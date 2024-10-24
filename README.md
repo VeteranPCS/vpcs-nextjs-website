@@ -1,36 +1,57 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+It uses TailwindCSS for styling and [Sanity.io](https://www.sanity.io/docs) as its CMS.
+
+The project is deployed on [Vercel](https://vercel.com).
+
+Additional functionality includes:
+
+- Salesforce API integrations
+    - Dynamically render VeteranPCS agents on their respective state pages based on Salesforce data.
+    - Dynamically render VeteranPCS lenders on their respective state pages based on Salesforce data.
+    - Connect customers to agents using Salesforce web-to-lead forms.
+    - Connect customers to lenders using Salesforce web-to-lead forms.
+    - Connect agents interested in being listed on the website to VeteranPCS using Salesforce web-to-lead forms.
+    - Connect lenders interested in being listed on the website to VeteranPCS using Salesforce web-to-lead forms.
+
+### Other Features Required
+
+- Integrate Google Analytics using `@next/third-parties` library.
+    - Use cases for both `<GoogleTagManager />` and `<GoogleAnalytics />` components.
+- Integrate [Microsoft Clarity](https://clarity.microsoft.com) to view user actions on the site.
+
 ## Getting Started
 
-First, run the development server:
+Clone repository:
+
+```bash
+gh repo clone VeteranPCS/vpcs-nextjs-website
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Documentation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
+### Next.js
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) for various use cases and examples.
 
-## Deploy on Vercel
+### Sanity.io CMS
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [Sanity.io](https://www.sanity.io/docs)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Next Third Parties Library
+
+- [Third Parties Library Docs](https://nextjs.org/docs/app/building-your-application/optimizing/third-party-libraries)
