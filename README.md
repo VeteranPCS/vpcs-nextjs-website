@@ -55,3 +55,7 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 ### Next Third Parties Library
 
 - [Third Parties Library Docs](https://nextjs.org/docs/app/building-your-application/optimizing/third-party-libraries)
+
+## Design
+
+- [Figma Designs](https://www.figma.com/design/eBD9WDWKoV4n0tyQCyIcEu/VeteranPCS-Homepage?node-id=1-2&node-type=frame&t=TExBGR1f1hLMB33F-0)
