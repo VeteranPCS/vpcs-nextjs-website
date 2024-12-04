@@ -1,0 +1,12 @@
+.herosectioncontainer {
+  background-image: url("/assets/Hero-Section.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #aeb0c7;
+  height: 1050px;
+  padding: 180px 30px 100px;
+  z-index: 10;
+  position: relative;
+  width: 100%;
+}

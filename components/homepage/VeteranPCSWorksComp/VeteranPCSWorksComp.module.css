@@ -1,0 +1,18 @@
+.veteranpcsworkscontainer {
+  border-radius: 32px;
+  border: 1px solid #eee;
+  border-bottom: 10px solid transparent;
+  background: #fff;
+  box-shadow: 0px 1px 0px 0px #eee;
+}
+
+.veteranpcsworkscontainer:hover {
+  border-radius: 32px;
+  border-bottom: 10px solid #292f6c;
+  background: #fff;
+  box-shadow:
+    0.29px 6.646px 30.11px 0px rgba(90, 114, 234, 0.06),
+    0.117px 2.673px 13.186px 0px rgba(90, 114, 234, 0.04),
+    0.026px 0.598px 5.707px 0px rgba(90, 114, 234, 0.03);
+  transition: all 0.3s ease-in-out;
+}

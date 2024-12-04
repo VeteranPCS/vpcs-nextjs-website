@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 /* State Map Styling */
 .map-container {
   @apply relative w-full h-[600px] bg-white;
@@ -39,4 +38,13 @@
 
 .st3 {
   @apply fill-blue-800 stroke-white stroke-[0.77];
+}
+
+.poppins {
+  font-family: Poppins, sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.roboto {
+  font-family: Roboto, sans-serif;
 }

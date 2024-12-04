@@ -1,0 +1,11 @@
+.impactherosectioncontainer {
+  background-image: url("/assets/impactherosection.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #aeb0c7;
+  padding-top: 180px;
+  z-index: 10;
+  position: relative;
+  width: 100%;
+}

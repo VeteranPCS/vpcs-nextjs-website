@@ -1,0 +1,76 @@
+.FooterLocationsContainer {
+  background: #002258;
+  padding: 40px 0px 0px;
+}
+
+.FooterContainer {
+  background: #002258;
+  padding: 40px 0px 40px;
+}
+
+.Footer {
+  background-color: #000000;
+  padding: 40px;
+}
+
+.TitleComponent {
+  color: #fff;
+  text-align: center;
+  font-family: Roboto;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 32.4px;
+}
+
+.PolicyLink {
+  color: #fff;
+  font-family: Roboto;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 32.4px;
+  /* 180% */
+}
+
+.LocationsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 20px;
+}
+
+.LocationItem {
+  color: #fff;
+  text-align: center;
+  font-family: Roboto;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 32.4px;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 640px) {
+  .LocationsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .LocationsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .LocationsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 20px;
+  }
+}
