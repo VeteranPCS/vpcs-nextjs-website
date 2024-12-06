@@ -1,0 +1,32 @@
+.blogimageone {
+    background-image: url("/assets/BlogImage1.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 5.933px;
+    position: relative;
+    height: 400px;
+    padding: 30px;
+}
+
+.blogimagetwo {
+    background-image: url("/assets/BlogImage2.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 5.933px;
+    position: relative;
+    height: 400px;
+    padding: 30px;
+}
+
+.blogimageThree {
+    background-image: url("/assets/BlogImage3.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 5.933px;
+    position: relative;
+    height: 400px;
+    padding: 30px;
+}

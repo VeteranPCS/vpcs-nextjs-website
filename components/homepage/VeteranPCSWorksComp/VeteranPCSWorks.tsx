@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import "@/styles/globals.css";
-import AOS from "aos";
-import "aos/dist/aos.css";
 import VeteranPCSWorksComp from "./VeteranPCSWorksComp";
 
 const cardsData = [
@@ -18,7 +16,7 @@ const cardsData = [
     title: "VA LOAN",
     subTitle:
       "Don’t overpay when using your va loan.  Our va loan experts are here to help.",
-    link: "Learn more here >",
+    link: "blog-list/va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-a-va-loan-or-veteranpcs >",
   },
   {
     img: "/icon/checkred.svg",
@@ -29,19 +27,10 @@ const cardsData = [
 ];
 
 const VeteranPCS = () => {
-  useEffect(() => {
-    AOS.init({
-      //   once: true,      // Make animation run once
-    });
-  }, []);
   return (
     <div className="bg-[#F4F4F4]">
       <div className="container mx-auto w-full lg:py-16 md:py-10 sm:py-10 py-5">
-        <div
-          className="px-4 mx-auto text-center"
-          data-aos="fade-right"
-          data-aos-duration="1000"
-        >
+        <div className="px-4 mx-auto text-center">
           <div>
             <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[35px] sm:text-[31px] text-[31px] tahoma">
               How VeteranPCS Works
@@ -51,11 +40,7 @@ const VeteranPCS = () => {
             </p>
           </div>
         </div>
-        <div
-          className="flex flex-wrap justify-center mt-10 xl:gap-11 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3 mx-auto"
-          data-aos="fade-left"
-          data-aos-duration="1000"
-        >
+        <div className="flex flex-wrap justify-center mt-10 xl:gap-11 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3 mx-auto">
           {cardsData.map((card, index) => (
             <VeteranPCSWorksComp key={index} veteranpcs={card} />
           ))}

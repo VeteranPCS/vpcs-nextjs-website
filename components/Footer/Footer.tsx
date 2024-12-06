@@ -1,74 +1,8 @@
 "use client";
 import React from "react";
-import styled from "styled-components";
 import classes from "./Footer.module.css";
-
-const LocationsContainer = styled.div`
-  background: #002258;
-  padding: 84px 0px 40px;
-`;
-
-const FooterContainer = styled.div`
-  background: #002258;
-  padding: 84px 0px 40px;
-`;
-
-const Footer = styled.div`
-  background-color: #000000;
-  padding: 40px 20px;
-`;
-
-const TitleComponent = styled.div`
-  color: #fff;
-  text-align: center;
-  font-family: Roboto;
-  font-size: 30px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 32.4px;
-`;
-
-const PolicyLink = styled.div`
-  color: #fff;
-  font-family: Roboto;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 32.4px; /* 180% */
-`;
-
-const LocationsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  grid-gap: 20px;
-
-  @media (min-width: 640px) {
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 20px;
-  }
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 20px;
-  }
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 10px;
-  }
-`;
-
-const LocationItem = styled.div`
-  color: #fff;
-  text-align: center;
-  font-family: Roboto;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 32.4px;
-  border-radius: 0.5rem;
-  transition: all 0.3s ease;
-`;
+import Image from "next/image";
+import Link from "next/link";
 
 const Locations = () => {
   const locations = [
@@ -137,40 +71,40 @@ const Locations = () => {
           <div className={classes.LocationsGrid}>
             {locations.map((location, index) => (
               <div key={index} className={classes.LocationItem}>
-                <a
+                <Link
                   href="#"
                   className="text-white text-center roboto text-base font-medium"
                 >
                   {location}
-                </a>
+                </Link>
               </div>
             ))}
           </div>
           <div className="mt-10 px-5">
             <div className="flex flex-wrap justify-between items-center">
               <div>
-                <a
+                <Link
                   href="#"
                   className="text-white text-center roboto text-lg font-medium"
                 >
                   Terms Of Service
-                </a>
+                </Link>
               </div>
               <div>
-                <a
+                <Link
                   href="#"
                   className="text-white text-center roboto text-lg font-medium"
                 >
                   Veteran PCS ©2024
-                </a>
+                </Link>
               </div>
               <div>
-                <a
+                <Link
                   href="#"
                   className="text-white text-center roboto text-lg font-medium"
                 >
                   Privacy Policy{" "}
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -181,7 +115,9 @@ const Locations = () => {
           <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 gap-4">
             <div>
               <div>
-                <img
+                <Image
+                  width={200}
+                  height={52}
                   className="w-[200px] h-[52px]"
                   src="/icon/solid-oak-logo.svg"
                   alt=""
@@ -195,10 +131,22 @@ const Locations = () => {
               </div>
               <div className="flex items-center">
                 <div>
-                  <img src="/icon/foot2.svg" alt="" />
+                  <Image
+                    width={100}
+                    height={100}
+                    className="w-auto h-auto"
+                    src="/icon/foot2.svg"
+                    alt=""
+                  />
                 </div>
                 <div>
-                  <img src="/icon/foot3.svg" alt="" />
+                  <Image
+                    width={100}
+                    height={100}
+                    className="w-auto h-auto"
+                    src="/icon/foot3.svg"
+                    alt=""
+                  />
                 </div>
               </div>
             </div>

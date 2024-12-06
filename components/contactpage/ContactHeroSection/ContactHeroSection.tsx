@@ -1,16 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import "@/styles/globals.css";
-import AOS from "aos";
-import "aos/dist/aos.css";
 import classes from "./ContactHeroSection.module.css";
+import Image from "next/image";
 
 const HeroSec = () => {
-  useEffect(() => {
-    AOS.init({
-      //   once: true,      // Make animation run once
-    });
-  }, []);
   return (
     <div className="relative">
       <div className={classes.HeroSectionContainer}>
@@ -25,7 +19,9 @@ const HeroSec = () => {
               </h1>
               <div className="flex justify-between xl:justify-start lg:justify-start md:justify-start sm:justify-between gap-4 mb-10 mt-10 mx-auto text-center">
                 <div className="flex items-center gap-4">
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     src="/icon/checkred.svg"
                     alt="check"
                     className="w-6 h-6"
@@ -35,7 +31,9 @@ const HeroSec = () => {
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     src="/icon/checkred.svg"
                     alt="check"
                     className="w-6 h-6"
@@ -46,7 +44,9 @@ const HeroSec = () => {
                 </div>
               </div>
               <div className="absolute bottom-[-15%] left-[45%] translate-[-45%] lg:block md:block sm:hidden hidden">
-                <img
+                <Image
+                  width={250}
+                  height={250}
                   src="/icon/VeteranPCS-logo_wht-outline.svg"
                   alt="Description of the image"
                   className="w-[250px] h-[250px]"

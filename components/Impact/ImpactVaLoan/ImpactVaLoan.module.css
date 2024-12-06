@@ -1,0 +1,12 @@
+.ImpactVaLoanContainer {
+  background-image: url("/assets/impactvaloansection.png");
+  background-size: cover;
+  background-position: center;
+  background-color: transparent !important;
+  background-repeat: no-repeat;
+  background-color: #aeb0c7;
+  padding: 100px 30px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}

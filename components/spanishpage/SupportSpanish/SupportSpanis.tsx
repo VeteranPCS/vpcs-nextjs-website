@@ -3,6 +3,7 @@ import React from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
 import styled from "styled-components";
 import Button from "@/components/common/Button";
+import Image from "next/image";
 
 const SupportSpanish = () => {
   return (
@@ -34,7 +35,13 @@ const SupportSpanish = () => {
               </div>
               <div>
                 <div className="flex gap-4 items-center">
-                  <img src="/assets/military-image-2.png" alt="Move in bonus" />
+                  <Image
+                    width={1000}
+                    height={1000}
+                    className="w-auto h-auto"
+                    src="/assets/military-image-2.png"
+                    alt="Move in bonus"
+                  />
                 </div>
               </div>
               <div className="lg:text-left sm:text-center text-center flex flex-col gap-7 justify-between lg:ml-5 md:ml-5 sm:ml-0 ml-0">

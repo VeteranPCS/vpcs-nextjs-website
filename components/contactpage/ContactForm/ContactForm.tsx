@@ -1,9 +1,10 @@
 "use client";
 import React from "react";
-import styled from "styled-components";
 import Button from "@/components/common/Button";
 import "@/styles/globals.css";
 import classes from "./ContactForm.module.css";
+import Image from "next/image";
+import Link from "next/link";
 
 const ContectForm = () => {
   return (
@@ -18,14 +19,26 @@ const ContectForm = () => {
             you for reaching out!
           </div>
           <div className="mt-10">
-            <div className={classes.ContactItem}>
+            <div className="flex flex-col gap-4">
               <div className={classes.ContactItem}>
-                <img src="/icon/phone-call.svg" alt="phone" />
-                <a href="tel:719-249-4757">719-249-4757</a>
+                <Image
+                  width={100}
+                  height={100}
+                  className="w-auto h-auto"
+                  src="/icon/phone-call.svg"
+                  alt="phone"
+                />
+                <Link href="tel:719-249-4757">719-249-4757</Link>
               </div>
               <div className={classes.ContactItem}>
-                <img src="/icon/sharp-email.svg" alt="phone" />
-                <a href="tel:719-249-4757">info@veteranpcs.com</a>
+                <Image
+                  width={100}
+                  height={100}
+                  className="w-auto h-auto"
+                  src="/icon/sharp-email.svg"
+                  alt="phone"
+                />
+                <Link href="tel:719-249-4757">info@veteranpcs.com</Link>
               </div>
             </div>
           </div>
@@ -38,36 +51,48 @@ const ContectForm = () => {
           <div>
             <ul className="flex items-center gap-4 mt-5">
               <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2 ">
-                <a href="#">
-                  <img
+                <Link href="#">
+                  <Image
+                    width={100}
+                    height={100}
+                    className="w-auto h-auto"
                     src="/icon/dribbble-fill.svg"
                     alt="Description of the image"
                   />
-                </a>
+                </Link>
               </li>
               <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2">
-                <a href="#">
-                  <img
+                <Link href="#">
+                  <Image
+                    width={100}
+                    height={100}
+                    className="w-auto h-auto"
                     src="/icon/instagram-fill.svg"
                     alt="Description of the image"
                   />
-                </a>
+                </Link>
               </li>
               <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2">
-                <a href="#">
-                  <img
+                <Link href="#">
+                  <Image
+                    width={100}
+                    height={100}
+                    className="w-auto h-auto"
                     src="/icon/twitter-fill.svg"
                     alt="Description of the image"
                   />
-                </a>
+                </Link>
               </li>
               <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2">
-                <a href="#">
-                  <img
+                <Link href="#">
+                  <Image
+                    width={100}
+                    height={100}
+                    className="w-auto h-auto"
                     src="/icon/youtube-fill.svg"
                     alt="Description of the image"
                   />
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -159,7 +184,7 @@ const ContectForm = () => {
                 id="message"
                 placeholder="Write your message.."
                 name="message"
-                rows="1"
+                rows={1}
               ></textarea>
             </div>
             <div className="flex justify-end">
@@ -168,8 +193,10 @@ const ContectForm = () => {
           </div>
         </div>
         <div className="lg:block md:block sm:hidden hidden mt-16 mr-4">
-          <img
-            src="assets/letter_send.png"
+          <Image
+            width={250}
+            height={200}
+            src="/assets/letter_send.png"
             alt="logo"
             className="w-[250px] h-[200px] absolute bottom-[-12%] right-[15%]"
           />

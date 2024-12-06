@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import "@/styles/globals.css";
+import Image from "next/image";
 
 const HeroSec = () => {
   return (
@@ -18,7 +19,9 @@ const HeroSec = () => {
           <div className="mt-32">
             <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-4 mb-5">
               <div>
-                <img
+                <Image
+                  width={1000}
+                  height={1000}
                   src="/assets/succsesStories.png"
                   alt="Tyler Success Story"
                   className="w-full h-full object-cover"
@@ -60,7 +63,9 @@ const HeroSec = () => {
                 </div>
               </div>
               <div>
-                <img
+                <Image
+                  width={1000}
+                  height={1000}
                   src="/assets/succsesStories.png"
                   alt="Tyler Success Story"
                   className="w-full h-full object-cover"
@@ -69,7 +74,9 @@ const HeroSec = () => {
             </div>
             <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-4 mb-5">
               <div>
-                <img
+                <Image
+                  width={1000}
+                  height={1000}
                   src="/assets/succsesStories.png"
                   alt="Tyler Success Story"
                   className="w-full h-full object-cover"

@@ -6,6 +6,36 @@ import Link from 'next/link';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
+// Define interfaces for the blog post structure
+interface SanitySlug {
+  current: string;
+}
+
+interface SanityImage {
+  asset: {
+    image_url: string;
+  };
+}
+
+interface SanityBlock {
+  _type: 'block';
+  children?: {
+    text: string;
+  }[];
+}
+
+interface BlogPost {
+  _id: string;
+  title: string;
+  slug?: SanitySlug;
+  mainImage?: SanityImage;
+  content?: SanityBlock[];
+}
+
+interface BlogListingProps {
+  blogList: BlogPost[];
+}
+
 const StyledCard = styled(Card)(({ theme }) => ({
     height: '100%',
     display: 'flex',
@@ -40,8 +70,10 @@ const ReadMore = styled(Typography)({
     },
 });
 
-const BlogListing = ({ blogList }) => {
+// Default image URL (replace with your actual default image URL)
+const DEFAULT_IMAGE_URL = '/api/placeholder/400/320';
 
+const BlogListing = ({ blogList }: BlogListingProps) => {
     useEffect(() => {
         console.log("blogList: ", blogList)
     }, [blogList])
@@ -53,7 +85,7 @@ const BlogListing = ({ blogList }) => {
         });
     }, []);
 
-    const getPlainText = (content) => {
+    const getPlainText = (content?: SanityBlock[]): string => {
         if (!content) return '';
 
         return content
@@ -71,11 +103,11 @@ const BlogListing = ({ blogList }) => {
             <Grid container spacing={3} sx={{ marginTop: '60px' }}>
                 {blogList.map((post, index) => {
                     const plainTextContent = getPlainText(post.content);
+                    const imageUrl = post?.mainImage?.asset?.image_url || DEFAULT_IMAGE_URL;
 
                     return (
                         <Grid item xs={12} sm={6} md={4} key={post._id} data-aos="fade-up" data-aos-delay={index * 100}>
                             <Link
-                                // href="#"
                                 href={`/blog-list/${post?.slug?.current}`} 
                                 passHref
                                 style={{ textDecoration: 'none' }}
@@ -83,7 +115,7 @@ const BlogListing = ({ blogList }) => {
                                 <StyledCard>
                                     <StyledCardMedia>
                                         <Image
-                                            src={post?.mainImage?.asset?.image_url}
+                                            src={imageUrl}
                                             alt={post.title}
                                             layout="fill"
                                             objectFit="cover"

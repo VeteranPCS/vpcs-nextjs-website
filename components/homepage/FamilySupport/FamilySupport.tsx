@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./FamilySupport.module.css";
+import Image from "next/image";
 
 const FamilySupport = () => {
   return (
@@ -14,17 +15,21 @@ const FamilySupport = () => {
          grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3 lg:py-12"
         >
           <div className="flex justify-center">
-            <img
+            <Image
               src="/assets/meetdaugether.png"
-              className="lg:w-[530px] lg:h-[530px] md:w-[530px] md:h-[530px] sm:w-[326px] sm:h-[326px] w-[326px] h-[326px]"
+              width={530}
+              height={530}
               alt="Description of the image"
+              className="lg:w-[530px] lg:h-[530px] md:w-[530px] md:h-[530px] sm:w-[326px] sm:h-[326px] w-[326px] h-[326px]"
             />
           </div>
           <div className="text-left">
             <div className="lg:block md:block sm:hidden hidden ">
-              <img
+              <Image
+                width={100}
+                height={100}
+                className=" w-auto h-auto"
                 src="/icon/userplus.svg"
-                className=""
                 alt="Description of the image"
               />
             </div>
@@ -40,9 +45,11 @@ const FamilySupport = () => {
             </div>
             <div className="mt-5">
               <div className="flex items-start gap-4">
-                <img
+                <Image
+                  width={100}
+                  height={100}
+                  className=" w-auto h-auto mt-2"
                   src="/icon/checkred.svg"
-                  className="mt-2"
                   alt="Description of the image"
                 />
                 <h6 className="text-white roboto lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] font-medium leading-[41px]">
@@ -51,9 +58,11 @@ const FamilySupport = () => {
                 </h6>
               </div>
               <div className="flex items-start gap-4">
-                <img
+                <Image
+                  width={100}
+                  height={100}
+                  className=" w-auto h-auto mt-2"
                   src="/icon/checkred.svg"
-                  className="mt-2"
                   alt="Description of the image"
                 />
                 <h6 className="text-white roboto lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] font-medium leading-[41px]">
@@ -62,9 +71,11 @@ const FamilySupport = () => {
                 </h6>
               </div>
               <div className="flex items-start gap-4">
-                <img
+                <Image
+                  width={100}
+                  height={100}
+                  className=" w-auto h-auto mt-2"
                   src="/icon/checkred.svg"
-                  className="mt-2"
                   alt="Description of the image"
                 />
                 <h6 className="text-white roboto lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] font-medium leading-[41px]">

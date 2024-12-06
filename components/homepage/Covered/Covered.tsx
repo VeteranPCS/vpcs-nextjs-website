@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect } from "react";
 import "@/styles/globals.css";
 import AOS from "aos";
@@ -11,21 +10,21 @@ const cardsData = [
     imgred: "/icon/Missionred.svg",
     title: "Our mission",
     subTitle: "Why is VeteranPCS mission is so important?",
-    link: "Learn more",
+    link: "about/",
   },
   {
     img: "/icon/Impact.svg",
     imgred: "/icon/Impactred.svg",
     title: "Impact",
     subTitle: "VeteranPCS impact on our military community.",
-    link: "Learn more",
+    link: "impact/",
   },
   {
     img: "/icon/Loan.svg",
     imgred: "/icon/Loanred.svg",
     title: "VA Loan",
     subTitle: "Learn more about how the VA Loan can work for you.",
-    link: "Learn more",
+    link: "blog-list/va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-a-va-loan-or-veteranpcs",
   },
   {
     img: "/icon/Works.svg",
@@ -39,7 +38,7 @@ const cardsData = [
     imgred: "/icon/Storiesred.svg",
     title: "Stories",
     subTitle: "We have helped 100s of veterans and their families!",
-    link: "Learn more",
+    link: "stories/",
   },
   {
     img: "/icon/Resources.svg",
@@ -56,6 +55,7 @@ const Covered = () => {
       //   once: true,      // Make animation run once
     });
   }, []);
+  
   return (
     <div className="container mx-auto w-full lg:py-16 md:py-16 sm:py-16 py-0">
       <div
@@ -80,11 +80,7 @@ const Covered = () => {
         {cardsData.map((card, index) => (
           <CoveredComp
             key={index}
-            card={card}
-            img={card.img}
-            title={card.title}
-            subTitle={card.subTitle}
-            link={card.link}
+            card={card} // Only pass 'card' object here
           />
         ))}
       </div>

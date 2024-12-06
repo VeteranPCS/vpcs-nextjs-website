@@ -5,6 +5,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { Box } from "@mui/material";
+import Image from "next/image";
 
 interface UserImage {
   _id: string;
@@ -93,7 +94,9 @@ const Carousel: React.FC<CarouselProps> = ({ userImageList }) => {
               key={item._id}
               className="xl:w-[230px] lg:w-[300px] md:w-[300px] sm:w-full w-full px-4"
             >
-              <img
+              <Image
+                width={1000}
+                height={1000}
                 src={item?.userImage?.asset?.image_url}
                 alt={item?.userImage?.alt}
                 className="w-full h-full object-contain"
@@ -106,7 +109,9 @@ const Carousel: React.FC<CarouselProps> = ({ userImageList }) => {
                 key={index}
                 className="xl:w-[230px] lg:w-[300px] md:w-[300px] sm:w-full w-full px-4"
               >
-                <img
+                <Image
+                  width={1000}
+                  height={1000}
                   src={item.imageUrl}
                   alt={item.title}
                   className="w-full h-full object-contain"

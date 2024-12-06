@@ -4,6 +4,8 @@ import "@/styles/globals.css";
 import styled from "styled-components";
 import Button from "@/components/common/Button";
 import classes from "./KeepInTouch.module.css";
+import Image from "next/image";
+import Link from "next/link";
 
 const KeepInTouch = () => {
   const [isChecked, setIsChecked] = React.useState(false);
@@ -17,48 +19,59 @@ const KeepInTouch = () => {
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3">
           <div className="lg:text-left md:text-left sm:text-center text-center">
             <div>
-              <img
+              <Image
+                width={100}
+                height={100}
+                className="w-auto h-auto"
                 src="/icon/veteran-pcs-logo-white.svg"
                 alt="Description of the image"
               />
               <p className="text-[#292F6C] tahoma text-lg font-normal leading-[30px] w-[300px] my-7">
-                Together we’ll make it home. Veteran & Military Spouse Real
+                Together we&apos;ll make it home. Veteran & Military Spouse Real
                 Estate Agents and VA Loan Experts You Can Trust
               </p>
             </div>
             <div>
               <ul className="flex items-center gap-4 mt-5">
                 <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2 ">
-                  <a href="#">
-                    <img
+                  <Link href="#">
+                    <Image
+                      width={100}
+                      height={100}
                       src="/icon/dribbble-fill.svg"
                       alt="Description of the image"
                     />
-                  </a>
+                  </Link>
                 </li>
                 <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2">
-                  <a href="#">
-                    <img
+                  <Link href="#">
+                    <Image
+                      width={100}
+                      height={100}
                       src="/icon/instagram-fill.svg"
                       alt="Description of the image"
                     />
-                  </a>
+                  </Link>
                 </li>
                 <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2">
-                  <a href="#">
-                    <img
+                  <Link href="#">
+                    <Image
+                      width={100}
+                      height={100}
                       src="/icon/twitter-fill.svg"
                       alt="Description of the image"
                     />
-                  </a>
+                  </Link>
                 </li>
                 <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2">
-                  <a href="#">
-                    <img
+                  <Link href="#">
+                    <Image
+                      width={100}
+                      height={100}
                       src="/icon/youtube-fill.svg"
                       alt="Description of the image"
                     />
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -97,7 +110,7 @@ const KeepInTouch = () => {
                       checked={isChecked}
                       onClick={handleCheckboxChange}
                     />
-                    <div className={classes.CheckboxLabel}>I'm not a robot</div>
+                    <div className={classes.CheckboxLabel}>I&apos;m not a robot</div>
                   </div>
                 </div>
                 <div>

@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import "@/styles/globals.css";
 import classes from "./Mission.module.css";
 import Button from "@/components/common/Button";
+import Image from "next/image";
 
 const Mission = () => {
   return (
@@ -14,7 +15,9 @@ const Mission = () => {
          grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3 lg:py-12"
         >
           <div className="flex justify-end">
-            <img
+            <Image
+              width={1000}
+              height={1000}
               src="/assets/Mission.png"
               className="lg:w-[552px] lg:h-[552px] md:w-[552px] md:h-[552px] sm:w-[326px] sm:h-[326px] w-[326px] h-[326px]"
               alt="Description of the image"

@@ -3,20 +3,30 @@ import { client } from '../../../sanity/lib/client'
 import { SanityDocument } from '@sanity/client'
 import { urlForImage } from '@/sanity/lib/image'
 
-interface PostDocument extends SanityDocument {
-    _type: 'agents'
-    title: string
-    publishedAt: string
+interface MainImage {
+    alt: string; // Alternative text for the image
+    asset: {
+        image_url: string; // URL of the image
+        _ref: string; // Reference ID for the image asset
+        _type: string; // Type of the asset, typically "reference"
+    };
+    _type: "image"; // Type of the main image, typically "image"
+}
+
+interface AgentDocument extends SanityDocument {
+    mainImage: MainImage;
+    publishedAt: string;
+    title: string;
+    _createdAt: string;
+    _id: string;
+    _rev: string;
+    _type: 'agents';
+    _updatedAt: string;
 }
 
 export async function GET() {
     try {
-        const agents = await client.fetch<PostDocument[]>(`*[_type == "real-state-agents"]`);
-        console.log("Fetched agents:", agents);
-
-        if (agents.length === 0) {
-            console.log("No agents found.");
-        }
+        const agents = await client.fetch<AgentDocument[]>(`*[_type == "real-state-agents"]`);
 
         agents.forEach((agent) => {
             if (agent.mainImage?.asset?._ref) {

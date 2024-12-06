@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import styled from "styled-components";
 import Button from "@/components/common/Button";
 import classes from "./VeteranCommunity.module.css";
+import Image from "next/image";
 
 const VeteranComunity = () => {
   return (
@@ -12,9 +13,11 @@ const VeteranComunity = () => {
         <div className="container mx-auto items-center grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3">
           <div className="lg:text-left order-1 lg:order-none md:order-none">
             <div className="lg:block md:block sm:hidden hidden ">
-              <img
+              <Image
+                width={100}
+                height={100}
                 src="/icon/userplus.svg"
-                className=""
+                className="w-auto h-auto"
                 alt="Description of the image"
               />
             </div>
@@ -28,9 +31,11 @@ const VeteranComunity = () => {
             </div>
             <div className="mt-5">
               <div className="flex items-start gap-4 my-4">
-                <img
+                <Image
+                  width={100}
+                  height={100}
                   src="/icon/checkred.svg"
-                  className=""
+                  className="w-auto h-auto"
                   alt="Description of the image"
                 />
                 <h6 className="text-white roboto text-lg font-medium my-0">
@@ -38,9 +43,11 @@ const VeteranComunity = () => {
                 </h6>
               </div>
               <div className="flex items-start gap-4 my-4">
-                <img
+                <Image
+                  width={100}
+                  height={100}
                   src="/icon/checkred.svg"
-                  className=""
+                  className="w-auto h-auto"
                   alt="Description of the image"
                 />
                 <h6 className="text-white roboto text-lg font-medium my-0">
@@ -48,9 +55,11 @@ const VeteranComunity = () => {
                 </h6>
               </div>
               <div className="flex items-start gap-4 my-4">
-                <img
+                <Image
+                  width={100}
+                  height={100}
                   src="/icon/checkred.svg"
-                  className=""
+                  className="w-auto h-auto"
                   alt="Description of the image"
                 />
                 <h6 className="text-white roboto text-lg font-medium my-0">
@@ -64,7 +73,9 @@ const VeteranComunity = () => {
             </div>
           </div>
           <div>
-            <img
+            <Image
+              width={552}
+              height={552}
               src="/assets/soldiertraining.png"
               className="w-[552px] h-[552px]"
               alt="Description of the image"

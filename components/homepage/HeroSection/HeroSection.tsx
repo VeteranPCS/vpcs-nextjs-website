@@ -7,6 +7,7 @@ import "@/styles/globals.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import classes from "./HeroSection.module.css";
+import Image from "next/image";
 
 interface HeroSectionProps {
   title: string;
@@ -35,7 +36,9 @@ const HeroSec = ({ title, subTitle, page }: HeroSectionProps) => {
               {page == "home" && (
                 <div className="flex justify-between xl:justify-start lg:justify-start md:justify-start sm:justify-between gap-4 mb-10 mt-10 mx-auto text-center ">
                   <div className="flex items-center gap-4">
-                    <img
+                    <Image
+                      width={6}
+                      height={6}
                       src="/icon/checkred.svg"
                       alt="check"
                       className="w-6 h-6"
@@ -45,7 +48,9 @@ const HeroSec = ({ title, subTitle, page }: HeroSectionProps) => {
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
-                    <img
+                    <Image
+                      width={6}
+                      height={6}
                       src="/icon/checkred.svg"
                       alt="check"
                       className="w-6 h-6"
@@ -74,14 +79,18 @@ const HeroSec = ({ title, subTitle, page }: HeroSectionProps) => {
             <div className="mx-auto w-full mb-20 lg:mb-0 sm:order-1 order-1 lg:order-none md:order-none">
               <div className="flex justify-center">
                 <div className="relative">
-                  <img
+                  <Image
+                    width={873}
+                    height={482}
                     src="/assets/house-hero-2024.png"
                     className="w-[873px] h-[482px] "
                     alt="Description of the image"
                     data-aos="fade-right"
                     data-aos-duration="1000"
                   />
-                  <img
+                  <Image
+                    width={533}
+                    height={533}
                     src="/assets/veteranPCS-slider-checks-03.png"
                     className="xl:w-[533px] xl:h-[533px] lg:w-[533px] lg:h-[533px] md:w-[450px] md:h-[450px] sm:w-full sm:h-[360px] w-full h-[360px] absolute top-[30%] left-[15%] -translate-x-2/4 -translate-y-2/4"
                     alt="Description of the image"

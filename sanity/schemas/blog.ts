@@ -49,6 +49,11 @@ export default defineType({
       title: 'Content',
       type: 'blockContent',
     }),
+    defineField({
+      name: 'is_show',
+      title: 'Is show',
+      type: 'boolean',
+    }),
   ],
 
   preview: {

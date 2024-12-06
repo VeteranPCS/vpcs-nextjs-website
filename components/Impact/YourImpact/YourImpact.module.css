@@ -2,6 +2,7 @@
   background-image: url("/assets/Hero-Section.png");
   background-size: cover;
   background-position: center;
+  background-color: transparent !important;
   background-repeat: no-repeat;
   background-color: #aeb0c7;
   padding: 100px 0px 300px;

@@ -5,8 +5,26 @@ import styled from "styled-components";
 import Button from "@/components/common/Button";
 import ReviewTestimonialSlider from "@/components/homepage/ReviewTestimonial/ReviewTestimonialSlider";
 import classes from "./ReviewTestimonial.module.css";
+import { useRouter } from 'next/navigation';
 
-const ReviewTestimonial = ({ reviewsList }) => {
+// Define the type for each review
+interface Review {
+  _id: string;  // Assuming each review has a unique id
+  name: string;
+  message: string;
+  designation: string; // Add the missing field
+  ratings: number;     // Add the missing field
+  comment: string;     // Add the missing field
+}
+
+// Define the props for the component
+interface ReviewTestimonialProps {
+  reviewsList: Review[];
+}
+
+const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({ reviewsList }) => {
+  const router = useRouter();
+
   return (
     <div className="w-full">
       <div className={classes.ReviewTestimonialContainer}>

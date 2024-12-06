@@ -1,0 +1,53 @@
+.pcsresourcesvaloanguide {
+  background: linear-gradient(113deg, #7E1618 41%, #D22230 100%);
+  padding: 60px 0px;
+}
+
+.KeepInTouchInput {
+  width: 100%;
+  max-width: 372px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background: #fff;
+  font-size: 1rem;
+
+  &:focus {
+    outline: none;
+    border-color: #6b46c1;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.5);
+  }
+}
+
+.CheckboxContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0rem;
+}
+
+.CustomCheckbox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.CustomCheckbox.checked {
+  background-color: #c53030;
+  border-color: #c53030;
+}
+
+.CustomCheckbox.checked::after {
+  content: "✓";
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  position: absolute;
+}

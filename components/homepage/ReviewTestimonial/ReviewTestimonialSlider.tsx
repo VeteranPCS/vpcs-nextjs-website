@@ -1,13 +1,26 @@
 "use client";
-import React, { useEffect } from "react"; // Keep this import
+import React from "react"; // Keep this import
 import "@/styles/globals.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import styled from "styled-components";
 import Slider from "react-slick";
 import { Box } from "@mui/material";
+import Image from "next/image";
 
-const Carousel = ({ reviews }) => {
+// Define the type for each review item
+interface Review {
+  _id: string;
+  name: string;
+  designation: string;
+  ratings: number;
+  comment: string;
+}
+
+interface CarouselProps {
+  reviews: Review[]; // Define the reviews prop as an array of Review items
+}
+
+const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
   // Slider 1 settings (6 images visible at once)
   const settingsOne = {
     infinite: true,
@@ -50,7 +63,7 @@ const Carousel = ({ reviews }) => {
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 1, // Show 3 images on medium screens
+          slidesToShow: 1, // Show 1 image on medium screens
         },
       },
       {
@@ -88,18 +101,18 @@ const Carousel = ({ reviews }) => {
       {/* Second Slider with 1 image shown */}
       <Box className="w-full">
         <Slider {...settingsTwo} className="pt-10">
-          {reviews.map((item, index) => (
+          {reviews.map((item) => (
             <div key={item._id} className="bg-white rounded-2xl p-10">
               <div className="flex items-center justify-center">
                 <div className="text-center flex flex-col justify-center gap-10">
                   <div className="flex items-center justify-center">
                     {Array.from({ length: 5 }).map((_, index) =>
                       index < item.ratings ? (
-                        <img
+                        <Image
+                          width={24}
+                          height={24}
                           key={index}
-                          src={
-                            "/icon/Star.svg" // Filled star
-                          }
+                          src="/icon/Star.svg" // Filled star
                           alt="star"
                           className="w-[24px] h-[24px] mr-2"
                         />
@@ -112,7 +125,9 @@ const Carousel = ({ reviews }) => {
                     {item.comment}
                   </p>
                   <div className="flex justify-center">
-                    <img
+                    <Image
+                      width={100}
+                      height={100}
                       src="/icon/Aven.svg"
                       alt="star"
                       className="w-[100px] h-[100px] mr-2"

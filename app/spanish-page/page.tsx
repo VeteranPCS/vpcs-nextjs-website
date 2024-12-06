@@ -1,3 +1,4 @@
+"use client";
 import HeroSection from "@/components/homepage/HeroSection/HeroSection";
 import StateMap from "@/components/homepage/StateMap";
 import Mission from "@/components/spanishpage/Mission/Mission";
@@ -13,7 +14,27 @@ import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import Footer from "@/components/Footer/Footer";
 import SupportSpanish from "@/components/spanishpage/SupportSpanish/SupportSpanis";
 
+import userImageServices from "@/services/userService";
+import { useEffect, useState } from "react";
+
 export default function Home() {
+  const [userImageList, SetUserImageList] = useState([]);
+
+  useEffect(() => {
+    fetchUserImage();
+  }, []);
+
+  const fetchUserImage = async () => {
+    try {
+      const response = await userImageServices.fetchImages();
+      if (!response.ok) throw new Error("Failed to fetch posts");
+      const data = await response.json();
+      SetUserImageList(data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+
   return (
     <main>
       <HeroSection
@@ -24,7 +45,7 @@ export default function Home() {
       <StateMap />
       <Mission />
       <SupportSpanish />
-      <ImageSlider />
+      <ImageSlider userImageList={userImageList} />
       <Covered />
       <FamilySupport />
       <VeteranPCS />

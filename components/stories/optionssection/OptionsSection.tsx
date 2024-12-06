@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import "@/styles/globals.css";
+import Image from "next/image";
+import Link from "next/link";
 
 const HeroSec = () => {
   return (
@@ -10,7 +12,9 @@ const HeroSec = () => {
           <div>
             <div className="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-16 mb-5">
               <div>
-                <img
+                <Image
+                  width={1000}
+                  height={1000}
                   src="/assets/optionimage1.png"
                   alt="Tyler Success Story"
                   className="w-full h-[233px] object-cover"
@@ -24,17 +28,19 @@ const HeroSec = () => {
                     affliated charity to donate their
                   </h6>
                   <div className="mt-5">
-                    <a
+                    <Link
                       href="#"
                       className="text-[#292F6C] text-[21px] font-medium border-b border-[#292F6C]"
                     >
                       Read More
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
               <div>
-                <img
+                <Image
+                  width={1000}
+                  height={1000}
                   src="/assets/optionimage2.png"
                   alt="Tyler Success Story"
                   className="w-full h-[233px] object-cover"
@@ -48,17 +54,19 @@ const HeroSec = () => {
                     the same time.  They received
                   </h6>
                   <div className="mt-5">
-                    <a
+                    <Link
                       href="#"
                       className="text-[#292F6C] text-[21px] font-medium border-b border-[#292F6C]"
                     >
                       Read More
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
               <div>
-                <img
+                <Image
+                  width={1000}
+                  height={1000}
                   src="/assets/optionimage3.png"
                   alt="Tyler Success Story"
                   className="w-full h-[233px] object-cover"
@@ -72,17 +80,19 @@ const HeroSec = () => {
                     understand exactly how to
                   </h6>
                   <div className="mt-5">
-                    <a
+                    <Link
                       href="#"
                       className="text-[#292F6C] text-[21px] font-medium border-b border-[#292F6C]"
                     >
                       Read More
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
               <div>
-                <img
+                <Image
+                  width={1000}
+                  height={1000}
                   src="/assets/optionimage4.png"
                   alt="Tyler Success Story"
                   className="w-full h-[233px] object-cover"
@@ -96,12 +106,12 @@ const HeroSec = () => {
                     Jason as I prepared my PCS to California. Since Jason is a
                   </h6>
                   <div className="mt-5">
-                    <a
+                    <Link
                       href="#"
                       className="text-[#292F6C] text-[21px] font-medium border-b border-[#292F6C]"
                     >
                       Read More
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>

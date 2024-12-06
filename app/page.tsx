@@ -42,6 +42,8 @@ export default function Home() {
       const response = await reviewService.fetchReviews()
       if (!response.ok) throw new Error('Failed to fetch posts')
       const data = await response.json()
+      // const testingData = data.slice(0, 1);
+      // console.log(testingData)
       SetReviewsList(data)
     } catch (error) {
       console.error('Error fetching posts:', error)
@@ -53,6 +55,8 @@ export default function Home() {
       const response = await userImageServices.fetchImages()
       if (!response.ok) throw new Error('Failed to fetch posts')
       const data = await response.json()
+      // const testingData = data.slice(0, 5);
+      // console.log(testingData)
       SetUserImageList(data)
     } catch (error) {
       console.error('Error fetching posts:', error)
@@ -64,9 +68,11 @@ export default function Home() {
       const response = await AgentServices.fetchAgentsList()
       if (!response.ok) throw new Error('Failed to fetch Agents')
       const data = await response.json()
+      // const testingData = data.slice(0, 6);
+      // console.log(testingData);
       setAgentList(data)
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      console.error('Error fetching Agents:', error)
     }
   }
 

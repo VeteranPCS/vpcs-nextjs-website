@@ -168,12 +168,6 @@ export default function PostManager() {
   }, [posts])
 
   return (
-    <div className="post-list" style={{ marginTop: '15%' }}>
-      {posts.map((post) => (
-        <div key={post._id}>
-          <span>{post._createdAt}</span>
-        </div>
-      ))}
-    </div>
+      <h1>Hello Post</h1>
   );
 }

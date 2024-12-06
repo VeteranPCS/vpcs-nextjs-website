@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from '@/app/constants/api'
+import { API_ENDPOINTS } from '@/constants/api'
 
 const userImageServices = {
     fetchImages: async () => {
