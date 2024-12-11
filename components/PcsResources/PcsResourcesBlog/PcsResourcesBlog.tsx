@@ -1,19 +1,17 @@
-"use client";
-import React, { useState, useEffect } from "react";
 import "@/styles/globals.css";
 import Link from "next/link";
 import classes from "./PcsResourcesBlog.module.css";
 
 const PcsResourcesBlog = () => {
   return (
-    <div className="pt-6">
+    <div className="pt-6 px-5">
       <div className="container mx-auto">
-        <div className="flex items-end justify-between">
-          <div className="text-left">
-            <h1 className="text-[#292F6C] lg:text-[42px] md:text-[42px] sm:text-[30px] text-[30px] font-bold tahoma">
+        <div className="flex flex-wrap gap-5 items-end lg:justify-between md:justify-between sm:justify-center justify-center">
+          <div className="lg:text-left md:text-left sm:text-center text-center">
+            <h1 className="text-[#292F6C] lg:text-[42px] md:text-[42px] sm:text-[30px] text-[30px] font-bold tahoma lg:text-left md:text-left sm:text-center text-center">
               Let’s talk VA loan
             </h1>
-            <p className="text-[#1F1D55] lg:text-[21px] md:text-[21px] sm:text-[15px] text-[15px] font-normal tahoma">
+            <p className="text-[#1F1D55] lg:text-[21px] md:text-[21px] sm:text-[15px] text-[15px] font-normal tahoma lg:text-left md:text-left sm:text-center text-center">
               Our experts breakdown buying with a VA loan
             </p>
           </div>

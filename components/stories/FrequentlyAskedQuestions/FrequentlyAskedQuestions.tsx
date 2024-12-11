@@ -1,49 +1,54 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AccordionItem from "../../common/AccordionItem";
+import commonService from "@/services/commonServices";
+
+type Question = {
+  _id: string;
+  question: string;
+  answer: string;
+};
 
 export default function ControlledAccordions() {
   const [expanded, setExpanded] = useState<string | false>("panel1");
+  const [questions, setQuestions] = useState<Question[] | null>([])
+
+  const fetchQuestion = useCallback(async () => {
+    try {
+      const response = await commonService.fetchFrequentlyAskedQuestions()
+      if (!response.ok) throw new Error('Failed to fetch posts')
+      const data = await response.json()
+      setQuestions(data)
+    } catch (error) {
+      console.error('Error fetching posts:', error)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchQuestion()
+  }, [fetchQuestion])
 
   const handleChange = (panel: string) => {
     setExpanded(expanded === panel ? false : panel); // Toggle panel visibility
   };
 
   return (
-    <div className="container lg:w-[50%] md:w-[75%] sm:w-full w-full mx-auto py-12">
+    <div className="container lg:w-[50%] md:w-[75%] sm:w-full w-full mx-auto py-12 pt-0 sm:pt-12 px-9 sm:px-0">
       <div>
-        <h1 className="text-[#7E1618] poppins lg:text-[43px] md:text-[43px] sm:text-[31px] text-[31px] font-semibold mb-10 text-center">
+        <h1 className="text-[#7E1618] poppins lg:text-[43px] md:text-[43px] sm:text-[31px] text-[31px] font-semibold mb-10 text-center px-8 sm:px-0">
           PCS Frequently Asked Questions
         </h1>
       </div>
-      <AccordionItem
-        id="panel1"
-        title="How do I apply for a VA guaranteed loan?"
-        content="You can apply for a VA loan with any mortgage lender that participates in the VA home loan program. At some point, you will need to get a Certificate of Eligibility from VA to prove to the lender that you are eligible for a VA loan."
-        expanded={expanded}
-        handleChange={handleChange}
-      />
-      <AccordionItem
-        id="panel2"
-        title="Are There Closing Costs Associated with a VA Loan?"
-        content="You can apply for a VA loan with any mortgage lender that participates in the VA home loan program. At some point, you will need to get a Certificate of Eligibility from VA to prove to the lender that you are eligible for a VA loan."
-        expanded={expanded}
-        handleChange={handleChange}
-      />
-      <AccordionItem
-        id="panel3"
-        title="How Many Times Can I Use My VA Home Loan Benefit?"
-        content="You can apply for a VA loan with any mortgage lender that participates in the VA home loan program. At some point, you will need to get a Certificate of Eligibility from VA to prove to the lender that you are eligible for a VA loan."
-        expanded={expanded}
-        handleChange={handleChange}
-      />
-      <AccordionItem
-        id="panel4"
-        title="Can I Have Two VA Loans?"
-        content="You can apply for a VA loan with any mortgage lender that participates in the VA home loan program. At some point, you will need to get a Certificate of Eligibility from VA to prove to the lender that you are eligible for a VA loan."
-        expanded={expanded}
-        handleChange={handleChange}
-      />
+      {questions?.map((question) => (
+        <AccordionItem
+          key={question._id}
+          id={question._id}
+          title={question.question}
+          content={question.answer}
+          expanded={expanded}
+          handleChange={handleChange}
+        />
+      ))}
     </div>
   );
 }

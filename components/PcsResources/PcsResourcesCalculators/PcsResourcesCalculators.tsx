@@ -1,11 +1,10 @@
-"use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "@/styles/globals.css";
 import Image from "next/image";
 
 const PcsResourcesCalculators = () => {
   return (
-    <div className="bg-[#E8E8E8] py-12">
+    <div className="bg-[#E8E8E8] py-12 px-5">
       <div className="container mx-auto">
         <div>
           <h2 className="text-[#003486] tahoma lg:text-[43px] md:text-[43px] sm:text-[31px] text-[31px] font-bold">

@@ -100,7 +100,7 @@ const Carousel = ({ agentList }: { agentList: any }) => {
   return (
     <div className="container mx-auto comlogoslider">
       <Box className="w-full">
-        <Slider {...settings} className="py-20">
+        <Slider {...settings} className="md:py-20 py-3">
           {carouselItems.map((item: any, index: number) => (
             <a key={item._id || index} className="w-[230px] px-9" href={item.url}>
               <Image

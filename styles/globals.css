@@ -3,11 +3,30 @@
   margin: 0px;
   box-sizing: border-box;
 }
-
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+html,
+body {
+  overflow-x: hidden;
+}
+@media screen and (max-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
 .header {
   box-shadow: 0 12px 18px -6px rgba(0, 0, 0, 0.3);
 }
-
+@media screen and (max-width: 575px) {
+  .header {
+    box-shadow: none;
+  }
+}
 .menu-nav ul li {
   position: relative;
 }
@@ -41,7 +60,7 @@ nav ul li ul {
   text-align: left;
 }
 
-.nav li:hover>ul {
+.nav li:hover > ul {
   opacity: 1;
   visibility: visible;
   transition: all 0.3s ease-in-out;
@@ -133,6 +152,6 @@ blockquote {
 }
 
 .tahoma {
-  font-family: 'Tahoma', sans-serif;
+  font-family: "Tahoma", sans-serif;
   letter-spacing: 0.5px;
 }

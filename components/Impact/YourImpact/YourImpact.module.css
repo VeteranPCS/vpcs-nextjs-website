@@ -10,3 +10,9 @@
   width: 100%;
   height: 100%;
 }
+@media screen and (max-width: 575px)  {
+  .yourimpactsectioncontainer {
+    background-size: auto;
+    padding: 130px 30px 60px 30px;
+  } 
+}

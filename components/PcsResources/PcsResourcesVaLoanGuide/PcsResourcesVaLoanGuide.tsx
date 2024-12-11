@@ -1,26 +1,26 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "@/styles/globals.css";
 import Link from "next/link";
 import classes from "./PcsResourcesVaLoanGuide.module.css";
 import Image from "next/image";
 
 const PcsResourcesVaLoanGuide = () => {
-  const [isChecked, setIsChecked] = React.useState(false);
+  const [isChecked, setIsChecked] = useState<boolean>(false);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
   return (
     <div className={classes.pcsresourcesvaloanguide}>
-      <div className="container mx-auto">
+      <div className="container mx-auto px-5">
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-6">
           <div className="lg:px-20 mg:px-20 sm:px-10 px-10">
             <div className="text-center">
               <h2 className="text-[#FFFFFF] text-center poppins lg:text-[36px] md:text-[36px] sm:text-[22px] text-[22px] font-bold">
                 VA Loan Guide
               </h2>
-              <p className="text-[#FFFFFF] text-center roboto lg:text-[21px] md:text-[21px] sm:text-[16px] text-[16px] font-medium w-[550px] mx-auto mt-4 mb-10">
+              <p className="text-[#FFFFFF] text-center roboto lg:text-[21px] md:text-[21px] sm:text-[16px] text-[16px] font-medium lg:w-[550px] mx-auto mt-4 mb-10">
                 Important considerations on income and orders when you&apos;re
                 planning your next move.
               </p>
@@ -82,7 +82,7 @@ const PcsResourcesVaLoanGuide = () => {
               height={567}
               src="/assets/military-meet.png"
               alt="check"
-              className="w-[567px] h-[567px]"
+              className="lg:w-[567px] lg:h-[567px] md:w-[567px] md:h-[567px] sm:w-full sm:h-full w-full h-full"
             />
           </div>
         </div>

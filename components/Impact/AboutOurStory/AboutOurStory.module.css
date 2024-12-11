@@ -3,3 +3,10 @@
   background: linear-gradient(233deg, #5a72ea 28.37%, #8468b1 95.18%), #d9d9d9;
   padding: 40px 30px;
 }
+
+@media only screen and (max-width: 600px) {
+  .aboutourstorycontainer {
+    border-radius: 0px;
+    padding: 20px;
+  }
+}

@@ -43,7 +43,7 @@ const StateMap = () => {
   return (
     <>
       <div className="z-0 w-full" id="map-container">
-        <div className="bg-[#aeb0c7] lg:p-16 md:p-16 py-10 w-full">
+        <div className="bg-[#aeb0c7] lg:p-16 md:p-16 py-10 w-full -mt-0.5">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 1766 1067"

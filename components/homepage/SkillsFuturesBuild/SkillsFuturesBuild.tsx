@@ -1,5 +1,3 @@
-"use client";
-import React from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
 import styled from "styled-components";
 import Button from "@/components/common/Button";
@@ -7,12 +5,12 @@ import classes from "./SkillsFuturesBuild.module.css";
 
 const SkillFuturesBuild = () => {
   return (
-    <div className="w-full relative">
+    <div className="w-full relative mb-8 sm:mb-0">
       <div className={classes.SkillsFuturesBuildContainer}>
-        <div className="container mx-auto ">
+        <div className="container mx-auto">
           <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 w-full">
             <div className="text-center">
-              <h1 className="text-white lg:text-[48px] text-[40px] font-bold poppins">
+              <h1 className="text-white lg:text-[48px] text-[40px] font-bold poppins px-10 sm:px-0">
                 Skills to share. Futures to build
               </h1>
               <p className="font-medium text-[18px] leading-[30px] text-white roboto lg:w-full w-[300px] mx-auto">

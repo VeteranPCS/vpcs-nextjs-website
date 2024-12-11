@@ -1,9 +1,8 @@
-'use client'
 import StateMap from "@/components/homepage/StateMap";
 import HeroSection from "@/components/homepage/HeroSection/HeroSection";
-import Slider from "@/components/common/Slider";
+import Agent from "@/components/homepage/AgentPages/Agent";
+import Testimonials from "@/components/Testimonials/TestimonialPage";
 import VideoFamily from "@/components/homepage/VideoFamily";
-import ImageSlider from "@/components/common/ImageSlider";
 import Covered from "@/components/homepage/Covered/Covered";
 import FamilySupport from "@/components/homepage/FamilySupport/FamilySupport";
 import VeteranPCS from "@/components/homepage/VeteranPCSWorksComp/VeteranPCSWorks";
@@ -14,91 +13,59 @@ import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpe
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import Footer from "@/components/Footer/Footer";
-import ReviewTestimonial from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
-import { useEffect, useState } from "react";
-import AgentServices from "@/services/agentService";
-import userImageServices from "@/services/userService";
-import reviewService from "@/services/reviewService";
+import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
+import { memo } from "react";
+
+const MemoizedStateMap = memo(StateMap);
+// const MemoizedHeroSection = memo(HeroSection);
+const MemoizedAgent = memo(Agent);
+const MemoizedTestimonials = memo(Testimonials);
+const MemoizedVideoFamily = memo(VideoFamily);
+const MemoizedCovered = memo(Covered);
+const MemoizedFamilySupport = memo(FamilySupport);
+// const MemoizedVeteranPCS = memo(VeteranPCS);
+// const MemoizedMakeItHome = memo(MakeItHome);
+const MemoizedVeteranComunity = memo(VeteranComunity);
+// const MemoizedWhyVeteranPcs = memo(WhyVeteranPcs);
+// const MemoizedAgentLoanExpert = memo(AgentLoanExpert);
+// const MemoizedSkillFuturesBuild = memo(SkillFuturesBuild);
+// const MemoizedKeepInTouch = memo(KeepInTouch);
+// const MemoizedFooter = memo(Footer);
+const MemoizedReviewsList = memo(ReviewsList);
 
 export default function Home() {
-  // const [posts, setPosts] = useState([])
-  const [agentList, setAgentList] = useState([]);
-  const [userImageList, SetUserImageList] = useState([]);
-  const [reviewsList, SetReviewsList] = useState([]);
-
-  useEffect(() => {
-    fetchUserImage()
-    fetchAgents()
-    fetchReviews()
-  }, [])
-
-  useEffect(() => {
-    console.log("Agent List", agentList)
-    // fetchPosts()
-  }, [agentList])
-
-  const fetchReviews = async () => {
-    try {
-      const response = await reviewService.fetchReviews()
-      if (!response.ok) throw new Error('Failed to fetch posts')
-      const data = await response.json()
-      // const testingData = data.slice(0, 1);
-      // console.log(testingData)
-      SetReviewsList(data)
-    } catch (error) {
-      console.error('Error fetching posts:', error)
-    }
-  }
-
-  const fetchUserImage = async () => {
-    try {
-      const response = await userImageServices.fetchImages()
-      if (!response.ok) throw new Error('Failed to fetch posts')
-      const data = await response.json()
-      // const testingData = data.slice(0, 5);
-      // console.log(testingData)
-      SetUserImageList(data)
-    } catch (error) {
-      console.error('Error fetching posts:', error)
-    }
-  }
-
-  const fetchAgents = async () => {
-    try {
-      const response = await AgentServices.fetchAgentsList()
-      if (!response.ok) throw new Error('Failed to fetch Agents')
-      const data = await response.json()
-      // const testingData = data.slice(0, 6);
-      // console.log(testingData);
-      setAgentList(data)
-    } catch (error) {
-      console.error('Error fetching Agents:', error)
-    }
-  }
-
   return (
     <main>
       <HeroSection
-        title="Together We’ll Make It Home."
+        title="Together, We’ll Make It Home."
         subTitle="Veteran & Military Spouse Real Estate Agents and VA Loan Experts
                 You Can Trust"
         page="home"
       />
-      <StateMap />
-      <Slider agentList={agentList}/>
-      <VideoFamily />
-      <ImageSlider userImageList={userImageList} />
-      <Covered />
-      <FamilySupport />
+      <MemoizedStateMap />
+      <MemoizedAgent />
+      <MemoizedVideoFamily />
+      <MemoizedTestimonials />
+      <MemoizedCovered />
+      {/* <FamilySupport /> */}
+      <MemoizedFamilySupport />
       <VeteranPCS />
-      <ReviewTestimonial reviewsList={reviewsList}/>
+      {/* <MemoizedVeteranPCS /> */}
+      <MemoizedReviewsList />
       <MakeItHome />
-      <VeteranComunity />
+      {/* <MemoizedMakeItHome /> */}
+      {/* <VeteranComunity /> */}
+      <MemoizedVeteranComunity />
       <WhyVeteranPcs />
+      {/* <MemoizedWhyVeteranPcs /> */}
       <AgentLoanExpert />
+      {/* <MemoizedAgentLoanExpert /> */}
       <SkillFuturesBuild />
+      {/* <MemoizedSkillFuturesBuild /> */}
       <KeepInTouch />
+      {/* <MemoizedKeepInTouch /> */}
       <Footer />
+      {/* <MemoizedFooter /> */}
     </main>
   );
 }

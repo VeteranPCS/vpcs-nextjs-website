@@ -35,19 +35,19 @@ const Covered: React.FC<CoveredProps> = ({ card }) => {
     <div className={ClassNames.coveredwrappercontainer}>
       <div className="xl:p-9 lg:p-9 md:p-9 sm:p-2 p-4 cover-card mx-auto">
         <div className="text-center">
-          <div className="xl:block lg:block md:block sm:flex flex items-center justify-center">
+          <div className="xl:block lg:block md:block sm:flex flex items-center lg:justify-center md:justify-center sm:justify-start justify-start">
             <div className="flex justify-center">
               <Image
                 width={80}
                 height={80}
-                className="coverd-link-img w-[80px] h-[80px]"
+                className="coverd-link-img lg:w-[80px] lg:h-[80px] md:w-[80px] md:h-[80px] sm:w-[50px] sm:h-[50px] w-[60px] h-[60px]"
                 src={img}
                 alt=""
               />
               <Image
                 width={80}
                 height={80}
-                className="coverd-link-imgred w-[80px] h-[80px]"
+                className="coverd-link-imgred lg:w-[80px] lg:h-[80px] md:w-[80px] md:h-[80px] sm:w-[50px] sm:h-[50px] w-[60px] h-[60px]"
                 src={imgred}
                 alt=""
               />

@@ -1,7 +1,4 @@
-"use client";
-import React, { useState, useEffect } from "react";
-// import Link from "next/link";
-// import Head from "next/head";
+import React from "react";
 import Button from "@/components/common/Button";
 import classes from "./ImpactVaLoan.module.css";
 import Image from "next/image";
@@ -11,8 +8,8 @@ const ImpactVaLoan = () => {
     <div className={classes.ImpactVaLoanContainer}>
       <div className="container mx-auto px-8">
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 gap-10 items-center justify-center">
-          <div className="lg:pl-10 md:pl-0 sm:pl-0 pl-0">
-            <div>
+          <div className="lg:pl-10 md:pl-0 sm:pl-0 pl-0 sm:order-1 order-2">
+            <div className="md:text-left text-center">
               <h1 className="text-white font-tahoma lg:text-[42px] md:text-[42px] sm:text-[32px] text-[32px] font-bold leading-[50.4px] capitalize">
                 VA loan
               </h1>
@@ -20,13 +17,13 @@ const ImpactVaLoan = () => {
                 Your service is your <b> downpayment </b>
               </p>
             </div>
-            <div className="flex justify-start flex-wrap items-start lg:gap-20 md:gap-5 sm:gap-0 gap-0 mt-10">
+            <div className="flex md:justify-start justify-center flex-wrap items-start lg:gap-20 md:gap-5 sm:gap-5 gap-5 mt-10">
               <div className="flex flex-col justify-center">
                 <div className="mx-auto">
                   <Image
                     width={50}
                     height={50}
-                    src="./icon/yoursymbolmeet.svg"
+                    src="/icon/yoursymbolmeet.svg"
                     alt="hand"
                     className="w-[50px] h-[50px]"
                   />
@@ -45,7 +42,7 @@ const ImpactVaLoan = () => {
                   <Image
                     width={1000}
                     height={1000}
-                    src="./icon/yoursymbousers.svg"
+                    src="/icon/yoursymbousers.svg"
                     alt="hand"
                     className="w-[50px] h-[50px]"
                   />
@@ -64,7 +61,7 @@ const ImpactVaLoan = () => {
                   <Image
                     width={1000}
                     height={1000}
-                    src="./icon/yourhome.svg"
+                    src="/icon/yourhome.svg"
                     alt="hand"
                     className="w-[50px] h-[50px]"
                   />
@@ -79,11 +76,11 @@ const ImpactVaLoan = () => {
                 </div>
               </div>
             </div>
-            <div className="mt-5">
+            <div className="mt-5 md:block flex justify-center">
               <Button buttonText="More info on VA Loan" />
             </div>
           </div>
-          <div className="lg:ml-10 md:ml-0 sm:ml-0 ml-0">
+          <div className="lg:ml-10 md:ml-0 sm:ml-0 ml-0 sm:order-2 order-1">
             <Image
               width={1000}
               height={1000}

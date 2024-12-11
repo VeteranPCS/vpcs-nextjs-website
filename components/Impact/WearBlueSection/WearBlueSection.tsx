@@ -1,25 +1,82 @@
-"use client";
-import React, { useState, useEffect } from "react";
-// import Link from "next/link";
-// import Head from "next/head";
+"use client"
+import React from "react";
 import Button from "@/components/common/Button";
 import "@/styles/globals.css";
 import "aos/dist/aos.css";
 import Image from "next/image";
+import { useState, useEffect, useCallback } from "react";
+import impactService from "@/services/impactService";
+import SupportContent from "@/components/homepage/FamilySupport/SupportContent";
+
+type BlockStyle = "h1" | "h2" | "h3" | "normal";
+
+interface ForegroundImage {
+  asset?: ImageAsset;
+  alt?: string;
+}
+
+interface Description {
+  _id?: string;
+  _key?: string;
+  style?: string;
+  children?: Child[];
+}
+
+interface Child {
+  _key: string;
+  marks: string[];
+  text: string;
+}
+
+interface ImageAsset {
+  image_url?: string;
+}
+
+interface PageData {
+  _id: string;
+  poster_1?: ForegroundImage;
+  poster_2?: ForegroundImage;
+  title?: string;
+  description?: Description[];
+  button_text?: string;
+}
 
 const MilitaryHomePage = () => {
+  const [storieDetails, setStorieDetails] = useState<PageData>();
+
+  const fetchStorieDetails = useCallback(async () => {
+    try {
+      const response = await impactService.fetchSuccessStories();
+      if (!response.ok) throw new Error("Failed to fetch posts");
+      const data = await response.json();
+      setStorieDetails(data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchStorieDetails();
+  }, [fetchStorieDetails]);
+
+  const validateBlockStyle = (style: string): BlockStyle => {
+    const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];
+    return validStyles.includes(style as BlockStyle)
+      ? (style as BlockStyle)
+      : "normal";
+  };
+
   return (
-    <div className="bg-[#F4F4F4]">
+    <div className="bg-[#F4F4F4] px-9 sm:px-0">
       <div className="container mx-auto px-8">
         <div className="flex flex-col md:flex-row items-center justify-center py-10 md:py-20">
           <div className="w-full md:w-1/2  flex justify-center">
             <Image
               width={400}
               height={400}
-              src="/assets/wereblueleft.png"
-              // src="./assets/wereblueleft.png"
-              alt="Military Family"
-              className="w-[400px] h-[400px]"
+              src={storieDetails?.poster_1?.asset?.image_url || "/assets/wereblueleft.png"}
+              alt={storieDetails?.poster_1?.alt || "Military Family"}
+              className="md:w-[400px] w-auto md:h-[400px] h-auto"
             />
           </div>
           <div className="w-full md:w-1/2 mt-10 md:mt-0">
@@ -27,20 +84,29 @@ const MilitaryHomePage = () => {
               <Image
                 width={273}
                 height={63}
-                src="/assets/wearblue.png"
-                alt="wearblue"
-                className="w-[273px] h-[63px]"
+                src={storieDetails?.poster_2?.asset?.image_url || "/assets/wearblue.png"}
+                alt={storieDetails?.poster_2?.alt || "wearblue"}
+                className="md:w-[273px] md:h-[63px] w-auto h-auto"
               />
             </div>
             <h6 className="lg:text-left md:text-left sm:text-center text-center lg:text-[25px] font-bold text-[#292F6C] mt-5 tahoma uppercase">
-              WEAR BLUE RUN TO REMEMBER
+              {storieDetails?.title}
             </h6>
             <p className="text-black font-roboto text-base font-medium ">
-              Wear blue’s mission is to honor the service and sacrifice of the
-              American military through active remembrance.
+              {/* Wear blue’s mission is to honor the service and sacrifice of the
+              American military through active remembrance. */}
+              {storieDetails?.description?.map((point, index) => (
+                <SupportContent
+                  key={point._id || index}
+                  block={{
+                    ...point,
+                    style: validateBlockStyle(point.style || "normal"),
+                  }}
+                />
+              ))}
             </p>
-            <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center">
-              <Button buttonText="Read More" />
+            <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center mt-4 md:mt-0">
+              <Button buttonText={storieDetails?.button_text || "Read More"} />
             </div>
           </div>
         </div>

@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import classes from "./Footer.module.css";
 import Image from "next/image";
@@ -81,7 +80,7 @@ const Locations = () => {
             ))}
           </div>
           <div className="mt-10 px-5">
-            <div className="flex flex-wrap justify-between items-center">
+            <div className="flex flex-wrap gap-4 justify-between items-center">
               <div>
                 <Link
                   href="#"

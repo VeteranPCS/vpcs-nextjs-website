@@ -1,0 +1,11 @@
+.thankyouherosectioncontainer {
+  background-image: url("/assets/thankyoubg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #aeb0c7;
+  padding: 180px 0px 100px;
+  z-index: 10;
+  position: relative;
+  width: 100%;
+}

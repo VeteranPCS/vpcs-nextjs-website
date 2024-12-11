@@ -1,22 +1,8 @@
-import React, { useEffect } from 'react';
-import { Grid, Typography, Container, Box, Breadcrumbs } from '@mui/material';
-import Link from 'next/link';
 import Image from 'next/image';
 import BlockContent from './BlockContent';
-import { useRouter } from 'next/navigation';
 
 // Define the Block type that matches BlockContent's expectations
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
-
-interface Block {
-  _key: string;
-  style: BlockStyle;
-  children: {
-    _key: string;
-    marks: string[];
-    text: string;
-  }[];
-}
 
 // Update BlogData to use a more flexible content type
 interface BlogData {
@@ -43,13 +29,6 @@ interface BlogDetailProps {
 }
 
 const BlogDetail: React.FC<BlogDetailProps> = ({ blogData }) => {
-  const router = useRouter();
-
-  useEffect(() => {
-    console.log(blogData);
-  }, [blogData]);
-
-  // Function to validate and convert style to BlockStyle
   const validateBlockStyle = (style: string): BlockStyle => {
     const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];
     return validStyles.includes(style as BlockStyle) 
@@ -60,20 +39,6 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ blogData }) => {
   return (
     <div className="max-w-7xl mx-auto py-16 px-4">
       <nav className="flex mb-8 text-gray-600">
-        <button 
-          onClick={() => router.push('/')}
-          className="hover:text-blue-600"
-        >
-          Home
-        </button>
-        <span className="mx-2">/</span>
-        <button 
-          onClick={() => router.push('/blog')}
-          className="hover:text-blue-600"
-        >
-          Blog
-        </button>
-        <span className="mx-2">/</span>
         <span className="text-gray-900">{blogData?.title}</span>
       </nav>
 

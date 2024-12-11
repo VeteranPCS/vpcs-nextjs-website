@@ -1,12 +1,11 @@
-"use client";
-import React, { useState } from "react";
+import React from "react";
 import "@/styles/globals.css";
 import Link from "next/link";
 import Image from "next/image";
 
 const Header = () => {
   return (
-    <div className="bg-[#292f6c] fixed top-0 left-0 w-full z-50 header px-5">
+    <div className="bg-[#292f6c] sticky top-0 left-0 w-full z-50 header px-5">
       <div className="container mx-auto">
         <div className="flex items-center justify-between gap-4 ">
           <div className="py-5">

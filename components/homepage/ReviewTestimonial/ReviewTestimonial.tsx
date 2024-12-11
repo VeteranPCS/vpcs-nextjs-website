@@ -1,11 +1,8 @@
-"use client";
 import React from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
-import styled from "styled-components";
 import Button from "@/components/common/Button";
 import ReviewTestimonialSlider from "@/components/homepage/ReviewTestimonial/ReviewTestimonialSlider";
 import classes from "./ReviewTestimonial.module.css";
-import { useRouter } from 'next/navigation';
 
 // Define the type for each review
 interface Review {
@@ -23,8 +20,6 @@ interface ReviewTestimonialProps {
 }
 
 const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({ reviewsList }) => {
-  const router = useRouter();
-
   return (
     <div className="w-full">
       <div className={classes.ReviewTestimonialContainer}>

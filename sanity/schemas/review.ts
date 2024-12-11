@@ -22,11 +22,6 @@ export default defineType({
       name: "comment",
       title: "Comment",
       type: "text",
-      validation: (Rule) =>
-        Rule.required()
-          .min(10)
-          .max(500)
-          .error("Comment must be between 10 and 500 characters."),
     }),
     defineField({
       name: "ratings",
@@ -38,12 +33,27 @@ export default defineType({
           .max(5)
           .error("Ratings must be a number between 0 and 5."),
     }),
+    defineField({
+      name: 'user_logo',
+      title: 'User Logo',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      fields: [
+        {
+          name: 'alt',
+          type: 'string',
+          title: 'Alternative Text',
+        }
+      ]
+    }),
   ],
   preview: {
     select: {
       title: "name",
       subtitle: "designation",
-      media: "icon", // Optional, if you have an icon or image field
+      media: "user_logo",
     },
   },
 });

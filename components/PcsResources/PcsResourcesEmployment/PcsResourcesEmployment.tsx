@@ -1,4 +1,3 @@
-"use client";
 import React from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
@@ -6,7 +5,7 @@ import Image from "next/image";
 
 const WhyVeteranPcs = () => {
   return (
-    <div className="w-full py-10">
+    <div className="w-full py-10 px-5">
       <div>
         <div className="container mx-auto w-full">
           <div>
@@ -15,7 +14,7 @@ const WhyVeteranPcs = () => {
                 <h3 className="text-[#002258] tahoma lg:text-[42px] md:text-[42px] sm:text-[31px] text-[31px] font-bold ">
                   Employment
                 </h3>
-                <p className="text-[#161C2D] tahoma lg:text-[20px] md:text-[20px] sm:text-[12px] text-[12px] font-normal mt-5">
+                <p className="text-[#161C2D] tahoma lg:text-[20px] md:text-[20px] sm:text-[12px] text-[12px] font-normal mt-5 mb-5">
                   Transitioning Military{" "}
                 </p>
                 <div>

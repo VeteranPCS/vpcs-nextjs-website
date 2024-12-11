@@ -1,13 +1,14 @@
 "use client"
-
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo, useCallback } from 'react';
 import blogService from '@/services/blogService';
 import BlogListing from '@/components/Blog/BlogListing';
+
+const MemoizedBlogListing = memo(BlogListing)
 
 export default function Blogs() {
     const [blogList, setBlogList] = useState([]);
 
-    const fetchBlogs = async () => {
+    const fetchBlogs = useCallback(async () => {
         try {
             const response = await blogService.fetchBlogs()
             if (!response.ok) throw new Error('Failed to fetch posts')
@@ -16,18 +17,13 @@ export default function Blogs() {
         } catch (error) {
             console.error('Error fetching posts:', error)
         }
-    }
-
-    useEffect(() => {
-        console.log(blogList)
-    }, [blogList])
+    }, [])
 
     useEffect(() => {
         fetchBlogs()
-    }, [])
-
+    }, [fetchBlogs])
 
     return (
-        <BlogListing blogList={blogList}/>
+        <MemoizedBlogListing blogList={blogList} />
     )
 }

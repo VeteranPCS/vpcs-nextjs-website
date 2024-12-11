@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, memo } from "react";
 import blogService from '@/services/blogService';
 import BlogDetail from "@/components/Blog/BlogDetail";
+
+const MemoizedBlogDetail = memo(BlogDetail);
 
 // Define the interface for the blog data
 interface BlogData {
@@ -47,13 +49,12 @@ export default function Post({ params }: { params: Params }) {
     useEffect(() => {
         fetchBlog();
     }, [fetchBlog]);
-
-    // If blogData is null, render a loading message or component
+    
     if (!blogData) {
         return <div>Loading...</div>;
     }
 
     return (
-        <BlogDetail blogData={blogData} />
+        <MemoizedBlogDetail blogData={blogData} />
     );
 }

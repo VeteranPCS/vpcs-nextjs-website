@@ -1,5 +1,3 @@
-"use client";
-import React from "react";
 import Button from "@/components/common/Button";
 import "@/styles/globals.css";
 import classes from "./ContactForm.module.css";

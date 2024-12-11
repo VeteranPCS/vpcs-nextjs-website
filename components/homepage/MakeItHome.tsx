@@ -1,7 +1,3 @@
-"use client";
-import React, { useState, useEffect } from "react";
-// import Link from "next/link";
-// import Head from "next/head";
 import Button from "@/components/common/Button";
 import "@/styles/globals.css";
 import "aos/dist/aos.css";

@@ -1,5 +1,4 @@
-"use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "@/styles/globals.css";
 import classes from "./StoriesHeroSection.module.css";
 import Image from "next/image";
@@ -10,7 +9,7 @@ const HeroSec = () => {
       <div className={classes.StoriesHeroSectionContainer}>
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-4">
-            <div className="mx-auto lg:text-left md:text-left sm:text-center text-center w-full sm:order-2 order-2 lg:order-none md:order-none">
+            <div className="mx-auto text-left w-full sm:order-2 order-2 lg:order-none md:order-none">
               <p className="text-white font-bold lg:text-[59px] md:text-[29px] sm:text-[32px] text-[32px] poppins leading-[1.3] tahoma">
                 Success Stories
               </p>
@@ -43,13 +42,13 @@ const HeroSec = () => {
                   </p>
                 </div>
               </div>
-              <div className="absolute bottom-[-15%] left-[45%] translate-[-45%] lg:block md:block sm:hidden hidden">
+              <div className="absolute bottom-[-30%] sm:bottom-[-15%] lg:left-[45%] md:left-[45%] sm:left-[27%] left-[27%] translate-[-45%] ">
                 <Image
                   width={1000}
                   height={1000}
                   src="/icon/VeteranPCS-logo_wht-outline.svg"
                   alt="Description of the image"
-                  className="w-[250px] h-[250px]"
+                  className="lg:w-[250px] lg:h-[250px] md:w-[250px] md:h-[250px] sm:w-[250px] sm:h-[250px] w-[200px] h-[200px]"
                 />
               </div>
             </div>

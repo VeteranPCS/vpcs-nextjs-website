@@ -1,4 +1,3 @@
-"use client";
 import React from "react"; // Keep this import
 import "@/styles/globals.css";
 import "slick-carousel/slick/slick.css";
@@ -14,11 +13,41 @@ interface Review {
   designation: string;
   ratings: number;
   comment: string;
+  user_logo?: {
+    asset?: {
+      image_url?: string;
+    };
+  };
 }
 
 interface CarouselProps {
   reviews: Review[]; // Define the reviews prop as an array of Review items
 }
+
+const NameIcon: React.FC<{ name: string}> = ({
+  name
+}) => {
+  const initial = name.charAt(0).toUpperCase();
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#f2f2f2",
+        color: "#181818",
+        width: 100,
+        height: 100,
+        borderRadius: "50%",
+        fontSize: 100 / 2.5,
+        fontWeight: "bold",
+        textTransform: "uppercase",
+      }}
+    >
+      {initial}
+    </div>
+  );
+};
 
 const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
   // Slider 1 settings (6 images visible at once)
@@ -125,13 +154,17 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
                     {item.comment}
                   </p>
                   <div className="flex justify-center">
-                    <Image
-                      width={100}
-                      height={100}
-                      src="/icon/Aven.svg"
-                      alt="star"
-                      className="w-[100px] h-[100px] mr-2"
-                    />
+                    {item?.user_logo?.asset?.image_url ? (
+                      <Image
+                        src={item.user_logo.asset.image_url}
+                        alt="User logo"
+                        width={100}
+                        height={100}
+                        className="w-[100px] h-[100px] rounded-full"
+                      />
+                    ) : (
+                      <NameIcon name={item.name} />
+                    )}
                   </div>
                 </div>
               </div>

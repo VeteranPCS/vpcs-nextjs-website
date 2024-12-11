@@ -1,43 +1,41 @@
-"use client";
-
 import ContactHero from "@/components/contactpage/ContactHeroSection/ContactHeroSection";
 import ContactForm from "@/components/contactpage/ContactForm/ContactForm";
-import ReviewTestimonial from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
+import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
 import WhyVeteranPcs from "@/components/homepage/WhyVeteranPCS";
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import Footer from "@/components/Footer/Footer";
 import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpert";
-import { useEffect, useState } from "react";
-import reviewService from "@/services/reviewService";
+import { memo } from "react";
+
+// const MemoizedContactHero = memo(ContactHero);
+// const MemoizedContactForm = memo(ContactForm);
+// const MemoizedWhyVeteranPcs = memo(WhyVeteranPcs);
+// const MemoizedSkillFuturesBuild = memo(SkillFuturesBuild);
+const MemoizedKeepInTouch = memo(KeepInTouch);
+const MemoizedFooter = memo(Footer);
+// const MemoizedAgentLoanExpert = memo(AgentLoanExpert);
+const MemoizedReviewsList = memo(ReviewsList);
 
 export default function Home() {
-  const [reviewsList, SetReviewsList] = useState([]);
-
-  useEffect(() => {
-    fetchReviews();
-  }, []);
-
-  const fetchReviews = async () => {
-    try {
-      const response = await reviewService.fetchReviews();
-      if (!response.ok) throw new Error("Failed to fetch posts");
-      const data = await response.json();
-      SetReviewsList(data);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  };
-  
   return (
     <>
       <ContactHero />
+      {/* <MemoizedContactHero /> */}
       <ContactForm />
-      <ReviewTestimonial reviewsList={reviewsList} />
+      {/* <MemoizedContactForm /> */}
+      
+      <MemoizedReviewsList />
+
       <WhyVeteranPcs />
+      {/* <MemoizedWhyVeteranPcs /> */}
       <AgentLoanExpert />
+      {/* <MemoizedAgentLoanExpert /> */}
       <SkillFuturesBuild />
+      {/* <MemoizedSkillFuturesBuild /> */}
       <KeepInTouch />
+      {/* <MemoizedKeepInTouch />
+      <MemoizedFooter /> */}
       <Footer />
     </>
   );

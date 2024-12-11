@@ -1,12 +1,11 @@
-"use client";
 import ImpactHeroSection from "@/components/Impact/ImpactHeroSection/ImpactHeroSection";
 import YourImpact from "@/components/Impact/YourImpact/YourImpact";
 import MakeAnImpact from "@/components/Impact/MakeAnImpact/MakeAnImpact";
-import ImpactImageslider from "@/components/common/ImageSlider";
+import Testimonials from "@/components/Testimonials/TestimonialPage";
 import FamilySupport from "@/components/homepage/FamilySupport/FamilySupport";
 import WearBlueSection from "@/components/Impact/WearBlueSection/WearBlueSection";
 import ImpactVaLoan from "@/components/Impact/ImpactVaLoan/ImpactVaLoan";
-import ReviewTestimonial from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
+import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
 import VideoReview from "@/components/Impact/VideoReview/VideoReview";
 import AboutOurStory from "@/components/Impact/AboutOurStory/AboutOurStory";
 import WhyVeteranPcs from "@/components/homepage/WhyVeteranPCS";
@@ -15,59 +14,61 @@ import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFu
 import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import Footer from "@/components/Footer/Footer";
+import { memo } from "react";
 
-import userImageServices from "@/services/userService";
-import reviewService from "@/services/reviewService";
-import { useEffect, useState } from "react";
+// const MemoizedImpactHeroSection = memo(ImpactHeroSection)
+// const MemoizedYourImpact = memo(YourImpact)
+// const MemoizedMakeAnImpact = memo(MakeAnImpact)
+const MemoizedTestimonials = memo(Testimonials)
+const MemoizedFamilySupport = memo(FamilySupport)
+// const MemoizedWearBlueSection = memo(WearBlueSection)
+const MemoizedImpactVaLoan = memo(ImpactVaLoan)
+const MemoizedReviewsList = memo(ReviewsList)
+const MemoizedVideoReview = memo(VideoReview)
+// const MemoizedAboutOurStory = memo(AboutOurStory)
+// const MemoizedWhyVeteranPcs = memo(WhyVeteranPcs)
+// const MemoizedAgentLoanExpert = memo(AgentLoanExpert)
+// const MemoizedSkillFuturesBuild = memo(SkillFuturesBuild)
+const MemoizedFrequentlyAskedQuestion = memo(FrequentlyAskedQuestion)
+// const MemoizedKeepInTouch = memo(KeepInTouch)
+// const MemoizedFooter = memo(Footer)
 
 export default function Home() {
-  const [userImageList, SetUserImageList] = useState([]);
-  const [reviewsList, SetReviewsList] = useState([]);
-
-  useEffect(() => {
-    fetchUserImage();
-    fetchReviews();
-  }, []);
-
-  const fetchUserImage = async () => {
-    try {
-      const response = await userImageServices.fetchImages();
-      if (!response.ok) throw new Error("Failed to fetch posts");
-      const data = await response.json();
-      SetUserImageList(data);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  };
-  const fetchReviews = async () => {
-    try {
-      const response = await reviewService.fetchReviews();
-      if (!response.ok) throw new Error("Failed to fetch posts");
-      const data = await response.json();
-      SetReviewsList(data);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  };
-
   return (
     <>
       <ImpactHeroSection />
+      {/* <MemoizedImpactHeroSection /> */}
       <YourImpact />
+      {/* <MemoizedYourImpact /> */}
       <MakeAnImpact />
-      <ImpactImageslider userImageList={userImageList} />
-      <FamilySupport />
+      {/* <MemoizedMakeAnImpact /> */}
+
+      <MemoizedTestimonials />
+
+      {/* <FamilySupport /> */}
+      <MemoizedFamilySupport />
       <WearBlueSection />
+      {/* <MemoizedWearBlueSection /> */}
       <ImpactVaLoan />
-      <ReviewTestimonial reviewsList={reviewsList} />
-      <VideoReview />
+      {/* <MemoizedImpactVaLoan /> */}
+
+      <MemoizedReviewsList />
+      <MemoizedVideoReview />
+
       <AboutOurStory />
+      {/* <MemoizedAboutOurStory /> */}
       <WhyVeteranPcs />
+      {/* <MemoizedWhyVeteranPcs /> */}
       <AgentLoanExpert />
+      {/* <MemoizedAgentLoanExpert /> */}
       <SkillFuturesBuild />
-      <FrequentlyAskedQuestion />
+      {/* <MemoizedSkillFuturesBuild /> */}
+      {/* <FrequentlyAskedQuestion /> */}
+      <MemoizedFrequentlyAskedQuestion />
       <KeepInTouch />
+      {/* <MemoizedKeepInTouch /> */}
       <Footer />
+      {/* <MemoizedFooter /> */}
     </>
   );
 }

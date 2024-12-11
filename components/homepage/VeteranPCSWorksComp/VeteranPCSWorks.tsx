@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect } from "react";
 import "@/styles/globals.css";
 import VeteranPCSWorksComp from "./VeteranPCSWorksComp";
@@ -16,7 +15,7 @@ const cardsData = [
     title: "VA LOAN",
     subTitle:
       "Don’t overpay when using your va loan.  Our va loan experts are here to help.",
-    link: "blog-list/va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-a-va-loan-or-veteranpcs >",
+    link: "blog-list/va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-a-va-loan-or-veteranpcs",
   },
   {
     img: "/icon/checkred.svg",
@@ -30,7 +29,7 @@ const VeteranPCS = () => {
   return (
     <div className="bg-[#F4F4F4]">
       <div className="container mx-auto w-full lg:py-16 md:py-10 sm:py-10 py-5">
-        <div className="px-4 mx-auto text-center">
+        <div className="px-10 sm:px-4 mx-auto text-center">
           <div>
             <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[35px] sm:text-[31px] text-[31px] tahoma">
               How VeteranPCS Works

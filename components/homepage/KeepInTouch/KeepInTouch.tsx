@@ -1,49 +1,77 @@
 "use client";
-import React from "react"; // No need for useState or useEffect
+import React, { useState, useEffect, useCallback } from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
-import styled from "styled-components";
 import Button from "@/components/common/Button";
 import classes from "./KeepInTouch.module.css";
 import Image from "next/image";
 import Link from "next/link";
+import mediaAccountService from "@/services/mediaAccountService";
+
+interface PageData {
+  _id: string;
+  name: string;
+  designation?: string;
+  icon:string;
+  link: string;
+}
 
 const KeepInTouch = () => {
-  const [isChecked, setIsChecked] = React.useState(false);
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [mediaAccount, SetMediaAccount] = useState<PageData[]>([]);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
+
+  const fetchMediaAccounts = useCallback(async () => {
+    try {
+      const response = await mediaAccountService.fetchAccounts()
+      if (!response.ok) throw new Error('Failed to fetch posts')
+      const data = await response.json()
+      SetMediaAccount(data)
+    } catch (error) {
+      console.error('Error fetching posts:', error)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchMediaAccounts()
+  }, [fetchMediaAccounts])
+
   return (
     <div className="bg-[#EEEEEE] py-12">
       <div className="container mx-auto mb-12">
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3">
           <div className="lg:text-left md:text-left sm:text-center text-center">
-            <div>
+            <div className={classes.mobileviewkissplogo}>
               <Image
                 width={100}
                 height={100}
-                className="w-auto h-auto"
+                className="lg:w-auto lg:h-auto md:w-auto md:h-auto sm:w-[300px] sm:h-auto w-[300px] h-auto mx-auto sm:mx-0"
                 src="/icon/veteran-pcs-logo-white.svg"
                 alt="Description of the image"
               />
-              <p className="text-[#292F6C] tahoma text-lg font-normal leading-[30px] w-[300px] my-7">
+              <p className="text-[#292F6C] tahoma text-lg font-normal leading-[30px] lg:w-[300px]  my-7">
                 Together we&apos;ll make it home. Veteran & Military Spouse Real
                 Estate Agents and VA Loan Experts You Can Trust
               </p>
             </div>
-            <div>
-              <ul className="flex items-center gap-4 mt-5">
-                <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2 ">
-                  <Link href="#">
-                    <Image
-                      width={100}
-                      height={100}
-                      src="/icon/dribbble-fill.svg"
-                      alt="Description of the image"
-                    />
-                  </Link>
-                </li>
-                <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2">
+            <div className="flex justify-center sm:justify-center md:justify-start lg:justify-start">
+              <ul className="flex items-center gap-4">
+                {mediaAccount.map((acc) => (
+                  <li key={acc._id} className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2">
+                    <Link href={acc.link}>
+                      <Image
+                        width={100}
+                        height={100}
+                        src={`/icon/${acc.icon}`}
+                        alt={acc.name}
+                      />
+                    </Link>
+                  </li>
+                ))}
+
+                {/* <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2">
                   <Link href="#">
                     <Image
                       width={100}
@@ -72,12 +100,12 @@ const KeepInTouch = () => {
                       alt="Description of the image"
                     />
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>
           <div className="mt-5 lg:mt-0 md:mt-0 sm:mt-5">
-            <div>
+            <div className={classes.CustomResponsiveCenter}>
               <h2 className="lg:text-[36px] sm:text-[25px] text-[25px] poppins font-bold text-[#292F6C] lg:text-left md:text-left sm:text-center text-center">
                 Keep In Touch
               </h2>
@@ -110,7 +138,9 @@ const KeepInTouch = () => {
                       checked={isChecked}
                       onClick={handleCheckboxChange}
                     />
-                    <div className={classes.CheckboxLabel}>I&apos;m not a robot</div>
+                    <div className={classes.CheckboxLabel}>
+                      I&apos;m not a robot
+                    </div>
                   </div>
                 </div>
                 <div>

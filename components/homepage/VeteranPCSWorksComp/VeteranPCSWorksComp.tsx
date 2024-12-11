@@ -1,4 +1,3 @@
-"use client";
 import React from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
 import classes from "./VeteranPCSWorksComp.module.css";

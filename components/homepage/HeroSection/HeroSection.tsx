@@ -1,7 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
-// import Link from "next/link";
-// import Head from "next/head";
+import React, { useEffect } from "react";
 import Button from "@/components/common/Button";
 import "@/styles/globals.css";
 import AOS from "aos";
@@ -15,7 +13,7 @@ interface HeroSectionProps {
   page: string;
 }
 
-const HeroSec = ({ title, subTitle, page }: HeroSectionProps) => {
+const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
   useEffect(() => {
     AOS.init({
       //   once: true,      // Make animation run once
@@ -27,7 +25,7 @@ const HeroSec = ({ title, subTitle, page }: HeroSectionProps) => {
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-4">
             <div className="mx-auto lg:text-left md:text-left sm:text-center text-center w-full sm:order-2 order-2 lg:order-none md:order-none lg:mt-10">
-              <h2 className="text-white font-bold lg:text-[59px] md:text-[29px] sm:text-[32px] text-[32px] leading-[1.3] tahoma">
+              <h2 className="text-white font-bold lg:text-[59px] md:text-[29px] sm:text-[32px] text-[32px] leading-[1.3] tahoma px-20 md:px-0 mt-4 md:mt-0">
                 {title}
               </h2>
               <h1 className="lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] font-normal text-white mb-10 mt-10 tahoma">
@@ -83,7 +81,7 @@ const HeroSec = ({ title, subTitle, page }: HeroSectionProps) => {
                     width={873}
                     height={482}
                     src="/assets/house-hero-2024.png"
-                    className="w-[873px] h-[482px] "
+                    className="w-[873px] sm:h-[482px] h-[300px] "
                     alt="Description of the image"
                     data-aos="fade-right"
                     data-aos-duration="1000"
@@ -92,7 +90,7 @@ const HeroSec = ({ title, subTitle, page }: HeroSectionProps) => {
                     width={533}
                     height={533}
                     src="/assets/veteranPCS-slider-checks-03.png"
-                    className="xl:w-[533px] xl:h-[533px] lg:w-[533px] lg:h-[533px] md:w-[450px] md:h-[450px] sm:w-full sm:h-[360px] w-full h-[360px] absolute top-[30%] left-[15%] -translate-x-2/4 -translate-y-2/4"
+                    className="xl:w-[533px] xl:h-[533px] lg:w-[533px] lg:h-[533px] md:w-[450px] md:h-[450px] sm:w-full sm:h-[360px] w-full h-[auto] absolute top-[20%] left-[7%] -translate-x-2/4 -translate-y-2/4"
                     alt="Description of the image"
                     data-aos="fade-right"
                     data-aos-duration="1000"
@@ -117,4 +115,4 @@ const HeroSec = ({ title, subTitle, page }: HeroSectionProps) => {
   );
 };
 
-export default HeroSec;
+export default HeroSection;
