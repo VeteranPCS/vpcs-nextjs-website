@@ -1,5 +1,7 @@
 "use client";
-
+// From RDS: This page needs to be rendered on the server in order to take advantage of the SEO benefits of Next.js.
+// We will need to support the Metadata object from Next as well as JSON-LD on this page to ensure that the SEO benefits are maintained.
+// Blogs can use design patterns that allow the majority of content to be rendered on the server. Aspects that require client interactivity can be moved to their own components or pulled in using dynamic from next/dynamic.
 import { useEffect, useState, useCallback, memo } from "react";
 import blogService from '@/services/blogService';
 import BlogDetail from "@/components/Blog/BlogDetail";
@@ -49,7 +51,7 @@ export default function Post({ params }: { params: Params }) {
     useEffect(() => {
         fetchBlog();
     }, [fetchBlog]);
-    
+
     if (!blogData) {
         return <div>Loading...</div>;
     }
