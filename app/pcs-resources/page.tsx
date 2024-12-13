@@ -48,7 +48,7 @@ export default function Home() {
       <PcsResourcesTrustedResources />
       <PcsResourcesHowDoesWork />
       <PcsResourcesMovingPcsing />
-      <div className="bg-[#EEEEEE] py-12">
+      <div className="bg-[#EEEEEE]">
         <MemoizedVideoReview />
         <AboutOurStory />
       </div>

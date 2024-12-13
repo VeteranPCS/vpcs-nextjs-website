@@ -12,37 +12,25 @@ import { memo } from "react";
 
 const MemoizedHeroSection = memo(AboutHeroSection)
 const MemoizedMission = memo(Mission)
-// const MemoizedSupportSpanish = memo(SupportSpanish)
 const MemoizedHowVetPcsStarted = memo(HowVetPcsStarted)
 const MemoizedCeoFounder = memo(CeoFounder)
 const MemoizedDigitalTeam = memo(DigitalTeam)
 const MemoizedAdminTeam = memo(AdminTeam)
 const MemoizedFrequentlyAskedQuestion = memo(FrequentlyAskedQuestion)
-// const MemoizedKeepInTouch = memo(KeepInTouch)
-// const MemoizedFooter = memo(Footer)
 
 export default function Home() {
   return (
     <main>
-      {/* <AboutHeroSection /> */}
-      <MemoizedHeroSection />
-      {/* <Mission /> */}
-      <MemoizedMission />
-      <SupportSpanish />
-      {/* <MemoizedSupportSpanish /> */}
-      {/* <HowVetPcsStarted /> */}
-      <MemoizedHowVetPcsStarted />
-      <MemoizedCeoFounder />
-      {/* <DigitalTeam /> */}
-      <MemoizedDigitalTeam />
-      {/* <AdminTeam /> */}
-      <MemoizedAdminTeam />
-      {/* <FrequentlyAskedQuestion /> */}
-      <MemoizedFrequentlyAskedQuestion />
-      <KeepInTouch />
-      {/* <MemoizedKeepInTouch /> */}
-      <Footer />
-      {/* <MemoizedFooter /> */}
+        <MemoizedHeroSection />
+        <MemoizedMission />
+        <SupportSpanish />
+        <MemoizedHowVetPcsStarted />
+        <MemoizedCeoFounder />
+        <MemoizedDigitalTeam />
+        <MemoizedAdminTeam />
+        <MemoizedFrequentlyAskedQuestion />
+        <KeepInTouch />
+        <Footer />
     </main>
   );
 }

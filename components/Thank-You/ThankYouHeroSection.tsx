@@ -1,10 +1,18 @@
+"use client";
 import React from "react";
 import "@/styles/globals.css";
 import classes from "./ThankYouHeroSection.module.css";
 import Image from "next/image";
 import Button from "@/components/common/Button";
+import { useRouter } from "next/navigation";
 
-const PcsResources = () => {
+const ThankYouHeroSection = () => {
+  const router = useRouter();
+
+  // Function to handle button click
+  const handleButtonClick = () => {
+    router.push("/contact"); // Navigate to the "stories" page
+  };
   return (
     <div className="relative">
       <div className={classes.thankyouherosectioncontainer}>
@@ -18,7 +26,7 @@ const PcsResources = () => {
                 Check your email for contact information
               </p>
               <div>
-                <Button buttonText="Contact us" />
+                <Button buttonText="Contact us" onClick={handleButtonClick} />
               </div>
               <div className="absolute bottom-[-15%] lg:left-[45%] md:left-[45%] sm:left-[27%] left-[27%] translate-[-45%] ">
                 <Image
@@ -37,4 +45,4 @@ const PcsResources = () => {
   );
 };
 
-export default PcsResources;
+export default ThankYouHeroSection;

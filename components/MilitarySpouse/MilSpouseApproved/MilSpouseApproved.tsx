@@ -17,12 +17,12 @@ const MilitarySpouseApproved = () => {
               alt="approved"
               width={1000}
               height={1000}
-              className="w-[613px] h-[613px]"
+              className="md:w-[613px] md:h-[613px] w-full h-full"
             />
           </div>
           <div>
             <div>
-              <h2 className="text-[#292F6C] tahoma lg:text-[63px] md:text-[53px] sm:text-[43px] text-[32px] font-bold">
+              <h2 className="text-[#292F6C] tahoma lg:text-[63px] md:text-[53px] sm:text-[43px] text-[35px] leading-[40px] md:leading-normal font-bold my-6 md:my-0">
                 Military Spouse Approved Resources
               </h2>
               <p className="text-[#292F6C] tahoma lg:text-[30px] md:text-[30px] sm:text-[20px] text-[20px] font-normal">
@@ -31,7 +31,7 @@ const MilitarySpouseApproved = () => {
             </div>
             <div className="lg:ml-10 my-7">
               <ul>
-                <li className="text-[#58595D] roboto lg:text-[20px] md:text-[18px] sm:text-[16px] text-[14px] font-medium list-disc mb-2 lg:w-[500px]">
+                <li className="text-[#58595D] roboto lg:text-[20px] md:text-[20px] sm:text-[20px] text-[20px] font-medium list-disc mb-2 lg:w-[500px]">
                   Moving can be a huge stressor. Check out these helpful
                   resources.
                 </li>

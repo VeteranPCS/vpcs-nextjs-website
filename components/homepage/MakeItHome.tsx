@@ -1,9 +1,17 @@
+"use client";
 import Button from "@/components/common/Button";
 import "@/styles/globals.css";
 import "aos/dist/aos.css";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const MilitaryHomePage = () => {
+  const router = useRouter();
+
+  // Function to handle button click
+  const handleButtonClick = () => {
+    router.push("/blog"); // Navigate to the "stories" page
+  };
   return (
     <div className="bg-[#F4F4F4]">
       <div className="container mx-auto px-8">
@@ -29,13 +37,13 @@ const MilitaryHomePage = () => {
                 Many companies prey on our military community
               </li>
               <li className="list-none text-[17px] font-medium roboto">
-                We&apos;ve hand selected veteran and military spouse VA loan experts
-                to help guide you whether you&apos;re a first-time home buyer or
-                experienced.
+                We&apos;ve hand selected veteran and military spouse VA loan
+                experts to help guide you whether you&apos;re a first-time home
+                buyer or experienced.
               </li>
             </ul>
             <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center">
-              <Button buttonText="VA Loan" />
+              <Button buttonText="VA Loan" onClick={handleButtonClick} />
             </div>
           </div>
         </div>

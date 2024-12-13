@@ -23,7 +23,7 @@ const Slider = () => {
   };
 
   return (
-    <div className="w-full flex flex-wrap">
+    <div className="w-full flex overflow-x-auto">
       {slides.map((slide, index) => (
         <div
           key={slide.id}
@@ -38,7 +38,7 @@ const Slider = () => {
               src={slide.content}
               width={100}
               height={100}
-              className="w-[130px] h-auto mt-5"
+              className="w-[130px] min-w-[130px] h-auto mt-5"
               alt="Description of the image"
             />
           </button>

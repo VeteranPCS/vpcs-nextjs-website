@@ -138,7 +138,7 @@ const KeepInTouch = () => {
                       checked={isChecked}
                       onClick={handleCheckboxChange}
                     />
-                    <div className={classes.CheckboxLabel}>
+                    <div className={classes.CheckboxLabel} style={{ fontSize: "16px" }}>
                       I&apos;m not a robot
                     </div>
                   </div>

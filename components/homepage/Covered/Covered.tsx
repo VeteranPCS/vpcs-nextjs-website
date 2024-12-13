@@ -1,9 +1,10 @@
-"use client"
+"use client";
 import React, { useEffect } from "react";
 import "@/styles/globals.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import CoveredComp from "./CoverdComp";
+import Link from "next/link";
 
 const cardsData = [
   {
@@ -25,7 +26,7 @@ const cardsData = [
     imgred: "/icon/Loanred.svg",
     title: "VA Loan",
     subTitle: "Learn more about how the VA Loan can work for you.",
-    link: "blog/va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-a-va-loan-or-veteranpcs",
+    link: "blog-list/va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-a-va-loan-or-veteranpcs",
   },
   {
     img: "/icon/Works.svg",
@@ -46,7 +47,7 @@ const cardsData = [
     imgred: "/icon/Resourcesred.svg",
     title: "Resources",
     subTitle: "Check out our VeteranPCS trusted resources.",
-    link: "Learn more",
+    link: "pcs-resources/",
   },
 ];
 
@@ -58,17 +59,17 @@ const Covered = () => {
   }, []);
 
   return (
-    <div className="container mx-auto w-full lg:py-16 md:py-16 sm:py-16 py-5">
+    <div className="container mx-auto w-full lg:py-16 md:py-16 sm:py-16 py-5 pt-32">
       <div
         className="px-4 bg-[#ffffff] mx-auto text-center"
         data-aos="fade-right"
         data-aos-duration="1000"
       >
         <div>
-          <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-[20px] tahoma lg:block md:block sm:hidden hidden">
+          <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-[20px] tahoma lg:block md:block ">
             We’ve got you covered
           </h2>
-          <p className="normal text-[#7E1618] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] leading-[32px] font-medium lg:block md:block sm:hidden hidden tahoma">
+          <p className="normal text-[#7E1618] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] leading-[32px] font-medium lg:block md:block tahoma">
             Military community helping military community move.
           </p>
         </div>
@@ -79,10 +80,12 @@ const Covered = () => {
         data-aos-duration="1000"
       >
         {cardsData.map((card, index) => (
-          <CoveredComp
-            key={index}
-            card={card} // Only pass 'card' object here
-          />
+          <Link href={card.link} key={index}>
+            <CoveredComp
+              key={index}
+              card={card} // Only pass 'card' object here
+            />
+          </Link>
         ))}
       </div>
     </div>

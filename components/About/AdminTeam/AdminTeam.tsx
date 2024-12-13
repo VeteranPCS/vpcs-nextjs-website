@@ -33,7 +33,12 @@ const AdminTeam = () => {
       const data = await response.json()
       setDigitalAdminDetails(data)
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      console.error('Error fetching Admin Team Data:', error)
+      return (
+        <div>
+          <p>Failed to load Admin Team&apos;s Data. Please try again later.</p>
+        </div>
+      );
     }
   }, [])
 

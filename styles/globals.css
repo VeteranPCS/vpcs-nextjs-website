@@ -3,30 +3,37 @@
   margin: 0px;
   box-sizing: border-box;
 }
+
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   overflow-x: hidden;
 }
+
 html,
 body {
   overflow-x: hidden;
 }
+
 @media screen and (max-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
+
   html,
   body {
     overflow-x: hidden;
   }
 }
+
 .header {
   box-shadow: 0 12px 18px -6px rgba(0, 0, 0, 0.3);
 }
+
 @media screen and (max-width: 575px) {
   .header {
     box-shadow: none;
   }
 }
+
 .menu-nav ul li {
   position: relative;
 }
@@ -50,9 +57,32 @@ body {
   background-color: #292e6c !important;
 }
 
-nav ul li ul {
-  top: 63px;
+/* nav ul li ul {
+  top: 120%;
   left: 0;
+}
+
+.nav li:hover > ul {
+  opacity: 1;
+  visibility: visible;
+  transition: all 0.3s ease-in-out;
+} */
+
+.nav .sub-menu {
+  z-index: 9999;
+  top: 200%;
+  left: 0;
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.45s ease-in-out;
+}
+
+.nav li:hover>.sub-menu,
+.nav .sub-menu:hover {
+  opacity: 1;
+  visibility: visible;
+  transition: all 0.3s ease-in-out;
 }
 
 .menu .menu-nav ul ul {
@@ -60,11 +90,6 @@ nav ul li ul {
   text-align: left;
 }
 
-.nav li:hover > ul {
-  opacity: 1;
-  visibility: visible;
-  transition: all 0.3s ease-in-out;
-}
 
 .nav li ul,
 blockquote {
@@ -153,5 +178,17 @@ blockquote {
 
 .tahoma {
   font-family: "Tahoma", sans-serif;
+  letter-spacing: 0.5px;
+}
+
+
+@font-face {
+  font-family: "lora", sans-serif;
+  src: url("/lora-font/Lora-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+.lora-normal {
+  font-family: 'lora-normal', sans-serif;
   letter-spacing: 0.5px;
 }

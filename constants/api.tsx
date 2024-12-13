@@ -14,4 +14,8 @@ export const API_ENDPOINTS = {
   videoReview: '/api/video-review',
   ourStory: '/api/our-story',
   additionalSuccessStories: '/api/stories/additional-success-stories',
+  howVeterencePCSServiceWorks: '/api/how-it-works/how-veterence-pcs-service-works',
+  fetchActionItem: '/api/internship/fetch-action-item-list',
+  fetchInternshipBenefits: '/api/internship/fetch-internship-benefits',
+  fetchInternshipOffer: '/api/internship/fetch-internship-offer'
 } as const

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
 import "@/styles/globals.css";
@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 import impactService from "@/services/impactService";
 import SupportContent from "@/components/homepage/FamilySupport/SupportContent";
+import { useRouter } from "next/navigation";
 
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
@@ -41,7 +42,13 @@ interface Child {
 }
 
 const FamilySupport = () => {
-  const [storyDetails, setStoryDetails] = useState<PageData>()
+  const router = useRouter();
+
+  // Function to handle button click
+  const handleButtonClick = () => {
+    router.push("/about"); // Navigate to the "stories" page
+  };
+  const [storyDetails, setStoryDetails] = useState<PageData>();
 
   const fetchStoryDetails = useCallback(async () => {
     try {
@@ -52,11 +59,11 @@ const FamilySupport = () => {
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    fetchStoryDetails()
-  }, [fetchStoryDetails])
+    fetchStoryDetails();
+  }, [fetchStoryDetails]);
 
   const validateBlockStyle = (style: string): BlockStyle => {
     const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];
@@ -73,8 +80,14 @@ const FamilySupport = () => {
             <Image
               width={426}
               height={500}
-              src={storyDetails?.foreground_image?.asset?.image_url || "/assets/CEO-founder-Jason-Anderson.png"}
-              alt={storyDetails?.foreground_image?.alt || "Description of the image"}
+              src={
+                storyDetails?.foreground_image?.asset?.image_url ||
+                "/assets/CEO-founder-Jason-Anderson.png"
+              }
+              alt={
+                storyDetails?.foreground_image?.alt ||
+                "Description of the image"
+              }
               className="lg:w-[426px] lg:h-[500px] md:w-[426px] md:h-[500px] sm:w-[326px] sm:h-[326px] w-[326px] h-auto"
             />
           </div>
@@ -96,7 +109,10 @@ const FamilySupport = () => {
               </p>
             </div>
             <div className="sm:mt-0 mt-16">
-              <Button buttonText={storyDetails?.buttonText || "OUR STORY"} />
+              <Button
+                buttonText={storyDetails?.buttonText || "OUR STORY"}
+                onClick={handleButtonClick}
+              />
             </div>
           </div>
         </div>

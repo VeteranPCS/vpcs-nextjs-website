@@ -1,10 +1,11 @@
-"use client"
+"use client";
 import React from "react";
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback } from "react";
 import aboutService from "@/services/aboutService";
+import { useRouter } from "next/navigation";
 
 interface ImageAsset {
   image_url?: string;
@@ -22,22 +23,30 @@ interface PageData {
 }
 
 const HowVetPcsStarted = () => {
+  const router = useRouter();
+
+  // Function to handle button click
+  const handleButtonClick = () => {
+    router.push("/how-it-works"); // Navigate to the "stories" page
+  };
   const [pageData, SetPageData] = useState<PageData>({});
 
   const fetchOverviewData = useCallback(async () => {
     try {
-      const response = await aboutService.fetchOverviewDetails('how_veternce_pcs_started')
-      if (!response.ok) throw new Error('Failed to fetch posts')
-      const data = await response.json()
-      SetPageData(data)
+      const response = await aboutService.fetchOverviewDetails(
+        "how_veternce_pcs_started"
+      );
+      if (!response.ok) throw new Error("Failed to fetch posts");
+      const data = await response.json();
+      SetPageData(data);
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      console.error("Error fetching posts:", error);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    fetchOverviewData()
-  }, [fetchOverviewData])
+    fetchOverviewData();
+  }, [fetchOverviewData]);
 
   return (
     <div className="bg-[#EEEEEE] pt-14 pb-8 md:pb-0">
@@ -48,7 +57,10 @@ const HowVetPcsStarted = () => {
               <Image
                 width={700}
                 height={523}
-                src={pageData?.foreground_image?.asset?.image_url || "/assets/Aboutflight.png"}
+                src={
+                  pageData?.foreground_image?.asset?.image_url ||
+                  "/assets/Aboutflight.png"
+                }
                 alt="hand"
                 className="md:w-[700px] md:h-[523px] w-auto h-auto pb-6 md:pb-0"
               />
@@ -59,14 +71,20 @@ const HowVetPcsStarted = () => {
               </h2>
             </div>
             <div>
-            {pageData?.description?.split("\n").map((paragraph, index) => (
-              <p key={index} className="text-black tahoma text-lg font-normal mb-4">
-                {paragraph.trim()}
-              </p>
-            ))}
+              {pageData?.description?.split("\n").map((paragraph, index) => (
+                <p
+                  key={index}
+                  className="text-black tahoma text-lg font-normal mb-4"
+                >
+                  {paragraph.trim()}
+                </p>
+              ))}
             </div>
             <div className="flex justify-center">
-              <Button buttonText={pageData.buttonText || "Default Button"} />
+              <Button
+                buttonText={pageData.buttonText || "Default Button"}
+                onClick={handleButtonClick}
+              />
             </div>
           </div>
         </div>

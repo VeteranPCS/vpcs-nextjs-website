@@ -1,9 +1,17 @@
+"use client";
 import "@/styles/globals.css";
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./AgentLoanExpert.module.css";
+import { useRouter } from "next/navigation";
 
 const AgentLoanExpert = () => {
+  const router = useRouter();
+
+  // Function to handle button click
+  const handleButtonClick = () => {
+    router.push("/contact"); // Navigate to the "stories" page
+  };
   return (
     <div className="container mx-auto w-full md:mt-12 md:mb-12 mb-4">
       <div className={classes.agentLoanExpertContainer}>
@@ -16,7 +24,7 @@ const AgentLoanExpert = () => {
               Want to be featured?
             </p>
             <div className="md:mt-0 mt-7">
-              <Button buttonText="Sign-up here" />
+              <Button buttonText="Sign-up here" onClick={handleButtonClick} />
             </div>
           </div>
         </div>

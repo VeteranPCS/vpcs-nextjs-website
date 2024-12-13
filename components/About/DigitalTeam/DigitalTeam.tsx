@@ -34,7 +34,12 @@ const DigitalTeam = () => {
       const data = await response.json();
       setDigitalTeamDetails(data);
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      console.error("Error fetching Digital Team's Data:", error);
+      return (
+        <div>
+          <p>Failed to load Digital Team&apos;s Data. Please try again later.</p>
+        </div>
+      );
     }
   }, []);
 
@@ -58,7 +63,7 @@ const DigitalTeam = () => {
             <p className="text-[#000000] text-center tahoma font-normal text-[24px] lg:w-[1000px] mx-auto my-3">
               Immersive creative experiences, sophisticated marketing and
               innovative technology for our customers safety and substantial
-              user experience.{" "}
+              user experience.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-9 mt-10">

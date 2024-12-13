@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import veterenceSupportService from "@/services/veterenceSupportService";
 import SupportContent from "../FamilySupport/SupportContent";
+import { useRouter } from "next/navigation";
 
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
@@ -48,6 +49,12 @@ interface PageData {
 }
 
 const VeteranComunity = () => {
+  const router = useRouter();
+
+  // Function to handle button click
+  const handleButtonClick = () => {
+    router.push("/impact"); // Navigate to the "stories" page
+  };
   const [pageData, setPageData] = useState<PageData | undefined>();
 
   const fetchFamilyData = useCallback(async () => {
@@ -136,7 +143,10 @@ const VeteranComunity = () => {
               ))}
             </div>
             <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center">
-              <Button buttonText={pageData?.button_text || "Our Impact"} />
+              <Button
+                buttonText={pageData?.button_text || "Our Impact"}
+                onClick={handleButtonClick}
+              />
             </div>
           </div>
           <div>

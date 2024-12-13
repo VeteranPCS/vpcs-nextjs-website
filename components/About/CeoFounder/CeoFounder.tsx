@@ -33,7 +33,12 @@ const CeoFounder = () => {
       const data = await response.json()
       setCEODetails(data)
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      console.error('Error fetching CEO Founder Data:', error)
+      return (
+        <div>
+          <p>Failed to load CEO Founder Data. Please try again later.</p>
+        </div>
+      );
     }
   }, [])
 

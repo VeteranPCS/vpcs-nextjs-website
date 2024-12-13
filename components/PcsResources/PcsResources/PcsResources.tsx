@@ -42,7 +42,7 @@ const PcsResources = () => {
                   </p>
                 </div>
               </div>
-              <div className="absolute bottom-[-15%] lg:left-[45%] md:left-[45%] sm:left-[27%] left-[27%] translate-[-45%] ">
+              <div className="absolute sm:bottom-[-15%] bottom-[-30%] lg:left-[45%] md:left-[45%] sm:left-[27%] left-[27%] translate-[-45%] ">
                 <Image
                   width={1000}
                   height={1000}

@@ -3,10 +3,17 @@ import React from "react";
 import "@/styles/globals.css";
 import styled from "styled-components";
 import Button from "@/components/common/Button";
+import { useRouter } from "next/navigation";
 
 const Wrapper = styled.section``;
 
 const FamilyVideo = () => {
+  const router = useRouter();
+
+  // Function to handle button click
+  const handleButtonClick = () => {
+    router.push("/how-it-works"); // Navigate to the "stories" page
+  };
   return (
     <div className="w-full relative">
       <div>
@@ -33,7 +40,7 @@ const FamilyVideo = () => {
               <p className="font-normal lg:text-[27px] md:text-[27px] sm:text-[17px] text-[17px] leading-[30px] text-white lg:mt-5 tahoma">
                 in bonus checks sent to military families!{" "}
               </p>
-              <Button buttonText="How it Works" />
+              <Button buttonText="How it Works" onClick={handleButtonClick} />
             </div>
           </div>
         </div>

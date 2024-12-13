@@ -3,7 +3,7 @@ import "@/styles/globals.css";
 import classes from "./HowItWorkHeroSection.module.css";
 import Image from "next/image";
 
-const HowItWorkHeroSection = () => {
+function HowItWorkHeroSection() {
   return (
     <div className="relative">
       <div className={classes.HowitworkHeroSectionContainer}>

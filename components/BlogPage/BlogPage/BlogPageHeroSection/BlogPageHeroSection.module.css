@@ -1,0 +1,7 @@
+.blogpageherosectioncontainer {
+    background-image: url("/assets/blogherosectionbg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 150px 30px;
+  }

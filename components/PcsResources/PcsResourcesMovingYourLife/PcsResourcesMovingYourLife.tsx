@@ -8,7 +8,7 @@ const PcsResourcesMovingYourLife = () => {
     <div className="bg-[#E8E8E8] py-12 px-5">
       <div className="container mx-auto">
         <div>
-          <h2 className="text-[#003486] tahoma lg:text-[43px] md:text-[43px] sm:text-[31px] text-[31px] font-bold">
+          <h2 className="text-[#003486] tahoma lg:text-[43px] md:text-[43px] sm:text-[43px] text-[43px] font-bold leading-[46px]">
             Moving your life resources
           </h2>
         </div>
@@ -24,7 +24,7 @@ const PcsResourcesMovingYourLife = () => {
             <div className="mt-5">
               <Link
                 href="https://stachd.com/"
-                className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold"
+                className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold underline"
               >
                 MILITARY SPOUSE CHAMBER OF COMMERCE
               </Link>
@@ -45,7 +45,7 @@ const PcsResourcesMovingYourLife = () => {
             <div className="mt-5">
               <Link
                 href="https://stachd.com/"
-                className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold"
+                className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold underline"
               >
                 BUSINESS DIRECTORY
               </Link>
@@ -66,7 +66,7 @@ const PcsResourcesMovingYourLife = () => {
             <div className="mt-5">
               <Link
                 href="https://stachd.com/"
-                className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold"
+                className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold underline"
               >
                 Mil - Vets
               </Link>
@@ -86,7 +86,7 @@ const PcsResourcesMovingYourLife = () => {
             <div className="mt-5">
               <Link
                 href="https://stachd.com/"
-                className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold"
+                className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold underline"
               >
                 SPOUSELY
               </Link>
@@ -106,7 +106,7 @@ const PcsResourcesMovingYourLife = () => {
             <div className="mt-5">
               <Link
                 href="https://stachd.com/"
-                className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold"
+                className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold underline"
               >
                 Bunker Labs
               </Link>
@@ -127,7 +127,7 @@ const PcsResourcesMovingYourLife = () => {
             <div className="mt-5">
               <Link
                 href="https://stachd.com/"
-                className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold"
+                className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold underline"
               >
                 BoxOps
               </Link>

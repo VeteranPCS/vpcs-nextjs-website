@@ -1,0 +1,8 @@
+.blogdetailsctacontainer {
+    background-image: url("/assets/flagagent.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 40px 40px;
+    border-radius: 32px;
+  }

@@ -54,7 +54,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                       className="w-6 h-6"
                     />
                     <p className="text-white font-medium text-sm tahoma">
-                      Free To Use
+                      Get Cash Back
                     </p>
                   </div>
                 </div>

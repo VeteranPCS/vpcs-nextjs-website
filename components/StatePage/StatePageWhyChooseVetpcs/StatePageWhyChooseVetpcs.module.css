@@ -1,0 +1,48 @@
+.statepahewhychoosedwrappercontainer {
+    border-radius: 32px;
+    border: 1px solid #7E1618;
+    border-bottom: 10px solid transparent;
+    background: #7E1618;
+    box-shadow: 0px 1px 0px 0px #eee;
+    width: 398px;
+  }
+  
+  .statepahewhychoosedwrappercontainer:hover {
+    border-radius: 32px;
+    border-bottom: 10px solid #292F6C;
+    background: #7E1618;
+    box-shadow:
+      0.29px 6.646px 30.11px 0px rgba(90, 114, 234, 0.06),
+      0.117px 2.673px 13.186px 0px rgba(90, 114, 234, 0.04),
+      0.026px 0.598px 5.707px 0px rgba(90, 114, 234, 0.03);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  @media (max-width: 640px) {
+    .statepahewhychoosedwrappercontainer {
+      width: 100%;
+    }
+  }
+  @media (min-width: 640px) {
+    .statepahewhychoosedwrappercontainer {
+      width: 100%;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .statepahewhychoosedwrappercontainer {
+      width: 300px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .statepahewhychoosedwrappercontainer {
+      width: 398px;
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    .statepahewhychoosedwrappercontainer {
+      width: 300px;
+    }
+  }

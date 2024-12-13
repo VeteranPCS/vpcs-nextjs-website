@@ -3,15 +3,16 @@ import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import ReviewTestimonialSlider from "@/components/homepage/ReviewTestimonial/ReviewTestimonialSlider";
 import classes from "./ReviewTestimonial.module.css";
+import { useRouter } from "next/navigation";
 
 // Define the type for each review
 interface Review {
-  _id: string;  // Assuming each review has a unique id
+  _id: string; // Assuming each review has a unique id
   name: string;
   message: string;
   designation: string; // Add the missing field
-  ratings: number;     // Add the missing field
-  comment: string;     // Add the missing field
+  ratings: number; // Add the missing field
+  comment: string; // Add the missing field
 }
 
 // Define the props for the component
@@ -19,7 +20,15 @@ interface ReviewTestimonialProps {
   reviewsList: Review[];
 }
 
-const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({ reviewsList }) => {
+const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({
+  reviewsList,
+}) => {
+  const router = useRouter();
+
+  // Function to handle button click
+  const handleButtonClick = () => {
+    router.push("/stories"); // Navigate to the "stories" page
+  };
   return (
     <div className="w-full">
       <div className={classes.ReviewTestimonialContainer}>
@@ -36,7 +45,10 @@ const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({ reviewsList }) =>
             <ReviewTestimonialSlider reviews={reviewsList} />
           </div>
           <div>
-            <Button buttonText="More success stories" />
+            <Button
+              buttonText="More success stories"
+              onClick={handleButtonClick}
+            />
           </div>
         </div>
       </div>

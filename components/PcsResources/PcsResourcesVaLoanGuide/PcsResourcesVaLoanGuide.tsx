@@ -15,7 +15,7 @@ const PcsResourcesVaLoanGuide = () => {
     <div className={classes.pcsresourcesvaloanguide}>
       <div className="container mx-auto px-5">
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-6">
-          <div className="lg:px-20 mg:px-20 sm:px-10 px-10">
+          <div className="lg:px-20 mg:px-20 sm:px-10 px-10 order-2 sm:order-1">
             <div className="text-center">
               <h2 className="text-[#FFFFFF] text-center poppins lg:text-[36px] md:text-[36px] sm:text-[22px] text-[22px] font-bold">
                 VA Loan Guide
@@ -76,7 +76,7 @@ const PcsResourcesVaLoanGuide = () => {
               </Link>
             </div>
           </div>
-          <div>
+          <div className="order-1 sm:order-2">
             <Image
               width={567}
               height={567}

@@ -4,7 +4,7 @@ import classes from "./PcsResourcesBlog.module.css";
 
 const PcsResourcesBlog = () => {
   return (
-    <div className="pt-6 px-5">
+    <div className="py-6 px-5">
       <div className="container mx-auto">
         <div className="flex flex-wrap gap-5 items-end lg:justify-between md:justify-between sm:justify-center justify-center">
           <div className="lg:text-left md:text-left sm:text-center text-center">

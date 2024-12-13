@@ -2,7 +2,6 @@ import { type SchemaTypeDefinition } from 'sanity'
 
 import blockContent from './schemas/blockContent'
 import category from './schemas/category'
-import post from './schemas/post'
 import author from './schemas/author'
 import userImage from './schemas/userImage'
 import review from './schemas/review'
@@ -18,10 +17,13 @@ import storiesPoster from './schemas/storiesPoster'
 import videoReview from './schemas/videoReview'
 import impactPage from './schemas/impactPage'
 import additionalSuccessStories from './schemas/additionalSuccessStories'
+import howVeterencePCSServiceWorks from './schemas/howVeterencePCSServiceWorks'
+import internshipActions from './schemas/internshipActions'
+import internshipBenefits from './schemas/internshipBenefits'
+import internshipOffer from './schemas/internshipOffer'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
-    post,
     author,
     category,
     blockContent,
@@ -38,6 +40,10 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     storiesPoster,
     videoReview,
     impactPage,
-    additionalSuccessStories
+    additionalSuccessStories,
+    howVeterencePCSServiceWorks,
+    internshipActions,
+    internshipBenefits,
+    internshipOffer
   ],
 }

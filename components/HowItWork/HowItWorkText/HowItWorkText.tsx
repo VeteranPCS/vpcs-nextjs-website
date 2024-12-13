@@ -1,7 +1,31 @@
+// "use client"
 import React from "react";
 import "@/styles/globals.css";
+// import { useState, useEffect, useCallback } from "react";
+// import howItWorksService from "@/services/howItWorksService";
 
 const HowItWorkText = () => {
+  // const [pageData, setPageData] = useState();
+
+  // const fetchVeterenceServiceData = useCallback(async () => {
+  //   try {
+  //     const response = await howItWorksService.fetchHowVeterencePCSWorks()
+  //     if (!response.ok) throw new Error('Failed to fetch posts')
+  //     const data = await response.json()
+  //     setPageData(data)
+  //   } catch (error) {
+  //     console.error('Error fetching posts:', error)
+  //   }
+  // }, [])
+
+  // useEffect(() => {
+  //   fetchVeterenceServiceData()
+  // }, [fetchVeterenceServiceData])
+
+  // useEffect(() => {
+  //   console.log(pageData)
+  // }, [pageData])
+
   return (
     <div className="py-12 lg:px-0 px-5">
       <div className="container mx-auto">
@@ -23,7 +47,7 @@ const HowItWorkText = () => {
           </p>
         </div>
         <div>
-          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[25px] sm:text-[20px] text-[20px] font-bold my-2">
+          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] sm:text-[30px] text-[30px] font-bold my-2">
             How the VeteranPCS Service Works
           </h6>
         </div>
@@ -125,7 +149,7 @@ const HowItWorkText = () => {
         </div>
         <div className="border-b-2 border-[#203269]"></div>
         <div>
-          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[25px] sm:text-[20px] text-[20px] font-bold my-2">
+          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] sm:text-[30px] text-[30px] font-bold my-2">
             How the Move-In Bonus Works
           </h6>
         </div>
@@ -145,7 +169,7 @@ const HowItWorkText = () => {
           </p>
         </div>
         <div className="pl-6">
-          <table className="table-auto border w-[1000px]">
+          <table className="table-auto border lg:w-[1000px] w-full">
             <thead>
               <tr className="border text-left">
                 <th className="text-[#000] tahoma lg:text-[24px] md:text-[24px] sm:text-[20px] text-[20px] font-bold p-3">
@@ -277,7 +301,7 @@ const HowItWorkText = () => {
         </div>
         <div className="border-b-2 border-[#203269]"></div>
         <div>
-          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[25px] sm:text-[20px] text-[20px] font-bold my-2">
+          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] sm:text-[30px] text-[30px] font-bold my-2">
             Who is Eligible for the Move-In Bonus?
           </h6>
         </div>
@@ -313,7 +337,7 @@ const HowItWorkText = () => {
         </div>
         <div className="border-b-2 border-[#203269]"></div>
         <div>
-          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[25px] sm:text-[20px] text-[20px] font-bold my-2">
+          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] sm:text-[30px] text-[30px] font-bold my-2">
             How it Works for Agents
           </h6>
         </div>
@@ -322,7 +346,7 @@ const HowItWorkText = () => {
             The following is intended to provide a general overview of how our
             site works with agents. For full information and understanding of
             the terms and conditions you must refer to our Referral Partner
-            Agreement. 
+            Agreement.
           </i>
         </div>
         <div className="my-5">
@@ -395,7 +419,7 @@ const HowItWorkText = () => {
         </div>
         <div className="border-b-2 border-[#203269]"></div>
         <div>
-          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[25px] sm:text-[20px] text-[20px] font-bold my-2">
+          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] sm:text-[30px] text-[30px] font-bold my-2">
             How it works for Mortgage Loan Officers
           </h6>
         </div>
@@ -448,7 +472,7 @@ const HowItWorkText = () => {
         </div>
         <div className="mt-5 mb-2">
           <p className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[20px] text-[20px] font-bold mb-5">
-            Are you a Lending company or Bank? 
+            Are you a Lending company or Bank?
           </p>
         </div>
         <div className="pl-6">
@@ -460,7 +484,7 @@ const HowItWorkText = () => {
         </div>
         <div className="border-b-2 border-[#203269]"></div>
         <div>
-          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[25px] sm:text-[20px] text-[20px] font-bold my-2">
+          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] sm:text-[30px] text-[30px] font-bold my-2">
             What makes us different?
           </h6>
         </div>
@@ -511,12 +535,12 @@ const HowItWorkText = () => {
             VeteranPCS is proud to support many different veteran-focused
             charities and organizations. We donate an additional 10% of your
             Move In Bonus amount to a military-focused charity, for full details
-            on amounts see the table above. 
+            on amounts see the table above.
           </p>
         </div>
         <div className="border-b-2 border-[#203269]"></div>
         <div>
-          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[25px] sm:text-[20px] text-[20px] font-bold my-2">
+          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] sm:text-[30px] text-[30px] font-bold my-2">
             What Charities do you support?
           </h6>
         </div>

@@ -4,10 +4,11 @@
   background-position: center;
   background-repeat: no-repeat;
   padding: 115px 30px;
-  margin-top: -1px;
+  margin-top: 80px;
 }
-@media screen and (max-width: 575px)  {
+@media screen and (max-width: 575px) {
   .AboutHeroSectionContainer {
     padding: 40px 30px 115px 30px;
-  } 
+    margin-top: 40px;
+  }
 }

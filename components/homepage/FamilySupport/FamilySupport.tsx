@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import veterenceSupportService from "@/services/veterenceSupportService";
 import SupportContent from "./SupportContent";
+import { useRouter } from "next/navigation";
 
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
@@ -47,6 +48,12 @@ interface PageData {
 }
 
 const FamilySupport = () => {
+  const router = useRouter();
+
+  // Function to handle button click
+  const handleButtonClick = () => {
+    router.push("/how-it-works"); // Navigate to the "stories" page
+  };
   const [pageData, setPageData] = useState<PageData | undefined>();
 
   const fetchFamilyData = useCallback(async () => {
@@ -83,7 +90,9 @@ const FamilySupport = () => {
           {/* Image Section */}
           <div className="flex justify-center">
             <Image
-              src={pageData?.image?.asset?.image_url || "/assets/meetdaugether.png"}
+              src={
+                pageData?.image?.asset?.image_url || "/assets/meetdaugether.png"
+              }
               width={530}
               height={530}
               alt={pageData?.image?.alt || "Description of the image"}
@@ -122,7 +131,10 @@ const FamilySupport = () => {
             {/* Points Section */}
             <div className="mt-5">
               {pageData?.points?.map((point, index) => (
-                <div className="flex items-start gap-4" key={point._id || index}>
+                <div
+                  className="flex items-start gap-4"
+                  key={point._id || index}
+                >
                   <Image
                     width={100}
                     height={100}
@@ -144,7 +156,10 @@ const FamilySupport = () => {
             </div>
 
             <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center">
-              <Button buttonText={pageData?.button_text || "Learn More"} />
+              <Button
+                buttonText={pageData?.button_text || "Learn More"}
+                onClick={handleButtonClick}
+              />
             </div>
           </div>
         </div>

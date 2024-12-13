@@ -7,24 +7,29 @@ import SliderValueLabel from "@/components/MilitarySpouse/SquaredAway/SquaredAwa
 
 const SquaredAway = () => {
   return (
-    <div className="container mx-auto w-full py-16">
+    <div className="container mx-auto w-full md:py-16 py-8">
       <div>
         <div
           className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1
-         grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3 lg:py-12"
+         grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3 lg:py-12 mx-5 md:mx-0"
         >
           <div>
+            <div className="block md:hidden">
+              <h2 className="text-[#292F6C] tahoma lg:text-[63px] md:text-[53px] sm:text-[30px] text-[30px] leading-[36px] md:leading-normal text-center md:text-left font-bold md:mb-3 mb-5">
+                Spouse Employment with Squared Away
+              </h2>
+            </div>
             <Image
               src="/assets/spouseaway.png"
               width={1000}
               height={869}
               alt="Description of the image"
-              className="lg:w-full lg:h-[869px] md:w-full md:h-[530px] sm:w-full sm:h-[326px] w-full h-[326px]"
+              className="lg:w-full xl:h-auto lg:h-[869px] md:w-full md:h-[530px] sm:w-full sm:h-[326px] w-full h-auto mb-5 md:mb-0"
             />
           </div>
           <div>
             <div>
-              <h2 className="text-[#292F6C] tahoma lg:text-[63px] md:text-[53px] sm:text-[43px] text-[43px] font-bold mb-3">
+              <h2 className="text-[#292F6C] tahoma lg:text-[63px] md:text-[53px] sm:text-[43px] text-[43px] font-bold mb-3 md:block hidden">
                 Spouse Employment with Squared Away
               </h2>
             </div>
