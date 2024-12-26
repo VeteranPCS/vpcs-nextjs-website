@@ -4,7 +4,7 @@ import Button from "@/components/common/Button";
 import classes from "./StatePageCTA.module.css";
 import Image from "next/image";
 
-const StatePageCTA = () => {
+const StatePageCTA = ({ cityName }: { cityName: string }) => {
   return (
     <div className="container mx-auto w-full py-16">
       <div className={classes.statepagectacontainer}>
@@ -33,16 +33,15 @@ const StatePageCTA = () => {
             </div>
             <div>
               <h1 className="text-white tahoma lg:text-[31px] md:text-[31px] sm:text-[31px] text-[31px] font-bold mt-5 lg:text-left md:text-left sm:text-center text-center lg:w-[500px]">
-                Talk to our Agents in South Carolina Today
+                Talk to our Agents in {cityName} Today
               </h1>
               <p className="text-white tahoma lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] font-normal leading-[25px] mt-4 lg:text-left md:text-left sm:text-center text-center">
-                Are you a veteran or military spouse in search of a South
-                Carolina realtor who understands your distinctive requirements?
+                Are you a veteran or military spouse in search of a {cityName} realtor who understands your distinctive requirements?
                 VeteranPCS is the answer. We are not serving merely as another
                 real estate platform; we represent a community of veterans and
                 military spouses committed to supporting one another throughout
                 transitional periods. Connect with a military-friendly real
-                estate agent in South Carolina today and initiate your PCS move
+                estate agent in {cityName} today and initiate your PCS move
                 with confidence.
               </p>
             </div>

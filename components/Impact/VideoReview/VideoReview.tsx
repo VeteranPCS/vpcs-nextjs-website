@@ -3,21 +3,21 @@ import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 import commonService from "@/services/commonServices";
 
-interface PageData {
+export interface VideoReviewProps {
   _id: string;
   title?: string;
   videoUrl?: string;
 }
 
 const VideoReview = () => {
-  const [videoDetails, setVideoDetails] = useState<PageData>()
+  const [videoDetails, setVideoDetails] = useState<VideoReviewProps | null>(null);
   
   const fetchVideoDetails = useCallback(async () => {
     try {
       const response = await commonService.fetchVideoReview();
-      if (!response.ok) throw new Error("Failed to fetch posts");
-      const data = await response.json();
-      setVideoDetails(data);
+      // if (!response.ok) throw new Error("Failed to fetch posts");
+      // const data = await response.json();
+      setVideoDetails(response);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }

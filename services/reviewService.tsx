@@ -1,11 +1,23 @@
 import { API_ENDPOINTS } from '@/constants/api'
+import { api, RequestType } from '@/services/api';
 
 const reviewService = {
     fetchReviews: async () => {
-        // const id = 'Hello World';
-        // const response = await fetch(`${API_ENDPOINTS.posts}?id=${id}`)
-        const response = await fetch(API_ENDPOINTS.reviews);
-        return response;
+        try {
+            const response = await api({
+                endpoint: API_ENDPOINTS.reviews,
+                type: RequestType.GET,
+            });
+
+            if (response?.status === 200) { 
+                return response.data; 
+            } else {
+                throw new Error('Failed to fetch Reviews');
+            }
+        } catch (error: any) {
+            console.error('Error fetching Reviews:', error);
+            throw error; 
+        }
     }
 };
 

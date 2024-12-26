@@ -24,8 +24,26 @@ interface BlogData {
   }[];
 }
 
+interface Block {
+  _key: string;
+  children: Child[];
+  style: 'h1' | 'h2' | 'h3' | 'normal'; // Explicitly define the style types
+  listItem?: 'bullet'; // Optional property for list items
+  level?: number; // Optional property for list nesting level
+}
+
+interface Child {
+  _key: string;
+  marks: string[]; // Assuming marks is an array of strings (e.g., ['strong', 'italic'])
+  text: string; // The text content of the child
+}
+
 interface BlogDetailProps {
   blogData: BlogData;
+}
+
+interface BlockContentProps {
+  block: Block; // Single block instead of an array
 }
 
 const BlogDetail: React.FC<BlogDetailProps> = ({ blogData }) => {
@@ -64,10 +82,12 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ blogData }) => {
           {blogData?.content?.map((block, index) => (
             <BlockContent 
               key={block._key || index} 
-              block={{
-                ...block,
-                style: validateBlockStyle(block.style)
-              }} 
+              blocks={[
+                {
+                  ...block,
+                  style: validateBlockStyle(block.style),
+                },
+              ]}
             />
           ))}
         </div>

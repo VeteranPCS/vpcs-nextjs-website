@@ -1,17 +1,10 @@
-"use client";
 import React from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 const PcsResourcesMilitarySpouse = () => {
-  const router = useRouter();
-
-  const handleButtonClick = () => {
-    router.push("/militaryspouse");
-  };
   return (
     <div className="w-full py-10 mb-5 px-5">
       <div>
@@ -29,10 +22,11 @@ const PcsResourcesMilitarySpouse = () => {
                 </p>
                 <div>
                   <Button buttonText="Mil Spouse Employment Articles" />
-                  <Button
-                    buttonText="More Mil Spouse Resources"
-                    onClick={handleButtonClick}
-                  />
+                  <Link href="/militaryspouse">
+                      <Button
+                        buttonText="More Mil Spouse Resources"
+                      />
+                  </Link>                
                 </div>
               </div>
               <div className="sm:order-2 order-1">

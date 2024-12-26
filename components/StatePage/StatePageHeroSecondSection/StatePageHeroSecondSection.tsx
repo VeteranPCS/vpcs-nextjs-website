@@ -7,8 +7,8 @@ const StatePageHeroSecondSection = () => {
   return (
     <div>
       <div className="flex flex-wrap items-start justify-between h-full">
-        <div className="bg-[#212557] flex flex-col items-center justify-center py-[69px] lg:w-1/4 md:w-1/4 sm:w-full w-full h-full">
-          <div>
+        <div className="bg-[#212557] flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center justify-center w-full h-full">
+          <div className="h-full  md:px-20 sm:py-10 py-10">
             <Image
               src="/icon/VeteranPCSlogo.svg"
               alt="Description of the image"
@@ -21,8 +21,7 @@ const StatePageHeroSecondSection = () => {
               Military Realtor in South Carolina
             </p>
           </div>
-        </div>
-        <div className="bg-[#292F6C] flex flex-col items-center flex-wrap justify-center py-10 lg:w-3/4 md:w-3/4 sm:w-full w-full h-full">
+          <div className="bg-[#292F6C] flex flex-col items-center flex-wrap justify-center py-10 w-full h-full">
           <div className="flex flex-wrap md:flex-nowrap justify-between items-center px-20 gap-20">
             <div className="flex flex-col gap-4">
               <Image
@@ -73,6 +72,8 @@ const StatePageHeroSecondSection = () => {
             </div>
           </div>
         </div>
+        </div>
+        
       </div>
     </div>
   );

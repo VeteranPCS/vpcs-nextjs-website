@@ -1,27 +1,21 @@
-"use client"
-import { useState, useEffect, useCallback, memo } from "react"
+import { memo } from "react"
 import userImageServices from "@/services/userService";
 import ImageSlider from "@/components/common/ImageSlider";
 
 const MemoizedSlider = memo(ImageSlider);
 
-export default function Testimonials() {
-    const [userImageList, SetUserImageList] = useState([]);
+export default async function Testimonials() {
+    let userImageList = [];
 
-    const fetchUserImage = useCallback(async () => {
-        try {
-            const response = await userImageServices.fetchImages()
-            if (!response.ok) throw new Error('Failed to fetch posts')
-            const data = await response.json()
-            SetUserImageList(data)
-        } catch (error) {
-            console.error('Error fetching posts:', error)
-        }
-    }, [])
+    try {
+        userImageList = await userImageServices.fetchImages();        
+    } catch (error) {
+        console.error("Error fetching blog", error);
+    }
 
-    useEffect(() => {
-        fetchUserImage()
-    }, [fetchUserImage])
+    if (!userImageList) {
+        return <p>Failed to load the User Image List.</p>;
+    }
 
     return (
         <MemoizedSlider userImageList={userImageList} />

@@ -1,10 +1,8 @@
-"use client"
 import React from "react";
 import Button from "@/components/common/Button";
 import "@/styles/globals.css";
 import "aos/dist/aos.css";
 import Image from "next/image";
-import { useState, useEffect, useCallback } from "react";
 import impactService from "@/services/impactService";
 import SupportContent from "@/components/homepage/FamilySupport/SupportContent";
 
@@ -32,7 +30,7 @@ interface ImageAsset {
   image_url?: string;
 }
 
-interface PageData {
+export interface WearBlueSectionProps {
   _id: string;
   poster_1?: ForegroundImage;
   poster_2?: ForegroundImage;
@@ -41,23 +39,15 @@ interface PageData {
   button_text?: string;
 }
 
-const MilitaryHomePage = () => {
-  const [storieDetails, setStorieDetails] = useState<PageData>();
+const MilitaryHomePage = async () => {
+  let storieDetails: WearBlueSectionProps | null = null;
 
-  const fetchStorieDetails = useCallback(async () => {
-    try {
-      const response = await impactService.fetchSuccessStories();
-      if (!response.ok) throw new Error("Failed to fetch posts");
-      const data = await response.json();
-      setStorieDetails(data);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchStorieDetails();
-  }, [fetchStorieDetails]);
+  try {
+    storieDetails = await impactService.fetchSuccessStories();
+  } catch (error) {
+    console.error('Failed to fetch Success Stories:', error);
+    return <p>Failed to load Family Success Stories.</p>;
+  }
 
   const validateBlockStyle = (style: string): BlockStyle => {
     const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];

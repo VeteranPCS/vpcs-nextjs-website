@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { client } from '../../../sanity/lib/client'
+import { client } from '@/sanity/lib/client'
 import { SanityDocument } from '@sanity/client'
 
 interface AccountDocument extends SanityDocument {

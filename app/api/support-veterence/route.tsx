@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { client } from "../../../sanity/lib/client";
+import { client } from "@/sanity/lib/client";
 import { SanityDocument } from "@sanity/client";
 import { urlForImage } from "@/sanity/lib/image";
 
 interface ReviewDocument extends SanityDocument {
-    _type: "blog";
+    _type: "support_veterence";
     title: string;
     publishedAt: string;
 }

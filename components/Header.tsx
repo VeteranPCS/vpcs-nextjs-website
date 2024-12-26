@@ -13,15 +13,15 @@ const Header = () => {
     <header className="bg-[#292f6c] fixed top-0 left-0 w-full z-50 shadow-lg lg:px-0 px-5">
       <div className="container mx-auto w-full">
         <nav className="flex justify-between">
-          <div className="w-[130px] md:w-[200px] flex items-center">
+          <Link className="w-[130px] md:w-[200px] flex items-center" href="/">
             <Image
               width={235}
               height={63}
               src="/icon/VeteranPCSlogo.svg"
               className="lg:w-[235px] lg:h-[63px] md:w-[235px] md:h-[63px] sm:w-[200px] sm:h-[63px] w-[200px] h-[63px]"
-              alt="Description of the image"
+              alt="VeteranPCS logo"
             />
-          </div>
+          </Link>
           <div className="flex items-center gap-3">
             <div
               className={`navLinks duration-500 absolute md:static md:w-auto ${isMenuOpen ? "w-[60%]" : "w-full"} w-full md:h-auto ${isMenuOpen ? "h-[100vh]" : "h-[100vh]"}  bg-[#292f6c] flex md:items-center gap-[1.5vw] top-[100%] ${isMenuOpen ? "left-[0%]" : "left-[-100%]"} px-5 md:py-0 py-5`}
@@ -116,20 +116,20 @@ const Header = () => {
                   <path
                     d="M1 1H24"
                     stroke="#FFFFFF"
-                    stroke-width="2"
-                    stroke-linecap="round"
+                    strokeWidth={2}
+                    strokeLinecap="round"
                   />
                   <path
                     d="M1 9H24"
                     stroke="#FFFFFF"
-                    stroke-width="2"
-                    stroke-linecap="round"
+                    strokeWidth={2}
+                    strokeLinecap="round"
                   />
                   <path
                     d="M1 17H24"
                     stroke="#FFFFFF"
-                    stroke-width="2"
-                    stroke-linecap="round"
+                    strokeWidth={2}
+                    strokeLinecap="round"
                   />
                 </svg>
               </button>

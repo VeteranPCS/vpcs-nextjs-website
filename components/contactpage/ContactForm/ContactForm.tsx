@@ -1,4 +1,3 @@
-"use client";
 import Button from "@/components/common/Button";
 import "@/styles/globals.css";
 import classes from "./ContactForm.module.css";
@@ -7,12 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const ContectForm = () => {
-  const router = useRouter();
-
-  // Function to handle button click
-  const handleButtonClick = () => {
-    router.push("/get-listed-lenders"); // Navigate to the "stories" page
-  };
   return (
     <div className="container mx-auto flex flex-wrap justify-center lg:py-12 md:py-12 sm:py-2 py-2 gap-10">
       <div className="flex flex-wrap justify-around rounded-[12.128px] bg-white shadow-[0px_0px_72.766px_36.383px_rgba(0,0,0,0.03)] p-4 w-full overflow-hidden mx-8 md:mb-0 mb-5">
@@ -50,16 +43,14 @@ const ContectForm = () => {
               </div>
             </div>
 
-            <div className="block justify-start items-center gap-4 flex-wrap ">
+            <Link href="/get-listed-lenders" className="block justify-start items-center gap-4 flex-wrap ">
               <Button
                 buttonText="Agents, Get Listed Here"
-                onClick={handleButtonClick}
               />
               <Button
                 buttonText="Lenders, Get Listed Here"
-                onClick={handleButtonClick}
               />
-            </div>
+            </Link>
 
             <div>
               <ul className="flex items-center md:justify-start justify-center gap-4 mt-5">

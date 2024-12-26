@@ -29,13 +29,13 @@ const cardsData = [
 ];
 
 
-const StatePageWhyChooseVetpcs = () => {
+const StatePageWhyChooseVetpcs = ({ cityName }: { cityName: string }) => {
 
   return (
     <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">
       <div className="text-center">
         <h1 className="text-[#292F6C] text-center tahoma lg:text-[44px] md:text-[44px] sm:text-[31px] text-[31px] font-bold lg:w-[600ox] md:w-[600px] sm:w-full w-full mx-auto">
-          South Carolina
+          {cityName}
         </h1>
         <p className="text-center text-[#292F6C] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal">
           Why choose VeteranPCS as Your Preferred Real Estate Agents

@@ -1,13 +1,11 @@
-"use client";
 import "@/styles/globals.css";
 import styled from "styled-components";
 import Button from "@/components/common/Button";
 import classes from "./VeteranCommunity.module.css";
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
 import veterenceSupportService from "@/services/veterenceSupportService";
 import SupportContent from "../FamilySupport/SupportContent";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
@@ -38,7 +36,7 @@ interface Point {
   children?: Child[];
 }
 
-interface PageData {
+export interface VeteranCommunityProps {
   _id: string;
   image?: ForegroundImage;
   icon?: ForegroundImage;
@@ -48,35 +46,17 @@ interface PageData {
   points?: Point[];
 }
 
-const VeteranComunity = () => {
-  const router = useRouter();
+const VeteranComunity = async () => {
+  let pageData: VeteranCommunityProps | null = null;
 
-  // Function to handle button click
-  const handleButtonClick = () => {
-    router.push("/impact"); // Navigate to the "stories" page
-  };
-  const [pageData, setPageData] = useState<PageData | undefined>();
-
-  const fetchFamilyData = useCallback(async () => {
-    try {
-      const response = await veterenceSupportService.fetchVeterenceSupport(
-        "support-our-veteran-community"
-      );
-      if (!response.ok) throw new Error("Failed to fetch posts");
-      const data = await response.json();
-      setPageData(data);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchFamilyData();
-  }, [fetchFamilyData]);
-
-  useEffect(() => {
-    console.log(pageData);
-  }, [pageData]);
+  try {
+    pageData = await veterenceSupportService.fetchVeterenceSupport(
+      "support-our-veteran-community"
+    );
+  } catch (error) {
+    console.error('Failed to fetch Veterence Data:', error);
+    return <p>Failed to load Veterence Data.</p>;
+  }
 
   const validateBlockStyle = (style?: string): BlockStyle => {
     const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];
@@ -142,12 +122,11 @@ const VeteranComunity = () => {
                 </div>
               ))}
             </div>
-            <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center">
+            <Link href="/impact" className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center">
               <Button
                 buttonText={pageData?.button_text || "Our Impact"}
-                onClick={handleButtonClick}
               />
-            </div>
+            </Link>
           </div>
           <div>
             <Image

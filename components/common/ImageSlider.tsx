@@ -1,3 +1,4 @@
+"use client"
 import React from "react"; // Keep this import
 import "@/styles/globals.css";
 import "slick-carousel/slick/slick.css";
@@ -99,7 +100,7 @@ const Carousel: React.FC<CarouselProps> = ({ userImageList }) => {
                 src={
                   item?.userImage?.asset?.image_url ||
                   "/placeholder.jpg" // Fallback in case neither exists
-                }                
+                }
                 alt={item?.userImage?.alt}
                 className="w-full h-full object-contain"
               />

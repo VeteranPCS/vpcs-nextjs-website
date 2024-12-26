@@ -1,51 +1,36 @@
-"use client"
 import "@/styles/globals.css";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useCallback } from "react";
 import aboutService from "@/services/aboutService";
 
-interface ImageAsset {
+export interface ImageAsset {
   image_url?: string;
 }
 
-interface ForegroundImage {
+export interface ForegroundImage {
   asset?: ImageAsset;
   alt?: string;
 }
 
-interface PageData {
+export interface TeamMember {
   _id: string;
-  image?: ForegroundImage;
-  description?: string;
-  buttonText?: string;
-  name?: string;
-  designation?: string;
+  image: ForegroundImage;
+  description: string;
+  buttonText: string;
+  name: string;
+  designation: string;
 }
 
-const AdminTeam = () => {
-  const [DigitalAdminDetails, setDigitalAdminDetails] = useState<PageData[]>([]);
+const AdminTeam = async () => {
+  let DigitalAdminDetails: TeamMember[] | null = null;
 
-  const fetchDigitalAdminDetails = useCallback(async () => {
-    try {
-      const response = await aboutService.fetchMembersDetail('administration')
-      if (!response.ok) throw new Error('Failed to fetch posts')
-      const data = await response.json()
-      setDigitalAdminDetails(data)
-    } catch (error) {
-      console.error('Error fetching Admin Team Data:', error)
-      return (
-        <div>
-          <p>Failed to load Admin Team&apos;s Data. Please try again later.</p>
-        </div>
-      );
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchDigitalAdminDetails()
-  }, [fetchDigitalAdminDetails])
-
+  try {
+    DigitalAdminDetails = await aboutService.fetchMembersDetail('administration');
+  } catch (error) {
+    console.error('Error fetching Administrations Team&apos;s Data:', error);
+    return <p>Failed to load the Administrations Team&apos;s Data.</p>;
+  }
+  
   return (
     <div>
       <div className="bg-[#FFFFFF] pt-7 pb-14 px-9 sm:px-0">
@@ -63,13 +48,13 @@ const AdminTeam = () => {
             {DigitalAdminDetails.map((details) => (
               <div key={details._id} className="border border-[#EAECF0] bg-white mx-auto mt-5">
                 <div>
-                <Image
-                  src={details?.image?.asset?.image_url || "/assets/adminpasteimage.png"}  
-                  alt={details?.image?.alt || "Profile image"} 
-                  width={417}
-                  height={400}
-                  className="w-full sm:h-[350px] h-auto"
-                />
+                  <Image
+                    src={details?.image?.asset?.image_url || "/assets/adminpasteimage.png"}
+                    alt={details?.image?.alt || "Profile image"}
+                    width={417}
+                    height={400}
+                    className="w-full sm:h-[350px] h-auto"
+                  />
                 </div>
                 <div className="px-5 py-5">
                   <h6 className="text-black tahoma font-semibold text-2xl">

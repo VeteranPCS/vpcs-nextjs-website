@@ -35,7 +35,7 @@ export default function Home() {
       <MemoizedCovered />
       <MemoizedVideoFamily />
       <MemoizedTestimonials />
-      <PcsResourcesBlog />
+      <PcsResourcesBlog title="Let’s talk VA loan" description="Our experts breakdown buying with a VA loan" link="connect with a VA Loan expert!" url="#"/>
       {/* <FamilySupport /> */}
       <MemoizedFamilySupport />
       <PcsResourcesVaLoanGuide />

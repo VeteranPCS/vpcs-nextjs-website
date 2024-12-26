@@ -75,10 +75,6 @@ const DEFAULT_IMAGE_URL = '/api/placeholder/400/320';
 
 const BlogListing = ({ blogList }: BlogListingProps) => {
     useEffect(() => {
-        console.log("blogList: ", blogList)
-    }, [blogList])
-
-    useEffect(() => {
         AOS.init({
             duration: 1000,
             once: true,

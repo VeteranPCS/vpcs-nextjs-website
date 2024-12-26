@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import AccordionItem from "../../common/AccordionItem";
 import commonService from "@/services/commonServices";
 
-type Question = {
+export type FreqAskedQuestionsProps = {
   _id: string;
   question: string;
   answer: string;
@@ -11,14 +11,12 @@ type Question = {
 
 export default function ControlledAccordions() {
   const [expanded, setExpanded] = useState<string | false>("panel1");
-  const [questions, setQuestions] = useState<Question[] | null>([])
+  const [questions, setQuestions] = useState<FreqAskedQuestionsProps[] | null>([])
 
   const fetchQuestion = useCallback(async () => {
     try {
       const response = await commonService.fetchFrequentlyAskedQuestions()
-      if (!response.ok) throw new Error('Failed to fetch posts')
-      const data = await response.json()
-      setQuestions(data)
+      setQuestions(response)
     } catch (error) {
       console.error('Error fetching Frequently Asked questions:', error)
       return (

@@ -22,7 +22,14 @@ export default defineType({
     defineField({
       name: 'author',
       title: 'Author',
-      type: 'string',
+      type: 'reference',
+      to: [{type: 'author'}],
+    }),
+    defineField({
+      name: 'categories',
+      title: 'Categories',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'category' }] }],
     }),
     defineField({
       name: 'mainImage',
@@ -53,6 +60,21 @@ export default defineType({
       name: 'is_show',
       title: 'Is show',
       type: 'boolean',
+    }),
+    defineField({
+      name: 'component',
+      title: 'Component',
+      type: 'string',
+    }),
+    defineField({
+      name: 'component_slug',
+      title: 'Component Slug',
+      type: 'slug',
+      options: {
+        source: 'component',
+        maxLength: 96,
+        isUnique: () => true,
+      },
     }),
   ],
 

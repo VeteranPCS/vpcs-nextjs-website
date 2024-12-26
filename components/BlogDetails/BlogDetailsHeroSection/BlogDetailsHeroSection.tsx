@@ -1,8 +1,10 @@
 import React from "react";
 import "@/styles/globals.css";
 import classes from "./BlogDetailsHeroSection.module.css";
+import { formatDate } from "@/utils/helper";
 
-const BlogDetailsHeroSection = () => {
+
+const BlogDetailsHeroSection = ({blog}: { blog: Record<string, any> }) => {
   return (
     <div className="relative">
       <div className={classes.blogdetailspageherosectioncontainer}>
@@ -14,11 +16,11 @@ const BlogDetailsHeroSection = () => {
               </h1>
               <div className="flex items-center">
                 <p className="text-white lora text-sm font-normal">
-                  04.23.2024
+                  {formatDate(blog?._createdAt)}
                 </p>
                 <p className="bg-white w-[50px] p-[1px] mx-5"></p>
                 <p className="text-white tahoma text-sm font-normal">
-                  Navigating temporary housing during your PCS move
+                  {blog?.title}
                 </p>
               </div>
               <div>
@@ -30,7 +32,7 @@ const BlogDetailsHeroSection = () => {
               </div>
               <div>
                 <h6 className="text-white tahoma text-sm font-bold mt-10">
-                  By VA Loan Expert <br></br>Jennifer Lawrence
+                  By VA Loan Expert <br></br>{blog?.author?.name}
                 </h6>
               </div>
             </div>

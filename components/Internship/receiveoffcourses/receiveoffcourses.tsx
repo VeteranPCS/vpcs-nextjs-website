@@ -1,33 +1,23 @@
-"use client"
 import React from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
-import { useState, useEffect, useCallback } from "react";
 import internshipPageService from "@/services/internshipPageService";
 
-interface pageData {
+export interface IntershipOfferDataProps {
   title: string;
   details: string;
   button_text: string;
 }
 
-const SkillFuturesBuild = () => {
-  const [internshipOffer, setInternshipOffer] = useState<pageData>()
+const SkillFuturesBuild = async () => {
+  let internshipOffer: IntershipOfferDataProps | null = null;
 
-  const fetchActionData = useCallback(async () => {
-    try {
-      const response = await internshipPageService.fetchInternshipOffer()
-      if (!response.ok) throw new Error('Failed to fetch posts')
-      const data = await response.json()
-      setInternshipOffer(data)
-    } catch (error) {
-      console.error('Error fetching posts:', error)
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchActionData()
-  }, [fetchActionData])
+  try {
+    internshipOffer = await internshipPageService.fetchInternshipOffer();
+  } catch (error) {
+    console.error('Failed to fetch Internship Action Items:', error);
+    return <p>Failed to load Internship Action Items.</p>;
+  }
 
   return (
     <div className="w-full">

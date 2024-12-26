@@ -1,51 +1,18 @@
-"use client";
 import "@/styles/globals.css";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useCallback } from "react";
 import aboutService from "@/services/aboutService";
+import { TeamMember } from '@/components/About/AdminTeam/AdminTeam';
 
-interface ImageAsset {
-  image_url?: string;
-}
+const DigitalTeam = async () => {
+  let DigitalTeamDetails: TeamMember[] | null = null;
 
-interface ForegroundImage {
-  asset?: ImageAsset;
-}
-
-interface PageData {
-  _id: string;
-  image?: ForegroundImage;
-  header?: string;
-  description?: string;
-  buttonText?: string;
-  name?: string;
-  designation?: string;
-}
-
-const DigitalTeam = () => {
-  const [DigitalTeamDetails, setDigitalTeamDetails] = useState<PageData[]>([]);
-
-  const fetchDigitalTeamDetails = useCallback(async () => {
-    try {
-      const response =
-        await aboutService.fetchMembersDetail("digital_innovation");
-      if (!response.ok) throw new Error("Failed to fetch posts");
-      const data = await response.json();
-      setDigitalTeamDetails(data);
-    } catch (error) {
-      console.error("Error fetching Digital Team's Data:", error);
-      return (
-        <div>
-          <p>Failed to load Digital Team&apos;s Data. Please try again later.</p>
-        </div>
-      );
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchDigitalTeamDetails();
-  }, [fetchDigitalTeamDetails]);
+  try {
+    DigitalTeamDetails = await aboutService.fetchMembersDetail('digital_innovation');
+  } catch (error) {
+    console.error('Error fetching Digital Innovation Team&apos;s Data:', error);
+    return <p>Failed to load the Digital Innovation Team&apos;s Data.</p>;
+  }
 
   return (
     <div className="bg-white py-3">

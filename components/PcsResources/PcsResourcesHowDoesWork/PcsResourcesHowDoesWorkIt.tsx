@@ -1,17 +1,10 @@
-"use client";
 import React from "react";
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./PcsResourcesHowDoesWorkIt.module.css";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const PcsResourcesHowDoesWorkIt = () => {
-  const router = useRouter();
-
-  // Function to handle button click
-  const handleButtonClick = () => {
-    router.push("/how-it-works"); // Navigate to the "stories" page
-  };
   return (
     <div className={classes.PcsResourcesHowDoesWorkItcontainer}>
       <div className="mx-auto text-center lg:w-[700px] md:w-[500px] sm:w-[400px] w-[400px] py-10">
@@ -25,9 +18,9 @@ const PcsResourcesHowDoesWorkIt = () => {
             not legally allowed we will contact you to help in other ways.
           </p>
         </div>
-        <div className="flex justify-center">
-          <Button buttonText="HOW IT WORKS" onClick={handleButtonClick} />
-        </div>
+        <Link href="/how-it-works" className="flex justify-center">
+          <Button buttonText="HOW IT WORKS" />
+        </Link>
       </div>
     </div>
   );

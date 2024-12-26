@@ -1,77 +1,26 @@
-"use client";
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./FamilySupport.module.css";
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
 import veterenceSupportService from "@/services/veterenceSupportService";
 import SupportContent from "./SupportContent";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { VeteranCommunityProps } from '@/components/homepage/VeteranCommunity/VeteranCommunity';
 
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
-interface ImageAsset {
-  image_url?: string;
-}
 
-interface ForegroundImage {
-  asset?: ImageAsset;
-  alt?: string;
-}
+const FamilySupport = async () => {
+  let pageData: VeteranCommunityProps | null = null;
 
-interface Child {
-  _key: string;
-  marks: string[];
-  text: string;
-}
-
-interface Description {
-  _key?: string;
-  style?: string;
-  children?: Child[];
-}
-
-interface Point {
-  _id?: string;
-  style?: string;
-  children?: Child[];
-}
-
-interface PageData {
-  _id: string;
-  image?: ForegroundImage;
-  icon?: ForegroundImage;
-  title?: string;
-  description?: Description[];
-  button_text?: string;
-  points?: Point[];
-}
-
-const FamilySupport = () => {
-  const router = useRouter();
-
-  // Function to handle button click
-  const handleButtonClick = () => {
-    router.push("/how-it-works"); // Navigate to the "stories" page
-  };
-  const [pageData, setPageData] = useState<PageData | undefined>();
-
-  const fetchFamilyData = useCallback(async () => {
-    try {
-      const response = await veterenceSupportService.fetchVeterenceSupport(
-        "support-veterans-and-their-families"
-      );
-      if (!response.ok) throw new Error("Failed to fetch posts");
-      const data = await response.json();
-      setPageData(data);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchFamilyData();
-  }, [fetchFamilyData]);
+  try {
+    pageData = await veterenceSupportService.fetchVeterenceSupport(
+      "support-our-veteran-community"
+    );
+  } catch (error) {
+    console.error('Failed to fetch Veterence Data:', error);
+    return <p>Failed to load Veterence Data.</p>;
+  }
 
   const validateBlockStyle = (style: string): BlockStyle => {
     const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];
@@ -155,12 +104,11 @@ const FamilySupport = () => {
               ))}
             </div>
 
-            <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center">
+            <Link href="/how-it-works" className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center">
               <Button
                 buttonText={pageData?.button_text || "Learn More"}
-                onClick={handleButtonClick}
               />
-            </div>
+            </Link>
           </div>
         </div>
       </div>

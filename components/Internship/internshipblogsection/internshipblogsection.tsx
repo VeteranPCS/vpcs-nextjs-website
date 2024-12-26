@@ -1,8 +1,6 @@
-"use client"
 import React from "react";
 import "@/styles/globals.css";
 import Image from "next/image";
-import { useState, useEffect, useCallback } from "react";
 import internshipPageService from "@/services/internshipPageService";
 
 interface ImageAsset {
@@ -12,30 +10,22 @@ interface ActionImage {
   asset: ImageAsset;
   alt: string
 }
-interface pageData {
+export interface InternshipActionDataProps {
   _id: string;
   action_image: ActionImage
   title: string;
   description: string;
 }
 
-const PcsResourcesCalculators = () => {
-  const [internshipActionData, setInternshipActionData] = useState<pageData[]>([])
+const PcsResourcesCalculators = async () => {
+  let internshipActionData: InternshipActionDataProps[] = [];
 
-  const fetchActionData = useCallback(async () => {
-    try {
-      const response = await internshipPageService.fetchActionItem()
-      if (!response.ok) throw new Error('Failed to fetch posts')
-      const data = await response.json()
-      setInternshipActionData(data)
-    } catch (error) {
-      console.error('Error fetching posts:', error)
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchActionData()
-  }, [fetchActionData])
+  try {
+    internshipActionData = await internshipPageService.fetchActionItem();
+  } catch (error) {
+    console.error('Failed to fetch Internship Action Items:', error);
+    return <p>Failed to load Internship Action Items.</p>;
+  }
 
   return (
     <div className="bg-[#E8E8E8] py-12 px-5">
@@ -56,8 +46,6 @@ const PcsResourcesCalculators = () => {
                     {data?.title}
                   </h3>
                   <p className="text-[#000000] roboto lg:text-[18px] md:text-[18px] sm:text-[13px] text-[13px] font-light mt-1">
-                    {/* Utilize our recommended moving calculator to estimate the cost
-                    of your move. **Not available for overseas moves** */}
                     {data?.description}
                   </p>
                 </div>

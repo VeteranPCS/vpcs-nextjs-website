@@ -192,3 +192,7 @@ blockquote {
   font-family: 'lora-normal', sans-serif;
   letter-spacing: 0.5px;
 }
+
+.comlogoslider .slick-initialized .slick-slide{
+  margin:0px 10px !important;
+}

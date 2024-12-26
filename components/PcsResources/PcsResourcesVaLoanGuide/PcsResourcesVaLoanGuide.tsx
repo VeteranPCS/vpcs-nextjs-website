@@ -51,7 +51,8 @@ const PcsResourcesVaLoanGuide = () => {
             <div className="flex items-center">
               <div className="bg-[#F9F9F9] rounded-[3px] border border-[#D3D3D3] py-5 px-5 mr-5 w-[200px]">
                 <div className={classes.CheckboxContainer}>
-                  <input
+                  <input  
+                    type="checkbox" 
                     className={classes.CustomCheckbox}
                     checked={isChecked}
                     onClick={handleCheckboxChange}

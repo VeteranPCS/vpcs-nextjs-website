@@ -1,51 +1,19 @@
-"use client"
 import "@/styles/globals.css";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useCallback } from "react";
 import aboutService from "@/services/aboutService";
+import { TeamMember } from '@/components/About/AdminTeam/AdminTeam';
 
-interface ImageAsset {
-  image_url?: string;
-}
+const CeoFounder = async () => {
+  let CEODetails: TeamMember[] | null = null;
 
-interface ForegroundImage {
-  asset?: ImageAsset;
-}
-
-interface PageData {
-  _id: string;
-  image?: ForegroundImage;
-  header?: string;
-  description?: string;
-  buttonText?: string;
-  name?: string;
-  designation?: string;
-}
-
-const CeoFounder = () => {
-  const [CEODetails, setCEODetails] = useState<PageData[]>([]);
-
-  const fetchCeoDetails = useCallback(async () => {
-    try {
-      const response = await aboutService.fetchMembersDetail('founder')
-      if (!response.ok) throw new Error('Failed to fetch posts')
-      const data = await response.json()
-      setCEODetails(data)
-    } catch (error) {
-      console.error('Error fetching CEO Founder Data:', error)
-      return (
-        <div>
-          <p>Failed to load CEO Founder Data. Please try again later.</p>
-        </div>
-      );
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchCeoDetails()
-  }, [fetchCeoDetails])
-
+  try {
+    CEODetails = await aboutService.fetchMembersDetail('founder');
+  } catch (error) {
+    console.error('Error fetching Founder&apos;s Data:', error);
+    return <p>Failed to load the Founder&apos;s Data.</p>;
+  }
+  
   return (
     <div className="pt-14">
       <div>

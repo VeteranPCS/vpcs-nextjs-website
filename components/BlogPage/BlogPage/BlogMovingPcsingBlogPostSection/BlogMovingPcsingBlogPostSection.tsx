@@ -1,8 +1,92 @@
 import React from "react";
 import "@/styles/globals.css";
 import BlogMovingPcsingPost from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPostSection/BlogMovingPcsingPost";
+import { Metadata } from "next";
+import blogService from '@/services/blogService';
 
-const StatePageHeroSecondSection = () => {
+export interface Author {
+  name: string;
+  image: string;
+  designation: string;
+}
+
+export interface Category {
+  _id: string;
+  title: string;
+}
+
+export interface BlogDetails {
+  _id: string;
+  title: string;
+  content: any[];
+  _createdAt: string;
+  slug: { current: string };
+  mainImage: { image_url: string; alt: string };
+  categories: Category[];
+  author: Author;
+}
+
+const META_DESCRIPTION = "Our blog is an excellent resource for new parents and caregivers. We cover topics such as postpartum care, newborn care, and more!";
+const META_TITLE = "Blog - Resources and Information";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/blog`,
+  },
+  title: META_TITLE,
+  description: META_DESCRIPTION,
+  openGraph: {
+    title: META_TITLE,
+    description: META_DESCRIPTION,
+    url: `${process.env.NEXT_PUBLIC_BASE_URL}/blog`,
+    type: "website",
+    siteName: "Yuzi Care",
+    images: [
+      {
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/images/logo/yuzi-full-logo-three-c.png`,
+        width: 800,
+        height: 600,
+        alt: "Yuzi Care Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: META_TITLE,
+    description: META_DESCRIPTION,
+    creator: "@yuzicare",
+    images: [
+      {
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/images/logo/yuzi-full-logo-three-c.png`,
+        alt: "Yuzi Care Logo",
+      },
+    ],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+    },
+  },
+};
+
+const StatePageHeroSecondSection = async () => {
+  let blogs: BlogDetails[] | null = null;
+
+  try {
+    blogs = await blogService.fetchBlogs("moving-or-pcsing-in-2024");
+  } catch (error) {
+    console.error("Error fetching blogs", error);
+  }
+
+  if (!blogs) {
+    return <p>Failed to load the blog.</p>;
+  }
+
   return (
     <div className="relative py-12 md:px-0 px-5">
       <div className="container mx-auto">
@@ -46,10 +130,10 @@ const StatePageHeroSecondSection = () => {
                   viewBox="0 0 14 15"
                   fill="none"
                 >
-                  <g clip-path="url(#clip0_1165_239)">
+                  <g clipPath="url(#clip0_1165_239)">
                     <path
-                      fill-rule="evenodd"
-                      clip-rule="evenodd"
+                      fillRule="evenodd"
+                      clipRule="evenodd"
                       d="M9.8833 9.43232L13.4698 13.0188C13.5959 13.145 13.6666 13.316 13.6666 13.4944C13.6665 13.6727 13.5956 13.8437 13.4695 13.9698C13.3433 14.0958 13.1723 14.1666 12.9939 14.1666C12.8156 14.1665 12.6446 14.0956 12.5185 13.9694L8.93201 10.3829C7.85987 11.2134 6.51165 11.6041 5.16161 11.4758C3.81157 11.3474 2.56113 10.7096 1.66467 9.69205C0.768216 8.67448 0.293077 7.35363 0.335916 5.99818C0.378755 4.64273 0.936354 3.35451 1.89528 2.39558C2.8542 1.43666 4.14242 0.87906 5.49787 0.836221C6.85332 0.793382 8.17418 1.26852 9.19174 2.16498C10.2093 3.06144 10.8471 4.31188 10.9755 5.66191C11.1038 7.01195 10.713 8.36018 9.88264 9.43232H9.8833ZM5.66683 10.1663C6.72765 10.1663 7.74502 9.74488 8.49513 8.99477C9.24524 8.24466 9.66665 7.22729 9.66665 6.16647C9.66665 5.10566 9.24524 4.08829 8.49513 3.33818C7.74502 2.58807 6.72765 2.16666 5.66683 2.16666C4.60602 2.16666 3.58865 2.58807 2.83854 3.33818C2.08843 4.08829 1.66702 5.10566 1.66702 6.16647C1.66702 7.22729 2.08843 8.24466 2.83854 8.99477C3.58865 9.74488 4.60602 10.1663 5.66683 10.1663V10.1663Z"
                       fill="white"
                     />
@@ -75,20 +159,15 @@ const StatePageHeroSecondSection = () => {
           </div>
         </div>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-1 grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 ">
-            <BlogMovingPcsingPost />
-            <BlogMovingPcsingPost />
-            <BlogMovingPcsingPost />
-            <BlogMovingPcsingPost />
-            <BlogMovingPcsingPost />
-            <BlogMovingPcsingPost />
-            <BlogMovingPcsingPost />
-            <BlogMovingPcsingPost />
+          {blogs?.map((blog) => (
+            <BlogMovingPcsingPost key={blog._id} blogDetails={blog} />
+          ))}
         </div>
         <div className="flex justify-end mt-5 sm:hidden ">
-              <button className="text-[#292F6C] robot text-sm font-bold ">
-                View All
-              </button>
-            </div>
+          <button className="text-[#292F6C] robot text-sm font-bold ">
+            View All
+          </button>
+        </div>
       </div>
     </div>
   );

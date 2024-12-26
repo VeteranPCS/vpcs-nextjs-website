@@ -1,11 +1,9 @@
-"use client";
 import React from "react";
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
-import { useState, useEffect, useCallback } from "react";
 import aboutService from "@/services/aboutService";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface ImageAsset {
   image_url?: string;
@@ -13,6 +11,7 @@ interface ImageAsset {
 
 interface ForegroundImage {
   asset?: ImageAsset;
+  alt?: string;
 }
 
 interface PageData {
@@ -20,33 +19,20 @@ interface PageData {
   header?: string;
   description?: string;
   buttonText?: string;
+  background_image?: ForegroundImage;
 }
 
-const HowVetPcsStarted = () => {
-  const router = useRouter();
+export interface AboutVetPcsResponse extends PageData {}
 
-  // Function to handle button click
-  const handleButtonClick = () => {
-    router.push("/how-it-works"); // Navigate to the "stories" page
-  };
-  const [pageData, SetPageData] = useState<PageData>({});
+const HowVetPcsStarted = async () => {
+  let pageData: AboutVetPcsResponse | null = null;
 
-  const fetchOverviewData = useCallback(async () => {
-    try {
-      const response = await aboutService.fetchOverviewDetails(
-        "how_veternce_pcs_started"
-      );
-      if (!response.ok) throw new Error("Failed to fetch posts");
-      const data = await response.json();
-      SetPageData(data);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchOverviewData();
-  }, [fetchOverviewData]);
+  try {
+    pageData = await aboutService.fetchOverviewDetails('how_veternce_pcs_started');
+  } catch (error) {
+    console.error('Error fetching About Overview:', error);
+    return <p>Failed to load the Digital Innovation Team&apos;s Data.</p>;
+  }
 
   return (
     <div className="bg-[#EEEEEE] pt-14 pb-8 md:pb-0">
@@ -80,12 +66,11 @@ const HowVetPcsStarted = () => {
                 </p>
               ))}
             </div>
-            <div className="flex justify-center">
+            <Link href="/how-it-works" className="flex justify-center">
               <Button
                 buttonText={pageData.buttonText || "Default Button"}
-                onClick={handleButtonClick}
               />
-            </div>
+            </Link>
           </div>
         </div>
       </div>

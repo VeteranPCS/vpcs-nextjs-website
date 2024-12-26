@@ -12,7 +12,6 @@ interface ReviewDocument extends SanityDocument {
 export async function GET() {
     try {
         const additionalStories = await client.fetch<ReviewDocument[]>(`*[_type == "additionalSuccessStories"]`)
-        console.log(additionalStories);
 
         additionalStories.forEach((review) => {
             if (review.image?.asset?._ref) {

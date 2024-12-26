@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import mediaAccountService from "@/services/mediaAccountService";
 
-interface PageData {
+export interface MediaAccountProps {
   _id: string;
   name: string;
   designation?: string;
@@ -17,7 +17,7 @@ interface PageData {
 
 const KeepInTouch = () => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [mediaAccount, SetMediaAccount] = useState<PageData[]>([]);
+  const [mediaAccount, SetMediaAccount] = useState<MediaAccountProps[]>([]);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
@@ -26,9 +26,7 @@ const KeepInTouch = () => {
   const fetchMediaAccounts = useCallback(async () => {
     try {
       const response = await mediaAccountService.fetchAccounts()
-      if (!response.ok) throw new Error('Failed to fetch posts')
-      const data = await response.json()
-      SetMediaAccount(data)
+      SetMediaAccount(response)
     } catch (error) {
       console.error('Error fetching posts:', error)
     }
@@ -134,11 +132,12 @@ const KeepInTouch = () => {
                 <div className="bg-[#F9F9F9] rounded-[3px] border border-[#D3D3D3] py-5 px-5 mr-5 w-[200px]">
                   <div className={classes.CheckboxContainer}>
                     <input
+                      type="checkbox" 
                       className={classes.CustomCheckbox}
                       checked={isChecked}
                       onClick={handleCheckboxChange}
                     />
-                    <div className={classes.CheckboxLabel} style={{ fontSize: "16px" }}>
+                    <div className={classes.CheckboxLabel}>
                       I&apos;m not a robot
                     </div>
                   </div>

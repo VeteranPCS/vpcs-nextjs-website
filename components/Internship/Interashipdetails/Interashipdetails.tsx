@@ -1,8 +1,6 @@
-"use client"
 import React from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
 import Image from "next/image";
-import { useState, useEffect, useCallback } from "react";
 import internshipPageService from "@/services/internshipPageService";
 
 interface ImageAsset {
@@ -12,7 +10,7 @@ interface ActionImage {
   asset: ImageAsset;
   alt: string
 }
-interface pageData {
+export interface IntershipBenefitDataProps {
   _id: string;
   logo: ActionImage
   title: string;
@@ -28,23 +26,15 @@ interface Children {
   text: string
 }
 
-const SkillFuturesBuild = () => {
-  const [internshipBenefitData, setInternshipBenefitData] = useState<pageData>()
+const SkillFuturesBuild = async () => {
+  let internshipBenefitData: IntershipBenefitDataProps | null = null;
 
-  const fetchActionData = useCallback(async () => {
-    try {
-      const response = await internshipPageService.fetchInternshipBenefits()
-      if (!response.ok) throw new Error('Failed to fetch posts')
-      const data = await response.json()
-      setInternshipBenefitData(data)
-    } catch (error) {
-      console.error('Error fetching posts:', error)
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchActionData()
-  }, [fetchActionData])
+  try {
+    internshipBenefitData = await internshipPageService.fetchInternshipBenefits();
+  } catch (error) {
+    console.error('Failed to fetch Internship Action Items:', error);
+    return <p>Failed to load Internship Action Items.</p>;
+  }
 
   return (
     <div className="w-full relative lg:py-12 sm:py-5 py-5 lg:px-0 px-5">

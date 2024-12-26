@@ -1,18 +1,16 @@
-"use client";
 import React from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./AboutOurStory.module.css";
 import Image from "next/image";
-import { useEffect, useState, useCallback } from "react";
 import impactService from "@/services/impactService";
 import SupportContent from "@/components/homepage/FamilySupport/SupportContent";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
-interface PageData {
+export interface OurStoryProps {
   foreground_image?: ForegroundImage;
   header?: string;
   description?: Description[];
@@ -41,29 +39,15 @@ interface Child {
   text: string;
 }
 
-const FamilySupport = () => {
-  const router = useRouter();
+const FamilySupport = async () => {
+  let storyDetails: OurStoryProps | null = null;
 
-  // Function to handle button click
-  const handleButtonClick = () => {
-    router.push("/about"); // Navigate to the "stories" page
-  };
-  const [storyDetails, setStoryDetails] = useState<PageData>();
-
-  const fetchStoryDetails = useCallback(async () => {
-    try {
-      const response = await impactService.fetchOurStory();
-      if (!response.ok) throw new Error("Failed to fetch posts");
-      const data = await response.json();
-      setStoryDetails(data);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchStoryDetails();
-  }, [fetchStoryDetails]);
+  try {
+    storyDetails = await impactService.fetchOurStory();
+  } catch (error) {
+    console.error('Failed to fetch Our Story:', error);
+    return <p>Failed to load Family Support Data.</p>;
+  }
 
   const validateBlockStyle = (style: string): BlockStyle => {
     const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];
@@ -108,12 +92,11 @@ const FamilySupport = () => {
                 ))}
               </p>
             </div>
-            <div className="sm:mt-0 mt-16">
+            <Link href="/about" className="sm:mt-0 mt-16">
               <Button
                 buttonText={storyDetails?.buttonText || "OUR STORY"}
-                onClick={handleButtonClick}
               />
-            </div>
+            </Link>
           </div>
         </div>
       </div>

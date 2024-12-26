@@ -1,11 +1,10 @@
-"use client";
+// "use client";
 import React from "react";
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
-import { useState, useEffect, useCallback } from "react";
 import aboutService from "@/services/aboutService";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 interface ImageAsset {
   image_url?: string;
 }
@@ -14,7 +13,7 @@ interface ForegroundImage {
   asset?: ImageAsset;
 }
 
-interface PageData {
+export interface SupportSpanishProps {
   _id: string;
   image?: ForegroundImage;
   header_1?: string;
@@ -27,41 +26,18 @@ interface PageData {
   designation?: string;
 }
 
-const SupportSpanish = () => {
-  const router = useRouter();
+const SupportSpanish = async () => {
+  let pageData: SupportSpanishProps | null = null;
 
-  // Function to handle button click
-  const handleContactButtonClick = () => {
-    router.push("/contact"); // Navigate to the "stories" page
-  };
-  const handleImpactButtonClick = () => {
-    router.push("/impact"); // Navigate to the "stories" page
-  };
-  const [pageData, SetPageData] = useState<PageData>({} as PageData);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchOverviewData = useCallback(async () => {
-    try {
-      const response = await aboutService.fetchSupportComponent()
-      if (!response.ok) throw new Error('Failed to fetch posts')
-      const data = await response.json()
-      SetPageData(data)
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error fetching posts:', error)
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchOverviewData();
-  }, [fetchOverviewData]);
+  try {
+    pageData = await aboutService.fetchSupportComponent();
+  } catch (error) {
+    console.error('Error fetching Support Spanish Page:', error);
+    return <p>Failed to load the Support Spanish Page.</p>;
+  }
 
   return (
     <div>
-      {/* {isLoading ? (
-        <Loader /> // Show the loader while data is loading
-      ) : ( */}
         <div className="w-full lg:py-10 md:py-10 sm:py-10 py-10 px-9 sm:px-0">
           <div>
             <div className="container mx-auto w-full">
@@ -83,7 +59,7 @@ const SupportSpanish = () => {
                       </p>
                     </div>
                     <div className="flex justify-start">
-                      <Button buttonText={pageData?.buttonText_1} />
+                      <Button buttonText={pageData?.buttonText_1 || "Default Button"} />
                     </div>
                   </div>
                   <div>
@@ -108,16 +84,15 @@ const SupportSpanish = () => {
                         {pageData?.description_2}
                       </p>
                     </div>
-                    <div className="flex lg:justify-start md:justify-start sm:justify-start justify-start items-center">
-                      <Button buttonText={pageData?.buttonText_2} onClick={handleImpactButtonClick}/>
-                    </div>
+                    <Link href="/impact" className="flex lg:justify-start md:justify-start sm:justify-start justify-start items-center">
+                      <Button buttonText={pageData?.buttonText_2 || "Default Button"}/>
+                    </Link>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      {/* )} */}
     </div>
 
   );

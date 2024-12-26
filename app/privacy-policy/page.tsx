@@ -1,4 +1,3 @@
-"use client";
 import PrivacyPolicy from "@/components/PrivacyPolicy/PrivacyPolicy";
 import Footer from "@/components/Footer/Footer";
 
