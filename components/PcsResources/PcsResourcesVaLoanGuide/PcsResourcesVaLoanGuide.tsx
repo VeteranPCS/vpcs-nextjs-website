@@ -54,7 +54,7 @@ const PcsResourcesVaLoanGuide = () => {
                   <input  
                     type="checkbox" 
                     className={classes.CustomCheckbox}
-                    checked={isChecked}
+                    defaultChecked={isChecked}
                     onClick={handleCheckboxChange}
                   />
                   <div className={classes.CheckboxLabel}>

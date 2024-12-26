@@ -83,18 +83,18 @@ const VeteranComunity = async () => {
               <h1 className="text-white poppins lg:text-left md:text-left sm:text-center text-center text-3xl font-bold leading-[30px] mt-5">
                 {pageData?.title}
               </h1>
-              <p className="text-white text-xl lg:text-left md:text-left sm:text-center text-center italic font-medium leading-[25px] mt-4 roboto">
+              <div className="text-white text-xl lg:text-left md:text-left sm:text-center text-center italic font-medium leading-[25px] mt-4 roboto">
                 {pageData?.description?.map((block, index) => (
                   <SupportContent
                     key={block._key || `description-${index}`}
                     block={{
                       ...block,
                       style: validateBlockStyle(block.style),
-                      children: block.children || [], // Ensure children is always an array
+                      children: block.children || [], 
                     }}
                   />
                 ))}
-              </p>
+              </div>
             </div>
             <div className="mt-5">
               {pageData?.points?.map((point, index) => (

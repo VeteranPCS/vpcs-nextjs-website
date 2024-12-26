@@ -51,23 +51,27 @@ export default async function Home({ params }: { params: { city: string } }) {
     console.error("Error fetching State Agent List", error);
   }
 
-  if (!state_data || !Object.keys(formatted_data).length) {
+  if (!state_data) {
     return <p>Failed to load data for the city.</p>;
   }
 
   return (
     <>
-      <StatePageHeroSection cityName={state_data.city_name} cityImage={state_data.city_map} cityList={Object.keys(formatted_data)} />
+      <StatePageHeroSection
+        cityName={state_data?.city_name || 'Unknown'}
+        cityImage={state_data?.city_map}  // Pass cityImage as an object
+        cityList={Object.keys(formatted_data)}
+      />
       <StatePageHeroSecondSection />
-      <StatePageVaLoan cityName={state_data.city_name} lendersData={lenders_data} />
-      <StatePageCTA cityName={state_data.city_name} />
+      <StatePageVaLoan cityName={state_data?.city_name || 'Unknown'} lendersData={lenders_data} />
+      <StatePageCTA cityName={state_data?.city_name || 'Unknown'} />
 
       {Object.entries(formatted_data).map(([cityName, agents]: [string, any[]]) => (
         <StatePageCityAgents key={cityName} city={cityName} agent_data={agents} />
       ))}
 
       <StatePageLetFindAgent />
-      <StatePageWhyChooseVetpcs cityName={state_data.city_name} />
+      <StatePageWhyChooseVetpcs cityName={state_data?.city_name || 'Unknown'} />
       <MemoizedFrequentlyAskedQuestion />
       <KeepInTouch />
       <Footer />

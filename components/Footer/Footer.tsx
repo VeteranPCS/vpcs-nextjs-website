@@ -58,6 +58,10 @@ const Locations = () => {
     "Wyoming",
   ];
 
+  const formattedLocation = (location: string) => {
+    return location.toLowerCase().replace(/\s+/g, '-');
+  }
+
   return (
     <div className={classes.FooterLocationsContainer}>
       <div className={classes.FooterContainer}>
@@ -71,7 +75,7 @@ const Locations = () => {
             {locations.map((location, index) => (
               <div key={index} className={classes.LocationItem}>
                 <Link
-                  href="#"
+                  href={`/${formattedLocation(location)}`}
                   className="text-white text-center roboto text-base font-medium"
                 >
                   {location}
