@@ -80,12 +80,12 @@ const Covered = () => {
         data-aos-duration="1000"
       >
         {cardsData.map((card, index) => (
-          <Link href={card.link} key={index}>
+          // <Link href={card.link} key={index}>
             <CoveredComp
               key={index}
               card={card} // Only pass 'card' object here
             />
-          </Link>
+          // </Link>
         ))}
       </div>
     </div>
