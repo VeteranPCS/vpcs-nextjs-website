@@ -93,6 +93,37 @@ export const salesForceAPI = async ({
     return res;  // Return the response or error
 };
 
+export const salesForceImageAPI = async ({
+    endpoint,
+    data,
+    type
+}: ApiParams): Promise<AxiosResponse | undefined> => {
+    let res: AxiosResponse | undefined;
+
+    if(!SALESFORCETOKEN) {
+        await getSalesforceToken()
+    }
+    
+    const config: AxiosRequestConfig = {
+        url: endpoint,
+        method: type as any,
+        data,
+        headers: {
+            "Cache-Control": "no-cache", 
+            Authorization: `Bearer ${SALESFORCETOKEN}`,
+        },
+        responseType: 'arraybuffer'
+    };
+
+    try {
+        res = await axios(config);  
+    } catch (err: any) {
+        res = err.response; 
+    }
+
+    return res;  // Return the response or error
+};
+
 export const salesForceTokenAPI = async ({
     endpoint,
     data,
