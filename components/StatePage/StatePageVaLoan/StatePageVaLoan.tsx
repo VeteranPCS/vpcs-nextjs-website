@@ -22,51 +22,51 @@ const StatePageVaLoan = ({ cityName, lendersData }: { cityName: string, lendersD
           </p>
         </div>
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-10 mt-10">
-        {Array.isArray(lendersData) || !lendersData.records
+          {Array.isArray(lendersData) || !lendersData.records
             ? <p>No lenders available</p>
             : lendersData.records.map((lender: Lenders) => (
-                <div key={lender.Id} className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4">
-                  <div className="justify-center items-center flex flex-col">
-                    <div className="rounded-full bg-[#E1EDFB] sm:w-[200px] sm:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
-                      <Image
-                        src={lender?.PhotoUrl}
-                        alt={`${lender?.Name}'s Profile Picture`}
-                        width={1000}
-                        height={1000}
-                        className="w-auto h-auto object-cover"
-                      />
-                    </div>
-                    <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${lender.BillingState}`}>
-                      <Button buttonText="Contact Now" />
-                    </Link>
+              <div key={lender.Id} className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4">
+                <div className="justify-center items-center flex flex-col">
+                  <div className="rounded-full bg-[#E1EDFB] sm:w-[200px] sm:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
+                    <Image
+                      src={lender?.PhotoUrl}
+                      alt={`${lender?.Name}'s Profile Picture`}
+                      width={1000}
+                      height={1000}
+                      className="w-auto h-auto object-cover"
+                    />
                   </div>
-                  <div className="pl-10">
-                    <div>
-                      <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[24px] text-[24px] font-bold">
-                        {lender?.Name}
-                      </h3>
-                      <p className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal sm:mt-4 mt-0">
-                        <b>{lender?.Military_Status__pc}</b>
-                        <br />
-                        NMLS: {lender.Individual_NMLS_ID__pc}<br />
-                        {lender.Military_Service__pc}<br />
-                        NMLS: {lender.Company_NMLS_ID__pc}
-                      </p>
-                      <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 line-clamp-3">
-                        {lender?.Agent_Bio__pc}
-                      </p>
-                      <div className="flex justify-end mt-2">
-                        <Link
-                          href="#"
-                          className=" text-[#292F6C] tahoma text-sm font-bold"
-                        >
-                          Read More
-                        </Link>
-                      </div>
+                  <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${lender.BillingState.toLowerCase().split(' ').join('-')}`}>
+                    <Button buttonText="Contact Now" />
+                  </Link>
+                </div>
+                <div className="pl-10">
+                  <div>
+                    <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[24px] text-[24px] font-bold">
+                      {lender?.Name}
+                    </h3>
+                    <p className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal sm:mt-4 mt-0">
+                      <b>{lender?.Military_Status__pc}</b>
+                      <br />
+                      NMLS: {lender.Individual_NMLS_ID__pc}<br />
+                      {lender.Military_Service__pc}<br />
+                      NMLS: {lender.Company_NMLS_ID__pc}
+                    </p>
+                    <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 line-clamp-3">
+                      {lender?.Agent_Bio__pc}
+                    </p>
+                    <div className="flex justify-end mt-2">
+                      <Link
+                        href="#"
+                        className=" text-[#292F6C] tahoma text-sm font-bold"
+                      >
+                        Read More
+                      </Link>
                     </div>
                   </div>
                 </div>
-              ))}
+              </div>
+            ))}
         </div>
       </div>
     </div>
