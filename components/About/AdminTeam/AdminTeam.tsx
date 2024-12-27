@@ -7,14 +7,19 @@ export interface ImageAsset {
   image_url?: string;
 }
 
-export interface ForegroundImage {
-  asset?: ImageAsset;
-  alt?: string;
+interface MainImage {
+  alt: string; // Alternative text for the image
+  asset: {
+    image_url?: string; // URL of the image
+    _ref: string; // Reference ID for the image asset
+    _type: string; // Type of the asset, typically "reference"
+  };
+  _type: "image"; // Type of the main image, typically "image"
 }
 
 export interface TeamMember {
   _id: string;
-  image: ForegroundImage;
+  image: MainImage;
   description: string;
   buttonText: string;
   name: string;
@@ -30,7 +35,7 @@ const AdminTeam = async () => {
     console.error('Error fetching Administrations Team&apos;s Data:', error);
     return <p>Failed to load the Administrations Team&apos;s Data.</p>;
   }
-  
+
   return (
     <div>
       <div className="bg-[#FFFFFF] pt-7 pb-14 px-9 sm:px-0">

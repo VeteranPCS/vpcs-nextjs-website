@@ -1,16 +1,43 @@
 import { API_ENDPOINTS } from '@/constants/api'
-import { api, RequestType } from '@/services/api';
+import { api, RequestType } from '@/services/api'
+import { SanityDocument } from '@sanity/client'
+import { urlForImage } from '@/sanity/lib/image'
+import { client } from '@/sanity/lib/client'
+
+interface MainImage {
+    alt: string; // Alternative text for the image
+    asset: {
+        image_url: string; // URL of the image
+        _ref: string; // Reference ID for the image asset
+        _type: string; // Type of the asset, typically "reference"
+    };
+    _type: "image"; // Type of the main image, typically "image"
+}
+
+interface AgentDocument extends SanityDocument {
+    mainImage: MainImage;
+    publishedAt: string;
+    title: string;
+    _createdAt: string;
+    _id: string;
+    _rev: string;
+    _type: 'agents';
+    _updatedAt: string;
+}
 
 const AgentServices = {
-    fetchAgentsList: async (): Promise<Response> => {
+    fetchAgentsList: async (): Promise<AgentDocument[]> => {
         try {
-            const response = await api({
-                endpoint: API_ENDPOINTS.agents,
-                type: RequestType.GET,
+            const agents = await client.fetch<AgentDocument[]>(`*[_type == "real-state-agents"]`);
+
+            agents.forEach((agent) => {
+                if (agent.mainImage?.asset?._ref) {
+                    agent.mainImage.asset.image_url = urlForImage(agent.mainImage.asset);
+                }
             });
 
-            if (response?.status === 200) {
-                return response.data;
+            if (agents) {
+                return agents;
             } else {
                 throw new Error('Failed to Fetch About Page Details');
             }

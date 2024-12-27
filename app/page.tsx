@@ -17,20 +17,12 @@ import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
 import { memo } from "react";
 
 const MemoizedStateMap = memo(StateMap);
-// const MemoizedHeroSection = memo(HeroSection);
 const MemoizedAgent = memo(Agent);
 const MemoizedTestimonials = memo(Testimonials);
 const MemoizedVideoFamily = memo(VideoFamily);
 const MemoizedCovered = memo(Covered);
 const MemoizedFamilySupport = memo(FamilySupport);
-// const MemoizedVeteranPCS = memo(VeteranPCS);
-// const MemoizedMakeItHome = memo(MakeItHome);
 const MemoizedVeteranComunity = memo(VeteranComunity);
-// const MemoizedWhyVeteranPcs = memo(WhyVeteranPcs);
-// const MemoizedAgentLoanExpert = memo(AgentLoanExpert);
-// const MemoizedSkillFuturesBuild = memo(SkillFuturesBuild);
-// const MemoizedKeepInTouch = memo(KeepInTouch);
-// const MemoizedFooter = memo(Footer);
 const MemoizedReviewsList = memo(ReviewsList);
 
 export default function Home() {

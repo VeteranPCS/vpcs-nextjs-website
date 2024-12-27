@@ -8,7 +8,7 @@ export default async function ReviewsList() {
     let reviewsList = null;
 
     try {
-        reviewsList = await reviewService.fetchReviews();        
+        reviewsList = await reviewService.fetchReviews();
     } catch (error) {
         console.error("Error fetching reviews", error);
     }
@@ -19,6 +19,6 @@ export default async function ReviewsList() {
     }
 
     return (
-        <MemoizedReviewTestimonial reviewsList={reviewsList}/>
+        <MemoizedReviewTestimonial reviewsList={reviewsList} />
     )
 } 

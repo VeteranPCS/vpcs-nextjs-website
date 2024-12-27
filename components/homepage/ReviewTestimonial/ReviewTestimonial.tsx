@@ -5,7 +5,7 @@ import ReviewTestimonialSlider from "@/components/homepage/ReviewTestimonial/Rev
 import classes from "./ReviewTestimonial.module.css";
 import Link from "next/link";
 
-interface Review {
+export interface Review {
   _id: string; // Assuming each review has a unique id
   name: string;
   message: string;
