@@ -1,7 +1,8 @@
 import { API_ENDPOINTS, VETERENCE_SALESFORCE_BASE_URL } from '@/constants/api'
 import { api, RequestType, salesForceAPI, salesForceImageAPI } from '@/services/api';
 import { getSalesforceToken } from '@/services/salesForceTokenService';
-import { SALESFORCETOKEN } from '@/services/salesForceTokenService';
+import { client } from '@/sanity/lib/client';
+import { urlForImage } from '@/sanity/lib/image';
 
 interface StateMap {
   _type: 'image';
@@ -83,12 +84,9 @@ export interface LendersData {
 const stateService = {
   fetchStateList: async (): Promise<StateList[]> => {
     try {
-      const response = await api({
-        endpoint: API_ENDPOINTS.fetchStateList,
-        type: RequestType.GET,
-      });
-      if (response?.status === 200) {
-        return response.data as StateList[];
+      const response = await client.fetch(`*[_type == "city_list"]{ city_slug }`)
+      if (response) {
+        return response as StateList[];
       } else {
         throw new Error('Failed to fetch State List');
       }
@@ -99,13 +97,13 @@ const stateService = {
   },
   fetchStateDetails: async (state: string): Promise<StateList> => {
     try {
-      const response = await api({
-        endpoint: `${API_ENDPOINTS.fetchStateDetails}?state=${state}`,
-        type: RequestType.GET,
-      });
+      const state_detail = await client.fetch<StateList>(`*[_type == "city_list" && city_slug.current == $city][0]`, { city: state });
 
-      if (response?.status === 200) {
-        return response.data as StateList;
+      if (state_detail.city_map?.asset?._ref) {
+        state_detail.city_map.asset.image_url = urlForImage(state_detail.city_map.asset);  // Add the image URL to the response
+      }
+      if (state_detail) {
+        return state_detail as StateList
       } else {
         throw new Error('Failed to fetch Reviews');
       }

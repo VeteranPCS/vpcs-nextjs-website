@@ -20,7 +20,9 @@ const MemoizedFrequentlyAskedQuestion = memo(FrequentlyAskedQuestion);
 
 export async function generateStaticParams() {
   try {
+    console.log('Generating static params...');
     const states = await stateService.fetchStateList();
+    console.log('States:', states);
     return states.map((state) => ({
       state: state.city_slug.current,
     }));
@@ -32,6 +34,7 @@ export async function generateStaticParams() {
 }
 
 export default async function Home({ params }: { params: { state: string } }) {
+  console.log('Params:', params);
   const { state } = params;
   let state_data: StateList | null = null;
   let agents_data: AgentsData | [] = [];
