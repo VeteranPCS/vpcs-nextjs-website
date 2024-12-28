@@ -1,4 +1,4 @@
-import Image from "next/image";
+"use client";
 import { useState, FormEvent, useCallback, useEffect } from 'react';
 import { FormData } from "@/app/get-listed-lenders/page";
 import initService from '@/services/initService';

@@ -3,18 +3,25 @@ import "@/styles/globals.css";
 import Image from "next/image";
 import internshipPageService from "@/services/internshipPageService";
 
-interface ImageAsset {
-  image_url: string;
-}
 interface ActionImage {
-  asset: ImageAsset;
-  alt: string
+  action_image?: {
+    asset?: {
+      _ref: string;
+      image_url?: string; // Make sure image_url exists here
+    };
+  }
 }
 export interface InternshipActionDataProps {
   _id: string;
-  action_image: ActionImage
   title: string;
   description: string;
+  action_image?: {
+    alt?: string;
+    asset?: {
+      _ref: string;
+      image_url?: string; // Make sure image_url exists here
+    };
+  }
 }
 
 const PcsResourcesCalculators = async () => {
@@ -37,8 +44,8 @@ const PcsResourcesCalculators = async () => {
                 <Image
                   width={1000}
                   height={237}
-                  src={data?.action_image?.asset?.image_url || "/assets/successful-team1.png"} 
-                  alt={data?.action_image?.alt || "check"} 
+                  src={data?.action_image?.asset?.image_url || "/assets/successful-team1.png"}
+                  alt={data?.action_image?.alt || "check"}
                   className="w-full lg:h-[356px] h-auto"
                 />
                 <div className="mt-5">

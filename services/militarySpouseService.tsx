@@ -1,5 +1,5 @@
-import { API_ENDPOINTS } from '@/constants/api'
-import { api, RequestType } from '@/services/api';
+import { client } from '@/sanity/lib/client'
+import { urlForImage } from '@/sanity/lib/image';
 
 interface EmploymentLogo {
     asset: {
@@ -74,13 +74,16 @@ export interface MilitarySpouseApprovedCompaniesProps {
 const militarySpouseService = {
     fetchMilitarySpouseEmployment: async (): Promise<EmploymentDataProps[]> => {
         try {
-            const response = await api({
-                endpoint: API_ENDPOINTS.fetchMilitarySpouseEmployment,
-                type: RequestType.GET,
-            });
+            const employmentData = await client.fetch<EmploymentDataProps[]>(`*[_type == "military_spouse_employment"]`)
 
-            if (response?.status === 200) {
-                return response.data as EmploymentDataProps[];
+            employmentData.map((employment) => {
+                if (employment?.logo?.asset?._ref) {
+                    employment.logo.asset.image_url = urlForImage(employment.logo.asset);
+                }
+            })
+
+            if (employmentData) {
+                return employmentData as EmploymentDataProps[];
             } else {
                 throw new Error('Failed to fetch Military Spouse Employment');
             }
@@ -91,13 +94,16 @@ const militarySpouseService = {
     },
     fetchMovingYourLife: async (): Promise<MovingYourLifeProps[]> => {
         try {
-            const response = await api({
-                endpoint: API_ENDPOINTS.fetchMovingYourLife,
-                type: RequestType.GET,
-            });
+            const movingYourLife = await client.fetch<MovingYourLifeProps[]>(`*[_type == "moving_your_life"]`)
 
-            if (response?.status === 200) {
-                return response.data as MovingYourLifeProps[];
+            movingYourLife.map((data) => {
+                if (data?.logo?.asset?._ref) {
+                    data.logo.asset.image_url = urlForImage(data.logo.asset);
+                }
+            })
+
+            if (movingYourLife) {
+                return movingYourLife as MovingYourLifeProps[];
             } else {
                 throw new Error('Failed to fetch Moving Your Life');
             }
@@ -108,13 +114,14 @@ const militarySpouseService = {
     },
     fetchMilitarySpouseApproved: async (): Promise<MilitarySpouseApprovedProps> => {
         try {
-            const response = await api({
-                endpoint: API_ENDPOINTS.fetchMilitarySpouseApproved,
-                type: RequestType.GET,
-            });
+            const militarySpouseApproved = await client.fetch<MilitarySpouseApprovedProps>(`*[_type == "military_spouse_approved"][0]`)
 
-            if (response?.status === 200) {
-                return response.data as MilitarySpouseApprovedProps;
+            if (militarySpouseApproved?.image?.asset?._ref) {
+                militarySpouseApproved.image.asset.image_url = urlForImage(militarySpouseApproved.image.asset);
+            }
+
+            if (militarySpouseApproved) {
+                return militarySpouseApproved as MilitarySpouseApprovedProps;
             } else {
                 throw new Error('Failed to fetch Military Spouse Approved');
             }
@@ -125,13 +132,16 @@ const militarySpouseService = {
     },
     fetchMilitarySpouseApprovedCompanies: async (): Promise<MilitarySpouseApprovedCompaniesProps[]> => {
         try {
-            const response = await api({
-                endpoint: API_ENDPOINTS.fetchMilitarySpouseApprovedCompanies,
-                type: RequestType.GET,
-            });
+            const militarySpouseApprovedCompanies = await client.fetch<MilitarySpouseApprovedCompaniesProps[]>(`*[_type == "approved_company_list"]`)
 
-            if (response?.status === 200) {
-                return response.data as MilitarySpouseApprovedCompaniesProps[];
+            militarySpouseApprovedCompanies.map((data) => {
+                if (data?.image?.asset?._ref) {
+                    data.image.asset.image_url = urlForImage(data.image.asset);
+                }
+            })
+
+            if (militarySpouseApprovedCompanies) {
+                return militarySpouseApprovedCompanies as MilitarySpouseApprovedCompaniesProps[];
             } else {
                 throw new Error('Failed to fetch Military Spouse Approved');
             }

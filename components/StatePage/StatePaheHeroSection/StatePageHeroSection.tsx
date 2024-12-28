@@ -7,32 +7,32 @@ interface ImageAsset {
   image_url: string;
 }
 
-interface CityImage {
+interface StateImage {
   asset: ImageAsset;
   alt: string;
 }
 
 interface StatePageHeroSecondSectionProps {
-  cityName: string;
-  cityImage: CityImage;
+  stateName: string;
+  stateImage: StateImage;
   cityList: string[];
 }
 
-const StatePageHeroSecondSection = ({ cityName, cityImage, cityList }: StatePageHeroSecondSectionProps) => {
+const StatePageHeroSecondSection = ({ stateName: cityName, stateImage: cityImage, cityList }: StatePageHeroSecondSectionProps) => {
 
   const groupCitiesInPairs = (cities: string[]): string[][] => {
     const pairs: string[][] = [];
-  
+
     for (let i = 0; i < cities.length; i += 2) {
       pairs.push(cities.slice(i, i + 2));
     }
-  
+
     return pairs;
   };
-  
+
   const cityNames = cityList // Extracting the city names from the object
   const cityPairs = groupCitiesInPairs(cityNames);
-  
+
   return (
     <div className="py-12 px-5 bg-[#D9D9D9]">
       <div className="container mx-auto lg:pt-[180px] lg:pb-[50px] md:pt-[180px] md:pb-[50px] sm:pt-[180px] sm:pb-[50px] pt-[60px] pb-[30px]">
@@ -55,7 +55,7 @@ const StatePageHeroSecondSection = ({ cityName, cityImage, cityList }: StatePage
                   <div key={cityIndex} className={cityIndex > 0 ? "md:ml-5 sm:ml-0 ml-0" : ""}>
                     <Link
                       className="text-[#ffffff] tahoma text-sm font-normal bg-[#7E1618] rounded-[16px] px-8 py-5 text-center"
-                      href="#"
+                      href={`#${city.toLowerCase().split(' ').join('-')}`}
                     >
                       {city} Agents
                     </Link>

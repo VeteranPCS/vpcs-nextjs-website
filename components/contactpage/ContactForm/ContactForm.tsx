@@ -3,7 +3,6 @@ import "@/styles/globals.css";
 import classes from "./ContactForm.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 const ContectForm = () => {
   return (
@@ -38,15 +37,17 @@ const ContectForm = () => {
                     src="/icon/sharp-email.svg"
                     alt="phone"
                   />
-                  <Link href="tel:719-249-4757">info@veteranpcs.com</Link>
+                  <Link href="mailto:info@veteranpcs.com">info@veteranpcs.com</Link>
                 </div>
               </div>
             </div>
 
-            <Link href="/get-listed-lenders" className="block justify-start items-center gap-4 flex-wrap ">
+            <Link href="/get-listed-agents" className="block justify-start items-center gap-4 flex-wrap ">
               <Button
                 buttonText="Agents, Get Listed Here"
               />
+            </Link>
+            <Link href="/get-listed-lenders" className="block justify-start items-center gap-4 flex-wrap ">
               <Button
                 buttonText="Lenders, Get Listed Here"
               />

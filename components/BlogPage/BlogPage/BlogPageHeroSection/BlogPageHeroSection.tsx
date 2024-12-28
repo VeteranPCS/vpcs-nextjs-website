@@ -2,7 +2,7 @@ import React from "react";
 import "@/styles/globals.css";
 import classes from "./BlogPageHeroSection.module.css";
 
-const StatePageHeroSecondSection = () => {
+const BlogPageHeroSection = () => {
   return (
     <div className="relative">
       <div className={classes.blogpageherosectioncontainer}>
@@ -42,4 +42,4 @@ const StatePageHeroSecondSection = () => {
   );
 };
 
-export default StatePageHeroSecondSection;
+export default BlogPageHeroSection;

@@ -14,9 +14,9 @@ export default async function Home() {
       <BlogPageHeroSection />
       <BlogMovingPcsingBlogPostSection />
       <BlogCta />
-      <PcsResourcesBlog title="Let’s talk VA loan" description="Our experts breakdown buying with a VA loan" link="connect with a VA Loan expert!" url="#"/>
+      <PcsResourcesBlog title="Let’s talk VA loan" description="Our experts breakdown buying with a VA loan" link="connect with a VA Loan expert!" url="#" />
       <div className="my-5">
-        <PcsResourcesBlog title="Military Bases" description="Our experts breakdown buying with a VA loan" link="connect with a VA Loan expert!" url="#"/>
+        <PcsResourcesBlog title="Military Bases" description="Our experts breakdown buying with a VA loan" link="connect with a VA Loan expert!" url="#" />
       </div>
       <MemoizedKeepInTouch />
       <Footer />

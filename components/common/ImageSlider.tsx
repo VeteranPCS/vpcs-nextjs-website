@@ -7,11 +7,12 @@ import Slider from "react-slick";
 import { Box } from "@mui/material";
 import Image from "next/image";
 
-interface UserImage {
+export interface UserImage {
   _id: string;
   userImage: {
     asset: {
       image_url: string;
+      _ref: string;
     };
     alt: string;
   };

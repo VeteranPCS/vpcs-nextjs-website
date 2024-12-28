@@ -1,16 +1,17 @@
 import { memo } from "react"
 import userImageServices from "@/services/userService";
 import ImageSlider from "@/components/common/ImageSlider";
+import { UserImage } from "@/components/common/ImageSlider";
 
 const MemoizedSlider = memo(ImageSlider);
 
 export default async function Testimonials() {
-    let userImageList = [];
+    let userImageList: UserImage[] = [];
 
     try {
-        userImageList = await userImageServices.fetchImages();        
+        userImageList = await userImageServices.fetchImages();
     } catch (error) {
-        console.error("Error fetching blog", error);
+        console.error("Error fetching images for testimonials", error);
     }
 
     if (!userImageList) {

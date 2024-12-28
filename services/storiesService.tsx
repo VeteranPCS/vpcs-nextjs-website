@@ -1,5 +1,4 @@
-import { API_ENDPOINTS } from '@/constants/api'
-import { api, RequestType } from '@/services/api';
+import { client } from '@/sanity/lib/client'
 
 export type VideoSuccessStory = {
     _createdAt: string;
@@ -10,9 +9,9 @@ export type VideoSuccessStory = {
     title: string;
     videoUrl: string;
     _updatedAt: string;
-  };
-  
-  export type ChildrenProps = {
+};
+
+export type ChildrenProps = {
     _key: string;
     _type: string;
     children: DescriptionChild[];
@@ -20,31 +19,28 @@ export type VideoSuccessStory = {
     listItem: string;
     markDefs: any[]; // Adjust based on your actual data
     style: string;
-  };
-  
-  interface DescriptionChild {
+};
+
+interface DescriptionChild {
     _key: string;
     _type: string;
     marks: string[];
     text: string;
-  }
-  
+}
+
 const storiesService = {
     fetchVideoSuccessStories: async (): Promise<VideoSuccessStory[]> => {
         try {
-            const response = await api({
-                endpoint: API_ENDPOINTS.fetchVideoSuccessStories,
-                type: RequestType.GET,
-            });
+            const additionalStories = await client.fetch<VideoSuccessStory[]>(`*[_type == "video_success_stories"]`);
 
-            if (response?.status === 200) { 
-                return response.data as VideoSuccessStory[]; 
+            if (additionalStories) {
+                return additionalStories as VideoSuccessStory[];
             } else {
                 throw new Error('Failed to fetch Video Success Stories');
             }
         } catch (error: any) {
             console.error('Error fetching Video Success Stories:', error);
-            throw error; 
+            throw error;
         }
     }
 };

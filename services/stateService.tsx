@@ -1,9 +1,10 @@
-import { API_ENDPOINTS, VETERENCE_SALESFORCE_BASE_URL } from '@/constants/api'
-import { api, RequestType, salesForceAPI, salesForceImageAPI } from '@/services/api';
+import { VETERENCE_SALESFORCE_BASE_URL } from '@/constants/api'
+import { RequestType, salesForceAPI, salesForceImageAPI } from '@/services/api';
 import { getSalesforceToken } from '@/services/salesForceTokenService';
-import { SALESFORCETOKEN } from '@/services/salesForceTokenService';
+import { client } from '@/sanity/lib/client';
+import { urlForImage } from '@/sanity/lib/image';
 
-interface CityMap {
+interface StateMap {
   _type: 'image';
   alt: string;
   asset: {
@@ -13,21 +14,21 @@ interface CityMap {
   };
 }
 
-interface CitySlug {
+interface StateSlug {
   current: string;
   _type: 'slug';
 }
 
-export interface CityList {
+export interface StateList {
   short_name: string;
   _id: string;
   _updatedAt: string;
-  city_map: CityMap;
+  city_map: StateMap;
   city_name: string;
   _createdAt: string;
   _rev: string;
   _type: 'city_list';
-  city_slug: CitySlug;
+  city_slug: StateSlug;
 }
 
 interface Agent {
@@ -81,15 +82,28 @@ export interface LendersData {
 }
 
 const stateService = {
-  fetchStateDetails: async (city: string): Promise<CityList> => {
+  fetchStateList: async (): Promise<StateList[]> => {
     try {
-      const response = await api({
-        endpoint: `${API_ENDPOINTS.fetchStateDetails}?city=${city}`,
-        type: RequestType.GET,
-      });
+      const response = await client.fetch(`*[_type == "city_list"]{ city_slug, short_name }`)
+      if (response) {
+        return response as StateList[];
+      } else {
+        throw new Error('Failed to fetch State List');
+      }
+    } catch (error: any) {
+      console.error('Error fetching State List:', error);
+      throw error;
+    }
+  },
+  fetchStateDetails: async (state: string): Promise<StateList> => {
+    try {
+      const state_detail = await client.fetch<StateList>(`*[_type == "city_list" && city_slug.current == $city][0]`, { city: state });
 
-      if (response?.status === 200) {
-        return response.data as CityList;
+      if (state_detail.city_map?.asset?._ref) {
+        state_detail.city_map.asset.image_url = urlForImage(state_detail.city_map.asset);  // Add the image URL to the response
+      }
+      if (state_detail) {
+        return state_detail as StateList
       } else {
         throw new Error('Failed to fetch Reviews');
       }
@@ -98,9 +112,9 @@ const stateService = {
       throw error;
     }
   },
-  fetchAgentsListByCity: async (city: string): Promise<AgentsData> => {
+  fetchAgentsListByState: async (state: string): Promise<AgentsData> => {
     try {
-      const query = `SELECT+Id%2C+Name%2C+AccountId_15__c%2C+PhotoUrl%2C+FirstName%2C+LastName%2C+Agent_Bio__pc%2C+Bases_Serviced__pc%2C+Military_Status__pc%2C+Military_Service__pc%2C+Brokerage_Name__pc%2C+BillingCity%2C+BillingState%2C+BillingStateCode+FROM+Account+WHERE+isAgent__pc+%3D+true+AND+Active_on_Website__pc+%3D+true+AND+BillingState+%3D+'${city}'`;
+      const query = `SELECT+Id%2C+Name%2C+AccountId_15__c%2C+PhotoUrl%2C+FirstName%2C+LastName%2C+Agent_Bio__pc%2C+Bases_Serviced__pc%2C+Military_Status__pc%2C+Military_Service__pc%2C+Brokerage_Name__pc%2C+BillingCity%2C+BillingState%2C+BillingStateCode+FROM+Account+WHERE+isAgent__pc+%3D+true+AND+Active_on_Website__pc+%3D+true+AND+BillingStateCode+%3D+'${state}'`;
 
       const response = await salesForceAPI({
         endpoint: `${VETERENCE_SALESFORCE_BASE_URL}/services/data/v62.0/query?q=${query}`,
@@ -133,7 +147,7 @@ const stateService = {
         // Token expired: Refresh and retry
         try {
           await getSalesforceToken(); // Refresh token
-          return await stateService.fetchAgentsListByCity(city); // Retry the request
+          return await stateService.fetchAgentsListByState(state); // Retry the request
         } catch (tokenError) {
           console.error("Failed to refresh token:", tokenError);
           throw tokenError;
@@ -146,9 +160,9 @@ const stateService = {
       throw error;
     }
   },
-  fetchLendersListByCity: async (city: string): Promise<LendersData> => {
+  fetchLendersListByState: async (state: string): Promise<LendersData> => {
     try {
-      const query = `SELECT+Id%2C+Name%2C+AccountId_15__c%2C+PhotoUrl%2c+FirstName%2C+LastName%2C+Agent_Bio__pc%2C+Bases_Serviced__pc%2C+Military_Status__pc%2C+Military_Service__pc%2C+Brokerage_Name__pc%2C+Individual_NMLS_ID__pc%2C+Company_NMLS_ID__pc%2C+BillingCity%2C+BillingState%2C+BillingStateCode+FROM+Account+WHERE+isLender__pc+%3D+true+AND+Active_on_Website__pc+%3D+true+AND+BillingState+%3D+'${city}'`
+      const query = `SELECT+Id%2C+Name%2C+AccountId_15__c%2C+PhotoUrl%2c+FirstName%2C+LastName%2C+Agent_Bio__pc%2C+Bases_Serviced__pc%2C+Military_Status__pc%2C+Military_Service__pc%2C+Brokerage_Name__pc%2C+Individual_NMLS_ID__pc%2C+Company_NMLS_ID__pc%2C+BillingCity%2C+BillingState%2C+BillingStateCode+FROM+Account+WHERE+isLender__pc+%3D+true+AND+Active_on_Website__pc+%3D+true+AND+BillingStateCode+%3D+'${state}'`
       const response = await salesForceAPI({
         endpoint: `${VETERENCE_SALESFORCE_BASE_URL}/services/data/v62.0/query?q=${query}`,
         type: RequestType.GET,
@@ -162,7 +176,7 @@ const stateService = {
                   endpoint: VETERENCE_SALESFORCE_BASE_URL + agent.PhotoUrl,
                   type: RequestType.GET,
                 });
-                
+
                 const base64Image = Buffer.from(photoResponse?.data).toString('base64');
                 agent.PhotoUrl = `data:image/jpeg;base64,${base64Image}`;
                 // agent.PhotoUrl = photoResponse?.data; // Ensure fallback to original URL
@@ -178,7 +192,7 @@ const stateService = {
       } else if (response?.status === 401) {
         try {
           await getSalesforceToken();
-          return await stateService.fetchLendersListByCity(city);
+          return await stateService.fetchLendersListByState(state);
         } catch (tokenError) {
           console.error('Failed to refresh token:', tokenError);
           throw tokenError;

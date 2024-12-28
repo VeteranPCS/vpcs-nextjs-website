@@ -23,7 +23,7 @@ export type AgentData = {
 
 const StatePageCityAgents = ({ city, agent_data }: Props) => {
   return (
-    <div>
+    <div id={city.toLowerCase().split(' ').join('-')}>
       <div className="bg-[#F4F4F4]">
         <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">
           <div className="text-center">
@@ -45,7 +45,7 @@ const StatePageCityAgents = ({ city, agent_data }: Props) => {
                       className="w-auto h-auto object-cover"
                     />
                   </div>
-                  <Link href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${agent.BillingState}`}>
+                  <Link href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${agent.BillingState.toLowerCase().split(' ').join('-')}`}>
                     <Button buttonText="Contact Now" />
                   </Link>
                 </div>
