@@ -1,5 +1,5 @@
-import { API_ENDPOINTS } from '@/constants/api'
-import { api, RequestType } from '@/services/api';
+import { client } from '@/sanity/lib/client';
+import { SanityDocument } from '@sanity/client';
 
 export interface HowItWorksContentProps {
     _id: string;
@@ -10,6 +10,10 @@ export interface HowItWorksContentProps {
     component_header: Block[];
     description: Block[];
     header_slug: Slug;
+}
+
+interface AccountDocument extends SanityDocument {
+    _type: 'howVeterencePCSServiceWorks';
 }
 
 export interface Block {
@@ -59,15 +63,13 @@ interface Table {
 }
 
 const howItWorksService = {
-    fetchHowVeterencePCSWorks: async (): Promise<Response> => {
+    fetchHowVeterencePCSWorks: async (): Promise<AccountDocument> => {
         try {
-            const response = await api({
-                endpoint: API_ENDPOINTS.howVeterencePCSServiceWorks,
-                type: RequestType.GET,
-            });
+            const story = await client.fetch<AccountDocument>(`*[_type == "howVeterencePCSServiceWorks"][0]`);
 
-            if (response?.status === 200) {
-                return response.data;
+
+            if (story) {
+                return story;
             } else {
                 throw new Error('Failed to fetch How Veterence PCS Works Data');
             }
@@ -79,13 +81,10 @@ const howItWorksService = {
     fetchOverviewSection: async (component: string): Promise<HowItWorksContentProps> => {
         try {
 
-            const response = await api({
-                endpoint: `${API_ENDPOINTS.fetchHowItWorksOverview}?component=${component}`,
-                type: RequestType.GET,
-            });
+            const story = await client.fetch<HowItWorksContentProps>(`*[_type == "how_veterence_pcs_works" && header_slug.current == $component][0]`, { component });
 
-            if (response?.status === 200) {
-                return response.data as HowItWorksContentProps;
+            if (story) {
+                return story as HowItWorksContentProps;
             } else {
                 throw new Error('Failed to Fetch How It Works Overview Section');
             }
@@ -96,13 +95,11 @@ const howItWorksService = {
     },
     fetchMoveInBonus: async (): Promise<HowBonusMoveInContentProps> => {
         try {
-            const response = await api({
-                endpoint: API_ENDPOINTS.fetchMoveInBonus,
-                type: RequestType.GET,
-            });
+            const story = await client.fetch<HowBonusMoveInContentProps>(`*[_type == "moveInBonus"][0]`);
 
-            if (response?.status === 200) {
-                return response.data as HowBonusMoveInContentProps;
+
+            if (story) {
+                return story as HowBonusMoveInContentProps;
             } else {
                 throw new Error('Failed to Fetch How Move In Bonus Works Content');
             }

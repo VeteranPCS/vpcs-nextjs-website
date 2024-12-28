@@ -1,5 +1,5 @@
-import { API_ENDPOINTS, VETERENCE_SALESFORCE_BASE_URL } from '@/constants/api'
-import { api, RequestType, salesForceAPI, salesForceImageAPI } from '@/services/api';
+import { VETERENCE_SALESFORCE_BASE_URL } from '@/constants/api'
+import { RequestType, salesForceAPI, salesForceImageAPI } from '@/services/api';
 import { getSalesforceToken } from '@/services/salesForceTokenService';
 import { client } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
@@ -84,7 +84,7 @@ export interface LendersData {
 const stateService = {
   fetchStateList: async (): Promise<StateList[]> => {
     try {
-      const response = await client.fetch(`*[_type == "city_list"]{ city_slug }`)
+      const response = await client.fetch(`*[_type == "city_list"]{ city_slug, short_name }`)
       if (response) {
         return response as StateList[];
       } else {

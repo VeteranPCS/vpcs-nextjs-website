@@ -1,8 +1,8 @@
-import Image from "next/image";
+"use client";
 import { useState, FormEvent, useCallback, useEffect } from 'react';
 import { FormData } from "@/app/get-listed-lenders/page";
 import HowDidYouHearAboutUs from "../GetListedLenders/HowDidYouHearAboutUs";
-import initService from '@/services/initService';
+import stateService from '@/services/stateService';
 
 interface ContactFormProps {
   onSubmit: (data: FormData) => void;
@@ -22,7 +22,7 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
 
   const getStateList = useCallback(async () => {
     try {
-      const response = await initService.getStateList()
+      const response = await stateService.fetchStateList();
       setStateList(response)
     } catch (error) {
       console.error('Error fetching posts:', error)
@@ -234,7 +234,7 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                   name="howDidYouHear"
                   className="border-b border-[#E2E4E5] px-2 py-1"
                 >
-                   <option value="" disabled selected>
+                  <option value="" disabled selected>
                     --None--
                   </option>
                   <option value="Yes">Yes</option>

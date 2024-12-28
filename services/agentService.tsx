@@ -1,5 +1,3 @@
-import { API_ENDPOINTS } from '@/constants/api'
-import { api, RequestType } from '@/services/api'
 import { SanityDocument } from '@sanity/client'
 import { urlForImage } from '@/sanity/lib/image'
 import { client } from '@/sanity/lib/client'

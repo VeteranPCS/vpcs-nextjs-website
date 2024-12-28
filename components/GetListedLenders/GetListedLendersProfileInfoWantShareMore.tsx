@@ -1,7 +1,7 @@
-import Image from "next/image";
+"use client";
 import { useState, FormEvent, useCallback, useEffect } from 'react';
 import { FormData } from "@/app/get-listed-lenders/page";
-import initService from '@/services/initService';
+import stateService from '@/services/stateService';
 
 interface ContactFormProps {
   onSubmit: (formData: FormData) => void;
@@ -21,7 +21,7 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
 
   const getStateList = useCallback(async () => {
     try {
-      const response = await initService.getStateList()
+      const response = await stateService.fetchStateList()
       setStateList(response)
     } catch (error) {
       console.error('Error fetching posts:', error)

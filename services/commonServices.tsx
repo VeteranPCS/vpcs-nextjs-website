@@ -1,18 +1,14 @@
-import { API_ENDPOINTS } from '@/constants/api'
-import { api, RequestType } from '@/services/api';
 import { VideoReviewProps } from '@/components/Impact/VideoReview/VideoReview';
 import { FreqAskedQuestionsProps } from '@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions';
+import { client } from '@/sanity/lib/client'
 
 const commonService = {
-    fetchFrequentlyAskedQuestions: async (): Promise<FreqAskedQuestionsProps[]> => { 
+    fetchFrequentlyAskedQuestions: async (): Promise<FreqAskedQuestionsProps[]> => {
         try {
-            const response = await api({
-                endpoint: API_ENDPOINTS.FreqAskedQues,
-                type: RequestType.GET,
-            });
+            const faqs = await client.fetch<FreqAskedQuestionsProps[]>(`*[_type == "frequently_asked_questions"]`);
 
-            if (response?.status === 200) { 
-                return response.data as FreqAskedQuestionsProps[]; 
+            if (faqs) {
+                return faqs as FreqAskedQuestionsProps[];
             } else {
                 throw new Error('Failed to fetch Frequently Asked Questions');
             }
@@ -23,13 +19,10 @@ const commonService = {
     },
     fetchVideoReview: async (): Promise<VideoReviewProps> => {
         try {
-            const response = await api({
-                endpoint: API_ENDPOINTS.videoReview,
-                type: RequestType.GET,
-            });
+            const videoReview = await client.fetch<VideoReviewProps>(`*[_type == "video_review"][0]`);
 
-            if (response?.status === 200) { 
-                return response.data as VideoReviewProps; 
+            if (videoReview) {
+                return videoReview as VideoReviewProps;
             } else {
                 throw new Error('Failed to fetch Video Review');
             }

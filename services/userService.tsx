@@ -1,5 +1,3 @@
-import { API_ENDPOINTS } from '@/constants/api'
-import { api, RequestType } from '@/services/api';
 import { client } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
 import { UserImage } from '@/components/common/ImageSlider';

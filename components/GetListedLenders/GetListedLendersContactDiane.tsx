@@ -1,3 +1,4 @@
+"use client";
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { FormData } from "@/app/get-listed-lenders/page";
 import Link from "next/link";
@@ -35,10 +36,10 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
-              Lenders, Get Listed!
+                Lenders, Get Listed!
               </h1>
               <p className="text-[#575F6E] roboto text-base font-black mt-3">
-              Are you a licensed lender who is also a veteran or military spouse? We&apos;d love to have you represent your current city and support our veterans who are pcs&apos;ing to your area. Fill out this form, and we&apos;ll be in touch. <Link href="" className='text-[#7E1618]'>Learn more</Link>
+                Are you a licensed lender who is also a veteran or military spouse? We&apos;d love to have you represent your current city and support our veterans who are pcs&apos;ing to your area. Fill out this form, and we&apos;ll be in touch. <Link href="" className='text-[#7E1618]'>Learn more</Link>
               </p>
             </div>
             <div className="border rounded-lg border-[#E2E4E5] p-8">

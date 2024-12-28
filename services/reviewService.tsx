@@ -1,5 +1,4 @@
 import { client } from '@/sanity/lib/client'
-import { SanityDocument } from '@sanity/client'
 import { urlForImage } from '@/sanity/lib/image'
 import { Review } from '@/components/homepage/ReviewTestimonial/ReviewTestimonial'
 interface ReviewDocument extends Review {

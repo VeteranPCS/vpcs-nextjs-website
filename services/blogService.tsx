@@ -1,5 +1,3 @@
-import { API_ENDPOINTS } from '@/constants/api'
-import { api, RequestType } from '@/services/api';
 import { client } from '@/sanity/lib/client';
 import { SanityDocument } from "@sanity/client";
 
@@ -29,13 +27,28 @@ const blogService = {
     },
     fetchBlogs: async (category: string): Promise<any> => {
         try {
-            const response = await api({
-                endpoint: `${API_ENDPOINTS.blogs}?category=${category}`,
-                type: RequestType.GET,
-            });
+            const blogs = await client.fetch<ReviewDocument[]>(`
+                            *[_type == "blog" && component_slug.current == $category]{
+                              ...,
+                              mainImage{
+                                ...,
+                                "image_url": asset->url // Directly fetch the main image URL
+                              },
+                              author->{
+                                _id,
+                                name,
+                                designation,
+                                "image": image.asset->url // Fetch author's image URL
+                              },
+                              categories[]->{
+                                _id,
+                                title
+                              }
+                            }
+                          `, { category });
 
-            if (response?.status === 200) {
-                return response.data;
+            if (blogs) {
+                return blogs;
             } else {
                 throw new Error('Failed to fetch blog');
             }
@@ -46,7 +59,6 @@ const blogService = {
     },
     fetchBlog: async (slug: string): Promise<ReviewDocument> => {
         try {
-            console.log("Fetching blog with slug:", slug);
             const blog = await client.fetch<ReviewDocument>(
                 `*[_type == "blog" && slug.current == $slug]{
                               ...,

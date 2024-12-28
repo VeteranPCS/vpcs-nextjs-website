@@ -1,3 +1,4 @@
+"use client";
 import { useState, FormEvent } from 'react';
 import { FormData } from "@/app/get-listed-lenders/page";
 
@@ -33,7 +34,7 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
-              Military Service
+                Military Service
               </h1>
             </div>
             <div className="border rounded-lg border-[#E2E4E5] p-8">

@@ -1,5 +1,3 @@
-import { API_ENDPOINTS } from '@/constants/api'
-import { api, RequestType } from '@/services/api';
 import { TeamMember } from '@/components/About/AdminTeam/AdminTeam';
 import { AboutVetPcsResponse } from '@/components/About/HowVetPcsStarted/HowVetPcsStarted'
 import { SupportSpanishProps } from '@/components/spanishpage/SupportSpanish/SupportSpanis';

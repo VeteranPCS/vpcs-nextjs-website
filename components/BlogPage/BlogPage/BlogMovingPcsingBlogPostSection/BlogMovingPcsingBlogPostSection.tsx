@@ -26,54 +26,6 @@ export interface BlogDetails {
   author: Author;
 }
 
-// const META_DESCRIPTION = "Our blog is an excellent resource for new parents and caregivers. We cover topics such as postpartum care, newborn care, and more!";
-// const META_TITLE = "Blog - Resources and Information";
-
-// export const metadata: Metadata = {
-//   alternates: {
-//     canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/blog`,
-//   },
-//   title: META_TITLE,
-//   description: META_DESCRIPTION,
-//   openGraph: {
-//     title: META_TITLE,
-//     description: META_DESCRIPTION,
-//     url: `${process.env.NEXT_PUBLIC_BASE_URL}/blog`,
-//     type: "website",
-//     siteName: "Yuzi Care",
-//     images: [
-//       {
-//         url: `${process.env.NEXT_PUBLIC_BASE_URL}/images/logo/yuzi-full-logo-three-c.png`,
-//         width: 800,
-//         height: 600,
-//         alt: "Yuzi Care Logo",
-//       },
-//     ],
-//   },
-//   twitter: {
-//     card: "summary_large_image",
-//     title: META_TITLE,
-//     description: META_DESCRIPTION,
-//     creator: "@yuzicare",
-//     images: [
-//       {
-//         url: `${process.env.NEXT_PUBLIC_BASE_URL}/images/logo/yuzi-full-logo-three-c.png`,
-//         alt: "Yuzi Care Logo",
-//       },
-//     ],
-//   },
-//   robots: {
-//     index: true,
-//     follow: true,
-//     nocache: false,
-//     googleBot: {
-//       index: true,
-//       follow: true,
-//       noimageindex: false,
-//     },
-//   },
-// };
-
 const StatePageHeroSecondSection = async () => {
   let blogs: BlogDetails[] | null = null;
 

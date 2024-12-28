@@ -70,7 +70,7 @@ const Header = () => {
                     <li className="px-10 py-3 text-white">
                       <Link
                         className="text-base font-normal"
-                        href="/get-listed-lenders"
+                        href="/get-listed-agents"
                       >
                         Get Listed Agents
                       </Link>

@@ -39,7 +39,7 @@ interface Block {
   children: Child[];
 }
 
-const StatePageHeroSecondSection: React.FC<StatePageHeroSecondSectionProps> = ({ blogDetails }) => {
+const BlogMovingPcsingPost: React.FC<StatePageHeroSecondSectionProps> = ({ blogDetails }) => {
   const getPlainText = (content: Block[]): string => {
     if (!content) return '';
 
@@ -110,4 +110,4 @@ const StatePageHeroSecondSection: React.FC<StatePageHeroSecondSectionProps> = ({
   );
 };
 
-export default StatePageHeroSecondSection;
+export default BlogMovingPcsingPost;

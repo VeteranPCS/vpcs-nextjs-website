@@ -1,17 +1,19 @@
-import { API_ENDPOINTS } from '@/constants/api'
-import { api, RequestType } from '@/services/api';
 import { MediaAccountProps } from '@/components/homepage/KeepInTouch/KeepInTouch';
+import { client } from '@/sanity/lib/client'
+import { SanityDocument } from '@sanity/client'
+
+
+interface AccountDocument extends SanityDocument {
+    _type: 'media_account'
+}
 
 const mediaAccountService = {
     fetchAccounts: async (): Promise<MediaAccountProps[]> => {
         try {
-            const response = await api({
-                endpoint: API_ENDPOINTS.accounts,
-                type: RequestType.GET,
-            });
+            const mediaAccounts = await client.fetch<MediaAccountProps[]>(`*[_type == "media_account"]`)
 
-            if (response?.status === 200) {
-                return response.data as MediaAccountProps[];
+            if (mediaAccounts) {
+                return mediaAccounts as MediaAccountProps[];
             } else {
                 throw new Error('Failed to fetch Internship Benefits');
             }
