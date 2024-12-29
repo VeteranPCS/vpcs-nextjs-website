@@ -29,7 +29,7 @@ const Header = () => {
             >
               <ul className="menu nav flex md:flex-row flex-col md:items-center md:gap-14 gap-5">
                 <li className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                  <Link className="text-white" href="/about">
+                  <Link className="text-white" href="/about" onClick={onMenuToggle}>
                     About
                   </Link>
                   <ul className="sub-menu bg-[#292E6C] border-t-2 border-[#003486] p-5">
@@ -37,34 +37,35 @@ const Header = () => {
                       <Link
                         className="text-base font-normal"
                         href="/how-it-works"
+                        onClick={onMenuToggle}
                       >
                         How It Works
                       </Link>
                     </li>
                     <li className="px-10 py-3 text-white">
-                      <Link className="text-base font-normal" href="/stories">
+                      <Link className="text-base font-normal" href="/stories" onClick={onMenuToggle}>
                         Stories
                       </Link>
                     </li>
                     <li className="px-10 py-3 text-white">
-                      <Link className="text-base font-normal" href="/blog">
+                      <Link className="text-base font-normal" href="/blog" onClick={onMenuToggle}>
                         Blog
                       </Link>
                     </li>
                   </ul>
                 </li>
                 <li className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                  <Link className="text-white" href="/pcs-resources">
+                  <Link className="text-white" href="/pcs-resources" onClick={onMenuToggle}>
                     PCS Resources
                   </Link>
                 </li>
                 <li className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                  <Link className="text-white" href="/impact">
+                  <Link className="text-white" href="/impact" onClick={onMenuToggle}>
                     Impact
                   </Link>
                 </li>
                 <li className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                  <Link className="text-white" href="/contact">
+                  <Link className="text-white" href="/contact" onClick={onMenuToggle}>
                     Contact
                   </Link>
                   <ul className="sub-menu">
@@ -72,6 +73,7 @@ const Header = () => {
                       <Link
                         className="text-base font-normal"
                         href="/get-listed-agents"
+                        onClick={onMenuToggle}
                       >
                         Get Listed Agents
                       </Link>
@@ -81,6 +83,7 @@ const Header = () => {
                       <Link
                         className="text-base font-normal"
                         href="/get-listed-lenders"
+                        onClick={onMenuToggle}
                       >
                         Get Listed Lenders
                       </Link>
