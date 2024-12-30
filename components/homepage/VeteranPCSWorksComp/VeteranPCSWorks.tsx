@@ -31,10 +31,10 @@ const VeteranPCS = () => {
       <div className="container mx-auto w-full lg:py-16 md:py-10 sm:py-10 py-5">
         <div className="px-10 sm:px-4 mx-auto text-center">
           <div>
-            <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[35px] sm:text-[31px] text-[31px] tahoma">
+            <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[35px] sm:text-[28px] text-[28px] tahoma">
               How VeteranPCS Works
             </h2>
-            <p className="normal text-[#292F6C] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] leading-[32px] font-normal poppins">
+            <p className="normal text-[#292F6C] lg:text-[18px] md:text-[19px] sm:text-[15px] text-[15px] leading-[32px] font-normal poppins">
               VeteranPCS is FREE for anyone to use.
             </p>
           </div>

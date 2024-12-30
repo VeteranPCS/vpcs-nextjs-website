@@ -3,6 +3,7 @@ import { useState, FormEvent, useCallback, useEffect } from 'react';
 import { FormData } from "@/app/get-listed-lenders/page";
 import initService from '@/services/initService';
 import HowDidYouHearAboutUs from "@/components/GetListedLenders/HowDidYouHearAboutUs";
+import ReCAPTCHA from 'react-google-recaptcha';
 
 interface ContactFormProps {
   onSubmit: (data: FormData) => void;
@@ -17,7 +18,9 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
     email: formData.email || '',
     phone: formData.phone || '',
   });
+  const siteKey: string = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '';
   const [stateList, setStateList] = useState<any[]>([]);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -31,7 +34,7 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
 
   const getStateList = useCallback(async () => {
     try {
-      const response = await initService.getStateList()
+      const response = await initService.getStateListFetch()
       setStateList(response)
     } catch (error) {
       console.error('Error fetching posts:', error)
@@ -150,8 +153,12 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                   placeholder="Zip"
                 />
               </div>
+              <ReCAPTCHA
+                sitekey={siteKey}
+                onChange={(token: string | null) => setCaptchaToken(token)}
+              />
             </div>
-            <HowDidYouHearAboutUs />
+            {/* <HowDidYouHearAboutUs /> */}
             <hr />
             <div className="flex md:justify-start justify-center">
               <button

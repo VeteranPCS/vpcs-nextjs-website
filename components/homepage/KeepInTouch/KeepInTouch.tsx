@@ -11,7 +11,7 @@ export interface MediaAccountProps {
   _id: string;
   name: string;
   designation?: string;
-  icon:string;
+  icon: string;
   link: string;
 }
 
@@ -25,16 +25,16 @@ const KeepInTouch = () => {
 
   const fetchMediaAccounts = useCallback(async () => {
     try {
-      const response = await mediaAccountService.fetchAccounts()
-      SetMediaAccount(response)
+      const response = await mediaAccountService.fetchAccounts();
+      SetMediaAccount(response);
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      console.error("Error fetching posts:", error);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    fetchMediaAccounts()
-  }, [fetchMediaAccounts])
+    fetchMediaAccounts();
+  }, [fetchMediaAccounts]);
 
   return (
     <div className="bg-[#EEEEEE] py-12">
@@ -57,7 +57,10 @@ const KeepInTouch = () => {
             <div className="flex justify-center sm:justify-center md:justify-start lg:justify-start">
               <ul className="flex items-center gap-4">
                 {mediaAccount.map((acc) => (
-                  <li key={acc._id} className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2">
+                  <li
+                    key={acc._id}
+                    className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2"
+                  >
                     <Link href={acc.link}>
                       <Image
                         width={100}
@@ -125,14 +128,14 @@ const KeepInTouch = () => {
                 type="email"
                 placeholder="Email*"
               />
-              <p className="text-[#292F6C] roboto lg:text-[14px] sm:text-[9px] text-[9px] font-medium mb-3">
+              <p className="text-[#292F6C] roboto lg:text-[14px] sm:text-[9px] text-[9px] font-medium mb-3 text-left md:pl-0 sm:pl-3 pl-3">
                 Fields marked with an asterisk (*) are required.
               </p>
-              <div className="flex items-center">
-                <div className="bg-[#F9F9F9] rounded-[3px] border border-[#D3D3D3] py-5 px-5 mr-5 w-[200px]">
+              <div className="flex items-center md:pl-0 sm:pl-3 pl-3">
+                <div className="bg-[#F9F9F9] rounded-[3px] border border-[#D3D3D3] md:py-5 md:px-5 sm:py-3 sm:px-3 py-3 px-3 mr-5 w-[200px] ">
                   <div className={classes.CheckboxContainer}>
                     <input
-                      type="checkbox" 
+                      type="checkbox"
                       className={classes.CustomCheckbox}
                       defaultChecked={isChecked}
                       onClick={handleCheckboxChange}

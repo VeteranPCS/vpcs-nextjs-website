@@ -1,7 +1,7 @@
 "use client";
 import { useState, FormEvent, useCallback, useEffect } from 'react';
 import { FormData } from "@/app/get-listed-lenders/page";
-import HowDidYouHearAboutUs from "../GetListedLenders/HowDidYouHearAboutUs";
+import HowDidYouHearAboutUs from '@/components/GetListedLenders/HowDidYouHearAboutUs';
 import stateService from '@/services/stateService';
 
 interface ContactFormProps {
@@ -243,7 +243,7 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
               </div>
 
             </div>
-            <HowDidYouHearAboutUs />
+            {/* <HowDidYouHearAboutUs /> */}
             <hr />
             <div className="flex md:justify-start justify-center">
               <button

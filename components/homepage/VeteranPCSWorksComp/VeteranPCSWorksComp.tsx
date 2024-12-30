@@ -13,11 +13,13 @@ interface VeteranPCSWorksCompProps {
   };
 }
 
-const VeteranPCSWorksComp: React.FC<VeteranPCSWorksCompProps> = ({ veteranpcs }) => {
+const VeteranPCSWorksComp: React.FC<VeteranPCSWorksCompProps> = ({
+  veteranpcs,
+}) => {
   const { img, title, subTitle, link } = veteranpcs;
   return (
     <a className={classes.veteranpcsworkscontainer} href={link}>
-      <div className="xl:p-9 lg:p-9 md:p-9 sm:p-2 p-4 lg:w-[300px] lg:h-[340px] sm:w-[250px] w-[250px] lg:mb-0 mb-4 flex flex-col justify-center items-center">
+      <div className="xl:p-9 lg:p-9 md:p-9 sm:p-2 p-4 lg:w-[300px] lg:h-[340px] sm:w-[250px] w-[250px] md:py-0 sm:py-20 py-10 lg:mb-0 mb-4 flex flex-col justify-center items-center">
         <div className="text-center ">
           <div className="xl:block lg:block md:block items-center justify-center">
             <div className="flex justify-center mx-auto w-[60px] h-[60px]">
@@ -36,7 +38,7 @@ const VeteranPCSWorksComp: React.FC<VeteranPCSWorksCompProps> = ({ veteranpcs })
                 </h4>
               </div>
               <div>
-                <p className="text-[#5A5A5A] lg:text-[18px] md:text-[18px] sm:text-[16px] text-[13px] font-normal tahoma mb-5">
+                <p className="text-[#5A5A5A] lg:text-[18px] md:text-[18px] sm:text-[16px] text-[13px] font-normal tahoma">
                   {subTitle}
                 </p>
               </div>

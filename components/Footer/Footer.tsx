@@ -59,8 +59,8 @@ const Locations = () => {
   ];
 
   const formattedLocation = (location: string) => {
-    return location.toLowerCase().replace(/\s+/g, '-');
-  }
+    return location.toLowerCase().replace(/\s+/g, "-");
+  };
 
   return (
     <div className={classes.FooterLocationsContainer}>
@@ -84,26 +84,23 @@ const Locations = () => {
             ))}
           </div>
           <div className="mt-10 px-5">
-            <div className="flex flex-wrap gap-4 justify-between items-center">
+            <div className="md:flex sm:block sm:justify-center sm:text-center text-center flex-wrap gap-5 md:justify-between items-center">
               <div>
                 <Link
-                  href="#"
+                  href="/terms-of-use"
                   className="text-white text-center roboto text-lg font-medium"
                 >
                   Terms Of Service
                 </Link>
               </div>
-              <div>
-                <Link
-                  href="#"
-                  className="text-white text-center roboto text-lg font-medium"
-                >
-                  Veteran PCS ©2024
-                </Link>
+              <div className="my-7 sm:my-7 md:my-0">
+                <span className="text-white text-center roboto text-lg font-medium">
+                  VeteranPCS ©2024
+                </span>
               </div>
               <div>
                 <Link
-                  href="#"
+                  href="/privacy-policy"
                   className="text-white text-center roboto text-lg font-medium"
                 >
                   Privacy Policy{" "}
@@ -127,9 +124,9 @@ const Locations = () => {
                 />
               </div>
               <div>
-                <p className="text-white text-[14px] font-medium roboto w-[180px] my-4">
-                  Jason Anderson Founder and Owner, VeteranPCS, LLC Employing
-                  Broker License: ER.100089091
+                <p className="text-white text-[14px] font-medium roboto my-4">
+                  Jason Anderson <br></br> Founder and Owner, VeteranPCS, LLC
+                  <br></br> Employing Broker <br></br> License: ER.100089091
                 </p>
               </div>
               <div className="flex items-center">

@@ -1,37 +1,62 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
-import { FormData } from "@/app/get-listed-lenders/page";
-import Link from "next/link";
+import { useForm, SubmitHandler } from 'react-hook-form';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 interface ContactFormProps {
   onSubmit: (formData: FormData) => void;
-  formData: FormData;
+  shouldSubmit: () => void;
 }
 
-const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
-  const [localFormData, setLocalFormData] = useState<FormData>({
-    firstName: formData.firstName || '',
-    lastName: formData.lastName || '',
-    email: formData.email || '',
-    phone: formData.phone || '',
+export interface FormData {
+  typeOfHome: string | null;
+  bedrooms: string;
+  bathrooms: string;
+  maxPrice: string;
+  preApproval: string | null;
+  captchaToken: string;
+}
+
+// Define validation schema using Yup
+const validationSchema = Yup.object({
+  typeOfHome: Yup.string().required('Type of Home is required'),
+  bedrooms: Yup.string().required('Number of bedrooms is required'),
+  bathrooms: Yup.string().required('Number of bathrooms is required'),
+  maxPrice: Yup.string().required('Maximum price is required'),
+  preApproval: Yup.string().required('Pre-approval status is required'),
+  captchaToken: Yup.string().required('Please complete the reCAPTCHA'),
+});
+
+const OptionalInformationForBuyer = ({ onSubmit, shouldSubmit }: ContactFormProps) => {
+  // Set up react-hook-form with Yup validation
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
+    // resolver: yupResolver(validationSchema),
+    defaultValues: {
+      typeOfHome: null,
+      bedrooms: '',
+      bathrooms: '',
+      maxPrice: '', 
+      preApproval: null,
+      captchaToken: '',
+    }
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setLocalFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const onCaptchaChange = (token: string | null) => {
+    setValue('captchaToken', token || '', { 
+      shouldValidate: true // This triggers validation after setting the value
+    });
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    onSubmit(localFormData);
+  // Handle form submission
+  const onSubmitHandler: SubmitHandler<FormData> = (data) => {
+    onSubmit(data);
+    shouldSubmit()
   };
 
   return (
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmitHandler)}>
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
@@ -40,41 +65,47 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
             </div>
             <div className="border rounded-lg border-[#E2E4E5] p-8">
               <div>
+                {/* Type of Home */}
                 <div className="mb-8 flex flex-col">
                   <label
-                    htmlFor="howDidYouHear"
+                    htmlFor="typeOfHome"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
                     Type of Home:
                   </label>
                   <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    id="typeOfHome"
+                    {...register('typeOfHome')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       --None--
                     </option>
                     <option value="Single Family">Single Family</option>
                     <option value="Townhouse">Townhouse</option>
                     <option value="Duplex">Duplex</option>
                     <option value="Condo">Condo</option>
-                    <option value="other">Other</option>
+                    <option value="Other">Other</option>
                   </select>
+                  {errors.typeOfHome && (
+                    <span className="text-red-500">{errors.typeOfHome.message}</span>
+                  )}
                 </div>
+
+                {/* Bedrooms */}
                 <div className="mb-8 flex flex-col">
                   <label
-                    htmlFor="howDidYouHear"
+                    htmlFor="bedrooms"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
                     How many Bedrooms are you looking for?:
                   </label>
                   <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    id="bedrooms"
+                    {...register('bedrooms')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       --None--
                     </option>
                     <option value="1+">1+</option>
@@ -83,20 +114,25 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
                     <option value="4+">4+</option>
                     <option value="5+">5+</option>
                   </select>
+                  {errors.bedrooms && (
+                    <span className="text-red-500">{errors.bedrooms.message}</span>
+                  )}
                 </div>
+
+                {/* Bathrooms */}
                 <div className="mb-8 flex flex-col">
                   <label
-                    htmlFor="howDidYouHear"
+                    htmlFor="bathrooms"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
                     How many Bathrooms are you looking for?:
                   </label>
                   <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    id="bathrooms"
+                    {...register('bathrooms')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       --None--
                     </option>
                     <option value="1+">1+</option>
@@ -104,20 +140,25 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
                     <option value="3+">3+</option>
                     <option value="4+">4+</option>
                   </select>
+                  {errors.bathrooms && (
+                    <span className="text-red-500">{errors.bathrooms.message}</span>
+                  )}
                 </div>
+
+                {/* Maximum Price */}
                 <div className="mb-8 flex flex-col">
                   <label
-                    htmlFor="howDidYouHear"
+                    htmlFor="maxPrice"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
                     Maximum Price:
                   </label>
                   <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    id="maxPrice"
+                    {...register('maxPrice')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       --None--
                     </option>
                     {[...Array(24)].map((_, i) => {
@@ -134,29 +175,49 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
                     <option value="$900k+">900k+</option>
                     <option value="$1M+">1M+</option>
                   </select>
+                  {errors.maxPrice && (
+                    <span className="text-red-500">{errors.maxPrice.message}</span>
+                  )}
                 </div>
+
+                {/* Pre-Approval */}
                 <div className="flex flex-col">
                   <label
-                    htmlFor="howDidYouHear"
+                    htmlFor="preApproval"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
                     Are you pre-approved for a mortgage?
                   </label>
                   <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    id="preApproval"
+                    {...register('preApproval')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       --None--
                     </option>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                     <option value="in process">In Process</option>
                   </select>
+                  {errors.preApproval && (
+                    <span className="text-red-500">{errors.preApproval.message}</span>
+                  )}
+                </div>
+
+                <div className="mt-8 flex flex-col">
+                  <ReCAPTCHA
+                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+                    onChange={onCaptchaChange} // Handle reCAPTCHA value change
+                  />
+                   {errors.captchaToken && (
+                    <span className="text-red-500">{errors.captchaToken.message}</span>
+                  )}
                 </div>
               </div>
             </div>
+
+            {/* Submit Button */}
             <div className="flex md:justify-start justify-center">
               <button
                 type="submit"
@@ -184,4 +245,4 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
   );
 };
 
-export default ContactForm;
+export default OptionalInformationForBuyer;

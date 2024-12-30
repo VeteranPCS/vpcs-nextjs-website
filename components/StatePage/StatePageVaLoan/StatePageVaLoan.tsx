@@ -5,7 +5,7 @@ import Button from "@/components/common/Button";
 import Link from "next/link";
 import { LendersData, Lenders } from "@/services/stateService";
 
-const StatePageVaLoan = ({ cityName, lendersData }: { cityName: string, lendersData: LendersData | [] }) => {
+const StatePageVaLoan = ({ cityName, lendersData }: { cityName: string, lendersData: LendersData | [] }) => {  
   return (
     <div>
       <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">

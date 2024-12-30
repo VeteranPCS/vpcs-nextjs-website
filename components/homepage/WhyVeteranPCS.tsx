@@ -19,11 +19,11 @@ const WhyVeteranPcs = () => {
                   <Image
                     width={100}
                     height={100}
-                    className="w-auto h-auto"
+                    className="md:w-auto md:h-auto sm:w-[12%] w-12"
                     src="/icon/Moveinbonus.svg"
                     alt="Move in bonus"
                   />
-                  <h3 className="text-[#003486] font-bold lg:text-[30px] md:text-[25px] sm:text-[25px] text-[25px] leading-[28px] poppins">
+                  <h3 className="text-[#003486] font-bold lg:text-[30px] md:text-[25px] sm:text-[25px] text-[22px] leading-[32px] poppins">
                     MOVE IN <br /> BONUS
                   </h3>
                 </div>
@@ -31,11 +31,11 @@ const WhyVeteranPcs = () => {
                   <Image
                     width={100}
                     height={100}
-                    className="w-auto h-auto"
+                    className="md:w-auto md:h-auto sm:w-[12%] w-12"
                     src="/icon/checkblue.svg"
                     alt="Move in bonus"
                   />
-                  <h3 className="text-[#003486] font-bold lg:text-[30px] md:text-[25px] sm:text-[20px] text-[16px] leading-[28px] poppins">
+                  <h3 className="text-[#003486] font-bold lg:text-[30px] md:text-[25px] sm:text-[25px] text-[22px] leading-[32px] poppins">
                     FREE TO USE
                   </h3>
                 </div>
@@ -43,11 +43,11 @@ const WhyVeteranPcs = () => {
                   <Image
                     width={100}
                     height={100}
-                    className="w-auto h-auto"
+                    className="md:w-auto md:h-auto sm:w-[12%] w-12"
                     src="/icon/Giveback.svg"
                     alt="Move in bonus"
                   />
-                  <h3 className="text-[#003486] font-bold lg:text-[30px] md:text-[25px] sm:text-[20px] text-[16px] leading-[28px] poppins">
+                  <h3 className="text-[#003486] font-bold lg:text-[30px] md:text-[25px] sm:text-[25px] text-[22px] leading-[32px] poppins">
                     GIVE BACK
                   </h3>
                 </div>
@@ -68,11 +68,11 @@ const WhyVeteranPcs = () => {
                   <Image
                     width={100}
                     height={100}
-                    className="w-auto h-auto"
+                    className="md:w-auto md:h-auto sm:w-[12%] w-12"
                     src="/icon/valoanexperts.svg"
                     alt="Move in bonus"
                   />
-                  <h3 className="text-[#003486] font-bold lg:text-[30px] md:text-[25px] sm:text-[20px] text-[16px] leading-[28px] poppins">
+                  <h3 className="text-[#003486] font-bold lg:text-[30px] md:text-[25px] sm:text-[25px] text-[22px] leading-[32px] poppins">
                     VA LOAN <br /> EXPERTS
                   </h3>
                 </div>
@@ -80,11 +80,11 @@ const WhyVeteranPcs = () => {
                   <Image
                     width={100}
                     height={100}
-                    className="w-auto h-auto"
+                    className="md:w-auto md:h-auto sm:w-[12%] w-12"
                     src="/icon/Support.svg"
                     alt="Move in bonus"
                   />
-                  <h3 className="text-[#003486] font-bold lg:text-[30px] md:text-[25px] sm:text-[20px] text-[16px] leading-[28px] poppins">
+                  <h3 className="text-[#003486] font-bold lg:text-[30px] md:text-[25px] sm:text-[25px] text-[22px] leading-[32px] poppins">
                     SUPPORT
                   </h3>
                 </div>
@@ -92,11 +92,11 @@ const WhyVeteranPcs = () => {
                   <Image
                     width={100}
                     height={100}
-                    className="w-auto h-auto"
+                    className="md:w-auto md:h-auto sm:w-[12%] w-12"
                     src="/icon/Agents.svg"
                     alt="Move in bonus"
                   />
-                  <h3 className="text-[#003486] font-bold lg:text-[30px] md:text-[25px] sm:text-[20px] text-[16px] leading-[28px] poppins">
+                  <h3 className="text-[#003486] font-bold lg:text-[30px] md:text-[25px] sm:text-[25px] text-[22px] leading-[32px] poppins">
                     AGENTS
                   </h3>
                 </div>
@@ -106,7 +106,7 @@ const WhyVeteranPcs = () => {
               <Image
                 width={100}
                 height={100}
-                className="w-auto h-auto my-5"
+                className="md:w-auto md:h-auto sm:w-full sm:h-full w-full h-full my-10 px-14"
                 src="/icon/vet-PCS-5-star-review.svg"
                 alt="Move in bonus"
               />

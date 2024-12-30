@@ -1,10 +1,36 @@
+"use client"
 import Button from "@/components/common/Button";
 import "@/styles/globals.css";
 import classes from "./ContactForm.module.css";
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect, useCallback } from "react";
+import mediaAccountService from "@/services/mediaAccountService";
+
+interface MediaAccountProps {
+  _id: string;
+  name: string;
+  designation?: string;
+  icon: string;
+  link: string;
+}
 
 const ContectForm = () => {
+
+  const [mediaAccount, SetMediaAccount] = useState<MediaAccountProps[]>([]);
+  const fetchMediaAccounts = useCallback(async () => {
+    try {
+      const response = await mediaAccountService.fetchAccounts()
+      SetMediaAccount(response)
+    } catch (error) {
+      console.error('Error fetching posts:', error)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchMediaAccounts()
+  }, [fetchMediaAccounts])
+
   return (
     <div className="container mx-auto flex flex-wrap justify-center lg:py-12 md:py-12 sm:py-2 py-2 gap-10">
       <div className="flex flex-wrap justify-around rounded-[12.128px] bg-white shadow-[0px_0px_72.766px_36.383px_rgba(0,0,0,0.03)] p-4 w-full overflow-hidden mx-8 md:mb-0 mb-5">
@@ -55,7 +81,19 @@ const ContectForm = () => {
 
             <div>
               <ul className="flex items-center md:justify-start justify-center gap-4 mt-5">
-                <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-1 flex items-center justify-center">
+                {mediaAccount.map((acc) => (
+                  <li key={acc._id} className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2">
+                    <Link href={acc.link}>
+                      <Image
+                        width={100}
+                        height={100}
+                        src={`/icon/${acc.icon}`}
+                        alt={acc.name}
+                      />
+                    </Link>
+                  </li>
+                ))}
+                {/* <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-1 flex items-center justify-center">
                   <Link href="#">
                     <Image
                       width={100}
@@ -98,7 +136,7 @@ const ContectForm = () => {
                       alt="Description of the image"
                     />
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>

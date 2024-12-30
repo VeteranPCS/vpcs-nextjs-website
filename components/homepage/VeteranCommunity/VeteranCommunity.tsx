@@ -4,7 +4,7 @@ import Button from "@/components/common/Button";
 import classes from "./VeteranCommunity.module.css";
 import Image from "next/image";
 import veterenceSupportService from "@/services/veterenceSupportService";
-import SupportContent from "../FamilySupport/SupportContent";
+import SupportContent from "@/components/homepage/FamilySupport/SupportContent";
 import Link from "next/link";
 
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
@@ -54,7 +54,7 @@ const VeteranComunity = async () => {
       "support-our-veteran-community"
     );
   } catch (error) {
-    console.error('Failed to fetch Veterence Data:', error);
+    console.error("Failed to fetch Veterence Data:", error);
     return <p>Failed to load Veterence Data.</p>;
   }
 
@@ -80,17 +80,17 @@ const VeteranComunity = async () => {
               />
             </div>
             <div>
-              <h1 className="text-white poppins lg:text-left md:text-left sm:text-center text-center text-3xl font-bold leading-[30px] mt-5">
+              <h1 className="text-white poppins lg:text-left md:text-left sm:text-center text-center text-3xl font-bold leading-[40px] mt-5">
                 {pageData?.title}
               </h1>
-              <div className="text-white text-xl lg:text-left md:text-left sm:text-center text-center italic font-medium leading-[25px] mt-4 roboto">
+              <div className="text-white md:text-xl sm:text-sm lg:text-left md:text-left sm:text-center text-center italic font-medium leading-[25px] mt-4 roboto">
                 {pageData?.description?.map((block, index) => (
                   <SupportContent
                     key={block._key || `description-${index}`}
                     block={{
                       ...block,
                       style: validateBlockStyle(block.style),
-                      children: block.children || [], 
+                      children: block.children || [],
                     }}
                   />
                 ))}
@@ -106,10 +106,10 @@ const VeteranComunity = async () => {
                     width={100}
                     height={100}
                     src="/icon/checkred.svg"
-                    className="w-auto h-auto"
+                    className="md:w-[25px] md:h-[25px] sm:w-[20px] sm:h-[20px] w-[25px] h-[25px] mt-1"
                     alt="Description of the image"
                   />
-                  <h6 className="text-white roboto text-lg font-medium my-0">
+                  <h6 className="text-white roboto md:text-lg sm:text-sm font-medium my-0">
                     <SupportContent
                       key={point._id || `point-content-${index}`}
                       block={{
@@ -122,10 +122,11 @@ const VeteranComunity = async () => {
                 </div>
               ))}
             </div>
-            <Link href="/impact" className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center">
-              <Button
-                buttonText={pageData?.button_text || "Our Impact"}
-              />
+            <Link
+              href="/impact"
+              className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center"
+            >
+              <Button buttonText={pageData?.button_text || "Our Impact"} />
             </Link>
           </div>
           <div>

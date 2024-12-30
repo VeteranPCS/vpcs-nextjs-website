@@ -111,7 +111,7 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
       <Box className="w-full">
         <Slider {...settingsOne} className="pt-10 reviw-topslider">
           {reviews.map((item, index) => (
-            <div key={index} className="bg-white rounded-2xl p-2">
+            <div key={index} className="bg-white rounded-2xl p-2 slider-box">
               <div className="flex items-center">
                 <div className="bg-[#f2f2f2] w-[64px] h-[64px] rounded-full"></div>
                 {/* <div className="ml-3">

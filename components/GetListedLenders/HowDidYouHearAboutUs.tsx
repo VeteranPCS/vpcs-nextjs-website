@@ -1,64 +1,74 @@
-"use client";
-import { useState } from 'react';
+import React from 'react';
+import { UseFormRegister, UseFormWatch, FieldErrors } from 'react-hook-form';
+import { ContactFormData, HowDidYouHearOptions } from '@/components/ContactLender/ContactLender'; // Adjust import path as needed
 
-const HowDidYouHearAboutUs = () => {
-    const [selectedOption, setSelectedOption] = useState<string>('');
+interface HowDidYouHearAboutUsProps {
+    register: UseFormRegister<ContactFormData>;
+    watch: UseFormWatch<ContactFormData>;
+    errors: FieldErrors<ContactFormData>;
+}
 
-    const hearAboutUsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedOption(e.target.value);
-    };
+const HowDidYouHearAboutUs: React.FC<HowDidYouHearAboutUsProps> = ({
+    register,
+    watch,
+    errors,
+}) => {
+    const howDidYouHearValue = watch('howDidYouHear');
 
     return (
-        <div className="border rounded-lg border-[#E2E4E5] p-8">
+        <div>
             <div className="mb-8 flex flex-col">
                 <label
                     htmlFor="howDidYouHear"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
-                    How Did You Hear About Us?*:
+                    How did you hear about us?*
                 </label>
                 <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    {...register('howDidYouHear')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
-                    onChange={hearAboutUsChange}
+                    id="howDidYouHear"
                 >
-                    <option value="" disabled selected>
-                        Select an option
-                    </option>
+                    <option value="">Select an option</option>
                     <option value="Google">Google</option>
                     <option value="Facebook">Facebook</option>
                     <option value="Instagram">Instagram</option>
-                    <option value="Linkedin">Linkedin</option>
-                    <option value="Tiktok">Tiktok</option>
+                    <option value="Linkedin">LinkedIn</option>
+                    <option value="Tiktok">TikTok</option>
                     <option value="Base Event">Base Event</option>
                     <option value="Transition Brief">Transition Brief</option>
                     <option value="Agent Referral">Agent Referral</option>
                     <option value="Friend Referral">Friend Referral</option>
                     <option value="Skillbridge">Skillbridge</option>
-                    <option value="Youtube">Youtube</option>
+                    <option value="Youtube">YouTube</option>
                     <option value="Other">Other</option>
                 </select>
+                {errors.howDidYouHear && (
+                    <span className="text-error">{errors.howDidYouHear.message}</span>
+                )}
             </div>
-            {selectedOption === 'Other' && (
+
+            {howDidYouHearValue === 'Other' && (
                 <div className="mb-8 flex flex-col">
                     <label
                         htmlFor="tellusMore"
                         className="text-[#242426] tahoma text-sm font-normal mb-1"
                     >
-                        Tell Us More
+                        Please tell us more*
                     </label>
-                    <input
+                    <textarea
+                        {...register('tellusMore')}
                         className="border-b border-[#E2E4E5] px-2 py-1"
-                        type="text"
                         id="tellusMore"
-                        name="tellusMore"
-                        placeholder="Tell us more"
+                        placeholder="Tell us more..."
                     />
+                    {errors.tellusMore && (
+                        <span className="text-error">{errors.tellusMore.message}</span>
+                    )}
                 </div>
             )}
         </div>
     );
-}
+};
 
 export default HowDidYouHearAboutUs;

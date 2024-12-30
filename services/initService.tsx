@@ -1,21 +1,18 @@
-import { API_ENDPOINTS } from '@/constants/api'
-import { api, RequestType } from '@/services/api';
+import { client } from '@/sanity/lib/client';
 
 const initService = {
-    getStateList: async () => {
+    getStateListFetch: async () => {
         try {
-            const response = await api({
-                endpoint: API_ENDPOINTS.fetchStateList,
-                type: RequestType.GET,
-            });
+            const response = await client.fetch(`*[_type == "city_list"]{ city_name, short_name }`)
+            console.log('response: ', response);
 
-            if (response?.status === 200) {
-                return response.data;
+            if (response) {
+                return response;
             } else {
-                throw new Error('Failed to fetch Additional Impact Stories');
+                throw new Error('Failed to fetch State List');
             }
         } catch (error: any) {
-            console.error('Error fetching Additional Impact Stories:', error);
+            console.error('Error fetching State List:', error);
             throw error;
         }
     },

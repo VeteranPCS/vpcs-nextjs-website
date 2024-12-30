@@ -1,36 +1,112 @@
 "use client";
-import { useState, FormEvent } from 'react';
-import { FormData } from "@/app/get-listed-lenders/page";
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
-interface ContactFormProps {
-  onSubmit: (data: FormData) => void;
-  onBack: () => void;
-  formData: FormData;
+export type StatusOptions =
+  | 'Active'
+  | 'National Guard'
+  | 'Retired'
+  | 'Spouse'
+  | 'Veteran'
+  | '';
+
+export type BranchOptions =
+  | 'Air Force'
+  | 'Coast Guard'
+  | 'Navy'
+  | 'Marine Corps'
+  | 'Space Force'
+  | 'Army'
+  | '';
+
+export type DischargeStatusOptions =
+  | 'Honorable Discharge'
+  | 'Retired'
+  | 'Medical Retirement'
+  | 'Currently Serving'
+  | '';
+
+export interface ContactFormData {
+  status_select: StatusOptions;
+  branch_select: BranchOptions;
+  discharge_status: DischargeStatusOptions;
 }
 
+interface ContactFormProps {
+  onSubmit: (data: ContactFormData) => void;
+  onBack: () => void;
+}
 
-const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
-  const [localFormData, setLocalFormData] = useState<FormData>({
-    firstName: formData.firstName || '',
-    lastName: formData.lastName || '',
-    email: formData.email || '',
-    phone: formData.phone || '',
+const StatusOptions: StatusOptions[] = [
+  'Active',
+  'National Guard',
+  'Retired',
+  'Spouse',
+  'Veteran',
+];
+
+const BranchOptions: BranchOptions[] = [
+  'Air Force',
+  'Coast Guard',
+  'Navy',
+  'Marine Corps',
+  'Space Force',
+  'Army',
+];
+
+const DischargeStatusOptions: DischargeStatusOptions[] = [
+  'Honorable Discharge',
+  'Retired',
+  'Medical Retirement',
+  'Currently Serving',
+];
+
+const contactFormSchema = yup.object().shape({
+  status_select: yup
+    .string()
+    .required('Please select an option')
+    .oneOf(StatusOptions, 'Invalid option selected'),
+  branch_select: yup
+    .string()
+    .required('Please select an option')
+    .oneOf(BranchOptions, 'Invalid option selected'),
+  discharge_status: yup
+    .string()
+    .required('Please select an option')
+    .oneOf(DischargeStatusOptions, 'Invalid option selected'),
+});
+
+const GetListedLendersProfileInfo = ({ onSubmit, onBack }: ContactFormProps) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue, // If you need to set default values dynamically
+  } = useForm<ContactFormData>({
+    // resolver: yupResolver(contactFormSchema),
+    defaultValues: {
+      status_select: '',
+      branch_select: '',
+      discharge_status: '',
+    },
   });
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    onSubmit(localFormData);
+  const onFormSubmit: SubmitHandler<ContactFormData> = (data) => {
+    onSubmit(data);
   };
 
-  const handleBack = (e: FormEvent) => {
-    e.preventDefault();
-    onBack();
+  const renderError = (fieldName: keyof ContactFormData) => {
+    const error = errors[fieldName];
+    return error ? (
+      <span className="text-error">{error.message}</span>
+    ) : null;
   };
 
   return (
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onFormSubmit)}>
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
@@ -41,69 +117,75 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
               <div>
                 <div className="mb-8 flex flex-col">
                   <label
-                    htmlFor="howDidYouHear"
+                    htmlFor="status_select"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
                     Status*
                   </label>
                   <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    {...register('status_select')}
+                    id="status_select"
+                    name="status_select"
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       Select an option
                     </option>
-                    <option value="Active">Active</option>
-                    <option value="National Guard">National Guard</option>
-                    <option value="Retired">Retired</option>
-                    <option value="Spouse">Spouse</option>
-                    <option value="Veteran">Veteran</option>
+                    {StatusOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
                   </select>
+                  {renderError('status_select')}
                 </div>
                 <div className="mb-8 flex flex-col">
                   <label
-                    htmlFor="howDidYouHear"
+                    htmlFor="branch_select"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
                     Branch*
                   </label>
                   <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    {...register('branch_select')}
+                    id="branch_select"
+                    name="branch_select"
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       Select an option
                     </option>
-                    <option value="Air Force">Air Force</option>
-                    <option value="Coast Guard">Coast Guard</option>
-                    <option value="Navy">Navy</option>
-                    <option value="Marine Corps">Marine Corps</option>
-                    <option value="Space Force">Space Force</option>
-                    <option value="Army">Army</option>
+                    {BranchOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
                   </select>
+                  {renderError('branch_select')}
                 </div>
                 <div className="flex flex-col">
                   <label
-                    htmlFor="howDidYouHear"
+                    htmlFor="discharge_status"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
                     Discharge Status(es)*
                   </label>
                   <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    {...register('discharge_status')}
+                    id="discharge_status"
+                    name="discharge_status"
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       Select an option
                     </option>
-                    <option value="Honorable Discharge">Honorable Discharge</option>
-                    <option value="Retired">Retired</option>
-                    <option value="Medical Retirement">Medical Retirement</option>
-                    <option value="Currently Serving">Currently Serving</option>
+                    {DischargeStatusOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
                   </select>
+                  {renderError('discharge_status')}
                 </div>
               </div>
             </div>
@@ -112,7 +194,7 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                 type="submit"
                 className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
               >
-                Submit Now
+                Next
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -131,7 +213,7 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
         </form>
         <div className="flex md:justify-start justify-center mt-8">
           <button
-            onClick={handleBack}
+            onClick={onBack}
             className="rounded-md border border-[#BBBFC1] bg-white px-8 py-2 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
           >
             <svg
@@ -154,4 +236,4 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
   );
 };
 
-export default ContactForm;
+export default GetListedLendersProfileInfo;

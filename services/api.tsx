@@ -79,11 +79,11 @@ export const salesForceAPI = async ({
         method: type as any,
         data,
         headers: {
-            "Cache-Control": "no-cache", 
+            "Cache-Control": "no-cache",                                                                                                                                
             Authorization: `Bearer ${SALESFORCETOKEN}`,
-        },
+        },                                                                                  
     };
-
+                                    
     try {
         res = await axios(config);  
     } catch (err: any) {

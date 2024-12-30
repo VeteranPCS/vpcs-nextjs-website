@@ -4,15 +4,17 @@
   border-bottom: 10px solid transparent;
   background: #fff;
   box-shadow: 0px 1px 0px 0px #eee;
-  
+
 }
-@media screen and (max-width: 575px)  {
+
+@media screen and (max-width: 575px) {
   .coveredwrappercontainer {
     margin: 0 auto;
-    max-width: 350px;
-    width: 350px;
-  } 
+    max-width: 100%;
+    width: 100%;
+  }
 }
+
 .coveredwrappercontainer:hover {
   border-radius: 32px;
   border-bottom: 10px solid #a81f23;

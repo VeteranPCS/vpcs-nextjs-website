@@ -32,7 +32,7 @@ export default function Home() {
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = (stepData: Partial<FormData>) => {
+  const handleSubmit = (stepData: any) => {
     setFormData(prev => ({
       ...prev,
       ...stepData
@@ -110,7 +110,6 @@ export default function Home() {
           <GetListedLendersProfileInfo 
             onSubmit={handleSubmit}
             onBack={handleBack}
-            formData={formData}
           />
         )}
         

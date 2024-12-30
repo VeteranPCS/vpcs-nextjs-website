@@ -1,44 +1,85 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ContactAgents from "@/components/ContactAgents/ContactAgent";
-import MilitaryService from "@/components/ContactAgents/MilitaryService";
 import CurrentLocation from "@/components/ContactAgents/CurrentLocation";
 import OptionalInformationForBuyer from "@/components/ContactAgents/OptionalInformationForBuyer";
 import Image from "next/image";
 import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListedLendersProfileInfo";
+import { contactAgentPostForm } from "@/services/salesForcePostFormsService";
 
-export interface FormData {
+interface FormData {
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
+  currentBase?: string;
+  destinationBase?: string;
+  howDidYouHear?: string;
+  tellusMore?: string;
+  additionalComments?: string;
+  status_select?: string;
+  branch_select?: string;
+  discharge_status?: string;
+  state?: string;
+  city?: string;
+  buyingSelling?: string;
+  timeframe?: string;
+  typeOfHome?: string | null;
+  bedrooms?: string;
+  bathrooms?: string;
+  maxPrice?: string;
+  preApproval?: string | null;
+  captchaToken?: string;
 }
 
 export default function Home() {
+  const [queryString, setQueryString] = useState<string>("");
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-  });
+  const [formData, setFormData] = useState<FormData>();
+  const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
 
   const handleNext = () => {
-    setCurrentStep(prev => Math.min(prev + 1, 4));
+    setCurrentStep(prev => Math.min(prev + 1, 4)); 
   };
-
+  
   const handleBack = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
+    setCurrentStep(prev => Math.max(prev - 1, 1)); 
   };
-
-  const handleSubmit = (stepData: Partial<FormData>) => {
+  
+  const handleSubmit = (stepData: any) => {
     setFormData(prev => ({
       ...prev,
       ...stepData
     }));
-    handleNext();
+    
+      handleNext();
   };
 
+  useEffect(() => {
+    const fullQueryString = window.location.search; 
+    console.log('fullQueryString: ', fullQueryString);
+    setQueryString(fullQueryString);
+  }, []);
+
+  const shouldSubmit = () => {
+    setShouldSubmitForm(true)
+  }
+
+  const handleFormSubmission = async () => {
+    try {
+      await contactAgentPostForm(formData, queryString);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      // Handle error appropriately
+    }
+  };
+  
+  useEffect(() => {
+    if (shouldSubmitForm) {
+      handleFormSubmission();
+    }
+  }, [formData, shouldSubmitForm]);
+  
   const renderProgressBar = () => {
     return (
       <div className="flex md:justify-start justify-center">
@@ -92,39 +133,28 @@ export default function Home() {
 
         {currentStep === 1 && (
           <ContactAgents
-            onBack={handleBack}
             onSubmit={handleSubmit}
-            formData={formData}
           />
         )}
-
-        {/* {currentStep === 2 && (
-          <MilitaryService 
-            onSubmit={handleSubmit}
-            onBack={handleBack}
-            formData={formData}
-          />
-        )} */}
 
         {currentStep === 2 && (
           <GetListedLendersProfileInfo
             onSubmit={handleSubmit}
             onBack={handleBack}
-            formData={formData}
           />
         )}
 
         {currentStep === 3 && (
           <CurrentLocation
             onSubmit={handleSubmit}
-            formData={formData}
+            onBack={handleBack}
           />
         )}
 
         {currentStep === 4 && (
           <OptionalInformationForBuyer
             onSubmit={handleSubmit}
-            formData={formData}
+            shouldSubmit={shouldSubmit}
           />
         )}
       </div>

@@ -1,7 +1,29 @@
 "use client";
 import { useState, ChangeEvent, FormEvent } from 'react';
-import { FormData } from "@/app/get-listed-lenders/page";
+// import { FormData } from "@/app/get-listed-lenders/page";
 import Link from "next/link";
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm, SubmitHandler } from 'react-hook-form';
+
+// Define FormData interface
+export interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+// Define validation schema using yup
+const lenderPersonalDataSchema = yup.object().shape({
+  firstName: yup.string().required('First name is required'),
+  lastName: yup.string().required('Last name is required'),
+  email: yup.string().email('Invalid email address').required('Email is required'),
+  phone: yup
+    .string()
+    .matches(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number format')
+    .required('Phone number is required'),
+});
 
 interface ContactFormProps {
   onSubmit: (formData: FormData) => void;
@@ -9,30 +31,24 @@ interface ContactFormProps {
 }
 
 const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
-  const [localFormData, setLocalFormData] = useState<FormData>({
-    firstName: formData.firstName || '',
-    lastName: formData.lastName || '',
-    email: formData.email || '',
-    phone: formData.phone || '',
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: yupResolver(lenderPersonalDataSchema),
+    defaultValues: formData,  // Use formData as the default values
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setLocalFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    onSubmit(localFormData);
+  // Handle form submission
+  const handleSubmitPersonal: SubmitHandler<FormData> = (data) => {
+    onSubmit(data);
   };
 
   return (
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(handleSubmitPersonal)}>
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
@@ -63,11 +79,12 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     type="text"
                     id="firstName"
-                    name="firstName"
-                    placeholder="Alexander"
-                    value={localFormData.firstName}
-                    onChange={handleChange}
+                    placeholder="Please Enter First Name"
+                    {...register('firstName')}
                   />
+                  {errors.firstName && (
+                    <span className="text-error">{errors.firstName.message}</span>
+                  )}
                 </div>
                 <div className="mb-8 flex flex-col">
                   <label
@@ -80,11 +97,12 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     type="text"
                     id="lastName"
-                    name="lastName"
-                    placeholder="Smith"
-                    value={localFormData.lastName}
-                    onChange={handleChange}
+                    placeholder="Please Enter Last Name"
+                    {...register('lastName')}
                   />
+                  {errors.lastName && (
+                    <span className="text-error">{errors.lastName.message}</span>
+                  )}
                 </div>
                 <div className="mb-8 flex flex-col relative">
                   <label
@@ -98,10 +116,8 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
                       className="pl-12 py-1 w-full"
                       type="email"
                       id="email"
-                      name="email"
-                      placeholder="alex_manager@gmail.com"
-                      value={localFormData.email}
-                      onChange={handleChange}
+                      {...register('email')}
+                      placeholder="Please Enter Email"
                     />
                     <span className="absolute left-1 w-6 h-6 text-[#B1B3B8]">
                       <svg
@@ -118,6 +134,9 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
                       </svg>
                     </span>
                   </div>
+                  {errors.email && (
+                    <span className="text-error">{errors.email.message}</span>
+                  )}
                 </div>
                 <div className="flex flex-col relative">
                   <label
@@ -131,10 +150,8 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
                       className="border-b border-[#E2E4E5] pl-12 py-1 w-full"
                       type="tel"
                       id="phone"
-                      name="phone"
-                      placeholder="+1 555 555-1234"
-                      value={localFormData.phone}
-                      onChange={handleChange}
+                      placeholder="Please Enter Phone"
+                      {...register('phone')}
                     />
                     <span className="absolute left-1 w-6 h-6 text-[#B1B3B8]">
                       <svg
@@ -151,6 +168,9 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
                       </svg>
                     </span>
                   </div>
+                  {errors.phone && (
+                    <span className="text-error">{errors.phone.message}</span>
+                  )}
                 </div>
               </div>
             </div>

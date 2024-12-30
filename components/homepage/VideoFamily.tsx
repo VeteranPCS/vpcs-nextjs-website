@@ -15,7 +15,7 @@ const FamilyVideo = () => {
     router.push("/how-it-works"); // Navigate to the "stories" page
   };
   return (
-    <div className="w-full relative">
+    <div className="w-full relative overflow-hidden">
       <div>
         <video
           loop
@@ -31,10 +31,10 @@ const FamilyVideo = () => {
         </video>
       </div>
       <Wrapper>
-        <div className="container mx-auto ">
+        <div className="container mx-auto overflow-hidden">
           <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 w-full">
             <div className="text-center">
-              <h1 className="text-white lg:text-[72px] md:text-[62px] sm:text-[42px] text-[42px] font-bold leading-[72px] tahoma">
+              <h1 className="text-white lg:text-[72px] md:text-[62px] sm:text-[36px] text-[36px] font-bold tahoma">
                 $247,500
               </h1>
               <p className="font-normal lg:text-[27px] md:text-[27px] sm:text-[17px] text-[17px] leading-[30px] text-white lg:mt-5 tahoma">

@@ -1,56 +1,76 @@
-"use client";
-import { useState } from "react";
-import ContactLender from "@/components/ContactLender/ContactLender";
 import Image from "next/image";
+import { ContactFormData } from "@/components/ContactLender/ContactLender";
+import ContactLender from "@/components/ContactLender/ContactLender";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export interface FormData {
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
+  additionalComments: string;
+  currentBase: string;
+  destinationBase: string;
+  howDidYouHear?: string;
+  tellusMore?: string;
+}
+
+async function submitForm(formData: ContactFormData, fullQueryString: string) {
+  "use server"
+
+  const paramsObj: { [key: string]: string } = {};
+  new URLSearchParams (fullQueryString).forEach((value, key) => {
+      paramsObj[key] = value;
+  });
+
+  const formBody = new URLSearchParams({
+    oid: "00D4x000003yaV2",
+    retURL: "https://veteranpcs.com/",
+    "00N4x00000QPJUT": paramsObj.id,
+    recordType: "0124x000000Z5yD",
+    lead_source: "Website",
+    "00N4x00000Lsr0GAAU": "true",
+    country_code: "US",
+    "00N4x00000QQ1LB": `https://veteranpcs.com/contact-lender${fullQueryString}`,
+    first_name: formData.firstName || "",
+    last_name: formData.lastName || "",
+    email: formData.email || "",
+    mobile: formData.phone || "",
+    "00N4x00000LspUs": formData.currentBase || "",
+    "00N4x00000QPksj": formData.howDidYouHear || "",
+    "00N4x00000QPS7V": formData.tellusMore || "",
+    "00N4x00000bfgFA": formData.additionalComments || "",
+    recaptcha_token: formData.captchaToken || "",
+  }).toString();
+
+  try {
+    const response = await fetch(
+      "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00D4x000003yaV2",
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formBody,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+
+    revalidatePath('/');
+    
+    // console.log('NEXT_PUBLIC_API_BASE_URL:', process.env.NEXT_PUBLIC_API_BASE_URL);
+    // redirect("http://127.0.0.1:3000/");
+  } catch (error) {
+    console.error('Error:', error);
+    throw new Error('Failed to submit form');
+  }
 }
 
 export default function Home() {
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-  });
-
-  const handleNext = () => {
-    setCurrentStep(prev => Math.min(prev + 1, 4));
-  };
-
-  const handleBack = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
-  };
-
-  const handleSubmit = (stepData: Partial<FormData>) => {
-    setFormData(prev => ({
-      ...prev,
-      ...stepData
-    }));
-    handleNext();
-  };
-
-  const renderProgressBar = () => {
-    return (
-      <div className="flex md:justify-start justify-center">
-        {/* <div className="flex items-center gap-4">
-          <span className={`border rounded-full w-5 h-5 p-[1px] ${currentStep >= 1 ? 'bg-[#000080]' : 'bg-[#FFFFFF] border-[#B9B9C3]'}`}></span>
-          <span className={`border w-10 p-[1px] ${currentStep >= 1 ? 'bg-[#000080]' : 'bg-[#B9B9C3]'}`}></span>
-          <span className={`border rounded-full w-5 h-5 p-[1px] ${currentStep >= 2 ? 'bg-[#000080]' : 'bg-[#FFFFFF] border-[#B9B9C3]'}`}></span>
-          <span className={`border w-10 p-[1px] ${currentStep >= 2 ? 'bg-[#000080]' : 'bg-[#B9B9C3]'}`}></span>
-          <span className={`border rounded-full w-5 h-5 p-[1px] ${currentStep >= 3 ? 'bg-[#000080]' : 'bg-[#FFFFFF] border-[#B9B9C3]'}`}></span>
-          <span className={`border w-10 p-[1px] ${currentStep >= 3 ? 'bg-[#000080]' : 'bg-[#B9B9C3]'}`}></span>
-          <span className={`border rounded-full w-5 h-5 p-[1px] ${currentStep >= 4 ? 'bg-[#000080]' : 'bg-[#FFFFFF] border-[#B9B9C3]'}`}></span>
-        </div> */}
-      </div>
-    );
-  };
-
   return (
     <>
       <div className="container mx-auto w-full">
@@ -82,16 +102,9 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="md:w-[456px] w-auto md:mx-auto md:-mt-6 mt-10 mx-5">
-          {renderProgressBar()}
-        </div>
-
-        {currentStep === 1 && (
-          <ContactLender 
-            onSubmit={handleSubmit}
-            formData={formData}
-          />
-        )}
+        <ContactLender
+          onSubmit={submitForm}
+        />
       </div>
     </>
   );

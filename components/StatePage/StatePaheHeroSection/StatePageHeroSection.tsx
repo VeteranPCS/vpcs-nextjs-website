@@ -2,6 +2,7 @@ import React from "react";
 import "@/styles/globals.css";
 import Image from "next/image";
 import Link from "next/link";
+import CityButton from "./CityButton";
 
 interface ImageAsset {
   image_url: string;
@@ -18,8 +19,11 @@ interface StatePageHeroSecondSectionProps {
   cityList: string[];
 }
 
-const StatePageHeroSecondSection = ({ stateName: cityName, stateImage: cityImage, cityList }: StatePageHeroSecondSectionProps) => {
-
+const StatePageHeroSecondSection = ({
+  stateName: cityName,
+  stateImage: cityImage,
+  cityList,
+}: StatePageHeroSecondSectionProps) => {
   const groupCitiesInPairs = (cities: string[]): string[][] => {
     const pairs: string[][] = [];
 
@@ -30,7 +34,7 @@ const StatePageHeroSecondSection = ({ stateName: cityName, stateImage: cityImage
     return pairs;
   };
 
-  const cityNames = cityList // Extracting the city names from the object
+  const cityNames = cityList; // Extracting the city names from the object
   const cityPairs = groupCitiesInPairs(cityNames);
 
   return (
@@ -39,38 +43,44 @@ const StatePageHeroSecondSection = ({ stateName: cityName, stateImage: cityImage
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-4">
           <div>
             <div className="sm:text-left text-center">
-              <h1 className="text-[#292F6C] tahoma lg:text-[60px] md:text-[60px] sm:text-[55px] text-[55px] font-bold lg:w-[200px] md:w-[200px] sm:w-full w-full leading-[58px]">
+              <h1 className="text-[#292F6C] tahoma lg:text-[60px] md:text-[60px] sm:text-[40px] text-[40px] font-bold lg:w-[300px] md:w-[300px] sm:w-full w-full leading-[70px]">
                 {cityName}
               </h1>
-              <p className="text-[#292F6C] tahoma lg:text-[40px] md:text-[35px] sm:text-[25px] text-[18px] font-normal">
+              <p className="text-[#292F6C] tahoma lg:text-[40px] md:text-[35px] sm:text-[25px] text-[18px] font-normal mt-5">
                 Real Estate Agents & Lenders
               </p>
             </div>
             {cityPairs.map((pair, index) => (
               <div
                 key={index}
-                className={`flex flex-wrap justify-center sm:justify-start items-center gap-4 ${index > 0 ? "mt-12" : "sm:mt-20 mt-10"}`}
+                className={`flex flex-wrap justify-center sm:justify-start items-center gap-4 ${index > 0 ? "mt-5" : "sm:mt-20 mt-10"}`}
               >
                 {pair.map((city, cityIndex) => (
-                  <div key={cityIndex} className={cityIndex > 0 ? "md:ml-5 sm:ml-0 ml-0" : ""}>
-                    <Link
+                  <div
+                    key={cityIndex}
+                    className={cityIndex > 0 ? "md:ml-5 sm:ml-0 ml-0" : ""}
+                  >
+                    {/* <Link
                       className="text-[#ffffff] tahoma text-sm font-normal bg-[#7E1618] rounded-[16px] px-8 py-5 text-center"
                       href={`#${city.toLowerCase().split(' ').join('-')}`}
                     >
                       {city} Agents
-                    </Link>
+                    </Link> */}
+                    <CityButton city={city} />
                   </div>
                 ))}
               </div>
             ))}
           </div>
-          <div>
+          <div className="md:mt-0 mt-10">
             <Image
-              src={cityImage?.asset?.image_url || "/assets/South-Carolina-map.png"}
+              src={
+                cityImage?.asset?.image_url || "/assets/South-Carolina-map.png"
+              }
               alt={cityImage?.alt || "Description of the image"}
               width={1000}
               height={1000}
-              className="w-auto h-auto object-cover"
+              className="w-full h-full object-cover"
             />
           </div>
         </div>

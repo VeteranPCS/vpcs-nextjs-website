@@ -4,6 +4,12 @@
   box-sizing: border-box;
 }
 
+.text-error {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -195,4 +201,22 @@ blockquote {
 
 .comlogoslider .slick-initialized .slick-slide{
   margin:0px 10px !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.reviw-topslider .slick-list .slick-track{
+  display: flex !important;
+  justify-content: center !important;
+  margin: 0px auto !important;
+}
+
+.reviw-topslider .slick-list .slick-track .slick-slide{
+  width: auto !important;
+}
+
+.reviw-topslider .slick-list .slick-track .slick-slide .slider-box{
+  width: auto !important;
 }

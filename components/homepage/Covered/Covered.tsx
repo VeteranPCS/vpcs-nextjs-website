@@ -59,13 +59,13 @@ const Covered = () => {
   }, []);
 
   return (
-    <div className="container mx-auto w-full lg:py-16 md:py-16 sm:py-16 py-5 pt-32">
+    <div className="container mx-auto w-full lg:py-16 md:py-16 sm:py-16 py-0 md:pt-32 sm:pb-5 pb-5">
       <div
         className="px-4 bg-[#ffffff] mx-auto text-center"
         data-aos="fade-right"
         data-aos-duration="1000"
       >
-        <div>
+        <div className="md:block sm:hidden hidden">
           <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-[20px] tahoma lg:block md:block ">
             We’ve got you covered
           </h2>
@@ -81,10 +81,10 @@ const Covered = () => {
       >
         {cardsData.map((card, index) => (
           // <Link href={card.link} key={index}>
-            <CoveredComp
-              key={index}
-              card={card} // Only pass 'card' object here
-            />
+          <CoveredComp
+            key={index}
+            card={card} // Only pass 'card' object here
+          />
           // </Link>
         ))}
       </div>

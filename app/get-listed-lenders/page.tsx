@@ -13,6 +13,10 @@ export interface FormData {
   phone: string;
 }
 
+interface ContactAgentsProps {
+  onSubmit: (data: FormData) => void;
+}
+
 export default function Home() {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>({
@@ -34,7 +38,7 @@ export default function Home() {
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = (stepData: Partial<FormData>) => {
+  const handleSubmit = (stepData: any) => {
     setFormData(prev => ({
       ...prev,
       ...stepData
@@ -94,22 +98,21 @@ export default function Home() {
         </div>
 
         {currentStep === 1 && (
-          <GetListedLenders 
+          <GetListedLenders
             onSubmit={handleSubmit}
             formData={formData}
           />
         )}
-        
+
         {currentStep === 2 && (
-          <GetListedLendersProfileInfo 
+          <GetListedLendersProfileInfo
             onSubmit={handleSubmit}
             onBack={handleBack}
-            formData={formData}
           />
         )}
-        
+
         {currentStep === 3 && (
-          <GetListedLendersProfileInfoWantShareMore 
+          <GetListedLendersProfileInfoWantShareMore
             onSubmit={handleSubmit}
             formData={formData}
             onBack={handleBack}
@@ -117,7 +120,7 @@ export default function Home() {
         )}
 
         {currentStep === 4 && (
-          <MortgageCompanyInfo 
+          <MortgageCompanyInfo
             onBack={handleBack}
             onSubmit={handleSubmit}
             formData={formData}

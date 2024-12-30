@@ -20,7 +20,7 @@ const AccordionItem = ({
       <div className="flex items-center space-x-4 w-full">
         <div className="flex-grow">
           <h3
-            className={`poppins text-[23px] font-medium leading-[25.3px] 
+            className={`poppins md:text-[23px] sm:text-[16px] font-medium leading-[25.3px] 
                 ${expanded === id ? "text-[#7E1618]" : "text-[#292F6C]"}`}
           >
             {title}

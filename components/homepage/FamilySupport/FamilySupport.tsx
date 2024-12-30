@@ -5,10 +5,9 @@ import Image from "next/image";
 import veterenceSupportService from "@/services/veterenceSupportService";
 import SupportContent from "./SupportContent";
 import Link from "next/link";
-import { VeteranCommunityProps } from '@/components/homepage/VeteranCommunity/VeteranCommunity';
+import { VeteranCommunityProps } from "@/components/homepage/VeteranCommunity/VeteranCommunity";
 
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
-
 
 const FamilySupport = async () => {
   let pageData: VeteranCommunityProps | null = null;
@@ -18,7 +17,7 @@ const FamilySupport = async () => {
       "support-our-veteran-community"
     );
   } catch (error) {
-    console.error('Failed to fetch Veterence Data:', error);
+    console.error("Failed to fetch Veterence Data:", error);
     return <p>Failed to load Veterence Data.</p>;
   }
 
@@ -61,7 +60,7 @@ const FamilySupport = async () => {
               />
             </div>
             <div>
-              <h1 className="text-white poppins lg:text-[31px] md:text-[31px] sm:text-[31px] text-[31px] font-bold mt-5 lg:text-left md:text-left sm:text-center text-center lg:w-[400px]">
+              <h1 className="text-white poppins lg:text-[31px] md:text-[31px] sm:text-[29px] text-[29px] font-bold mt-5 lg:text-left md:text-left sm:text-center text-center lg:w-[400px]">
                 {pageData?.title}
               </h1>
               <div className="text-white roboto lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] italic font-medium leading-[25px] mt-4 lg:text-left md:text-left sm:text-center text-center">
@@ -104,10 +103,11 @@ const FamilySupport = async () => {
               ))}
             </div>
 
-            <Link href="/how-it-works" className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center">
-              <Button
-                buttonText={pageData?.button_text || "Learn More"}
-              />
+            <Link
+              href="/how-it-works"
+              className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center"
+            >
+              <Button buttonText={pageData?.button_text || "Learn More"} />
             </Link>
           </div>
         </div>

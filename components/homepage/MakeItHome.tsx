@@ -26,16 +26,19 @@ const MilitaryHomePage = () => {
               Your service is your downpayment
             </p>
             <ul className="list-disc text-[#7A7A7A] mb-8">
-              <li className="list-none text-[17px] font-medium roboto">
+              <li className="list-none text-[17px] md:font-medium sm:font-normal font-normal roboto">
                 Many companies prey on our military community
               </li>
-              <li className="list-none text-[17px] font-medium roboto">
+              <li className="list-none text-[17px] md:font-medium sm:font-normal font-normal roboto">
                 We&apos;ve hand selected veteran and military spouse VA loan
                 experts to help guide you whether you&apos;re a first-time home
                 buyer or experienced.
               </li>
             </ul>
-            <Link href="/blog" className="flex lg:justify-start md:justify-start sm:justify-center justify-center">
+            <Link
+              href="/blog"
+              className="flex lg:justify-start md:justify-start sm:justify-center justify-center"
+            >
               <Button buttonText="VA Loan" />
             </Link>
           </div>

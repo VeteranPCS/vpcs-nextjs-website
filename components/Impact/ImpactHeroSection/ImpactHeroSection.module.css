@@ -9,8 +9,9 @@
   position: relative;
   width: 100%;
 }
-@media screen and (max-width: 575px)  {
+
+@media screen and (max-width: 575px) {
   .impactherosectioncontainer {
-    padding: 40px 30px 60px 30px;
-  } 
+    padding: 100px 30px 60px 30px;
+  }
 }

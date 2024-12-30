@@ -6,9 +6,34 @@
   padding: 115px 30px;
   margin-top: 100px;
 }
-@media screen and (max-width: 575px)  {
+
+@media screen and (max-width: 575px) {
   .StoriesHeroSectionContainer {
-    padding: 40px 30px 60px 30px;
+    padding: 100px 30px 60px 30px;
     margin-top: 0;
-  } 
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .StoriesHeroSectionContainer {
+    margin-top: 0;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .StoriesHeroSectionContainer {
+    margin-top: 0;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .StoriesHeroSectionContainer {
+    margin-top: 100px;
+  }
+}
+
+@media screen and (min-width: 1290px) {
+  .StoriesHeroSectionContainer {
+    margin-top: 100px;
+  }
 }

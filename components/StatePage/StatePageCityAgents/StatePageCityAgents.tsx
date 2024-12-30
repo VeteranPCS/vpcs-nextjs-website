@@ -23,6 +23,7 @@ export type AgentData = {
 
 const StatePageCityAgents = ({ city, agent_data }: Props) => {
   return (
+    // <div id={city.replace(/\s+/g, "-").toLowerCase()}>
     <div id={city.toLowerCase().split(' ').join('-')}>
       <div className="bg-[#F4F4F4]">
         <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">

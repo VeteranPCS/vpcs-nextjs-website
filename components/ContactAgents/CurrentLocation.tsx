@@ -1,214 +1,77 @@
-// import Image from "next/image";
-// import { useState, FormEvent, useEffect, useCallback } from 'react';
-// import { FormData } from "@/app/get-listed-lenders/page";
-// import initService from "@/services/initService";
-
-// interface ContactFormProps {
-//   onSubmit: (formData: FormData) => void;
-//   formData: FormData;
-// }
-
-// const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
-//   const [localFormData, setLocalFormData] = useState<FormData>({
-//     firstName: formData.firstName || '',
-//     lastName: formData.lastName || '',
-//     email: formData.email || '',
-//     phone: formData.phone || '',
-//   });
-
-//   const [stateList, setStateList] = useState<any[]>([]);
-
-//   const getStateList = useCallback(async () => {
-//     try {
-//       const response = await initService.getStateList()
-//       setStateList(response)
-//     } catch (error) {
-//       console.error('Error fetching posts:', error)
-//     }
-//   }, []);
-
-//   useEffect(() => {
-//     getStateList();
-//   }, [getStateList])
-
-//   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     onSubmit(localFormData);
-//   };
-
-//   return (
-//     <div className="md:py-12 py-4 md:px-0 px-5">
-//       <div className="md:w-[456px] mx-auto my-10">
-//         <div className="flex flex-col gap-8">
-//           <div className="md:text-left text-center">
-//             <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
-//               Where You&apos;re Moving To
-//             </h1>
-//           </div>
-//           <div className="border rounded-lg border-[#E2E4E5] p-8">
-//             <form onSubmit={handleSubmit}>
-//               <div>
-//                 <div className="mb-8 flex flex-col">
-//                   <label
-//                     htmlFor="howDidYouHear"
-//                     className="text-[#242426] tahoma text-sm font-normal mb-1"
-//                   >
-//                     State
-//                   </label>
-//                   <select
-//                     id="howDidYouHear"
-//                     name="howDidYouHear"
-//                     className="border-b border-[#E2E4E5] px-2 py-1"
-//                   >
-//                     <option value="" disabled selected>
-//                       Select State
-//                     </option>
-//                     {stateList.map((state) => (
-//                       <option key={state.short_name} value={state.short_name}>
-//                         {state.short_name}
-//                       </option>
-//                     ))}
-//                   </select>
-//                 </div>
-//                 <div className="mb-8 flex flex-col">
-//                   <label
-//                     htmlFor="lastName"
-//                     className="text-[#242426] tahoma text-sm font-normal mb-1"
-//                   >
-//                     City
-//                   </label>
-//                   <input
-//                     className="border-b border-[#E2E4E5] px-2 py-1"
-//                     type="text"
-//                     id="lastName"
-//                     name="lastName"
-//                     placeholder="City"
-//                   />
-//                 </div>
-//                 <div className="flex flex-col">
-//                   <label
-//                     htmlFor="lastName"
-//                     className="text-[#242426] tahoma text-sm font-normal mb-1"
-//                   >
-//                     Destination Base/City*
-//                   </label>
-//                   <input
-//                     className="border-b border-[#E2E4E5] px-2 py-1"
-//                     type="text"
-//                     id="lastName"
-//                     name="lastName"
-//                     placeholder="Destination Base/City"
-//                   />
-//                 </div>
-//               </div>
-//             </form>
-//           </div>
-//           <div className="border rounded-lg border-[#E2E4E5] p-8">
-//             <div className="mb-8 flex flex-col">
-//               <label
-//                 htmlFor="howDidYouHear"
-//                 className="text-[#242426] tahoma text-sm font-normal mb-1"
-//               >
-//                 Are you buying and/or selling?
-//               </label>
-//               <select
-//                 id="howDidYouHear"
-//                 name="howDidYouHear"
-//                 className="border-b border-[#E2E4E5] px-2 py-1"
-//               >
-//                 <option value="" disabled selected>
-//                   --None--
-//                 </option>
-//                 <option value="Buying">Buying</option>
-//                 <option value="Selling">Selling</option>
-//               </select>
-//             </div>
-//             <div className="flex flex-col">
-//               <label
-//                 htmlFor="howDidYouHear"
-//                 className="text-[#242426] tahoma text-sm font-normal mb-1"
-//               >
-//                 What is your timeframe?
-//               </label>
-//               <select
-//                 id="howDidYouHear"
-//                 name="howDidYouHear"
-//                 className="border-b border-[#E2E4E5] px-2 py-1"
-//               >
-//                 <option value="" disabled selected>
-//                   --None--
-//                 </option>
-//                 <option value="6+ Months">6+ Months</option>
-//                 <option value="3-6 Months">3-6 Months</option>
-//                 <option value="1-2 Months">1-2 Months</option>
-//                 <option value="<1 Month">&lt;1 Month</option>
-//               </select>
-//             </div>
-//           </div>
-//           <div className="flex md:justify-start justify-center">
-//             <button
-//               type="submit"
-//               className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
-//             >
-//               <svg
-//                 xmlns="http://www.w3.org/2000/svg"
-//                 width="24"
-//                 height="24"
-//                 viewBox="0 0 24 24"
-//                 fill="none"
-//               >
-//                 <path
-//                   d="M8.99991 16.17L4.82991 12L3.40991 13.41L8.99991 19L20.9999 7L19.5899 5.59L8.99991 16.17Z"
-//                   fill="white"
-//                 />
-//               </svg>
-//               Submit
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ContactForm;
-
-import Image from "next/image";
-import { useState, FormEvent, useEffect, useCallback } from 'react';
-import { FormData } from "@/app/get-listed-lenders/page";
+import { useState, useEffect, useCallback } from 'react';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import initService from "@/services/initService";
 
-interface ContactFormProps {
-  onSubmit: (formData: FormData) => void;
-  formData: FormData;
+// Define the shape of the form data
+interface FormData {
+  state: string;
+  city: string;
+  destination: string;
+  buyingSelling: string;
+  timeframe: string;
+  captchaToken: string;
 }
 
-const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
-  const [localFormData, setLocalFormData] = useState<FormData>({
-    firstName: formData.firstName || '',
-    lastName: formData.lastName || '',
-    email: formData.email || '',
-    phone: formData.phone || '',
-  });
+interface ContactFormProps {
+  onSubmit: (data: FormData) => void;
+  onBack: () => void;
+}
 
+// Validation schema with Yup
+const validationSchema = yup.object({
+  state: yup.string().required('State is required'),
+  city: yup.string().required('City is required'),
+  destination: yup.string().required('Destination is required'),
+  buyingSelling: yup.string().required('Please select if you are buying or selling'),
+  timeframe: yup.string().required('Please select a timeframe'),
+});
+
+const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
   const [stateList, setStateList] = useState<any[]>([]);
 
   const getStateList = useCallback(async () => {
     try {
-      const response = await initService.getStateList()
-      setStateList(response)
+      const response = await initService.getStateListFetch();
+      setStateList(response);
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      console.error('Error fetching states:', error);
     }
   }, []);
 
   useEffect(() => {
     getStateList();
-  }, [getStateList])
+  }, [getStateList]);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onSubmit(localFormData);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<FormData>({
+    // resolver: yupResolver(validationSchema),
+    defaultValues: {
+      state: '',
+      city: '',
+      destination: '',
+      buyingSelling: '',
+      timeframe: '',
+    }
+  });
+
+  // Form submit handler
+  const handleFormSubmit = (data: FormData) => {
+    onSubmit(data);
+  };
+
+  // Error rendering function
+  const renderError = (fieldName: keyof FormData) => {
+    const error = errors[fieldName];
+    return error ? (
+      <span className="text-error">{error.message}</span>
+    ) : null;
   };
 
   return (
@@ -220,23 +83,23 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
               Where You&apos;re Moving To
             </h1>
           </div>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(handleFormSubmit)}>
             <div className="flex flex-col gap-8">
               <div className="border rounded-lg border-[#E2E4E5] p-8">
                 <div>
                   <div className="mb-8 flex flex-col">
                     <label
-                      htmlFor="howDidYouHear"
+                      htmlFor="state"
                       className="text-[#242426] tahoma text-sm font-normal mb-1"
                     >
-                      State
+                      State*
                     </label>
                     <select
-                      id="howDidYouHear"
-                      name="howDidYouHear"
+                      id="state"
+                      {...register('state')}
                       className="border-b border-[#E2E4E5] px-2 py-1"
                     >
-                      <option value="" disabled selected>
+                      <option value="" disabled>
                         Select State
                       </option>
                       {stateList.map((state) => (
@@ -245,72 +108,78 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
                         </option>
                       ))}
                     </select>
+                    {renderError('state')}
                   </div>
+
                   <div className="mb-8 flex flex-col">
                     <label
-                      htmlFor="lastName"
+                      htmlFor="city"
                       className="text-[#242426] tahoma text-sm font-normal mb-1"
                     >
-                      City
+                      City*
                     </label>
                     <input
+                      id="city"
+                      {...register('city')}
                       className="border-b border-[#E2E4E5] px-2 py-1"
-                      type="text"
-                      id="lastName"
-                      name="lastName"
                       placeholder="City"
                     />
+                    {renderError('city')}
                   </div>
-                  <div className="flex flex-col">
+
+                  <div className="mb-8 flex flex-col">
                     <label
-                      htmlFor="lastName"
+                      htmlFor="destination"
                       className="text-[#242426] tahoma text-sm font-normal mb-1"
                     >
                       Destination Base/City*
                     </label>
                     <input
+                      id="destination"
+                      {...register('destination')}
                       className="border-b border-[#E2E4E5] px-2 py-1"
-                      type="text"
-                      id="lastName"
-                      name="lastName"
                       placeholder="Destination Base/City"
                     />
+                    {renderError('destination')}
                   </div>
                 </div>
               </div>
+
               <div className="border rounded-lg border-[#E2E4E5] p-8">
                 <div className="mb-8 flex flex-col">
                   <label
-                    htmlFor="howDidYouHear"
+                    htmlFor="buyingSelling"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
-                    Are you buying and/or selling?
+                    Are you buying and/or selling?*
                   </label>
                   <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    id="buyingSelling"
+                    {...register('buyingSelling')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       --None--
                     </option>
                     <option value="Buying">Buying</option>
                     <option value="Selling">Selling</option>
                   </select>
+                  {renderError('buyingSelling')}
                 </div>
-                <div className="flex flex-col">
+
+                <div className="mb-8 flex flex-col">
                   <label
-                    htmlFor="howDidYouHear"
+                    htmlFor="timeframe"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
-                    What is your timeframe?
+                    What is your timeframe?*
                   </label>
                   <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    id="timeframe"
+                    {...register('timeframe')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       --None--
                     </option>
                     <option value="6+ Months">6+ Months</option>
@@ -318,34 +187,56 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
                     <option value="1-2 Months">1-2 Months</option>
                     <option value="<1 Month">&lt;1 Month</option>
                   </select>
+                  {renderError('timeframe')}
                 </div>
               </div>
+
               <div className="flex md:justify-start justify-center">
-                <button
-                  type="submit"
-                  className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
+              <button
+                type="submit"
+                className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
+              >
+                Next
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M8.99991 16.17L4.82991 12L3.40991 13.41L8.99991 19L20.9999 7L19.5899 5.59L8.99991 16.17Z"
-                      fill="white"
-                    />
-                  </svg>
-                  Submit
-                </button>
-              </div>
+                  <path
+                    d="M14.0098 11H5.99976V13H14.0098V16L17.9998 12L14.0098 8.00003V11Z"
+                    fill="#FFFFFF"
+                  />
+                </svg>
+              </button>
+            </div>
             </div>
           </form>
+          <div className="flex md:justify-start justify-center mt-3">
+          <button
+            onClick={onBack}
+            className="rounded-md border border-[#BBBFC1] bg-white px-8 py-2 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="24"
+              viewBox="0 0 22 24"
+              fill="none"
+            >
+              <path
+                d="M9.1578 11H16.5003V13H9.1578V16L5.50031 12L9.1578 8.00003V11Z"
+                fill="#242731"
+              />
+            </svg>
+            Back
+          </button>
+        </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default ContactForm;
+export default CurrentLocation;
