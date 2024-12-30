@@ -55,12 +55,6 @@ export default function Home() {
       handleNext();
   };
 
-  useEffect(() => {
-    const fullQueryString = window.location.search; 
-    console.log('fullQueryString: ', fullQueryString);
-    setQueryString(fullQueryString);
-  }, []);
-
   const shouldSubmit = () => {
     setShouldSubmitForm(true)
   }
@@ -73,12 +67,22 @@ export default function Home() {
       // Handle error appropriately
     }
   };
-  
+
   useEffect(() => {
+    const handleFormSubmission = async () => {
+      const fullQueryString = window.location.search;
+      setQueryString(fullQueryString);
+      try {
+        await contactAgentPostForm(formData, queryString);
+      } catch (error) {
+        console.error('Error submitting form:', error);
+      }
+    };
+
     if (shouldSubmitForm) {
       handleFormSubmission();
     }
-  }, [formData, shouldSubmitForm]);
+  }, [formData, shouldSubmitForm, queryString]);
   
   const renderProgressBar = () => {
     return (
