@@ -3,7 +3,6 @@ import { ContactFormData } from "@/components/ContactLender/ContactLender";
 import ContactLender from "@/components/ContactLender/ContactLender";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
 export interface FormData {
   firstName: string;
   lastName: string;
@@ -20,8 +19,8 @@ async function submitForm(formData: ContactFormData, fullQueryString: string) {
   "use server"
 
   const paramsObj: { [key: string]: string } = {};
-  new URLSearchParams (fullQueryString).forEach((value, key) => {
-      paramsObj[key] = value;
+  new URLSearchParams(fullQueryString).forEach((value, key) => {
+    paramsObj[key] = value;
   });
 
   const formBody = new URLSearchParams({
@@ -41,12 +40,13 @@ async function submitForm(formData: ContactFormData, fullQueryString: string) {
     "00N4x00000QPksj": formData.howDidYouHear || "",
     "00N4x00000QPS7V": formData.tellusMore || "",
     "00N4x00000bfgFA": formData.additionalComments || "",
-    recaptcha_token: formData.captchaToken || "",
+    "g-recaptcha-response": formData.captchaToken || "",
+    "captcha_settings": formData.captcha_settings || "",
   }).toString();
 
   try {
     const response = await fetch(
-      "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00D4x000003yaV2",
+      "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
       {
         method: 'POST',
         headers: {
@@ -61,7 +61,7 @@ async function submitForm(formData: ContactFormData, fullQueryString: string) {
     }
 
     revalidatePath('/');
-    
+
     // console.log('NEXT_PUBLIC_API_BASE_URL:', process.env.NEXT_PUBLIC_API_BASE_URL);
     // redirect("http://127.0.0.1:3000/");
   } catch (error) {
@@ -71,6 +71,7 @@ async function submitForm(formData: ContactFormData, fullQueryString: string) {
 }
 
 export default function Home() {
+
   return (
     <>
       <div className="container mx-auto w-full">

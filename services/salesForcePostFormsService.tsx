@@ -7,10 +7,10 @@ import { redirect } from 'next/navigation'
 export async function contactAgentPostForm(formData: any, queryString: string) {
     try {
         const paramsObj: { [key: string]: string } = {};
-        new URLSearchParams (queryString).forEach((value, key) => {
+        new URLSearchParams(queryString).forEach((value, key) => {
             paramsObj[key] = value;
         });
-
+        console.log("formData", formData)
         console.log("agent", paramsObj)
 
         const formBody = new URLSearchParams({
@@ -43,9 +43,9 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
             "00N4x00000Lpb2Z": formData.bathrooms || "",
             "00N4x00000LsaCy": formData.maxPrice || "",
             "00N4x00000Lpbfw": formData.preApproval || "",
-            recaptcha_token: formData.captchaToken || "",
+            "g-recaptcha-response": formData.captchaToken || "",
+            "captcha_settings": formData.captcha_settings || "",
         }).toString();
-
 
         const response = await fetch(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00D4x000003yaV2",
