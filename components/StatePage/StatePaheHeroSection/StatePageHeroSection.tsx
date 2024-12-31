@@ -73,7 +73,7 @@ const StatePageHeroSecondSection = ({
               </div>
             ))}
             <div className="relative md:hidden sm:block md:my-0 sm:mt-5 mt-5 w-full inline-grid justify-center">
-             <CitySelection cityList={cityList} />
+              <CitySelection cityList={cityList} />
               <div>
                 <Button buttonText="Don’t want to browse? Find an agent for me" />
               </div>
@@ -88,6 +88,7 @@ const StatePageHeroSecondSection = ({
               width={1000}
               height={1000}
               className="w-full h-full object-cover"
+              loading="eager"
             />
           </div>
         </div>

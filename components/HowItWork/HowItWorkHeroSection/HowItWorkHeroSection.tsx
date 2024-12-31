@@ -44,6 +44,7 @@ async function HowItWorkHeroSection() {
                       src="/icon/checkred.svg"
                       alt="check"
                       className="w-7 h-7 mt-2"
+                      loading="eager"
                     />
                     <p className="text-white poppins lg:text-[24px] md:text-[20px] sm:text-[16px] text-[16px] font-medium text-sm tahoma lg:w-[450px] md:w-[450px] sm:w-full w-full leading-8">
                       {item.children.map((child) => child.text).join(" ")}
@@ -58,6 +59,7 @@ async function HowItWorkHeroSection() {
                   src="/icon/VeteranPCS-logo_wht-outline.svg"
                   alt="Description of the image"
                   className="lg:w-[250px] lg:h-[250px] md:w-[250px] md:h-[250px] sm:w-[250px] sm:h-[250px] w-[200px] h-[200px]"
+                  loading="eager"
                 />
               </div>
             </div>

@@ -29,6 +29,7 @@ const PcsResources = () => {
                   src="/icon/VeteranPCS-logo_wht-outline.svg"
                   alt="Description of the image"
                   className="lg:w-[250px] lg:h-[250px] md:w-[250px] md:h-[250px] sm:w-[250px] sm:h-[250px] w-[200px] h-[200px]"
+                  loading="eager"
                 />
               </div>
             </div>

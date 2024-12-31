@@ -1,6 +1,5 @@
 import React from "react";
 import "@/styles/globals.css";
-import Image from "next/image";
 import storiesService from "@/services/storiesService";
 import { VideoSuccessStory } from '@/services/storiesService'
 import { ChildrenProps } from '@/services/storiesService'
@@ -75,7 +74,7 @@ const SuccessStories = async () => {
                     </div>
                   </div>
                   <div>
-                  <iframe
+                    <iframe
                       loading="lazy"
                       title={story?.title}
                       src={story?.videoUrl}

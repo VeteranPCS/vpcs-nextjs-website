@@ -40,6 +40,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                       src="/icon/checkred.svg"
                       alt="check"
                       className="w-6 h-6"
+                      loading="eager"
                     />
                     <p className="text-white font-medium text-sm tahoma">
                       Free To Use
@@ -52,6 +53,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                       src="/icon/checkred.svg"
                       alt="check"
                       className="w-6 h-6"
+                      loading="eager"
                     />
                     <p className="text-white font-medium text-sm tahoma">
                       Get Cash Back
@@ -94,6 +96,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                     alt="Description of the image"
                     data-aos="fade-right"
                     data-aos-duration="1000"
+                    loading="eager"
                   />
                   <Image
                     width={533}
@@ -103,6 +106,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                     alt="Description of the image"
                     data-aos="fade-right"
                     data-aos-duration="1000"
+                    loading="eager"
                   />
                 </div>
               </div>
