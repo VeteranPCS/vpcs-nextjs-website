@@ -1,8 +1,6 @@
 import React from "react";
 import "@/styles/globals.css";
 import Image from "next/image";
-import CityButton from "./CityButton";
-// import { Button } from "@mui/material";
 import Button from "@/components/common/Button";
 import CitySelection from "./CitySelection";
 interface ImageAsset {
@@ -25,18 +23,6 @@ const StatePageHeroSecondSection = ({
   stateImage: cityImage,
   cityList,
 }: StatePageHeroSecondSectionProps) => {
-  const groupCitiesInPairs = (cities: string[]): string[][] => {
-    const pairs: string[][] = [];
-
-    for (let i = 0; i < cities.length; i += 2) {
-      pairs.push(cities.slice(i, i + 2));
-    }
-
-    return pairs;
-  };
-
-  const cityNames = cityList; // Extracting the city names from the object
-  const cityPairs = groupCitiesInPairs(cityNames);
 
   return (
     <div className="py-12 px-5 bg-[#D9D9D9]">
@@ -51,28 +37,7 @@ const StatePageHeroSecondSection = ({
                 Real Estate Agents & Lenders
               </p>
             </div>
-            {cityPairs.map((pair, index) => (
-              <div
-                key={index}
-                className={`md:flex flex-wrap justify-center sm:justify-start items-center gap-4 sm:hidden hidden  ${index > 0 ? "mt-5" : "sm:mt-20 mt-10"}`}
-              >
-                {pair.map((city, cityIndex) => (
-                  <div
-                    key={cityIndex}
-                    className={cityIndex > 0 ? "md:ml-5 sm:ml-0 ml-0" : ""}
-                  >
-                    {/* <Link
-                      className="text-[#ffffff] tahoma text-sm font-normal bg-[#7E1618] rounded-[16px] px-8 py-5 text-center"
-                      href={`#${city.toLowerCase().split(' ').join('-')}`}
-                    >
-                      {city} Agents
-                    </Link> */}
-                    <CityButton city={city} />
-                  </div>
-                ))}
-              </div>
-            ))}
-            <div className="relative md:hidden sm:block md:my-0 sm:mt-5 mt-5 w-full inline-grid justify-center">
+            <div className="relative md:my-0 sm:mt-5 mt-5 w-full inline-grid justify-center md:justify-start md:mt-10">
               <CitySelection cityList={cityList} />
               <div>
                 <Button buttonText="Don’t want to browse? Find an agent for me" />

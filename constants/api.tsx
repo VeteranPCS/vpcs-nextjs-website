@@ -4,33 +4,8 @@ export const API_ENDPOINTS = {
   user: 'api/users',
   reviews: 'api/reviews',
   blogs: 'api/blogs',
-  accounts: 'api/media-accounts',
-  members: 'api/members-details',
-  FreqAskedQues: 'api/frequently-asked-question',
-  aboutUsOverview: 'api/about-us-page',
-  aboutUsSupport: 'api/about-us-support',
-  veterence: 'api/support-veterence',
-  impact: 'api/impact-page/stories',
-  videoReview: 'api/video-review',
-  ourStory: 'api/our-story',
-  additionalSuccessStories: 'api/stories/additional-success-stories',
-  howVeterencePCSServiceWorks: 'api/how-it-works/how-veterence-pcs-service-works',
-  fetchActionItem: 'api/internship/fetch-action-item-list',
-  fetchInternshipBenefits: 'api/internship/fetch-internship-benefits',
-  fetchInternshipOffer: 'api/internship/fetch-internship-offer',
-  fetchLifeResources: 'api/resources/fetch-life-resources',
-  fetchTrustedSources: 'api/resources/fetch-trusted-sources',
-  fetchMilitarySpouseEmployment: 'api/military-spouse/fetch-military-spouse-employment',
-  fetchMovingYourLife: 'api/military-spouse/fetch-moving-your-life',
-  fetchMilitarySpouseApproved: 'api/military-spouse/fetch-military-spouse-approved',
-  fetchMilitarySpouseApprovedCompanies: 'api/military-spouse/fetch-military-spouse-approved-companies',
-  fetchHowItWorksOverview: 'api/how-it-works/fetch-how-it-works-content',
-  fetchMoveInBonus: 'api/how-it-works/fetch-move-in-bonus',
-  fetchStateDetails: 'api/state/fetch-state-details',
-  fetchVideoSuccessStories: 'api/stories/fetch-video-success-stories',
-  fetchStateAgentList: 'api/state/fetch-state-agent-list',
-  fetchStateList: 'api/state/fetch-state-list',
 } as const
 
-export const VETERENCE_SALESFORCE_BASE_URL = process.env.VETERENCE_SALESFORCE_BASE_URL;
+export const SALESFORCE_BASE_URL = process.env.SALESFORCE_BASE_URL;
+export const SALESFORCE_API_VERSION = process.env.SALESFORCE_API_VERSION;
 export const BASE_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
