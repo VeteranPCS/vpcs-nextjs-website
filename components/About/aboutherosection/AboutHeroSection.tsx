@@ -41,6 +41,7 @@ const AboutHeroSection = async () => {
                     src={pageData?.foreground_image?.asset?.image_url || "/icon/VeteranPCS-logo_wht-outline.svg"}
                     alt={pageData?.foreground_image?.alt || "Description of the image"}
                     className="lg:w-[250px] lg:h-[250px] md:w-[250px] md:h-[250px] sm:w-[250px] sm:h-[250px] w-[200px] h-[200px]"
+                    loading="eager"
                   />
                 </div>
               </div>

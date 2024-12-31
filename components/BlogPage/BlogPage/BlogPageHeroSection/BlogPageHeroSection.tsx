@@ -49,6 +49,7 @@ const BlogPageHeroSection = () => {
                     width={20}
                     height={20}
                     alt="search"
+                    loading="eager"
                   />
                 </button>
               </div>
