@@ -6,6 +6,7 @@ import OptionalInformationForBuyer from "@/components/ContactAgents/OptionalInfo
 import Image from "next/image";
 import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListedLendersProfileInfo";
 import { contactAgentPostForm } from "@/services/salesForcePostFormsService";
+import useTimestamp from "@/hooks/useTimestamp";
 
 interface FormData {
   firstName: string;
@@ -39,20 +40,20 @@ export default function Home() {
   const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
 
   const handleNext = () => {
-    setCurrentStep(prev => Math.min(prev + 1, 4)); 
+    setCurrentStep(prev => Math.min(prev + 1, 4));
   };
-  
+
   const handleBack = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1)); 
+    setCurrentStep(prev => Math.max(prev - 1, 1));
   };
-  
+
   const handleSubmit = (stepData: any) => {
     setFormData(prev => ({
       ...prev,
       ...stepData
     }));
-    
-      handleNext();
+
+    handleNext();
   };
 
   const shouldSubmit = () => {
@@ -83,7 +84,9 @@ export default function Home() {
       handleFormSubmission();
     }
   }, [formData, shouldSubmitForm, queryString]);
-  
+
+  useTimestamp();
+
   const renderProgressBar = () => {
     return (
       <div className="flex md:justify-start justify-center">
@@ -102,6 +105,7 @@ export default function Home() {
 
   return (
     <>
+
       <div className="container mx-auto w-full">
         <div className="flex flex-wrap md:flex-nowrap justify-between items-center md:pt-[140px] pt-[80px] md:mx-0 mx-5">
           <div>

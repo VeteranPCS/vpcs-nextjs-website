@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "@/styles/globals.css";
-import ClientLayoutWrapper from "@/components/ClientLayoutWrapper"; // Import wrapper
+import ClientLayoutWrapper from "@/components/ClientLayoutWrapper"; // Import wrapper'
+import useTimestamp from "@/hooks/useTimestamp";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script defer src="https://www.google.com/recaptcha/api.js"></script>
+      </head>
       <body className={inter.className}>
         <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
       </body>

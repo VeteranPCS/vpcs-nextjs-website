@@ -15,6 +15,7 @@ export interface FormData {
   maxPrice: string;
   preApproval: string | null;
   captchaToken: string;
+  captcha_settings: string | null;
 }
 
 // Define validation schema using Yup
@@ -35,16 +36,28 @@ const OptionalInformationForBuyer = ({ onSubmit, shouldSubmit }: ContactFormProp
       typeOfHome: null,
       bedrooms: '',
       bathrooms: '',
-      maxPrice: '', 
+      maxPrice: '',
       preApproval: null,
       captchaToken: '',
+      captcha_settings: '',
     }
   });
 
   const onCaptchaChange = (token: string | null) => {
-    setValue('captchaToken', token || '', { 
-      shouldValidate: true // This triggers validation after setting the value
-    });
+    if (token) {
+      const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
+      if (captchaSettingsElem) {
+        const captchaSettings = JSON.parse(captchaSettingsElem.value);
+        captchaSettings.ts = JSON.stringify(new Date().getTime());
+        captchaSettingsElem.value = JSON.stringify(captchaSettings);
+        setValue('captcha_settings', captchaSettingsElem.value, {
+          shouldValidate: false // This triggers validation after setting the value
+        });
+        setValue('captchaToken', token, {
+          shouldValidate: true // This triggers validation after setting the value
+        });
+      }
+    }
   };
 
   // Handle form submission
@@ -57,6 +70,7 @@ const OptionalInformationForBuyer = ({ onSubmit, shouldSubmit }: ContactFormProp
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form onSubmit={handleSubmit(onSubmitHandler)}>
+          <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' />
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
@@ -210,7 +224,7 @@ const OptionalInformationForBuyer = ({ onSubmit, shouldSubmit }: ContactFormProp
                     sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
                     onChange={onCaptchaChange} // Handle reCAPTCHA value change
                   />
-                   {errors.captchaToken && (
+                  {errors.captchaToken && (
                     <span className="text-red-500">{errors.captchaToken.message}</span>
                   )}
                 </div>
