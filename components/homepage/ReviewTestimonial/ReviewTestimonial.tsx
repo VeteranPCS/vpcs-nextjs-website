@@ -24,7 +24,7 @@ const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({
   return (
     <div className="w-full">
       <div className={classes.ReviewTestimonialContainer}>
-        <div className="flex justify-center flex-col items-center xl:py-16 lg:py-16 px-5">
+        <div className="xl:py-16 lg:py-16 px-5 mx-auto">
           <div className="">
             <h1 className="text-white tahoma text-center xl:text-[48px] lg:text-[48px] md:text-[38px] sm:text-[35px] text-[35px] font-bold leading-[50px] mt-5">
               We’ve helped hundreds
@@ -36,6 +36,8 @@ const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({
           <div>
             <ReviewTestimonialSlider reviews={reviewsList} />
           </div>
+        </div>
+        <div className="flex justify-center mt-10">
           <Link href="/stories">
             <Button buttonText="More success stories" />
           </Link>

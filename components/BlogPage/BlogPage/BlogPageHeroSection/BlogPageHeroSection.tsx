@@ -1,6 +1,7 @@
 import React from "react";
 import "@/styles/globals.css";
 import classes from "./BlogPageHeroSection.module.css";
+import Image from "next/image";
 
 const BlogPageHeroSection = () => {
   return (
@@ -32,7 +33,24 @@ const BlogPageHeroSection = () => {
                 </p>
               </div>
               <div>
-                <h6 className="text-white tahoma text-sm font-bold mt-10">By Jennifer Lawrence</h6>
+                <h6 className="text-white tahoma text-sm font-bold mt-10">
+                  By Jennifer Lawrence
+                </h6>
+              </div>
+              <div className="flex items-center justify-center sm:mt-10 mt-10 md:mt-0 md:hidden sm:ma-auto">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="w-full max-w-md px-4 py-3 border bg-[#F9F9F9] border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 "
+                />
+                <button className="bg-[#003486] hover:bg-blue-600 text-white px-4 py-4 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                  <Image
+                    src="/icon/search.svg"
+                    width={20}
+                    height={20}
+                    alt="search"
+                  />
+                </button>
               </div>
             </div>
           </div>

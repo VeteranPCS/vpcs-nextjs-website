@@ -1,14 +1,15 @@
 import "@/styles/globals.css";
 import Image from "next/image";
 import militarySpouseService from "@/services/militarySpouseService";
-import { EmploymentDataProps } from '@/services/militarySpouseService';
+import { EmploymentDataProps } from "@/services/militarySpouseService";
 import Link from "next/link";
 
 const MilitarySpouseEmployment = async () => {
   let employmentData: EmploymentDataProps[] = [];
 
   try {
-    employmentData = await militarySpouseService.fetchMilitarySpouseEmployment();
+    employmentData =
+      await militarySpouseService.fetchMilitarySpouseEmployment();
   } catch (error) {
     console.error("Error fetching Military Spouse Employment", error);
   }
@@ -33,11 +34,13 @@ const MilitarySpouseEmployment = async () => {
             <div key={item._id}>
               <Link href={item?.url} className="md:h-[115px] h-auto">
                 <Image
-                  src={item?.logo?.asset?.image_url || "/assets/empoweremploy.png"}
+                  src={
+                    item?.logo?.asset?.image_url || "/assets/empoweremploy.png"
+                  }
                   width={1000}
                   height={1000}
                   alt={item?.logo?.alt || "Description of the image"}
-                  className="w-[300px] h-auto object-cover"
+                  className="md:w-auto md:h-auto sm:w-auto sm:h-auto w-auto h-auto object-cover"
                 />
               </Link>
               <div>

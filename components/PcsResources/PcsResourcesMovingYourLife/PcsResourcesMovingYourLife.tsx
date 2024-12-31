@@ -45,18 +45,21 @@ const PcsResourcesMovingYourLife = async () => {
                 width={356}
                 height={95}
                 // item?.userImage?.asset?.image_url ||
-                src={life_resource?.logo?.asset?.image_url || "/assets/MovingLifeimg1.png"} 
+                src={
+                  life_resource?.logo?.asset?.image_url ||
+                  "/assets/MovingLifeimg1.png"
+                }
                 alt={life_resource?.logo?.alt || "no alt"}
-                className="w-[356px] h-[95px]"
+                className="md:w-[356px] md:h-[95px] sm:w-auto sm:h-auto w-auto h-auto"
               />
               <div className="mt-5">
                 <Link
                   href={life_resource?.url}
-                  className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[17px] text-[17px] font-bold underline"
+                  className="text-[#292F6C] poppins lg:text-[21px] md:text-[21px] sm:text-[19px] text-[19px] font-bold underline"
                 >
                   {life_resource?.name}
                 </Link>
-                <p className="text-[#000000] roboto lg:text-[18px] md:text-[18px] sm:text-[13px] text-[13px] font-light mt-1">
+                <p className="text-[#000000] roboto lg:text-[18px] md:text-[18px] sm:text-[17px] text-[17px] font-light mt-1">
                   {life_resource?.description}
                 </p>
               </div>

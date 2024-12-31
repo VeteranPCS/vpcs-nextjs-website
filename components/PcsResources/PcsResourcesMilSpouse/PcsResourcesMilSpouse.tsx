@@ -23,10 +23,8 @@ const PcsResourcesMilitarySpouse = () => {
                 <div>
                   <Button buttonText="Mil Spouse Employment Articles" />
                   <Link href="/militaryspouse">
-                      <Button
-                        buttonText="More Mil Spouse Resources"
-                      />
-                  </Link>                
+                    <Button buttonText="More Mil Spouse Resources" />
+                  </Link>
                 </div>
               </div>
               <div className="sm:order-2 order-1">
@@ -46,7 +44,7 @@ const PcsResourcesMilitarySpouse = () => {
                     <Image
                       width={250}
                       height={85}
-                      className="w-[250px] h-[85px]"
+                      className="md:w-[250px] md:h-[85px] sm:w-[100px] sm:h-[85px] w-[150px] h-[65px] md:mb-0 sm:mb-4 mb-4"
                       src="/assets/milspaceous.png"
                       alt="Move in bonus"
                     />

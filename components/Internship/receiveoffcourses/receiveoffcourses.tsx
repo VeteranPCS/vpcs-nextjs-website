@@ -15,7 +15,7 @@ const SkillFuturesBuild = async () => {
   try {
     internshipOffer = await internshipPageService.fetchInternshipOffer();
   } catch (error) {
-    console.error('Failed to fetch Internship Action Items:', error);
+    console.error("Failed to fetch Internship Action Items:", error);
     return <p>Failed to load Internship Action Items.</p>;
   }
 
@@ -34,7 +34,12 @@ const SkillFuturesBuild = async () => {
                 for active duty, veterans, and military spouses. */}
                 {internshipOffer?.details}
               </p>
-              <Button buttonText={internshipOffer?.button_text || "40% off training"} />
+              <p className="text-[#FFFFFF] text-center roboto lg:text-lg md:text-lg sm:text-sm text-sm font-medium lg:w-[900px] md:w-[900px] sm:w-full w-full mx-auto pt-5 py-5">
+                Use code ‘FREEDOM40′ at checkout!
+              </p>
+              <Button
+                buttonText={internshipOffer?.button_text || "40% off training"}
+              />
             </div>
           </div>
         </div>

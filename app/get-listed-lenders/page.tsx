@@ -5,6 +5,8 @@ import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListed
 import GetListedLendersProfileInfoWantShareMore from "@/components/GetListedLenders/GetListedLendersProfileInfoWantShareMore";
 import MortgageCompanyInfo from "@/components/GetListedLenders/MortgageCompanyInfo";
 import Image from "next/image";
+import { GetListedLendersPostForm } from "@/services/salesForcePostFormsService";
+import { useRouter } from 'next/navigation'
 
 export interface FormData {
   firstName: string;
@@ -18,21 +20,36 @@ interface ContactAgentsProps {
 }
 
 export default function Home() {
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-  });
+  const [formData, setFormData] = useState({});
+  const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
+
+  const shouldSubmit = () => {
+    setShouldSubmitForm(true)
+  }
 
   const handleNext = () => {
     setCurrentStep(prev => Math.min(prev + 1, 4));
   };
 
   useEffect(() => {
-    console.log(currentStep);
-  }, [currentStep]);
+    const handleFormSubmission = async () => {
+      try {
+       const server_response = await GetListedLendersPostForm(formData);
+        if (server_response?.redirectUrl) {
+          router.push(server_response.redirectUrl);
+        } else {
+          console.log("No redirect URL found");
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+      }
+    };
+    if (shouldSubmitForm) {
+      handleFormSubmission();
+    }
+  }, [formData, shouldSubmitForm, router]);
 
   const handleBack = () => {
     setCurrentStep(prev => Math.max(prev - 1, 1));
@@ -45,6 +62,7 @@ export default function Home() {
     }));
     handleNext();
   };
+
 
   const renderProgressBar = () => {
     return (
@@ -100,7 +118,6 @@ export default function Home() {
         {currentStep === 1 && (
           <GetListedLenders
             onSubmit={handleSubmit}
-            formData={formData}
           />
         )}
 
@@ -108,13 +125,13 @@ export default function Home() {
           <GetListedLendersProfileInfo
             onSubmit={handleSubmit}
             onBack={handleBack}
+            shouldValidate={true}
           />
         )}
 
         {currentStep === 3 && (
           <GetListedLendersProfileInfoWantShareMore
             onSubmit={handleSubmit}
-            formData={formData}
             onBack={handleBack}
           />
         )}
@@ -123,7 +140,7 @@ export default function Home() {
           <MortgageCompanyInfo
             onBack={handleBack}
             onSubmit={handleSubmit}
-            formData={formData}
+            shouldSubmit={shouldSubmit}
           />
         )}
       </div>

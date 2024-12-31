@@ -4,7 +4,6 @@ const initService = {
     getStateListFetch: async () => {
         try {
             const response = await client.fetch(`*[_type == "city_list"]{ city_name, short_name }`)
-            console.log('response: ', response);
 
             if (response) {
                 return response;

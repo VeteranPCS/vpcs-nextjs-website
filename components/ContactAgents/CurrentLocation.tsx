@@ -192,47 +192,47 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
               </div>
 
               <div className="flex md:justify-start justify-center">
-              <button
-                type="submit"
-                className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
-              >
-                Next
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
+                <button
+                  type="submit"
+                  className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
                 >
-                  <path
-                    d="M14.0098 11H5.99976V13H14.0098V16L17.9998 12L14.0098 8.00003V11Z"
-                    fill="#FFFFFF"
-                  />
-                </svg>
-              </button>
-            </div>
+                  Next
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M14.0098 11H5.99976V13H14.0098V16L17.9998 12L14.0098 8.00003V11Z"
+                      fill="#FFFFFF"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </form>
           <div className="flex md:justify-start justify-center mt-3">
-          <button
-            onClick={onBack}
-            className="rounded-md border border-[#BBBFC1] bg-white px-8 py-2 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="22"
-              height="24"
-              viewBox="0 0 22 24"
-              fill="none"
+            <button
+              onClick={onBack}
+              className="rounded-md border border-[#BBBFC1] bg-white px-8 py-2 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
             >
-              <path
-                d="M9.1578 11H16.5003V13H9.1578V16L5.50031 12L9.1578 8.00003V11Z"
-                fill="#242731"
-              />
-            </svg>
-            Back
-          </button>
-        </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="24"
+                viewBox="0 0 22 24"
+                fill="none"
+              >
+                <path
+                  d="M9.1578 11H16.5003V13H9.1578V16L5.50031 12L9.1578 8.00003V11Z"
+                  fill="#242731"
+                />
+              </svg>
+              Back
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,42 +1,73 @@
 "use client";
 import { useState, FormEvent, useCallback, useEffect } from 'react';
-import { FormData } from "@/app/get-listed-lenders/page";
+import { useForm, Controller, Resolver } from 'react-hook-form';
 import stateService from '@/services/stateService';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 interface ContactFormProps {
-  onSubmit: (formData: FormData) => void;
-  formData: FormData;
+  onSubmit: (formData: LenderInfoProps) => void;
   onBack: () => void;
 }
 
-const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
-  const [localFormData, setLocalFormData] = useState<FormData>({
-    firstName: formData.firstName || '',
-    lastName: formData.lastName || '',
-    email: formData.email || '',
-    phone: formData.phone || '',
-  });
+interface LenderInfoProps {
+  primaryState: string;
+  otherStates: string[];
+  localCities: string;  
+  nmlsId: string;
+}
 
-  const [stateList, setStateList] = useState<any[]>([]);
+interface State {
+  short_name: string;
+}
 
+const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactFormProps) => {
+  const [stateList, setStateList] = useState<State[]>([]);
+
+  // Fetch state list
   const getStateList = useCallback(async () => {
     try {
-      const response = await stateService.fetchStateList()
-      setStateList(response)
+      const response = await stateService.fetchStateList();
+      setStateList(response);
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      console.error('Error fetching states:', error);
     }
   }, []);
 
   useEffect(() => {
     getStateList();
-  }, [getStateList])
+  }, [getStateList]);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onSubmit(localFormData);
+  // Validation schema using yup
+  const schema = yup.object({
+    primaryState: yup
+      .string()
+      .required('Primary State is required')
+      .oneOf(stateList.map((state) => state.short_name), 'Invalid state selected'),
+    otherStates: yup
+      .array()
+      .of(yup.string()),
+    localCities: yup.string(),
+    nmlsId: yup.string(),
+  });
+
+  // Use form hook with validation
+  const { register, handleSubmit, control, formState: { errors } } = useForm<LenderInfoProps>({
+    resolver: yupResolver(schema)  as Resolver<LenderInfoProps>,
+    defaultValues: {
+      primaryState: '',
+      otherStates: [],
+      localCities: '',
+      nmlsId: '',
+    },
+  });
+
+  // Handle form submission
+  const onFormSubmit = (data: LenderInfoProps) => {
+    onSubmit(data);
   };
 
+  // Handle back action
   const handleBack = (e: FormEvent) => {
     e.preventDefault();
     onBack();
@@ -51,22 +82,23 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
               Lender Info
             </h1>
           </div>
-          <div className="border rounded-lg border-[#E2E4E5] p-8">
-            <form onSubmit={handleSubmit}>
-              <div className="mb-8">
+          <div>
+            <form onSubmit={handleSubmit(onFormSubmit)}>
+              <div className="border rounded-lg border-[#E2E4E5] p-8 mb-8">
+                {/* Primary State */}
                 <div className="mb-8 flex flex-col">
                   <label
-                    htmlFor="howDidYouHear"
+                    htmlFor="primaryState"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
                     Primary State to be Listed:
                   </label>
                   <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    id="primaryState"
+                    {...register('primaryState')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       Select State
                     </option>
                     {stateList.map((state) => (
@@ -75,82 +107,77 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                       </option>
                     ))}
                   </select>
+                  {errors.primaryState && (
+                    <span className="text-red-500 text-sm">{errors.primaryState.message}</span>
+                  )}
                 </div>
+
+                {/* Other States */}
                 <div className="mb-8 flex flex-col">
                   <label
-                    htmlFor="howDidYouHear"
+                    htmlFor="otherStates"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
                     Other State(s) Licensed:
                   </label>
                   <select
-                    id="howDidYouHear"
-                    name="howDidYouHear"
+                    id="otherStates"
+                    {...register('otherStates')}
+                    multiple
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled selected>
-                      Select State
-                    </option>
                     {stateList.map((state) => (
                       <option key={state.short_name} value={state.short_name}>
                         {state.short_name}
                       </option>
                     ))}
                   </select>
+                  {errors.otherStates && (
+                    <span className="text-red-500 text-sm">{errors.otherStates.message}</span>
+                  )}
                 </div>
+
+                {/* Local Cities */}
                 <div className="mb-8 flex flex-col">
                   <label
-                    htmlFor="firstName"
+                    htmlFor="localCities"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
-                  />
+                  >
+                    Cities/Bases/Areas you consider yourself as a &apos;local lender&apos;
+                  </label>
                   <textarea
+                    id="localCities"
+                    {...register('localCities')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
-                    // type="textarea"
-                    id="firstName"
-                    name="firstName"
-                    placeholder="Cities/Bases/Areas you consider yourself as a 'local lender'"
+                    placeholder="Enter cities or areas"
                   />
                 </div>
+
+                {/* NMLS ID */}
                 <div className="flex flex-col">
                   <label
-                    htmlFor="firstName"
+                    htmlFor="nmlsId"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
-                  />
+                  >
+                    Individual NMLS ID:
+                  </label>
                   <input
-                    className="border-b border-[#E2E4E5] px-2 py-1"
                     type="text"
-                    id="firstName"
-                    name="firstName"
-                    placeholder="Individual NMLS ID"
+                    id="nmlsId"
+                    {...register('nmlsId')}
+                    className="border-b border-[#E2E4E5] px-2 py-1"
+                    placeholder="Enter your NMLS ID"
                   />
                 </div>
               </div>
-              {/* <div className="mt-5 flex md:justify-start justify-center">
-                <button
-                  type="submit"
-                  className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      d="M8.99991 16.17L4.82991 12L3.40991 13.41L8.99991 19L20.9999 7L19.5899 5.59L8.99991 16.17Z"
-                      fill="white"
-                    />
-                  </svg>
-                  Submit
-                </button>
-              </div> */}
+
+              {/* Submit Button */}
               <div className="flex md:justify-start justify-center">
                 <button
                   type="submit"
                   className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
                 >
-                  Submit Now
+                  Next
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -166,6 +193,8 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                 </button>
               </div>
             </form>
+
+            {/* Back Button */}
             <div className="flex md:justify-start justify-center mt-8">
               <button
                 onClick={handleBack}
@@ -193,4 +222,4 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
   );
 };
 
-export default ContactForm;
+export default GetListedLendersProfileInfoWantShareMore;

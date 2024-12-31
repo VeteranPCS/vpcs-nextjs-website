@@ -23,7 +23,6 @@ body {
 }
 
 @media screen and (max-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
-
   html,
   body {
     overflow-x: hidden;
@@ -84,7 +83,7 @@ body {
   transition: all 0.45s ease-in-out;
 }
 
-.nav li:hover>.sub-menu,
+.nav li:hover > .sub-menu,
 .nav .sub-menu:hover {
   opacity: 1;
   visibility: visible;
@@ -95,7 +94,6 @@ body {
   padding: 20px 0;
   text-align: left;
 }
-
 
 .nav li ul,
 blockquote {
@@ -187,7 +185,6 @@ blockquote {
   letter-spacing: 0.5px;
 }
 
-
 @font-face {
   font-family: "lora", sans-serif;
   src: url("/lora-font/Lora-Regular.ttf") format("truetype");
@@ -195,28 +192,42 @@ blockquote {
 }
 
 .lora-normal {
-  font-family: 'lora-normal', sans-serif;
+  font-family: "lora-normal", sans-serif;
   letter-spacing: 0.5px;
 }
 
-.comlogoslider .slick-initialized .slick-slide{
-  margin:0px 10px !important;
+.comlogoslider .slick-initialized .slick-slide {
+  margin: 0px 10px !important;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-.reviw-topslider .slick-list .slick-track{
+/* .reviw-topslider .slick-list .slick-track {
   display: flex !important;
   justify-content: center !important;
   margin: 0px auto !important;
-}
-
-.reviw-topslider .slick-list .slick-track .slick-slide{
+} */
+/* 
+.reviw-topslider .slick-list .slick-track .slick-slide:nth-child(8),
+.reviw-topslider .slick-list .slick-track .slick-slide:nth-child(9),
+.reviw-topslider .slick-list .slick-track .slick-slide:nth-child(11),
+.reviw-topslider .slick-list .slick-track .slick-slide:nth-child(12){
   width: auto !important;
 }
 
-.reviw-topslider .slick-list .slick-track .slick-slide .slider-box{
-  width: auto !important;
+.reviw-topslider .slick-list .slick-track .slick-slide:nth-child(10){
+  width: 256px;
 }
+
+.reviw-topslider .slick-slide:nth-child(8),
+.reviw-topslider .slick-slide:nth-child(9),
+.reviw-topslider .slick-slide:nth-child(11),
+.reviw-topslider .slick-slide:nth-child(12) {
+  opacity: 0.5 !important;
+}
+
+.reviw-topslider .slick-slide.slick-active.slick-current {
+  opacity: 0.5 !important;
+} */

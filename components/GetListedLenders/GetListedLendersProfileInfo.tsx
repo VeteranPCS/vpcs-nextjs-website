@@ -1,5 +1,5 @@
 "use client";
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
@@ -36,6 +36,7 @@ export interface ContactFormData {
 interface ContactFormProps {
   onSubmit: (data: ContactFormData) => void;
   onBack: () => void;
+  shouldValidate: boolean;
 }
 
 const StatusOptions: StatusOptions[] = [
@@ -62,29 +63,29 @@ const DischargeStatusOptions: DischargeStatusOptions[] = [
   'Currently Serving',
 ];
 
-const contactFormSchema = yup.object().shape({
-  status_select: yup
+const contactFormSchema = (shouldValidate: boolean) => yup.object().shape({
+  status_select: shouldValidate ? yup
     .string()
     .required('Please select an option')
-    .oneOf(StatusOptions, 'Invalid option selected'),
-  branch_select: yup
+    .oneOf(StatusOptions, 'Invalid option selected') : yup.string(),
+  branch_select: shouldValidate ? yup
     .string()
     .required('Please select an option')
-    .oneOf(BranchOptions, 'Invalid option selected'),
-  discharge_status: yup
+    .oneOf(BranchOptions, 'Invalid option selected') : yup.string(),
+  discharge_status: shouldValidate ? yup
     .string()
     .required('Please select an option')
-    .oneOf(DischargeStatusOptions, 'Invalid option selected'),
+    .oneOf(DischargeStatusOptions, 'Invalid option selected') : yup.string(),
 });
 
-const GetListedLendersProfileInfo = ({ onSubmit, onBack }: ContactFormProps) => {
+const GetListedLendersProfileInfo = ({ onSubmit, onBack, shouldValidate }: ContactFormProps) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue, // If you need to set default values dynamically
+    setValue, 
   } = useForm<ContactFormData>({
-    // resolver: yupResolver(contactFormSchema),
+    resolver: yupResolver(contactFormSchema(shouldValidate)) as Resolver<ContactFormData>,
     defaultValues: {
       status_select: '',
       branch_select: '',
@@ -128,7 +129,7 @@ const GetListedLendersProfileInfo = ({ onSubmit, onBack }: ContactFormProps) => 
                     name="status_select"
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled>
+                    <option value="" disabled selected>
                       Select an option
                     </option>
                     {StatusOptions.map((option) => (
@@ -152,7 +153,7 @@ const GetListedLendersProfileInfo = ({ onSubmit, onBack }: ContactFormProps) => 
                     name="branch_select"
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled>
+                    <option value="" disabled selected>
                       Select an option
                     </option>
                     {BranchOptions.map((option) => (
@@ -176,7 +177,7 @@ const GetListedLendersProfileInfo = ({ onSubmit, onBack }: ContactFormProps) => 
                     name="discharge_status"
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    <option value="" disabled>
+                    <option value="" disabled selected>
                       Select an option
                     </option>
                     {DischargeStatusOptions.map((option) => (

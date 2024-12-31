@@ -9,8 +9,10 @@
   position: relative;
   width: 100%;
 }
-@media screen and (max-width: 575px)  {
+
+@media screen and (max-width: 575px) {
   .pcsresourcesherosectioncontainer {
     padding: 120px 30px 60px 30px;
-  } 
+    margin-bottom: 120px;
+  }
 }

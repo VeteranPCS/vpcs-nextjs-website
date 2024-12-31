@@ -1,30 +1,24 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GetListedAgents from "@/components/GetListedAgents/GetListedAgentsContactDiane";
-import MilitaryService from "@/components/GetListedAgents/MilitaryService";
 import CurrentLocation from "@/components/GetListedAgents/CurrentLocation";
 import AgentInfo from "@/components/GetListedAgents/AgentInfo";
 import Image from "next/image";
 import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListedLendersProfileInfo";
-
-export interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-}
+import { GetListedAgentsPostForm } from "@/services/salesForcePostFormsService";
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
-  const [currentStep, setCurrentStep] = useState<number>(3);
-  const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-  });
+  const router = useRouter()
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [formData, setFormData] = useState({});
+  const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
+
+  const shouldSubmit = () => {
+    setShouldSubmitForm(true)
+  }
 
   const handleNext = () => {
-    console.log("currentStep: ", currentStep);
     setCurrentStep(prev => Math.min(prev + 1, 4));
   };
 
@@ -39,6 +33,25 @@ export default function Home() {
     }));
     handleNext();
   };
+
+  useEffect(() => {
+    const handleFormSubmission = async () => {
+      try {
+        const server_response = await GetListedAgentsPostForm(formData);
+        if (server_response?.redirectUrl) {
+          router.push(server_response.redirectUrl);
+        } else {
+          console.log("No redirect URL found");
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+      }
+    };
+
+    if (shouldSubmitForm) {
+      handleFormSubmission();
+    }
+  }, [formData, shouldSubmitForm, router]);
 
   const renderProgressBar = () => {
     return (
@@ -94,29 +107,21 @@ export default function Home() {
         {currentStep === 1 && (
           <GetListedAgents 
             onSubmit={handleSubmit}
-            formData={formData}
           />
         )}
-        
-        {/* {currentStep === 2 && (
-          <MilitaryService 
-            onSubmit={handleSubmit}
-            onBack={handleBack}
-            formData={formData}
-          />
-        )} */}
         
         {currentStep === 2 && (
           <GetListedLendersProfileInfo 
             onSubmit={handleSubmit}
             onBack={handleBack}
+            shouldValidate={true}
           />
         )}
         
         {currentStep === 3 && (
           <CurrentLocation 
             onSubmit={handleSubmit}
-            formData={formData}
+            onBack={handleBack}
           />
         )}
 
@@ -124,7 +129,7 @@ export default function Home() {
           <AgentInfo 
             onBack={handleBack}
             onSubmit={handleSubmit}
-            formData={formData}
+            shouldSubmit={shouldSubmit}
           />
         )}
       </div>

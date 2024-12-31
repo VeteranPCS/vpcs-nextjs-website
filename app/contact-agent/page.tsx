@@ -7,6 +7,7 @@ import Image from "next/image";
 import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListedLendersProfileInfo";
 import { contactAgentPostForm } from "@/services/salesForcePostFormsService";
 import useTimestamp from "@/hooks/useTimestamp";
+import { useRouter } from 'next/navigation'
 
 interface FormData {
   firstName: string;
@@ -34,7 +35,7 @@ interface FormData {
 }
 
 export default function Home() {
-  const [queryString, setQueryString] = useState<string>("");
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>();
   const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
@@ -60,21 +61,17 @@ export default function Home() {
     setShouldSubmitForm(true)
   }
 
-  const handleFormSubmission = async () => {
-    try {
-      await contactAgentPostForm(formData, queryString);
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      // Handle error appropriately
-    }
-  };
-
   useEffect(() => {
     const handleFormSubmission = async () => {
       const fullQueryString = window.location.search;
-      setQueryString(fullQueryString);
       try {
-        await contactAgentPostForm(formData, queryString);
+        const server_response = await contactAgentPostForm(formData, fullQueryString);
+
+        if (server_response?.redirectUrl) {
+          router.push(server_response.redirectUrl);
+        } else {
+          console.log("No redirect URL found");
+        }
       } catch (error) {
         console.error('Error submitting form:', error);
       }
@@ -83,7 +80,7 @@ export default function Home() {
     if (shouldSubmitForm) {
       handleFormSubmission();
     }
-  }, [formData, shouldSubmitForm, queryString]);
+  }, [formData, shouldSubmitForm, router]);
 
   useTimestamp();
 
@@ -149,6 +146,7 @@ export default function Home() {
           <GetListedLendersProfileInfo
             onSubmit={handleSubmit}
             onBack={handleBack}
+            shouldValidate={false}
           />
         )}
 

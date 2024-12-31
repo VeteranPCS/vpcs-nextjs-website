@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react"; // Keep this import
 import "@/styles/globals.css";
 import "slick-carousel/slick/slick.css";
@@ -92,15 +92,14 @@ const Carousel: React.FC<CarouselProps> = ({ userImageList }) => {
         <Slider {...settings} className="py-2">
           {userImageList.map((item) => (
             <div
-              key={item._id}
+              key={"settings" + item._id}
               className="xl:w-[230px] lg:w-[300px] md:w-[300px] sm:w-full w-full px-4"
             >
               <Image
                 width={1000}
                 height={1000}
                 src={
-                  item?.userImage?.asset?.image_url ||
-                  "/placeholder.jpg" // Fallback in case neither exists
+                  item?.userImage?.asset?.image_url || "/placeholder.jpg" // Fallback in case neither exists
                 }
                 alt={item?.userImage?.alt}
                 className="w-full h-full object-contain"

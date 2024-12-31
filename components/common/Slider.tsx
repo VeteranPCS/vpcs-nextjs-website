@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import "@/styles/globals.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -38,7 +38,11 @@ const Carousel = ({ agentList }: { agentList: any }) => {
       <Box className="w-full">
         <Slider {...settings} className="md:py-20 py-3">
           {agentList.map((item: any, index: number) => (
-            <a key={item._id || index} className="w-[230px] px-9" href={item.url}>
+            <a
+              key={"logo-slider" + (item._id || index)}
+              className="w-[230px] px-9"
+              href={item.url}
+            >
               <Image
                 height={100}
                 width={100}

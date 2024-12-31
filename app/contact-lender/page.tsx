@@ -1,76 +1,39 @@
+"use client";
 import Image from "next/image";
-import { ContactFormData } from "@/components/ContactLender/ContactLender";
 import ContactLender from "@/components/ContactLender/ContactLender";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { contactLenderPostForm } from "@/services/salesForcePostFormsService";
+import { useRouter } from 'next/navigation'
+
 export interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  additionalComments: string;
-  currentBase: string;
-  destinationBase: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  currentBase?: string;
+  destinationBase?: string;
+  additionalComments?: string | null;
   howDidYouHear?: string;
   tellusMore?: string;
-}
-
-async function submitForm(formData: ContactFormData, fullQueryString: string) {
-  "use server"
-
-  const paramsObj: { [key: string]: string } = {};
-  new URLSearchParams(fullQueryString).forEach((value, key) => {
-    paramsObj[key] = value;
-  });
-
-  const formBody = new URLSearchParams({
-    oid: "00D4x000003yaV2",
-    retURL: "https://veteranpcs.com/",
-    "00N4x00000QPJUT": paramsObj.id,
-    recordType: "0124x000000Z5yD",
-    lead_source: "Website",
-    "00N4x00000Lsr0GAAU": "true",
-    country_code: "US",
-    "00N4x00000QQ1LB": `https://veteranpcs.com/contact-lender${fullQueryString}`,
-    first_name: formData.firstName || "",
-    last_name: formData.lastName || "",
-    email: formData.email || "",
-    mobile: formData.phone || "",
-    "00N4x00000LspUs": formData.currentBase || "",
-    "00N4x00000QPksj": formData.howDidYouHear || "",
-    "00N4x00000QPS7V": formData.tellusMore || "",
-    "00N4x00000bfgFA": formData.additionalComments || "",
-    "g-recaptcha-response": formData.captchaToken || "",
-    "captcha_settings": formData.captcha_settings || "",
-  }).toString();
-
-  try {
-    const response = await fetch(
-      "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formBody,
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
-
-    revalidatePath('/');
-
-    // console.log('NEXT_PUBLIC_API_BASE_URL:', process.env.NEXT_PUBLIC_API_BASE_URL);
-    // redirect("http://127.0.0.1:3000/");
-  } catch (error) {
-    console.error('Error:', error);
-    throw new Error('Failed to submit form');
-  }
+  captchaToken?: string;
+  captcha_settings?: string;
 }
 
 export default function Home() {
+  const router = useRouter()
+
+  const handleSubmit = async (formData: FormData) => {
+    try {
+      const fullQueryString = window.location.search; 
+      const server_response = await contactLenderPostForm(formData, fullQueryString);
+      if (server_response?.redirectUrl) {
+        router.push(server_response.redirectUrl);
+      } else {
+        console.log("No redirect URL found");
+      }    
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  };
 
   return (
     <>
@@ -104,7 +67,7 @@ export default function Home() {
         </div>
 
         <ContactLender
-          onSubmit={submitForm}
+          onSubmit={handleSubmit}
         />
       </div>
     </>

@@ -86,7 +86,7 @@ const FamilySupport = async () => {
                   <Image
                     width={100}
                     height={100}
-                    className="md:w-auto md:h-auto md:mt-1 mt-0.5 w-5 h-5"
+                    className="md:w-auto md:h-auto md:mt-1 mt-0.5 w-6 h-6"
                     src="/icon/checkred.svg"
                     alt="Description of the image"
                   />

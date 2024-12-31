@@ -1,30 +1,140 @@
 "use client";
 import { useState, FormEvent, useCallback, useEffect } from 'react';
-import { FormData } from "@/app/get-listed-lenders/page";
 import initService from '@/services/initService';
-import HowDidYouHearAboutUs from "@/components/GetListedLenders/HowDidYouHearAboutUs";
 import ReCAPTCHA from 'react-google-recaptcha';
+import useTimestamp from '@/hooks/useTimestamp';
+import { useForm, Resolver } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+export type HowDidYouHearOptions =
+  | 'Google'
+  | 'Facebook'
+  | 'Instagram'
+  | 'Linkedin'
+  | 'Tiktok'
+  | 'Base Event'
+  | 'Transition Brief'
+  | 'Agent Referral'
+  | 'Friend Referral'
+  | 'Skillbridge'
+  | 'Youtube'
+  | 'Other'
+  | ''
+
+interface FormData {
+  name: string;
+  companyNMLSId: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  howDidYouHear: string;
+  tellusMore?: string;
+  captchaToken: string | null;
+  captcha_settings: string | null,
+}
+
+const howDidYouHearOptions: HowDidYouHearOptions[] = [
+  'Google',
+  'Facebook',
+  'Instagram',
+  'Linkedin',
+  'Tiktok',
+  'Base Event',
+  'Transition Brief',
+  'Agent Referral',
+  'Friend Referral',
+  'Skillbridge',
+  'Youtube',
+  'Other',
+  ''
+];
 
 interface ContactFormProps {
   onSubmit: (data: FormData) => void;
   onBack: () => void;
-  formData: FormData;
+  shouldSubmit: () => void;
 }
 
-const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
-  const [localFormData, setLocalFormData] = useState<FormData>({
-    firstName: formData.firstName || '',
-    lastName: formData.lastName || '',
-    email: formData.email || '',
-    phone: formData.phone || '',
-  });
-  const siteKey: string = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '';
-  const [stateList, setStateList] = useState<any[]>([]);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+// Validation schema using yup
+const schema = yup.object({
+  name: yup.string().required('Name is required'),
+  companyNMLSId: yup.string(),
+  street: yup.string().required('Street is required'),
+  city: yup.string(),
+  state: yup.string(),
+  zip: yup.string(),
+  howDidYouHear: yup
+    .string()
+    .required('Please select an option')
+    .oneOf(howDidYouHearOptions, 'Invalid option selected'),
+  tellusMore: yup.string().when('howDidYouHear', {
+    is: 'Other',
+    then: (schema) => schema,
+    otherwise: (schema) => schema.nullable(),
+  }),
+  captchaToken: yup.string().required('Please complete the reCAPTCHA'),
+  captcha_settings: yup.string().required('Please complete the reCAPTCHA'),
+});
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    onSubmit(localFormData);
+const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
+  useTimestamp();
+  const [stateList, setStateList] = useState<any[]>([]);
+
+  // Fetch state list
+  const getStateList = useCallback(async () => {
+    try {
+      const response = await initService.getStateListFetch();
+      setStateList(response);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getStateList();
+  }, [getStateList]);
+
+  // React Hook Form setup with validation
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
+    resolver: yupResolver(schema) as Resolver<FormData>,
+    defaultValues: {
+      name: '',
+      companyNMLSId: '',
+      street: '',
+      city: '',
+      state: '',
+      zip: '',
+      howDidYouHear: '',
+      tellusMore: '',
+      captchaToken: '',
+      captcha_settings: '',
+    },
+  });
+
+  const howDidYouHearValue = watch("howDidYouHear");
+
+  const onCaptchaChange = (token: string | null) => {
+    if (token) {
+      const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
+      if (captchaSettingsElem) {
+        const captchaSettings = JSON.parse(captchaSettingsElem.value);
+        captchaSettings.ts = JSON.stringify(new Date().getTime());
+        captchaSettingsElem.value = JSON.stringify(captchaSettings);
+        setValue('captcha_settings', captchaSettingsElem.value, {
+          shouldValidate: false // This triggers validation after setting the value
+        });
+        setValue('captchaToken', token, {
+          shouldValidate: true // This triggers validation after setting the value
+        });
+      }
+    }
+  };
+
+  const onFormSubmit = (data: FormData) => {
+    onSubmit(data);
+    shouldSubmit()
   };
 
   const handleBack = (e: FormEvent) => {
@@ -32,23 +142,11 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
     onBack();
   };
 
-  const getStateList = useCallback(async () => {
-    try {
-      const response = await initService.getStateListFetch()
-      setStateList(response)
-    } catch (error) {
-      console.error('Error fetching posts:', error)
-    }
-  }, []);
-
-  useEffect(() => {
-    getStateList();
-  }, [getStateList])
-
   return (
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onFormSubmit)}>
+          <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' />
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
@@ -56,79 +154,77 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
               </h1>
             </div>
             <div className="border rounded-lg border-[#E2E4E5] p-8">
+              {/* Name */}
               <div className="mb-8 flex flex-col">
-                <label
-                  htmlFor="firstName"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
-                >
+                <label htmlFor="name" className="text-[#242426] tahoma text-sm font-normal mb-1">
                   Name
                 </label>
                 <input
+                  {...register('name')}
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="name"
                   placeholder="Name"
                 />
+                {errors.name && <span className="text-red-500 text-sm">{errors.name.message}</span>}
               </div>
+
+              {/* Company NMLS ID */}
               <div className="mb-8 flex flex-col">
-                <label
-                  htmlFor="firstName"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
-                >
+                <label htmlFor="companyNMLSId" className="text-[#242426] tahoma text-sm font-normal mb-1">
                   Company NMLS ID
                 </label>
                 <input
+                  {...register('companyNMLSId')}
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="companyNMLSId"
                   placeholder="Company NMLS ID"
                 />
+                {errors.companyNMLSId && <span className="text-red-500 text-sm">{errors.companyNMLSId.message}</span>}
               </div>
+
+              {/* Street */}
               <div className="mb-8 flex flex-col">
-                <label
-                  htmlFor="firstName"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
-                >
+                <label htmlFor="street" className="text-[#242426] tahoma text-sm font-normal mb-1">
                   Street
                 </label>
                 <input
+                  {...register('street')}
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="street"
                   placeholder="Street"
                 />
+                {errors.street && <span className="text-red-500 text-sm">{errors.street.message}</span>}
               </div>
+
+              {/* City */}
               <div className="mb-8 flex flex-col">
-                <label
-                  htmlFor="firstName"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
-                >
+                <label htmlFor="city" className="text-[#242426] tahoma text-sm font-normal mb-1">
                   City
                 </label>
                 <input
+                  {...register('city')}
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="city"
                   placeholder="City"
                 />
+                {errors.city && <span className="text-red-500 text-sm">{errors.city.message}</span>}
               </div>
+
+              {/* State */}
               <div className="mb-8 flex flex-col">
-                <label
-                  htmlFor="howDidYouHear"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
-                >
+                <label htmlFor="state" className="text-[#242426] tahoma text-sm font-normal mb-1">
                   State/Province
                 </label>
                 <select
-                  id="howDidYouHear"
-                  name="howDidYouHear"
+                  {...register('state')}
+                  id="state"
                   className="border-b border-[#E2E4E5] px-2 py-1"
                 >
-                  <option value="" disabled selected>
+                  <option value="" disabled>
                     Select State
                   </option>
                   {stateList.map((state) => (
@@ -137,28 +233,101 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                     </option>
                   ))}
                 </select>
+                {errors.state && <span className="text-red-500 text-sm">{errors.state.message}</span>}
               </div>
+
+              {/* Zip */}
               <div className="mb-8 flex flex-col">
-                <label
-                  htmlFor="firstName"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
-                >
+                <label htmlFor="zip" className="text-[#242426] tahoma text-sm font-normal mb-1">
                   Zip
                 </label>
                 <input
+                  {...register('zip')}
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="zip"
                   placeholder="Zip"
                 />
+                {errors.zip && <span className="text-red-500 text-sm">{errors.zip.message}</span>}
               </div>
-              <ReCAPTCHA
-                sitekey={siteKey}
-                onChange={(token: string | null) => setCaptchaToken(token)}
-              />
+
             </div>
-            {/* <HowDidYouHearAboutUs /> */}
+
+            <div className='border rounded-lg border-[#E2E4E5] p-8'>
+              <div className="mb-8 flex flex-col">
+                <label
+                  htmlFor="howDidYouHear"
+                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                >
+                  How did you hear about us?*
+                </label>
+                <select
+                  {...register('howDidYouHear')}
+                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  id="howDidYouHear"
+                >
+                  <option value="">Select an option</option>
+                  <option value="Google">Google</option>
+                  <option value="Facebook">Facebook</option>
+                  <option value="Instagram">Instagram</option>
+                  <option value="Linkedin">LinkedIn</option>
+                  <option value="Tiktok">TikTok</option>
+                  <option value="Base Event">Base Event</option>
+                  <option value="Transition Brief">Transition Brief</option>
+                  <option value="Agent Referral">Agent Referral</option>
+                  <option value="Friend Referral">Friend Referral</option>
+                  <option value="Skillbridge">Skillbridge</option>
+                  <option value="Youtube">YouTube</option>
+                  <option value="Other">Other</option>
+                </select>
+                {errors.howDidYouHear && (
+                  <span className="text-error">{errors.howDidYouHear.message}</span>
+                )}
+              </div>
+
+              {howDidYouHearValue === 'Other' && (
+                <div className="mb-8 flex flex-col">
+                  <label
+                    htmlFor="tellusMore"
+                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  >
+                    Please tell us more*
+                  </label>
+                  <input
+                    type="text"
+                    {...register('tellusMore')}
+                    className="border-b border-[#E2E4E5] px-2 py-1"
+                    id="tellusMore"
+                    placeholder="Tell us more..."
+                  />
+                  {errors.tellusMore && (
+                    <span className="text-error">{errors.tellusMore.message}</span>
+                  )}
+                </div>
+              )}
+
+              <div className="mt-8 flex flex-col">
+                <ReCAPTCHA
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+                  onChange={onCaptchaChange}
+                />
+                {errors.captchaToken && (
+                  <span className="text-error">{errors.captchaToken.message}</span>
+                )}
+              </div>
+            </div>
+
+            {/* CAPTCHA */}
+            {/* <div className="mt-8 flex flex-col">
+                <ReCAPTCHA
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+                  onChange={onCaptchaChange}
+                />
+                {errors.captchaToken && (
+                  <span className="text-error">{errors.captchaToken.message}</span>
+                )}
+              </div> */}
+
             <hr />
             <div className="flex md:justify-start justify-center">
               <button
@@ -182,6 +351,8 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
             </div>
           </div>
         </form>
+
+        {/* Back Button */}
         <div className="flex md:justify-start justify-center mt-8">
           <button
             onClick={handleBack}
@@ -207,4 +378,4 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
   );
 };
 
-export default ContactForm;
+export default MortgageCompanyInfo;

@@ -1,6 +1,5 @@
 "use client";
 import { useEffect } from "react";
-
 const useTimestamp = () => {
     useEffect(() => {
         const updateTimestamp = () => {
@@ -14,12 +13,9 @@ const useTimestamp = () => {
                 }
             }
         };
-
         const interval = setInterval(updateTimestamp, 500);
-
         // Cleanup interval on component unmount
         return () => clearInterval(interval);
     }, []);
 };
-
 export default useTimestamp;

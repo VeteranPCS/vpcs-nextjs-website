@@ -13,7 +13,7 @@ const HowItWorkText = () => {
     <div className="py-12 lg:px-0 px-5">
       <div className="container mx-auto">
         <div>
-          <p className="text-[#000000] roboto lg:text-[23px] md:text-[23px] sm:text-[20px] text-[20px] font-medium">
+          <p className="text-[#000000] roboto lg:text-[23px] md:text-[23px] sm:text-[15px] text-[15px] md:font-medium sm:font-normal font-normal">
             The following is intended to provide a general overview of how the
             VeteranPCS service works, but is qualified in its entirety by the
             <span className="text-[#348BE2]"> Platform Terms of Use.</span> If
@@ -23,7 +23,7 @@ const HowItWorkText = () => {
           </p>
         </div>
         <div className="my-4">
-          <p className="text-[#000000] roboto lg:text-[23px] md:text-[23px] sm:text-[20px] text-[20px] font-medium">
+          <p className="text-[#000000] roboto lg:text-[23px] md:text-[23px] sm:text-[15px] text-[15px] md:font-medium sm:font-normal font-normal">
             Visit our
             <span className="text-[#348BE2]"> contact page</span> to find out
             how you can become a preferred agent or lender with VeteranPCS.

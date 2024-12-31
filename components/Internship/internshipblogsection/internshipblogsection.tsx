@@ -9,7 +9,7 @@ interface ActionImage {
       _ref: string;
       image_url?: string; // Make sure image_url exists here
     };
-  }
+  };
 }
 export interface InternshipActionDataProps {
   _id: string;
@@ -21,7 +21,7 @@ export interface InternshipActionDataProps {
       _ref: string;
       image_url?: string; // Make sure image_url exists here
     };
-  }
+  };
 }
 
 const PcsResourcesCalculators = async () => {
@@ -30,7 +30,7 @@ const PcsResourcesCalculators = async () => {
   try {
     internshipActionData = await internshipPageService.fetchActionItem();
   } catch (error) {
-    console.error('Failed to fetch Internship Action Items:', error);
+    console.error("Failed to fetch Internship Action Items:", error);
     return <p>Failed to load Internship Action Items.</p>;
   }
 
@@ -44,15 +44,18 @@ const PcsResourcesCalculators = async () => {
                 <Image
                   width={1000}
                   height={237}
-                  src={data?.action_image?.asset?.image_url || "/assets/successful-team1.png"}
+                  src={
+                    data?.action_image?.asset?.image_url ||
+                    "/assets/successful-team1.png"
+                  }
                   alt={data?.action_image?.alt || "check"}
                   className="w-full lg:h-[356px] h-auto"
                 />
                 <div className="mt-5">
-                  <h3 className="text-[#003486] poppins lg:text-[23px] md:text-[23px] sm:text-[17px] text-[17px] font-medium">
+                  <h3 className="text-[#003486] poppins lg:text-[23px] md:text-[23px] sm:text-[17px] text-[17px] font-bold">
                     {data?.title}
                   </h3>
-                  <p className="text-[#000000] roboto lg:text-[18px] md:text-[18px] sm:text-[13px] text-[13px] font-light mt-1">
+                  <p className="text-[#000000] font-normal roboto lg:text-[18px] md:text-[18px] sm:text-[13px] text-[13px] mt-1">
                     {data?.description}
                   </p>
                 </div>

@@ -45,7 +45,7 @@ const FamilySupport = async () => {
   try {
     storyDetails = await impactService.fetchOurStory();
   } catch (error) {
-    console.error('Failed to fetch Our Story:', error);
+    console.error("Failed to fetch Our Story:", error);
     return <p>Failed to load Family Support Data.</p>;
   }
 
@@ -75,9 +75,9 @@ const FamilySupport = async () => {
               className="lg:w-[426px] lg:h-[500px] md:w-[426px] md:h-[500px] sm:w-[326px] sm:h-[326px] w-[326px] h-auto"
             />
           </div>
-          <div className="sm:text-justify text-center">
+          <div className="md:text-left sm:text-justify text-center">
             <div>
-              <h1 className="text-white poppins lg:text-[35px] md:text-[35px] sm:text-[31px] text-[31px] font-bold mt-5 lg:text-left md:text-left sm:text-center text-center px-20 sm:px-0">
+              <h1 className="text-white poppins lg:text-[35px] md:text-[35px] sm:text-[31px] text-[31px] font-bold mt-5 md:text-left sm:text-center text-center sm:px-0 px-0">
                 {storyDetails?.header}
               </h1>
               <p className="text-white roboto lg:text-[16px] md:text-[16px] sm:text-[16px] text-[16px] font-medium mt-4 lg:w-[500px] md:w-[500px] sm:w-full w-full">
@@ -93,9 +93,7 @@ const FamilySupport = async () => {
               </p>
             </div>
             <Link href="/about" className="sm:mt-0 mt-16">
-              <Button
-                buttonText={storyDetails?.buttonText || "OUR STORY"}
-              />
+              <Button buttonText={storyDetails?.buttonText || "OUR STORY"} />
             </Link>
           </div>
         </div>

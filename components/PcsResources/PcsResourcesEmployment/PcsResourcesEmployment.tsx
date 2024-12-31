@@ -11,7 +11,7 @@ const WhyVeteranPcs = () => {
         <div className="container mx-auto w-full">
           <div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
-              <div className="sm:text-left text-center">
+              <div className="sm:text-left text-left md:order-0 sm:order-1 order-1">
                 <h3 className="text-[#002258] tahoma lg:text-[42px] md:text-[42px] sm:text-[31px] text-[31px] font-bold ">
                   Employment
                 </h3>
@@ -22,7 +22,7 @@ const WhyVeteranPcs = () => {
                   <Button buttonText="Veteran Employment Articles" />
                 </div>
               </div>
-              <div>
+              <div className="md:order-1 sm:order-0 order-0 md:text-left text-left">
                 <div className="flex gap-4 items-center">
                   <Image
                     width={465}
@@ -33,7 +33,7 @@ const WhyVeteranPcs = () => {
                   />
                 </div>
               </div>
-              <div>
+              <div className="md:order-0 sm:order-1 order-1">
                 <div>
                   <Link href="https://www.hiringourheroes.org/">
                     <Image

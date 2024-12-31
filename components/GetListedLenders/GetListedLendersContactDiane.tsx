@@ -27,17 +27,15 @@ const lenderPersonalDataSchema = yup.object().shape({
 
 interface ContactFormProps {
   onSubmit: (formData: FormData) => void;
-  formData: FormData;
 }
 
-const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
+const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(lenderPersonalDataSchema),
-    defaultValues: formData,  // Use formData as the default values
   });
 
   // Handle form submission
@@ -201,4 +199,4 @@ const ContactForm = ({ onSubmit, formData }: ContactFormProps) => {
   );
 };
 
-export default ContactForm;
+export default GetListedLenders;

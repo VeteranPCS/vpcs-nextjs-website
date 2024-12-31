@@ -1,52 +1,140 @@
 "use client";
 import { useState, FormEvent, useCallback, useEffect } from 'react';
-import { FormData } from "@/app/get-listed-lenders/page";
-import HowDidYouHearAboutUs from '@/components/GetListedLenders/HowDidYouHearAboutUs';
+// import { FormData } from "@/app/get-listed-lenders/page";
 import stateService from '@/services/stateService';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import ReCAPTCHA from 'react-google-recaptcha';
+import useTimestamp from '@/hooks/useTimestamp';
 
+export type HowDidYouHearOptions =
+  | 'Google'
+  | 'Facebook'
+  | 'Instagram'
+  | 'Linkedin'
+  | 'Tiktok'
+  | 'Base Event'
+  | 'Transition Brief'
+  | 'Agent Referral'
+  | 'Friend Referral'
+  | 'Skillbridge'
+  | 'Youtube'
+  | 'Other'
+  | ''
 interface ContactFormProps {
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: any) => void;
   onBack: () => void;
-  formData: FormData;
+  shouldSubmit: () => void;
 }
 
-const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
-  const [localFormData, setLocalFormData] = useState<FormData>({
-    firstName: formData.firstName || '',
-    lastName: formData.lastName || '',
-    email: formData.email || '',
-    phone: formData.phone || '',
-  });
+const howDidYouHearOptions: HowDidYouHearOptions[] = [
+  'Google',
+  'Facebook',
+  'Instagram',
+  'Linkedin',
+  'Tiktok',
+  'Base Event',
+  'Transition Brief',
+  'Agent Referral',
+  'Friend Referral',
+  'Skillbridge',
+  'Youtube',
+  'Other',
+  ''
+];
+
+const schema = yup.object().shape({
+  primaryState: yup.string(),
+  otherStates: yup.string(),
+  licenseNumber: yup.string().required("License number is required."),
+  brokerageName: yup.string().required("Brokerage name is required."),
+  managingBrokerName: yup.string().required("Managing broker name is required."),
+  managingBrokerPhone: yup
+    .string()
+    .required("Managing broker phone is required.")
+    .matches(/^\d{10}$/, "Phone number must be 10 digits."),
+  managingBrokerEmail: yup
+    .string()
+    .email("Enter a valid email address.")
+    .required("Managing broker email is required."),
+  citiesServiced: yup.string(),
+  basesServiced: yup.string(),
+  personallyPCS: yup.string(),
+  leadAcceptance: yup.string(),
+  howDidYouHear: yup
+    .string()
+    .required('Please select an option')
+    .oneOf(howDidYouHearOptions, 'Invalid option selected'),
+  tellusMore: yup.string().when('howDidYouHear', {
+    is: 'Other',
+    then: (schema) => schema,
+    otherwise: (schema) => schema.nullable(),
+  }),
+  captchaToken: yup.string().required('Please complete the reCAPTCHA'),
+  captcha_settings: yup.string().required('Please complete the reCAPTCHA'),
+});
+
+const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
+  useTimestamp();
 
   const [stateList, setStateList] = useState<any[]>([]);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+  } = useForm({
+    defaultValues: {
+      captchaToken: '',
+      captcha_settings: '',
+    },
+    resolver: yupResolver(schema),
+  });
+
+  const howDidYouHearValue = watch("howDidYouHear");
   const getStateList = useCallback(async () => {
     try {
       const response = await stateService.fetchStateList();
-      setStateList(response)
+      setStateList(response);
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      console.error("Error fetching state list:", error);
     }
   }, []);
 
-  useEffect(() => {
-    getStateList();
-  }, [getStateList])
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    onSubmit(localFormData);
+  const onCaptchaChange = (token: string | null) => {
+    if (token) {
+      const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
+      if (captchaSettingsElem) {
+        const captchaSettings = JSON.parse(captchaSettingsElem.value);
+        captchaSettings.ts = JSON.stringify(new Date().getTime());
+        captchaSettingsElem.value = JSON.stringify(captchaSettings);
+        setValue('captcha_settings', captchaSettingsElem.value, {
+          shouldValidate: false // This triggers validation after setting the value
+        });
+        setValue('captchaToken', token, {
+          shouldValidate: true // This triggers validation after setting the value
+        });
+      }
+    }
   };
 
-  const handleBack = (e: FormEvent) => {
-    e.preventDefault();
-    onBack();
+  useEffect(() => {
+    getStateList();
+  }, [getStateList]);
+
+  const onSubmitHandler: SubmitHandler<any> = (data) => {
+    onSubmit(data);
+    shouldSubmit()
   };
 
   return (
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmitHandler)}>
+        <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' />
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
@@ -56,15 +144,15 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
             <div className="border rounded-lg border-[#E2E4E5] p-8">
               <div className="mb-8 flex flex-col">
                 <label
-                  htmlFor="howDidYouHear"
+                  htmlFor="primaryState"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
                   Primary State to be Listed:
                 </label>
                 <select
-                  id="howDidYouHear"
-                  name="howDidYouHear"
+                  id="primaryState"
                   className="border-b border-[#E2E4E5] px-2 py-1"
+                  {...register("primaryState")}
                 >
                   <option value="" disabled selected>
                     Select State
@@ -75,17 +163,20 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                     </option>
                   ))}
                 </select>
+                {errors.primaryState && (
+                  <span className="text-error">{errors.primaryState.message}</span>
+                )}
               </div>
               <div className="mb-8 flex flex-col">
                 <label
-                  htmlFor="howDidYouHear"
+                  htmlFor="otherStates"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
                   Other State(s) Licensed:
                 </label>
                 <select
-                  id="howDidYouHear"
-                  name="howDidYouHear"
+                  id="otherStates"
+                  {...register("otherStates")}
                   className="border-b border-[#E2E4E5] px-2 py-1"
                 >
                   <option value="" disabled selected>
@@ -97,10 +188,13 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                   <option value="searchEngine">Search Engine</option>
                   <option value="other">Other</option>
                 </select>
+                {errors.otherStates && (
+                  <span className="text-error">{errors.otherStates.message}</span>
+                )}
               </div>
               <div className="mb-8 flex flex-col">
                 <label
-                  htmlFor="firstName"
+                  htmlFor="licenseNumber"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
                   License Number(s)
@@ -108,14 +202,17 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                 <input
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="licenseNumber"
+                  {...register("licenseNumber")}
                   placeholder="License Number(s)"
                 />
+                {errors.licenseNumber && (
+                  <span className="text-error">{errors.licenseNumber.message}</span>
+                )}
               </div>
               <div className="mb-8 flex flex-col">
                 <label
-                  htmlFor="firstName"
+                  htmlFor="brokerageName"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
                   Brokerage Name
@@ -123,14 +220,17 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                 <input
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="brokerageName"
+                  {...register("brokerageName")}
                   placeholder="Brokerage Name"
                 />
+                {errors.brokerageName && (
+                  <span className="text-error">{errors.brokerageName.message}</span>
+                )}
               </div>
               <div className="mb-8 flex flex-col">
                 <label
-                  htmlFor="firstName"
+                  htmlFor="managingBrokerName"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
                   Managing Broker Name*
@@ -138,14 +238,17 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                 <input
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="managingBrokerName"
+                  {...register("managingBrokerName")}
                   placeholder="Managing Broker Name"
                 />
+                {errors.managingBrokerName && (
+                  <span className="text-error">{errors.managingBrokerName.message}</span>
+                )}
               </div>
               <div className="mb-8 flex flex-col">
                 <label
-                  htmlFor="firstName"
+                  htmlFor="managingBrokerPhone"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
                   Managing Broker Phone*
@@ -153,14 +256,17 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                 <input
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="managingBrokerPhone"
+                  {...register("managingBrokerPhone")}
                   placeholder="Managing Broker Phone"
                 />
+                {errors.managingBrokerPhone && (
+                  <span className="text-error">{errors.managingBrokerPhone.message}</span>
+                )}
               </div>
               <div className="mb-8 flex flex-col">
                 <label
-                  htmlFor="firstName"
+                  htmlFor="managingBrokerEmail"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
                   Managing Broker Email*
@@ -168,14 +274,17 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                 <input
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="managingBrokerEmail"
+                  {...register("managingBrokerEmail")}
                   placeholder="Managing Broker Email"
                 />
+                {errors.managingBrokerEmail && (
+                  <span className="text-error">{errors.managingBrokerEmail.message}</span>
+                )}
               </div>
               <div className="mb-8 flex flex-col">
                 <label
-                  htmlFor="firstName"
+                  htmlFor="citiesServiced"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
                   Cities Serviced
@@ -183,14 +292,17 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                 <input
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="citiesServiced"
+                  {...register("citiesServiced")}
                   placeholder="Cities Serviced"
                 />
+                {errors.citiesServiced && (
+                  <span className="text-error">{errors.citiesServiced.message}</span>
+                )}
               </div>
               <div className="mb-8 flex flex-col">
                 <label
-                  htmlFor="firstName"
+                  htmlFor="basesServiced"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
                   Bases Serviced
@@ -198,21 +310,24 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                 <input
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="basesServiced"
+                  {...register("basesServiced")}
                   placeholder="Bases Serviced"
                 />
+                {errors.basesServiced && (
+                  <span className="text-error">{errors.basesServiced.message}</span>
+                )}
               </div>
               <div className="mb-8 flex flex-col">
                 <label
-                  htmlFor="howDidYouHear"
+                  htmlFor="personallyPCS"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
                   Have you personally PCS’d?
                 </label>
                 <select
-                  id="howDidYouHear"
-                  name="howDidYouHear"
+                  id="personallyPCS"
+                  {...register("personallyPCS")}
                   className="border-b border-[#E2E4E5] px-2 py-1"
                 >
                   <option value="" disabled selected>
@@ -221,17 +336,20 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                   <option value="Yes">Yes</option>
                   <option value="No">No</option>
                 </select>
+                {errors.personallyPCS && (
+                  <span className="text-error">{errors.personallyPCS.message}</span>
+                )}
               </div>
               <div className="flex flex-col">
                 <label
-                  htmlFor="howDidYouHear"
+                  htmlFor="leadAcceptance"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
                   Are you able to receive leads for a 25% fee?
                 </label>
                 <select
-                  id="howDidYouHear"
-                  name="howDidYouHear"
+                  id="leadAcceptance"
+                  {...register("leadAcceptance")}
                   className="border-b border-[#E2E4E5] px-2 py-1"
                 >
                   <option value="" disabled selected>
@@ -240,9 +358,76 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
                   <option value="Yes">Yes</option>
                   <option value="No">No</option>
                 </select>
+                {errors.leadAcceptance && (
+                  <span className="text-error">{errors.leadAcceptance.message}</span>
+                )}
+              </div>
+            </div>
+
+            <div className='border rounded-lg border-[#E2E4E5] p-8'>
+              <div className="mb-8 flex flex-col">
+                <label
+                  htmlFor="howDidYouHear"
+                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                >
+                  How did you hear about us?*
+                </label>
+                <select
+                  {...register('howDidYouHear')}
+                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  id="howDidYouHear"
+                >
+                  <option value="">Select an option</option>
+                  <option value="Google">Google</option>
+                  <option value="Facebook">Facebook</option>
+                  <option value="Instagram">Instagram</option>
+                  <option value="Linkedin">LinkedIn</option>
+                  <option value="Tiktok">TikTok</option>
+                  <option value="Base Event">Base Event</option>
+                  <option value="Transition Brief">Transition Brief</option>
+                  <option value="Agent Referral">Agent Referral</option>
+                  <option value="Friend Referral">Friend Referral</option>
+                  <option value="Skillbridge">Skillbridge</option>
+                  <option value="Youtube">YouTube</option>
+                  <option value="Other">Other</option>
+                </select>
+                {errors.howDidYouHear && (
+                  <span className="text-error">{errors.howDidYouHear.message}</span>
+                )}
               </div>
 
+              {howDidYouHearValue === 'Other' && (
+                <div className="mb-8 flex flex-col">
+                  <label
+                    htmlFor="tellusMore"
+                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  >
+                    Please tell us more*
+                  </label>
+                  <input
+                    type="text"
+                    {...register('tellusMore')}
+                    className="border-b border-[#E2E4E5] px-2 py-1"
+                    id="tellusMore"
+                    placeholder="Tell us more..."
+                  />
+                  {errors.tellusMore && (
+                    <span className="text-error">{errors.tellusMore.message}</span>
+                  )}
+                </div>
+              )}
+
+              <div className="mt-8 flex flex-col">
+                <ReCAPTCHA
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+                  onChange={onCaptchaChange}
+                />
+                {errors.captchaToken && (
+                  <span className="text-error">{errors.captchaToken.message}</span>
+                )}
+              </div>
             </div>
+
             {/* <HowDidYouHearAboutUs /> */}
             <hr />
             <div className="flex md:justify-start justify-center">
@@ -269,7 +454,7 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
         </form>
         <div className="flex md:justify-start justify-center mt-8">
           <button
-            onClick={handleBack}
+            onClick={onBack}
             className="rounded-md border border-[#BBBFC1] bg-white px-8 py-2 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
           >
             <svg
@@ -292,4 +477,4 @@ const ContactForm = ({ onSubmit, onBack, formData }: ContactFormProps) => {
   );
 };
 
-export default ContactForm;
+export default AgentInfo;

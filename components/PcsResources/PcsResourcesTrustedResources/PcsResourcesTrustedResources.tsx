@@ -43,26 +43,33 @@ const PcsResourcesTrustedResources = async () => {
         <div className="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 grid-cols-2 gap-5 lg:mt-10 md:mt-10 sm:mt-5 mt-5">
           {trusted_sources.map((trusted_source) => (
             <div key={trusted_source._id}>
-              {trusted_source?.url ?
+              {trusted_source?.url ? (
                 <Link href={trusted_source?.url}>
                   <Image
                     width={128}
                     height={36}
-                    src={trusted_source?.logo?.asset?.image_url || "/assets/spouselylogomain.png"}
+                    src={
+                      trusted_source?.logo?.asset?.image_url ||
+                      "/assets/spouselylogomain.png"
+                    }
                     alt={trusted_source?.logo?.alt || "no alt"}
-                    className="w-[128px] mt-10 h-[36px]"
+                    className="md:w-[128px] mt-10 md:h-[36px] sm:w-auto sm:h-auto w-auto h-auto"
                   />
-                </Link> :
+                </Link>
+              ) : (
                 <div>
                   <Image
                     width={128}
                     height={36}
-                    src={trusted_source?.logo?.asset?.image_url || "/assets/spouselylogomain.png"}
+                    src={
+                      trusted_source?.logo?.asset?.image_url ||
+                      "/assets/spouselylogomain.png"
+                    }
                     alt={trusted_source?.logo?.alt || "no alt"}
-                    className="w-[128px] mt-10 h-[36px]"
+                    className="md:w-[128px] mt-10 md:h-[36px] sm:w-auto sm:h-auto w-auto h-auto"
                   />
                 </div>
-              }
+              )}
             </div>
           ))}
         </div>

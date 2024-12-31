@@ -2,7 +2,7 @@ import React from "react";
 import "@/styles/globals.css";
 import BlogMovingPcsingPost from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPostSection/BlogMovingPcsingPost";
 import { Metadata } from "next";
-import blogService from '@/services/blogService';
+import blogService from "@/services/blogService";
 
 export interface Author {
   name: string;
@@ -48,7 +48,7 @@ const StatePageHeroSecondSection = async () => {
               <h1 className="text-[#292F6C] tahoma lg:text-[36px] md:text-[36px] text-[26px] font-bold">
                 Moving or PCSing in 2024?
               </h1>
-              <div className="flex items-cenetr gap-10 mt-5">
+              <div className="flex flex-wrap items-cenetr md:gap-10 sm:gap-5 gap-4 mt-5">
                 <button className="text-[#7E1618] robot text-sm font-normal ">
                   All
                 </button>
@@ -65,7 +65,7 @@ const StatePageHeroSecondSection = async () => {
             </div>
           </div>
           <div>
-            <form className="flex justify-center mt-6 w-[312px]">
+            <form className="flex justify-center mt-6 w-[312px] md:inline-flex sm:hidden hidden">
               <input
                 type="text"
                 placeholder="Search"

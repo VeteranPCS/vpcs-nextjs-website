@@ -17,7 +17,7 @@ const HeroSec = () => {
               in amazing ways
             </h1>
           </div>
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-10 sm:mt-20 mt-0">
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 items-start justify-between md:gap-10 sm:gap-3 gap-3 sm:mt-20 mt-0">
             <div className="text-center md:block sm:flex flex sm:items-center items-center lg:mt-3 md:mt-3 sm:mt-3 mt-3 md:bg-transparent sm:bg-[#7E1618] bg-[#7E1618] sm:rounded-2xl rounded-2xl p-6 sm:p-6">
               <div className="md:flex md:justify-center md:mx-auto w-[70px] h-[70px]">
                 <Image
@@ -71,7 +71,7 @@ const HeroSec = () => {
                   $25,000
                 </h2>
                 <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
-                Hero Foundations
+                  Hero Foundations
                 </p>
               </div>
             </div>
@@ -87,10 +87,10 @@ const HeroSec = () => {
               </div>
               <div className="md:text-center sm:text-left text-left md:pl-0 sm:pl-3 pl-3">
                 <h2 className="text-white font-bold md:text-[42px] sm:text-[35px] text-[35px] tahoma md:mt-5 mb-2">
-                300+
+                  300+
                 </h2>
                 <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
-                Heroes Listed
+                  Heroes Listed
                 </p>
               </div>
             </div>
@@ -106,10 +106,10 @@ const HeroSec = () => {
               </div>
               <div className="md:text-center sm:text-left text-left md:pl-0 sm:pl-3 pl-3">
                 <h2 className="text-white font-bold md:text-[42px] sm:text-[35px] text-[35px] tahoma md:mt-5 mb-2">
-                100+
+                  100+
                 </h2>
                 <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
-                Mil Spouses listed
+                  Mil Spouses listed
                 </p>
               </div>
             </div>
@@ -125,10 +125,10 @@ const HeroSec = () => {
               </div>
               <div className="md:text-center sm:text-left text-left md:pl-0 sm:pl-3 pl-3">
                 <h2 className="text-white font-bold md:text-[42px] sm:text-[35px] text-[35px] tahoma md:mt-5 mb-2">
-                50
+                  50
                 </h2>
                 <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
-                Connected Internships
+                  Connected Internships
                 </p>
               </div>
             </div>

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import "@/styles/globals.css";
 import "slick-carousel/slick/slick.css";
@@ -25,9 +25,7 @@ interface CarouselProps {
   reviews: Review[]; // Define the reviews prop as an array of Review items
 }
 
-const NameIcon: React.FC<{ name: string}> = ({
-  name
-}) => {
+const NameIcon: React.FC<{ name: string }> = ({ name }) => {
   const initial = name.charAt(0).toUpperCase();
   return (
     <div
@@ -80,29 +78,15 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
 
   // Slider 2 settings (1 image visible at once)
   const settingsTwo = {
-    dots:true,
+    dots: true,
     infinite: true,
     speed: 500,
-    autoplay: true,
+    autoplay: false,
     autoplaySpeed: 3000,
     pauseOnHover: true,
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: false,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 1, // Show 1 image on medium screens
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1, // Show 1 image on small screens
-        },
-      },
-    ],
   };
 
   return (
@@ -111,7 +95,10 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
       <Box className="w-full">
         <Slider {...settingsOne} className="pt-10 reviw-topslider">
           {reviews.map((item, index) => (
-            <div key={index} className="bg-white rounded-2xl p-2 slider-box">
+            <div
+              key={"settingsOne" + index}
+              className="bg-white rounded-2xl p-2 slider-box"
+            >
               <div className="flex items-center">
                 <div className="bg-[#f2f2f2] w-[64px] h-[64px] rounded-full"></div>
                 {/* <div className="ml-3">
@@ -132,41 +119,42 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
       <Box className="w-full">
         <Slider {...settingsTwo} className="pt-10">
           {reviews.map((item) => (
-            <div key={item._id} className="bg-white rounded-2xl p-10">
-              <div className="flex items-center justify-center">
-                <div className="text-center flex flex-col justify-center gap-10">
-                  <div className="flex items-center justify-center">
-                    {Array.from({ length: 5 }).map((_, index) =>
-                      index < item.ratings ? (
-                        <Image
-                          width={24}
-                          height={24}
-                          key={index}
-                          src="/icon/Star.svg" // Filled star
-                          alt="star"
-                          className="w-[24px] h-[24px] mr-2"
-                        />
-                      ) : (
-                        ""
-                      )
-                    )}
-                  </div>
-                  <p className="text-[#181818] text-[18px] font-normal tahoma">
-                    {item.comment}
-                  </p>
-                  <div className="flex justify-center">
-                    {item?.user_logo?.asset?.image_url ? (
+            <div
+              key={"settingsTwo" + item._id}
+              className="bg-white rounded-2xl p-10"
+            >
+              <div className="text-center flex flex-col justify-center gap-10 tw-overflow-y-scroll">
+                <div className="flex mx-auto">
+                  {Array.from({ length: 5 }).map((_, index) =>
+                    index < item.ratings ? (
                       <Image
-                        src={item.user_logo.asset.image_url}
-                        alt="User logo"
-                        width={100}
-                        height={100}
-                        className="w-[100px] h-[100px] rounded-full"
+                        width={24}
+                        height={24}
+                        key={index}
+                        src="/icon/Star.svg" // Filled star
+                        alt="star"
+                        className="w-[24px] h-[24px] mr-2"
                       />
                     ) : (
-                      <NameIcon name={item.name} />
-                    )}
-                  </div>
+                      ""
+                    )
+                  )}
+                </div>
+                <p className="text-[#181818] text-[18px] font-normal tahoma">
+                  {item.comment}
+                </p>
+                <div className="flex justify-center">
+                  {item?.user_logo?.asset?.image_url ? (
+                    <Image
+                      src={item.user_logo.asset.image_url}
+                      alt="User logo"
+                      width={100}
+                      height={100}
+                      className="w-[100px] h-[100px] rounded-full"
+                    />
+                  ) : (
+                    <NameIcon name={item.name} />
+                  )}
                 </div>
               </div>
             </div>
@@ -351,4 +339,3 @@ export default Carousel;
 // };
 
 // export default Carousel;
-

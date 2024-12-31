@@ -1,9 +1,10 @@
 import React from "react";
 import "@/styles/globals.css";
 import Image from "next/image";
-import Link from "next/link";
 import CityButton from "./CityButton";
-
+// import { Button } from "@mui/material";
+import Button from "@/components/common/Button";
+import CitySelection from "./CitySelection";
 interface ImageAsset {
   image_url: string;
 }
@@ -53,7 +54,7 @@ const StatePageHeroSecondSection = ({
             {cityPairs.map((pair, index) => (
               <div
                 key={index}
-                className={`flex flex-wrap justify-center sm:justify-start items-center gap-4 ${index > 0 ? "mt-5" : "sm:mt-20 mt-10"}`}
+                className={`md:flex flex-wrap justify-center sm:justify-start items-center gap-4 sm:hidden hidden  ${index > 0 ? "mt-5" : "sm:mt-20 mt-10"}`}
               >
                 {pair.map((city, cityIndex) => (
                   <div
@@ -71,6 +72,12 @@ const StatePageHeroSecondSection = ({
                 ))}
               </div>
             ))}
+            <div className="relative md:hidden sm:block md:my-0 sm:mt-5 mt-5 w-full inline-grid justify-center">
+             <CitySelection cityList={cityList} />
+              <div>
+                <Button buttonText="Don’t want to browse? Find an agent for me" />
+              </div>
+            </div>
           </div>
           <div className="md:mt-0 mt-10">
             <Image
