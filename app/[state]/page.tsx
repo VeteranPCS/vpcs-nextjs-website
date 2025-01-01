@@ -74,7 +74,7 @@ export default async function Home({ params }: { params: { state: string } }) {
       <StatePageHeroSection
         stateName={state_data?.city_name || 'Unknown'}
         stateImage={state_data?.city_map}  // Pass cityImage as an object
-        cityList={Object.keys(formatted_data)}
+        cityList={Object.keys(formatted_data).sort()}
       />
       <StatePageHeroSecondSection />
       <StatePageVaLoan cityName={state_data?.city_name || 'Unknown'} lendersData={lenders_data} />

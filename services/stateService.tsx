@@ -1,4 +1,4 @@
-import { VETERENCE_SALESFORCE_BASE_URL } from '@/constants/api'
+import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
 import { RequestType, salesForceAPI, salesForceImageAPI } from '@/services/api';
 import { getSalesforceToken } from '@/services/salesForceTokenService';
 import { client } from '@/sanity/lib/client';
@@ -114,10 +114,14 @@ const stateService = {
   },
   fetchAgentsListByState: async (state: string): Promise<AgentsData> => {
     try {
-      const query = `SELECT+Id%2C+Name%2C+AccountId_15__c%2C+PhotoUrl%2C+FirstName%2C+LastName%2C+Agent_Bio__pc%2C+Bases_Serviced__pc%2C+Military_Status__pc%2C+Military_Service__pc%2C+Brokerage_Name__pc%2C+BillingCity%2C+BillingState%2C+BillingStateCode+FROM+Account+WHERE+isAgent__pc+%3D+true+AND+Active_on_Website__pc+%3D+true+AND+BillingStateCode+%3D+'${state}'`;
+      const query = `
+      SELECT Id, Name, AccountId_15__c, PhotoUrl, FirstName, LastName, Agent_Bio__pc, Bases_Serviced__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, BillingStateCode
+      FROM Account
+      WHERE isAgent__pc = true AND Active_on_Website__pc = true AND BillingStateCode = '${state}'
+      `.replace(/\s+/g, ' ').trim();
 
       const response = await salesForceAPI({
-        endpoint: `${VETERENCE_SALESFORCE_BASE_URL}/services/data/v62.0/query?q=${query}`,
+        endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
         type: RequestType.GET,
       });
 
@@ -127,7 +131,7 @@ const stateService = {
             if (agent.PhotoUrl) {
               try {
                 const photoResponse = await salesForceImageAPI({
-                  endpoint: VETERENCE_SALESFORCE_BASE_URL + agent.PhotoUrl,
+                  endpoint: SALESFORCE_BASE_URL + agent.PhotoUrl,
                   type: RequestType.GET,
                 });
 
@@ -162,9 +166,14 @@ const stateService = {
   },
   fetchLendersListByState: async (state: string): Promise<LendersData> => {
     try {
-      const query = `SELECT+Id%2C+Name%2C+AccountId_15__c%2C+PhotoUrl%2c+FirstName%2C+LastName%2C+Agent_Bio__pc%2C+Bases_Serviced__pc%2C+Military_Status__pc%2C+Military_Service__pc%2C+Brokerage_Name__pc%2C+Individual_NMLS_ID__pc%2C+Company_NMLS_ID__pc%2C+BillingCity%2C+BillingState%2C+BillingStateCode+FROM+Account+WHERE+isLender__pc+%3D+true+AND+Active_on_Website__pc+%3D+true+AND+BillingStateCode+%3D+'${state}'`
+      const query = `
+      SELECT Id, Name, AccountId_15__c, PhotoUrl, FirstName, LastName, Agent_Bio__pc, Bases_Serviced__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, BillingStateCode, Individual_NMLS_ID__pc, Company_NMLS_ID__pc
+      FROM Account
+      WHERE isLender__pc = true AND Active_on_Website__pc = true AND BillingStateCode = '${state}'
+      `.replace(/\s+/g, ' ').trim();
+
       const response = await salesForceAPI({
-        endpoint: `${VETERENCE_SALESFORCE_BASE_URL}/services/data/v62.0/query?q=${query}`,
+        endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
         type: RequestType.GET,
       });
       if (response?.status === 200) {
@@ -173,7 +182,7 @@ const stateService = {
             if (agent.PhotoUrl) {
               try {
                 const photoResponse = await salesForceImageAPI({
-                  endpoint: VETERENCE_SALESFORCE_BASE_URL + agent.PhotoUrl,
+                  endpoint: SALESFORCE_BASE_URL + agent.PhotoUrl,
                   type: RequestType.GET,
                 });
 
