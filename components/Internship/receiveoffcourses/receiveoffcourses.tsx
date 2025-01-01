@@ -9,7 +9,7 @@ export interface IntershipOfferDataProps {
   button_text: string;
 }
 
-const SkillFuturesBuild = async () => {
+const receiveoffcourses = async () => {
   let internshipOffer: IntershipOfferDataProps | null = null;
 
   try {
@@ -48,4 +48,4 @@ const SkillFuturesBuild = async () => {
   );
 };
 
-export default SkillFuturesBuild;
+export default receiveoffcourses;

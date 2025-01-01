@@ -1,11 +1,23 @@
+"use client"
 import React from "react";
 import "@/styles/globals.css";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import Link from "next/link";
+import { useState } from "react";
 import { LendersData, Lenders } from "@/services/stateService";
 
 const StatePageVaLoan = ({ cityName, lendersData }: { cityName: string, lendersData: LendersData | [] }) => {
+  const [expandedIndexes, setExpandedIndexes] = useState<number[]>([]);
+
+  const toggleReadMore = (index: number) => {
+    if (expandedIndexes.includes(index)) {
+      setExpandedIndexes(expandedIndexes.filter((i) => i !== index));
+    } else {
+      setExpandedIndexes([...expandedIndexes, index]);
+    }
+  };
+
   return (
     <div>
       <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">
@@ -24,7 +36,7 @@ const StatePageVaLoan = ({ cityName, lendersData }: { cityName: string, lendersD
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-10 mt-10">
           {Array.isArray(lendersData) || !lendersData.records
             ? <p>No lenders available</p>
-            : lendersData.records.map((lender: Lenders) => (
+            : lendersData.records.map((lender: Lenders, index: number) => (
               <div key={lender.Id} className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4">
                 <div className="justify-center items-center flex flex-col">
                   <div className="rounded-full bg-[#E1EDFB] sm:w-[200px] sm:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
@@ -54,16 +66,19 @@ const StatePageVaLoan = ({ cityName, lendersData }: { cityName: string, lendersD
                       <br />
                       NMLS: {lender.Company_NMLS_ID__pc}
                     </p>
-                    <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 line-clamp-3">
+                    <p className={`text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4
+                    ${expandedIndexes.includes(index)
+                        ? "line-clamp-none"
+                        : "line-clamp-3"}`}>
                       {lender?.Agent_Bio__pc}
                     </p>
                     <div className="flex justify-end mt-2">
-                      <Link
-                        href="#"
+                      <button
+                        onClick={() => toggleReadMore(index)}
                         className=" text-[#292F6C] tahoma text-sm font-bold"
                       >
-                        Read More
-                      </Link>
+                        {expandedIndexes.includes(index) ? "Read Less" : "Read More"}
+                      </button>
                     </div>
                   </div>
                 </div>

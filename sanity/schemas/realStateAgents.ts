@@ -1,7 +1,7 @@
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
-    name: 'real-state-agents',
+    name: 'real_state_agents',
     title: 'Real State Agents',
     type: 'document',
     fields: [

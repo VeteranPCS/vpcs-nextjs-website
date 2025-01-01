@@ -26,7 +26,7 @@ interface Children {
   text: string
 }
 
-const SkillFuturesBuild = async () => {
+const Interashipdetails = async () => {
   let internshipBenefitData: IntershipBenefitDataProps | null = null;
 
   try {
@@ -72,4 +72,4 @@ const SkillFuturesBuild = async () => {
   );
 };
 
-export default SkillFuturesBuild;
+export default Interashipdetails;

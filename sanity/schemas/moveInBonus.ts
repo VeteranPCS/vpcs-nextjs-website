@@ -1,4 +1,6 @@
-export default {
+import { defineField, defineType } from 'sanity'
+
+export default defineType({
     name: 'moveInBonus',
     title: 'Move-In Bonus',
     type: 'document',
@@ -49,4 +51,4 @@ export default {
         of: [{ type: 'block' }],
       }
     ]
-  }
+  })

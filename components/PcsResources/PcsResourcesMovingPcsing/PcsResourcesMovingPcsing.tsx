@@ -3,7 +3,7 @@ import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
 import Link from "next/link";
-const PcsResourcesMovingYourLife = () => {
+const PcsResourcesMovingPcsing = () => {
   return (
     <div className="py-12 px-5">
       <div className="container mx-auto">
@@ -31,4 +31,4 @@ const PcsResourcesMovingYourLife = () => {
   );
 };
 
-export default PcsResourcesMovingYourLife;
+export default PcsResourcesMovingPcsing;

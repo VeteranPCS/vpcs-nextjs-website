@@ -1,8 +1,10 @@
+"use client"
 import React from "react";
 import "@/styles/globals.css";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import Link from "next/link";
+import { useState } from "react";
 
 type Props = {
   city: string;
@@ -24,6 +26,16 @@ export type AgentData = {
 };
 
 const StatePageCityAgents = ({ city, agent_data }: Props) => {
+  const [expandedIndexes, setExpandedIndexes] = useState<number[]>([]);
+
+  const toggleReadMore = (index: number) => {
+    if (expandedIndexes.includes(index)) {
+      setExpandedIndexes(expandedIndexes.filter((i) => i !== index));
+    } else {
+      setExpandedIndexes([...expandedIndexes, index]);
+    }
+  };
+
   return (
     // <div id={city.replace(/\s+/g, "-").toLowerCase()}>
     <div id={city.toLowerCase().split(" ").join("-")}>
@@ -36,7 +48,7 @@ const StatePageCityAgents = ({ city, agent_data }: Props) => {
             <div className="bg-[#7E1618] py-[3px] w-24 mx-auto my-5"></div>
           </div>
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-10 mt-10">
-            {agent_data.map((agent) => (
+            {agent_data.map((agent, index) => (
               <div
                 key={agent.Id}
                 className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4"
@@ -69,16 +81,19 @@ const StatePageCityAgents = ({ city, agent_data }: Props) => {
                       <br />
                       <b>{agent?.Brokerage_Name__pc}</b>
                     </p>
-                    <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[10px] text-[10px] font-normal mt-4 line-clamp-3">
+                    <p className={`text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[10px] text-[10px] font-normal mt-4 
+                    ${expandedIndexes.includes(index)
+                        ? "line-clamp-none"
+                        : "line-clamp-3"}`}>
                       {agent?.Agent_Bio__pc}
                     </p>
                     <div className="flex justify-end mt-2">
-                      <Link
-                        href="#"
+                      <button
+                        onClick={() => toggleReadMore(index)}
                         className=" text-[#292F6C] tahoma text-sm font-bold"
                       >
-                        Read More
-                      </Link>
+                        {expandedIndexes.includes(index) ? "Read Less" : "Read More"}
+                      </button>
                     </div>
                   </div>
                 </div>

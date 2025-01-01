@@ -17,7 +17,6 @@ import storiesPoster from '@/sanity/schemas/storiesPoster'
 import videoReview from '@/sanity/schemas/videoReview'
 import impactPage from '@/sanity/schemas/impactPage'
 import additionalSuccessStories from '@/sanity/schemas/additionalSuccessStories'
-import howVeterencePCSServiceWorks from '@/sanity/schemas/howVeterencePCSServiceWorks'
 import internshipActions from '@/sanity/schemas/internshipActions'
 import internshipBenefits from '@/sanity/schemas/internshipBenefits'
 import internshipOffer from '@/sanity/schemas/internshipOffer'
@@ -51,7 +50,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     videoReview,
     impactPage,
     additionalSuccessStories,
-    howVeterencePCSServiceWorks,
     internshipActions,
     internshipBenefits,
     internshipOffer,

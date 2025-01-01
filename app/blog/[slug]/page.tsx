@@ -17,19 +17,6 @@ interface BlogProps {
     blog: Record<string, any> | null; // Allow blog to be null
 }
 
-export async function generateStaticParams() {
-    try {
-        const blogs = await blogService.fetchBlogSlugs();
-        return blogs.map((blog) => ({
-            slug: blog.slug,
-        }));
-
-    } catch (error) {
-        console.error("Error generating static params:", error);
-        return []; // Return an empty array to avoid breaking the build
-    }
-}
-
 export default async function Home({ params }: { params: { slug: string } }) {
     const { slug } = params;
     let blog: Record<string, any> | null = null;

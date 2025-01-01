@@ -26,7 +26,7 @@ interface AgentDocument extends SanityDocument {
 const AgentServices = {
     fetchAgentsList: async (): Promise<AgentDocument[]> => {
         try {
-            const agents = await client.fetch<AgentDocument[]>(`*[_type == "real-state-agents"]`);
+            const agents = await client.fetch<AgentDocument[]>(`*[_type == "real_state_agents"]`);
 
             agents.forEach((agent) => {
                 if (agent.mainImage?.asset?._ref) {

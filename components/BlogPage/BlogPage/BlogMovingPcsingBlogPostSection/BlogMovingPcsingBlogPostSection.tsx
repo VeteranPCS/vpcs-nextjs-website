@@ -26,7 +26,7 @@ export interface BlogDetails {
   author: Author;
 }
 
-const StatePageHeroSecondSection = async () => {
+const BlogMovingPcsingBlogPostSection = async () => {
   let blogs: BlogDetails[] | null = null;
 
   try {
@@ -125,4 +125,4 @@ const StatePageHeroSecondSection = async () => {
   );
 };
 
-export default StatePageHeroSecondSection;
+export default BlogMovingPcsingBlogPostSection;

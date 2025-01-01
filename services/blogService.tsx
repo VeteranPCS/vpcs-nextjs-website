@@ -12,19 +12,6 @@ interface ReviewDocument extends SanityDocument {
 }
 
 const blogService = {
-    fetchBlogSlugs: async (): Promise<BlogSlugs[]> => {
-        try {
-            const response = await client.fetch(`*[_type == "blog"]{ "slug": slug.current }`);
-            if (response) {
-                return response;
-            } else {
-                throw new Error('Failed to fetch blog slugs');
-            }
-        } catch (error: any) {
-            console.error('Error fetching blog slugs:', error);
-            throw error;
-        }
-    },
     fetchBlogs: async (category: string): Promise<any> => {
         try {
             const blogs = await client.fetch<ReviewDocument[]>(`
