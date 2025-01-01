@@ -13,7 +13,7 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
 
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
-            retURL: `https://veteranpcs.com/thank-you?path=/contact-agent/&retURL=https://veteranpcs.com/${paramsObj.state}&firstName=${paramsObj.fn}&form=agent`,
+            retURL: `https://veteranpcs.com/thank-you/`,
             "00N4x00000QPJUT": paramsObj.id,
             recordType: "0124x000000Z5yD",
             lead_source: "Website",
@@ -215,7 +215,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
 
     const formBody = new URLSearchParams({
         oid: "00D4x000003yaV2",
-        retURL: "https://veteranpcs.com/",
+        retURL: "https://veteranpcs.com/thank-you",
         "00N4x00000QPJUT": paramsObj.id,
         recordType: "0124x000000Z5yD",
         lead_source: "Website",
