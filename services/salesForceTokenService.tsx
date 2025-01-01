@@ -1,11 +1,12 @@
 import { salesForceTokenAPI, RequestType } from '@/services/api';
+import { SALESFORCE_LOGIN_BASE_URL } from '@/constants/api';
 
 let SALESFORCETOKEN: string | null = null;
 
 export async function getSalesforceToken() {
     try {
         const response = await salesForceTokenAPI({
-            endpoint: `https://login.salesforce.com/services/oauth2/token?grant_type=password&client_id=${process.env.SALESFORCE_CLIENT_ID}&client_secret=${process.env.SALESFORCE_CLIENT_SECRET}&username=${process.env.SALESFORCE_USERNAME}&password=${process.env.SALESFORCE_PASSWORD}${process.env.SALESFORCE_TOKEN}`,
+            endpoint: `${SALESFORCE_LOGIN_BASE_URL}/services/oauth2/token?grant_type=password&client_id=${process.env.SALESFORCE_CLIENT_ID}&client_secret=${process.env.SALESFORCE_CLIENT_SECRET}&username=${process.env.SALESFORCE_USERNAME}&password=${process.env.SALESFORCE_PASSWORD}${process.env.SALESFORCE_TOKEN}`,
             type: RequestType.POST,
         })
 
