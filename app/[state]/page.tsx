@@ -31,8 +31,23 @@ export async function generateStaticParams() {
   }
 }
 
+export async function generateMetadata({ params }: { params: { state: string } }) {
+  const stateName = params.state
+    .replace(/-/g, " ") // Replace hyphens with spaces
+    .toLowerCase()      // Convert to lowercase
+    .split(" ")         // Split into words
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
+    .join(" ");
+
+  return {
+    title: `Find Military Friendly Real Estate Agents in ${stateName} - Veteran PCS`,
+    description: `Connect with the best veteran real estate agents in ${stateName} who understand the unique needs of veterans and military families.`,
+  };
+}
+
+
 export default async function Home({ params }: { params: { state: string } }) {
-  const { state } = params;
+  const { state } = await params;
   let state_data: StateList | null = null;
   let agents_data: AgentsData | [] = [];
   let lenders_data: LendersData | [] = [];
@@ -76,11 +91,13 @@ export default async function Home({ params }: { params: { state: string } }) {
         stateImage={state_data?.city_map}  // Pass cityImage as an object
         cityList={Object.keys(formatted_data).sort()}
       />
-      <StatePageHeroSecondSection />
+      <StatePageHeroSecondSection
+        stateName={state_data?.city_name || 'Unknown'}
+      />
       <StatePageVaLoan cityName={state_data?.city_name || 'Unknown'} lendersData={lenders_data} />
       <StatePageCTA cityName={state_data?.city_name || 'Unknown'} />
 
-      {Object.entries(formatted_data).map(([cityName, agents]: [string, any[]]) => (
+      {Object.entries(formatted_data).sort().map(([cityName, agents]: [string, any[]]) => (
         <StatePageCityAgents key={cityName} city={cityName} agent_data={agents} />
       ))}
 

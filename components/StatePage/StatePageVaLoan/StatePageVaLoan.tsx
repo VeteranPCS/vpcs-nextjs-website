@@ -5,7 +5,7 @@ import Button from "@/components/common/Button";
 import Link from "next/link";
 import { LendersData, Lenders } from "@/services/stateService";
 
-const StatePageVaLoan = ({ cityName, lendersData }: { cityName: string, lendersData: LendersData | [] }) => {  
+const StatePageVaLoan = ({ cityName, lendersData }: { cityName: string, lendersData: LendersData | [] }) => {
   return (
     <div>
       <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">
@@ -46,10 +46,12 @@ const StatePageVaLoan = ({ cityName, lendersData }: { cityName: string, lendersD
                       {lender?.Name}
                     </h3>
                     <p className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal sm:mt-4 mt-0">
-                      <b>{lender?.Military_Status__pc}</b>
+                      <b>{lender?.Military_Status__pc} {lender.Military_Service__pc}</b>
                       <br />
-                      NMLS: {lender.Individual_NMLS_ID__pc}<br />
-                      {lender.Military_Service__pc}<br />
+                      NMLS: {lender.Individual_NMLS_ID__pc}
+                      <br />
+                      {lender.Brokerage_Name__pc}
+                      <br />
                       NMLS: {lender.Company_NMLS_ID__pc}
                     </p>
                     <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 line-clamp-3">

@@ -14,7 +14,16 @@ const nextConfig = {
     ]
   },
   images: {
-    domains: ['cdn.sanity.io', 'veteranpcs.my.salesforce.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
+      },
+      {
+        protocol: 'https',
+        hostname: 'veteranpcs.my.salesforce.com',
+      },
+    ],
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",

@@ -19,6 +19,8 @@ export type AgentData = {
   FirstName: string;
   AccountId_15__c: string;
   BillingState: string;
+  BillingCity: string;
+  Brokerage_Name__pc: string;
 };
 
 const StatePageCityAgents = ({ city, agent_data }: Props) => {
@@ -61,11 +63,11 @@ const StatePageCityAgents = ({ city, agent_data }: Props) => {
                       {agent?.Name}
                     </h3>
                     <p className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[10px] text-[10px] font-normal sm:mt-4 mt-0">
-                      <b>{agent?.Military_Status__pc}</b>
-                      <br></br>
-                      NMLS:806490<br></br>
-                      {agent?.Military_Service__pc}
-                      <br></br>NMLS: 2143
+                      {agent?.BillingCity}, {agent?.BillingState}
+                      <br />
+                      <b>{agent?.Military_Status__pc} {agent?.Military_Service__pc}</b>
+                      <br />
+                      <b>{agent?.Brokerage_Name__pc}</b>
                     </p>
                     <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[10px] text-[10px] font-normal mt-4 line-clamp-3">
                       {agent?.Agent_Bio__pc}

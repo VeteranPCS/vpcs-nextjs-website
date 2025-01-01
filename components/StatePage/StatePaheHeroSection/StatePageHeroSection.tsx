@@ -12,17 +12,17 @@ interface StateImage {
   alt: string;
 }
 
-interface StatePageHeroSecondSectionProps {
+interface StatePageHeroSectionProps {
   stateName: string;
   stateImage: StateImage;
   cityList: string[];
 }
 
-const StatePageHeroSecondSection = ({
+const StatePageHeroSection = ({
   stateName: cityName,
   stateImage: cityImage,
   cityList,
-}: StatePageHeroSecondSectionProps) => {
+}: StatePageHeroSectionProps) => {
 
   return (
     <div className="py-12 px-5 bg-[#D9D9D9]">
@@ -62,4 +62,4 @@ const StatePageHeroSecondSection = ({
   );
 };
 
-export default StatePageHeroSecondSection;
+export default StatePageHeroSection;
