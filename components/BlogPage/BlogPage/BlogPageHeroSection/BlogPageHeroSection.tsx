@@ -36,10 +36,10 @@ const BlogPageHeroSection = ({ blog }: { blog: BlogDetails }) => {
           <div>
             <div className="text-center">
               <span className="rounded-lg bg-white/15 py-1 px-3 text-white text-center roboto text-xsfont-bold mx-auto">
-                PCS HELP
+                {blog?.categories[0]?.title}
               </span>
               <h1 className="text-white text-center tahoma lg:text-[36px] md:text-[36px] sm:text-[31px] text-[31px] font-bold mt-8 mb-3 leading-normal">
-                What you need to know
+                {blog?.title}
               </h1>
               <div className="flex items-center">
                 <p className="text-white lora text-sm font-normal">
@@ -48,15 +48,13 @@ const BlogPageHeroSection = ({ blog }: { blog: BlogDetails }) => {
                 </p>
                 <p className="bg-white w-[50px] p-[1px] mx-5"></p>
                 <p className="text-white tahoma text-sm font-normal">
-                  {/* Navigating temporary housing during your PCS move */}
                   {blog?.title}
                 </p>
               </div>
               <div>
                 <p className="text-white text-center lora text-sm font-normal lg:w-[510px] w-full mx-auto mt-10 leading-6 line-clamp-2">
-                  Progressively incentivize cooperative systems through
-                  technically sound functionalities. The credibly productivate
-                  seamless data.
+                  {/* Temporary placeholder. Will need to add description field to blog schema. */}
+                  {blog?.content[0]?.children[0]?.text.slice(0, 200)}
                 </p>
               </div>
               <div>

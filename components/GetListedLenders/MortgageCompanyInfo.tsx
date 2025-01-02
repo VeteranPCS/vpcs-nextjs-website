@@ -226,7 +226,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
                   <option value="" disabled>
                     Select State
                   </option>
-                  {stateList.map((state) => (
+                  {stateList.sort((a, b) => a.short_name < b.short_name ? -1 : 1).map((state) => (
                     <option key={state.short_name} value={state.short_name}>
                       {state.short_name}
                     </option>

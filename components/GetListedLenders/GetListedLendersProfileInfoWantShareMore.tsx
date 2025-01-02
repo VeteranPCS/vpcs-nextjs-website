@@ -13,7 +13,7 @@ interface ContactFormProps {
 interface LenderInfoProps {
   primaryState: string;
   otherStates: string[];
-  localCities: string;  
+  localCities: string;
   nmlsId: string;
 }
 
@@ -53,7 +53,7 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
 
   // Use form hook with validation
   const { register, handleSubmit, control, formState: { errors } } = useForm<LenderInfoProps>({
-    resolver: yupResolver(schema)  as Resolver<LenderInfoProps>,
+    resolver: yupResolver(schema) as Resolver<LenderInfoProps>,
     defaultValues: {
       primaryState: '',
       otherStates: [],
@@ -101,7 +101,7 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
                     <option value="" disabled>
                       Select State
                     </option>
-                    {stateList.map((state) => (
+                    {stateList.sort((a, b) => a.short_name < b.short_name ? -1 : 1).map((state) => (
                       <option key={state.short_name} value={state.short_name}>
                         {state.short_name}
                       </option>
@@ -126,7 +126,7 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
                     multiple
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    {stateList.map((state) => (
+                    {stateList.sort((a, b) => a.short_name < b.short_name ? -1 : 1).map((state) => (
                       <option key={state.short_name} value={state.short_name}>
                         {state.short_name}
                       </option>
