@@ -1,8 +1,7 @@
 // services/salesForcePostFormsService.ts
 'use server'
 
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function contactAgentPostForm(formData: any, queryString: string) {
     try {
@@ -13,13 +12,13 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
 
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
-            retURL: `https://veteranpcs.com/thank-you/`,
+            retURL: `${BASE_URL}/thank-you`,
             "00N4x00000QPJUT": paramsObj.id,
             recordType: "0124x000000Z5yD",
             lead_source: "Website",
             "00N4x00000Lsr0GAAU": "true",
             country_code: "US",
-            "00N4x00000QQ1LB": `https://veteranpcs.com/contact-agent${queryString}`,
+            "00N4x00000QQ1LB": `${BASE_URL}/contact-agent${queryString}`,
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
             email: formData.email || "",
@@ -80,12 +79,12 @@ export async function GetListedAgentsPostForm(formData: any) {
     try {
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
-            retURL: "https://veteranpcs.com/thank-you/",
+            retURL: `${BASE_URL}/thank-you`,
             recordType: "0124x000000Z5yI",
             lead_source: "Website",
             "00N4x00000Lsr0G": "true",
             country_code: "US",
-            "00N4x00000QQ1LB": "https://veteranpcs.com/get-listed-agents/",
+            "00N4x00000QQ1LB": `${BASE_URL}/get-listed-agents`,
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
             email: formData.email || "",
@@ -147,12 +146,12 @@ export async function GetListedLendersPostForm(formData: any) {
     try {
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
-            retURL: "https://veteranpcs.com/thank-you/",
+            retURL: `${BASE_URL}/thank-you`,
             recordType: "0124x000000ZGGU",
             lead_source: "Website",
             "00N4x00000Lsr0G": "true",
             country_code: "US",
-            "00N4x00000QQ1LB": "https://veteranpcs.com/get-listed-lendors/",
+            "00N4x00000QQ1LB": `${BASE_URL}/get-listed-lenders`,
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
             email: formData.email || "",
@@ -208,9 +207,9 @@ export async function GetListedLendersPostForm(formData: any) {
 }
 
 export async function KeepInTouchForm(formData: any) {
-    console.log('formData: ', formData);
-    
+
     const formBody = new URLSearchParams({
+        oid: "00D4x000003yaV2",
         recordType: "0124x000000Z5yD",
         lead_source: "Website",
         first_name: formData.firstName || "",
@@ -234,9 +233,8 @@ export async function KeepInTouchForm(formData: any) {
 
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
-        }
+        };
 
-        const data = await response.text();
         return { success: true, message: 'Form submitted successfully!' };
     } catch (error) {
         console.error('Error:', error);
@@ -252,13 +250,13 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
 
     const formBody = new URLSearchParams({
         oid: "00D4x000003yaV2",
-        retURL: "https://veteranpcs.com/thank-you/",
+        retURL: `${BASE_URL}/thank-you`,
         "00N4x00000QPJUT": paramsObj.id,
         recordType: "0124x000000Z5yD",
         lead_source: "Website",
         "00N4x00000Lsr0GAAU": "true",
         country_code: "US",
-        "00N4x00000QQ1LB": `https://veteranpcs.com/contact-lender${fullQueryString}`,
+        "00N4x00000QQ1LB": `${BASE_URL}/contact-lender${fullQueryString}`,
         first_name: formData.firstName || "",
         last_name: formData.lastName || "",
         email: formData.email || "",
@@ -286,11 +284,6 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
-
-        // const locationHeader = response.headers.get('Location');
-        // if (locationHeader) {
-        //     return { locationHeader };
-        // }
 
         const data = await response.text();
         const redirectUrlMatch = data.match(/window.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);

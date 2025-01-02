@@ -1,11 +1,9 @@
 "use client";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// import HowDidYouHearAboutUs from '../GetListedLenders/HowDidYouHearAboutUs';
 import HowDidYouHearAboutUs from '@/components/GetListedLenders/HowDidYouHearAboutUs';
 import * as yup from 'yup';
 import ReCAPTCHA from 'react-google-recaptcha';
-import useTimestamp from '@/hooks/useTimestamp';
 
 // Define the possible values for howDidYouHear
 export type HowDidYouHearOptions =
@@ -88,7 +86,6 @@ const contactFormSchema = yup.object().shape({
 });
 
 const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
-  useTimestamp();
 
   const {
     register,
@@ -147,7 +144,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form onSubmit={handleSubmit(handleFormSubmit)}>
-        <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' />
+          <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' />
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">

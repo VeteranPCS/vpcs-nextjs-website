@@ -6,7 +6,6 @@ import OptionalInformationForBuyer from "@/components/ContactAgents/OptionalInfo
 import Image from "next/image";
 import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListedLendersProfileInfo";
 import { contactAgentPostForm } from "@/services/salesForcePostFormsService";
-import useTimestamp from "@/hooks/useTimestamp";
 import { useRouter } from 'next/navigation'
 
 interface FormData {
@@ -81,8 +80,6 @@ export default function Home() {
       handleFormSubmission();
     }
   }, [formData, shouldSubmitForm, router]);
-
-  useTimestamp();
 
   const renderProgressBar = () => {
     return (

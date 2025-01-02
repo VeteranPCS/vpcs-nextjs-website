@@ -8,34 +8,18 @@ import Footer from "@/components/Footer/Footer";
 import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpert";
 import { memo } from "react";
 
-// const MemoizedContactHero = memo(ContactHero);
-// const MemoizedContactForm = memo(ContactForm);
-// const MemoizedWhyVeteranPcs = memo(WhyVeteranPcs);
-// const MemoizedSkillFuturesBuild = memo(SkillFuturesBuild);
-const MemoizedKeepInTouch = memo(KeepInTouch);
-const MemoizedFooter = memo(Footer);
-// const MemoizedAgentLoanExpert = memo(AgentLoanExpert);
 const MemoizedReviewsList = memo(ReviewsList);
 
 export default function Home() {
   return (
     <>
       <ContactHero />
-      {/* <MemoizedContactHero /> */}
       <ContactForm />
-      {/* <MemoizedContactForm /> */}
-      
       <MemoizedReviewsList />
-
       <WhyVeteranPcs />
-      {/* <MemoizedWhyVeteranPcs /> */}
       <AgentLoanExpert />
-      {/* <MemoizedAgentLoanExpert /> */}
       <SkillFuturesBuild />
-      {/* <MemoizedSkillFuturesBuild /> */}
       <KeepInTouch />
-      {/* <MemoizedKeepInTouch />
-      <MemoizedFooter /> */}
       <Footer />
     </>
   );

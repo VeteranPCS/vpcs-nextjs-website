@@ -15,7 +15,7 @@ interface MediaAccountProps {
   link: string;
 }
 
-const ContectForm = () => {
+const ContactForm = () => {
 
   const [mediaAccount, SetMediaAccount] = useState<MediaAccountProps[]>([]);
   const fetchMediaAccounts = useCallback(async () => {
@@ -53,7 +53,7 @@ const ContectForm = () => {
                     src="/icon/phone-call.svg"
                     alt="phone"
                   />
-                  <Link href="tel:719-249-4757">719-249-4757</Link>
+                  <Link href="tel:7192494757">719-249-4757</Link>
                 </div>
                 <div className={classes.ContactItem}>
                   <Image
@@ -93,50 +93,6 @@ const ContectForm = () => {
                     </Link>
                   </li>
                 ))}
-                {/* <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-1 flex items-center justify-center">
-                  <Link href="#">
-                    <Image
-                      width={100}
-                      height={100}
-                      className="w-[20px] h-[20px]"
-                      src="/icon/dribbble-fill.svg"
-                      alt="Description of the image"
-                    />
-                  </Link>
-                </li>
-                <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-1 flex items-center justify-center">
-                  <Link href="#">
-                    <Image
-                      width={100}
-                      height={100}
-                      className="w-[20px] h-[20px]"
-                      src="/icon/instagram-fill.svg"
-                      alt="Description of the image"
-                    />
-                  </Link>
-                </li>
-                <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-1 flex items-center justify-center">
-                  <Link href="#">
-                    <Image
-                      width={100}
-                      height={100}
-                      className="w-[20px] h-[20px]"
-                      src="/icon/twitter-fill.svg"
-                      alt="Description of the image"
-                    />
-                  </Link>
-                </li>
-                <li className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-1 flex items-center justify-center">
-                  <Link href="#">
-                    <Image
-                      width={100}
-                      height={100}
-                      className="w-[20px] h-[20px]"
-                      src="/icon/youtube-fill.svg"
-                      alt="Description of the image"
-                    />
-                  </Link>
-                </li> */}
               </ul>
             </div>
           </div>
@@ -164,7 +120,7 @@ const ContectForm = () => {
                   <input
                     className={classes.Input}
                     type="text"
-                    placeholder="Doe"
+                    placeholder="Last Name"
                     id="lastName"
                     name="lastName"
                   />
@@ -250,4 +206,4 @@ const ContectForm = () => {
   );
 };
 
-export default ContectForm;
+export default ContactForm;
