@@ -207,6 +207,43 @@ export async function GetListedLendersPostForm(formData: any) {
     }
 }
 
+export async function KeepInTouchForm(formData: any) {
+    console.log('formData: ', formData);
+    
+    const formBody = new URLSearchParams({
+        recordType: "0124x000000Z5yD",
+        lead_source: "Website",
+        first_name: formData.firstName || "",
+        last_name: formData.lastName || "",
+        email: formData.email || "",
+        "g-recaptcha-response": formData.captchaToken || "",
+        "captcha_settings": formData.captcha_settings || "",
+    }).toString();
+
+    try {
+        const response = await fetch(
+            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formBody,
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+
+        const data = await response.text();
+        return { success: true, message: 'Form submitted successfully!' };
+    } catch (error) {
+        console.error('Error:', error);
+        throw new Error('Failed to submit form');
+    }
+}
+
 export async function contactLenderPostForm(formData: any, fullQueryString: string) {
     const paramsObj: { [key: string]: string } = {};
     new URLSearchParams(fullQueryString).forEach((value, key) => {
@@ -215,7 +252,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
 
     const formBody = new URLSearchParams({
         oid: "00D4x000003yaV2",
-        retURL: "https://veteranpcs.com/thank-you",
+        retURL: "https://veteranpcs.com/thank-you/",
         "00N4x00000QPJUT": paramsObj.id,
         recordType: "0124x000000Z5yD",
         lead_source: "Website",

@@ -1,8 +1,10 @@
+"use client"
 import React from "react";
 import "@/styles/globals.css";
 import classes from "./BlogCts.module.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
+import Link from "next/link";
 
 const StatePageHeroSecondSection = () => {
   return (
@@ -13,15 +15,15 @@ const StatePageHeroSecondSection = () => {
                     <div>
                         <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold">Buying Or Selling</h2>
                     </div>
-                    <div>
-                        <Button buttonText="Find An Agent" />
-                    </div>
+                    <Link href="/#map-container">
+                        <Button buttonText="Find An Agent"/>
+                    </Link>
                     <div>
                         <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold">VA Loan Expert</h2>
                     </div>
-                    <div>
+                    <Link href="/#map-container">
                         <Button buttonText="Find A Lender" />
-                    </div>
+                    </Link>
                 </div>
                 <div>
                     <div>

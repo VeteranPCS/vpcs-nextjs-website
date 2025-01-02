@@ -7,6 +7,7 @@ import Covered from "@/components/homepage/Covered/Covered";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import Footer from "@/components/Footer/Footer";
 import Testimonials from "@/components/Testimonials/TestimonialPage";
+import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 import { memo } from "react";
 
 const MemoizedVideoReview = memo(VideoReview)
@@ -22,7 +23,8 @@ export default function Home() {
       <MemoizedVideoReview />
       <AboutOurStory />
       <div className="mb-16">
-        <PcsResourcesBlog title="Let’s talk VA loan" description="Our experts breakdown buying with a VA loan" link="connect with a VA Loan expert!" url="#"/>
+        <CommonBlog component="Let’s talk VA loan"/>
+        {/* <PcsResourcesBlog title="Let’s talk VA loan" description="Our experts breakdown buying with a VA loan" link="connect with a VA Loan expert!" url="#"/> */}
       </div>
       <KeepInTouch />
       <Footer />

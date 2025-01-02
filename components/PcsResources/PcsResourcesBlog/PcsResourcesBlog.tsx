@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import Link from "next/link";
 import classes from "./PcsResourcesBlog.module.css";
 import blogService from '@/services/blogService';
+import { BlogDetails } from "@/app/blog/page";
 
 // Define types for the props
 interface Category {
@@ -15,22 +16,9 @@ interface Author {
   designation: string;
 }
 
-interface BlogDetails {
-  _id: string;
-  title: string;
-  content: any[]; // This could be further refined depending on your content type
-  _createdAt: string;
-  slug: { current: string };
-  mainImage: { image_url: string; alt: string };
-  categories: Category[];
-  author: Author;
-}
-
 interface PcsResourcesBlogProps {
-  title: string;
-  description: string;
-  link: string;
-  url: string;
+  blogList: BlogDetails[];
+  component: string;
 }
 
 interface BlockChild {
@@ -43,18 +31,7 @@ interface Block {
   children: BlockChild[];
 }
 
-const PcsResourcesBlog: React.FC<PcsResourcesBlogProps> = async ({ title, description, link, url }) => {
-  
-  // Function to generate slug from title
-  function generateSlug(title: string): string {
-    return title
-      .toLowerCase() // Convert to lowercase
-      .replace(/'/g, "") // Remove apostrophes
-      .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric characters with hyphens
-      .replace(/^-+|-+$/g, ""); // Trim leading/trailing hyphens
-  }
-
-  // Function to format date
+const PcsResourcesBlog: React.FC<PcsResourcesBlogProps> = async ({ blogList, component }) => {
   function formatDate(timestamp: string): string {
     const date = new Date(timestamp); // Parse the timestamp into a Date object
     const day = String(date.getDate()).padStart(2, "0"); // Get day with leading zero
@@ -78,51 +55,26 @@ const PcsResourcesBlog: React.FC<PcsResourcesBlogProps> = async ({ title, descri
       .join('\n\n');
   };
 
-    let blogs: BlogDetails[] | null = null;
-
-    try {
-        blogs = await blogService.fetchBlogs(generateSlug(title)); // fetch data on the server side
-    } catch (error) {
-        console.error("Error fetching blog", error);
-    }
-
-    // Check if blog is null and render error page
-    if (!blogs) {
-        return <p>Failed to load the blog.</p>;
-    }
-
   return (
-    <div className="py-6 px-5">
+    <div className="py-6 px-5" id={component}>
       <div className="container mx-auto">
         <div className="flex flex-wrap gap-5 items-end lg:justify-between md:justify-between sm:justify-center justify-center">
           <div className="lg:text-left md:text-left sm:text-center text-center">
             <h1 className="text-[#292F6C] lg:text-[42px] md:text-[42px] sm:text-[30px] text-[30px] font-bold tahoma lg:text-left md:text-left sm:text-center text-center">
-              {title || ""}
+              {component}
             </h1>
-            <p className="text-[#1F1D55] lg:text-[21px] md:text-[21px] sm:text-[15px] text-[15px] font-normal tahoma lg:text-left md:text-left sm:text-center text-center">
-              {description || ""}
-            </p>
-            <div>
-              <Link
-                href={url || ""}
-                className="text-[#292F6C] lg:text-[14px] md:text-[14px] sm:text-[12px] text-[12px] font-bold roboto"
-              >
-                {link || ""}
-              </Link>
-            </div>
           </div>
         </div>
         <div
-          className={`grid ${blogs.length === 1
+          className={`grid ${blogList.length === 1
             ? "lg:grid-cols-1"
-            : blogs.length === 2
+            : blogList.length === 2
               ? "lg:grid-cols-2"
               : "lg:grid-cols-3"
             } md:grid-cols-2 sm:grid-cols-1 grid-cols-1 gap-6 mt-10`}
         >
-              {/* <Link href="/blog/[slug]" as={`/blog/${blogDetails?.slug?.current || "default-slug"}`} className="pt-12 md:px-0 px-5"> */}
 
-          {blogs.map((blog) => (
+          {blogList.map((blog) => (
             <Link href="/blog/[slug]" as={`/blog/${blog?.slug?.current || "default-slug"}`} key={blog._id} className={classes.blogimageone} style={{ backgroundImage: `url(${blog?.mainImage?.image_url || "/assets/BlogImage1.png"} )` }}>
               <div className="flex items-center absolute top-4 right-4 gap-2">
                 {blog?.categories?.map((category) => (
@@ -142,7 +94,7 @@ const PcsResourcesBlog: React.FC<PcsResourcesBlogProps> = async ({ title, descri
                 <h3 className="text-white tahoma lg:text-[21px] md:text-[21px] sm:text-[15px] text-[15px] font-bold my-3">
                   {blog?.title}
                 </h3>
-                <p className="text-[#E5E5E5] roboto lg:text-[14px] md:text-[14px] sm:text-[12px] text-[12px] font-normal lg:w-[370px]">
+                <p className="text-[#E5E5E5] roboto lg:text-[14px] md:text-[14px] sm:text-[12px] text-[12px] font-normal lg:w-[370px] line-clamp-3">
                   {getPlainText(blog?.content)}
                 </p>
               </div>

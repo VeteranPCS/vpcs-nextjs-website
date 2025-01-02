@@ -4,11 +4,11 @@ import BlogBeginingPostAgent from "@/components/BlogDetails/BlogBeginingBlogPost
 import Testimonials from "@/components/Testimonials/TestimonialPage";
 import BlogDetailsCta from "@/components/BlogDetails/BlogDetailsCta/BlogDetailsCta";
 import EndBlogPostDetails from "@/components/BlogDetails/EndBlogPostDetails/EndBlogPostDetails";
-import PcsResourcesBlog from "@/components/PcsResources/PcsResourcesBlog/PcsResourcesBlog";
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import Footer from "@/components/Footer/Footer";
 import blogService from "@/services/blogService";
+import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 
 // Memoize FAQ component for performance
 const MemoizedFrequentlyAskedQuestion = memo(FrequentlyAskedQuestion);
@@ -39,7 +39,7 @@ export default async function Home({ params }: { params: { slug: string } }) {
             <Testimonials />
             <BlogDetailsCta />
             <EndBlogPostDetails blog={blog} />
-            <PcsResourcesBlog title="Related Posts" description="" link="" url="#" />
+            <CommonBlog component="Related Posts"/>
             <MemoizedFrequentlyAskedQuestion />
             <KeepInTouch />
             <Footer />

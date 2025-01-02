@@ -68,20 +68,16 @@ export async function POST(req: NextRequest) {
       video_review: ["/impact", "/militaryspouse", "/pcs-resources", "/thank-you"],
       video_success_stories: ["/stories"]
     };
-    console.log("body._type", body._type);
     const paths = revalidatePathMap[body._type];
-    console.log('paths: ', paths);
 
     if (!paths) {
       return new Response(JSON.stringify({ message: "Invalid Type" }), {
         status: 400,
       });
     } else {
-      console.log(`Revalidating ${paths}`);
       for (const path of paths) {
         revalidatePath(path);
       }
-      console.log(`Revalidated ${paths}`);
     }
 
     return NextResponse.json({

@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import BlogMovingPcsingPost from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPostSection/BlogMovingPcsingPost";
 import { Metadata } from "next";
 import blogService from "@/services/blogService";
+import BlogCategory from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPostSection/BlogCategory";
 
 export interface Author {
   name: string;
@@ -26,51 +27,31 @@ export interface BlogDetails {
   author: Author;
 }
 
-const BlogMovingPcsingBlogPostSection = async () => {
-  let blogs: BlogDetails[] | null = null;
-
-  try {
-    blogs = await blogService.fetchBlogs("moving-or-pcsing-in-2024");
-  } catch (error) {
-    console.error("Error fetching blogs", error);
-  }
-
-  if (!blogs) {
-    return <p>Failed to load the blog.</p>;
-  }
-
+const BlogMovingPcsingBlogPostSection = async ({ blogList, component, categories_list }: { blogList: BlogDetails[], component: string, categories_list: any }) => {
   return (
-    <div className="relative py-12 md:px-0 px-5">
+    <div className="relative py-12 md:px-0 px-5" id={component}>
       <div className="container mx-auto">
         <div className="flex justify-between items-center flex-wrap">
           <div>
             <div>
               <h1 className="text-[#292F6C] tahoma lg:text-[36px] md:text-[36px] text-[26px] font-bold">
-                Moving or PCSing in 2024?
+                {component}
               </h1>
-              <div className="flex flex-wrap items-cenetr md:gap-10 sm:gap-5 gap-4 mt-5">
-                <button className="text-[#7E1618] robot text-sm font-normal ">
-                  All
-                </button>
-                <button className="text-[#292F6C] robot text-sm font-normal ">
-                  U.S. Military Bases
-                </button>
-                <button className="text-[#292F6C] robot text-sm font-normal ">
-                  Military Transition Help
-                </button>
-                <button className="text-[#292F6C] robot text-sm font-normal ">
-                  PCS Help
-                </button>
-              </div>
+                <BlogCategory categories_list={categories_list} />
             </div>
           </div>
           <div>
-            <form className="flex justify-center mt-6 w-[312px] md:inline-flex sm:hidden hidden">
-              <input
-                type="text"
-                placeholder="Search"
-                className="w-full max-w-md px-4 py-3 border bg-[#F9F9F9] border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 "
-              />
+          <form
+            className="flex justify-center mt-6 w-[312px] md:inline-flex sm:hidden hidden"
+            method="GET"
+            action="/blog-search"
+          >
+            <input
+              type="text"
+              name="query"
+              placeholder="Search"
+              className="w-full max-w-md px-4 py-3 border bg-[#F9F9F9] border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
               <button
                 type="submit"
                 className="bg-[#003486] hover:bg-blue-600 text-white px-4 py-2 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -104,14 +85,14 @@ const BlogMovingPcsingBlogPostSection = async () => {
               </button>
             </form>
             <div className="sm:flex justify-end mt-5 hidden">
-              <button className="text-[#292F6C] robot text-sm font-bold ">
+              {/* <button className="text-[#292F6C] robot text-sm font-bold ">
                 View All
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-1 grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 ">
-          {blogs?.map((blog) => (
+          {blogList?.map((blog) => (
             <BlogMovingPcsingPost key={blog._id} blogDetails={blog} />
           ))}
         </div>

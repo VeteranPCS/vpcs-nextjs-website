@@ -19,6 +19,7 @@ import AboutOurStory from "@/components/Impact/AboutOurStory/AboutOurStory";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import Footer from "@/components/Footer/Footer";
 import { memo } from "react";
+import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 
 const MemoizedCovered = memo(Covered)
 const MemoizedVideoFamily = memo(VideoFamily)
@@ -35,7 +36,7 @@ export default function Home() {
       <MemoizedCovered />
       <MemoizedVideoFamily />
       <MemoizedTestimonials />
-      <PcsResourcesBlog title="Let’s talk VA loan" description="Our experts breakdown buying with a VA loan" link="connect with a VA Loan expert!" url="#"/>
+      <CommonBlog component="Let’s talk VA loan"/>
       {/* <FamilySupport /> */}
       <MemoizedFamilySupport />
       <PcsResourcesVaLoanGuide />
