@@ -2,7 +2,6 @@
 import { useState, FormEvent, useCallback, useEffect } from 'react';
 import initService from '@/services/initService';
 import ReCAPTCHA from 'react-google-recaptcha';
-import useTimestamp from '@/hooks/useTimestamp';
 import { useForm, Resolver } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -79,7 +78,7 @@ const schema = yup.object({
 });
 
 const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
-  useTimestamp();
+
   const [stateList, setStateList] = useState<any[]>([]);
 
   // Fetch state list

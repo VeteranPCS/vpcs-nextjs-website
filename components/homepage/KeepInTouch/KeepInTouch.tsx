@@ -9,10 +9,10 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import ReCAPTCHA from 'react-google-recaptcha';
-import useTimestamp from '@/hooks/useTimestamp';
 import { KeepInTouchForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from 'next/navigation'
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export interface MediaAccountProps {
   _id: string;
   name: string;
@@ -42,8 +42,6 @@ const contactFormSchema = yup.object().shape({
 const KeepInTouch = () => {
   const router = useRouter()
 
-  useTimestamp();
-
   const {
     register,
     handleSubmit,
@@ -66,7 +64,7 @@ const KeepInTouch = () => {
     try {
       const server_response = await KeepInTouchForm(data);
       if (server_response?.success) {
-        router.push("https://veteranpcs.com/thank-you/");
+        router.push(`${BASE_URL}/thank-you`);
       } else {
         console.log("No redirect URL found");
       }

@@ -39,25 +39,16 @@ export default function Home() {
       <MemoizedVideoFamily />
       <MemoizedTestimonials />
       <MemoizedCovered />
-      {/* <FamilySupport /> */}
       <MemoizedFamilySupport />
       <VeteranPCS />
-      {/* <MemoizedVeteranPCS /> */}
       <MemoizedReviewsList />
       <MakeItHome />
-      {/* <MemoizedMakeItHome /> */}
-      {/* <VeteranComunity /> */}
       <MemoizedVeteranComunity />
       <WhyVeteranPcs />
-      {/* <MemoizedWhyVeteranPcs /> */}
       <AgentLoanExpert />
-      {/* <MemoizedAgentLoanExpert /> */}
       <SkillFuturesBuild />
-      {/* <MemoizedSkillFuturesBuild /> */}
       <KeepInTouch />
-      {/* <MemoizedKeepInTouch /> */}
       <Footer />
-      {/* <MemoizedFooter /> */}
     </main>
   );
 }

@@ -6,7 +6,6 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import ReCAPTCHA from 'react-google-recaptcha';
-import useTimestamp from '@/hooks/useTimestamp';
 
 export type HowDidYouHearOptions =
   | 'Google'
@@ -76,7 +75,6 @@ const schema = yup.object().shape({
 });
 
 const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
-  useTimestamp();
 
   const [stateList, setStateList] = useState<any[]>([]);
 
@@ -134,7 +132,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form onSubmit={handleSubmit(onSubmitHandler)}>
-        <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' />
+          <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' />
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
