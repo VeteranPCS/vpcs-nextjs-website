@@ -39,7 +39,7 @@ export default async function Home({ params }: { params: { slug: string } }) {
             <Testimonials />
             <BlogDetailsCta />
             <EndBlogPostDetails blog={blog} />
-            <CommonBlog component="Related Posts"/>
+            <CommonBlog component="Related Posts" />
             <MemoizedFrequentlyAskedQuestion />
             <KeepInTouch />
             <Footer />

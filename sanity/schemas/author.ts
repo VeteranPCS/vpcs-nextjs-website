@@ -12,16 +12,25 @@ export default defineType({
     }),
     defineField({
       name: 'slug',
-      title: 'Slug',
+      title: 'Salesforce Contact Form Parameters',
       type: 'slug',
-      options: {
-        source: 'name',
-        maxLength: 96,
-      },
+      description: 'e.g. contact-agent?form=agent&agent=Jason&id=0014x00000HWTqI&state=colorado'
     }),
     defineField({
-      name: 'designation',
-      title: 'Designation',
+      name: 'military_status',
+      title: 'Military Status and Affiliation',
+      type: 'string',
+      description: 'e.g. Active Duty Air Force, Army Veteran, Military Spouse, Retired Navy, etc.',
+    }),
+    defineField({
+      name: 'location',
+      title: 'Location',
+      type: 'string',
+      description: 'e.g. San Diego, CA',
+    }),
+    defineField({
+      name: 'brokerage',
+      title: 'Brokerage',
       type: 'string',
     }),
     defineField({

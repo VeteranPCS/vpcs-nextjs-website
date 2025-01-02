@@ -151,7 +151,7 @@ const KeepInTouch = () => {
           <div className="mt-5 lg:mt-0 md:mt-0 sm:mt-5">
             <div className={classes.CustomResponsiveCenter}>
               <form onSubmit={handleSubmit(handleFormSubmission)}>
-                <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' />
+                <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
                 <h2 className="lg:text-[36px] sm:text-[25px] text-[25px] poppins font-bold text-[#292F6C] lg:text-left md:text-left sm:text-center text-center">
                   Keep In Touch
                 </h2>

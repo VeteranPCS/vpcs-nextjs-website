@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
 import BlogContent from "@/components/Blog/BlockContent";
+import Link from "next/link";
 import { formatDate } from "@/utils/helper";
 
 const BlogBeginningBlogPostAgent = ({ blog }: { blog: Record<string, any> }) => {
@@ -35,16 +36,18 @@ const BlogBeginningBlogPostAgent = ({ blog }: { blog: Record<string, any> }) => 
               <p className="text-[#495057] roboto text-sm font-normal mt-5">
                 <b className="text-[#495057] tahoma">{blog?.author?.name}</b>
                 <br />
-                Birmingham, AL
+                {blog?.author?.location || ""}
                 <br />
                 <b className="text-[#495057]">
-                  Active Duty Army
+                  {blog?.author?.military_status || ""}
                   <br />
-                  Lokation Real Estate
+                  {blog?.author?.brokerage || ""}
                 </b>
               </p>
               <div>
-                <Button buttonText="Get in Touch" />
+                <Link href={`/${blog?.author?.slug}`}>
+                  <Button buttonText="Get in Touch" />
+                </Link>
               </div>
             </div>
           </div>

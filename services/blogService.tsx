@@ -57,7 +57,10 @@ const blogService = {
                               author->{
                                 _id,
                                 name,
-                                designation,
+                                military_status,
+                                "slug": slug.current,
+                                location,
+                                brokerage,
                                 "image": image.asset->url // Fetch author's image URL
                               },
                               categories[]->{
