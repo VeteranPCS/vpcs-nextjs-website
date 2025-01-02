@@ -69,7 +69,7 @@ export default async function Home({ params }: { params: { state: string } }) {
   try {
     agents_data = await stateService.fetchAgentsListByState(state_code);
     formatted_data = agents_data.records.reduce((groups: any, agent: any) => {
-      const city = agent.BillingCity || 'Top';
+      const city = agent.BillingCity ? agent.BillingCity.toLowerCase().split(" ").map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") : 'Top';
       if (!groups[city]) {
         groups[city] = [];
       }
