@@ -32,7 +32,7 @@ const BlogDetailsHeroSection = ({blog}: { blog: Record<string, any> }) => {
               </div>
               <div>
                 <h6 className="text-white tahoma text-sm font-bold mt-10">
-                  By VA Loan Expert <br></br>{blog?.author?.name}
+                  By {blog?.author?.name}
                 </h6>
               </div>
             </div>
