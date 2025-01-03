@@ -49,7 +49,8 @@ export default defineType({
           type: 'string',
           title: 'Alternative Text',
         }
-      ]
+      ],
+      validation: (Rule) => Rule.required().error('A main image is required.'),
     }),
     defineField({
       name: 'publishedAt',
