@@ -15,6 +15,14 @@ interface ReviewDocument extends SanityDocument {
 const blogService = {
   fetchBlogs: async (): Promise<any> => {
     try {
+      const logo_url = await client.fetch<ReviewDocument[]>(`
+        *[_type == "veterence_logo"]{
+          logo{
+            "image_url": asset->url // Directly fetch the main image URL
+          },
+        }
+      `);
+
       const blogs = await client.fetch<ReviewDocument[]>(`
                             *[_type == "blog"]{
                               ...,
@@ -36,6 +44,10 @@ const blogService = {
                           `);
 
       if (blogs) {
+        blogs.map((blog: any) => {
+          blog.logo = logo_url[0].logo.image_url;
+        });
+
         return blogs;
       } else {
         throw new Error('Failed to fetch blog');
@@ -47,6 +59,14 @@ const blogService = {
   },
   fetchBlog: async (slug: string): Promise<ReviewDocument> => {
     try {
+      const logo_url = await client.fetch<ReviewDocument[]>(`
+        *[_type == "veterence_logo"]{
+          logo{
+            "image_url": asset->url // Directly fetch the main image URL
+          },
+        }
+      `);
+
       const blog = await client.fetch<ReviewDocument>(
         `*[_type == "blog" && slug.current == $slug]{
                               ...,
@@ -71,6 +91,7 @@ const blogService = {
         { slug }
       );
       if (blog) {
+        blog.logo = logo_url[0].logo.image_url;
         return blog; // Handle successful response
       } else {
         // Handle error response
@@ -83,6 +104,14 @@ const blogService = {
   },
   SearchBlog: async (query: string): Promise<BlogDetails[]> => {
     try {
+      const logo_url = await client.fetch<ReviewDocument[]>(`
+        *[_type == "veterence_logo"]{
+          logo{
+            "image_url": asset->url // Directly fetch the main image URL
+          },
+        }
+      `);
+
       const blogs = await client.fetch(
         `*[
           _type == "blog" &&
@@ -91,6 +120,7 @@ const blogService = {
           _id,
           title,
           content,
+          short_title,
           slug,
           publishedAt,
           mainImage {
@@ -104,6 +134,10 @@ const blogService = {
       );
 
       if (blogs) {
+        blogs.map((blog: any) => {
+          blog.logo = logo_url[0].logo.image_url;
+        });
+
         return blogs; // Handle successful response
       } else {
         // Handle error response
@@ -116,6 +150,14 @@ const blogService = {
   },
   fetchBlogsByComponent: async (component: string) => {
     try {
+      const logo_url = await client.fetch<ReviewDocument[]>(`
+        *[_type == "veterence_logo"]{
+          logo{
+            "image_url": asset->url // Directly fetch the main image URL
+          },
+        }
+      `);
+
       const blog = await client.fetch(
         `*[_type == "blog" && component == $component]{
                               ...,
@@ -137,6 +179,10 @@ const blogService = {
         { component }
       );
       if (blog) {
+        blog.map((blo: any) => {
+          blo.logo = logo_url[0].logo.image_url;
+        });
+
         return blog; // Handle successful response
       } else {
         // Handle error response

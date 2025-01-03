@@ -30,6 +30,7 @@ import howVeterencePCSWorks from '@/sanity/schemas/howVeterencePCSWorks'
 import moveInBonus from '@/sanity/schemas/moveInBonus'
 import cityList from '@/sanity/schemas/cityList'
 import videoSuccessStories from '@/sanity/schemas/videoSuccessStories'
+import veterenceImage from './schemas/veterenceImage' 
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -62,6 +63,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     howVeterencePCSWorks,
     moveInBonus,
     cityList,
-    videoSuccessStories
+    videoSuccessStories,
+    veterenceImage
   ],
 }

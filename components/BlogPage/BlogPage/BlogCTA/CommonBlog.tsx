@@ -12,8 +12,8 @@ export interface BlogDetails {
     author: Author;
     component: string;  // Added field for grouping by component
     publishedAt: string;  // Added field for sorting blogs
-    meta_title: string;
-    meta_description: string;
+    short_title: string,
+    logo: string,
 }
 
 export interface Author {

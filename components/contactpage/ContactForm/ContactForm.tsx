@@ -6,6 +6,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import mediaAccountService from "@/services/mediaAccountService";
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { contactPostForm } from "@/services/salesForcePostFormsService";
+import { useRouter } from "next/navigation";
 
 interface MediaAccountProps {
   _id: string;
@@ -15,8 +21,58 @@ interface MediaAccountProps {
   link: string;
 }
 
-const ContactForm = () => {
+export interface ContactFormData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  captchaToken?: string;
+  captcha_settings?: string;
+  additionalComments?: string;
+}
 
+type FormErrors = Partial<Record<keyof ContactFormData, { message?: string }>>;
+
+const contactFormSchema = yup.object().shape({
+  firstName: yup.string().required('First name is required'),
+  lastName: yup.string().required('Last name is required'),
+  email: yup.string().email('Invalid email address').required('Email is required'),
+  additionalComments: yup.string(),
+  captchaToken: yup.string().required('Please complete the reCAPTCHA'),
+  captcha_settings: yup.string().required('Please complete the reCAPTCHA'),
+});
+
+const ContactForm = () => {
+  const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<ContactFormData>({
+    resolver: yupResolver<ContactFormData>(contactFormSchema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      additionalComments: '',
+      captchaToken: '',
+      captcha_settings: '',
+    },
+  });
+
+  async function onSubmit(data: ContactFormData) {
+    try {
+      const server_response = await contactPostForm(data);
+      if (server_response?.success) {
+        router.push(`${BASE_URL}/thank-you`);
+      } else {
+        console.log("No redirect URL found");
+      } 
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  }
   const [mediaAccount, SetMediaAccount] = useState<MediaAccountProps[]>([]);
   const fetchMediaAccounts = useCallback(async () => {
     try {
@@ -31,6 +87,31 @@ const ContactForm = () => {
     fetchMediaAccounts()
   }, [fetchMediaAccounts])
 
+  // Error rendering function
+  const renderError = (fieldName: keyof FormErrors) => {
+    const error = errors[fieldName];
+    return error ? (
+      <span className="text-error">{error.message}</span>
+    ) : null;
+  };
+
+  const onCaptchaChange = (token: string | null) => {
+    if (token) {
+      const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
+      if (captchaSettingsElem) {
+        const captchaSettings = JSON.parse(captchaSettingsElem.value);
+        captchaSettings.ts = JSON.stringify(new Date().getTime());
+        captchaSettingsElem.value = JSON.stringify(captchaSettings);
+        setValue('captcha_settings', captchaSettingsElem.value, {
+          shouldValidate: false // This triggers validation after setting the value
+        });
+        setValue('captchaToken', token, {
+          shouldValidate: true // This triggers validation after setting the value
+        });
+      }
+    }
+  };
+    
   return (
     <div className="container mx-auto flex flex-wrap justify-center lg:py-12 md:py-12 sm:py-2 py-2 gap-10">
       <div className="flex flex-wrap justify-around rounded-[12.128px] bg-white shadow-[0px_0px_72.766px_36.383px_rgba(0,0,0,0.03)] p-4 w-full overflow-hidden mx-8 md:mb-0 mb-5">
@@ -98,99 +179,127 @@ const ContactForm = () => {
           </div>
         </div>
         <div className="md:w-2/3 sm:w-full w-full relative md:px-10 lg:px-20 mt-10 md:mt-0">
-          <div className={classes.FormContainer}>
-            <div className="w-full">
-              <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1  gap-5">
-                <div className={classes.FormGroup}>
-                  <label className={classes.Label} htmlFor="firstName">
-                    First Name
-                  </label>
-                  <input
-                    className={classes.Input}
-                    type="text"
-                    id="firstName"
-                    placeholder="First Name"
-                    name="firstName"
-                  />
-                </div>
-                <div className={classes.FormGroup}>
-                  <label className={classes.Label} htmlFor="lastName">
-                    Last Name
-                  </label>
-                  <input
-                    className={classes.Input}
-                    type="text"
-                    placeholder="Last Name"
-                    id="lastName"
-                    name="lastName"
-                  />
-                </div>
-                <div className={classes.FormGroup}>
-                  <label className={classes.Label} htmlFor="email">
-                    Email
-                  </label>
-                  <input
-                    className={classes.Input}
-                    type="email"
-                    id="email"
-                    placeholder="Email"
-                    name="email"
-                  />
-                </div>
-              </div>
-              <div className="md:mt-14 md:mb-14 mt-5 mb-10">
-                <div className={classes.FormGroup}>
-                  <h6 className={classes.SelectLabel}>Select Subject</h6>
-                  <div className={classes.RadioGroup}>
-                    <div className={classes.RadioLabel}>
-                      <input
-                        type="radio"
-                        name="subject"
-                        value="general-inquiry"
-                      />
-                      General Inquiry
-                    </div>
-                    <div className={classes.RadioLabel}>
-                      <input
-                        type="radio"
-                        name="subject"
-                        value="general-inquiry"
-                      />
-                      General Inquiry
-                    </div>
-                    <div className={classes.RadioLabel}>
-                      <input type="radio" name="subject" value="general-inquiry" />
-                      General Inquiry
-                    </div>
-                    <div className={classes.RadioLabel}>
-                      <input
-                        type="radio"
-                        name="subject"
-                        value="general-inquiry"
-                      />
-                      General Inquiry
-                    </div>
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+          <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
+            <div className={classes.FormContainer}>
+              <div className="w-full">
+                <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1  gap-5 mb-10">
+                  <div className={classes.FormGroup}>
+                    <label className={classes.Label} htmlFor="firstName">
+                      First Name
+                    </label>
+                    <input
+                      {...register('firstName')}
+                      className={classes.Input}
+                      type="text"
+                      id="firstName"
+                      placeholder="First Name"
+                    />
+                    {renderError('firstName')}
+                  </div>
+
+                  <div className={classes.FormGroup}>
+                    <label className={classes.Label} htmlFor="lastName">
+                      Last Name
+                    </label>
+                    <input
+                      className={classes.Input}
+                      type="text"
+                      placeholder="Last Name"
+                      id="lastName"
+                      {...register('lastName')}
+                    />
+                    {renderError('lastName')}
+                  </div>
+                  <div className={classes.FormGroup}>
+                    <label className={classes.Label} htmlFor="email">
+                      Email
+                    </label>
+                    <input
+                      className={classes.Input}
+                      type="email"
+                      id="email"
+                      placeholder="Email"
+                      {...register('email')}
+                    />
+                    {renderError('email')}
                   </div>
                 </div>
-              </div>
+                {/* <div className="md:mt-14 md:mb-14 mt-5 mb-10">
+                  <div className={classes.FormGroup}>
+                    <h6 className={classes.SelectLabel}>Select Subject</h6>
+                    <div className={classes.RadioGroup}>
+                      <div className={classes.RadioLabel}>
+                        <input
+                          type="radio"
+                          name="subject"
+                          value="general-inquiry"
+                        />
+                        General Inquiry
+                      </div>
+                      <div className={classes.RadioLabel}>
+                        <input
+                          type="radio"
+                          name="subject"
+                          value="general-inquiry"
+                        />
+                        General Inquiry
+                      </div>
+                      <div className={classes.RadioLabel}>
+                        <input type="radio" name="subject" value="general-inquiry" />
+                        General Inquiry
+                      </div>
+                      <div className={classes.RadioLabel}>
+                        <input
+                          type="radio"
+                          name="subject"
+                          value="general-inquiry"
+                        />
+                        General Inquiry
+                      </div>
+                    </div>
+                  </div>
+                </div> */}
 
-              <div className={classes.FormGroup}>
-                <label className={classes.label} htmlFor="message">
-                  Message
-                </label>
-                <textarea
-                  className={classes.TextArea}
-                  id="message"
-                  placeholder="Write your message.."
-                  name="message"
-                  rows={1}
-                ></textarea>
-              </div>
-              <div className="flex justify-end">
-                <Button buttonText="Send Message" />
+                <div className={classes.FormGroup}>
+                  <label className={classes.label} htmlFor="message">
+                    Message
+                  </label>
+                  <textarea
+                    className={classes.TextArea}
+                    id="message"
+                    placeholder="Write your message.."
+                    {...register('additionalComments')}
+                    rows={1}
+                  ></textarea>
+                </div>
+
+                <div className={classes.FormGroup}>
+                <ReCAPTCHA
+                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+                    onChange={onCaptchaChange} // Handle reCAPTCHA value change
+                  />
+                  {renderError('captchaToken')}
+                </div>
+                <div className="flex justify-end lg:py-8 md:py-8 sm:py-2 py-2">
+                  {/* <Button buttonText="Send Message" /> */}
+                  <button
+                    type="submit"
+                    className="items-center bg-[#A81F23] w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px] px-[20px] xl:py-[15px] lg:py-[15px] sm:py-[14px] py-[14px] rounded-[16px] text-center tracking-[1px] hover:tracking-[5px] duration-500 transition-all"
+                  >
+                    <span
+                      className="xl:text-[18px] lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal leading-6 bg-cover 
+                        text-white text-nowrap tahoma"
+                    >
+                      Send Message
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+
+          </form>
           <div className="lg:block md:block sm:hidden hidden mt-16 mr-4">
             <Image
               width={250}

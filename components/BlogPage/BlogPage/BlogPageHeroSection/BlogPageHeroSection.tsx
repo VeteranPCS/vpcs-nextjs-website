@@ -15,6 +15,8 @@ export interface BlogDetails {
   author: Author;
   component: string;  // Added field for grouping by component
   publishedAt: string;  // Added field for sorting blogs
+  short_title: string;
+  logo: string
 }
 
 export interface Author {
@@ -31,7 +33,11 @@ export interface Category {
 const BlogPageHeroSection = ({ blog }: { blog: BlogDetails }) => {
   return (
     <div className="relative">
-      <div className={classes.blogpageherosectioncontainer} style={{ backgroundImage: `url(${blog?.mainImage?.image_url || "/assets/BlogImage1.png"} )` }}>
+      <div className={classes.blogpageherosectioncontainer} 
+          style={{
+            backgroundImage: `url("${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamic-image?title=${blog?.short_title}&image_url=${blog?.mainImage?.image_url}&logo_url=${blog?.logo}")`
+          }}
+        >
         <div className="flex flex-col justify-center items-center">
           <div>
             <div className="text-center">

@@ -75,7 +75,7 @@ const PcsResourcesBlog: React.FC<PcsResourcesBlogProps> = async ({ blogList, com
         >
 
           {blogList.map((blog) => (
-            <Link href="/blog/[slug]" as={`/blog/${blog?.slug?.current || "default-slug"}`} key={blog._id} className={classes.blogimageone} style={{ backgroundImage: `url(${blog?.mainImage?.image_url || "/assets/BlogImage1.png"} )` }}>
+            <Link href="/blog/[slug]" as={`/blog/${blog?.slug?.current || "default-slug"}`} key={blog._id} className={classes.blogimageone} style={{ backgroundImage: `url("${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamic-image?title=${blog?.short_title}&image_url=${blog?.mainImage?.image_url}&logo_url=${blog?.logo}")` }}>
               <div className="flex items-center absolute top-4 right-4 gap-2">
                 {blog?.categories?.map((category) => (
                   <div

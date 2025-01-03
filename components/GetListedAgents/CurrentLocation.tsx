@@ -127,6 +127,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
                 type="submit"
                 className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
               >
+                Next
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -135,11 +136,10 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
                   fill="none"
                 >
                   <path
-                    d="M8.99991 16.17L4.82991 12L3.40991 13.41L8.99991 19L20.9999 7L19.5899 5.59L8.99991 16.17Z"
-                    fill="white"
+                    d="M14.0098 11H5.99976V13H14.0098V16L17.9998 12L14.0098 8.00003V11Z"
+                    fill="#FFFFFF"
                   />
                 </svg>
-                Submit
               </button>
             </div>
           </div>

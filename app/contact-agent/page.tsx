@@ -143,7 +143,7 @@ export default function Home() {
           <GetListedLendersProfileInfo
             onSubmit={handleSubmit}
             onBack={handleBack}
-            shouldValidate={false}
+            shouldValidate={true}
           />
         )}
 

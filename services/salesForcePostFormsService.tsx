@@ -299,3 +299,38 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
         throw new Error('Failed to submit form');
     }
 }
+
+export async function contactPostForm(formData: any) {
+    const formBody = new URLSearchParams({
+        oid: "00D4x000003yaV2",
+        recordType: "0124x000000Z5yD",
+        lead_source: "Website",
+        first_name: formData.firstName || "",
+        last_name: formData.lastName || "",
+        email: formData.email || "",
+        "00N4x00000bfgFA": formData.additionalComments || "",
+        "g-recaptcha-response": formData.captchaToken || "",
+        "captcha_settings": formData.captcha_settings || "",
+    }).toString();
+
+    try {
+        const response = await fetch(
+            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formBody,
+            }
+        );
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        };
+
+        return { success: true, message: 'Form submitted successfully!' };
+    } catch (error) {
+        console.error('Error:', error);
+        throw new Error('Failed to submit form');
+    }
+}

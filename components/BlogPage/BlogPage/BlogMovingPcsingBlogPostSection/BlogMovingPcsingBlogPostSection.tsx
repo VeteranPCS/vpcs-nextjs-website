@@ -25,6 +25,8 @@ export interface BlogDetails {
   mainImage: { image_url: string; alt: string };
   categories: Category[];
   author: Author;
+  short_title: string,
+  logo: string
 }
 
 const BlogMovingPcsingBlogPostSection = async ({ blogList, component, categories_list }: { blogList: BlogDetails[], component: string, categories_list: any }) => {
