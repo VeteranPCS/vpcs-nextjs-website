@@ -26,9 +26,10 @@ interface BlogProps {
 
 export async function generateStaticParams() {
     try {
-        const blogs: BlogDetails[] = await blogService.fetchBlogs();
-        return blogs.map((blog) => ({
-            slug: blog.slug.current,
+        const blogSlugs = await blogService.fetchBlogSlugs();
+
+        return blogSlugs.map((slug) => ({
+            slug: slug.slug,
         }));
 
     } catch (error) {
@@ -74,7 +75,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function Home({ params }: { params: { slug: string } }) {
-    const { slug } = params;
+    const { slug } = await params;
     let blog: Record<string, any> | null = null;
 
     try {
