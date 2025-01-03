@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import Image from "next/image";
 import { formatDate } from "@/utils/helper";
 import Link from "next/link";
+
 export interface BlockChild {
   _type: string;
   text: string;
@@ -61,7 +62,7 @@ const SearchBlog = ({ searchedBlog }: { searchedBlog: BlogDetails[] }) => {
             <div className="my-10" key={blog._id}>
               <Link href={`/blog/${blog?.slug?.current}`}>
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamic-image?title=${blog?.short_title}&image_url=${blog?.mainImage?.asset?.url}&logo_url=${blog?.logo}` || "/assets/BlogpostImage.png"}
+                  src={blog?.mainImage?.asset?.url || ""}
                   alt={blog?.mainImage?.alt || "Blog image"}
                   width={1000}
                   height={1000}
