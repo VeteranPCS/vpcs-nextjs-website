@@ -146,6 +146,24 @@ const blogService = {
       console.error('Error fetching blogs:', error);
       throw error; // You can handle the error more gracefully based on your needs
     }
+  },
+  fetchBlogSlugs: async (): Promise<BlogSlugs[]> => {
+    try {
+      const blogSlugs = await client.fetch<BlogSlugs[]>(`
+                            *[_type == "blog"]{
+                              "slug": slug.current
+                            }
+                          `);
+
+      if (blogSlugs) {
+        return blogSlugs;
+      } else {
+        throw new Error('Failed to fetch blog');
+      }
+    } catch (error: any) {
+      console.error('Error fetching blogs:', error);
+      throw error; // You can handle the error more gracefully based on your needs
+    }
   }
 }
 
