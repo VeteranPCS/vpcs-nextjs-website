@@ -213,6 +213,16 @@ const stateService = {
       console.error('Error fetching State Based Agent List:', error);
       throw error;
     }
+  },
+  fetchStateImage: async (state_slug: string): Promise<string> => {
+    try {
+      const state_map = await client.fetch(`*[_type == "city_list" && city_slug.current == $city][0] { city_map }`, { city: state_slug });
+      const image_url = urlForImage(state_map.city_map.asset);
+      return image_url;
+    } catch (error: any) {
+      console.error('Error fetching State Image:', error);
+      throw error;
+    }
   }
 };
 

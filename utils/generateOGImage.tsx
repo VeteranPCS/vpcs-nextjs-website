@@ -1,24 +1,25 @@
-import { ImageResponse } from 'next/og'
-
-export const runtime = 'edge'
+import { ImageResponse } from 'next/og';
 
 const size = {
     width: 1200,
     height: 630,
-}
+};
 
-const contentType = 'image/png'
+const fetchFont = async () => {
+    const response = await fetch(new URL('@/styles/lora-font/Lora-Bold.ttf', import.meta.url));
+    return response.arrayBuffer();
+};
 
-export async function GET(request: any) {
-    const { searchParams } = new URL(request.url)
-    const title = searchParams.get('title') || 'Default Title'
-    const image_url = searchParams.get('image_url') || '/assets/blogctabgimage.png'
-    const logo_url = searchParams.get('logo_url') || '/assets/blogctabgimage.png'
-
-    // Font
-    const loraBold = fetch(
-        new URL('@/styles/lora-font/Lora-Bold.ttf', import.meta.url)
-    ).then((res) => res.arrayBuffer())
+export async function generateOGImage({
+    title = 'VeteranPCS',
+    image_url = '/assets/blogctabgimage.png',
+    logo_url = '/assets/blogctabgimage.png',
+}: {
+    title?: string;
+    image_url?: string;
+    logo_url?: string;
+}) {
+    const loraBold = await fetchFont();
 
     return new ImageResponse(
         (
@@ -62,7 +63,7 @@ export async function GET(request: any) {
                     }}
                 >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={logo_url} alt="" height={71} width={304} />
+                    <img src={logo_url} alt={title} height={71} width={304} />
                 </div>
             </div>
         ),
@@ -71,11 +72,11 @@ export async function GET(request: any) {
             fonts: [
                 {
                     name: 'Lora',
-                    data: await loraBold,
+                    data: loraBold,
                     style: 'normal',
                     weight: 700,
                 },
             ],
         }
-    )
+    );
 }

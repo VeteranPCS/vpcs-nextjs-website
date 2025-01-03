@@ -12,6 +12,8 @@ import { memo } from "react";
 import stateService, { StateList as StateList, AgentsData, LendersData } from "@/services/stateService";
 import { AgentData } from '@/components/StatePage/StatePageCityAgents/StatePageCityAgents'
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 interface FormattedAgentData {
   [city: string]: AgentData[];
 }
@@ -39,9 +41,32 @@ export async function generateMetadata({ params }: { params: { state: string } }
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
     .join(" ");
 
+  const ogTitle = `Find Military Friendly Real Estate Agents in ${stateName} - Veteran PCS`;
+  const ogDescription = `Connect with the best veteran real estate agents in ${stateName} who understand the unique needs of veterans and military families.`;
+  const ogImage = await stateService.fetchStateImage(params.state);
+
   return {
-    title: `Find Military Friendly Real Estate Agents in ${stateName} - Veteran PCS`,
-    description: `Connect with the best veteran real estate agents in ${stateName} who understand the unique needs of veterans and military families.`,
+    metadataBase: new URL(BASE_URL || ""),
+    title: ogTitle,
+    description: ogDescription,
+    openGraph: {
+      title: ogTitle,
+      description: ogDescription,
+      url: `${BASE_URL}/${params.state}`,
+      type: "website",
+      images: [{
+        url: ogImage,
+        alt: `Map of ${stateName}`,
+        width: 800,
+        height: 600,
+      }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description: ogDescription,
+      images: [`/${ogImage}`],
+    },
   };
 }
 

@@ -26,7 +26,7 @@ interface BlogDetails {
   author: Author;
   short_title: string,
   logo: string
-  }
+}
 
 interface StatePageHeroSecondSectionProps {
   blogDetails: BlogDetails;
@@ -61,8 +61,7 @@ const BlogMovingPcsingPost: React.FC<StatePageHeroSecondSectionProps> = ({ blogD
       <div className="container mx-auto">
         <div className="w-full relative">
           <Image
-            // src={blogDetails?.mainImage?.image_url || "/assets/BlogpostImage.png"}
-            src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamic-image?title=${blogDetails?.short_title}&image_url=${blogDetails?.mainImage?.image_url}&logo_url=${blogDetails?.logo}` || "/assets/BlogpostImage.png"}
+            src={blogDetails?.mainImage?.image_url || "/assets/BlogpostImage.png"}
             alt={blogDetails?.mainImage?.alt || "Blog post image"}
             width={310}
             height={280}

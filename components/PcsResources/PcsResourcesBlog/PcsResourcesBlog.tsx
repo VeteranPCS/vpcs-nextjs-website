@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import Link from "next/link";
 import classes from "./PcsResourcesBlog.module.css";
-import blogService from '@/services/blogService';
+import { urlForImage } from "@/sanity/lib/image";
 import { BlogDetails } from "@/app/blog/page";
 
 // Define types for the props
@@ -75,7 +75,7 @@ const PcsResourcesBlog: React.FC<PcsResourcesBlogProps> = async ({ blogList, com
         >
 
           {blogList.map((blog) => (
-            <Link href="/blog/[slug]" as={`/blog/${blog?.slug?.current || "default-slug"}`} key={blog._id} className={classes.blogimageone} style={{ backgroundImage: `url("${process.env.NEXT_PUBLIC_API_BASE_URL}/api/dynamic-image?title=${blog?.short_title}&image_url=${blog?.mainImage?.image_url}&logo_url=${blog?.logo}")` }}>
+            <Link href="/blog/[slug]" as={`/blog/${blog?.slug?.current || "/blog"}`} key={blog._id} className={classes.blogimageone} style={{ backgroundImage: `url("${urlForImage(blog.mainImage)}")` }}>
               <div className="flex items-center absolute top-4 right-4 gap-2">
                 {blog?.categories?.map((category) => (
                   <div

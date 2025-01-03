@@ -8,6 +8,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL || ""),
   title: {
     template: "%s | VeteranPCS",
     default:
@@ -18,16 +19,22 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://veteranpcs.com",
+    url: BASE_URL,
     siteName: "VeteranPCS",
     images: [
       {
-        url: `${BASE_URL}/icon/VeteranPCSlogo.svg`,
+        url: `${BASE_URL}/opengraph/vpcs-logo-no-background.png`,
         width: 1200,
         height: 630,
         alt: "VeteranPCS",
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    description: "Connecting Veterans & Military Spouses with Trusted Real Estate Agents Nationwide",
+    title: "VeteranPCS",
+    images: ['/opengraph/vpcs-logo-no-background.png'],
   },
 };
 
