@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
             authors: [blog.author.name],
         },
         twitter: {
-            cardType: "summary_large_image",
+            card: "summary_large_image",
             title: blog.meta_title,
             description: blog.meta_description,
         },
