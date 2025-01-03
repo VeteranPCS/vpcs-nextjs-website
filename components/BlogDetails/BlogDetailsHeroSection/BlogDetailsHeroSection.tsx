@@ -4,7 +4,7 @@ import classes from "./BlogDetailsHeroSection.module.css";
 import { formatDate } from "@/utils/helper";
 
 
-const BlogDetailsHeroSection = ({blog}: { blog: Record<string, any> }) => {
+const BlogDetailsHeroSection = ({ blog }: { blog: Record<string, any> }) => {
   return (
     <div className="relative">
       <div className={classes.blogdetailspageherosectioncontainer} style={{ backgroundImage: `url(${blog?.mainImage?.image_url || "/assets/BlogImage1.png"} )` }}>
@@ -12,9 +12,9 @@ const BlogDetailsHeroSection = ({blog}: { blog: Record<string, any> }) => {
           <div>
             <div className="text-center">
               <h1 className="text-white text-center tahoma lg:text-[36px] md:text-[36px] sm:text-[36px] text-[36px] font-bold mt-8 mb-3">
-                What you need to know
+                {blog?.title}
               </h1>
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <p className="text-white lora text-sm font-normal">
                   {formatDate(blog?._createdAt)}
                 </p>
@@ -22,14 +22,14 @@ const BlogDetailsHeroSection = ({blog}: { blog: Record<string, any> }) => {
                 <p className="text-white tahoma text-sm font-normal">
                   {blog?.title}
                 </p>
-              </div>
-              <div>
+              </div> */}
+              {/* <div>
                 <p className="text-white text-center lora text-sm font-normal lg:w-[510px] w-full mx-auto mt-10 leading-6">
                   Progressively incentivize cooperative systems through
                   technically sound functionalities. The credibly productivate
                   seamless data.
                 </p>
-              </div>
+              </div> */}
               <div>
                 <h6 className="text-white tahoma text-sm font-bold mt-10">
                   By {blog?.author?.name}

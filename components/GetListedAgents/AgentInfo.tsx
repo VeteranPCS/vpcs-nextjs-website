@@ -1,6 +1,5 @@
 "use client";
 import { useState, FormEvent, useCallback, useEffect } from 'react';
-// import { FormData } from "@/app/get-listed-lenders/page";
 import stateService from '@/services/stateService';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';

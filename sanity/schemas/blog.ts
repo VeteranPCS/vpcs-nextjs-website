@@ -1,4 +1,4 @@
-import {defineField, defineType} from 'sanity'
+import { defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'blog',
@@ -23,7 +23,7 @@ export default defineType({
       name: 'author',
       title: 'Author',
       type: 'reference',
-      to: [{type: 'author'}],
+      to: [{ type: 'author' }],
     }),
     defineField({
       name: 'categories',
@@ -57,6 +57,18 @@ export default defineType({
       type: 'blockContent',
     }),
     defineField({
+      name: 'meta_title',
+      title: 'Metadata Title',
+      type: 'string',
+      description: 'Open Graph Title',
+    }),
+    defineField({
+      name: 'meta_description',
+      title: 'Metadata Description',
+      type: 'string',
+      description: 'Open Graph Description',
+    }),
+    defineField({
       name: 'is_show',
       title: 'Is show',
       type: 'boolean',
@@ -85,8 +97,8 @@ export default defineType({
       media: 'mainImage',
     },
     prepare(selection) {
-      const {author} = selection
-      return {...selection, subtitle: author && `by ${author}`}
+      const { author } = selection
+      return { ...selection, subtitle: author && `by ${author}` }
     },
   },
 })
