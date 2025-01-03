@@ -1,13 +1,14 @@
 import { ImageResponse } from 'next/og'
 import blogService from '@/services/blogService'
 
-export const alt = 'VeteraPCS Blog'
+export const alt = 'VeteranPCS Blog'
 
 export const size = {
     width: 1200,
     height: 630,
 }
 export const contentType = 'image/png'
+export const runtime = "edge"
 
 export default async function Image({ params }: { params: { slug: string } }) {
 

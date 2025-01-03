@@ -8,6 +8,7 @@ export const size = {
     height: 630,
 }
 export const contentType = 'image/png'
+export const runtime = "edge"
 
 export default async function Image({ params }: { params: { slug: string } }) {
 
