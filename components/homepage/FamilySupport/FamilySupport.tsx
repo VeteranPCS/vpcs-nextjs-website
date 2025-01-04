@@ -104,7 +104,7 @@ const FamilySupport = async () => {
             </div>
 
             <Link
-              href="/how-it-works"
+              href="/impact"
               className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center"
             >
               <Button buttonText={pageData?.button_text || "Learn More"} />

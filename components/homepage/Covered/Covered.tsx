@@ -12,14 +12,14 @@ const cardsData = [
     imgred: "/icon/Missionred.svg",
     title: "Our mission",
     subTitle: "Why is VeteranPCS mission is so important?",
-    link: "about/",
+    link: "about",
   },
   {
     img: "/icon/Impact.svg",
     imgred: "/icon/Impactred.svg",
     title: "Impact",
     subTitle: "VeteranPCS impact on our military community.",
-    link: "impact/",
+    link: "impact",
   },
   {
     img: "/icon/Loan.svg",
@@ -33,21 +33,21 @@ const cardsData = [
     imgred: "/icon/Worksred.svg",
     title: "How It Works",
     subTitle: "How does VeteranPCS work?",
-    link: "Learn more",
+    link: "how-it-works",
   },
   {
     img: "/icon/Stories.svg",
     imgred: "/icon/Storiesred.svg",
     title: "Stories",
     subTitle: "We have helped 100s of veterans and their families!",
-    link: "stories/",
+    link: "stories",
   },
   {
     img: "/icon/Resources.svg",
     imgred: "/icon/Resourcesred.svg",
     title: "Resources",
     subTitle: "Check out our VeteranPCS trusted resources.",
-    link: "pcs-resources/",
+    link: "pcs-resources",
   },
 ];
 

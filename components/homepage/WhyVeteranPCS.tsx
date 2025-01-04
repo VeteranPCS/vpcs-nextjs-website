@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
+import Link from "next/link";
 
 const WhyVeteranPcs = () => {
   return (
@@ -112,7 +113,9 @@ const WhyVeteranPcs = () => {
               />
             </div>
             <div className="mx-auto justify-center text-center flex">
-              <Button buttonText="Find an Agent" />
+              <Link href="/#map-container">
+                <Button buttonText="Find an Agent" />
+              </Link>
             </div>
           </div>
         </div>
