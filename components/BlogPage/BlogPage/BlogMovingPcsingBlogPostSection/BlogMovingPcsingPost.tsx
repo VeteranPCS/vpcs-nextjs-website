@@ -12,7 +12,7 @@ interface Category {
 interface Author {
   image: string;
   name: string;
-  designation: string;
+  military_status: string;
 }
 
 interface BlogDetails {
@@ -101,7 +101,7 @@ const BlogMovingPcsingPost: React.FC<StatePageHeroSecondSectionProps> = ({ blogD
                 />
                 <div>
                   <h6 className="text-[#343A40] tahoma text-sm font-bold">{blogDetails?.author?.name || "Unknown Author"}</h6>
-                  <p className="text-[#495057] tahoma text-sm font-normal">{blogDetails?.author?.designation || "Unknown Designation"}</p>
+                  <p className="text-[#495057] tahoma text-sm font-normal">{blogDetails?.author?.military_status || "Unknown Designation"}</p>
                 </div>
               </div>
             </div>

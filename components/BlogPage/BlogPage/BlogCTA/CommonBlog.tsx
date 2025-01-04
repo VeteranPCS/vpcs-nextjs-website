@@ -14,12 +14,14 @@ export interface BlogDetails {
     publishedAt: string;  // Added field for sorting blogs
     short_title: string,
     logo: string,
+    meta_title: string;
+    meta_description: string;
 }
 
 export interface Author {
     name: string;
     image: string;
-    designation: string;
+    military_status: string;
 }
 
 export interface Category {

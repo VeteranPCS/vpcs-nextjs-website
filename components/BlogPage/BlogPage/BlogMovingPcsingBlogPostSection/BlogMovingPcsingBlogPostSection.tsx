@@ -8,7 +8,7 @@ import BlogCategory from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPos
 export interface Author {
   name: string;
   image: string;
-  designation: string;
+  military_status: string;
 }
 
 export interface Category {
@@ -39,21 +39,21 @@ const BlogMovingPcsingBlogPostSection = async ({ blogList, component, categories
               <h1 className="text-[#292F6C] tahoma lg:text-[36px] md:text-[36px] text-[26px] font-bold">
                 {component}
               </h1>
-                <BlogCategory categories_list={categories_list} />
+              <BlogCategory categories_list={categories_list} />
             </div>
           </div>
           <div>
-          <form
-            className="flex justify-center mt-6 w-[312px] md:inline-flex sm:hidden hidden"
-            method="GET"
-            action="/blog-search"
-          >
-            <input
-              type="text"
-              name="query"
-              placeholder="Search"
-              className="w-full max-w-md px-4 py-3 border bg-[#F9F9F9] border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+            <form
+              className="flex justify-center mt-6 w-[312px] md:inline-flex sm:hidden"
+              method="GET"
+              action="/blog-search"
+            >
+              <input
+                type="text"
+                name="query"
+                placeholder="Search"
+                className="w-full max-w-md px-4 py-3 border bg-[#F9F9F9] border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
               <button
                 type="submit"
                 className="bg-[#003486] hover:bg-blue-600 text-white px-4 py-2 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"

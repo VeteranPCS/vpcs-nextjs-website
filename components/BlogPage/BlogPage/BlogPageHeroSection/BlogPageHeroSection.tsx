@@ -24,7 +24,7 @@ export interface BlogDetails {
 export interface Author {
   name: string;
   image: string;
-  designation: string;
+  military_status: string;
 }
 
 export interface Category {

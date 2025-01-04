@@ -9,7 +9,7 @@ import blogService from "@/services/blogService";
 export interface Author {
   name: string;
   image: string;
-  designation: string;
+  military_status: string;
 }
 
 export interface Category {
@@ -28,8 +28,8 @@ export interface BlogDetails {
   author: Author;
   component: string;  // Added field for grouping by component
   publishedAt: string;  // Added field for sorting blogs
-  // meta_title: string;
-  // meta_description: string;
+  meta_title: string;
+  meta_description: string;
   short_title: string,
   logo: string
 }

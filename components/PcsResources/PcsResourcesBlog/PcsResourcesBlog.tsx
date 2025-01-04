@@ -13,7 +13,7 @@ interface Category {
 interface Author {
   image: string;
   name: string;
-  designation: string;
+  military_status: string;
 }
 
 interface PcsResourcesBlogProps {
