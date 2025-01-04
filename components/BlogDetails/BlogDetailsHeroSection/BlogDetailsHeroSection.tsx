@@ -7,7 +7,7 @@ import { formatDate } from "@/utils/helper";
 const BlogDetailsHeroSection = ({ blog }: { blog: Record<string, any> }) => {
   return (
     <div className="relative">
-      <div className={classes.blogdetailspageherosectioncontainer} style={{ backgroundImage: `url("${blog?.mainImage.image_url || ""}")` }}>
+      <div className={classes.blogdetailspageherosectioncontainer} style={{ backgroundImage: `url("${blog?.mainImage.image_url || "/assets/blogctabgimage.png"}")` }}>
         <div className="flex flex-col justify-center items-center">
           <div>
             <div className="text-center">

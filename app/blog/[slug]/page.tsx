@@ -13,7 +13,6 @@ import { urlForImage } from "@/sanity/lib/image";
 import Script from "next/script";
 import { BlogPosting, WithContext } from "schema-dts";
 import { formatDate } from "@/utils/helper";
-import { generateOGImage } from "@/utils/generateOGImage";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 // Memoize FAQ component for performance
@@ -84,7 +83,7 @@ export default async function Home({ params }: { params: { slug: string } }) {
             "@id": `${BASE_URL}/blog/${params.slug}`,
         },
         headline: blog.title,
-        image: urlForImage(blog.mainImage),
+        image: `${blog.mainImage ? urlForImage(blog.mainImage) : BASE_URL + 'blogctabgimage.png'}`,
         datePublished: formatDate(blog._createdAt),
         author: {
             "@type": "Person",
