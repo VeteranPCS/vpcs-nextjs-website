@@ -5,6 +5,7 @@ import classes from "./AboutHeroSection.module.css";
 import Image from "next/image";
 import aboutService from "@/services/aboutService";
 import { AboutVetPcsResponse } from '@/components/About/HowVetPcsStarted/HowVetPcsStarted'
+import Link from "next/link";
 
 const AboutHeroSection = async () => {
   let pageData: AboutVetPcsResponse | null = null;
@@ -32,7 +33,9 @@ const AboutHeroSection = async () => {
                   {pageData?.description}
                 </p>
                 <div>
-                  <Button buttonText={pageData?.buttonText || "default button"} />
+                  <Link href="/#map-container">
+                    <Button buttonText={pageData?.buttonText || "default button"} />
+                  </Link>
                 </div>
                 <div className="absolute bottom-[-15%] lg:left-[45%] md:left-[45%] sm:left-[27%] left-[27%] translate-[-45%] ">
                   <Image

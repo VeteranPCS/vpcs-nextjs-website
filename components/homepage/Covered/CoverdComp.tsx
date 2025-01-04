@@ -66,15 +66,6 @@ const Covered: React.FC<CoveredProps> = ({ card }) => {
                 </div>
                 <div className="xl:mt-3 lg:mt-3 md:mt-3 sm:mt-0">
                   <span className="text-[#A81F23] text-[16px]">Learn more</span>
-
-                  {/*<strong>
-                     <Link
-                      href={link}
-                      className="text-[#A81F23] mt-10 lg:text-[20px] md:text-[19px] sm:text-[16px] text-[16px] poppins"
-                    >
-                      Learn more
-                    </Link> 
-                  </strong>*/}
                 </div>
               </div>
             </div>

@@ -8,7 +8,7 @@ const cardsData = [
     title: "AGENTS",
     subTitle:
       "Find a veteran or military spouse real estate agent to help buy or sell a home.",
-    link: "Learn more here >",
+    link: "#map-container",
   },
   {
     img: "/icon/checkred.svg",
@@ -21,7 +21,7 @@ const cardsData = [
     img: "/icon/checkred.svg",
     title: "Bonus",
     subTitle: "Get cash back when you close on a home. $200-$4,000.",
-    link: "Learn more here >",
+    link: "how-it-works",
   },
 ];
 

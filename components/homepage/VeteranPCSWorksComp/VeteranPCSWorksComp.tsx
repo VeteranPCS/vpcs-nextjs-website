@@ -2,6 +2,7 @@ import React from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
 import classes from "./VeteranPCSWorksComp.module.css";
 import Image from "next/image";
+import Link from "next/link";
 
 // Define the type for the `veteranpcs` prop
 interface VeteranPCSWorksCompProps {
@@ -18,7 +19,7 @@ const VeteranPCSWorksComp: React.FC<VeteranPCSWorksCompProps> = ({
 }) => {
   const { img, title, subTitle, link } = veteranpcs;
   return (
-    <a className={classes.veteranpcsworkscontainer} href={link}>
+    <Link className={classes.veteranpcsworkscontainer} href={link}>
       <div className="xl:p-9 lg:p-9 md:p-9 sm:p-2 p-4 lg:w-[300px] lg:h-[340px] sm:w-[250px] w-[250px] md:py-0 sm:py-20 py-10 lg:mb-0 mb-4 flex flex-col justify-center items-center">
         <div className="text-center ">
           <div className="xl:block lg:block md:block items-center justify-center">
@@ -46,7 +47,7 @@ const VeteranPCSWorksComp: React.FC<VeteranPCSWorksCompProps> = ({
           </div>
         </div>
       </div>
-    </a>
+    </Link>
   );
 };
 
