@@ -16,12 +16,11 @@ export default defineType({
       type: 'slug',
       options: {
         source: 'name',
-        maxLength: 96,
       },
     }),
     defineField({
-      name: 'designation',
-      title: 'Designation',
+      name: 'military_status',
+      title: 'Military Status',
       type: 'string',
     }),
     defineField({
@@ -39,19 +38,16 @@ export default defineType({
         }
       ]
     }),
-    // defineField({
-    //   name: 'bio',
-    //   title: 'Bio',
-    //   type: 'array',
-    //   of: [
-    //     {
-    //       title: 'Block',
-    //       type: 'block',
-    //       styles: [{title: 'Normal', value: 'normal'}],
-    //       lists: [],
-    //     },
-    //   ],
-    // }),
+    defineField({
+      name: 'brokerage',
+      title: 'Brokerage',
+      type: 'string',
+    }),
+    defineField({
+      name: 'location',
+      title: 'Location',
+      type: 'string',
+    }),
   ],
   preview: {
     select: {
