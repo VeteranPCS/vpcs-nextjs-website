@@ -24,7 +24,7 @@ const blogService = {
       `);
 
       const blogs = await client.fetch<ReviewDocument[]>(`
-                            *[_type == "blog"]{
+                            *[_type == "blog" && is_show == true] | order(_createdAt desc) {
                               ...,
                               mainImage{
                                 ...,
@@ -33,7 +33,7 @@ const blogService = {
                               author->{
                                 _id,
                                 name,
-                                designation,
+                                military_status,
                                 "image": image.asset->url // Fetch author's image URL
                               },
                               categories[]->{

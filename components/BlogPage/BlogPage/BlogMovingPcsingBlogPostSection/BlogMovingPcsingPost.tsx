@@ -65,7 +65,7 @@ const BlogMovingPcsingPost: React.FC<StatePageHeroSecondSectionProps> = ({ blogD
             alt={blogDetails?.mainImage?.alt || "Blog post image"}
             width={310}
             height={280}
-            className="w-full h-[280px]"
+            className="w-full h-[280px] object-cover"
           />
           {blogDetails?.categories?.length ? (
             <div className="flex items-center absolute top-4 right-4 gap-4">
