@@ -40,6 +40,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { slug: string } }) {
     const blog = await blogService.fetchBlog(params.slug);
 
+    const openGraphImageURL = `${process.env.BASE_URL}/blog/${params.slug}/opengraph-image`;
+    const twitterImageURL = `${process.env.BASE_URL}/blog/${params.slug}/twitter-image`;
+
     return {
         title: blog.meta_title,
         description: blog.meta_description,
@@ -49,11 +52,20 @@ export async function generateMetadata({ params }: { params: { slug: string } })
             url: `${BASE_URL}/blog/${params.slug}`,
             type: "article",
             authors: [blog.author.name],
+            images: [
+                {
+                    url: openGraphImageURL,
+                    width: 1200,
+                    height: 630,
+                    alt: "VeteranPCS Blog",
+                },
+            ],
         },
         twitter: {
             card: "summary_large_image",
             title: blog.meta_title,
             description: blog.meta_description,
+            images: [twitterImageURL]
         },
     };
 }

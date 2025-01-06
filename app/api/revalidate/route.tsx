@@ -66,7 +66,8 @@ export async function POST(req: NextRequest) {
       trusted_resources: ["/militaryspouse", "/pcs-resources"],
       users: ["/", `/blog/${slug}`, "/impact", "/militaryspouse", "/pcs-resources", "/stories", "/spanish-page", "/thank-you"],
       video_review: ["/impact", "/militaryspouse", "/pcs-resources", "/thank-you"],
-      video_success_stories: ["/stories"]
+      video_success_stories: ["/stories"],
+      veterence_logo: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"]
     };
     const paths = revalidatePathMap[body._type];
 
