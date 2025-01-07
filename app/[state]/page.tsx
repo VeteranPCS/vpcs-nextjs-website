@@ -11,6 +11,7 @@ import Footer from "@/components/Footer/Footer";
 import { memo } from "react";
 import stateService, { StateList as StateList, AgentsData, LendersData } from "@/services/stateService";
 import { AgentData } from '@/components/StatePage/StatePageCityAgents/StatePageCityAgents'
+import { Agent } from "@/services/stateService";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -71,7 +72,7 @@ export async function generateMetadata({ params }: { params: { state: string } }
 }
 
 
-export default async function Home({ params }: { params: { state: string } }) {
+export default async function StatePage({ params }: { params: { state: string } }) {
   const { state } = await params;
   let state_data: StateList | null = null;
   let agents_data: AgentsData | [] = [];
@@ -93,12 +94,15 @@ export default async function Home({ params }: { params: { state: string } }) {
 
   try {
     agents_data = await stateService.fetchAgentsListByState(state_code);
-    formatted_data = agents_data.records.reduce((groups: any, agent: any) => {
-      const city = agent.BillingCity ? agent.BillingCity.toLowerCase().split(" ").map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ") : 'Top';
-      if (!groups[city]) {
-        groups[city] = [];
+    formatted_data = agents_data.records.reduce((groups: any, agent: Agent) => {
+      const areaName = agent.Area_Assignments__r?.records.length
+        ? agent.Area_Assignments__r.records[0].Area__r.Name // Access first area
+        : "Top";
+
+      if (!groups[areaName]) {
+        groups[areaName] = [];
       }
-      groups[city].push(agent);
+      groups[areaName].push(agent);
       return groups;
     }, {});
   } catch (error) {
@@ -119,11 +123,11 @@ export default async function Home({ params }: { params: { state: string } }) {
       <StatePageHeroSecondSection
         stateName={state_data?.city_name || 'Unknown'}
       />
-      <StatePageVaLoan cityName={state_data?.city_name || 'Unknown'} lendersData={lenders_data} />
+      <StatePageVaLoan cityName={state_data?.city_name || 'Unknown'} lendersData={lenders_data} state={params.state} />
       <StatePageCTA cityName={state_data?.city_name || 'Unknown'} />
 
       {Object.entries(formatted_data).sort().map(([cityName, agents]: [string, any[]]) => (
-        <StatePageCityAgents key={cityName} city={cityName} agent_data={agents} />
+        <StatePageCityAgents key={cityName} city={cityName} agent_data={agents} state={params.state} />
       ))}
 
       <StatePageLetFindAgent />
