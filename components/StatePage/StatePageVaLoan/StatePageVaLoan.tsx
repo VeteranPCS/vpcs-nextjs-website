@@ -1,23 +1,12 @@
-"use client"
 import React from "react";
 import "@/styles/globals.css";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import Link from "next/link";
-import { useState } from "react";
 import { LendersData, Lenders } from "@/services/stateService";
 import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
 
 const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, lendersData: LendersData | [], state: string }) => {
-  const [expandedIndexes, setExpandedIndexes] = useState<number[]>([]);
-
-  const toggleReadMore = (index: number) => {
-    if (expandedIndexes.includes(index)) {
-      setExpandedIndexes(expandedIndexes.filter((i) => i !== index));
-    } else {
-      setExpandedIndexes([...expandedIndexes, index]);
-    }
-  };
 
   return (
     <div>
@@ -66,20 +55,21 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                       <p>{lender.Brokerage_Name__pc}</p>
                       <p>NMLS: {lender.Company_NMLS_ID__pc}</p>
                     </div>
-                    <p className={`text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4
-                    ${expandedIndexes.includes(index)
-                        ? "line-clamp-none"
-                        : "line-clamp-3"}`}>
-                      {lender?.Agent_Bio__pc}
-                    </p>
-                    <div className="flex justify-end mt-2">
-                      <button
-                        onClick={() => toggleReadMore(index)}
-                        className=" text-[#292F6C] tahoma text-sm font-bold"
-                      >
-                        {expandedIndexes.includes(index) ? "Read Less" : "Read More"}
-                      </button>
+                    <div className="relative">
+                      {/* Hidden checkbox to track toggle state */}
+                      <input type="checkbox" id={`toggle-${index + lender.Name}`} className="peer hidden" />
+
+                      {/* Text that expands/collapses */}
+                      <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 
+      max-h-[80px] overflow-hidden peer-checked:max-h-full transition-all duration-300">
+                        {lender?.Agent_Bio__pc}
+                      </p>
+
+                      {/* Single label that toggles state */}
+                      <label htmlFor={`toggle-${index + lender.Name}`} className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold absolute bottom-0 right-0 bg-white peer-checked:before:content-['Read_Less'] before:content-['...Read_More'] mt-10 before:bg-white">
+                      </label>
                     </div>
+
                   </div>
                 </div>
               </div>
