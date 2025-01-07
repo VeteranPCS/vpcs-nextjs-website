@@ -31,40 +31,43 @@ export interface StateList {
   city_slug: StateSlug;
 }
 
-interface Agent {
-  attributes: object; // Replace with the correct type for the 'attributes' field if needed
-  Id: string;
+export interface Agent {
   Name: string;
   AccountId_15__c: string;
-  PhotoUrl: string;
+  PhotoUrl?: string; // Keeping optional as it's not returned in the query
   FirstName: string;
   LastName: string;
   Agent_Bio__pc: string;
-  Bases_Serviced__pc: string | null;
   Military_Status__pc: string;
   Military_Service__pc: string;
   Brokerage_Name__pc: string;
-  BillingCity: string | null;
+  BillingCity?: string | null;
   BillingState: string;
   BillingStateCode: string;
+  State_s_Licensed_in__pc: string;
+  Other_States__pc?: string[]; // INCLUDES can return an array
+  Area_Assignments__r?: {
+    records: {
+      Id: string;
+      Name: string;
+      Area__r: {
+        Name: string;
+      };
+    }[];
+  };
 }
 
 export interface Lenders {
-  attributes: object; // Replace with the correct type for the 'attributes' field if needed
-  Id: string;
   Name: string;
   AccountId_15__c: string;
-  PhotoUrl: string;
+  PhotoUrl?: string;
   FirstName: string;
-  LastName: string;
   Agent_Bio__pc: string;
-  Bases_Serviced__pc: string | null;
   Military_Status__pc: string;
   Military_Service__pc: string;
   Brokerage_Name__pc: string;
   BillingCity: string | null;
   BillingState: string;
-  BillingStateCode: string;
   Individual_NMLS_ID__pc: string;
   Company_NMLS_ID__pc: string;
 }
@@ -115,9 +118,14 @@ const stateService = {
   fetchAgentsListByState: async (state: string): Promise<AgentsData> => {
     try {
       const query = `
-      SELECT Id, Name, AccountId_15__c, PhotoUrl, FirstName, LastName, Agent_Bio__pc, Bases_Serviced__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, BillingStateCode
-      FROM Account
-      WHERE isAgent__pc = true AND Active_on_Website__pc = true AND BillingStateCode = '${state}'
+        SELECT Name, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc,
+              Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState,
+              (SELECT Id, Name, Area__r.Name FROM Area_Assignments__r)
+        FROM Account
+        WHERE isAgent__pc = true
+          AND Active_on_Website__pc = true
+          AND (State_s_Licensed_in__pc LIKE '%${state}%'
+              OR Other_States__pc INCLUDES ('${state}'))
       `.replace(/\s+/g, ' ').trim();
 
       const response = await salesForceAPI({
@@ -139,7 +147,7 @@ const stateService = {
                 agent.PhotoUrl = `data:image/jpeg;base64,${base64Image}`;
                 // agent.PhotoUrl = photoResponse?.data; // Ensure fallback to original URL
               } catch (error) {
-                console.error(`Error fetching photo URL for agent ${agent.Id}:`, error);
+                console.error(`Error fetching photo URL for agent ${agent.AccountId_15__c}:`, error);
               }
             }
             return agent;
@@ -167,9 +175,12 @@ const stateService = {
   fetchLendersListByState: async (state: string): Promise<LendersData> => {
     try {
       const query = `
-      SELECT Id, Name, AccountId_15__c, PhotoUrl, FirstName, LastName, Agent_Bio__pc, Bases_Serviced__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, BillingStateCode, Individual_NMLS_ID__pc, Company_NMLS_ID__pc
+      SELECT Name, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, Individual_NMLS_ID__pc, Company_NMLS_ID__pc
       FROM Account
-      WHERE isLender__pc = true AND Active_on_Website__pc = true AND BillingStateCode = '${state}'
+      WHERE isLender__pc = true
+        AND Active_on_Website__pc = true
+        AND (State_s_Licensed_in__pc LIKE '%${state}%'
+            OR Other_States__pc INCLUDES ('${state}'))
       `.replace(/\s+/g, ' ').trim();
 
       const response = await salesForceAPI({
@@ -190,7 +201,7 @@ const stateService = {
                 agent.PhotoUrl = `data:image/jpeg;base64,${base64Image}`;
                 // agent.PhotoUrl = photoResponse?.data; // Ensure fallback to original URL
               } catch (error) {
-                console.error(`Error fetching photo URL for agent ${agent.Id}:`, error);
+                console.error(`Error fetching photo URL for agent ${agent.AccountId_15__c}:`, error);
               }
             }
             return agent;

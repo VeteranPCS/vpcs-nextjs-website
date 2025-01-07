@@ -6,8 +6,9 @@ import Button from "@/components/common/Button";
 import Link from "next/link";
 import { useState } from "react";
 import { LendersData, Lenders } from "@/services/stateService";
+import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
 
-const StatePageVaLoan = ({ cityName, lendersData }: { cityName: string, lendersData: LendersData | [] }) => {
+const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, lendersData: LendersData | [], state: string }) => {
   const [expandedIndexes, setExpandedIndexes] = useState<number[]>([]);
 
   const toggleReadMore = (index: number) => {
@@ -37,18 +38,18 @@ const StatePageVaLoan = ({ cityName, lendersData }: { cityName: string, lendersD
           {Array.isArray(lendersData) || !lendersData.records
             ? <p>No lenders available</p>
             : lendersData.records.map((lender: Lenders, index: number) => (
-              <div key={lender.Id} className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4">
+              <div key={lender.AccountId_15__c} className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4">
                 <div className="justify-center items-center flex flex-col">
                   <div className="rounded-full bg-[#E1EDFB] sm:w-[200px] sm:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
                     <Image
-                      src={lender?.PhotoUrl}
+                      src={lender?.PhotoUrl || ""}
                       alt={`${lender?.Name}'s Profile Picture`}
                       width={1000}
                       height={1000}
                       className="w-auto h-auto object-cover"
                     />
                   </div>
-                  <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${lender.BillingState.toLowerCase().split(' ').join('-')}`}>
+                  <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}>
                     <Button buttonText="Contact Now" />
                   </Link>
                 </div>
@@ -57,15 +58,14 @@ const StatePageVaLoan = ({ cityName, lendersData }: { cityName: string, lendersD
                     <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[24px] text-[24px] font-bold">
                       {lender?.Name}
                     </h3>
-                    <p className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal sm:mt-4 mt-0">
-                    <b>{lender?.Military_Status__pc} {lender.Military_Service__pc}</b>
-                      <br />
-                      NMLS: {lender.Individual_NMLS_ID__pc}
-                      <br />
-                      {lender.Brokerage_Name__pc}
-                      <br />
-                      NMLS: {lender.Company_NMLS_ID__pc}
-                    </p>
+                    <div className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal sm:mt-4 mt-0">
+                      <p className="font-bold">
+                        {orderMilitaryServiceInfo(lender?.Military_Status__pc || "", lender?.Military_Service__pc || "")}
+                      </p>
+                      <p>NMLS: {lender.Individual_NMLS_ID__pc}</p>
+                      <p>{lender.Brokerage_Name__pc}</p>
+                      <p>NMLS: {lender.Company_NMLS_ID__pc}</p>
+                    </div>
                     <p className={`text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4
                     ${expandedIndexes.includes(index)
                         ? "line-clamp-none"
