@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
     const slug = body.slug?.current || "";
     const city_slug = body.city_slug?.current || "";
     const revalidatePathMap: RevalidatePathMap = {
-      aboutSupportComponent: ["/about", "/spanish-page"],
-      aboutUsPage: ["/about", "/spanish-page"],
+      aboutSupportComponent: ["/about", "/spanish"],
+      aboutUsPage: ["/about", "/spanish"],
       additionalSuccessStories: ["stories"],
       approved_company_list: ["/militaryspouse"],
       author: ["/pcs-resources", "/thank-you", "blog", `/blog/${slug}`],
@@ -53,18 +53,18 @@ export async function POST(req: NextRequest) {
       internship_benefits: ["/internship"],
       internship_offer: ["/internship"],
       life_resources: ["/pcs-resources"],
-      media_account: ["/contact", "/", `/${city_slug}`, "/about", "/blog", `/blog/${slug}`, "/contact", "/how-it-works", "/impact", "/internship", "militaryspouse", "/pcs-resources", "/stories", "/thank-you", "/spanish-page"],
+      media_account: ["/contact", "/", `/${city_slug}`, "/about", "/blog", `/blog/${slug}`, "/contact", "/how-it-works", "/impact", "/internship", "militaryspouse", "/pcs-resources", "/stories", "/thank-you", "/spanish"],
       member_info: ["/about"],
       military_spouse_approved: ["/militaryspouse"],
       military_spouse_employment: ["/militaryspouse"],
       moveInBonus: ["/how-it-works"],
       moving_your_life: ["/militaryspouse"],
-      real_state_agents:["/"],
+      real_state_agents: ["/"],
       review: ["/", "/contact", "/impact", "/militaryspouse", "/pcs-resources", "/stories"],
       stories_poster: ["/impact"],
-      support_veterence: ["/", "/impact", "/pcs-resources", "spanish-page", "stories"],
+      support_veterence: ["/", "/impact", "/pcs-resources", "spanish", "stories"],
       trusted_resources: ["/militaryspouse", "/pcs-resources"],
-      users: ["/", `/blog/${slug}`, "/impact", "/militaryspouse", "/pcs-resources", "/stories", "/spanish-page", "/thank-you"],
+      users: ["/", `/blog/${slug}`, "/impact", "/militaryspouse", "/pcs-resources", "/stories", "/spanish", "/thank-you"],
       video_review: ["/impact", "/militaryspouse", "/pcs-resources", "/thank-you"],
       video_success_stories: ["/stories"],
       veterence_logo: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"]
@@ -93,5 +93,5 @@ export async function POST(req: NextRequest) {
       return new Response(err.message, { status: 500 });
     }
     return new Response("Error", { status: 500 });
-}
+  }
 }
