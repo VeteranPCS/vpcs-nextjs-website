@@ -40,7 +40,7 @@ const PcsResources = () => {
                     loading="eager"
                   />
                   <p className="text-white font-medium text-sm tahoma">
-                    Free To Use
+                    Veteran Approved
                   </p>
                 </div>
               </div>
