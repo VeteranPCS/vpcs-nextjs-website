@@ -5,13 +5,19 @@ import ReviewTestimonialSlider from "@/components/homepage/ReviewTestimonial/Rev
 import classes from "./ReviewTestimonial.module.css";
 import Link from "next/link";
 
+interface Reviewer {
+  profilePhotoUrl: string;
+  displayName: string;
+}
+
 export interface Review {
-  _id: string; // Assuming each review has a unique id
+  comment: string;
+  createTime: string;
   name: string;
-  message: string;
-  designation: string; // Add the missing field
-  ratings: number; // Add the missing field
-  comment: string; // Add the missing field
+  reviewId: string;
+  reviewer: Reviewer;
+  starRating: 'ONE' | 'TWO' | 'THREE' | 'FOUR' | 'FIVE';
+  updateTime: string;
 }
 
 interface ReviewTestimonialProps {

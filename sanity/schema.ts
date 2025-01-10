@@ -4,7 +4,6 @@ import blockContent from '@/sanity/schemas/blockContent'
 import category from '@/sanity/schemas/category'
 import author from '@/sanity/schemas/author'
 import userImage from '@/sanity/schemas/userImage'
-import review from '@/sanity/schemas/review'
 import realStateAgents from '@/sanity/schemas/realStateAgents'
 import blog from '@/sanity/schemas/blog'
 import mediaAccounts from '@/sanity/schemas/mediaAccounts'
@@ -38,7 +37,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     category,
     blockContent,
     userImage, 
-    review, 
     realStateAgents, 
     blog, 
     mediaAccounts, 

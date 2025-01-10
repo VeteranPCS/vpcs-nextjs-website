@@ -1,6 +1,9 @@
 import { client } from '@/sanity/lib/client'
 import { urlForImage } from '@/sanity/lib/image'
+import { RequestType, googleReviewsAPI } from '@/services/api';
 import { Review } from '@/components/homepage/ReviewTestimonial/ReviewTestimonial'
+import { getGoogleAuthToken } from "@/services/salesForceTokenService";
+
 interface ReviewDocument extends Review {
     user_logo: {
         asset: {
@@ -13,19 +16,30 @@ interface ReviewDocument extends Review {
 const reviewService = {
     fetchReviews: async () => {
         try {
-            const reviews = await client.fetch<ReviewDocument[]>(`*[_type == "review"]`)
+            // const response = await googleReviewsAPI({
+            //     endpoint: `https://mybusiness.googleapis.com/v4/accounts/${process.env.GOOGLE_REVIEWS_ACCOUNT_ID}/locations/${process.env.LOCATION_ID}/reviews`,
+            //     type: RequestType.GET,
+            // });
 
-            reviews.forEach((review) => {
-                if (review.user_logo?.asset?._ref) {
-                    review.user_logo.asset.image_url = urlForImage(review.user_logo.asset);  // Add the image URL to the response
-                }
-            })
+            // if (response?.status === 200) {
+            //     console.log("response: ", response);
+                
+            //     return response;
+            // } else if (response?.status === 401) {
+            //     // Token expired: Refresh and retry
+            //     try {
+            //         await getGoogleAuthToken(); // Refresh token
+            //         return await reviewService.fetchReviews(); // Retry the request
+            //     } catch (tokenError) {
+            //         console.error("Failed to refresh token:", tokenError);
+            //         throw tokenError;
+            //     }
+            // } else {
+            //     throw new Error("Failed to fetch Google api Reviews");
+            // }
 
-            if (reviews) {
-                return reviews;
-            } else {
-                throw new Error('Failed to fetch Reviews');
-            }
+            const reviews = await import('@/public/json/reviews.json');
+            return reviews.reviews as Review[];
         } catch (error: any) {
             console.error('Error fetching Reviews:', error);
             throw error;

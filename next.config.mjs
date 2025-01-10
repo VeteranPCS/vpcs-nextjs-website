@@ -27,6 +27,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'veteranpcs.my.salesforce.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
