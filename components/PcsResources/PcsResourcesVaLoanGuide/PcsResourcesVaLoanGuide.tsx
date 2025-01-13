@@ -21,6 +21,8 @@ type FormInputs = {
 type FormErrors = Partial<Record<keyof FormInputs, { message?: string }>>;
 
 const PcsResourcesVaLoanGuide = () => {
+  const [recaptchaRef, setRecaptchaRef] = useState<ReCAPTCHA | null>(null);
+
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required('First name is required'),
     lastName: Yup.string().required('Last name is required'),
@@ -61,6 +63,13 @@ const PcsResourcesVaLoanGuide = () => {
     try {
       const server_response = await vaLoanGuideForm(data);
       if (server_response?.success) {
+        setValue('firstName', '');  
+        setValue('lastName', '');
+        setValue('email', '');
+        setValue('captchaToken', '');
+        setValue('captcha_settings', '');
+        recaptchaRef?.reset();
+
         const link = document.createElement('a');
         link.href = '/downloads/VA-Loan-Guide.pdf';  // Note: case-sensitive path
         link.download = 'VA-Loan-Guide.pdf';
@@ -132,6 +141,7 @@ const PcsResourcesVaLoanGuide = () => {
               <div className="flex items-center">
                 <div>
                   <ReCAPTCHA
+                    ref={(r) => setRecaptchaRef(r)}
                     sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
                     onChange={onCaptchaChange} // Handle reCAPTCHA value change
                   />
