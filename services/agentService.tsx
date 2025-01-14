@@ -13,17 +13,14 @@ interface MainImage {
 }
 
 interface AgentDocument extends SanityDocument {
-    mainImage: MainImage;
-    publishedAt: string;
-    title: string;
-    _createdAt: string;
+    image: MainImage;
+    mainImage?: MainImage;
     _id: string;
     _rev: string;
-    _type: 'agents';
-    _updatedAt: string;
+    _type: 'agent';
 }
 
-const AgentServices = {
+const agentService = {
     fetchAgentsList: async (): Promise<AgentDocument[]> => {
         try {
             const agents = await client.fetch<AgentDocument[]>(`*[_type == "real_state_agents"]`);
@@ -44,6 +41,25 @@ const AgentServices = {
             throw error; // You can handle the error more gracefully based on your needs
         }
     },
+    getAgentImage: async (salesforceID: string): Promise<string> => {
+        try {
+            const agent = await client.fetch<AgentDocument>(`*[_type == "agent" && salesforceID == $salesforceID][0]`, { salesforceID });
+
+            if (agent.image?.asset?._ref) {
+                agent.image.asset.image_url = urlForImage(agent.image.asset);
+            }
+            if (agent) {
+                return agent.image.asset.image_url;
+            } else {
+                throw new Error('Failed to Fetch About Page Details');
+            }
+        } catch (error: any) {
+            console.error('Error fetching About Page Details:', error);
+            throw error; // You can handle the error more gracefully based on your needs
+        }
+
+    },
+
 };
 
-export default AgentServices;
+export default agentService;

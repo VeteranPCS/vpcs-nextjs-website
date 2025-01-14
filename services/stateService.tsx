@@ -3,6 +3,7 @@ import { RequestType, salesForceAPI, salesForceImageAPI } from '@/services/api';
 import { getSalesforceToken } from '@/services/salesForceTokenService';
 import { client } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
+import agentService from './agentService';
 
 interface StateMap {
   _type: 'image';
@@ -118,7 +119,7 @@ const stateService = {
   fetchAgentsListByState: async (state: string): Promise<AgentsData> => {
     try {
       const query = `
-        SELECT Name, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc,
+        SELECT Name, PhotoUrl, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc,
               Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState,
               (SELECT Id, Name, Area__r.Name FROM Area_Assignments__r)
         FROM Account
@@ -134,18 +135,13 @@ const stateService = {
       });
 
       if (response?.status === 200) {
+
         const recordsWithUpdatedPhotoUrl = await Promise.all(
           response.data.records.map(async (agent: Agent) => {
             if (agent.PhotoUrl) {
               try {
-                const photoResponse = await salesForceImageAPI({
-                  endpoint: SALESFORCE_BASE_URL + agent.PhotoUrl,
-                  type: RequestType.GET,
-                });
-
-                const base64Image = Buffer.from(photoResponse?.data).toString('base64');
-                agent.PhotoUrl = `data:image/jpeg;base64,${base64Image}`;
-                // agent.PhotoUrl = photoResponse?.data; // Ensure fallback to original URL
+                const photoResponse = await agentService.getAgentImage(agent.AccountId_15__c);
+                agent.PhotoUrl = photoResponse;
               } catch (error) {
                 console.error(`Error fetching photo URL for agent ${agent.AccountId_15__c}:`, error);
               }
@@ -175,7 +171,7 @@ const stateService = {
   fetchLendersListByState: async (state: string): Promise<LendersData> => {
     try {
       const query = `
-      SELECT Name, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, Individual_NMLS_ID__pc, Company_NMLS_ID__pc
+      SELECT Name, PhotoUrl, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, Individual_NMLS_ID__pc, Company_NMLS_ID__pc
       FROM Account
       WHERE isLender__pc = true
         AND Active_on_Website__pc = true
@@ -192,13 +188,8 @@ const stateService = {
           response.data.records.map(async (agent: Agent) => {
             if (agent.PhotoUrl) {
               try {
-                const photoResponse = await salesForceImageAPI({
-                  endpoint: SALESFORCE_BASE_URL + agent.PhotoUrl,
-                  type: RequestType.GET,
-                });
-
-                const base64Image = Buffer.from(photoResponse?.data).toString('base64');
-                agent.PhotoUrl = `data:image/jpeg;base64,${base64Image}`;
+                const photoResponse = await agentService.getAgentImage(agent.AccountId_15__c);
+                agent.PhotoUrl = photoResponse;
                 // agent.PhotoUrl = photoResponse?.data; // Ensure fallback to original URL
               } catch (error) {
                 console.error(`Error fetching photo URL for agent ${agent.AccountId_15__c}:`, error);
