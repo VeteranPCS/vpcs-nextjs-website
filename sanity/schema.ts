@@ -29,21 +29,22 @@ import howVeterencePCSWorks from '@/sanity/schemas/howVeterencePCSWorks'
 import moveInBonus from '@/sanity/schemas/moveInBonus'
 import cityList from '@/sanity/schemas/cityList'
 import videoSuccessStories from '@/sanity/schemas/videoSuccessStories'
-import veterenceImage from './schemas/veterenceImage' 
+import veterenceImage from './schemas/veterenceImage'
+import agent from './schemas/agent'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
     author,
     category,
     blockContent,
-    userImage, 
-    realStateAgents, 
-    blog, 
-    mediaAccounts, 
-    memberInfo, 
-    frequentlyAskedQuestions, 
-    aboutUsPage, 
-    aboutSupport, 
+    userImage,
+    realStateAgents,
+    blog,
+    mediaAccounts,
+    memberInfo,
+    frequentlyAskedQuestions,
+    aboutUsPage,
+    aboutSupport,
     supportVeterence,
     storiesPoster,
     videoReview,
@@ -62,6 +63,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     moveInBonus,
     cityList,
     videoSuccessStories,
-    veterenceImage
+    veterenceImage,
+    agent
   ],
 }
