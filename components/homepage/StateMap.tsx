@@ -65,7 +65,7 @@ const StateMap = () => {
             >
               <Link href="/washington">
                 <g
-                  id="WA"
+                  id="Washington"
                   className="state"
                   data-name="Washington"
                   data-link="https://veteranpcs.com/washington"
@@ -94,7 +94,7 @@ const StateMap = () => {
               </Link>
               <Link href="/oregon">
                 <g
-                  id="OR"
+                  id="Oregon"
                   className="state"
                   data-name="Oregon"
                   data-link="https://veteranpcs.com/oregon"
@@ -123,7 +123,7 @@ const StateMap = () => {
               </Link>
               <Link href="/california">
                 <g
-                  id="CA"
+                  id="California"
                   className="state"
                   data-name="California"
                   data-link="https://veteranpcs.com/california"
@@ -152,7 +152,7 @@ const StateMap = () => {
               </Link>
               <Link href="/nevada">
                 <g
-                  id="NV"
+                  id="Nevada"
                   className="state"
                   data-name="Nevada"
                   data-link="https://veteranpcs.com/nevada"
@@ -180,7 +180,7 @@ const StateMap = () => {
               </Link>
               <Link href="/idaho">
                 <g
-                  id="ID"
+                  id="Idaho"
                   className="state"
                   data-name="Idaho"
                   data-link="https://veteranpcs.com/idaho"
@@ -208,7 +208,7 @@ const StateMap = () => {
               </Link>
               <Link href="/utah">
                 <g
-                  id="UT"
+                  id="Utah"
                   className="state"
                   data-name="Utah"
                   data-link="https://veteranpcs.com/utah"
@@ -238,7 +238,7 @@ const StateMap = () => {
               </Link>
               <Link href="/arizona">
                 <g
-                  id="AZ"
+                  id="Arizona"
                   className="state"
                   data-name="Arizona"
                   data-link="https://veteranpcs.com/arizona"
@@ -266,7 +266,7 @@ const StateMap = () => {
               </Link>
               <Link href="/new-mexico">
                 <g
-                  id="NM"
+                  id="New Mexico"
                   className="state"
                   data-name="New Mexico"
                   data-link="https://veteranpcs.com/new-mexico"
@@ -294,7 +294,7 @@ const StateMap = () => {
               </Link>
               <Link href="/colorado">
                 <g
-                  id="CO"
+                  id="Colorado"
                   className="state"
                   data-name="Colorado"
                   data-link="https://veteranpcs.com/colorado"
@@ -322,7 +322,7 @@ const StateMap = () => {
               </Link>
               <Link href="/wyoming">
                 <g
-                  id="WY"
+                  id="Wyoming"
                   className="state"
                   data-name="Wyoming"
                   data-link="https://veteranpcs.com/wyoming"
@@ -350,7 +350,7 @@ const StateMap = () => {
               </Link>
               <Link href="/montana">
                 <g
-                  id="MT"
+                  id="Montana"
                   className="state"
                   data-name="Montana"
                   data-link="https://veteranpcs.com/montana"
@@ -378,7 +378,7 @@ const StateMap = () => {
               </Link>
               <Link href="/north-dakota">
                 <g
-                  id="ND"
+                  id="North Dakota"
                   className="state"
                   data-name="North Dakota"
                   data-link="https://veteranpcs.com/north-dakota"
@@ -406,7 +406,7 @@ const StateMap = () => {
               </Link>
               <Link href="/south-dakota">
                 <g
-                  id="SD"
+                  id="South Dakota"
                   className="state"
                   data-name="South Dakota"
                   data-link="https://veteranpcs.com/south-dakota"
@@ -434,7 +434,7 @@ const StateMap = () => {
               </Link>
               <Link href="/nebraska">
                 <g
-                  id="NE"
+                  id="Nebraska"
                   className="state"
                   data-name="Nebraska"
                   data-link="https://veteranpcs.com/nebraska"
@@ -462,7 +462,7 @@ const StateMap = () => {
               </Link>
               <Link href="/kansas">
                 <g
-                  id="KS"
+                  id="Kansas"
                   className="state"
                   data-name="Kansas"
                   data-link="https://veteranpcs.com/kansas"
@@ -490,7 +490,7 @@ const StateMap = () => {
               </Link>
               <Link href="/oklahoma">
                 <g
-                  id="OK"
+                  id="Oklahoma"
                   className="state"
                   data-name="Oklahoma"
                   data-link="https://veteranpcs.com/oklahoma"
@@ -518,7 +518,7 @@ const StateMap = () => {
               </Link>
               <Link href="/wisconsin">
                 <g
-                  id="WI"
+                  id="Wisconsin"
                   className="state"
                   data-name="Wisconsin"
                   data-link="https://veteranpcs.com/wisconsin"
@@ -547,7 +547,7 @@ const StateMap = () => {
               </Link>
               <Link href="/minnesota">
                 <g
-                  id="MN"
+                  id="Minnesota"
                   className="state"
                   data-name="Minnesota"
                   data-link="https://veteranpcs.com/minnesota"
@@ -575,7 +575,7 @@ const StateMap = () => {
               </Link>
               <Link href="/michigan">
                 <g
-                  id="MI"
+                  id="Michigan"
                   className="state"
                   data-name="Michigan"
                   data-link="https://veteranpcs.com/michigan"
@@ -604,7 +604,7 @@ const StateMap = () => {
               </Link>
               <Link href="/iowa">
                 <g
-                  id="IA"
+                  id="Iowa"
                   className="state"
                   data-name="Iowa"
                   data-link="https://veteranpcs.com/iowa"
@@ -632,7 +632,7 @@ const StateMap = () => {
               </Link>
               <Link href="/missouri">
                 <g
-                  id="MO"
+                  id="Missouri"
                   className="state"
                   data-name="Missouri"
                   data-link="https://veteranpcs.com/missouri"
@@ -660,7 +660,7 @@ const StateMap = () => {
               </Link>
               <Link href="/illinois">
                 <g
-                  id="IL"
+                  id="Illinois"
                   className="state"
                   data-name="Illinois"
                   data-link="https://veteranpcs.com/illinois"
@@ -688,7 +688,7 @@ const StateMap = () => {
               </Link>
               <Link href="/indiana">
                 <g
-                  id="IN"
+                  id="Indiana"
                   className="state"
                   data-name="Indiana"
                   data-link="https://veteranpcs.com/indiana"
@@ -716,7 +716,7 @@ const StateMap = () => {
               </Link>
               <Link href="/ohio">
                 <g
-                  id="OH"
+                  id="Ohio"
                   className="state"
                   data-name="Ohio"
                   data-link="https://veteranpcs.com/ohio"
@@ -744,7 +744,7 @@ const StateMap = () => {
               </Link>
               <Link href="/maine">
                 <g
-                  id="ME"
+                  id="Maine"
                   className="state"
                   data-name="Maine"
                   data-link="https://veteranpcs.com/maine"
@@ -773,7 +773,7 @@ const StateMap = () => {
               </Link>
               <Link href="/new-york">
                 <g
-                  id="NY"
+                  id="New York"
                   className="state"
                   data-name="New York"
                   data-link="https://veteranpcs.com/new-york"
@@ -802,7 +802,7 @@ const StateMap = () => {
               </Link>
               <Link href="/pennsylvania">
                 <g
-                  id="PA"
+                  id="Pennsylvania"
                   className="state"
                   data-name="Pennsylvania"
                   data-link="https://veteranpcs.com/pennsylvania"
@@ -830,7 +830,7 @@ const StateMap = () => {
               </Link>
               <Link href="/kentucky">
                 <g
-                  id="KY"
+                  id="Kentucky"
                   className="state"
                   data-name="Kentucky"
                   data-link="https://veteranpcs.com/kentucky"
@@ -859,7 +859,7 @@ const StateMap = () => {
               </Link>
               <Link href="/tennessee">
                 <g
-                  id="TN"
+                  id="Tennessee"
                   className="state"
                   data-name="Tennessee"
                   data-link="https://veteranpcs.com/tennessee"
@@ -887,7 +887,7 @@ const StateMap = () => {
               </Link>
               <Link href="/arkansas">
                 <g
-                  id="AR"
+                  id="Arkansas"
                   className="state"
                   data-name="Arkansas"
                   data-link="https://veteranpcs.com/arkansas"
@@ -915,7 +915,7 @@ const StateMap = () => {
               </Link>
               <Link href="/louisiana">
                 <g
-                  id="LA"
+                  id="Louisiana"
                   className="state"
                   data-name="Louisiana"
                   data-link="https://veteranpcs.com/louisiana"
@@ -944,7 +944,7 @@ const StateMap = () => {
               </Link>
               <Link href="/mississippi">
                 <g
-                  id="MS"
+                  id="Mississippi"
                   className="state"
                   data-name="Mississippi"
                   data-link="https://veteranpcs.com/mississippi"
@@ -973,7 +973,7 @@ const StateMap = () => {
               </Link>
               <Link href="/alabama">
                 <g
-                  id="AL"
+                  id="Alabama"
                   className="state"
                   data-name="Alabama"
                   data-link="https://veteranpcs.com/alabama"
@@ -1002,7 +1002,7 @@ const StateMap = () => {
               </Link>
               <Link href="/georgia">
                 <g
-                  id="GA"
+                  id="Georgia"
                   className="state"
                   data-name="Georgia"
                   data-link="https://veteranpcs.com/georgia"
@@ -1031,7 +1031,7 @@ const StateMap = () => {
               </Link>
               <Link href="/west-virginia">
                 <g
-                  id="WV"
+                  id="West Virginia"
                   className="state"
                   data-name="West Virginia"
                   data-link="https://veteranpcs.com/west-virginia"
@@ -1059,7 +1059,7 @@ const StateMap = () => {
               </Link>
               <Link href="/virginia">
                 <g
-                  id="VA"
+                  id="Virginia"
                   className="state"
                   data-name="Virginia"
                   data-link="https://veteranpcs.com/virginia"
@@ -1088,7 +1088,7 @@ const StateMap = () => {
               </Link>
               <Link href="/north-carolina">
                 <g
-                  id="NC"
+                  id="North Carolina"
                   className="state"
                   data-name="North Carolina"
                   data-link="https://veteranpcs.com/north-carolina"
@@ -1117,7 +1117,7 @@ const StateMap = () => {
               </Link>
               <Link href="/south-carolina">
                 <g
-                  id="SC"
+                  id="South Carolina"
                   className="state"
                   data-name="South Carolina"
                   data-link="https://veteranpcs.com/south-carolina"
@@ -1146,7 +1146,7 @@ const StateMap = () => {
               </Link>
               <Link href="/florida">
                 <g
-                  id="FL"
+                  id="Florida"
                   className="state"
                   data-name="Florida"
                   data-link="https://veteranpcs.com/flordia"
@@ -1175,7 +1175,7 @@ const StateMap = () => {
               </Link>
               <Link href="/maryland">
                 <g
-                  id="MD"
+                  id="Maryland"
                   className="state small-state-group"
                   data-name="Maryland"
                   data-link="https://veteranpcs.com/maryland"
@@ -1208,7 +1208,7 @@ const StateMap = () => {
               </Link>
               <Link href="/washington-dc">
                 <g
-                  id="DC"
+                  id="Washington DC"
                   className="state small-state-group"
                   data-name="DC"
                   data-link="https://veteranpcs.com/washington-dc"
@@ -1236,7 +1236,7 @@ const StateMap = () => {
               </Link>
               <Link href="/delaware">
                 <g
-                  id="DE"
+                  id="Delaware"
                   className="state small-state-group"
                   data-name="Delaware"
                   data-link="https://veteranpcs.com/delaware"
@@ -1269,7 +1269,7 @@ const StateMap = () => {
               </Link>
               <Link href="/new-jersey">
                 <g
-                  id="NJ"
+                  id="New Jersey"
                   className="state small-state-group"
                   data-name="New Jersey"
                   data-link="https://veteranpcs.com/new-jersey"
@@ -1302,7 +1302,7 @@ const StateMap = () => {
               </Link>
               <Link href="/connecticut">
                 <g
-                  id="CT"
+                  id="Connecticut"
                   className="state small-state-group"
                   data-name="Connecticut"
                   data-link="https://veteranpcs.com/connecticut"
@@ -1334,7 +1334,7 @@ const StateMap = () => {
               </Link>
               <Link href="/rhode-island">
                 <g
-                  id="RI"
+                  id="Rhode Island"
                   className="state small-state-group"
                   data-name="Rhode Island"
                   data-link="https://veteranpcs.com/rhode-island"
@@ -1366,7 +1366,7 @@ const StateMap = () => {
               </Link>
               <Link href="/massachussets">
                 <g
-                  id="MA"
+                  id="Massachussets"
                   className="state small-state-group"
                   data-name="Massachusetts"
                   data-link="https://veteranpcs.com/massachussets"
@@ -1399,7 +1399,7 @@ const StateMap = () => {
               </Link>
               <Link href="/new-hampshire">
                 <g
-                  id="NH"
+                  id="New Hampshire"
                   className="state small-state-group"
                   data-name="New Hampshire"
                   data-link="https://veteranpcs.com/new-hampshire"
@@ -1431,7 +1431,7 @@ const StateMap = () => {
               </Link>
               <Link href="/vermont">
                 <g
-                  id="VT"
+                  id="Vermont"
                   className="state small-state-group"
                   data-name="Vermont"
                   data-link="https://veteranpcs.com/vermont"
@@ -1463,7 +1463,7 @@ const StateMap = () => {
               </Link>
               <Link href="/texas">
                 <g
-                  id="TX"
+                  id="Texas"
                   className="state"
                   data-name="Texas"
                   data-link="https://veteranpcs.com/texas"
@@ -1492,7 +1492,7 @@ const StateMap = () => {
               </Link>
               <Link href="/alaska">
                 <g
-                  id="AK"
+                  id="Alaska"
                   className="state"
                   data-name="Alaska"
                   data-link="https://veteranpcs.com/alaska"
@@ -1521,7 +1521,7 @@ const StateMap = () => {
               </Link>
               <Link href="/hawaii">
                 <g
-                  id="HI"
+                  id="Hawaii"
                   className="state small-state-group"
                   data-name="Hawaii"
                   data-link="https://veteranpcs.com/hawaii"
