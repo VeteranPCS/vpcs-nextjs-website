@@ -14,6 +14,7 @@ interface MainImage {
 
 interface AgentDocument extends SanityDocument {
     image: MainImage;
+    mainImage?: MainImage;
     _id: string;
     _rev: string;
     _type: 'agent';
@@ -22,11 +23,11 @@ interface AgentDocument extends SanityDocument {
 const agentService = {
     fetchAgentsList: async (): Promise<AgentDocument[]> => {
         try {
-            const agents = await client.fetch<AgentDocument[]>(`*[_type == "agent"]`);
+            const agents = await client.fetch<AgentDocument[]>(`*[_type == "real_state_agents"]`);
 
             agents.forEach((agent) => {
-                if (agent.image?.asset?._ref) {
-                    agent.image.asset.image_url = urlForImage(agent.image.asset);
+                if (agent.mainImage?.asset?._ref) {
+                    agent.mainImage.asset.image_url = urlForImage(agent.mainImage.asset);
                 }
             });
 
