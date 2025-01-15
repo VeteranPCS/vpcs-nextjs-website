@@ -3,19 +3,23 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import "@/styles/globals.css";
 import ClientLayoutWrapper from "@/components/ClientLayoutWrapper"; // Import wrapper
+import { RealEstateAgent, WithContext } from "schema-dts";
+import Script from "next/script";
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const inter = Inter({ subsets: ["latin"] });
+
+const META_TITLE = "Military Members & Veterans: Get a Top Agent, VA Loan Support & Up to $4,000, for Free";
+const META_DESCRIPTION = "Tired of navigating the home buying process alone during every PCS? With VeteranPCS, get a trusted veteran or military spouse agent, expert VA loan guidance, and a Move In Bonus up to $4,000—so you save money, avoid costly mistakes, and buy or sell with confidence. No cost, no hassle, just results.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL || ""),
   title: {
     template: "%s | VeteranPCS",
-    default:
-      "Connecting Veterans & Military Spouses with Trusted Real Estate Agents Nationwide",
+    default: META_TITLE,
   },
-  description:
-    "VeteranPCS offers a nationwide network of veteran and military spouse real estate agents who understand the unique challenges of military relocations. Buy or sell your home with confidence and receive a Move-In Bonus up to $4,000. Supporting military families every step of the way.",
+  description: META_DESCRIPTION,
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -23,7 +27,7 @@ export const metadata: Metadata = {
     siteName: "VeteranPCS",
     images: [
       {
-        url: `${BASE_URL}/opengraph/vpcs-logo-no-background.png`,
+        url: `${BASE_URL}/opengraph/og-logo.png`,
         width: 1200,
         height: 630,
         alt: "VeteranPCS",
@@ -32,11 +36,53 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    description: "Connecting Veterans & Military Spouses with Trusted Real Estate Agents Nationwide",
-    title: "VeteranPCS",
-    images: ['/opengraph/vpcs-logo-no-background.png'],
+    description: META_DESCRIPTION,
+    title: META_TITLE,
+    images: ['/opengraph/og-logo.png'],
   },
 };
+
+const jsonLd: WithContext<RealEstateAgent> =
+{
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  url: BASE_URL,
+  name: "VeteranPCS",
+  description: "VeteranPCS was created by veterans for veterans to help make your next PCS move your best PCS move using our agents, lenders, and resources.",
+  logo: `${BASE_URL}/opengraph/og-logo.png`,
+  image: [
+    {
+      "@type": "ImageObject",
+      url: `${BASE_URL}/opengraph/og-logo.png`,
+    }
+  ],
+  telephone: "+1 719-445-7845",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "415 N. Tejon St.",
+    addressLocality: "Colorado Spring",
+    postalCode: "CO 809003",
+    addressCountry: "USA"
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: "38.859055",
+    longitude: "-104.813499"
+  },
+  openingHours: [
+    "Mon - Fri 9:00 am - 17:00 pm",
+    "Sat - 9:00 am - 17:00 pm"
+  ],
+  priceRange: "$",
+  brand: {
+    "@type": "Brand",
+    name: "VeteranPCS",
+    logo: `${BASE_URL}/opengraph/og-logo.png`
+  },
+  email: 'info@veteranpcs.com',
+  knowsAbout: ["military relocation", "veteran real estate agents", "military spouse real estate agents", "VA loan", "PCS move"],
+  slogan: "Together we'll make it home.",
+}
 
 export default function RootLayout({
   children,
@@ -46,7 +92,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script defer src="https://www.google.com/recaptcha/api.js"></script>
+        <Script defer src="https://www.google.com/recaptcha/api.js"></Script>
+        <Script id={`json-ld-real-estate-agent`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body className={inter.className}>
         <ClientLayoutWrapper>{children}</ClientLayoutWrapper>

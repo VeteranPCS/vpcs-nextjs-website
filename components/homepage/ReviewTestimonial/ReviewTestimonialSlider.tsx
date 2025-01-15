@@ -136,7 +136,7 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
               <div
                 key={"settingsOne" + index}
                 className="bg-white rounded-2xl p-2 slider-box"
-            >
+              >
                 {isMiddle ? (
                   <div className="flex items-center">
                     <div className="bg-[#f2f2f2] w-[60px] h-[60px] rounded-full">
@@ -156,9 +156,6 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
                       <h6 className="text-[#181818] text-[18px] font-normal tahoma text-nowrap">
                         {item?.reviewer?.displayName}
                       </h6>
-                      {/* <p className="text-[#5A5A5A] text-[16px] font-normal tahoma text-nowrap">
-                        {item.designation}
-                      </p> */}
                     </div>
                   </div>
                 ) : (
@@ -179,7 +176,7 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
         >
           <div className="text-center flex flex-col justify-center gap-10 tw-overflow-y-scroll">
             <div className="flex mx-auto">
-            {Array.from({ length: 5 }).map((_, index) => {
+              {Array.from({ length: 5 }).map((_, index) => {
                 const ratingMap = {
                   'ONE': 1,
                   'TWO': 2,
@@ -188,7 +185,7 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
                   'FIVE': 5
                 };
                 const numericRating = reviewDetails?.starRating ? ratingMap[reviewDetails.starRating] : 0;
-                
+
                 return index < numericRating ? (
                   <Image
                     width={24}

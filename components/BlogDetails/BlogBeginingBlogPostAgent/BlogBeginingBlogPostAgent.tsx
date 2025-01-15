@@ -51,9 +51,9 @@ const BlogBeginningBlogPostAgent = ({ blog }: { blog: Record<string, any> }) => 
               </div>
             </div>
           </div>
-          <div className="lg:w-4/5 md:w-4/5 sm:w-full w-full lg:pl-10">
+          <article className="lg:w-4/5 md:w-4/5 sm:w-full w-full lg:pl-10">
             <BlogContent blocks={firstHalfContent} />
-          </div>
+          </article>
         </div>
       </div>
     </div>

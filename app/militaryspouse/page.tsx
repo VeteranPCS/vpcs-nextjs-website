@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import MilitarySpouseHeroSection from "@/components/MilitarySpouse/MilitarySpouseHerosection/MilitarySpouseHeroSection";
 import Covered from "@/components/homepage/Covered/Covered";
 import SquaredAway from "@/components/MilitarySpouse/SquaredAway/SquaredAway";
@@ -17,9 +18,38 @@ import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuesti
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import Footer from "@/components/Footer/Footer";
 
-// const MemoizedVideoFamily = memo(VideoFamily)
-// const MemoizedTestimonials = memo(Testimonials)
-// const MemoizedReviewsList = memo(ReviewsList)
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const META_TITLE = "Support for Military Spouses - Employment & Moving Resources";
+const META_DESCRIPTION = "Explore VeteranPCS's dedicated resources for military spouses, including remote employment opportunities with Squared Away, moving assistance from Porch and BoxOps, and access to veteran-owned businesses. Empower your journey with our community-driven support.";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL || ""),
+  title: {
+    template: "%s | VeteranPCS",
+    default: META_TITLE,
+  },
+  description: META_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: BASE_URL,
+    siteName: "VeteranPCS",
+    images: [
+      {
+        url: `${BASE_URL}/opengraph/og-logo.png`,
+        width: 1200,
+        height: 630,
+        alt: "VeteranPCS",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    description: META_DESCRIPTION,
+    title: META_TITLE,
+    images: ['/opengraph/og-logo.png'],
+  },
+};
 
 export default function Home() {
   return (
