@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import HeroSection from "@/components/homepage/HeroSection/HeroSection";
 import StateMap from "@/components/homepage/StateMap";
 import Mission from "@/components/spanishpage/Mission/Mission";
@@ -20,6 +21,39 @@ const MemoizedTestimonials = memo(Testimonials)
 const MemoizedVeteranComunity = memo(VeteranComunity)
 const MemoizedFamilySupport = memo(FamilySupport)
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const META_TITLE = "Military Members & Veterans: Get a Top Agent, VA Loan Support & Up to $4,000, for Free";
+const META_DESCRIPTION = "Tired of navigating the home buying process alone during every PCS? With VeteranPCS, get a trusted veteran or military spouse agent, expert VA loan guidance, and a Move In Bonus up to $4,000—so you save money, avoid costly mistakes, and buy or sell with confidence. No cost, no hassle, just results.";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL || ""),
+  title: {
+    template: "%s | VeteranPCS",
+    default: META_TITLE,
+  },
+  description: META_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: BASE_URL,
+    siteName: "VeteranPCS",
+    images: [
+      {
+        url: `${BASE_URL}/opengraph/og-logo.png`,
+        width: 1200,
+        height: 630,
+        alt: "VeteranPCS",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    description: META_DESCRIPTION,
+    title: META_TITLE,
+    images: ['/opengraph/og-logo.png'],
+  },
+};
+
 export default function Home() {
   return (
     <main>
@@ -33,10 +67,8 @@ export default function Home() {
       <SupportSpanish />
       <MemoizedTestimonials />
       <MemoizedCovered />
-      {/* <FamilySupport /> */}
       <MemoizedFamilySupport />
       <VeteranPCS />
-      {/* <VeteranComunity /> */}
       <MemoizedVeteranComunity />
       <MakeItHome />
       <AgentLoanExpert />
