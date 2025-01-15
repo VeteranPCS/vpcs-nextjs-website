@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
+import agentService from "@/services/agentService";
 
 type RevalidatePathMap = {
   [key: string]: string[];
@@ -20,6 +21,7 @@ export async function POST(req: NextRequest) {
         _type: "slug";
         current: string;
       };
+      salesforceID?: string;
     }>(req, process.env.SANITY_REVALIDATE_KEY);
 
     if (!isValidSignature) {
@@ -67,9 +69,11 @@ export async function POST(req: NextRequest) {
       users: ["/", `/blog/${slug}`, "/impact", "/militaryspouse", "/pcs-resources", "/stories", "/spanish", "/thank-you"],
       video_review: ["/impact", "/militaryspouse", "/pcs-resources", "/thank-you"],
       video_success_stories: ["/stories"],
-      veterence_logo: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"]
+      veterence_logo: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"],
     };
-    const paths = revalidatePathMap[body._type];
+    console.log(body._type);
+    console.log(body.salesforceID);
+    const paths = body._type !== 'agent' ? revalidatePathMap[body._type] : await agentService.getAgentState(body.salesforceID!);
 
     if (!paths) {
       return new Response(JSON.stringify({ message: "Invalid Type" }), {
