@@ -88,7 +88,7 @@ const BlockContent: React.FC<BlockContentProps> = ({ blocks }) => {
       } else {
         if (isInsideList) {
           result.push(
-            <ul key={`list-${block._key}`} className="list-disc list-none pl-8">
+            <ul key={`list-${block._key}`} className="list-disc pl-8">
               {currentList}
             </ul>
           );
@@ -101,7 +101,7 @@ const BlockContent: React.FC<BlockContentProps> = ({ blocks }) => {
 
     if (isInsideList) {
       result.push(
-        <ul key="list-end" className="list-disc list-none pl-8">
+        <ul key="list-end" className="list-disc pl-8">
           {currentList}
         </ul>
       );

@@ -3,7 +3,7 @@ import "@/styles/globals.css";
 import classes from "./StoriesHeroSection.module.css";
 import Image from "next/image";
 
-const HeroSec = () => {
+const StoriesHeroSection = () => {
   return (
     <div className="relative">
       <div className={classes.StoriesHeroSectionContainer}>
@@ -62,4 +62,4 @@ const HeroSec = () => {
   );
 };
 
-export default HeroSec;
+export default StoriesHeroSection;
