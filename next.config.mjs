@@ -35,6 +35,35 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
+  async redirects() {
+    return [
+      {
+        source: "/blog/us-military-bases/:path*/:slug",
+        destination: "/blog/:slug",
+        permanent: true,
+      },
+      {
+        source: "/blog/va-loan-help/:path*/:slug",
+        destination: "/blog/:slug",
+        permanent: true,
+      },
+      {
+        source: "/blog/pcs-help/:path*/:slug",
+        destination: "/blog/:slug",
+        permanent: true,
+      },
+      {
+        source: "/blog/military-transition-help/:path*/:slug",
+        destination: "/blog/:slug",
+        permanent: true,
+      },
+      {
+        source: "/blog/things-to-do/:path*/:slug",
+        destination: "/blog/:slug",
+        permanent: true,
+      },
+    ]
   }
 };
 
