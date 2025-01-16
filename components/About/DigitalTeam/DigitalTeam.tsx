@@ -17,7 +17,7 @@ const DigitalTeam = async () => {
 
   return (
     <div className="bg-white py-3">
-      <div className="mt-10">
+      <div className="mt-10 pb-10">
         <h1 className="text-[#292F6C] text-center font-tahoma lg:text-[55px] md:text-[60px] sm:text-[40px] text-[40px] font-bold px-24 sm:px-0 pb-10 sm:pb-0">
           Meet the <span className="font-normal">Veteran</span>PCS team
         </h1>
@@ -25,14 +25,9 @@ const DigitalTeam = async () => {
       <div className="bg-[#EEEEEE] pt-7 pb-14 px-9 sm:px-0">
         <div className="container mx-auto">
           <div className="text-center">
-            <h6 className="text-gray-800 text-center font-bold text-[21px] tahoma">
-              DIGITAL INNOVATION AND TECH
+            <h6 className="text-gray-800 text-center text-[21px] tahoma">
+              Veterans and Military Spouses, Just Like You
             </h6>
-            <p className="text-[#000000] text-center tahoma font-normal text-[24px] lg:w-[1000px] mx-auto my-3">
-              Immersive creative experiences, sophisticated marketing and
-              innovative technology for our customers safety and substantial
-              user experience.
-            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-9 mt-10">
             {DigitalTeamDetails.map((details) => (
