@@ -1,8 +1,6 @@
 import React from "react";
 import "@/styles/globals.css";
 import BlogMovingPcsingPost from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPostSection/BlogMovingPcsingPost";
-import { Metadata } from "next";
-import blogService from "@/services/blogService";
 import BlogCategory from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPostSection/BlogCategory";
 
 export interface Author {

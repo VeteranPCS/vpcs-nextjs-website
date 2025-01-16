@@ -1,5 +1,4 @@
 .blogimageone {
-  /* background-image: url("/assets/BlogImage1.png"); */
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -10,7 +9,6 @@
 }
 
 .blogimagetwo {
-  background-image: url("/assets/BlogImage2.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -21,7 +19,6 @@
 }
 
 .blogimageThree {
-  background-image: url("/assets/BlogImage3.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;

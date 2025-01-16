@@ -26,7 +26,7 @@ const cardsData = [
     imgred: "/icon/Loanred.svg",
     title: "VA Loan",
     subTitle: "Learn more about how the VA Loan can work for you.",
-    link: "blog-list/va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-a-va-loan-or-veteranpcs",
+    link: "blog/va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-a-va-loan-or-veteranpcs",
   },
   {
     img: "/icon/Works.svg",

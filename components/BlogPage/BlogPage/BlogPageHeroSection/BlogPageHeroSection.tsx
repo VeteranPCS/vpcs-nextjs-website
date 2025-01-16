@@ -55,15 +55,11 @@ const BlogPageHeroSection = ({ blog }: { blog: BlogDetails }) => {
                     {/* 04.23.2024 */}
                     {formatDate(blog?.publishedAt)}
                   </p>
-                  <p className="bg-white w-[50px] p-[1px] mx-5"></p>
-                  <p className="text-white tahoma text-sm font-normal">
-                    {blog?.title}
-                  </p>
                 </div>
                 <div>
                   <p className="text-white text-center lora text-sm font-normal lg:w-[510px] w-full mx-auto mt-10 leading-6 line-clamp-2">
                     {/* Temporary placeholder. Will need to add description field to blog schema. */}
-                    {blog?.content[0]?.children[0]?.text.slice(0, 200)}
+                    {blog?.content[0]?.children[0]?.text.slice(0, 250)}
                   </p>
                 </div>
                 <div>

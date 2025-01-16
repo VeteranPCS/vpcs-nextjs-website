@@ -19,7 +19,7 @@ const PcsResourcesCalculators = () => {
                 height={237}
                 src="/assets/successful-team1.png"
                 alt="check"
-                className="w-full h-[356px]"
+                className="w-full h-[356px] object-cover"
               />
               <div className="mt-5">
                 <h3 className="text-[#003486] poppins lg:text-[23px] md:text-[23px] sm:text-[17px] text-[17px] font-medium">

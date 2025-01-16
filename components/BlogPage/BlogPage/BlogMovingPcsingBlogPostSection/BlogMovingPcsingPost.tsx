@@ -57,16 +57,24 @@ const BlogMovingPcsingPost: React.FC<StatePageHeroSecondSectionProps> = ({ blogD
 
   const plainTextContent = getPlainText(blogDetails?.content);
   return (
-    <Link href="/blog/[slug]" as={`/blog/${blogDetails?.slug?.current || "default-slug"}`} className="pt-12 md:px-0 px-5">
+    <Link href={`/blog/${blogDetails?.slug?.current}`} className="pt-12 md:px-0 px-5">
       <div className="container mx-auto">
         <div className="w-full relative">
-          <Image
-            src={blogDetails?.mainImage?.image_url || "/assets/BlogpostImage.png"}
-            alt={blogDetails?.mainImage?.alt || "Blog post image"}
-            width={310}
-            height={280}
-            className="w-full h-[280px] object-cover"
-          />
+          <div className="relative">
+            <Image
+              src={blogDetails?.mainImage?.image_url || "/assets/BlogpostImage.png"}
+              alt={blogDetails?.mainImage?.alt || "Blog post image"}
+              width={310}
+              height={280}
+              className="w-full h-[280px] object-cover"
+            />
+            {/* Overlay for the short title */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <h2 className="text-white text-base font-bold text-center px-4">
+                {blogDetails?.short_title || "Untitled"}
+              </h2>
+            </div>
+          </div>
           {blogDetails?.categories?.length ? (
             <div className="flex items-center absolute top-4 right-4 gap-4">
               {blogDetails.categories.map((category) => (

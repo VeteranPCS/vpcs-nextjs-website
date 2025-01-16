@@ -2,7 +2,7 @@ import Image from 'next/image';
 import BlockContent from './BlockContent';
 
 // Define the Block type that matches BlockContent's expectations
-type BlockStyle = "h1" | "h2" | "h3" | "normal";
+export type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
 // Update BlogData to use a more flexible content type
 interface BlogData {
@@ -24,7 +24,7 @@ interface BlogData {
   }[];
 }
 
-interface Block {
+export interface Block {
   _key: string;
   children: Child[];
   style: 'h1' | 'h2' | 'h3' | 'normal'; // Explicitly define the style types
@@ -46,13 +46,14 @@ interface BlockContentProps {
   block: Block; // Single block instead of an array
 }
 
+export const validateBlockStyle = (style: string): BlockStyle => {
+  const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];
+  return validStyles.includes(style as BlockStyle)
+    ? (style as BlockStyle)
+    : "normal";
+};
+
 const BlogDetail: React.FC<BlogDetailProps> = ({ blogData }) => {
-  const validateBlockStyle = (style: string): BlockStyle => {
-    const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];
-    return validStyles.includes(style as BlockStyle) 
-      ? (style as BlockStyle) 
-      : "normal";
-  };
 
   return (
     <div className="max-w-7xl mx-auto py-16 px-4">
@@ -67,7 +68,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ blogData }) => {
         <time className="text-gray-600 mb-8 block">
           {new Date(blogData?.publishedAt).toLocaleDateString()}
         </time>
-        
+
         <div className="relative h-96 mb-8">
           <Image
             height={100}
@@ -80,8 +81,8 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ blogData }) => {
 
         <div className="prose prose-lg max-w-none">
           {blogData?.content?.map((block, index) => (
-            <BlockContent 
-              key={block._key || index} 
+            <BlockContent
+              key={block._key || index}
               blocks={[
                 {
                   ...block,

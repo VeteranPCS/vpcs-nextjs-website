@@ -21,7 +21,7 @@ const AboutHeroSection = async () => {
     <div>
       <div className="relative">
         <div className={classes.AboutHeroSectionContainer} style={{
-          backgroundImage: `url(${pageData?.background_image?.asset?.image_url || '/assets/aboutherosectionbg.png'})`
+          backgroundImage: `url(${pageData?.background_image?.asset?.image_url || '/assets/aboutherosectionbg.webp'})`
         }}>
           <div className="container mx-auto px-5">
             <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-6 mb-6">

@@ -1,8 +1,9 @@
 import "@/styles/globals.css";
 import Image from "next/image";
-import Link from "next/link";
 import aboutService from "@/services/aboutService";
 import { TeamMember } from '@/components/About/AdminTeam/AdminTeam';
+import BlockContent from "@/components/Blog/BlockContent";
+import { validateBlockStyle } from "@/components/Blog/BlogDetail";
 
 const DigitalTeam = async () => {
   let DigitalTeamDetails: TeamMember[] | null = null;
@@ -48,7 +49,7 @@ const DigitalTeam = async () => {
                     alt="Jason"
                     width={417}
                     height={400}
-                    className="w-full sm:h-[350px] h-auto"
+                    className="w-full sm:h-[350px] h-auto object-cover"
                   />
                 </div>
                 <div className="px-5 py-5">
@@ -58,16 +59,29 @@ const DigitalTeam = async () => {
                   <span className="text-[#3E3E59] text-lg font-light">
                     {details.designation}
                   </span>
-                  <p className="text-[#5F6980] text-lg font-light mt-3 mb-3">
-                    I am a lifelong learner, passionate about my family and
-                    friends, the outdoors,
-                  </p>
-                  <Link
-                    href="#"
-                    className="text-[#292F6C] text-lg font-bold tahoma mt-4"
-                  >
-                    Read More
-                  </Link>
+                  <div className="relative">
+                    {/* Hidden checkbox to track toggle state */}
+                    <input type="checkbox" id={`toggle-${details._id}`} className="peer hidden" />
+
+                    {/* Text that expands/collapses */}
+                    <p className="text-[#5F6980] max-h-28 text-lg font-light mt-3 mb-3 overflow-hidden peer-checked:max-h-full transition-all duration-300">
+                      {details?.description?.map((block, index) => (
+                        <BlockContent
+                          key={block._key || index}
+                          blocks={[
+                            {
+                              ...block,
+                              style: validateBlockStyle(block.style),
+                            },
+                          ]}
+                        />
+                      ))}
+                    </p>
+
+                    {/* Single label that toggles state */}
+                    <label htmlFor={`toggle-${details._id}`} className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold absolute bottom-[-1] left-0 bg-white peer-checked:before:content-['Read_Less'] before:content-['Read_More'] before:bg-white before:block">
+                    </label>
+                  </div>
                 </div>
               </div>
             ))}

@@ -21,6 +21,7 @@ const Header = () => {
               src="/icon/VeteranPCSlogo.svg"
               className="lg:w-[235px] lg:h-[63px] md:w-[235px] md:h-[63px] sm:w-[200px] sm:h-[63px] w-[200px] h-[63px]"
               alt="VeteranPCS logo"
+              onClick={isMenuOpen ? onMenuToggle : undefined}
             />
           </Link>
           <div className="flex items-center gap-3">

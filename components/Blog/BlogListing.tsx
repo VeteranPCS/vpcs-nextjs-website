@@ -8,32 +8,32 @@ import 'aos/dist/aos.css';
 
 // Define interfaces for the blog post structure
 interface SanitySlug {
-  current: string;
+    current: string;
 }
 
 interface SanityImage {
-  asset: {
-    image_url: string;
-  };
+    asset: {
+        image_url: string;
+    };
 }
 
 interface SanityBlock {
-  _type: 'block';
-  children?: {
-    text: string;
-  }[];
+    _type: 'block';
+    children?: {
+        text: string;
+    }[];
 }
 
 interface BlogPost {
-  _id: string;
-  title: string;
-  slug?: SanitySlug;
-  mainImage?: SanityImage;
-  content?: SanityBlock[];
+    _id: string;
+    title: string;
+    slug?: SanitySlug;
+    mainImage?: SanityImage;
+    content?: SanityBlock[];
 }
 
 interface BlogListingProps {
-  blogList: BlogPost[];
+    blogList: BlogPost[];
 }
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -104,7 +104,7 @@ const BlogListing = ({ blogList }: BlogListingProps) => {
                     return (
                         <Grid item xs={12} sm={6} md={4} key={post._id} data-aos="fade-up" data-aos-delay={index * 100}>
                             <Link
-                                href={`/blog-list/${post?.slug?.current}`} 
+                                href={`/blog/${post?.slug?.current}`}
                                 passHref
                                 style={{ textDecoration: 'none' }}
                             >

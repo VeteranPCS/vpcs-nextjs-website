@@ -27,37 +27,37 @@ const Carousel: React.FC<CarouselProps> = ({ userImageList }) => {
     {
       title: "Item 1",
       description: "Description for item 1",
-      imageUrl: "/assets/imageslider.png",
+      imageUrl: "/assets/imageslider.webp",
     },
     {
       title: "Item 2",
       description: "Description for item 2",
-      imageUrl: "/assets/imageslider1.png",
+      imageUrl: "/assets/imageslider1.webp",
     },
     {
       title: "Item 3",
       description: "Description for item 3",
-      imageUrl: "/assets/imageslider2.png",
+      imageUrl: "/assets/imageslider2.webp",
     },
     {
       title: "Item 4",
       description: "Description for item 4",
-      imageUrl: "/assets/imageslider3.png",
+      imageUrl: "/assets/imageslider3.webp",
     },
     {
       title: "Item 5",
       description: "Description for item 5",
-      imageUrl: "/assets/imageslider4.png",
+      imageUrl: "/assets/imageslider4.webp",
     },
     {
       title: "Item 6",
       description: "Description for item 6",
-      imageUrl: "/assets/imageslider5.png",
+      imageUrl: "/assets/imageslider5.webp",
     },
     {
       title: "Item 7",
       description: "Description for item 7",
-      imageUrl: "/assets/imageslider6.png",
+      imageUrl: "/assets/imageslider6.webp",
     },
   ];
   const settings = {

@@ -13,7 +13,7 @@ const MilitaryHomePage = () => {
             <Image
               width={400}
               height={400}
-              src="/assets/makeitwork.png"
+              src="/assets/makeitwork.webp"
               alt="Military Family"
               className="w-[400px] h-[400px]"
             />
@@ -36,7 +36,7 @@ const MilitaryHomePage = () => {
               </li>
             </ul>
             <Link
-              href="/blog"
+              href="/contact-lender"
               className="flex lg:justify-start md:justify-start sm:justify-center justify-center"
             >
               <Button buttonText="VA Loan" />

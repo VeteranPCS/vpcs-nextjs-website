@@ -59,7 +59,7 @@ const WhyVeteranPcs = () => {
                     width={465}
                     height={465}
                     className="w-full h-full"
-                    src="/assets/veteranPCS-slider-checks-03.png"
+                    src="/assets/veteranPCS-slider-checks-03.webp"
                     alt="Move in bonus"
                   />
                 </div>
