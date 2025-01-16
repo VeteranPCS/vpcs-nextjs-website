@@ -11,13 +11,13 @@ const StatePageHeroSecondSection = ({ stateName }: StatePageHeroSecondSectionPro
     <div>
       <div className="flex flex-wrap items-start justify-between h-full">
         <div className="bg-[#212557] flex flex-wrap sm:flex-wrap md:flex-wrap lg:flex-nowrap items-center justify-center w-full h-full">
-          <div className="h-full  md:px-20 sm:py-10 py-10">
+          <div className="h-full md:px-20 sm:py-10 py-10 flex flex-col justify-center items-center mx-auto">
             <Image
               src="/icon/VeteranPCSlogo.svg"
               alt="Description of the image"
               width={1000}
               height={1000}
-              className="w-auto h-auto object-cover"
+              className="object-cover px-4 lg:min-w-[350px] mx-auto"
             />
             <p className="text-center text-white tahoma lg:text-[21px] md:text-[21px] sm:text-[18px] text-[18px] font-normal mt-4">
               Your Trusted Veteran &<br></br>
@@ -25,8 +25,8 @@ const StatePageHeroSecondSection = ({ stateName }: StatePageHeroSecondSectionPro
             </p>
           </div>
           <div className="bg-[#292F6C] flex flex-col items-center flex-wrap justify-center py-10 w-full h-full">
-            <div className="flex flex-wrap md:flex-nowrap justify-between items-center px-20 gap-20">
-              <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap md:flex-nowrap justify-between items-center px-20 gap-20 md:gap-10">
+              <div className="flex flex-col gap-4 max-w-52">
                 <Image
                   src="/icon/userpluswhite.svg"
                   alt="Description of the image"
@@ -42,7 +42,7 @@ const StatePageHeroSecondSection = ({ stateName }: StatePageHeroSecondSectionPro
                   and understand the unique needs and challenges.
                 </p>
               </div>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 max-w-52">
                 <Image
                   src="/icon/dollar.svg"
                   alt="Description of the image"
@@ -57,7 +57,7 @@ const StatePageHeroSecondSection = ({ stateName }: StatePageHeroSecondSectionPro
                   Complete clarity and transparency so you do not overpay.
                 </p>
               </div>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 max-w-52">
                 <Image
                   src="/icon/userswhite.svg"
                   alt="Description of the image"
