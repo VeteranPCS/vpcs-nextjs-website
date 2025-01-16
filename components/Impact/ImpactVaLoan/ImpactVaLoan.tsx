@@ -84,7 +84,7 @@ const ImpactVaLoan = () => {
             <Image
               width={1000}
               height={1000}
-              src="/assets/imageslider3.png"
+              src="/assets/imageslider3.webp"
               alt="hand"
               className="lg:w-[445px] lg:h-[445px] md:w-full md:h-full sm:w-full sm:h-full w-full h-full"
             />
