@@ -9,7 +9,7 @@
   
   .statepahewhychoosedwrappercontainer:hover {
     border-radius: 32px;
-    border-bottom: 10px solid #292F6C;
+    /* border-bottom: 10px solid #292F6C; */
     background: #7E1618;
     box-shadow:
       0.29px 6.646px 30.11px 0px rgba(90, 114, 234, 0.06),

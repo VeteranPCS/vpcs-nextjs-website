@@ -13,7 +13,9 @@ const StatePageCityAgents = () => {
             <h6 className="text-[#FFFFFF] text-enter text-[31px] sm:text-[19px] px-8 text-center sm:text-left sm:font-normal font-bold leading-[34px] sm:leading-none">Don’t see an agent for your area?</h6>
           </div>
           <div className="mt-8 sm:mt-0">
-            <Button buttonText="Let us find you an agent" />
+            <Link href="/contact-agent">
+              <Button buttonText="Let us find you an agent" />
+            </Link>
           </div>
         </div>
       </div>

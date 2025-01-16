@@ -59,9 +59,11 @@ const SupportSpanish = async () => {
                     </p>
                   </div>
                   <div className="flex justify-start">
-                    <Button
-                      buttonText={pageData?.buttonText_1 || "Default Button"}
-                    />
+                    <Link href="/contact-agent">
+                      <Button
+                        buttonText={pageData?.buttonText_1 || "Default Button"}
+                      />
+                    </Link>
                   </div>
                 </div>
                 <div>

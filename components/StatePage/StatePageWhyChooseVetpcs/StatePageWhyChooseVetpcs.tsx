@@ -25,7 +25,7 @@ const cardsData = [
     title: "Bonus",
     subTitle: "RECEIVE CASHBACK OF $200 - $4,000 AT CLOSING",
   },
-  
+
 ];
 
 
@@ -38,7 +38,7 @@ const StatePageWhyChooseVetpcs = ({ cityName }: { cityName: string }) => {
           {cityName}
         </h1>
         <p className="text-center text-[#292F6C] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal">
-          Why choose VeteranPCS as Your Preferred Real Estate Agents
+          Why choose VeteranPCS as Your Preferred Real Estate Agents?
         </p>
       </div>
       <div

@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./StatePageCTA.module.css";
 import Image from "next/image";
+import Link from "next/link";
 
 const StatePageCTA = ({ cityName }: { cityName: string }) => {
   return (
@@ -45,10 +46,14 @@ const StatePageCTA = ({ cityName }: { cityName: string }) => {
                 with confidence.
               </p>
             </div>
-           
+
             <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center">
-              <Button buttonText="Agent" />
-              <button className="border-2 border-[#A3161B] rounded-2xl py-4 px-10 text-center text-[#A3161B] text-lg  ml-5 bg-white">Lender</button>
+              <Link href="/contact-agent">
+                <Button buttonText="Agent" />
+              </Link>
+              <Link href="/contact-lender">
+                <button className="border-2 border-[#A3161B] rounded-2xl py-3 px-8 text-center text-[#A3161B] text-lg  ml-5 bg-white tahoma">Lender</button>
+              </Link>
             </div>
           </div>
         </div>
