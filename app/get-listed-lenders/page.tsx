@@ -7,6 +7,7 @@ import MortgageCompanyInfo from "@/components/GetListedLenders/MortgageCompanyIn
 import Image from "next/image";
 import { GetListedLendersPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from 'next/navigation'
+import { sendGTMEvent } from "@next/third-parties/google";
 
 export interface FormData {
   firstName: string;
@@ -36,7 +37,11 @@ export default function Home() {
   useEffect(() => {
     const handleFormSubmission = async () => {
       try {
-       const server_response = await GetListedLendersPostForm(formData);
+        sendGTMEvent({
+          event: 'conversion_get_listed_lenders',
+        });
+
+        const server_response = await GetListedLendersPostForm(formData);
         if (server_response?.redirectUrl) {
           router.push(server_response.redirectUrl);
         } else {

@@ -5,8 +5,10 @@ import "@/styles/globals.css";
 import ClientLayoutWrapper from "@/components/ClientLayoutWrapper"; // Import wrapper
 import { RealEstateAgent, WithContext } from "schema-dts";
 import Script from "next/script";
+import { GoogleTagManager } from '@next/third-parties/google'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const GTM_ID = process.env.GOOGLE_TAG_MANAGER_ID || "";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -82,6 +84,17 @@ const jsonLd: WithContext<RealEstateAgent> =
   email: 'info@veteranpcs.com',
   knowsAbout: ["military relocation", "veteran real estate agents", "military spouse real estate agents", "VA loan", "PCS move"],
   slogan: "Together we'll make it home.",
+  sameAs: [
+    "https://www.linkedin.com/company/veteranpcs/",
+    "https://www.facebook.com/VeteranPCS/",
+    "https://www.instagram.com/veteranpcs/",
+    "https://www.tiktok.com/@veteranpcs",
+  ],
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "5",
+    reviewCount: "76"
+  }
 }
 
 export default function RootLayout({
@@ -92,6 +105,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <GoogleTagManager gtmId={GTM_ID} />
         <Script defer src="https://www.google.com/recaptcha/api.js"></Script>
         <Script id={`json-ld-real-estate-agent`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>

@@ -23,7 +23,7 @@ const MilitaryHomePage = () => {
               Together we&apos;ll make it home
             </h1>
             <p className="lg:text-left md:text-left sm:text-center text-center text-xl font-medium text-[#292F6C] italic mb-6 leading-[24px] roboto">
-              Your service is your downpayment
+              Your service is your down payment
             </p>
             <ul className="list-disc text-[#7A7A7A] mb-8">
               <li className="list-none text-[17px] md:font-medium sm:font-normal font-normal roboto">
@@ -39,7 +39,7 @@ const MilitaryHomePage = () => {
               href="/contact-lender"
               className="flex lg:justify-start md:justify-start sm:justify-center justify-center"
             >
-              <Button buttonText="VA Loan" />
+              <Button buttonText="Contact VA Loan Expert" />
             </Link>
           </div>
         </div>

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Button from "@/components/common/Button";
+import { sendGTMEvent } from "@next/third-parties/google";
 
 interface TooltipState {
   display: boolean;
@@ -40,6 +41,18 @@ const StateMap = () => {
     }));
   };
 
+  const handleSendGtmEvent = (event: React.MouseEvent<SVGElement> | React.MouseEvent<HTMLAnchorElement>) => {
+    const target = event.currentTarget as HTMLElement;
+    const href = target.getAttribute("href");
+    const dataName = target.getAttribute("data-name");
+
+    sendGTMEvent({
+      event: "map_interaction",
+      state: href || dataName || "unknown", // Use `href` first, fallback to `data-name`, default to "unknown"
+    });
+  };
+
+
   return (
     <>
       <div className="z-0 w-full" id="map-container">
@@ -63,7 +76,7 @@ const StateMap = () => {
               viewBox="0 0 1766 1067"
               className="w-full h-full mx-auto"
             >
-              <Link href="/washington">
+              <Link href="/washington" onClick={handleSendGtmEvent}>
                 <g
                   id="Washington"
                   className="state"
@@ -92,7 +105,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/oregon">
+              <Link href="/oregon" onClick={handleSendGtmEvent}>
                 <g
                   id="Oregon"
                   className="state"
@@ -121,7 +134,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/california">
+              <Link href="/california" onClick={handleSendGtmEvent}>
                 <g
                   id="California"
                   className="state"
@@ -150,7 +163,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/nevada">
+              <Link href="/nevada" onClick={handleSendGtmEvent}>
                 <g
                   id="Nevada"
                   className="state"
@@ -178,7 +191,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/idaho">
+              <Link href="/idaho" onClick={handleSendGtmEvent}>
                 <g
                   id="Idaho"
                   className="state"
@@ -206,7 +219,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/utah">
+              <Link href="/utah" onClick={handleSendGtmEvent}>
                 <g
                   id="Utah"
                   className="state"
@@ -236,7 +249,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/arizona">
+              <Link href="/arizona" onClick={handleSendGtmEvent}>
                 <g
                   id="Arizona"
                   className="state"
@@ -264,7 +277,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/new-mexico">
+              <Link href="/new-mexico" onClick={handleSendGtmEvent}>
                 <g
                   id="New Mexico"
                   className="state"
@@ -292,7 +305,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/colorado">
+              <Link href="/colorado" onClick={handleSendGtmEvent}>
                 <g
                   id="Colorado"
                   className="state"
@@ -320,7 +333,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/wyoming">
+              <Link href="/wyoming" onClick={handleSendGtmEvent}>
                 <g
                   id="Wyoming"
                   className="state"
@@ -348,7 +361,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/montana">
+              <Link href="/montana" onClick={handleSendGtmEvent}>
                 <g
                   id="Montana"
                   className="state"
@@ -376,7 +389,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/north-dakota">
+              <Link href="/north-dakota" onClick={handleSendGtmEvent}>
                 <g
                   id="North Dakota"
                   className="state"
@@ -404,7 +417,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/south-dakota">
+              <Link href="/south-dakota" onClick={handleSendGtmEvent}>
                 <g
                   id="South Dakota"
                   className="state"
@@ -432,7 +445,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/nebraska">
+              <Link href="/nebraska" onClick={handleSendGtmEvent}>
                 <g
                   id="Nebraska"
                   className="state"
@@ -460,7 +473,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/kansas">
+              <Link href="/kansas" onClick={handleSendGtmEvent}>
                 <g
                   id="Kansas"
                   className="state"
@@ -488,7 +501,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/oklahoma">
+              <Link href="/oklahoma" onClick={handleSendGtmEvent}>
                 <g
                   id="Oklahoma"
                   className="state"
@@ -516,7 +529,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/wisconsin">
+              <Link href="/wisconsin" onClick={handleSendGtmEvent}>
                 <g
                   id="Wisconsin"
                   className="state"
@@ -545,7 +558,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/minnesota">
+              <Link href="/minnesota" onClick={handleSendGtmEvent}>
                 <g
                   id="Minnesota"
                   className="state"
@@ -573,7 +586,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/michigan">
+              <Link href="/michigan" onClick={handleSendGtmEvent}>
                 <g
                   id="Michigan"
                   className="state"
@@ -602,7 +615,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/iowa">
+              <Link href="/iowa" onClick={handleSendGtmEvent}>
                 <g
                   id="Iowa"
                   className="state"
@@ -630,7 +643,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/missouri">
+              <Link href="/missouri" onClick={handleSendGtmEvent}>
                 <g
                   id="Missouri"
                   className="state"
@@ -658,7 +671,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/illinois">
+              <Link href="/illinois" onClick={handleSendGtmEvent}>
                 <g
                   id="Illinois"
                   className="state"
@@ -686,7 +699,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/indiana">
+              <Link href="/indiana" onClick={handleSendGtmEvent}>
                 <g
                   id="Indiana"
                   className="state"
@@ -714,7 +727,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/ohio">
+              <Link href="/ohio" onClick={handleSendGtmEvent}>
                 <g
                   id="Ohio"
                   className="state"
@@ -742,7 +755,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/maine">
+              <Link href="/maine" onClick={handleSendGtmEvent}>
                 <g
                   id="Maine"
                   className="state"
@@ -771,7 +784,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/new-york">
+              <Link href="/new-york" onClick={handleSendGtmEvent}>
                 <g
                   id="New York"
                   className="state"
@@ -800,7 +813,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/pennsylvania">
+              <Link href="/pennsylvania" onClick={handleSendGtmEvent}>
                 <g
                   id="Pennsylvania"
                   className="state"
@@ -828,7 +841,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/kentucky">
+              <Link href="/kentucky" onClick={handleSendGtmEvent}>
                 <g
                   id="Kentucky"
                   className="state"
@@ -857,7 +870,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/tennessee">
+              <Link href="/tennessee" onClick={handleSendGtmEvent}>
                 <g
                   id="Tennessee"
                   className="state"
@@ -885,7 +898,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/arkansas">
+              <Link href="/arkansas" onClick={handleSendGtmEvent}>
                 <g
                   id="Arkansas"
                   className="state"
@@ -913,7 +926,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/louisiana">
+              <Link href="/louisiana" onClick={handleSendGtmEvent}>
                 <g
                   id="Louisiana"
                   className="state"
@@ -942,7 +955,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/mississippi">
+              <Link href="/mississippi" onClick={handleSendGtmEvent}>
                 <g
                   id="Mississippi"
                   className="state"
@@ -971,7 +984,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/alabama">
+              <Link href="/alabama" onClick={handleSendGtmEvent}>
                 <g
                   id="Alabama"
                   className="state"
@@ -1000,7 +1013,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/georgia">
+              <Link href="/georgia" onClick={handleSendGtmEvent}>
                 <g
                   id="Georgia"
                   className="state"
@@ -1029,7 +1042,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/west-virginia">
+              <Link href="/west-virginia" onClick={handleSendGtmEvent}>
                 <g
                   id="West Virginia"
                   className="state"
@@ -1057,7 +1070,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/virginia">
+              <Link href="/virginia" onClick={handleSendGtmEvent}>
                 <g
                   id="Virginia"
                   className="state"
@@ -1086,7 +1099,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/north-carolina">
+              <Link href="/north-carolina" onClick={handleSendGtmEvent}>
                 <g
                   id="North Carolina"
                   className="state"
@@ -1115,7 +1128,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/south-carolina">
+              <Link href="/south-carolina" onClick={handleSendGtmEvent}>
                 <g
                   id="South Carolina"
                   className="state"
@@ -1144,7 +1157,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/florida">
+              <Link href="/florida" onClick={handleSendGtmEvent}>
                 <g
                   id="Florida"
                   className="state"
@@ -1173,7 +1186,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/maryland">
+              <Link href="/maryland" onClick={handleSendGtmEvent}>
                 <g
                   id="Maryland"
                   className="state small-state-group"
@@ -1206,7 +1219,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/washington-dc">
+              <Link href="/washington-dc" onClick={handleSendGtmEvent}>
                 <g
                   id="Washington DC"
                   className="state small-state-group"
@@ -1234,7 +1247,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/delaware">
+              <Link href="/delaware" onClick={handleSendGtmEvent}>
                 <g
                   id="Delaware"
                   className="state small-state-group"
@@ -1267,7 +1280,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/new-jersey">
+              <Link href="/new-jersey" onClick={handleSendGtmEvent}>
                 <g
                   id="New Jersey"
                   className="state small-state-group"
@@ -1300,7 +1313,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/connecticut">
+              <Link href="/connecticut" onClick={handleSendGtmEvent}>
                 <g
                   id="Connecticut"
                   className="state small-state-group"
@@ -1332,7 +1345,7 @@ const StateMap = () => {
                   ></path>
                 </g>
               </Link>
-              <Link href="/rhode-island">
+              <Link href="/rhode-island" onClick={handleSendGtmEvent}>
                 <g
                   id="Rhode Island"
                   className="state small-state-group"
@@ -1364,7 +1377,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/massachussets">
+              <Link href="/massachussets" onClick={handleSendGtmEvent}>
                 <g
                   id="Massachussets"
                   className="state small-state-group"
@@ -1397,7 +1410,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/new-hampshire">
+              <Link href="/new-hampshire" onClick={handleSendGtmEvent}>
                 <g
                   id="New Hampshire"
                   className="state small-state-group"
@@ -1429,7 +1442,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/vermont">
+              <Link href="/vermont" onClick={handleSendGtmEvent}>
                 <g
                   id="Vermont"
                   className="state small-state-group"
@@ -1461,7 +1474,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/texas">
+              <Link href="/texas" onClick={handleSendGtmEvent}>
                 <g
                   id="Texas"
                   className="state"
@@ -1490,7 +1503,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/alaska">
+              <Link href="/alaska" onClick={handleSendGtmEvent}>
                 <g
                   id="Alaska"
                   className="state"
@@ -1519,7 +1532,7 @@ const StateMap = () => {
                   </g>
                 </g>
               </Link>
-              <Link href="/hawaii">
+              <Link href="/hawaii" onClick={handleSendGtmEvent}>
                 <g
                   id="Hawaii"
                   className="state small-state-group"
@@ -1555,7 +1568,7 @@ const StateMap = () => {
                 </g>
               </Link>
             </svg>
-            <Link href="/contact-agent" className="py-8 flex justify-center">
+            <Link href="/contact-agent" className="py-8 flex justify-center" onClick={handleSendGtmEvent}>
               <Button buttonText="Don't want to browse? Find an Agent For Me" />
             </Link>
           </div>

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import ContactAgents from "@/components/ContactAgents/ContactAgent";
 import CurrentLocation from "@/components/ContactAgents/CurrentLocation";
 import OptionalInformationForBuyer from "@/components/ContactAgents/OptionalInformationForBuyer";
@@ -7,6 +7,7 @@ import Image from "next/image";
 import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListedLendersProfileInfo";
 import { contactAgentPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from 'next/navigation'
+import { sendGTMEvent } from "@next/third-parties/google";
 
 interface FormData {
   firstName: string;
@@ -35,6 +36,7 @@ interface FormData {
 
 export default function Home() {
   const router = useRouter()
+
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>();
   const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
@@ -63,7 +65,14 @@ export default function Home() {
   useEffect(() => {
     const handleFormSubmission = async () => {
       const fullQueryString = window.location.search;
+      const queryParams = new URLSearchParams(fullQueryString);
+
       try {
+        sendGTMEvent({
+          event: "conversion_contact_agent",
+          agent_id: queryParams.get('id') || "",
+          state: queryParams.get('state') || "",
+        });
         const server_response = await contactAgentPostForm(formData, fullQueryString);
 
         if (server_response?.redirectUrl) {
@@ -98,7 +107,7 @@ export default function Home() {
   };
 
   return (
-    <>
+    <Suspense>
 
       <div className="container mx-auto w-full">
         <div className="flex flex-wrap md:flex-nowrap justify-between items-center md:pt-[140px] pt-[80px] md:mx-0 mx-5">
@@ -161,6 +170,6 @@ export default function Home() {
           />
         )}
       </div>
-    </>
+    </Suspense>
   );
 }

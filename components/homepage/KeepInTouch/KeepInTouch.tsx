@@ -10,7 +10,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { KeepInTouchForm } from "@/services/salesForcePostFormsService";
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
+import { sendGTMEvent } from "@next/third-parties/google";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export interface MediaAccountProps {
@@ -41,6 +42,7 @@ const contactFormSchema = yup.object().shape({
 
 const KeepInTouch = () => {
   const router = useRouter()
+  const pathname = usePathname()
 
   const {
     register,
@@ -62,6 +64,10 @@ const KeepInTouch = () => {
 
   const handleFormSubmission = async (data: ContactFormData) => {
     try {
+      sendGTMEvent({
+        event: 'keep_in_touch_form_submission',
+        page: pathname,
+      });
       const server_response = await KeepInTouchForm(data);
       if (server_response?.success) {
         router.push(`${BASE_URL}/thank-you`);
