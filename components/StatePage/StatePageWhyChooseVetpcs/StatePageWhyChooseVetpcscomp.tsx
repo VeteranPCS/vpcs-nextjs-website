@@ -34,7 +34,7 @@ const Covered: React.FC<CoveredProps> = ({ card }) => {
   return (
     <div className={ClassNames.statepahewhychoosedwrappercontainer}>
       <div className="xl:p-9 lg:p-9 md:p-9 sm:p-2 p-4 cover-card mx-auto lg:h-[350px]">
-        <div className="text-center my-14">
+        <div className="text-center my-5">
           <div className="xl:block lg:block md:block sm:flex flex items-center lg:justify-center md:justify-center sm:justify-center justify-center flex-wrap">
             <div className="flex justify-center">
               <Image

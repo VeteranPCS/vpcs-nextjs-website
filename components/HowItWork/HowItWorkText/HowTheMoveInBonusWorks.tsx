@@ -57,17 +57,17 @@ const HowTheMoveInBonusWorks = async () => {
           })}
         </div>
 
-        <div className="pl-6 mt-2">
+        <div className="md:pl-6 mt-2">
           <table className="table-auto border lg:w-[1000px] w-full">
             <thead>
               <tr className="border text-left">
-                <th className="text-[#000] tahoma lg:text-[24px] md:text-[24px] sm:text-[20px] text-[20px] font-bold p-3">
+                <th className="text-[#000] tahoma lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] font-bold p-3">
                   Home Price
                 </th>
-                <th className="text-[#000] tahoma lg:text-[24px] md:text-[24px] sm:text-[20px] text-[20px] font-bold p-3">
+                <th className="text-[#000] tahoma lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] font-bold p-3">
                   Move-In Bonus
                 </th>
-                <th className="text-[#000] tahoma lg:text-[24px] md:text-[24px] sm:text-[20px] text-[20px] font-bold p-3">
+                <th className="text-[#000] tahoma lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] font-bold p-3">
                   Charity Donation
                 </th>
               </tr>
@@ -75,7 +75,7 @@ const HowTheMoveInBonusWorks = async () => {
             <tbody>
               {moveInBonus?.bonusTable.map((row, index) => (
                 <tr key={index} className="border">
-                  <td className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[20px] text-[20px] font-bold p-3">
+                  <td className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] font-bold p-3">
                     {row.priceRange}
                   </td>
                   <td className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] md:font-medium sm:font-normal font-normal p-3">

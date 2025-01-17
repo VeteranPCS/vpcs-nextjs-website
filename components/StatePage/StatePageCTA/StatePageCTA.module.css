@@ -1,6 +1,6 @@
 .statepagectacontainer {
     border-radius: 32px;
-    background: linear-gradient(233deg, #5a72ea 28.37%, #8468b1 95.18%), #d9d9d9;
+    background: linear-gradient(233deg, #2A2F6C 28.37%, #555CA4 95.18%), #D9D9D9;
     padding: 40px 30px;
   }
   
@@ -8,7 +8,7 @@
   @media only screen and (max-width: 600px) {
     .statepagectacontainer {
       border-radius: 0px;
-      background: linear-gradient(233deg, #5a72ea 28.37%, #8468b1 95.18%), #d9d9d9;
+      background: linear-gradient(233deg, #2A2F6C 28.37%, #555CA4 95.18%), #D9D9D9;
       padding: 40px 30px;
     }
   

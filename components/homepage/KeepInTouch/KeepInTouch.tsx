@@ -143,8 +143,8 @@ const KeepInTouch = () => {
                   >
                     <Link href={acc.link}>
                       <Image
-                        width={100}
-                        height={100}
+                        width={50}
+                        height={50}
                         src={`/icon/${acc.icon}`}
                         alt={acc.name}
                       />
@@ -195,7 +195,7 @@ const KeepInTouch = () => {
                   Fields marked with an asterisk (*) are required.
                 </p>
                 <div className="flex items-center md:pl-0 sm:pl-3 pl-3">
-                  <div className="w-[200px] flex items-center gap-4">
+                  <div className="w-[200px] flex flex-wrap items-center gap-4">
                     <div>
                       <ReCAPTCHA
                         sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}

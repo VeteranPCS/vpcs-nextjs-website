@@ -42,7 +42,7 @@ const StatePageWhyChooseVetpcs = ({ cityName }: { cityName: string }) => {
         </p>
       </div>
       <div
-        className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-1 grid-cols-1 lg:mt-10 md:mt-10 sm:mt-10 mt-5 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3"
+        className="grid xl:grid-cols-4 lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 lg:mt-10 md:mt-10 sm:mt-10 mt-5 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3"
         data-aos="fade-left"
         data-aos-duration="1000"
       >

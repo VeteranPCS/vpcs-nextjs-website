@@ -28,33 +28,33 @@ const Header = () => {
             <div
               className={`navLinks duration-500 absolute md:static md:w-auto ${isMenuOpen ? "w-[60%]" : "w-full"} w-full md:h-auto ${isMenuOpen ? "h-[100vh]" : "h-[100vh]"}  bg-[#292f6c] flex md:items-center gap-[1.5vw] top-[100%] ${isMenuOpen ? "left-[0%]" : "left-[-100%]"} px-5 md:py-0 py-5`}
             >
-              <ul className="menu nav flex md:flex-row flex-col md:items-center md:gap-14 gap-5">
-                <li className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
+              <ul className="menu nav flex md:flex-row flex-col md:items-center xl:gap-14 lg:gap-5 gap-5">
+                <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
                   <Link className="text-white" href="/about" onClick={onMenuToggle}>
                     About Us
                   </Link>
                 </li>
-                <li className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
+                <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
                   <Link className="text-white" href="/how-it-works" onClick={onMenuToggle}>
                     How It Works
                   </Link>
                 </li>
-                <li className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
+                <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
                   <Link className="text-white" href="/impact" onClick={onMenuToggle}>
                     Our Impact
                   </Link>
                 </li>
-                <li className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
+                <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
                   <Link className="text-white" href="/blog" onClick={onMenuToggle}>
                     Blog
                   </Link>
                 </li>
-                <li className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
+                <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
                   <Link className="text-white" href="/pcs-resources" onClick={onMenuToggle}>
                     PCS Resources
                   </Link>
                 </li>
-                <li className="relative max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
+                <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
                   <Link className="text-white" href="/contact" onClick={onMenuToggle}>
                     Contact
                   </Link>

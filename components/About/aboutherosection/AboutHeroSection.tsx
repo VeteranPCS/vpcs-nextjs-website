@@ -37,7 +37,7 @@ const AboutHeroSection = async () => {
                     <Button buttonText={pageData?.buttonText || "default button"} />
                   </Link>
                 </div>
-                <div className="absolute bottom-[-15%] lg:left-[45%] md:left-[45%] sm:left-[27%] left-[27%] translate-[-45%] ">
+                <div className="absolute bottom-[-15%] lg:left-[45%] md:left-[45%] sm:left-[26%] left-[26%] translate-[-45%] ">
                   <Image
                     width={1000}
                     height={1000}

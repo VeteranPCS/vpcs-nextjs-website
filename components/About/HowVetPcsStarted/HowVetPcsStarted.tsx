@@ -48,15 +48,15 @@ const HowVetPcsStarted = async () => {
                   "/assets/Aboutflight.png"
                 }
                 alt="hand"
-                className="md:w-[700px] md:h-[523px] w-auto h-auto pb-6 md:pb-0"
+                className="lg:w-[700px] lg:h-[523px] md:w-full md:h-full w-auto h-auto pb-6 md:pb-0"
               />
             </div>
             <div className="lg:mt-16 lg:mb-7">
-              <h2 className="text-[#292F6C] text-center font-tahoma text-[32px] leading-[32px] font-bold md:pb-0 pb-5">
+              <h2 className="text-[#292F6C] text-center font-tahoma text-[32px] leading-[32px] font-bold md:pb-0 pb-5 my-4">
                 {pageData?.header}
               </h2>
             </div>
-            <div>
+            <div className="px-5">
               {pageData?.description?.split("\n").map((paragraph, index) => (
                 <p
                   key={index}

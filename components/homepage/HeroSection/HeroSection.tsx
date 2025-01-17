@@ -24,8 +24,8 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
       <div className={classes.herosectioncontainer}>
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-4">
-            <div className="mx-auto lg:text-left md:text-left sm:text-center text-center w-full sm:order-2 order-2 lg:order-none md:order-none lg:mt-10">
-              <h2 className="text-white font-bold lg:text-[59px] md:text-[29px] sm:text-[32px] text-[32px] leading-[1.3] tahoma sm:px-0 md:px-0 sm:mt-24 mt-24 md:mt-0">
+            <div className="mx-auto lg:text-left md:text-left sm:text-center text-center w-full sm:order-2 order-2 lg:order-none md:order-none lg:mt-12">
+              <h2 className="text-white font-bold lg:text-[59px] md:text-[29px] sm:text-[32px] text-[32px] leading-[1.3] tahoma sm:px-0 md:px-0 sm:mt-24 mt-24 md:mt-10">
                 {title}
               </h2>
               <h1 className="lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] font-normal text-white lg:my-10 md:my-5 sm:my-10 my-10 tahoma">

@@ -29,7 +29,7 @@ const Mission = async () => {
           className="items-center grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1
            grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3 lg:py-12"
         >
-          <div className="flex sm:justify-end justify-center">
+          <div className="flex lg:justify-end justify-center">
             <Image
               width={1000}
               height={1000}

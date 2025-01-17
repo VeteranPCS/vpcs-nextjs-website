@@ -19,7 +19,7 @@ const DigitalTeam = async () => {
     <div className="bg-[#EEEEEE] py-10 my-10 lg:my-20">
       <div className="mt-10 pb-10 flex flex-col justify-center items-center">
         <div className="container mx-auto  flex flex-col lg:space-y-10 space-y-4">
-          <h1 className="text-[#292F6C] text-center font-tahoma lg:text-[55px] md:text-[60px] sm:text-[40px] text-[40px] font-bold px-24 sm:px-0 pb-10 sm:pb-0">
+          <h1 className="text-[#292F6C] font-bold xl:text-[55px] lg:text-[50px] sm:text-[40px] text-[40px] leading-[54px] tahoma text-center">
             Meet the <span className="font-normal">Veteran</span>PCS team
           </h1>
           <h6 className="text-gray-800 text-center text-[21px] tahoma px-4">

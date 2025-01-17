@@ -19,6 +19,12 @@ const Carousel = ({ agentList }: { agentList: any }) => {
     arrows: false,
     responsive: [
       {
+        breakpoint: 1290,
+        settings: {
+          slidesToShow: 3,
+        },
+      },
+      {
         breakpoint: 1024,
         settings: {
           slidesToShow: 3,
@@ -44,11 +50,11 @@ const Carousel = ({ agentList }: { agentList: any }) => {
               href={item.url}
             >
               <Image
-                height={100}
-                width={100}
+                height={1000}
+                width={1000}
                 src={item?.mainImage?.asset?.image_url || item.imageUrl}
                 alt={item?.mainImage?.alt || item.title}
-                className="w-full h-full"
+                className="w-full h-full opacity-40 hover:opacity-100 transition-all duration-300 ease-in-out object-contain"
               />
             </a>
           ))}

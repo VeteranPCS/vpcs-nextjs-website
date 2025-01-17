@@ -37,22 +37,28 @@ const StatePageCTA = ({ cityName }: { cityName: string }) => {
                 Talk to our Agents in {cityName} Today
               </h1>
               <p className="text-white tahoma lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] font-normal leading-[25px] mt-4 lg:text-left md:text-left sm:text-center text-center">
-                Are you a veteran or military spouse in search of a {cityName} realtor who understands your distinctive requirements?
+                Are you a veteran or military spouse in search of a {cityName}{" "}
+                realtor who understands your distinctive requirements?
                 VeteranPCS is the answer. We are not serving merely as another
                 real estate platform; we represent a community of veterans and
                 military spouses committed to supporting one another throughout
                 transitional periods. Connect with a military-friendly real
-                estate agent in {cityName} today and initiate your PCS move
-                with confidence.
+                estate agent in {cityName} today and initiate your PCS move with
+                confidence.
               </p>
             </div>
 
-            <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center">
+            <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center gap-4">
               <Link href="/contact-agent">
                 <Button buttonText="Agent" />
               </Link>
               <Link href="/contact-lender">
-                <button className="border-2 border-[#A3161B] rounded-2xl py-3 px-8 text-center text-[#A3161B] text-lg  ml-5 bg-white tahoma">Lender</button>
+                <button className="items-center border-2 border-[#A3161B] bg-white w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px]
+                 px-[20px] md:py-[14px] py-[12px] rounded-[16px] text-center tracking-[1px] text-[#A3161B] hover:bg-[#A3161B] hover:text-[#ffffff] all-duration transition-all duration-300 ease-in-out">
+                  <span className="xl:text-[18px] lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal leading-6 bg-cover text-nowrap tahoma">
+                    Lender
+                  </span>
+                </button>
               </Link>
             </div>
           </div>

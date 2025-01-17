@@ -21,17 +21,17 @@ const CeoFounder = async () => {
         <div className="container mx-auto">
           <div className=" mx-auto">
             <div>
-              <span className="text-[#282828] flex justify-center tahoma text-[21px] font-bold">
+              <span className="text-[#282828] flex justify-center tahoma lg:text-[21px] sm:text-[18px] text-[18px] font-bold">
                 CEO & FOUNDER
               </span>
             </div>
             <div>
-              <h1 className="text-[#292F6C] font-bold text-center tahoma lg:text-[55px] md:text-[60px] sm:text-[40px] text-[40px] ">
+              <h1 className="text-[#292F6C] font-bold text-center tahoma lg:text-[55px] md:text-[60px] sm:text-[30px] text-[30px] ">
                 Meet Our Founder
               </h1>
             </div>
             <div>
-              <p className="text-[#161C2Db3] text-center font-normal sm:text-[24px] text-[14px] lg:w-[1000px] leading-[40px] py-10 mx-auto px-9 sm:px-0">
+              <p className="text-[#161C2Db3] text-center font-normal sm:text-[24px] text-[14px] mx-auto px-9 sm:px-0">
                 VeteranPCS was created to be different. A site dedicated to
                 equally serving the agents as much as the military families
                 going through a PCS or move.
@@ -50,7 +50,7 @@ const CeoFounder = async () => {
                   />
                 </div>
                 <div className="px-5 py-5">
-                  <h6 className="text-black tahoma font-semibold text-2xl">
+                  <h6 className="text-black tahoma font-semibold lg:text-2xl ">
                     {details.name}
                   </h6>
                   <span className="text-[#3E3E59] text-lg font-light">

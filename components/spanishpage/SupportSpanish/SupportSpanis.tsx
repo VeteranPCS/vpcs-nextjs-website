@@ -46,7 +46,7 @@ const SupportSpanish = async () => {
               data-aos="fade-right"
               data-aos-duration="1000"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-between items-start mt-10">
+              <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4 justify-between items-start mt-10">
                 <div className="lg:text-left sm:text-center text-left flex flex-col gap-4 justify-between">
                   <div>
                     <h2 className="text-[#292F6C] font-bold xl:text-[42px] lg:text-[40px] sm:text-[40px] text-[40px] leading-[54px] tahoma">
@@ -82,12 +82,12 @@ const SupportSpanish = async () => {
                 </div>
                 <div className="lg:text-left sm:text-left text-left flex flex-col sm:gap-7 gap-4 justify-between lg:ml-5 md:ml-5 sm:ml-0 ml-0">
                   <div>
-                    <h2 className="text-[#292F6C] font-bold md:text-[42px] sm:text-[40px] text-[30px] tahoma lg:w-[200px] leading-[52px]">
+                    <h2 className="text-[#292F6C] font-bold xl:text-[42px] lg:text-[40px] sm:text-[40px] text-[40px] leading-[54px] tahoma">
                       {pageData?.header_2}
                     </h2>
                   </div>
                   <div>
-                    <p className="text-[#161C2Db3] text-[20px] font-normal leading-[38px] tahoma">
+                    <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px] tahoma">
                       {pageData?.description_2}
                     </p>
                   </div>

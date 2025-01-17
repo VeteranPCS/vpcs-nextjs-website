@@ -231,3 +231,28 @@ html {
 .reviw-topslider .slick-slide.slick-active.slick-current {
   opacity: 0.5 !important;
 } */
+.st0 {
+  border-radius: 0.5rem;
+  fill: #292F6C !important;
+  stroke: #fff;
+  stroke-width: 0.75;
+}
+
+.st2 {
+  fill: #292F6C !important;
+  stroke: #fff;
+  stroke-width: 0.75;
+}
+
+.st3 {
+  fill: #292F6C !important;
+  stroke: #fff;
+  stroke-width: 0.77;
+}
+
+.st0:hover, .st2:hover, .st3:hover, .small-state-group:hover .st0, .small-state-group:hover .st2, .small-state-group:hover .st3 {
+  cursor: pointer;
+  fill: #4E5489 !important;
+}
+
+
