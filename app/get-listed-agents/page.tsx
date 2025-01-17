@@ -7,6 +7,7 @@ import Image from "next/image";
 import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListedLendersProfileInfo";
 import { GetListedAgentsPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from 'next/navigation'
+import { sendGTMEvent } from "@next/third-parties/google";
 
 export default function Home() {
   const router = useRouter()
@@ -37,6 +38,10 @@ export default function Home() {
   useEffect(() => {
     const handleFormSubmission = async () => {
       try {
+        sendGTMEvent({
+          event: 'conversion_get_listed_agents',
+        });
+
         const server_response = await GetListedAgentsPostForm(formData);
         if (server_response?.redirectUrl) {
           router.push(server_response.redirectUrl);
@@ -105,28 +110,28 @@ export default function Home() {
         </div>
 
         {currentStep === 1 && (
-          <GetListedAgents 
+          <GetListedAgents
             onSubmit={handleSubmit}
           />
         )}
-        
+
         {currentStep === 2 && (
-          <GetListedLendersProfileInfo 
+          <GetListedLendersProfileInfo
             onSubmit={handleSubmit}
             onBack={handleBack}
             shouldValidate={true}
           />
         )}
-        
+
         {currentStep === 3 && (
-          <CurrentLocation 
+          <CurrentLocation
             onSubmit={handleSubmit}
             onBack={handleBack}
           />
         )}
 
         {currentStep === 4 && (
-          <AgentInfo 
+          <AgentInfo
             onBack={handleBack}
             onSubmit={handleSubmit}
             shouldSubmit={shouldSubmit}

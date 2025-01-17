@@ -30,8 +30,7 @@ export default function Home() {
     <main>
       <HeroSection
         title="Together, We’ll Make It Home."
-        subTitle="Veteran & Military Spouse Real Estate Agents and VA Loan Experts
-                You Can Trust"
+        subTitle="Veteran & Military Spouse Real Estate Agents and VA Loan Experts You Can Trust"
         page="home"
       />
       <MemoizedStateMap />

@@ -9,6 +9,7 @@ import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { vaLoanGuideForm } from "@/services/salesForcePostFormsService";
+import { sendGTMEvent } from "@next/third-parties/google";
 
 type FormInputs = {
   firstName: string;
@@ -61,9 +62,14 @@ const PcsResourcesVaLoanGuide = () => {
 
   const onSubmitHandler: SubmitHandler<FormInputs> = async (data) => {
     try {
+      sendGTMEvent({
+        event: "conversion_download",
+        content: "VA Loan Guide",
+      });
+
       const server_response = await vaLoanGuideForm(data);
       if (server_response?.success) {
-        setValue('firstName', '');  
+        setValue('firstName', '');
         setValue('lastName', '');
         setValue('email', '');
         setValue('captchaToken', '');
@@ -79,7 +85,7 @@ const PcsResourcesVaLoanGuide = () => {
         document.body.removeChild(link);
       } else {
         console.log("No redirect URL found");
-      } 
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
     }
