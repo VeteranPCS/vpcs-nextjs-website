@@ -51,7 +51,7 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                       alt={`${agent?.Name}'s Profile Picture`}
                       width={1000}
                       height={1000}
-                      className="w-auto h-auto object-cover"
+                      className="object-cover"
                     />
                   </div>
                   <Link
