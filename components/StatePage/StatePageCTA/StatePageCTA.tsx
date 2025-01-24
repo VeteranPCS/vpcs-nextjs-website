@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./StatePageCTA.module.css";
 import Image from "next/image";
+import Link from "next/link";
 
 const StatePageCTA = ({ cityName }: { cityName: string }) => {
   return (
@@ -48,15 +49,19 @@ const StatePageCTA = ({ cityName }: { cityName: string }) => {
             </div>
 
             <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center gap-4">
-              <Button buttonText="Agent" />
-              <button
-                className="items-center border-2 border-[#A3161B] bg-white w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px]
+              <Link href="/contact-agent">
+                <Button buttonText="Agent" />
+              </Link>
+              <Link href="/contact-lender">
+                <button
+                  className="items-center border-2 border-[#A3161B] bg-white w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px]
                px-[20px] md:py-[14px] py-[12px] rounded-[16px] text-center tracking-[1px] text-[#A3161B] hover:bg-[#A3161B] hover:text-[#ffffff] all-duration transition-all duration-300 ease-in-out"
-              >
-                <span className="xl:text-[18px] lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal leading-6 bg-cover text-nowrap tahoma">
-                  Lender
-                </span>
-              </button>
+                >
+                  <span className="xl:text-[18px] lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal leading-6 bg-cover text-nowrap tahoma">
+                    Lender
+                  </span>
+                </button>
+              </Link>
             </div>
           </div>
         </div>

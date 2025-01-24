@@ -54,8 +54,7 @@ const AdminTeam = async () => {
               ADMINISTRATION
             </h6>
             <p className="text-[#000000] text-center tahoma font-normal text-[24px] lg:w-[1000px] mx-auto my-3">
-              Management of VeteranPCSs resources, people, and time to ensure
-              your experience is seamless and an extraordinary move or PCS.
+              Ensuring your experience is seamless and an extraordinary move or PCS.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-9 mt-10">

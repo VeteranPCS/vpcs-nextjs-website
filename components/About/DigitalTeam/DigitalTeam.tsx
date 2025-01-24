@@ -16,22 +16,20 @@ const DigitalTeam = async () => {
   }
 
   return (
-    <div className="bg-white py-3 px-5">
-      <div className="mt-10">
-        <h1 className="text-[#292F6C] font-bold xl:text-[55px] lg:text-[50px] sm:text-[40px] text-[40px] leading-[54px] tahoma text-center">
-          Meet the <span className="font-normal">Veteran</span>PCS team
-        </h1>
-      </div>
-      <div className="bg-[#EEEEEE] pt-7 pb-14 px-9 sm:px-0">
+    <div className="bg-white py-3 px-5 mt-10">
+      <div className="bg-[#EEEEEE] px-9 sm:px-0 pb-14">
+        <div className="mt-10 pt-7 pb-14 ">
+          <h1 className="text-[#292F6C] font-bold xl:text-[55px] lg:text-[50px] sm:text-[40px] text-[40px] leading-[54px] tahoma text-center">
+            Meet the <span className="font-normal">Veteran</span>PCS team
+          </h1>
+        </div>
         <div className="container mx-auto">
           <div className="text-center">
             <h6 className="text-gray-800 text-center font-bold text-[21px] tahoma">
-              DIGITAL INNOVATION AND TECH
+              OPERATIONS & TECH
             </h6>
             <p className="text-[#000000] text-center tahoma font-normal text-[24px] lg:w-[1000px] mx-auto my-3">
-              Immersive creative experiences, sophisticated marketing and
-              innovative technology for our customers safety and substantial
-              user experience.
+              Veterans and Military Spouses, Just Like You
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-9 mt-10">
