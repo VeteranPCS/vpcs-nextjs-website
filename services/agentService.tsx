@@ -133,10 +133,10 @@ const agentService = {
             if (agents) {
                 return agents;
             } else {
-                throw new Error('Failed to Fetch About Page Details');
+                throw new Error('Failed to Fetch Agent Details');
             }
         } catch (error: any) {
-            console.error('Error fetching About Page Details:', error);
+            console.error('Error fetching Agent Details:', error);
             throw error; // You can handle the error more gracefully based on your needs
         }
     },
@@ -150,10 +150,10 @@ const agentService = {
             if (agent) {
                 return agent.image.asset.image_url;
             } else {
-                throw new Error('Failed to Fetch About Page Details');
+                throw new Error('Failed to Fetch Agent Image');
             }
         } catch (error: any) {
-            console.error('Error fetching About Page Details:', error);
+            console.error('Error fetching Agent Image:', error);
             throw error; // You can handle the error more gracefully based on your needs
         }
     },
