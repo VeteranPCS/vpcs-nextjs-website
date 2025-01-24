@@ -290,7 +290,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
                 type="submit"
                 className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
               >
-                Submit Now
+                Submit
               </button>
             </div>
           </div>
