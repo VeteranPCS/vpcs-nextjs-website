@@ -8,7 +8,7 @@ const userImageServices = {
 
             const users = await client.fetch<UserImage[]>(`*[_type == "users"] { userImage }`)
 
-            users.forEach((user) => {
+            users.forEach((user: UserImage) => {
                 if (user.userImage?.asset?._ref) {
                     user.userImage.asset.image_url = urlForImage(user.userImage.asset);  // Add the image URL to the response
                 }

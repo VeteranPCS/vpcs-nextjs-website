@@ -40,8 +40,8 @@ export default function Home() {
         sendGTMEvent({
           event: 'conversion_get_listed_lenders',
         });
-
         const server_response = await GetListedLendersPostForm(formData);
+        
         if (server_response?.redirectUrl) {
           router.push(server_response.redirectUrl);
         } else {

@@ -12,20 +12,21 @@
   margin-top: 105px;
 }
 
-@media screen and (max-width: 575px) {
-  .herosectioncontainer {
-    margin-top: 50px;
-    height: 1200px;
-  }
-}
-
 @media screen and (max-width: 767px) {
   .herosectioncontainer {
     margin-top: 50px;
     height: 1200px;
+    background-position: right;
   }
 }
-
+@media screen and (max-width: 575px) {
+  .herosectioncontainer {
+    margin-top: 50px;
+    height: 850px;
+    background-position: left;
+    background-size: auto;
+  }
+}
 @media screen and (min-width: 768px) {
   .herosectioncontainer {
     margin-top: 50px;

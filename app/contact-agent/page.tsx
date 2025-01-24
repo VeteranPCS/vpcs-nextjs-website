@@ -36,7 +36,6 @@ interface FormData {
 
 export default function Home() {
   const router = useRouter()
-
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>();
   const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
@@ -108,7 +107,6 @@ export default function Home() {
 
   return (
     <Suspense>
-
       <div className="container mx-auto w-full">
         <div className="flex flex-wrap md:flex-nowrap justify-between items-center md:pt-[140px] pt-[80px] md:mx-0 mx-5">
           <div>

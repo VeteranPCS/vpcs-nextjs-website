@@ -49,6 +49,15 @@ const AdminTeam = async () => {
     <div>
       <div className="bg-[#FFFFFF] pt-7 pb-14 px-9 sm:px-0">
         <div className="container mx-auto">
+          <div className="text-center">
+            <h6 className="text-gray-800 text-center font-bold text-[21px] tahoma">
+              ADMINISTRATION
+            </h6>
+            <p className="text-[#000000] text-center tahoma font-normal text-[24px] lg:w-[1000px] mx-auto my-3">
+              Management of VeteranPCSs resources, people, and time to ensure
+              your experience is seamless and an extraordinary move or PCS.
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-9 mt-10">
             {DigitalAdminDetails.map((details) => (
               <div key={details._id} className="border border-[#EAECF0] bg-white mx-auto mt-5">

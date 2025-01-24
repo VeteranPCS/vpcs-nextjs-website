@@ -28,7 +28,7 @@ const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({
   reviewsList,
 }) => {
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       <div className={classes.ReviewTestimonialContainer}>
         <div className="xl:py-16 lg:py-16 px-5 mx-auto">
           <div className="">

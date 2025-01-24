@@ -45,13 +45,75 @@ const StateMap = () => {
     const target = event.currentTarget as HTMLElement;
     const href = target.getAttribute("href");
     const dataName = target.getAttribute("data-name");
-
     sendGTMEvent({
       event: "map_interaction",
       state: href || dataName || "unknown", // Use `href` first, fallback to `data-name`, default to "unknown"
     });
   };
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
+  const states = [
+    { name: 'Alabama', link: 'https://veteranpcs.com/alabama/' },
+    { name: 'Alaska', link: 'https://veteranpcs.com/alaska/' },
+    { name: 'Arizona', link: 'https://veteranpcs.com/arizona/' },
+    { name: 'Arkansas', link: 'https://veteranpcs.com/arkansas/' },
+    { name: 'California', link: 'https://veteranpcs.com/california/' },
+    { name: 'Colorado', link: 'https://veteranpcs.com/colorado/' },
+    { name: 'Connecticut', link: 'https://veteranpcs.com/connecticut/' },
+    { name: 'Delaware', link: 'https://veteranpcs.com/delaware/' },
+    { name: 'Florida', link: 'https://veteranpcs.com/florida/' },
+    { name: 'Georgia', link: 'https://veteranpcs.com/georgia/' },
+    { name: 'Hawaii', link: 'https://veteranpcs.com/hawaii/' },
+    { name: 'Idaho', link: 'https://veteranpcs.com/idaho/' },
+    { name: 'Illinois', link: 'https://veteranpcs.com/illinois/' },
+    { name: 'Indiana', link: 'https://veteranpcs.com/indiana/' },
+    { name: 'Iowa', link: 'https://veteranpcs.com/iowa/' },
+    { name: 'Kansas', link: 'https://veteranpcs.com/kansas/' },
+    { name: 'Kentucky', link: 'https://veteranpcs.com/kentucky/' },
+    { name: 'Louisiana', link: 'https://veteranpcs.com/louisiana/' },
+    { name: 'Maine', link: 'https://veteranpcs.com/maine/' },
+    { name: 'Maryland', link: 'https://veteranpcs.com/maryland/' },
+    { name: 'Massachusetts', link: 'https://veteranpcs.com/massachusetts/' },
+    { name: 'Michigan', link: 'https://veteranpcs.com/michigan/' },
+    { name: 'Minnesota', link: 'https://veteranpcs.com/minnesota/' },
+    { name: 'Mississippi', link: 'https://veteranpcs.com/mississippi/' },
+    { name: 'Missouri', link: 'https://veteranpcs.com/missouri/' },
+    { name: 'Montana', link: 'https://veteranpcs.com/montana/' },
+    { name: 'Nebraska', link: 'https://veteranpcs.com/nebraska/' },
+    { name: 'Nevada', link: 'https://veteranpcs.com/nevada/' },
+    { name: 'New Hampshire', link: 'https://veteranpcs.com/new-hampshire/' },
+    { name: 'New Jersey', link: 'https://veteranpcs.com/new-jersey/' },
+    { name: 'New Mexico', link: 'https://veteranpcs.com/new-mexico/' },
+    { name: 'New York', link: 'https://veteranpcs.com/new-york/' },
+    { name: 'North Carolina', link: 'https://veteranpcs.com/north-carolina/' },
+    { name: 'North Dakota', link: 'https://veteranpcs.com/north-dakota/' },
+    { name: 'Ohio', link: 'https://veteranpcs.com/ohio/' },
+    { name: 'Oklahoma', link: 'https://veteranpcs.com/oklahoma/' },
+    { name: 'Oregon', link: 'https://veteranpcs.com/oregon/' },
+    { name: 'Pennsylvania', link: 'https://veteranpcs.com/pennsylvania/' },
+    { name: 'Rhode Island', link: 'https://veteranpcs.com/rhode-island/' },
+    { name: 'South Carolina', link: 'https://veteranpcs.com/south-carolina/' },
+    { name: 'South Dakota', link: 'https://veteranpcs.com/south-dakota/' },
+    { name: 'Tennessee', link: 'https://veteranpcs.com/tennessee/' },
+    { name: 'Texas', link: 'https://veteranpcs.com/texas/' },
+    { name: 'Utah', link: 'https://veteranpcs.com/utah/' },
+    { name: 'Vermont', link: 'https://veteranpcs.com/vermont/' },
+    { name: 'Virginia', link: 'https://veteranpcs.com/virginia/' },
+    { name: 'Washington', link: 'https://veteranpcs.com/washington/' },
+    { name: 'Washington DC', link: 'https://veteranpcs.com/washington-dc/' },
+    { name: 'West Virginia', link: 'https://veteranpcs.com/west-virginia/' },
+    { name: 'Wisconsin', link: 'https://veteranpcs.com/wisconsin/' },
+    { name: 'Wyoming', link: 'https://veteranpcs.com/wyoming/' },
+  ];
+
+  const filteredStates = states.filter((state) =>
+    state.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
     <>
@@ -1568,7 +1630,44 @@ const StateMap = () => {
                 </g>
               </Link>
             </svg>
-            <Link href="/contact-agent" className="py-8 flex justify-center" onClick={handleSendGtmEvent}>
+            <div className="dropdown md:hidden block">
+              <div className="flex mb-2 bg-white w-[337px] mx-auto rounded-xl py-3">
+                <button onClick={toggleDropdown} className="dropbtn ml-6 flex justify-between items-center w-[85%]">
+                  Select State    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path id="Vector" d="M1.42857 -3.74668e-07L5 3.57143L8.57143 -6.24447e-08L10 0.714286L5 5.71429L-3.12225e-08 0.714285L1.42857 -3.74668e-07Z" fill="#252B42" />
+                  </svg>
+
+                </button>
+              </div>
+              {isOpen && (
+                <div id="myDropdown" className="dropdown-content">
+                  <div className="w-[337px] mx-auto">
+                    <input
+                      type="text"
+                      id="stateSearch"
+                      className="search-input h-[48px] w-full rounded-xl pl-3"
+                      placeholder="Search..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <div className="bg-white mt-2 w-[337px] mx-auto h-[250px] overflow-auto rounded-lg">
+                    {filteredStates.length === 0 ? (
+                      <div className="flex items-center justify-center h-full">
+                        <span className="text-gray-500">No data found</span>
+                      </div>
+                    ) : (
+                      filteredStates.map((state) => (
+                        <a key={state.name} href={state.link} className="py-2 flex justify-center border border-solid">
+                          {state.name}
+                        </a>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+            <Link href="/contact-agent" className="md:py-8 py-2 flex justify-center" onClick={handleSendGtmEvent}>
               <Button buttonText="Don't want to browse? Find an Agent For Me" />
             </Link>
           </div>

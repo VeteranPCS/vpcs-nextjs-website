@@ -41,7 +41,6 @@ export default function Home() {
         sendGTMEvent({
           event: 'conversion_get_listed_agents',
         });
-
         const server_response = await GetListedAgentsPostForm(formData);
         if (server_response?.redirectUrl) {
           router.push(server_response.redirectUrl);
@@ -110,28 +109,28 @@ export default function Home() {
         </div>
 
         {currentStep === 1 && (
-          <GetListedAgents
+          <GetListedAgents 
             onSubmit={handleSubmit}
           />
         )}
-
+        
         {currentStep === 2 && (
-          <GetListedLendersProfileInfo
+          <GetListedLendersProfileInfo 
             onSubmit={handleSubmit}
             onBack={handleBack}
             shouldValidate={true}
           />
         )}
-
+        
         {currentStep === 3 && (
-          <CurrentLocation
+          <CurrentLocation 
             onSubmit={handleSubmit}
             onBack={handleBack}
           />
         )}
 
         {currentStep === 4 && (
-          <AgentInfo
+          <AgentInfo 
             onBack={handleBack}
             onSubmit={handleSubmit}
             shouldSubmit={shouldSubmit}

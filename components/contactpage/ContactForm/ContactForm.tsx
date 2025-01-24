@@ -67,12 +67,13 @@ const ContactForm = () => {
       sendGTMEvent({
         event: 'contact_form_submission',
       });
+      
       const server_response = await contactPostForm(data);
       if (server_response?.success) {
         router.push(`${BASE_URL}/thank-you`);
       } else {
         console.log("No redirect URL found");
-      }
+      } 
     } catch (error) {
       console.error('Error submitting form:', error);
     }
@@ -115,12 +116,24 @@ const ContactForm = () => {
       }
     }
   };
-
+    
   return (
     <div className="container mx-auto flex flex-wrap justify-center lg:py-12 md:py-12 sm:py-2 py-2 gap-10">
       <div className="flex flex-wrap justify-around rounded-[12.128px] bg-white shadow-[0px_0px_72.766px_36.383px_rgba(0,0,0,0.03)] p-4 w-full overflow-hidden mx-8 md:mb-0 mb-5">
         <div className="md:w-1/3 sm:w-full w-full ">
           <div className={classes.Container}>
+          <Link href="/get-listed-agents" className="block justify-start items-center gap-4 flex-wrap">
+              <Button
+                buttonText="Agents, Get Listed Here"
+                divClassName="!pb-0"
+              />
+            </Link>
+            <Link href="/get-listed-lenders" className="block justify-start items-center gap-4 flex-wrap mb-6">
+              <Button
+                buttonText="Lenders, Get Listed Here"
+              />
+            </Link>
+
             <div className={classes.Heading}>
               We would love to hear<br></br> from you
             </div>
@@ -152,18 +165,6 @@ const ContactForm = () => {
                 </div>
               </div>
             </div>
-
-            <Link href="/get-listed-agents" className="block justify-start items-center gap-4 flex-wrap ">
-              <Button
-                buttonText="Agents, Get Listed Here"
-              />
-            </Link>
-            <Link href="/get-listed-lenders" className="block justify-start items-center gap-4 flex-wrap ">
-              <Button
-                buttonText="Lenders, Get Listed Here"
-              />
-            </Link>
-
             <div>
               <ul className="flex items-center md:justify-start justify-center gap-4 mt-5">
                 {mediaAccount.map((acc) => (
@@ -185,7 +186,7 @@ const ContactForm = () => {
         <div className="md:w-2/3 sm:w-full w-full relative md:px-10 lg:px-20 mt-10 md:mt-0">
 
           <form onSubmit={handleSubmit(onSubmit)}>
-            <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
+          <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
             <div className={classes.FormContainer}>
               <div className="w-full">
                 <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1  gap-5 mb-10">
@@ -280,7 +281,7 @@ const ContactForm = () => {
                 </div>
 
                 <div className={classes.FormGroup}>
-                  <ReCAPTCHA
+                <ReCAPTCHA
                     sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
                     onChange={onCaptchaChange} // Handle reCAPTCHA value change
                   />

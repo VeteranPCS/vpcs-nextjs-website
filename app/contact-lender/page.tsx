@@ -27,19 +27,18 @@ export default function Home() {
     try {
       const fullQueryString = window.location.search;
       const queryParams = new URLSearchParams(fullQueryString);
-
       sendGTMEvent({
         event: "conversion_contact_lender",
         agent_id: queryParams.get('id') || "",
         state: queryParams.get('state') || "",
       });
-
+      
       const server_response = await contactLenderPostForm(formData, fullQueryString);
       if (server_response?.redirectUrl) {
         router.push(server_response.redirectUrl);
       } else {
         console.log("No redirect URL found");
-      }
+      }    
     } catch (error) {
       console.error('Error submitting form:', error);
     }
@@ -75,10 +74,10 @@ export default function Home() {
             </button>
           </div>
         </div>
+
         <ContactLender
           onSubmit={handleSubmit}
         />
-
       </div>
     </Suspense >
   );

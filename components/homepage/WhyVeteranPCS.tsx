@@ -15,7 +15,7 @@ const WhyVeteranPcs = () => {
               </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4 justify-between items-center mt-10">
-              <div className="lf:text-left sm:text-center text-center">
+              <div className="lg:ml-auto">
                 <div className="flex gap-4 lg:justify-start sm:justify-center justify-center items-center">
                   <Image
                     width={100}
@@ -64,7 +64,7 @@ const WhyVeteranPcs = () => {
                   />
                 </div>
               </div>
-              <div className="mx-auto">
+              <div>
                 <div className="flex gap-4 lg:justify-start sm:justify-center justify-center items-center">
                   <Image
                     width={100}

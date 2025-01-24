@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const SkillFuturesBuild = () => {
   return (
-    <div className="w-full relative mb-8 sm:mb-0">
+    <div className="w-full relative lg:mb-8 mb-0">
       <div className={classes.SkillsFuturesBuildContainer}>
         <div className="container mx-auto">
           <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 w-full">

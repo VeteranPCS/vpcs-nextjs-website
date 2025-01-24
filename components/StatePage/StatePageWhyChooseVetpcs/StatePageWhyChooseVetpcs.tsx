@@ -25,7 +25,7 @@ const cardsData = [
     title: "Bonus",
     subTitle: "RECEIVE CASHBACK OF $200 - $4,000 AT CLOSING",
   },
-
+  
 ];
 
 

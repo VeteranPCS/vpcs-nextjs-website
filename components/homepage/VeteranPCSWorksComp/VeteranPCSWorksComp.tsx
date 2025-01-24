@@ -20,7 +20,7 @@ const VeteranPCSWorksComp: React.FC<VeteranPCSWorksCompProps> = ({
   const { img, title, subTitle, link } = veteranpcs;
   return (
     <Link className={classes.veteranpcsworkscontainer} href={link}>
-      <div className="xl:p-9 lg:p-9 md:p-9 sm:p-2 p-4 lg:w-[300px] lg:h-[340px] sm:w-[250px] w-[250px] md:py-0 sm:py-20 py-10 lg:mb-0 mb-4 flex flex-col justify-center items-center">
+      <div className="xl:p-9 lg:p-9 md:p-9 sm:p-2 p-4 lg:w-[300px] lg:h-[340px] sm:w-[250px] w-[250px] sm:py-6 py-10 lg:mb-0 mb-4 flex flex-col justify-center items-center">
         <div className="text-center ">
           <div className="xl:block lg:block md:block items-center justify-center">
             <div className="flex justify-center mx-auto w-[60px] h-[60px]">

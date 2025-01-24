@@ -124,7 +124,7 @@ const agentService = {
         try {
             const agents = await client.fetch<AgentDocument[]>(`*[_type == "real_state_agents"]`);
 
-            agents.forEach((agent) => {
+            agents.forEach((agent: AgentDocument) => {
                 if (agent.mainImage?.asset?._ref) {
                     agent.mainImage.asset.image_url = urlForImage(agent.mainImage.asset);
                 }

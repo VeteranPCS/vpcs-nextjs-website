@@ -66,10 +66,10 @@ const PcsResourcesVaLoanGuide = () => {
         event: "conversion_download",
         content: "VA Loan Guide",
       });
-
+      
       const server_response = await vaLoanGuideForm(data);
       if (server_response?.success) {
-        setValue('firstName', '');
+        setValue('firstName', '');  
         setValue('lastName', '');
         setValue('email', '');
         setValue('captchaToken', '');
@@ -85,7 +85,7 @@ const PcsResourcesVaLoanGuide = () => {
         document.body.removeChild(link);
       } else {
         console.log("No redirect URL found");
-      }
+      } 
     } catch (error) {
       console.error('Error submitting form:', error);
     }

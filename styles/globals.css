@@ -23,6 +23,7 @@ body {
 }
 
 @media screen and (max-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
+
   html,
   body {
     overflow-x: hidden;
@@ -83,7 +84,7 @@ body {
   transition: all 0.45s ease-in-out;
 }
 
-.nav li:hover > .sub-menu,
+.nav li:hover>.sub-menu,
 .nav .sub-menu:hover {
   opacity: 1;
   visibility: visible;
@@ -197,40 +198,58 @@ blockquote {
 }
 
 .comlogoslider .slick-initialized .slick-slide {
-  margin: 0px 10px !important;
+  margin: 0px 30px !important;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-/* .reviw-topslider .slick-list .slick-track {
-  display: flex !important;
-  justify-content: center !important;
+.reviw-topslider .slick-list {
+  width: 1000px !important;
   margin: 0px auto !important;
-} */
-/* 
-.reviw-topslider .slick-list .slick-track .slick-slide:nth-child(8),
-.reviw-topslider .slick-list .slick-track .slick-slide:nth-child(9),
-.reviw-topslider .slick-list .slick-track .slick-slide:nth-child(11),
-.reviw-topslider .slick-list .slick-track .slick-slide:nth-child(12){
-  width: auto !important;
 }
 
-.reviw-topslider .slick-list .slick-track .slick-slide:nth-child(10){
-  width: 256px;
+.reviw-topslider .slick-slide .withoutdatasliderbox {
+  width: 80px !important;
 }
 
-.reviw-topslider .slick-slide:nth-child(8),
-.reviw-topslider .slick-slide:nth-child(9),
-.reviw-topslider .slick-slide:nth-child(11),
-.reviw-topslider .slick-slide:nth-child(12) {
-  opacity: 0.5 !important;
+.reviw-topslider .slick-slide .activesliderbox {
+  width: 256px !important;
 }
 
-.reviw-topslider .slick-slide.slick-active.slick-current {
-  opacity: 0.5 !important;
-} */
+.custom-slider .slick-slide:not(.slick-active:nth-child(4)) {
+  width: 256px !important;
+}
+
+.slick-dots-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  top: 670px;
+}
+
+.slick-dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #9599b3;
+  cursor: pointer;
+}
+
+.slick-dot.active {
+  background-color: #FFFFFF;
+  width: 20px;
+  height: 20px;
+  transition: all 0.3s ease-in-out;
+}
+
 .st0 {
   border-radius: 0.5rem;
   fill: #292F6C !important;
