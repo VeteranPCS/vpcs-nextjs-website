@@ -1,7 +1,10 @@
 "use client";
+import { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import ReCAPTCHA from 'react-google-recaptcha';
+import { set } from "sanity";
 
 export interface FormData {
   firstName: string;
@@ -13,6 +16,8 @@ export interface FormData {
   howDidYouHear: string;
   additionalComments?: string; // Optional field
   tellusMore?: string; // Optional field for 'Other' option
+  captchaToken?: string;
+  captcha_settings?: string;
 }
 
 interface ContactFormProps {
@@ -39,10 +44,11 @@ const contactFormSchema = yup.object().shape({
   additionalComments: yup.string().optional(),
 });
 
-const ContactForm = ({ onSubmit }: ContactFormProps) => {
+const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
   const {
     register,
     handleSubmit,
+    setValue,
     watch,
     formState: { errors },
   } = useForm<FormData>({
@@ -57,6 +63,8 @@ const ContactForm = ({ onSubmit }: ContactFormProps) => {
       howDidYouHear: '',
       tellusMore: '',
       additionalComments: '',
+      captchaToken: '',
+      captcha_settings: '{}',
     },
   });
 
@@ -66,14 +74,37 @@ const ContactForm = ({ onSubmit }: ContactFormProps) => {
     onSubmit(data);
   };
 
+  const onCaptchaChange = (token: string | null) => {
+    if (token) {
+      const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
+      if (captchaSettingsElem) {
+        const captchaSettings = JSON.parse(captchaSettingsElem.value);
+        captchaSettings.ts = JSON.stringify(new Date().getTime());
+        captchaSettingsElem.value = JSON.stringify(captchaSettings);
+        setValue('captcha_settings', captchaSettingsElem.value);
+        setValue('captchaToken', token);
+      }
+    }
+  };
+
+  const [agentName, setAgentName] = useState('Us');
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const agentFirstName = urlParams.get('fn') || 'Us';
+    setAgentName(agentFirstName);
+  }, [agentName])
+
+
   return (
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
-                Contact Us
+                Contact {agentName}
               </h1>
               <h2 className="text-[#242426] my-2 tahoma lg:text-[23px] md:text-[22px] sm:text-[18px] text-[18px] font-bold leading-6">
                 No spam mail, no fees. VeteranPCS is free to use.
@@ -252,7 +283,7 @@ const ContactForm = ({ onSubmit }: ContactFormProps) => {
                   </div>
                 )}
 
-              {/* Additional Comments */}
+                {/* Additional Comments */}
                 <div className="flex flex-col">
                   <label
                     htmlFor="additionalComments"
@@ -268,6 +299,15 @@ const ContactForm = ({ onSubmit }: ContactFormProps) => {
                   />
                 </div>
               </div>
+              <div className="mt-8 flex flex-col">
+                <ReCAPTCHA
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+                  onChange={onCaptchaChange} // Handle reCAPTCHA value change
+                />
+                {errors.captchaToken && (
+                  <span className="text-red-500">{errors.captchaToken.message}</span>
+                )}
+              </div>
             </div>
             {/* Submit Button */}
             <div className="flex md:justify-start justify-center">
@@ -275,19 +315,7 @@ const ContactForm = ({ onSubmit }: ContactFormProps) => {
                 type="submit"
                 className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
               >
-                Next
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <path
-                    d="M14.0098 11H5.99976V13H14.0098V16L17.9998 12L14.0098 8.00003V11Z"
-                    fill="#FFFFFF"
-                  />
-                </svg>
+                Submit
               </button>
             </div>
           </div>
@@ -297,4 +325,4 @@ const ContactForm = ({ onSubmit }: ContactFormProps) => {
   );
 };
 
-export default ContactForm;
+export default ContactAgentForm;
