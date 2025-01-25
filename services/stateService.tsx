@@ -144,13 +144,16 @@ const stateService = {
                 agent.PhotoUrl = photoResponse;
               } catch (error) {
                 console.error(`Error fetching photo URL for agent ${agent.AccountId_15__c}:`, error);
+                agent.PhotoUrl = undefined;
               }
             }
             return agent;
           })
         );
 
-        return { ...response.data, records: recordsWithUpdatedPhotoUrl } as AgentsData;
+        const filterAgentsWithOutPhotos = recordsWithUpdatedPhotoUrl.filter((agent: Agent) => agent.PhotoUrl !== undefined);
+
+        return { ...response.data, records: filterAgentsWithOutPhotos } as AgentsData;
       } else if (response?.status === 401) {
         // Token expired: Refresh and retry
         try {
@@ -193,13 +196,17 @@ const stateService = {
                 // agent.PhotoUrl = photoResponse?.data; // Ensure fallback to original URL
               } catch (error) {
                 console.error(`Error fetching photo URL for agent ${agent.AccountId_15__c}:`, error);
+                agent.PhotoUrl = undefined;
               }
             }
             return agent;
           })
         );
 
-        return { ...response.data, records: recordsWithUpdatedPhotoUrl } as LendersData;
+        const filterAgentsWithOutPhotos = recordsWithUpdatedPhotoUrl.filter((agent: Agent) => agent.PhotoUrl !== undefined);
+
+        return { ...response.data, records: filterAgentsWithOutPhotos } as LendersData;
+
       } else if (response?.status === 401) {
         try {
           await getSalesforceToken();
