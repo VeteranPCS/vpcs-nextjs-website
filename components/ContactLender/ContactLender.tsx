@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import HowDidYouHearAboutUs from '@/components/GetListedLenders/HowDidYouHearAboutUs';
@@ -85,7 +86,7 @@ const contactFormSchema = yup.object().shape({
   captcha_settings: yup.string().required('Please complete the reCAPTCHA'),
 });
 
-const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
+const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
 
   const {
     register,
@@ -140,6 +141,14 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     ) : null;
   };
 
+  const [lenderName, setLenderName] = useState('Us');
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const lenderFirstName = urlParams.get('fn') || 'Us';
+    setLenderName(lenderFirstName);
+  }, [lenderName])
+
   return (
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
@@ -148,7 +157,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
-                Contact Us
+                Contact {lenderName}
               </h1>
               <p className="text-[#575F6E] roboto text-base font-black mt-3">
                 This information is strictly used to connect you and the lender directly. Be sure to check your spam/junk folder if you do not receive a confirmation email.
@@ -300,4 +309,4 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
   );
 };
 
-export default ContactForm;
+export default ContactLenderForm;
