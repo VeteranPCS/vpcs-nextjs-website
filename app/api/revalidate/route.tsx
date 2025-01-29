@@ -71,8 +71,7 @@ export async function POST(req: NextRequest) {
       video_success_stories: ["/stories"],
       veterence_logo: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"],
     };
-    console.log(body._type);
-    console.log(body.salesforceID);
+
     const paths = body._type !== 'agent' ? revalidatePathMap[body._type] : await agentService.getAgentState(body.salesforceID!);
 
     if (!paths) {

@@ -53,7 +53,6 @@ export default function Home() {
       <ReceiveOffCourses />
       <MemoizedFrequentlyAskedQuestion />
       <KeepInTouch />
-      <Footer />
     </main>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 import { useState, FormEvent } from 'react';
-import { FormData } from "@/app/get-listed-lenders/page";
+import { FormData } from "@/app/(site)/get-listed-lenders/page";
 
 interface ContactFormProps {
   onSubmit: (data: FormData) => void;

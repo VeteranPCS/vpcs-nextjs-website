@@ -7,7 +7,6 @@ import DigitalTeam from "@/components/About/DigitalTeam/DigitalTeam";
 import AdminTeam from "@/components/About/AdminTeam/AdminTeam";
 import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 import { memo } from "react";
 import type { Metadata } from "next";
 
@@ -66,7 +65,6 @@ export default function Home() {
       <MemoizedAdminTeam />
       <MemoizedFrequentlyAskedQuestion />
       <KeepInTouch />
-      <Footer />
     </main>
   );
 }

@@ -172,11 +172,8 @@ const agentService = {
 
             if (response?.status === 200) {
                 const data = response.data;
-                console.log('data:', data);
                 const combinedStates = combineStateValues(data);
-                console.log(combinedStates);
                 const fullStateNames = getStateFullNames(combinedStates);
-                console.log(fullStateNames);
                 return fullStateNames;
 
             } else if (response?.status === 401) {

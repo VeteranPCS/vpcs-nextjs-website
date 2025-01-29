@@ -47,7 +47,6 @@ export default function Home() {
       <AgentLoanExpert />
       <SkillFuturesBuild />
       <KeepInTouch />
-      <Footer />
     </main>
   );
 }

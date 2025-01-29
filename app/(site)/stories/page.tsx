@@ -8,7 +8,6 @@ import FamilySupport from "@/components/homepage/FamilySupport/FamilySupport";
 import WhyVeteranPcs from "@/components/homepage/WhyVeteranPCS";
 import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 import Testimonials from "@/components/Testimonials/TestimonialPage";
 import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
 import { memo } from "react";
@@ -66,7 +65,6 @@ export default function Home() {
       <WhyVeteranPcs />
       <MemoizedFrequentlyAskedQuestion />
       <KeepInTouch />
-      <Footer />
     </>
   );
 }

@@ -5,7 +5,6 @@ import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
 import WhyVeteranPcs from "@/components/homepage/WhyVeteranPCS";
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpert";
 import { memo } from "react";
 
@@ -54,7 +53,6 @@ export default function Home() {
       <AgentLoanExpert />
       <SkillFuturesBuild />
       <KeepInTouch />
-      <Footer />
     </>
   );
 }

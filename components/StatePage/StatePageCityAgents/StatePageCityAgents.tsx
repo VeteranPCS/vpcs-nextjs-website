@@ -37,7 +37,7 @@ function toTitleCase(str: string): string {
 }
 
 const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
-  console.log(agent_data);
+
   return (
     // <div id={city.replace(/\s+/g, "-").toLowerCase()}>
     <div id={city.toLowerCase().split(" ").join("-")}>

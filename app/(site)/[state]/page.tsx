@@ -7,7 +7,6 @@ import StatePageLetFindAgent from "@/components/StatePage/StatePageLetFindAgent/
 import StatePageWhyChooseVetpcs from "@/components/StatePage/StatePageWhyChooseVetpcs/StatePageWhyChooseVetpcs";
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 import { memo } from "react";
 import stateService, { StateList as StateList, AgentsData, LendersData } from "@/services/stateService";
 import { AgentData } from '@/components/StatePage/StatePageCityAgents/StatePageCityAgents'
@@ -200,7 +199,6 @@ export default async function StatePage({ params }: { params: { state: string } 
       <StatePageWhyChooseVetpcs cityName={state_data?.city_name || 'Unknown'} />
       <MemoizedFrequentlyAskedQuestion />
       <KeepInTouch />
-      <Footer />
     </>
   );
 }

@@ -23,11 +23,10 @@ export default function Home() {
       <MemoizedVideoReview />
       <AboutOurStory />
       <div className="mb-16">
-        <CommonBlog component="Let’s talk VA loan"/>
+        <CommonBlog component="Let’s talk VA loan" />
         {/* <PcsResourcesBlog title="Let’s talk VA loan" description="Our experts breakdown buying with a VA loan" link="connect with a VA Loan expert!" url="#"/> */}
       </div>
       <KeepInTouch />
-      <Footer />
     </main>
   );
 }

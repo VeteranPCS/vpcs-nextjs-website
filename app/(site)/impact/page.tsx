@@ -76,7 +76,6 @@ export default function Home() {
       <SkillFuturesBuild />
       <MemoizedFrequentlyAskedQuestion />
       <KeepInTouch />
-      <Footer />
     </>
   );
 }

@@ -123,11 +123,12 @@ const Locations = () => {
                   alt=""
                 />
               </div>
-              <div>
-                <p className="text-white text-[14px] font-medium roboto my-4">
-                  Jason Anderson <br></br> Founder and Owner, VeteranPCS, LLC
-                  <br></br> Employing Broker <br></br> License: ER.100089091
-                </p>
+              <div className="text-white text-[14px] font-medium roboto my-4">
+                <p>Solid Oak Realty, Inc.</p>
+                <p>D.B.A. VeteranPCS</p>
+                <p>415 N. Tejon St.</p>
+                <p>Colorado Springs, CO 80903</p>
+                <p>License: ER.100089091</p>
               </div>
               <div className="flex items-center">
                 <div>

@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import Link from "next/link";
 import classes from "./PcsResourcesBlog.module.css";
 import { urlForImage } from "@/sanity/lib/image";
-import { BlogDetails } from "@/app/blog/page";
+import { BlogDetails } from "@/app/(site)/blog/page";
 
 // Define types for the props
 interface Category {

@@ -3,7 +3,6 @@ import BlogMovingPcsingBlogPostSection from "@/components/BlogPage/BlogPage/Blog
 import BlogCta from "@/components/BlogPage/BlogPage/BlogCTA/BlogCta";
 import PcsResourcesBlog from "@/components/PcsResources/PcsResourcesBlog/PcsResourcesBlog";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 import { memo } from "react";
 import blogService from "@/services/blogService";
 export interface Author {
@@ -96,7 +95,6 @@ export default async function Home() {
         index !== 0 && <PcsResourcesBlog key={index} blogList={blogsList} component={component} />
       ))}
       <MemoizedKeepInTouch />
-      <Footer />
     </>
   );
 }
