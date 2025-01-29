@@ -52,8 +52,12 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                         {orderMilitaryServiceInfo(lender?.Military_Status__pc || "", lender?.Military_Service__pc || "")}
                       </p>
                       <p>NMLS: {lender.Individual_NMLS_ID__pc}</p>
-                      <p>{lender.Brokerage_Name__pc}</p>
-                      <p>NMLS: {lender.Company_NMLS_ID__pc}</p>
+                      {lender.Company_NMLS_ID__pc &&
+                        <>
+                          <p>{lender.Brokerage_Name__pc}</p>
+                          <p>NMLS: {lender.Company_NMLS_ID__pc}</p>
+                        </>
+                      }
                     </div>
                     <div className="relative">
                       {/* Hidden checkbox to track toggle state */}

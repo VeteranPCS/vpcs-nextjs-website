@@ -78,7 +78,7 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                     </h3>
                     <div className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[10px] text-[10px] font-normal sm:mt-4 mt-0">
                       <p>
-                        {`${agent.BillingAddress?.city ? toTitleCase(agent.BillingAddress?.city) : ""}, ${agent.BillingAddress?.state}`}
+                        {`${agent.BillingAddress?.city ? toTitleCase(agent.BillingAddress?.city) + "," : ""} ${agent.BillingAddress?.state}`}
                       </p>
                       <p className="font-bold">
                         {orderMilitaryServiceInfo(agent?.Military_Status__pc || "", agent?.Military_Service__pc || "")}
