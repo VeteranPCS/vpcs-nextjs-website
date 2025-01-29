@@ -42,8 +42,10 @@ export interface Agent {
   Military_Status__pc: string;
   Military_Service__pc: string;
   Brokerage_Name__pc: string;
-  BillingCity?: string | null;
-  BillingState: string;
+  BillingAddress: {
+    city?: string;
+    state: string;
+  };
   BillingStateCode: string;
   State_s_Licensed_in__pc: string;
   Other_States__pc?: string[]; // INCLUDES can return an array
@@ -121,7 +123,7 @@ const stateService = {
     try {
       const query = `
         SELECT Name, PhotoUrl, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc,
-              Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState,
+              Military_Service__pc, Brokerage_Name__pc, BillingAddress,
               (SELECT Id, Name, Area__r.Name, Area__r.State__c FROM Area_Assignments__r)
         FROM Account
         WHERE isAgent__pc = true

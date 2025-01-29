@@ -4,10 +4,11 @@ import Image from "next/image";
 import Button from "@/components/common/Button";
 import Link from "next/link";
 import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
+import { Agent } from "@/services/stateService";
 
 type Props = {
   city: string;
-  agent_data: AgentData[];
+  agent_data: Agent[];
   state: string;
 };
 
@@ -25,8 +26,18 @@ export type AgentData = {
   Brokerage_Name__pc: string;
 };
 
-const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
+function toTitleCase(str: string): string {
+  if (!str) return "";
 
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
+  console.log(agent_data);
   return (
     // <div id={city.replace(/\s+/g, "-").toLowerCase()}>
     <div id={city.toLowerCase().split(" ").join("-")}>
@@ -67,7 +78,7 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                     </h3>
                     <div className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[10px] text-[10px] font-normal sm:mt-4 mt-0">
                       <p>
-                        {agent?.BillingCity ? `${agent?.BillingCity, agent?.BillingState}` : agent?.BillingState ? agent?.BillingState : ""}
+                        {`${agent.BillingAddress?.city ? toTitleCase(agent.BillingAddress?.city) + "," : ""} ${agent.BillingAddress?.state}`}
                       </p>
                       <p className="font-bold">
                         {orderMilitaryServiceInfo(agent?.Military_Status__pc || "", agent?.Military_Service__pc || "")}
