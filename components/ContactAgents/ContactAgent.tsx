@@ -4,7 +4,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import ReCAPTCHA from 'react-google-recaptcha';
-import { set } from "sanity";
 
 export interface FormData {
   firstName: string;

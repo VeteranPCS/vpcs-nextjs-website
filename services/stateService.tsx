@@ -53,6 +53,7 @@ export interface Agent {
       Name: string;
       Area__r: {
         Name: string;
+        State__c: string;
       };
     }[];
   };
@@ -121,7 +122,7 @@ const stateService = {
       const query = `
         SELECT Name, PhotoUrl, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc,
               Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState,
-              (SELECT Id, Name, Area__r.Name FROM Area_Assignments__r)
+              (SELECT Id, Name, Area__r.Name, Area__r.State__c FROM Area_Assignments__r)
         FROM Account
         WHERE isAgent__pc = true
           AND Active_on_Website__pc = true

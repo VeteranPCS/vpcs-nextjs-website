@@ -19,6 +19,59 @@ interface FormattedAgentData {
   [city: string]: AgentData[];
 }
 
+const stateUrlToStateName = {
+  "alabama": "alabama",
+  "alaska": "alaska",
+  "arizona": "arizona",
+  "arkansas": "arkansas",
+  "california": "california",
+  "colorado": "colorado",
+  "connecticut": "connecticut",
+  "delaware": "delaware",
+  "florida": "florida",
+  "georgia": "georgia",
+  "hawaii": "hawaii",
+  "idaho": "idaho",
+  "illinois": "illinois",
+  "indiana": "indiana",
+  "iowa": "iowa",
+  "kansas": "kansas",
+  "kentucky": "kentucky",
+  "louisiana": "louisiana",
+  "maine": "maine",
+  "maryland": "maryland",
+  "massachusetts": "massachusetts",
+  "michigan": "michigan",
+  "minnesota": "minnesota",
+  "mississippi": "mississippi",
+  "missouri": "missouri",
+  "montana": "montana",
+  "nebraska": "nebraska",
+  "nevada": "nevada",
+  "new-hampshire": "new hampshire",
+  "new-jersey": "new jersey",
+  "new-mexico": "new mexico",
+  "new-york": "new york",
+  "north-carolina": "north carolina",
+  "north-dakota": "north dakota",
+  "ohio": "ohio",
+  "oklahoma": "oklahoma",
+  "oregon": "oregon",
+  "pennsylvania": "pennsylvania",
+  "rhode-island": "rhode island",
+  "south-carolina": "south carolina",
+  "south-dakota": "south dakota",
+  "tennessee": "tennessee",
+  "texas": "texas",
+  "utah": "utah",
+  "vermont": "vermont",
+  "virginia": "virginia",
+  "washington-dc": "district of columbia",
+  "west-virginia": "west virginia",
+  "wisconsin": "wisconsin",
+  "wyoming": "wyoming"
+}
+
 const MemoizedFrequentlyAskedQuestion = memo(FrequentlyAskedQuestion);
 
 export async function generateStaticParams() {
@@ -93,18 +146,31 @@ export default async function StatePage({ params }: { params: { state: string } 
   }
 
   try {
-    agents_data = await stateService.fetchAgentsListByState(state_code);
+    agents_data = await stateService.fetchAgentsListByState(state_code); // pass state abbreviation; e.g. TX, VA, etc.
     formatted_data = agents_data.records.reduce((groups: any, agent: Agent) => {
-      const areaName = agent.Area_Assignments__r?.records.length
-        ? agent.Area_Assignments__r.records[0].Area__r.Name // Access first area
-        : "Top";
+      const areaAssignments = agent.Area_Assignments__r?.records || [];
 
-      if (!groups[areaName]) {
-        groups[areaName] = [];
+      // Filter to only areas within the current state
+      const areasInState = areaAssignments
+        .filter((record: any) => record.Area__r.State__c.toLowerCase() === stateUrlToStateName[state as keyof typeof stateUrlToStateName])
+        .map((record: any) => record.Area__r.Name);
+
+      // If the agent has no areas in the current state, skip them
+      if (areasInState.length === 0) {
+        return groups;
       }
-      groups[areaName].push(agent);
+
+      // Add the agent to each relevant group
+      areasInState.forEach((areaName: string) => {
+        if (!groups[areaName]) {
+          groups[areaName] = [];
+        }
+        groups[areaName].push(agent);
+      });
+
       return groups;
     }, {});
+
   } catch (error) {
     console.error("Error fetching State Agent List", error);
   }
