@@ -66,7 +66,7 @@ const MilitaryHomePage = async () => {
               height={400}
               src={storieDetails?.poster_1?.asset?.image_url || "/assets/wereblueleft.png"}
               alt={storieDetails?.poster_1?.alt || "Military Family"}
-              className="md:w-[400px] w-auto md:h-[400px] h-auto"
+              className="lg:w-[400px] w-[300px] lg:h-[400px] h-auto"
             />
           </div>
           <div className="w-full md:w-1/2 mt-10 md:mt-0">
@@ -79,7 +79,7 @@ const MilitaryHomePage = async () => {
                 className="md:w-[273px] md:h-[63px] w-auto h-auto"
               />
             </div>
-            <h6 className="lg:text-left md:text-left sm:text-center text-center lg:text-[25px] font-bold text-[#292F6C] mt-5 tahoma uppercase">
+            <h6 className="lg:text-left md:text-left lg:text-[25px] font-bold text-[#292F6C] mt-5 tahoma uppercase">
               {storieDetails?.title}
             </h6>
             <p className="text-black font-roboto text-base font-medium ">

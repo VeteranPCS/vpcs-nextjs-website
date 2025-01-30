@@ -43,7 +43,7 @@ const SuccessStories = async () => {
           <div className="sm:mt-32 mt-5">
             {successStories.map((story, index) => (
               index % 2 === 0 ? (
-                <div key={story._id} className="lg:bg-[#FFFFFF] md:bg-[#FFFFFF] sm:bg-[#EDEDED] bg-[#EDEDED] px-5 py-5 grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-4 lg:mb-5 md:mb-5">
+                <div key={story._id} className="lg:bg-[#FFFFFF] md:bg-[#FFFFFF] sm:bg-[#EDEDED] bg-[#EDEDED] p-5 xl:p-0 grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-4 lg:mb-5 md:mb-5">
                   <div className="lg:order-1 md:oreder-1 sm:order-2 order-2">
                     <iframe
                       loading="lazy"
@@ -51,10 +51,10 @@ const SuccessStories = async () => {
                       src={story?.videoUrl}
                       frameBorder="0"
                       allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-                      className="w-full h-[500px] object-cover"
+                      className="w-full lg:h-[280px] xl:h-[360px] h-[280px] md:h-[431px] sm:h-[360px] object-cover"
                     ></iframe>
                   </div>
-                  <div className="lg:ml-10 md:ml-10 sm:ml-0 ml-0 lg:order-0 md:oreder-0 sm:order-1 order-1">
+                  <div className="lg:ml-10 md:ml-0 sm:ml-0 ml-0 lg:order-0 md:oreder-0 sm:order-1 order-1">
                     <h1 className="text-[#003486] poppins lg:text-[41px] md:text-[41px] sm:text-[27px] text-[27px] font-bold lg:leading-[45px] md:leading-[45px] sm:leading-[40px] leading-[40px]">
                       {story?.title}<br></br>
                     </h1>
@@ -65,7 +65,7 @@ const SuccessStories = async () => {
                 </div>
               ) : (
                 <div key={story._id} className="bg-[#EDEDED] grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-4 lg:mb-5 md:mb-5 p-5">
-                  <div className="lg:ml-10 md:ml-10 sm:ml-0 ml-0">
+                  <div className="ml-0">
                     <h1 className="text-[#003486] poppins lg:text-[41px] md:text-[41px] sm:text-[27px] text-[27px] font-bold lg:leading-[45px] md:leading-[45px] sm:leading-[40px] leading-[40px]">
                       {story?.title}<br></br>
                     </h1>
@@ -80,7 +80,7 @@ const SuccessStories = async () => {
                       src={story?.videoUrl}
                       frameBorder="0"
                       allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-                      className="w-full h-[500px] object-cover"
+                      className="w-full lg:h-[280px] xl:h-[360px] h-[280px] md:h-[431px] sm:h-[360px] object-cover"
                     ></iframe>
                   </div>
                 </div>

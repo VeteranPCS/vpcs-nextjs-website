@@ -17,7 +17,7 @@ const HeroSec = () => {
               in amazing ways
             </h1>
           </div>
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 items-start justify-between md:gap-10 sm:gap-3 gap-3 sm:mt-20 mt-0">
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 items-start justify-between sm:gap-3 gap-3">
             <div className="text-center md:block sm:flex flex sm:items-center items-center lg:mt-3 md:mt-3 sm:mt-3 mt-3 md:bg-transparent sm:bg-[#7E1618] bg-[#7E1618] sm:rounded-2xl rounded-2xl p-6 sm:p-6">
               <div className="md:flex md:justify-center md:mx-auto w-[70px] h-[70px]">
                 <Image

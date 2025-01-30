@@ -5,14 +5,19 @@
   background-color: transparent !important;
   background-repeat: no-repeat;
   background-color: #aeb0c7;
-  padding: 100px 0px 300px;
+  padding: 100px 0px 400px;
   position: relative;
   width: 100%;
   height: 100%;
 }
-@media screen and (max-width: 575px)  {
+@media screen and (max-width: 1024px) {
+  .yourimpactsectioncontainer {
+    background-position: right;
+  }
+}
+@media screen and (max-width: 575px) {
   .yourimpactsectioncontainer {
     background-size: auto;
     padding: 130px 30px 60px 30px;
-  } 
+  }
 }

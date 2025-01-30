@@ -25,15 +25,21 @@ const MilitaryHomePage = () => {
             <p className="lg:text-left md:text-left sm:text-center text-center text-xl font-medium text-[#292F6C] italic mb-6 leading-[24px] roboto">
               Your service is your down payment
             </p>
-            <ul className="list-disc text-[#7A7A7A] mb-8">
-              <li className="list-none text-[17px] md:font-medium sm:font-normal font-normal roboto">
-                Many companies prey on our military community
-              </li>
-              <li className="list-none text-[17px] md:font-medium sm:font-normal font-normal roboto">
-                We&apos;ve hand selected veteran and military spouse VA loan
-                experts to help guide you whether you&apos;re a first-time home
-                buyer or experienced.
-              </li>
+            <ul className="text-[#7A7A7A] mb-8 pl-4">
+              <div className="flex items-baseline">
+                <span className="w-2 h-2 min-w-2 min-h-2 rounded-full bg-[#a81f23] inline-block mr-2"></span>
+                <li className="list-none text-[17px] md:font-medium sm:font-normal font-normal roboto">
+                  Many companies prey on our military community Many companies prey on our military community
+                </li>
+              </div>
+              <div className="flex items-baseline">
+                <span className="w-2 h-2 min-w-2 min-h-2 rounded-full bg-[#a81f23] inline-block mr-2"></span>
+                <li className="list-none text-[17px] md:font-medium sm:font-normal font-normal roboto">
+                  We&apos;ve hand selected veteran and military spouse VA loan
+                  experts to help guide you whether you&apos;re a first-time home
+                  buyer or experienced.
+                </li>
+              </div>
             </ul>
             <Link
               href="/contact-lender"

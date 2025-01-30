@@ -191,10 +191,10 @@ const KeepInTouch = () => {
                   />
                   {renderError('email')}
                 </div>
-                <p className="text-[#292F6C] roboto lg:text-[14px] sm:text-[9px] text-[9px] font-medium mb-3 text-left md:pl-0 sm:pl-3 pl-3">
+                <p className="text-[#292F6C] roboto lg:text-[14px] max-w-[390px] sm:max-w-full mx-auto sm:text-[9px] text-[9px] font-medium mb-3 text-left md:pl-0 sm:pl-3 pl-3">
                   Fields marked with an asterisk (*) are required.
                 </p>
-                <div className="flex items-center md:pl-0 sm:pl-3 pl-3">
+                <div className="flex items-center md:pl-0 sm:pl-3 pl-3 max-w-[390px] mx-auto sm:max-w-full">
                   <div className="w-[200px] flex md:flex-nowrap flex-wrap items-center gap-4">
                     <div>
                       <ReCAPTCHA

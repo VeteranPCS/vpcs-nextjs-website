@@ -108,6 +108,12 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
         },
       },
       {
+        breakpoint: 992,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
         breakpoint: 768,
         settings: {
           slidesToShow: 1,
@@ -206,7 +212,7 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
         <Slider {...settingsTwo} ref={bottomSliderRef}>
           {reviews.map((review) => (
             <div key={review.reviewId}>
-              <div className="bg-white rounded-2xl p-10 h-[450px] overflow-hidden relative">
+              <div className="bg-white rounded-2xl lg:p-10 p-5 lg:h-[450px] h-[680px] overflow-hidden relative">
                 <div className="text-center flex flex-col justify-center gap-10 w-full">
                   <div className="flex mx-auto">
                     {Array.from({ length: 5 }).map((_, index) => {
@@ -245,7 +251,7 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
                   <p className="text-[#181818] text-[18px] font-normal tahoma min-h-[250px]">
                     {review?.comment || "No comment"}
                   </p>
-                  <div className="flex justify-center absolute left-0 right-0 bottom-10">
+                  <div className="flex justify-center lg:absolute left-0 right-0 bottom-10">
                     {review?.reviewer?.profilePhotoUrl ? (
                       <Image
                         src={review?.reviewer?.profilePhotoUrl}
@@ -258,20 +264,6 @@ const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
                       <NameIcon name={review?.reviewer?.displayName} />
                     )}
                   </div>
-                </div>
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="16"
-                    viewBox="0 0 18 16"
-                    fill="none"
-                  >
-                    <path
-                      d="M8.0301 14.9705C8.415 15.6371 9.37725 15.6371 9.76215 14.9705L16.9708 2.48476C17.3557 1.8181 16.8745 0.984763 16.1047 0.984763H1.6875C0.917702 0.984763 0.436578 1.8181 0.821478 2.48476L8.0301 14.9705Z"
-                      fill="white"
-                    />
-                  </svg>
                 </div>
               </div>
             </div>

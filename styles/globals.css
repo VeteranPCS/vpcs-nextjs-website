@@ -83,7 +83,16 @@ body {
   visibility: hidden;
   transition: all 0.45s ease-in-out;
 }
-
+@media screen and (max-width: 992px) {
+  .nav .sub-menu {
+    left: -170px;
+  }
+}
+@media screen and (max-width: 768px) {
+  .nav .sub-menu {
+    left: -150px;
+  }
+}
 .nav li:hover>.sub-menu,
 .nav .sub-menu:hover {
   opacity: 1;
@@ -197,9 +206,6 @@ blockquote {
   letter-spacing: 0.5px;
 }
 
-.comlogoslider .slick-initialized .slick-slide {
-  margin: 0px 30px !important;
-}
 
 html {
   scroll-behavior: smooth;

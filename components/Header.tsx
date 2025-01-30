@@ -28,7 +28,7 @@ const Header = () => {
             <div
               className={`navLinks duration-500 absolute md:static md:w-auto ${isMenuOpen ? "w-[60%]" : "w-full"} w-full md:h-auto ${isMenuOpen ? "h-[100vh]" : "h-[100vh]"}  bg-[#292f6c] flex md:items-center gap-[1.5vw] top-[100%] ${isMenuOpen ? "left-[0%]" : "left-[-100%]"} px-5 md:py-0 py-5`}
             >
-              <ul className="menu nav flex md:flex-row flex-col md:items-center md:gap-5 gap-5">
+              <ul className="menu nav flex md:flex-row flex-col md:items-center lg:gap-5 gap-3">
                 <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
                   <Link className="text-white" href="/about" onClick={onMenuToggle}>
                     About Us

@@ -89,11 +89,11 @@ const Carousel: React.FC<CarouselProps> = ({ userImageList }) => {
   return (
     <div className="mx-auto comlogoslider bg-[#ffffff]">
       <Box className="w-full">
-        <Slider {...settings} className="py-2">
+        <Slider {...settings} className="py-3">
           {userImageList.map((item) => (
             <div
               key={"settings" + item._id}
-              className="xl:w-[230px] lg:w-[300px] md:w-[300px] sm:w-full w-full px-4"
+              className="xl:w-[230px] lg:w-[300px] md:w-[300px] sm:w-full w-full px-2"
             >
               <Image
                 width={1000}
@@ -110,7 +110,7 @@ const Carousel: React.FC<CarouselProps> = ({ userImageList }) => {
             carouselData.map((item, index) => (
               <div
                 key={index}
-                className="xl:w-[230px] lg:w-[300px] md:w-[300px] sm:w-full w-full px-4"
+                className="xl:w-[230px] lg:w-[300px] md:w-[300px] sm:w-full w-full px-2"
               >
                 <Image
                   width={1000}

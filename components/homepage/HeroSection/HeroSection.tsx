@@ -102,7 +102,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                     width={533}
                     height={533}
                     src="/assets/veteranPCS-slider-checks-03.png"
-                    className="xl:w-[533px] xl:h-[533px] lg:w-[533px] lg:h-[533px] md:w-[600px] md:h-[450px] sm:w-full sm:h-[480px] w-full h-[360px] absolute top-[20%] left-[7%] -translate-x-2/4 -translate-y-2/4"
+                    className="xl:w-[533px] xl:h-[533px] lg:w-[533px] lg:h-[533px] md:w-[565px] md:h-[450px] sm:w-full sm:h-[480px] w-full h-[360px] absolute top-[20%] left-[11%] -translate-x-2/4 -translate-y-2/4"
                     alt="Description of the image"
                     data-aos="fade-right"
                     data-aos-duration="1000"
