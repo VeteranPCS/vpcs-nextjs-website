@@ -44,18 +44,18 @@ export async function POST(req: NextRequest) {
       aboutUsPage: ["/about", "/spanish"],
       additionalSuccessStories: ["stories"],
       approved_company_list: ["/militaryspouse"],
-      author: ["/pcs-resources", "/thank-you", "blog", `/blog/${slug}`],
+      author: ["/pcs-resources", "/thank-you", "/blog"],
       blog: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"],
       category: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"],
       city_list: ["/contact-agent", "/get-listed-agents", "/get-listed-lenders", `/${city_slug}`],
       frequently_asked_questions: [`/${city_slug}`, "/about", `/blog/${slug}`, "/impact", "/internship", "/militaryspouse", "/pcs-resources", "/stories"],
       how_veterence_pcs_works: ["/how-it-works"],
-      impact_page: ["/impact", "/militaryspouse", "pcs-resources", "/thank-you"],
+      impact_page: ["/impact", "/militaryspouse", "/pcs-resources", "/thank-you"],
       internship_action: ["/internship"],
       internship_benefits: ["/internship"],
       internship_offer: ["/internship"],
       life_resources: ["/pcs-resources"],
-      media_account: ["/contact", "/", `/${city_slug}`, "/about", "/blog", `/blog/${slug}`, "/contact", "/how-it-works", "/impact", "/internship", "militaryspouse", "/pcs-resources", "/stories", "/thank-you", "/spanish"],
+      media_account: ["/contact", "/", `/${city_slug}`, "/about", "/blog", `/blog/${slug}`, "/contact", "/how-it-works", "/impact", "/internship", "/militaryspouse", "/pcs-resources", "/stories", "/thank-you", "/spanish"],
       member_info: ["/about"],
       military_spouse_approved: ["/militaryspouse"],
       military_spouse_employment: ["/militaryspouse"],
@@ -81,6 +81,7 @@ export async function POST(req: NextRequest) {
     } else {
       for (const path of paths) {
         revalidatePath(path);
+        console.log(`Revalidated path: ${path}`);
       }
     }
 

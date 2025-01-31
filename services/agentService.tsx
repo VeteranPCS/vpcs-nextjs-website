@@ -176,7 +176,6 @@ const agentService = {
                 const data = response.data;
                 const combinedStates = combineStateValues(data);
                 const fullStateNames = getStateFullNames(combinedStates);
-                console.log("Agent full state names:", fullStateNames);
                 return fullStateNames;
 
             } else if (response?.status === 401) {

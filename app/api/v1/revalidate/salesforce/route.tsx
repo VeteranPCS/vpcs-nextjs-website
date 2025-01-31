@@ -23,11 +23,8 @@ function convertStateNameToPathName(state: string): string {
 
 export async function POST(req: NextRequest) {
     try {
-        // Parse the request body ONCE
         const body = await req.json();
-        console.log("Webhook Body:", body);
 
-        // Check Salesforce Signature
         if (!verifySalesforceSignature(req)) {
             return new Response(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
         }
@@ -49,9 +46,8 @@ export async function POST(req: NextRequest) {
 
         for (const state of agentStates) {
             const path = convertStateNameToPathName(state);
-            console.log("Agent State:", path);
             revalidatePath(path);
-            console.log("Revalidated State:", path);
+            console.log("Revalidated path:", path);
         }
 
         // You can process the account updates here (e.g., update a database, trigger other workflows)
