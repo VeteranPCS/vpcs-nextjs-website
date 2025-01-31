@@ -75,3 +75,49 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.slick-dots li button:before {
+  font-size: 0;
+}
+
+/* Base dot style */
+.slick-dots li button {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #9599b3;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out; /* Smooth transition */
+  position: relative;
+}
+
+/* Active dot */
+.slick-dots li.slick-active button {
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff;
+  border-radius: 100%;
+  z-index: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Add glow effect using ::before */
+.slick-dots li.slick-active button::before {
+  content: "";
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  background-color: rgba(255, 255, 255);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Hide the glow for inactive dots */
+.slick-dots li button::before {
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+}

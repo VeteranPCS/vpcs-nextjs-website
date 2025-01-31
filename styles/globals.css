@@ -241,6 +241,10 @@ html {
   top: 670px;
 }
 
+.slick-dots li button:before {
+  font-size: 0;
+}
+
 .slick-dot {
   width: 15px;
   height: 15px;

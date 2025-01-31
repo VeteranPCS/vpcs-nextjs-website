@@ -1,12 +1,9 @@
 "use client";
 import React from "react";
-import "@/styles/globals.css";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import { Box } from "@mui/material";
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import "./ReviewTestimonial.module.css";
+import "@/app/globals.css";
 
 interface Reviewer {
   profilePhotoUrl: string;
@@ -16,262 +13,122 @@ interface Reviewer {
 interface Review {
   comment: string;
   createTime: string;
-  name: string;
   reviewId: string;
   reviewer: Reviewer;
   starRating: "ONE" | "TWO" | "THREE" | "FOUR" | "FIVE";
-  updateTime: string;
 }
 
-interface CarouselProps {
+interface ReviewsSliderProps {
   reviews: Review[];
 }
 
-const NameIcon: React.FC<{ name: string }> = ({ name }) => {
-  const initial = name.charAt(0).toUpperCase();
+const StarRating: React.FC<{ rating: "ONE" | "TWO" | "THREE" | "FOUR" | "FIVE" }> = ({ rating }) => {
+  const stars = {
+    ONE: 1,
+    TWO: 2,
+    THREE: 3,
+    FOUR: 4,
+    FIVE: 5,
+  }[rating] || 0;
+
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#f2f2f2",
-        color: "#181818",
-        width: 60,
-        height: 60,
-        borderRadius: "50%",
-        fontSize: 100 / 2.5,
-        fontWeight: "bold",
-        textTransform: "uppercase",
-      }}
-    >
-      {initial}
+    <div className="flex">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <span key={i} className={i < stars ? "text-yellow-500" : "text-gray-300"}>
+          ★
+        </span>
+      ))}
     </div>
   );
 };
 
-const Carousel: React.FC<CarouselProps> = ({ reviews }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [slidesToShow, setSlidesToShow] = useState(6);
-  const topSliderRef = useRef<Slider>(null);
-  const bottomSliderRef = useRef<Slider>(null);
+const ReviewCard: React.FC<{ review: Review }> = ({ review }) => {
+  const formattedDate = new Date(review.createTime).toLocaleDateString();
 
-  const updateSlidesToShow = () => {
-    const screenWidth = window.innerWidth;
-    if (screenWidth < 768) {
-      setSlidesToShow(1);
-    } else if (screenWidth < 1024) {
-      setSlidesToShow(3);
-    } else {
-      setSlidesToShow(6);
-    }
-  };
+  return (
+    <div className="bg-white shadow-lg rounded-lg p-4 flex flex-col w-full">
+      {/* Header (Profile & Name) */}
+      <div className="flex items-center gap-3">
+        {review.reviewer.profilePhotoUrl ? (
+          <Image
+            src={review.reviewer.profilePhotoUrl}
+            alt={review.reviewer.displayName}
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+        ) : (
+          <div className="w-10 h-10 flex items-center justify-center bg-gray-200 rounded-full text-gray-700 font-bold">
+            {review.reviewer.displayName.charAt(0).toUpperCase()}
+          </div>
+        )}
+        <div>
+          <p className="font-semibold">{review.reviewer.displayName}</p>
+          <StarRating rating={review.starRating} />
+        </div>
+      </div>
 
-  useEffect(() => {
-    updateSlidesToShow();
-    window.addEventListener("resize", updateSlidesToShow);
-    return () => {
-      window.removeEventListener("resize", updateSlidesToShow);
-    };
-  }, []);
+      {/* Review Text */}
+      <p className="mt-3 text-gray-700">{review.comment || "No review provided."}</p>
 
-  useEffect(() => {
-    if (reviews.length > 0) {
-      const currentIndex = Math.floor(slidesToShow / 2);
-      setActiveIndex(currentIndex);
-    }
-  }, [reviews, slidesToShow]);
+      {/* Date */}
+      <p className="mt-3 text-sm text-gray-500">{formattedDate}</p>
+    </div>
+  );
+};
 
-  const settingsOne = {
+const ReviewsSlider: React.FC<ReviewsSliderProps> = ({ reviews }) => {
+  const sliderSettings = {
     infinite: true,
     speed: 500,
-    slidesToShow: 6,
+    slidesToShow: 2,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
-    pauseOnHover: true,
+    autoplaySpeed: 4000,
     arrows: false,
     dots: true,
-    centerMode: true,
-    centerPadding: "0px",
-    swipe: false,
-    touchMove: false,
-    beforeChange: (current: number, next: number) => {
-      setActiveIndex(next);
-      bottomSliderRef.current?.slickGoTo(next);
-    },
+    appendDots: (dots: React.ReactNode) => (
+      <div className="flex justify-center">
+        <ul className="flex space-x-2">{dots}</ul>
+      </div>
+    ),
+    customPaging: () => (
+      <button className="slick-dot"
+        style={{
+          width: "15px",
+          height: "15px",
+          borderRadius: "50%",
+          backgroundColor: "#9599b3",
+          cursor: "pointer",
+        }}
+      />),
     responsive: [
       {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-        },
-      },
-      {
-        breakpoint: 992,
+        breakpoint: 1024, // Tablets
         settings: {
           slidesToShow: 2,
         },
       },
       {
-        breakpoint: 768,
+        breakpoint: 768, // Mobile
         settings: {
           slidesToShow: 1,
         },
       },
     ],
-    appendDots: (dots: React.ReactNode) => (
-      <CustomDots
-        currentSlide={activeIndex}
-        slideCount={reviews.length}
-        goTo={(index) => {
-          topSliderRef.current?.slickGoTo(index);
-          bottomSliderRef.current?.slickGoTo(index);
-        }}
-      />
-    ),
-  };
-
-  const settingsTwo = {
-    ...settingsOne,
-    slidesToShow: 1,
-    fade: false,
-    cssEase: "linear",
-    autoplay: false,
-    dots: false,
-  };
-
-  const CustomDots: React.FC<{
-    currentSlide: number;
-    slideCount: number;
-    goTo: (index: number) => void;
-  }> = ({ currentSlide, slideCount, goTo }) => {
-    const maxDots = 6;
-    const totalDots = Math.min(slideCount, maxDots);
-
-    return (
-      <div className="slick-dots-container">
-        {Array.from({ length: totalDots }).map((_, index) => (
-          <button
-            key={index}
-            className={`slick-dot ${currentSlide === index ? "active" : ""}`}
-            onClick={() => goTo(index)}
-          />
-        ))}
-      </div>
-    );
   };
 
   return (
-    <div className="container mx-auto comlogoslider relative">
-      <Box className="w-full custom-slider">
-        <Slider
-          {...settingsOne}
-          ref={topSliderRef}
-          className="pt-10 reviw-topslider"
-        >
-          {reviews.map((item, index) => {
-            const isMiddle = index === activeIndex;
-            return (
-              <div key={item.reviewId}>
-                {isMiddle ? (
-                  <div className="bg-white rounded-2xl p-2 slider-box activesliderbox">
-                    <div className="flex items-center w-full">
-                      <div className="bg-[#f2f2f2] w-[60px] h-[60px] rounded-full">
-                        {item?.reviewer?.profilePhotoUrl ? (
-                          <Image
-                            src={item?.reviewer?.profilePhotoUrl}
-                            alt="User logo"
-                            width={60}
-                            height={60}
-                            className="w-[60px] h-[60px] rounded-full"
-                          />
-                        ) : (
-                          <NameIcon name={item?.reviewer?.displayName} />
-                        )}
-                      </div>
-                      <div className="ml-3">
-                        <h6 className="text-[#181818] text-[18px] font-normal tahoma text-nowrap">
-                          {item?.reviewer?.displayName}
-                        </h6>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="bg-white rounded-2xl p-2 slider-box withoutdatasliderbox">
-                    <div className="bg-[#f2f2f2] w-[60px] h-[60px] rounded-full"></div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </Slider>
-      </Box>
-
-      <Box className="w-full mt-10">
-        <Slider {...settingsTwo} ref={bottomSliderRef}>
-          {reviews.map((review) => (
-            <div key={review.reviewId}>
-              <div className="bg-white rounded-2xl lg:p-10 p-5 lg:h-[450px] h-[680px] overflow-hidden relative">
-                <div className="text-center flex flex-col justify-center gap-10 w-full">
-                  <div className="flex mx-auto">
-                    {Array.from({ length: 5 }).map((_, index) => {
-                      const ratingMap = {
-                        ONE: 1,
-                        TWO: 2,
-                        THREE: 3,
-                        FOUR: 4,
-                        FIVE: 5,
-                      };
-                      const numericRating = review?.starRating
-                        ? ratingMap[review.starRating]
-                        : 0;
-
-                      return index < numericRating ? (
-                        <Image
-                          width={24}
-                          height={24}
-                          key={index}
-                          src="/icon/Star.svg"
-                          alt="star"
-                          className="w-[24px] h-[24px] mr-2"
-                        />
-                      ) : (
-                        <Image
-                          width={24}
-                          height={24}
-                          key={index}
-                          src="/icon/EmptyStar.svg"
-                          alt="empty star"
-                          className="w-[24px] h-[24px] mr-2"
-                        />
-                      );
-                    })}
-                  </div>
-                  <p className="text-[#181818] text-[18px] font-normal tahoma min-h-[250px]">
-                    {review?.comment || "No comment"}
-                  </p>
-                  <div className="flex justify-center lg:absolute left-0 right-0 bottom-10">
-                    {review?.reviewer?.profilePhotoUrl ? (
-                      <Image
-                        src={review?.reviewer?.profilePhotoUrl}
-                        alt="User logo"
-                        width={100}
-                        height={100}
-                        className="w-[100px] h-[100px] rounded-full"
-                      />
-                    ) : (
-                      <NameIcon name={review?.reviewer?.displayName} />
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </Slider>
-      </Box>
+    <div className="w-full max-w-5xl mx-auto mt-20">
+      <Slider {...sliderSettings}>
+        {reviews.map((review) => (
+          <div key={review.reviewId} className="px-2">
+            <ReviewCard review={review} />
+          </div>
+        ))}
+      </Slider>
     </div>
   );
 };
 
-export default Carousel;
+export default ReviewsSlider;
