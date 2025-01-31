@@ -7,7 +7,7 @@ import Script from "next/script";
 import { GoogleTagManager } from '@next/third-parties/google'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const GTM_ID = process.env.GOOGLE_TAG_MANAGER_ID || "";
+const GTM_ID = process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID || "";
 
 const inter = Inter({ subsets: ["latin"] });
 
