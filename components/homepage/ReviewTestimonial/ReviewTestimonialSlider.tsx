@@ -92,16 +92,7 @@ const ReviewsSlider: React.FC<ReviewsSliderProps> = ({ reviews }) => {
         <ul className="flex space-x-2">{dots}</ul>
       </div>
     ),
-    customPaging: () => (
-      <button className="slick-dot"
-        style={{
-          width: "15px",
-          height: "15px",
-          borderRadius: "50%",
-          backgroundColor: "#9599b3",
-          cursor: "pointer",
-        }}
-      />),
+    customPaging: () => <button className="slick-dot" />,
     responsive: [
       {
         breakpoint: 1024, // Tablets
@@ -119,7 +110,7 @@ const ReviewsSlider: React.FC<ReviewsSliderProps> = ({ reviews }) => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto mt-20">
+    <div className="w-full max-w-5xl mx-auto mt-10 xl:mt-24">
       <Slider {...sliderSettings}>
         {reviews.map((review) => (
           <div key={review.reviewId} className="px-2">

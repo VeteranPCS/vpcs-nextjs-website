@@ -44,7 +44,7 @@ const FamilySupport = async () => {
               width={530}
               height={530}
               alt={pageData?.image?.alt || "Description of the image"}
-              className="lg:w-[530px] lg:h-[530px] md:w-[530px] md:h-[530px] sm:w-[326px] sm:h-[326px] w-[326px] h-[326px]"
+              className="lg:w-[530px] lg:h-[530px] md:w-[530px] md:h-[530px] sm:w-[326px] sm:h-[326px] w-[326px] h-[326px] object-cover"
             />
           </div>
 

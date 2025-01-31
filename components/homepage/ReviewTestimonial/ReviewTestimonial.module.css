@@ -5,22 +5,3 @@
   background-repeat: no-repeat;
   padding: 40px 0px;
 }
-
-.slick-dot {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #9599b3;
-  cursor: pointer;
-}
-
-.slick-dots li button:before {
-  font-size: 0;
-}
-
-.slick-dot.active {
-  background-color: #FFFFFF;
-  width: 20px;
-  height: 20px;
-  transition: all 0.3s ease-in-out;
-}

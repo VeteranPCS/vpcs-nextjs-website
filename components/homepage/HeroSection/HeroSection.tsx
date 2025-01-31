@@ -16,7 +16,7 @@ interface HeroSectionProps {
 const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
   useEffect(() => {
     AOS.init({
-      //   once: true,      // Make animation run once
+      once: true,      // Make animation run once
     });
   }, []);
   return (

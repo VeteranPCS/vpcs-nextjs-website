@@ -15,7 +15,7 @@ const MilitaryHomePage = () => {
               height={400}
               src="/assets/makeitwork.webp"
               alt="Military Family"
-              className="w-[400px] h-[400px]"
+              className="object-cover"
             />
           </div>
           <div className="w-full md:w-1/2 mt-10 md:mt-0">

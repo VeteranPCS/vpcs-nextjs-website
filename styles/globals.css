@@ -228,38 +228,6 @@ html {
   width: 256px !important;
 }
 
-.slick-dots-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  top: 670px;
-}
-
-.slick-dots li button:before {
-  font-size: 0;
-}
-
-.slick-dot {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #9599b3;
-  cursor: pointer;
-}
-
-.slick-dot.active {
-  background-color: #FFFFFF;
-  width: 20px;
-  height: 20px;
-  transition: all 0.3s ease-in-out;
-}
-
 .st0 {
   border-radius: 0.5rem;
   fill: #292F6C !important;
