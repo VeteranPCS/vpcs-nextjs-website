@@ -1,11 +1,8 @@
-"use client";
-import React, { useEffect } from "react";
 import Button from "@/components/common/Button";
 import "@/styles/globals.css";
-import AOS from "aos";
-import "aos/dist/aos.css";
 import classes from "./HeroSection.module.css";
 import Image from "next/image";
+import Link from "next/link";
 
 interface HeroSectionProps {
   title: string;
@@ -14,11 +11,7 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
-  useEffect(() => {
-    AOS.init({
-      once: true,      // Make animation run once
-    });
-  }, []);
+
   return (
     <div>
       <div className={classes.herosectioncontainer}>
@@ -63,25 +56,22 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
               )}
               {page == "home" && (
                 <div className="lg:mt-28 md:mt-4 sm:mt-10 mt-10">
-                  <Button
-                    buttonText="Find An Agent"
-                    onClick={() => {
-                      const targetElement =
-                        document.getElementById("map-container");
-                      if (targetElement) {
-                        targetElement.scrollIntoView({ behavior: "smooth" });
-                      }
-                    }}
-                  />
+                  <Link href="#map-container">
+                    <Button buttonText="Find An Agent" />
+                  </Link>
                 </div>
               )}
               {page == "spanish" && (
                 <div className="lg:flex md:flex sm:hidden hidden justify-start items-center gap-4 flex-wrap ">
-                  <Button buttonText="Browse our map" />
+                  <Link href="#map-container">
+                    <Button buttonText="Browse our map" />
+                  </Link>
                   <p className="text-white font-normal xl:text-[30px] lg:text-[30px] md:text-[20px] sm:text-[20px] text-[20px] mx-10 xl:w-auto w-full">
                     OR
                   </p>
-                  <Button buttonText="Find an agent for me" />
+                  <Link href="/contact-agent">
+                    <Button buttonText="Find an agent for me" />
+                  </Link>
                 </div>
               )}
             </div>
@@ -92,20 +82,16 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                     width={873}
                     height={482}
                     src="/assets/house-hero-2024.png"
-                    className="w-[873px] sm:h-[482px] h-[300px] "
-                    alt="Description of the image"
-                    data-aos="fade-right"
-                    data-aos-duration="1000"
+                    className="w-[873px] sm:h-[482px] h-[300px]"
+                    alt="A military couple stands in front of their newly purchased home after using a military-friendly realtor from VeteranPCS"
                     loading="eager"
                   />
                   <Image
                     width={533}
                     height={533}
                     src="/assets/veteranPCS-slider-checks-03.png"
-                    className="xl:w-[533px] xl:h-[533px] lg:w-[533px] lg:h-[533px] md:w-[565px] md:h-[450px] sm:w-full sm:h-[480px] w-full h-[360px] absolute top-[20%] left-[11%] -translate-x-2/4 -translate-y-2/4"
-                    alt="Description of the image"
-                    data-aos="fade-right"
-                    data-aos-duration="1000"
+                    className="xl:w-[533px] xl:h-[533px] lg:w-[533px] lg:h-[533px] md:w-[565px] md:h-[450px] sm:w-full sm:h-[480px] w-full h-[360px] absolute top-[20%] left-[11%] object-cover"
+                    alt="A military couple stands in front of their newly purchased home after using a military-friendly realtor from VeteranPCS"
                     loading="eager"
                   />
                 </div>
