@@ -31,6 +31,7 @@ const stateAbbreviations = {
     CA: "california",
     CO: "colorado",
     CT: "connecticut",
+    DC: "washington-dc",
     DE: "delaware",
     FL: "florida",
     GA: "georgia",
@@ -87,7 +88,7 @@ function combineStateValues(data: any): string[] {
 
         // Extract state values, ensuring they are strings before splitting
         const statesLicensed = record.State_s_Licensed_in__pc ? record.State_s_Licensed_in__pc.split(", ") : [];
-        const otherStates = record.Other_States__pc ? record.Other_States__pc.split(", ") : [];
+        const otherStates = record.Other_States__pc ? record.Other_States__pc.split(";") : [];
 
         // Combine the arrays and remove any duplicates
         const combinedStates = Array.from(new Set([...statesLicensed, ...otherStates]));
@@ -158,6 +159,7 @@ const agentService = {
         }
     },
     getAgentState: async (salesforceID: string): Promise<string[]> => {
+        console.log("Fetching agent state for Salesforce ID:", salesforceID);
         try {
             const query = `
         SELECT State_s_Licensed_in__pc, Other_States__pc
@@ -174,6 +176,7 @@ const agentService = {
                 const data = response.data;
                 const combinedStates = combineStateValues(data);
                 const fullStateNames = getStateFullNames(combinedStates);
+                console.log("Agent full state names:", fullStateNames);
                 return fullStateNames;
 
             } else if (response?.status === 401) {
