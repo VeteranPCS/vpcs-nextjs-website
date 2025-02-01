@@ -17,7 +17,6 @@ import PcsResourcesMovingPcsing from "@/components/PcsResources/PcsResourcesMovi
 import VideoReview from "@/components/Impact/VideoReview/VideoReview";
 import AboutOurStory from "@/components/Impact/AboutOurStory/AboutOurStory";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 import { memo } from "react";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 
@@ -40,6 +39,9 @@ export const metadata: Metadata = {
     default: META_TITLE,
   },
   description: META_DESCRIPTION,
+  alternates: {
+    canonical: `${BASE_URL}/pcs-resources`,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",

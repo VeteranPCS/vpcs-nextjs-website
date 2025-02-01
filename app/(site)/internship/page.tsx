@@ -6,7 +6,6 @@ import Internshipdetails from "@/components/Internship/Interashipdetails/Interas
 import ReceiveOffCourses from "@/components/Internship/receiveoffcourses/receiveoffcourses";
 import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 import { memo } from "react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -20,6 +19,9 @@ export const metadata: Metadata = {
     default: META_TITLE,
   },
   description: META_DESCRIPTION,
+  alternates: {
+    canonical: `${BASE_URL}/internship`,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",

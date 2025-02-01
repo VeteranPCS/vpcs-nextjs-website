@@ -14,7 +14,6 @@ import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpe
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
 import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 import { memo } from "react";
 
 const MemoizedTestimonials = memo(Testimonials)
@@ -33,6 +32,9 @@ export const metadata: Metadata = {
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,
+  },
+  alternates: {
+    canonical: `${BASE_URL}/impact`,
   },
   description: META_DESCRIPTION,
   openGraph: {

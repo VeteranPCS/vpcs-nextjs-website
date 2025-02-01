@@ -3,7 +3,6 @@ import HowItWorkHeroSection from "@/components/HowItWork/HowItWorkHeroSection/Ho
 import Covered from "@/components/homepage/Covered/Covered";
 import HowItWorkText from "@/components/HowItWork/HowItWorkText/HowItWorkText";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "How VeteranPCS Connects Military Families with Trusted Real Estate Agents";
@@ -14,6 +13,9 @@ export const metadata: Metadata = {
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,
+  },
+  alternates: {
+    canonical: `${BASE_URL}/how-it-works`,
   },
   description: META_DESCRIPTION,
   openGraph: {

@@ -10,7 +10,6 @@ import VeteranComunity from "@/components/homepage/VeteranCommunity/VeteranCommu
 import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpert";
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 import SupportSpanish from "@/components/spanishpage/SupportSpanish/SupportSpanis";
 import Testimonials from "@/components/Testimonials/TestimonialPage";
 import { memo } from "react";
@@ -30,6 +29,9 @@ export const metadata: Metadata = {
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,
+  },
+  alternates: {
+    canonical: `${BASE_URL}/spanish`,
   },
   description: META_DESCRIPTION,
   openGraph: {

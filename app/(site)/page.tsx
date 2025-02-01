@@ -12,7 +12,6 @@ import WhyVeteranPcs from "@/components/homepage/WhyVeteranPCS";
 import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpert";
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
 import { memo } from "react";
 

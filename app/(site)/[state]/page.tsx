@@ -102,6 +102,9 @@ export async function generateMetadata({ params }: { params: { state: string } }
     metadataBase: new URL(BASE_URL || ""),
     title: ogTitle,
     description: ogDescription,
+    alternates: {
+      canonical: `${BASE_URL}/${params.state}`,
+    },
     openGraph: {
       title: ogTitle,
       description: ogDescription,

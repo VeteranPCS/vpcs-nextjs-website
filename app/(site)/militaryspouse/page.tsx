@@ -16,7 +16,6 @@ import VideoReview from "@/components/Impact/VideoReview/VideoReview";
 import AboutOurStory from "@/components/Impact/AboutOurStory/AboutOurStory";
 import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "Support for Military Spouses - Employment & Moving Resources";
@@ -29,6 +28,9 @@ export const metadata: Metadata = {
     default: META_TITLE,
   },
   description: META_DESCRIPTION,
+  alternates: {
+    canonical: `${BASE_URL}/militaryspouse`,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",

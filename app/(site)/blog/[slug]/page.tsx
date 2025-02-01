@@ -6,7 +6,6 @@ import BlogDetailsCta from "@/components/BlogDetails/BlogDetailsCta/BlogDetailsC
 import EndBlogPostDetails from "@/components/BlogDetails/EndBlogPostDetails/EndBlogPostDetails";
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import Footer from "@/components/Footer/Footer";
 import blogService from "@/services/blogService";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 import { urlForImage } from "@/sanity/lib/image";
@@ -46,6 +45,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     return {
         title: blog.meta_title,
         description: blog.meta_description,
+        alternates: {
+            canonical: `${BASE_URL}/blog/${params.slug}`,
+        },
         openGraph: {
             title: blog.meta_title,
             description: blog.meta_description,
@@ -139,7 +141,6 @@ export default async function Home({ params }: { params: { slug: string } }) {
             <CommonBlog component={blog.component || ""} />
             <MemoizedFrequentlyAskedQuestion />
             <KeepInTouch />
-            <Footer />
         </>
     );
 }

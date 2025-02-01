@@ -30,6 +30,9 @@ export const metadata: Metadata = {
     template: "%s | VeteranPCS",
     default: META_TITLE,
   },
+  alternates: {
+    canonical: `${BASE_URL}/about`,
+  },
   description: META_DESCRIPTION,
   openGraph: {
     type: "website",

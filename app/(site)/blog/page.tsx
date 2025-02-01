@@ -5,6 +5,10 @@ import PcsResourcesBlog from "@/components/PcsResources/PcsResourcesBlog/PcsReso
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import { memo } from "react";
 import blogService from "@/services/blogService";
+import { Metadata } from "next";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export interface Author {
   name: string;
   image: string;
@@ -42,6 +46,42 @@ export interface BlogService {
 }
 
 const MemoizedKeepInTouch = memo(KeepInTouch);
+
+const META_TITLE = "Real Estate Tips, Tricks, and Advice for Military Families";
+const META_DESCRIPTION = "VeteranPCS blog is your go-to resource for real estate tips, tricks, and advice for military families. Learn about VA loans, PCS moves, and more.";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL || ""),
+  title: {
+    template: "%s | VeteranPCS",
+    default: META_TITLE,
+  },
+  alternates: {
+    canonical: `${BASE_URL}/blog`,
+  },
+  description: META_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: BASE_URL,
+    siteName: "VeteranPCS",
+    images: [
+      {
+        url: `${BASE_URL}/opengraph/og-logo.png`,
+        width: 1200,
+        height: 630,
+        alt: "VeteranPCS",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    description: META_DESCRIPTION,
+    title: META_TITLE,
+    images: ['/opengraph/og-logo.png'],
+  },
+};
+
 
 export default async function Home() {
   let blogs: BlogDetails[] | null = null;

@@ -29,6 +29,9 @@ export const metadata: Metadata = {
     default: META_TITLE,
   },
   description: META_DESCRIPTION,
+  alternates: {
+    canonical: `${BASE_URL}/stories`,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",

@@ -16,10 +16,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         "/get-listed-lenders",
         "/impact",
         "/how-it-works",
+        "/militaryspouse",
         "/pcs-resources",
         "/privacy-policy",
         "/terms-of-use",
-        "/militaryspouse",
+        "/spanish",
+        "/stories"
     ]
 
     const stateRoutes = await stateService.fetchStateList();
