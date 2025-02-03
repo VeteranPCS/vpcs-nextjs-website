@@ -11,7 +11,7 @@ const PcsResourcesCalculators = () => {
             CALCULATORS
           </h2>
         </div>
-        <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 gap-16 mt-10">
+        <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 xl:gap-16 gap-10 mt-10">
           <div>
             <div>
               <Image
@@ -19,7 +19,7 @@ const PcsResourcesCalculators = () => {
                 height={237}
                 src="/assets/successful-team1.png"
                 alt="check"
-                className="w-full h-[356px] object-cover"
+                className="w-full xl:h-[356px] h-auto xl:object-cover object-contain"
               />
               <div className="mt-5">
                 <h3 className="text-[#003486] poppins lg:text-[23px] md:text-[23px] sm:text-[17px] text-[17px] font-medium">
@@ -39,7 +39,7 @@ const PcsResourcesCalculators = () => {
                 height={237}
                 src="/assets/successful-team2.png"
                 alt="check"
-                className="w-full h-[356px]"
+                className="w-full xl:h-[356px] h-auto xl:object-cover object-contain"
               />
               <div className="mt-5">
                 <h3 className="text-[#003486] poppins lg:text-[23px] md:text-[23px] sm:text-[17px] text-[17px] font-medium">
@@ -59,7 +59,7 @@ const PcsResourcesCalculators = () => {
                 height={237}
                 src="/assets/successful-team3.png"
                 alt="check"
-                className="w-full h-[356px]"
+                className="w-full xl:h-[356px] h-auto xl:object-cover object-contain"
               />
               <div className="mt-5">
                 <h3 className="text-[#003486] poppins lg:text-[23px] md:text-[23px] sm:text-[17px] text-[17px] font-medium">
