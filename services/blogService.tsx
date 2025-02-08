@@ -223,7 +223,6 @@ const blogService = {
           "slug": slug.current
         }
         `,
-
         { author });
       if (blogSlugs) {
         return blogSlugs;
