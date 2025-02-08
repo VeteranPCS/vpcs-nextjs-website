@@ -12,6 +12,11 @@ interface ReviewDocument extends SanityDocument {
   publishedAt: string;
 }
 
+interface Author extends SanityDocument {
+  _type: "author";
+  _id: string;
+}
+
 const blogService = {
   fetchBlogs: async (): Promise<any> => {
     try {
@@ -210,7 +215,26 @@ const blogService = {
       console.error('Error fetching blogs:', error);
       throw error; // You can handle the error more gracefully based on your needs
     }
-  }
+  },
+  fetchBlogsByAuthor: async (author: string) => {
+    try {
+      const blogSlugs = await client.fetch(`
+        *[_type == "blog" && author._ref == $author]{
+          "slug": slug.current
+        }
+        `,
+
+        { author });
+      if (blogSlugs) {
+        return blogSlugs;
+      } else {
+        throw new Error(`Failed to fetch blog for author: ${author}`);
+      }
+    } catch (error: any) {
+      console.error('Error fetching blogs by author:', error);
+      throw error; // You can handle the error more gracefully based
+    }
+  },
 }
 
 export default blogService;

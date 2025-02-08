@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
 import agentService from "@/services/agentService";
+import blogService from "@/services/blogService";
 
 type RevalidatePathMap = {
   [key: string]: string[];
@@ -22,6 +23,11 @@ export async function POST(req: NextRequest) {
         current: string;
       };
       salesforceID?: string;
+      author?: {
+        _type: "reference";
+        _ref: string;
+      };
+      _id: string;
     }>(req, process.env.SANITY_REVALIDATE_KEY);
 
     if (!isValidSignature) {
@@ -72,7 +78,19 @@ export async function POST(req: NextRequest) {
       veterence_logo: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"],
     };
 
-    const paths = body._type !== 'agent' ? revalidatePathMap[body._type] : await agentService.getAgentState(body.salesforceID!);
+    let paths;
+    switch (body._type) {
+      case "agent":
+        paths = await agentService.getAgentState(body.salesforceID!);
+        break;
+      case "author":
+        const blogs = await blogService.fetchBlogsByAuthor(body._id);
+        paths = blogs.map((blog: any) => `/blog/${blog.slug}`);
+        break;
+      default:
+        paths = revalidatePathMap[body._type];
+        break;
+    }
 
     if (!paths) {
       return new Response(JSON.stringify({ message: "Invalid Type" }), {
