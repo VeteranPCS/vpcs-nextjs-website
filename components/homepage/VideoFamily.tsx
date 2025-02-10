@@ -35,7 +35,7 @@ const FamilyVideo = () => {
           <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 w-full">
             <div className="text-center">
               <h1 className="text-white lg:text-[72px] md:text-[62px] sm:text-[36px] text-[36px] font-bold tahoma">
-                $247,500
+                $302,000
               </h1>
               <p className="font-normal lg:text-[27px] md:text-[27px] sm:text-[17px] text-[17px] leading-[30px] text-white lg:mt-5 tahoma">
                 in bonus checks sent to military families!{" "}

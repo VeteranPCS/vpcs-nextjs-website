@@ -82,7 +82,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                     width={873}
                     height={482}
                     src="/assets/house-hero-2024.png"
-                    className="w-[873px] sm:h-[482px] h-[300px]"
+                    className="w-[873px] sm:h-[482px] h-[300px] object-contain"
                     alt="A home sold by VeteranPCS"
                     loading="eager"
                   />
