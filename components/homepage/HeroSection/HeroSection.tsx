@@ -83,14 +83,14 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                     height={482}
                     src="/assets/house-hero-2024.png"
                     className="w-[873px] sm:h-[482px] h-[300px]"
-                    alt="A military couple stands in front of their newly purchased home after using a military-friendly realtor from VeteranPCS"
+                    alt="A home sold by VeteranPCS"
                     loading="eager"
                   />
                   <Image
                     width={533}
                     height={533}
                     src="/assets/veteranPCS-slider-checks-03.png"
-                    className="xl:w-[533px] xl:h-[533px] lg:w-[533px] lg:h-[533px] md:w-[565px] md:h-[450px] sm:w-full sm:h-[480px] w-full h-[360px] absolute top-[20%] left-[11%] object-cover"
+                    className="absolute top-3/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 xl:w-[533px] xl:h-[533px] lg:w-[533px] lg:h-[533px] md:w-[565px] md:h-[450px] sm:w-full sm:h-[480px] w-full h-[360px] object-cover"
                     alt="A military couple stands in front of their newly purchased home after using a military-friendly realtor from VeteranPCS"
                     loading="eager"
                   />

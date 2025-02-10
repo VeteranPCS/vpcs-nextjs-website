@@ -4,8 +4,9 @@ import { getSalesforceToken } from '@/services/salesForceTokenService';
 import { client } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
 import agentService from './agentService';
+import { Image } from 'sanity';
 
-interface StateMap {
+interface StateMap extends Image {
   _type: 'image';
   alt: string;
   asset: {
@@ -108,15 +109,15 @@ const stateService = {
       const state_detail = await client.fetch<StateList>(`*[_type == "city_list" && city_slug.current == $city][0]`, { city: state });
 
       if (state_detail.city_map?.asset?._ref) {
-        state_detail.city_map.asset.image_url = urlForImage(state_detail.city_map.asset);  // Add the image URL to the response
+        state_detail.city_map.asset.image_url = urlForImage(state_detail.city_map);  // Add the image URL to the response
       }
       if (state_detail) {
         return state_detail as StateList
       } else {
-        throw new Error('Failed to fetch Reviews');
+        throw new Error('Failed to fetch State Details');
       }
     } catch (error: any) {
-      console.error('Error fetching Reviews:', error);
+      console.error('Error fetching State Details:', error);
       throw error;
     }
   },
