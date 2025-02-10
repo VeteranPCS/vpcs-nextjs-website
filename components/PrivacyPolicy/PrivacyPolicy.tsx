@@ -20,7 +20,7 @@ const ContactForm = () => {
           <div className="mb-4">
             <p>
               Protecting your private information is our priority. This Privacy
-              Policy applies to Solid Oak Realty d/b/a VeteranPCS, , a Colorado
+              Policy applies to Solid Oak Realty d/b/a VeteranPCS, a Colorado
               corporation (the “Company”) and describes how the Company gathers,
               uses, and maintains your personal information. This Privacy Policy
               also applies to your use of our website and other sites under the
@@ -315,7 +315,7 @@ const ContactForm = () => {
               and user-provided data for as long as you use the Platform and for
               a reasonable time thereafter. If you would like us to delete your
               user-provided data that you have provided via the Platform, please
-              contact us at operations@veteranpcs.com and we will respond within
+              contact us at info@veteranpcs.com and we will respond within
               a reasonable time. Please note that some or all of the
               user-provided data may be required for the Platform to function
               properly.
@@ -362,7 +362,7 @@ const ContactForm = () => {
           </div>
           <div className="mb-4">
             <p>
-              By e-mail: operations@veteranpcs.com with a subject line of “Your
+              By e-mail: info@veteranpcs.com with a subject line of “Your
               California Privacy Rights.”
             </p>
           </div>
@@ -438,7 +438,7 @@ const ContactForm = () => {
               termination of your use of the Platform. We may also continue to
               display your profile information and/or personal story on the Site
               unless you request that we discontinue use. Please contact us
-              directly via email at operations@veteranpcs.com to request that
+              directly via email at info@veteranpcs.com to request that
               your information be disabled from public view.
             </p>
           </div>
@@ -474,7 +474,7 @@ const ContactForm = () => {
               <br></br>The Company welcomes your questions or comments regarding
               Privacy Policy. If you believe that the Company has not adhered to
               this Privacy Policy, please contact the Company at
-              operations@veteranpcs.com.
+              info@veteranpcs.com.
             </p>
           </div>
         </div>

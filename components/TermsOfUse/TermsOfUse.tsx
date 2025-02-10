@@ -1,6 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const ContactForm = () => {
   return (
@@ -303,9 +304,9 @@ const ContactForm = () => {
                 determination will be made on a case by case basis in the
                 Company’s sole discretion. Reach out to
               </span>
-              <Link href="mailto:operations@veteranpcs.com">
+              <Link href="mailto:info@veteranpcs.com">
                 <span className="font-normal leading-8">
-                  operations@veteranpcs.com
+                  info@veteranpcs.com
                 </span>
               </Link>
               <span className="font-normal leading-8">
@@ -1031,12 +1032,12 @@ const ContactForm = () => {
                 use of a VeteranPCS-introduced real estate agent. Other terms
                 and conditions may apply. This is not a solicitation if you are
                 already represented by a real estate broker. Please contact
-                operations@veteranPCS.com for details. Program terms and
+                info@veteranpcs.com for details. Program terms and
                 conditions are subject to change at any time without notice. By
                 using the services offered herein, you represent that you have
                 read, understood, and agree to the
               </span>
-              <Link href="https://www.veteranpcs.com/terms-of-use">
+              <Link href={`${BASE_URL}/terms-of-use`}>
                 <span className="font-normal leading-8">
                   {" "}
                   Platform Terms of Use
@@ -1227,9 +1228,9 @@ const ContactForm = () => {
               <span className="font-normal leading-8">
                 Please email your Feedback to us at
               </span>
-              <Link href="mailto:Operations@veteranpcs.com">
+              <Link href="mailto:info@veteranpcs.com">
                 <span className="font-normal leading-8">
-                  Operations@veteranpcs.com
+                  info@veteranpcs.com
                 </span>
               </Link>
               <span className="font-normal leading-8">
@@ -1668,9 +1669,9 @@ const ContactForm = () => {
                 in accordance with applicable law. You may opt-out by emailing
                 us at
               </span>
-              <Link href="mailto:operations@veteranpcs.com">
+              <Link href="mailto:info@veteranpcs.com">
                 <span className="font-normal leading-8">
-                  operations@veteranpcs.com
+                  info@veteranpcs.com
                 </span>
               </Link>
               <span className="font-normal leading-8">

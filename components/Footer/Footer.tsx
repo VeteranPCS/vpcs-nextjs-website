@@ -2,6 +2,7 @@ import React from "react";
 import classes from "./Footer.module.css";
 import Image from "next/image";
 import Link from "next/link";
+import { date } from "yup";
 
 const Locations = () => {
   const locations = [
@@ -57,6 +58,8 @@ const Locations = () => {
     "Wisconsin",
     "Wyoming",
   ];
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
 
   const formattedLocation = (location: string) => {
     return location.toLowerCase().replace(/\s+/g, "-");
@@ -95,7 +98,7 @@ const Locations = () => {
               </div>
               <div className="my-7 sm:my-7 md:my-0">
                 <span className="text-white text-center roboto text-lg font-medium">
-                  VeteranPCS ©2024
+                  VeteranPCS ©2021 - {currentYear}
                 </span>
               </div>
               <div>
@@ -169,7 +172,7 @@ const Locations = () => {
                 use of a VeteranPCS-introduced real estate agent. Other terms
                 and conditions may apply. This is not a solicitation if you are
                 already represented by a real estate broker. Please contact
-                operations@veteranPCS.com for details. Program terms and
+                <Link href='mailto:info@veteranpcs.com'> info@veteranpcs.com</Link> for details. Program terms and
                 conditions are subject to change at any time without notice. By
                 using the services offered herein, you represent that you have
                 read, understood, and agree to the Platform Terms of Use.
