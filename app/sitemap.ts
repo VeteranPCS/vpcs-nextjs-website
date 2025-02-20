@@ -21,7 +21,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         "/privacy-policy",
         "/terms-of-use",
         "/spanish",
-        "/stories"
+        "/stories",
+        "/kick-start-your-career"
     ]
 
     const stateRoutes = await stateService.fetchStateList();

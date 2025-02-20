@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import ReCAPTCHA from 'react-google-recaptcha';
 import { internshipFormSubmission } from "@/services/salesForcePostFormsService";
+import { useRouter } from "next/navigation";
 
 export interface FormData {
     first_name: string;
@@ -24,6 +25,7 @@ export interface FormData {
     "00N4x00000QPksj": string;
     "00N4x00000QPS7V"?: string;
     "g-recaptcha-response": string;
+    captcha_settings?: string;
 }
 
 const schema = yup.object().shape({
@@ -40,7 +42,30 @@ const schema = yup.object().shape({
     "00N4x00000QPK7L": yup.string().required("Internship type is required"),
     "00N4x00000LspV2": yup.string().required("Destination state is required"),
     "00N4x00000LspUi": yup.string().required("Desired city is required"),
-    "00N4x00000QPLQY": yup.string().required("Start date is required"),
+    "00N4x00000QPLQY": yup
+        .string()
+        .required("Start date is required")
+        .matches(
+            /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/,
+            "Date must be in mm/dd/yyyy format"
+        )
+        .test("valid-date", "Please enter a valid date", (value) => {
+            if (!value) return false;
+            const [month, day, year] = value.split("/").map(Number);
+            const date = new Date(year, month - 1, day);
+            return date instanceof Date && !isNaN(date.getTime()) &&
+                date.getMonth() === month - 1 &&
+                date.getDate() === day &&
+                date.getFullYear() === year;
+        })
+        .test("future-date", "Start date must be in the future", (value) => {
+            if (!value) return false;
+            const [month, day, year] = value.split("/").map(Number);
+            const inputDate = new Date(year, month - 1, day);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Reset time to start of day for fair comparison
+            return inputDate >= today;
+        }),
     "00N4x00000QPLQd": yup.string().required("License status is required"),
     "00N4x00000QPksj": yup.string().required("How did you hear is required"),
     "00N4x00000QPS7V": yup.string().when("00N4x00000QPksj", {
@@ -79,26 +104,50 @@ const WebToLeadForm = () => {
             "00N4x00000QPksj": "",
             "00N4x00000QPS7V": "",
             "g-recaptcha-response": "",
+            captcha_settings: '{}',
         },
     });
+
+    const router = useRouter();
 
     const howDidYouHear = watch("00N4x00000QPksj");
 
     const handleFormSubmit: SubmitHandler<FormData> = async (data) => {
         try {
-            console.log(data);
-            await internshipFormSubmission(data);
-            return true;
+            const response = await internshipFormSubmission(data);
+            if (response.redirectUrl) {
+                router.push(response.redirectUrl);
+            }
         } catch (error) {
             console.error('Error submitting form:', error);
-            // You might want to handle the error appropriately here
-            // e.g., show an error message to the user
-            return false;
         }
     };
 
     const onCaptchaChange = (token: string | null) => {
-        setValue("g-recaptcha-response", token || "");
+        if (token) {
+            const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
+            if (captchaSettingsElem) {
+                const captchaSettings = JSON.parse(captchaSettingsElem.value);
+                captchaSettings.ts = JSON.stringify(new Date().getTime());
+                captchaSettingsElem.value = JSON.stringify(captchaSettings);
+                setValue('captcha_settings', captchaSettingsElem.value);
+                setValue('g-recaptcha-response', token);
+            }
+        }
+    };
+
+    const handleDateInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+        if (value.length > 8) value = value.slice(0, 8);
+
+        // Add slashes
+        if (value.length >= 4) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4);
+        } else if (value.length >= 2) {
+            value = value.slice(0, 2) + '/' + value.slice(2);
+        }
+
+        setValue('00N4x00000QPLQY', value);
     };
 
     return (
@@ -107,17 +156,12 @@ const WebToLeadForm = () => {
                 <form
                     onSubmit={handleSubmit(handleFormSubmit)}
                 >
-                    <input type="hidden" name="oid" value="00D4x000003yaV2" />
-                    <input type="hidden" name="retURL" value={`${process.env.NEXT_PUBLIC_API_BASE_URL}/thank-you`} />
-                    <input type="hidden" name="recordType" value="0124x000000ZGKv" />
-                    <input type="hidden" name="lead_source" value="Website" />
-                    <input type="hidden" name="00N4x00000Lsr0G" value="true" />
-                    <input type="hidden" name="country_code" value="US" />
                     <input
                         type="hidden"
                         name="00N4x00000QQ1LB"
-                        value="https://veteranpcs.com/kick-start-your-career/"
+                        value={`${process.env.NEXT_PUBLIC_API_BASE_URL}/kick-start-your-career`}
                     />
+                    <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
 
                     <div className="flex flex-col gap-8">
                         <div className="md:text-left text-center">
@@ -519,8 +563,11 @@ const WebToLeadForm = () => {
                                         {...register("00N4x00000QPLQY")}
                                         id="00N4x00000QPLQY"
                                         type="text"
+                                        pattern="\d{2}/\d{2}/\d{4}"
                                         className="border-b border-[#E2E4E5] px-2 py-1"
                                         placeholder="mm/dd/yyyy"
+                                        onChange={handleDateInput}
+                                        maxLength={10}
                                     />
                                     {errors["00N4x00000QPLQY"] && (
                                         <p className="text-red-500 text-xs mt-1">

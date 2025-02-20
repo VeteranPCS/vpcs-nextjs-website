@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 
 function InternshipApplicationPage() {
     return (
-        <div>
+        <div className="md:py-12 py-4 md:px-0 px-5">
             <InternshipApplicationForm />
         </div>
     )

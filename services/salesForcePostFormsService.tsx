@@ -371,7 +371,14 @@ export async function vaLoanGuideForm(formData: any) {
 }
 
 export async function internshipFormSubmission(formData: any) {
+
     const formBody = new URLSearchParams({
+        oid: "00D4x000003yaV2",
+        recordType: "0124x000000ZGKv",
+        retURL: `${BASE_URL}/thank-you`,
+        lead_source: "Website",
+        "00N4x00000Lsr0G": "true",
+        country_code: "US",
         "g-recaptcha-response": formData.captchaToken || "",
         "captcha_settings": formData.captcha_settings || "",
         ...formData,
