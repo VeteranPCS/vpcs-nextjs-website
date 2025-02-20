@@ -49,7 +49,7 @@ const PcsResourcesCalculators = async () => {
                     "/assets/successful-team1.png"
                   }
                   alt={data?.action_image?.alt || "check"}
-                  className="w-full lg:h-[356px] h-auto"
+                  className="w-full lg:h-[356px] h-auto object-cover"
                 />
                 <div className="mt-5">
                   <h3 className="text-[#003486] poppins lg:text-[23px] md:text-[23px] sm:text-[17px] text-[17px] font-bold">
