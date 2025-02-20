@@ -1,7 +1,7 @@
 import React from "react"; // No need for useState or useEffect
 import "@/styles/globals.css";
-import styled from "styled-components";
 import Button from "@/components/common/Button";
+import Link from "next/link";
 import classes from "./internshipapplication.module.css";
 
 const SkillFuturesBuild = () => {
@@ -15,8 +15,9 @@ const SkillFuturesBuild = () => {
                 Apply below to learn how you can kickstart your career in the
                 real estate industry!
               </h1>
-
-              <Button buttonText="Internship Application" />
+              <Link href="/kick-start-your-career">
+                <Button buttonText="Internship Application" />
+              </Link>
             </div>
           </div>
         </div>

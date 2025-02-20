@@ -369,3 +369,49 @@ export async function vaLoanGuideForm(formData: any) {
         throw new Error('Failed to submit form');
     }
 }
+
+export async function internshipFormSubmission(formData: any) {
+
+    const formBody = new URLSearchParams({
+        oid: "00D4x000003yaV2",
+        recordType: "0124x000000ZGKv",
+        retURL: `${BASE_URL}/thank-you`,
+        lead_source: "Website",
+        "00N4x00000Lsr0G": "true",
+        country_code: "US",
+        "g-recaptcha-response": formData.captchaToken || "",
+        "captcha_settings": formData.captcha_settings || "",
+        ...formData,
+    }).toString();
+
+    try {
+        const response = await fetch(
+            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formBody,
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+
+        const data = await response.text();
+        const redirectUrlMatch = data.match(/window.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
+        const redirectUrl = redirectUrlMatch ? redirectUrlMatch[1] : null;
+
+        if (redirectUrl) {
+            return { redirectUrl };
+        }
+
+        return { message: 'Form submitted successfully!' };
+    } catch (error) {
+        console.error('Error:', error);
+        throw new Error('Failed to submit form');
+    }
+}
+
