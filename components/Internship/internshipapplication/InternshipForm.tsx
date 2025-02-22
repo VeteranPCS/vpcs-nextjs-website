@@ -5,6 +5,7 @@ import * as yup from "yup";
 import ReCAPTCHA from 'react-google-recaptcha';
 import { internshipFormSubmission } from "@/services/salesForcePostFormsService";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export interface FormData {
     first_name: string;
@@ -111,6 +112,13 @@ const WebToLeadForm = () => {
     const router = useRouter();
 
     const howDidYouHear = watch("00N4x00000QPksj");
+    const militaryStatus = watch("00N4x00000LsnP2");
+
+    useEffect(() => {
+        if (militaryStatus.includes("Active")) {
+            setValue("00N4x00000QQ0Vz", ["Currently Serving"]);
+        }
+    }, [militaryStatus, setValue]);
 
     const handleFormSubmit: SubmitHandler<FormData> = async (data) => {
         try {
@@ -173,10 +181,12 @@ const WebToLeadForm = () => {
                         </div>
 
                         <div className="border rounded-lg border-[#E2E4E5] p-8">
+                            <h3 className="text-[#000080] font-bold tahoma text-lg mb-1">Personal Information</h3>
+                            <p className="text-sm text-[#575F6E] roboto mb-8">No spam mail, no fees.</p>
                             {/* First Name */}
                             <div className="mb-8 flex flex-col">
-                                <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                    First Name*
+                                <label className="hidden">
+                                    First Name
                                 </label>
                                 <input
                                     {...register("first_name")}
@@ -193,8 +203,8 @@ const WebToLeadForm = () => {
 
                             {/* Last Name */}
                             <div className="mb-8 flex flex-col">
-                                <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                    Last Name*
+                                <label className="hidden">
+                                    Last Name
                                 </label>
                                 <input
                                     {...register("last_name")}
@@ -211,8 +221,8 @@ const WebToLeadForm = () => {
 
                             {/* Email */}
                             <div className="mb-8 flex flex-col">
-                                <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                    Email*
+                                <label className="hidden">
+                                    Email
                                 </label>
                                 <input
                                     {...register("email")}
@@ -229,8 +239,8 @@ const WebToLeadForm = () => {
 
                             {/* Phone */}
                             <div className="mb-8 flex flex-col">
-                                <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                    Phone*
+                                <label className="hidden">
+                                    Phone
                                 </label>
                                 <input
                                     {...register("mobile")}
@@ -247,46 +257,20 @@ const WebToLeadForm = () => {
 
                             {/* Military Service */}
                             <fieldset className="mb-8">
-                                <legend className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                    Military Service
+                                <legend className="text-[#000080] font-bold tahoma text-lg mb-1">
+                                    Military Service Information
                                 </legend>
-
-                                {/* Military Status */}
-                                <div className="mb-4 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                        Status*
-                                    </label>
-                                    <select
-                                        {...register("00N4x00000LsnP2")}
-                                        id="00N4x00000LsnP2"
-                                        multiple
-                                        className="border-b border-[#E2E4E5] px-2 py-1 h-32"
-                                    >
-                                        <option value="Active">Active</option>
-                                        <option value="National Guard">National Guard</option>
-                                        <option value="Reserves">Reserves</option>
-                                        <option value="Retired">Retired</option>
-                                        <option value="Spouse">Spouse</option>
-                                        <option value="Veteran">Veteran</option>
-                                    </select>
-                                    {errors["00N4x00000LsnP2"] && (
-                                        <p className="text-red-500 text-xs mt-1">
-                                            {errors["00N4x00000LsnP2"].message}
-                                        </p>
-                                    )}
-                                </div>
-
                                 {/* Military Branch */}
                                 <div className="mb-4 flex flex-col">
                                     <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                        Branch*
+                                        Branch of Service
                                     </label>
                                     <select
                                         {...register("00N4x00000LsnOx")}
                                         id="00N4x00000LsnOx"
-                                        className="border-b border-[#E2E4E5] px-2 py-1"
+                                        className={`border-b border-[#E2E4E5] px-2 py-1 ${!watch("00N4x00000LsnOx") ? "text-[#6B7280]" : "text-black"}`}
                                     >
-                                        <option value="">--None--</option>
+                                        <option value="" disabled>--Select--</option>
                                         <option value="Air Force">Air Force</option>
                                         <option value="Army">Army</option>
                                         <option value="Coast Guard">Coast Guard</option>
@@ -301,17 +285,42 @@ const WebToLeadForm = () => {
                                     )}
                                 </div>
 
+                                {/* Military Status */}
+                                <div className="mb-4 flex flex-col">
+                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
+                                        Military Status
+                                    </label>
+                                    <select
+                                        {...register("00N4x00000LsnP2")}
+                                        id="00N4x00000LsnP2"
+                                        className={`border-b border-[#E2E4E5] px-2 py-1 ${!watch("00N4x00000LsnP2") ? "text-[#6B7280]" : "text-black"}`}
+                                    >
+                                        <option value="" disabled>--Select--</option>
+                                        <option value="Active">Active</option>
+                                        <option value="National Guard">National Guard</option>
+                                        <option value="Reserves">Reserves</option>
+                                        <option value="Retired">Retired</option>
+                                        <option value="Spouse">Spouse</option>
+                                        <option value="Veteran">Veteran</option>
+                                    </select>
+                                    {errors["00N4x00000LsnP2"] && (
+                                        <p className="text-red-500 text-xs mt-1">
+                                            {errors["00N4x00000LsnP2"].message}
+                                        </p>
+                                    )}
+                                </div>
+
                                 {/* Discharge Status */}
                                 <div className="mb-4 flex flex-col">
                                     <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                        Discharge Status(es)*
+                                        Discharge Status
                                     </label>
                                     <select
                                         {...register("00N4x00000QQ0Vz")}
                                         id="00N4x00000QQ0Vz"
-                                        multiple
-                                        className="border-b border-[#E2E4E5] px-2 py-1 h-24"
+                                        className={`border-b border-[#E2E4E5] px-2 py-1 ${!watch("00N4x00000QQ0Vz") ? "text-[#6B7280]" : "text-black"}`}
                                     >
+                                        <option value="" disabled>--Select--</option>
                                         <option value="Honorable Discharge">Honorable Discharge</option>
                                         <option value="Retired">Retired</option>
                                         <option value="Medical Retirement">Medical Retirement</option>
@@ -326,6 +335,8 @@ const WebToLeadForm = () => {
                             </fieldset>
 
                             {/* Current Location */}
+                            <h3 className="text-[#000080] font-bold tahoma text-lg mb-8">Location & Internship</h3>
+
                             <fieldset className="mb-8">
                                 <legend className="text-[#242426] tahoma text-sm font-normal mb-1">
                                     Current Location
@@ -333,15 +344,15 @@ const WebToLeadForm = () => {
 
                                 {/* State */}
                                 <div className="mb-4 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                        State*
+                                    <label className="hidden">
+                                        State
                                     </label>
                                     <select
                                         {...register("state_code")}
                                         id="state_code"
-                                        className="border-b border-[#E2E4E5] px-2 py-1"
+                                        className={`border-b border-[#E2E4E5] px-2 py-1 ${!watch("state_code") ? "text-[#6B7280]" : "text-black"}`}
                                     >
-                                        <option value="">--State*--</option>
+                                        <option value="" disabled>--Select--</option>
                                         <option value="AL">AL</option>
                                         <option value="AK">AK</option>
                                         <option value="AZ">AZ</option>
@@ -403,8 +414,8 @@ const WebToLeadForm = () => {
 
                                 {/* City */}
                                 <div className="mb-4 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                        City*
+                                    <label className="hidden">
+                                        City
                                     </label>
                                     <input
                                         {...register("city")}
@@ -421,7 +432,7 @@ const WebToLeadForm = () => {
 
                                 {/* Base */}
                                 <div className="mb-4 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
+                                    <label className="hidden">
                                         Base
                                     </label>
                                     <input
@@ -438,20 +449,20 @@ const WebToLeadForm = () => {
                             {/* Internship */}
                             <fieldset className="mb-8">
                                 <legend className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                    Internship
+                                    Internship Type
                                 </legend>
 
                                 {/* Type */}
                                 <div className="mb-4 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                        Type*
+                                    <label className="hidden">
+                                        Internship Type
                                     </label>
                                     <select
                                         {...register("00N4x00000QPK7L")}
                                         id="00N4x00000QPK7L"
-                                        className="border-b border-[#E2E4E5] px-2 py-1"
+                                        className={`border-b border-[#E2E4E5] px-2 py-1 ${!watch("00N4x00000QPK7L") ? "text-[#6B7280]" : "text-black"}`}
                                     >
-                                        <option value="">--TYPE*--</option>
+                                        <option value="" disabled>--Select--</option>
                                         <option value="Intern - Agent">Real Estate Agent</option>
                                         <option value="Intern - Lender">Mortgage Lending</option>
                                     </select>
@@ -465,14 +476,14 @@ const WebToLeadForm = () => {
                                 {/* Destination State */}
                                 <div className="mb-4 flex flex-col">
                                     <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                        Desired State*
+                                        Desired Location
                                     </label>
                                     <select
                                         {...register("00N4x00000LspV2")}
                                         id="00N4x00000LspV2"
-                                        className="border-b border-[#E2E4E5] px-2 py-1"
+                                        className={`border-b border-[#E2E4E5] px-2 py-1 ${!watch("00N4x00000LspV2") ? "text-[#6B7280]" : "text-black"}`}
                                     >
-                                        <option value="">--Desired State*--</option>
+                                        <option value="" disabled>--Select--</option>
                                         <option value="AL">AL</option>
                                         <option value="AK">AK</option>
                                         <option value="AZ">AZ</option>
@@ -536,8 +547,8 @@ const WebToLeadForm = () => {
 
                                 {/* Desired City */}
                                 <div className="mb-4 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                        Desired City*
+                                    <label className="hidden">
+                                        Desired City
                                     </label>
                                     <input
                                         {...register("00N4x00000LspUi")}
@@ -557,7 +568,7 @@ const WebToLeadForm = () => {
                                 {/* Start Date */}
                                 <div className="mb-4 flex flex-col">
                                     <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                        Date you would like to start*
+                                        Preferred Start Date
                                     </label>
                                     <input
                                         {...register("00N4x00000QPLQY")}
@@ -579,14 +590,14 @@ const WebToLeadForm = () => {
                                 {/* Licensed */}
                                 <div className="mb-4 flex flex-col">
                                     <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                        Are you licensed?*
+                                        Are you licensed?
                                     </label>
                                     <select
                                         {...register("00N4x00000QPLQd")}
                                         id="00N4x00000QPLQd"
-                                        className="border-b border-[#E2E4E5] px-2 py-1"
+                                        className={`border-b border-[#E2E4E5] px-2 py-1 ${!watch("00N4x00000QPLQd") ? "text-[#6B7280]" : "text-black"}`}
                                     >
-                                        <option value="">--</option>
+                                        <option value="" disabled>--Select--</option>
                                         <option value="Yes">Yes</option>
                                         <option value="No">No</option>
                                         <option value="In Progress">In Progress</option>
@@ -602,14 +613,14 @@ const WebToLeadForm = () => {
                             {/* How Did You Hear */}
                             <div className="mb-8 flex flex-col">
                                 <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                    How Did You Hear About Us?*
+                                    How Did You Hear About Us?
                                 </label>
                                 <select
                                     {...register("00N4x00000QPksj")}
                                     id="00N4x00000QPksj"
-                                    className="border-b border-[#E2E4E5] px-2 py-1"
+                                    className={`border-b border-[#E2E4E5] px-2 py-1 ${!watch("00N4x00000QPksj") ? "text-[#6B7280]" : "text-black"}`}
                                 >
-                                    <option value="">--None--</option>
+                                    <option value="" disabled>--Select--</option>
                                     <option value="Google">Google</option>
                                     <option value="Facebook">Facebook</option>
                                     <option value="Instagram">Instagram</option>
@@ -634,7 +645,7 @@ const WebToLeadForm = () => {
                             {howDidYouHear === "Other" && (
                                 <div className="mb-8 flex flex-col">
                                     <label className="text-[#242426] tahoma text-sm font-normal mb-1">
-                                        Tell Us More!*
+                                        Tell Us More!
                                     </label>
                                     <input
                                         {...register("00N4x00000QPS7V")}
