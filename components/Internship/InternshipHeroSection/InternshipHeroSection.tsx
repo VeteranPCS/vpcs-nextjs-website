@@ -21,7 +21,7 @@ const PcsResources = () => {
                 of the many agents or lenders on our website
               </p>
               <div>
-                <Link href="/kickstart-your-career">
+                <Link href="/kick-start-your-career">
                   <Button buttonText="Internship Application" />
                 </Link>
               </div>
