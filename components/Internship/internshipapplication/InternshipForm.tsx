@@ -5,6 +5,7 @@ import * as yup from "yup";
 import ReCAPTCHA from 'react-google-recaptcha';
 import { internshipFormSubmission } from "@/services/salesForcePostFormsService";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export interface FormData {
     first_name: string;
@@ -111,6 +112,13 @@ const WebToLeadForm = () => {
     const router = useRouter();
 
     const howDidYouHear = watch("00N4x00000QPksj");
+    const militaryStatus = watch("00N4x00000LsnP2");
+
+    useEffect(() => {
+        if (militaryStatus.includes("Active")) {
+            setValue("00N4x00000QQ0Vz", ["Currently Serving"]);
+        }
+    }, [militaryStatus, setValue]);
 
     const handleFormSubmit: SubmitHandler<FormData> = async (data) => {
         try {
