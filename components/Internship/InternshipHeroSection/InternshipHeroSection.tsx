@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import classes from "./InternshipHeroSection.module.css";
 import Image from "next/image";
 import Button from "@/components/common/Button";
+import Link from "next/link";
 
 const PcsResources = () => {
   return (
@@ -20,7 +21,9 @@ const PcsResources = () => {
                 of the many agents or lenders on our website
               </p>
               <div>
-                <Button buttonText="Internship Application" />
+                <Link href="/kickstart-your-career">
+                  <Button buttonText="Internship Application" />
+                </Link>
               </div>
               <div className="absolute bottom-[-15%] xl:left-[41%]  lg:left-[35%] md:left-[35%] sm:left-[26%] left-[26%] translate-[-45%] ">
                 <Image
