@@ -120,19 +120,14 @@ const StateMap = () => {
   return (
     <>
       <div className="z-0 w-full" id="map-container">
-        <div className="bg-[#aeb0c7] lg:px-16 sm:py-10 py-10 w-full">
+        <div className="bg-[#aeb0c7] lg:px-16 py-10 w-full">
           <div>
             <div className="text-center pb-5 w-full relative">
-              <h2 className="text-white text-center text-shadow-lg tahoma font-bold leading-10 lg:text-[59px] md:text-[40px] sm:text-[32px] text-[32px]">
+              <h2 className="text-[#292f6c] text-center text-shadow-lg tahoma font-bold leading-10 lg:text-[59px] md:text-[40px] sm:text-[32px] text-[32px]">
                 Buying or Selling?
               </h2>
-              <p className="lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] text-white text-center text-shadow-lg font-normal lg:my-10 md:my-5 sm:my-5 my-5 tahoma sm:px-1 px-1">
-                Choose a state below to connect with our veteran and military
-                spouse
-                <span className="sm:hidden hidden md:block">
-                  <br></br>
-                </span>
-                agents and lenders
+              <p className="lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] text-[#292f6c] text-center text-shadow-lg font-normal lg:my-10 md:my-5 sm:my-5 my-5 tahoma px-2 sm:px-28 lg:px-36 max-w-screen-md mx-auto">
+                Choose a state below to connect with our veteran and military spouse agents and lenders
               </p>
             </div>
             <svg
