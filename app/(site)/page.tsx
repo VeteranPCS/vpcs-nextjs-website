@@ -15,7 +15,6 @@ import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
 import { memo } from "react";
 
-const MemoizedStateMap = memo(StateMap);
 const MemoizedAgent = memo(Agent);
 const MemoizedTestimonials = memo(Testimonials);
 const MemoizedVideoFamily = memo(VideoFamily);
@@ -32,7 +31,7 @@ export default function Home() {
         subTitle="Veteran & Military Spouse Real Estate Agents and VA Loan Experts You Can Trust"
         page="home"
       />
-      <MemoizedStateMap />
+      <StateMap />
       <MemoizedAgent />
       <MemoizedVideoFamily />
       <MemoizedTestimonials />

@@ -120,9 +120,9 @@ const StateMap = () => {
   return (
     <>
       <div className="z-0 w-full" id="map-container">
-        <div className="bg-[#aeb0c7] lg:p-16 md:p-16 sm:py-10 py-10 w-full">
+        <div className="bg-[#aeb0c7] lg:px-16 sm:py-10 py-10 w-full">
           <div>
-            <div className="text-center pb-5 w-full relative md:hidden sm:block block  sm:top-[10%] top-[15%]">
+            <div className="text-center pb-5 w-full relative">
               <h2 className="text-white text-center text-shadow-lg tahoma font-bold leading-10 lg:text-[59px] md:text-[40px] sm:text-[32px] text-[32px]">
                 Buying or Selling?
               </h2>
