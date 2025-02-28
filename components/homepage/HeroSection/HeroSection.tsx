@@ -99,16 +99,6 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
             </div>
           </div>
         </div>
-        <div className="text-center pb-5 w-full relative md:block sm:hidden hidden xl:top-[35%] lg:top-[32%] md:top-[0%]">
-          <h2 className="text-white text-center text-shadow-lg tahoma font-bold leading-10 lg:text-[59px] md:text-[40px] sm:text-[32px] text-[32px]">
-            Buying or Selling?
-          </h2>
-          <p className="lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] text-white text-center text-shadow-lg font-normal mb-10 mt-10 tahoma">
-            Choose a state below to connect with our veteran and military spouse
-            <br></br>
-            agents and lenders
-          </p>
-        </div>
       </div>
     </div>
   );

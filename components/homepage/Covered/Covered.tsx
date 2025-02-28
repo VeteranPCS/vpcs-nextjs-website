@@ -11,7 +11,7 @@ const cardsData = [
     img: "/icon/Mission.svg",
     imgred: "/icon/Missionred.svg",
     title: "Our mission",
-    subTitle: "Why is VeteranPCS mission is so important?",
+    subTitle: "Why is the VeteranPCS mission important?",
     link: "about",
   },
   {
@@ -54,7 +54,7 @@ const cardsData = [
 const Covered = () => {
   useEffect(() => {
     AOS.init({
-      //   once: true,      // Make animation run once
+      once: true,      // Make animation run once
     });
   }, []);
 
@@ -70,7 +70,7 @@ const Covered = () => {
             We’ve got you covered
           </h2>
           <p className="normal text-[#7E1618] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] leading-[32px] font-medium lg:block md:block tahoma">
-            Military community helping military community move.
+            Military community helping our military community move.
           </p>
         </div>
       </div>

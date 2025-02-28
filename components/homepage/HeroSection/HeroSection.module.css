@@ -4,7 +4,6 @@
   background-position: center;
   background-repeat: no-repeat;
   background-color: #aeb0c7;
-  height: 1000px;
   padding: 50px 30px;
   z-index: 10;
   position: relative;
@@ -15,7 +14,7 @@
 @media screen and (max-width: 767px) {
   .herosectioncontainer {
     margin-top: 50px;
-    height: 1200px;
+    height: 1000px;
     background-position: right;
   }
 }

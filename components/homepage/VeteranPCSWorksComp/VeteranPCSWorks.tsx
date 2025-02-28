@@ -15,7 +15,7 @@ const cardsData = [
     title: "VA LOAN",
     subTitle:
       "Don’t overpay when using your va loan. Our va loan experts are here to help.",
-    link: "blog/va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
+    link: "#map-container",
   },
   {
     img: "/icon/checkred.svg",

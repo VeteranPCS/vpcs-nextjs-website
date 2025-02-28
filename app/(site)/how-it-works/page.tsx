@@ -3,6 +3,7 @@ import HowItWorkHeroSection from "@/components/HowItWork/HowItWorkHeroSection/Ho
 import Covered from "@/components/homepage/Covered/Covered";
 import HowItWorkText from "@/components/HowItWork/HowItWorkText/HowItWorkText";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
+import StateMap from "@/components/homepage/StateMap";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "How VeteranPCS Connects Military Families with Trusted Real Estate Agents";
@@ -44,6 +45,9 @@ export default function Home() {
   return (
     <>
       <HowItWorkHeroSection />
+      <div id="agent-map" className="bg-[#aeb0c7] pt-24 lg:pt-32 xl:pt-40">
+        <StateMap />
+      </div>
       <Covered />
       <HowItWorkText />
       <KeepInTouch />
