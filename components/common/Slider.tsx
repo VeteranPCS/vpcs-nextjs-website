@@ -41,8 +41,11 @@ const Carousel = ({ agentList }: { agentList: any }) => {
 
   return (
     <div className="container mx-auto comlogoslider">
+      <h3 className="text-center text-2xl sm:text-4xl font-bold text-[#292F6C] pt-6 sm:pt-10">
+        Features & Partners
+      </h3>
       <Box className="w-full">
-        <Slider {...settings} className="md:py-20 py-3">
+        <Slider {...settings} className="md:py-8 py-3">
           {agentList.map((item: any, index: number) => (
             <a
               key={"logo-slider" + (item._id || index)}
