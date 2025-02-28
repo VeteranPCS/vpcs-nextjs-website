@@ -47,7 +47,7 @@ const BlogPageHeroSection = ({ blog }: { blog: BlogDetails }) => {
                 <span className="rounded-lg bg-white/15 py-1 px-3 text-white text-center roboto text-xsfont-bold mx-auto">
                   {blog?.categories[0]?.title}
                 </span>
-                <h1 className="text-white text-center tahoma lg:text-[36px] md:text-[36px] sm:text-[31px] text-[31px] font-bold mt-8 mb-3 leading-normal">
+                <h1 className="text-white text-center tahoma lg:text-[36px] md:text-[36px] sm:text-[31px] text-[31px] font-bold mt-8 mb-3 leading-normal max-w-[800px]">
                   {blog?.title}
                 </h1>
                 <div className="flex items-center justify-center">

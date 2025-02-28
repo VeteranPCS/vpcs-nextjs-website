@@ -11,7 +11,7 @@ const BlogDetailsHeroSection = ({ blog }: { blog: Record<string, any> }) => {
         <div className="flex flex-col justify-center items-center">
           <div>
             <div className="text-center">
-              <h1 className="text-white text-center tahoma lg:text-[36px] md:text-[36px] sm:text-[36px] text-[36px] font-bold mt-8 mb-3">
+              <h1 className="text-white text-center tahoma lg:text-[36px] md:text-[36px] sm:text-[36px] text-[36px] font-bold mt-8 mb-3 max-w-[800px]">
                 {blog?.title}
               </h1>
               <div>
