@@ -172,8 +172,7 @@ blockquote {
   transition: all 0.3s ease;
 }
 
-.list-disc li::before {
-  content: "\2022";
+.list-disc li::marker {
   color: #a81f23;
   font-size: 1.5rem;
   margin-right: 8px;
