@@ -67,13 +67,13 @@ const ContactForm = () => {
       sendGTMEvent({
         event: 'contact_form_submission',
       });
-      
+
       const server_response = await contactPostForm(data);
       if (server_response?.success) {
         router.push(`${BASE_URL}/thank-you`);
       } else {
         console.log("No redirect URL found");
-      } 
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
     }
@@ -116,29 +116,31 @@ const ContactForm = () => {
       }
     }
   };
-    
+
   return (
     <div className="container mx-auto flex flex-wrap justify-center lg:py-12 md:py-12 sm:py-2 py-2 gap-10">
       <div className="flex flex-wrap justify-around rounded-[12.128px] bg-white shadow-[0px_0px_72.766px_36.383px_rgba(0,0,0,0.03)] p-4 w-full overflow-hidden mx-8 md:mb-0 mb-5">
         <div className="md:w-1/3 sm:w-full w-full ">
           <div className={classes.Container}>
-          <Link href="/get-listed-agents" className="block justify-start items-center gap-4 flex-wrap">
+            <Link href="/get-listed-agents" className="block justify-start items-center gap-4 flex-wrap">
               <Button
                 buttonText="Agents, Get Listed Here"
                 divClassName="!pb-0"
+                buttonClassName="border border-white border-2"
               />
             </Link>
             <Link href="/get-listed-lenders" className="block justify-start items-center gap-4 flex-wrap mb-6">
               <Button
                 buttonText="Lenders, Get Listed Here"
+                buttonClassName="border border-white border-2"
               />
             </Link>
 
             <div className={classes.Heading}>
-              We would love to hear<br></br> from you
+              We would love to hear from you
             </div>
             <div className={classes.Subtext}>
-              We will get back with you within two business <br></br> days!
+              We will get back with you within two business days!
               Thank you for reaching out!
             </div>
             <div className="mt-10">
@@ -186,7 +188,7 @@ const ContactForm = () => {
         <div className="md:w-2/3 sm:w-full w-full relative md:px-10 lg:px-20 mt-10 md:mt-0">
 
           <form onSubmit={handleSubmit(onSubmit)}>
-          <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
+            <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
             <div className={classes.FormContainer}>
               <div className="w-full">
                 <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1  gap-5 mb-10">
@@ -231,41 +233,6 @@ const ContactForm = () => {
                     {renderError('email')}
                   </div>
                 </div>
-                {/* <div className="md:mt-14 md:mb-14 mt-5 mb-10">
-                  <div className={classes.FormGroup}>
-                    <h6 className={classes.SelectLabel}>Select Subject</h6>
-                    <div className={classes.RadioGroup}>
-                      <div className={classes.RadioLabel}>
-                        <input
-                          type="radio"
-                          name="subject"
-                          value="general-inquiry"
-                        />
-                        General Inquiry
-                      </div>
-                      <div className={classes.RadioLabel}>
-                        <input
-                          type="radio"
-                          name="subject"
-                          value="general-inquiry"
-                        />
-                        General Inquiry
-                      </div>
-                      <div className={classes.RadioLabel}>
-                        <input type="radio" name="subject" value="general-inquiry" />
-                        General Inquiry
-                      </div>
-                      <div className={classes.RadioLabel}>
-                        <input
-                          type="radio"
-                          name="subject"
-                          value="general-inquiry"
-                        />
-                        General Inquiry
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
 
                 <div className={classes.FormGroup}>
                   <label className={classes.label} htmlFor="message">
@@ -281,14 +248,13 @@ const ContactForm = () => {
                 </div>
 
                 <div className={classes.FormGroup}>
-                <ReCAPTCHA
+                  <ReCAPTCHA
                     sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
                     onChange={onCaptchaChange} // Handle reCAPTCHA value change
                   />
                   {renderError('captchaToken')}
                 </div>
                 <div className="flex justify-end lg:py-8 md:py-8 sm:py-2 py-2">
-                  {/* <Button buttonText="Send Message" /> */}
                   <button
                     type="submit"
                     className="items-center bg-[#A81F23] w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px] px-[20px] xl:py-[15px] lg:py-[15px] sm:py-[14px] py-[14px] rounded-[16px] text-center tracking-[1px] hover:tracking-[5px] duration-500 transition-all"
@@ -305,15 +271,6 @@ const ContactForm = () => {
             </div>
 
           </form>
-          <div className="lg:block md:block sm:hidden hidden mt-16 mr-4">
-            <Image
-              width={250}
-              height={200}
-              src="/assets/letter_send.png"
-              alt="logo"
-              className="w-[250px] h-[200px] absolute bottom-[-12%] right-[15%]"
-            />
-          </div>
         </div>
       </div>
     </div>
