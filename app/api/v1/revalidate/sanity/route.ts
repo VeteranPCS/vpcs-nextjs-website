@@ -9,7 +9,12 @@ type RevalidatePathMap = {
 };
 
 export async function POST(req: NextRequest) {
+  console.log("Sanity webhook received at /api/v1/revalidate/sanity");
+  console.log("Request headers:", Object.fromEntries(req.headers.entries()));
+  console.log("Request URL:", req.url);
+
   try {
+    console.log("Attempting to parse webhook body...");
     const { isValidSignature, body } = await parseBody<{
       _type: string;
       slug?: {
@@ -28,7 +33,11 @@ export async function POST(req: NextRequest) {
       _id: string;
     }>(req, process.env.SANITY_REVALIDATE_KEY);
 
+    console.log("Webhook body:", body);
+    console.log("Signature valid:", isValidSignature);
+
     if (!isValidSignature) {
+      console.log("Invalid signature - returning 401");
       const message = "Invalid signature";
       return new Response(JSON.stringify({ message, isValidSignature, body }), {
         status: 401,
