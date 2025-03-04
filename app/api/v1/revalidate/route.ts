@@ -8,8 +8,6 @@ type RevalidatePathMap = {
   [key: string]: string[];
 };
 
-export const runtime = "edge";
-
 export async function POST(req: NextRequest) {
   try {
     const { isValidSignature, body } = await parseBody<{
