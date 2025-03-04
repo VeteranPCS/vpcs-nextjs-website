@@ -24,6 +24,18 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
               <h1 className="lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] font-normal text-white lg:my-10 md:my-5 sm:my-10 my-10 tahoma">
                 {subTitle}
               </h1>
+              {page == "spanish" && (
+                <div className="flex flex-col gap-4 text-white text-lg">
+                  <ul className="list-disc list-outside">
+                    <li>
+                      Entendemos el desafío de encontrar un agente inmobiliario militar que comprenda el préstamo VA y hable español también.
+                    </li>
+                    <li>
+                      Los miembros militares reciben entre $200 a $4,000 dólares en el cierre de casa para ayudar con los costos de la compra de su hogar.
+                    </li>
+                  </ul>
+                </div>
+              )}
               {page == "home" && (
                 <div className="flex justify-between xl:justify-start lg:justify-start md:justify-start sm:justify-between gap-4 lg:my-10 md:my-5 sm:my-10 my-10 mx-auto text-center ">
                   <div className="flex items-center gap-4">
@@ -64,13 +76,13 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
               {page == "spanish" && (
                 <div className="lg:flex md:flex sm:hidden hidden justify-start items-center gap-4 flex-wrap ">
                   <Link href="#map-container">
-                    <Button buttonText="Browse our map" />
+                    <Button buttonText="Explora nuestro mapa" />
                   </Link>
                   <p className="text-white font-normal xl:text-[30px] lg:text-[30px] md:text-[20px] sm:text-[20px] text-[20px] mx-10 xl:w-auto w-full">
-                    OR
+                    O
                   </p>
                   <Link href="/contact-agent">
-                    <Button buttonText="Find an agent for me" />
+                    <Button buttonText="Encuentra un agente" />
                   </Link>
                 </div>
               )}

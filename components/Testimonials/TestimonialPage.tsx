@@ -1,9 +1,7 @@
-import { memo } from "react"
 import userImageServices from "@/services/userService";
 import ImageSlider from "@/components/common/ImageSlider";
 import { UserImage } from "@/components/common/ImageSlider";
 
-const MemoizedSlider = memo(ImageSlider);
 
 export default async function Testimonials() {
     let userImageList: UserImage[] = [];
@@ -19,6 +17,6 @@ export default async function Testimonials() {
     }
 
     return (
-        <MemoizedSlider userImageList={userImageList} />
+        <ImageSlider userImageList={userImageList} />
     )
 }

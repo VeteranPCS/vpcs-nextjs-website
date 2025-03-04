@@ -1,24 +1,15 @@
 import AboutHeroSection from "@/components/About/aboutherosection/AboutHeroSection";
 import Mission from "@/components/spanishpage/Mission/Mission";
-import SupportSpanish from "@/components/spanishpage/SupportSpanish/SupportSpanis";
+import SupportSpanish from "@/components/spanishpage/SupportSpanish/SupportSpanish";
 import HowVetPcsStarted from "@/components/About/HowVetPcsStarted/HowVetPcsStarted";
 import CeoFounder from "@/components/About/CeoFounder/CeoFounder";
 import DigitalTeam from "@/components/About/DigitalTeam/DigitalTeam";
 import AdminTeam from "@/components/About/AdminTeam/AdminTeam";
-import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
+import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import { memo } from "react";
 import type { Metadata } from "next";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-const MemoizedHeroSection = memo(AboutHeroSection)
-const MemoizedMission = memo(Mission)
-const MemoizedHowVetPcsStarted = memo(HowVetPcsStarted)
-const MemoizedCeoFounder = memo(CeoFounder)
-const MemoizedDigitalTeam = memo(DigitalTeam)
-const MemoizedAdminTeam = memo(AdminTeam)
-const MemoizedFrequentlyAskedQuestion = memo(FrequentlyAskedQuestion)
 
 
 const META_TITLE = "Earn Up to $4,000 Move In Bonus & Support Veteran Charities";
@@ -56,17 +47,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default function AboutPage() {
   return (
     <main>
-      <MemoizedHeroSection />
-      <MemoizedMission />
+      <AboutHeroSection />
+      <Mission />
       <SupportSpanish />
-      <MemoizedHowVetPcsStarted />
-      <MemoizedCeoFounder />
-      <MemoizedDigitalTeam />
-      <MemoizedAdminTeam />
-      <MemoizedFrequentlyAskedQuestion />
+      <HowVetPcsStarted />
+      <CeoFounder />
+      <DigitalTeam />
+      <AdminTeam />
+      <FrequentlyAskedQuestion />
       <KeepInTouch />
     </main>
   );

@@ -6,19 +6,15 @@ import Covered from "@/components/homepage/Covered/Covered";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import Testimonials from "@/components/Testimonials/TestimonialPage";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
-import { memo } from "react";
 
-const MemoizedVideoReview = memo(VideoReview)
-const MemoizedTestimonials = memo(Testimonials)
-
-export default function Home() {
+export default function ThankYouPage() {
   return (
     <main>
       <Thankyou />
       <PcsResourcesHowDoesWork />
       <Covered />
-      <MemoizedTestimonials />
-      <MemoizedVideoReview />
+      <Testimonials />
+      <VideoReview />
       <AboutOurStory />
       <div className="mb-16">
         <CommonBlog component="Let’s talk VA loan" />

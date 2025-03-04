@@ -1,11 +1,8 @@
-import { memo } from "react"
 import Script from "next/script";
 import reviewService from "@/services/reviewService";
 import ReviewTestimonial from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
 import { Review } from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
 import { WithContext, Review as Testimonial } from "schema-dts";
-
-const MemoizedReviewTestimonial = memo(ReviewTestimonial);
 
 export default async function ReviewsList() {
     let reviewsList = null;
@@ -53,7 +50,7 @@ export default async function ReviewsList() {
     return (
         <div>
             <Script id={`json-ld-testimonials`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-            <MemoizedReviewTestimonial reviewsList={reviewsList} />
+            <ReviewTestimonial reviewsList={reviewsList} />
         </div>
     )
 } 

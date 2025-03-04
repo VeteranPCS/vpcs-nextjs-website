@@ -10,13 +10,6 @@ import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuesti
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import Testimonials from "@/components/Testimonials/TestimonialPage";
 import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
-import { memo } from "react";
-
-const MemoizedVideoFamily = memo(VideoFamily)
-const MemoizedTestimonials = memo(Testimonials)
-const MemoizedReviewsList = memo(ReviewsList)
-const MemoizedFrequentlyAskedQuestion = memo(FrequentlyAskedQuestion)
-const MemoizedFamilySupport = memo(FamilySupport)
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "Success Stories - Real Experiences from Military Families";
@@ -54,19 +47,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default function StoriesPage() {
   return (
     <>
       <StoriesHeroSection />
       <SuccessStories />
-      <MemoizedTestimonials />
-      <MemoizedReviewsList />
+      <Testimonials />
+      <ReviewsList />
       <OptionSection />
-      <MemoizedVideoFamily />
+      <VideoFamily />
       <Covered />
-      <MemoizedFamilySupport />
+      <FamilySupport />
       <WhyVeteranPcs />
-      <MemoizedFrequentlyAskedQuestion />
+      <FrequentlyAskedQuestion />
       <KeepInTouch />
     </>
   );

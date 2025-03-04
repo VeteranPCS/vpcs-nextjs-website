@@ -29,7 +29,7 @@ interface FormData {
   captchaToken?: string;
 }
 
-export default function Home() {
+export default function ContactAgentPage() {
   const router = useRouter()
 
   const handleSubmit = async (formData: FormData) => {

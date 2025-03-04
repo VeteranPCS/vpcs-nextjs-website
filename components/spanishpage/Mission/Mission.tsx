@@ -40,9 +40,9 @@ const Mission = async () => {
           </div>
           <div className="text-left">
             <div>
-              <h1 className="text-white poppins lg:text-[31px] md:text-[31px] sm:text-[31px] text-[31px] font-bold mt-5 lg:text-left md:text-left sm:text-center text-left">
+              <h2 className="text-white poppins lg:text-[31px] md:text-[31px] sm:text-[31px] text-[31px] font-bold mt-5 lg:text-left md:text-left sm:text-center text-left">
                 {pageData?.header}
-              </h1>
+              </h2>
               <p className="text-white lg:text-[20px] md:text-[19px] sm:text-[16px] text-[16px] font-normal leading-[30px] mt-4 lg:text-left md:text-left sm:text-center text-left tahoma">
                 {pageData?.description}
               </p>

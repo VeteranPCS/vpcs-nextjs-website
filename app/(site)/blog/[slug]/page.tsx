@@ -1,4 +1,3 @@
-import { memo } from "react";
 import BlogDetailsHeroSection from "@/components/BlogDetails/BlogDetailsHeroSection/BlogDetailsHeroSection";
 import BlogBeginingPostAgent from "@/components/BlogDetails/BlogBeginingBlogPostAgent/BlogBeginingBlogPostAgent";
 import Testimonials from "@/components/Testimonials/TestimonialPage";
@@ -14,8 +13,6 @@ import { BlogPosting, WithContext } from "schema-dts";
 import { formatDate } from "@/utils/helper";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-// Memoize FAQ component for performance
-const MemoizedFrequentlyAskedQuestion = memo(FrequentlyAskedQuestion);
 
 interface BlogProps {
     blog: Record<string, any> | null; // Allow blog to be null
@@ -139,7 +136,7 @@ export default async function Home({ params }: { params: { slug: string } }) {
             <BlogDetailsCta />
             <EndBlogPostDetails blog={blog} />
             <CommonBlog component={blog.component || ""} />
-            <MemoizedFrequentlyAskedQuestion />
+            <FrequentlyAskedQuestion />
             <KeepInTouch />
         </>
     );

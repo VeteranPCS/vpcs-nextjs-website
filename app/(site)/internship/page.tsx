@@ -6,7 +6,6 @@ import Internshipdetails from "@/components/Internship/Interashipdetails/Interas
 import ReceiveOffCourses from "@/components/Internship/receiveoffcourses/receiveoffcourses";
 import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import { memo } from "react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "Real Estate Internships for Veterans & Military Spouses - Launch Your Career with VeteranPCS";
@@ -44,8 +43,7 @@ export const metadata: Metadata = {
   },
 };
 
-const MemoizedFrequentlyAskedQuestion = memo(FrequentlyAskedQuestion)
-export default function Home() {
+export default function InternshipPage() {
   return (
     <main>
       <InternshipHeroSection />
@@ -53,7 +51,7 @@ export default function Home() {
       <InternshipApplication />
       <Internshipdetails />
       <ReceiveOffCourses />
-      <MemoizedFrequentlyAskedQuestion />
+      <FrequentlyAskedQuestion />
       <KeepInTouch />
     </main>
   );

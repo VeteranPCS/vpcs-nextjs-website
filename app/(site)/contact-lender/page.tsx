@@ -19,7 +19,7 @@ export interface FormData {
   captcha_settings?: string;
 }
 
-export default function Home() {
+export default function ContactLenderPage() {
   const router = useRouter()
 
   const handleSubmit = async (formData: FormData) => {

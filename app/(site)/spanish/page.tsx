@@ -10,15 +10,8 @@ import VeteranComunity from "@/components/homepage/VeteranCommunity/VeteranCommu
 import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpert";
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import SupportSpanish from "@/components/spanishpage/SupportSpanish/SupportSpanis";
+import SupportSpanish from "@/components/spanishpage/SupportSpanish/SupportSpanish";
 import Testimonials from "@/components/Testimonials/TestimonialPage";
-import { memo } from "react";
-
-const MemoizedStateMap = memo(StateMap)
-const MemoizedCovered = memo(Covered)
-const MemoizedTestimonials = memo(Testimonials)
-const MemoizedVeteranComunity = memo(VeteranComunity)
-const MemoizedFamilySupport = memo(FamilySupport)
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "Military Members & Veterans: Get a Top Agent, VA Loan Support & Up to $4,000, for Free";
@@ -60,18 +53,21 @@ export default function Home() {
   return (
     <main>
       <HeroSection
-        title="Together, We’ll Make It Home."
-        subTitle="If you’re looking for a Spanish speaking agent"
+        title="Juntos, Llegaremos a Casa."
+        subTitle="VeteranPCS esta empoderando a los miembros de las fuerzas armadas hispanohablantes y a sus familias al comprar o vender una vivienda."
         page="spanish"
       />
-      <MemoizedStateMap />
+      <StateMap
+        title="¿Quieres comprar o vender?"
+        subTitle="VeteranPCS esta empoderando a los miembros de las fuerzas armadas hispanohablantes y a sus familias al comprar o vender una vivienda."
+      />
       <Mission />
       <SupportSpanish />
-      <MemoizedTestimonials />
-      <MemoizedCovered />
-      <MemoizedFamilySupport />
+      <Testimonials />
+      <Covered />
+      <FamilySupport />
       <VeteranPCS />
-      <MemoizedVeteranComunity />
+      <VeteranComunity />
       <MakeItHome />
       <AgentLoanExpert />
       <SkillFuturesBuild />

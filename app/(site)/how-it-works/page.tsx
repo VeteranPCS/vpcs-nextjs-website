@@ -41,12 +41,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default function HowItWorksPage() {
   return (
     <>
       <HowItWorkHeroSection />
       <div id="agent-map" className="bg-[#aeb0c7] pt-24 lg:pt-32 xl:pt-40">
-        <StateMap />
+        <StateMap
+          title="Buying or Selling?"
+          subTitle="Choose a state below to connect with our veteran and military spouse agents and lenders"
+        />
       </div>
       <Covered />
       <HowItWorkText />

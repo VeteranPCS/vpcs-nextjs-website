@@ -17,16 +17,7 @@ import PcsResourcesMovingPcsing from "@/components/PcsResources/PcsResourcesMovi
 import VideoReview from "@/components/Impact/VideoReview/VideoReview";
 import AboutOurStory from "@/components/Impact/AboutOurStory/AboutOurStory";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import { memo } from "react";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
-
-const MemoizedCovered = memo(Covered)
-const MemoizedVideoFamily = memo(VideoFamily)
-const MemoizedTestimonials = memo(Testimonials)
-const MemoizedReviewsList = memo(ReviewsList)
-const MemoizedVideoReview = memo(VideoReview)
-const MemoizedFrequentlyAskedQuestion = memo(FrequentlyAskedQuestion)
-const MemoizedFamilySupport = memo(FamilySupport)
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "PCS Resources - Essential Tools for Military Relocation";
@@ -64,27 +55,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default function PcsResourcesPage() {
   return (
     <main>
       <PcsResources />
-      <MemoizedCovered />
-      <MemoizedVideoFamily />
-      <MemoizedTestimonials />
+      <Covered />
+      <VideoFamily />
+      <Testimonials />
       <CommonBlog component="Let’s talk VA loan" />
-      <MemoizedFamilySupport />
+      <FamilySupport />
       <PcsResourcesVaLoanGuide />
-      <MemoizedFrequentlyAskedQuestion />
+      <FrequentlyAskedQuestion />
       <PcsResourcesCalculators />
       <PcsResourcesEmployment />
-      <MemoizedReviewsList />
+      <ReviewsList />
       <PcsResourcesMilSpouse />
       <PcsResourcesMovingYourLife />
       <PcsResourcesTrustedResources />
       <PcsResourcesHowDoesWork />
       <PcsResourcesMovingPcsing />
       <div className="bg-[#EEEEEE]">
-        <MemoizedVideoReview />
+        <VideoReview />
         <AboutOurStory />
       </div>
       <FrequentlyAskedQuestion />
