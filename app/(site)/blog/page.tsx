@@ -3,7 +3,6 @@ import BlogMovingPcsingBlogPostSection from "@/components/BlogPage/BlogPage/Blog
 import BlogCta from "@/components/BlogPage/BlogPage/BlogCTA/BlogCta";
 import PcsResourcesBlog from "@/components/PcsResources/PcsResourcesBlog/PcsResourcesBlog";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import { memo } from "react";
 import blogService from "@/services/blogService";
 import { Metadata } from "next";
 
@@ -44,8 +43,6 @@ export interface GroupedBlogs {
 export interface BlogService {
   fetchBlogs: () => Promise<BlogDetails[]>;
 }
-
-const MemoizedKeepInTouch = memo(KeepInTouch);
 
 const META_TITLE = "Real Estate Tips, Tricks, and Advice for Military Families";
 const META_DESCRIPTION = "VeteranPCS blog is your go-to resource for real estate tips, tricks, and advice for military families. Learn about VA loans, PCS moves, and more.";
@@ -134,7 +131,7 @@ export default async function Home() {
       {Object.entries(groupedBlogs).map(([component, blogsList], index) => (
         index !== 0 && <PcsResourcesBlog key={index} blogList={blogsList} component={component} />
       ))}
-      <MemoizedKeepInTouch />
+      <KeepInTouch />
     </>
   );
 }

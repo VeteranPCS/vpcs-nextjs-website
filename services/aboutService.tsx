@@ -1,6 +1,6 @@
 import { TeamMember } from '@/components/About/AdminTeam/AdminTeam';
 import { AboutVetPcsResponse } from '@/components/About/HowVetPcsStarted/HowVetPcsStarted'
-import { SupportSpanishProps } from '@/components/spanishpage/SupportSpanish/SupportSpanis';
+import { SupportSpanishProps } from '@/components/spanishpage/SupportSpanish/SupportSpanish';
 import { client } from "@/sanity/lib/client";
 import { SanityDocument } from "@sanity/client";
 import { urlForImage } from "@/sanity/lib/image";

@@ -6,9 +6,6 @@ import WhyVeteranPcs from "@/components/homepage/WhyVeteranPCS";
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpert";
-import { memo } from "react";
-
-const MemoizedReviewsList = memo(ReviewsList);
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "Get Connected with a Veteran-Friendly Realtor or Lender";
@@ -51,7 +48,7 @@ export default function Home() {
     <>
       <ContactHero />
       <ContactForm />
-      <MemoizedReviewsList />
+      <ReviewsList />
       <WhyVeteranPcs />
       <AgentLoanExpert />
       <SkillFuturesBuild />

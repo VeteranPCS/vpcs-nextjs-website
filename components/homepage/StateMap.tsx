@@ -11,7 +11,7 @@ interface TooltipState {
   y: number;
 }
 
-const StateMap = () => {
+const StateMap = ({ title, subTitle }: { title: string, subTitle: string }) => {
   const [tooltip, setTooltip] = useState<TooltipState>({
     display: false,
     name: "",
@@ -124,10 +124,10 @@ const StateMap = () => {
           <div>
             <div className="text-center pb-5 w-full relative">
               <h2 className="text-[#292f6c] text-center text-shadow-lg tahoma font-bold leading-10 lg:text-[59px] md:text-[40px] sm:text-[32px] text-[32px]">
-                Buying or Selling?
+                {title}
               </h2>
               <p className="lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] text-[#292f6c] text-center text-shadow-lg font-normal lg:my-10 md:my-5 sm:my-5 my-5 tahoma px-2 sm:px-28 lg:px-36 max-w-screen-md mx-auto">
-                Choose a state below to connect with our veteran and military spouse agents and lenders
+                {subTitle}
               </p>
             </div>
             <svg

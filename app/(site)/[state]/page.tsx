@@ -7,7 +7,6 @@ import StatePageLetFindAgent from "@/components/StatePage/StatePageLetFindAgent/
 import StatePageWhyChooseVetpcs from "@/components/StatePage/StatePageWhyChooseVetpcs/StatePageWhyChooseVetpcs";
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import { memo } from "react";
 import stateService, { StateList as StateList, AgentsData, LendersData } from "@/services/stateService";
 import { AgentData } from '@/components/StatePage/StatePageCityAgents/StatePageCityAgents'
 import { Agent } from "@/services/stateService";
@@ -70,8 +69,6 @@ const stateUrlToStateName = {
   "wisconsin": "wisconsin",
   "wyoming": "wyoming"
 }
-
-const MemoizedFrequentlyAskedQuestion = memo(FrequentlyAskedQuestion);
 
 export async function generateStaticParams() {
   try {
@@ -200,7 +197,7 @@ export default async function StatePage({ params }: { params: { state: string } 
 
       <StatePageLetFindAgent />
       <StatePageWhyChooseVetpcs cityName={state_data?.city_name || 'Unknown'} />
-      <MemoizedFrequentlyAskedQuestion />
+      <FrequentlyAskedQuestion />
       <KeepInTouch />
     </>
   );

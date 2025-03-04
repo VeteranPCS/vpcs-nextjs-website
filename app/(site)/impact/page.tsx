@@ -14,14 +14,6 @@ import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpe
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
 import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import { memo } from "react";
-
-const MemoizedTestimonials = memo(Testimonials)
-const MemoizedFamilySupport = memo(FamilySupport)
-const MemoizedReviewsList = memo(ReviewsList)
-const MemoizedVideoReview = memo(VideoReview)
-
-const MemoizedFrequentlyAskedQuestion = memo(FrequentlyAskedQuestion)
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "Supporting Military Families Through Real Estate";
@@ -60,23 +52,23 @@ export const metadata: Metadata = {
 };
 
 
-export default function Home() {
+export default function ImpactPage() {
   return (
     <>
       <ImpactHeroSection />
       <YourImpact />
       <MakeAnImpact />
-      <MemoizedTestimonials />
-      <MemoizedFamilySupport />
+      <Testimonials />
+      <FamilySupport />
       <WearBlueSection />
       <ImpactVaLoan />
-      <MemoizedReviewsList />
-      <MemoizedVideoReview />
+      <ReviewsList />
+      <VideoReview />
       <AboutOurStory />
       <WhyVeteranPcs />
       <AgentLoanExpert />
       <SkillFuturesBuild />
-      <MemoizedFrequentlyAskedQuestion />
+      <FrequentlyAskedQuestion />
       <KeepInTouch />
     </>
   );

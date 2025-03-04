@@ -1,6 +1,6 @@
 import StateMap from "@/components/homepage/StateMap";
 import HeroSection from "@/components/homepage/HeroSection/HeroSection";
-import Agent from "@/components/homepage/AgentPages/Agent";
+import FeaturedLogos from "@/components/homepage/FeaturedLogos/FeaturedLogos";
 import Testimonials from "@/components/Testimonials/TestimonialPage";
 import VideoFamily from "@/components/homepage/VideoFamily";
 import Covered from "@/components/homepage/Covered/Covered";
@@ -13,15 +13,6 @@ import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpe
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
-import { memo } from "react";
-
-const MemoizedAgent = memo(Agent);
-const MemoizedTestimonials = memo(Testimonials);
-const MemoizedVideoFamily = memo(VideoFamily);
-const MemoizedCovered = memo(Covered);
-const MemoizedFamilySupport = memo(FamilySupport);
-const MemoizedVeteranComunity = memo(VeteranComunity);
-const MemoizedReviewsList = memo(ReviewsList);
 
 export default function Home() {
   return (
@@ -31,16 +22,19 @@ export default function Home() {
         subTitle="Veteran & Military Spouse Real Estate Agents and VA Loan Experts You Can Trust"
         page="home"
       />
-      <StateMap />
-      <MemoizedAgent />
-      <MemoizedVideoFamily />
-      <MemoizedTestimonials />
-      <MemoizedCovered />
-      <MemoizedFamilySupport />
+      <StateMap
+        title="Buying or Selling?"
+        subTitle="Choose a state below to connect with our veteran and military spouse agents and lenders"
+      />
+      <FeaturedLogos />
+      <VideoFamily />
+      <Testimonials />
+      <Covered />
+      <FamilySupport />
       <VeteranPCS />
-      <MemoizedReviewsList />
+      <ReviewsList />
       <MakeItHome />
-      <MemoizedVeteranComunity />
+      <VeteranComunity />
       <WhyVeteranPcs />
       <AgentLoanExpert />
       <SkillFuturesBuild />

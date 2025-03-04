@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default function MilitarySpousePage() {
   return (
     <>
       <MilitarySpouseHeroSection />
@@ -65,7 +65,10 @@ export default function Home() {
       <PcsResourcesTrustedResources />
       <ReviewsList />
       <MilitarySpouseApproved />
-      <StateMap />
+      <StateMap
+        title="Buying or Selling?"
+        subTitle="Choose a state below to connect with our veteran and military spouse agents and lenders"
+      />
       <VideoFamily />
       <Testimonials />
       <WhyVeteranPcs />

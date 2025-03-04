@@ -9,6 +9,9 @@ const ContactForm = () => {
       <div className="container mx-auto">
         <div className="lg:w-[800px] w-full mx-auto my-10">
           <div className="mb-5">
+            <h1 className="text-[#000000] font-medium text-[45px] roboto">
+              Terms of Use
+            </h1>
             <h6 className="text-[#000000] font-bold text-lg roboto">
               Last Updated: JANUARY 14, 2023
             </h6>

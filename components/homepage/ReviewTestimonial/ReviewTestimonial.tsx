@@ -1,4 +1,3 @@
-import React from "react";
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
 import ReviewTestimonialSlider from "@/components/homepage/ReviewTestimonial/ReviewTestimonialSlider";

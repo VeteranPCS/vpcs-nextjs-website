@@ -9,7 +9,7 @@ import { GetListedAgentsPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
 
-export default function Home() {
+export default function GetListedAgentsPage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState({});
@@ -109,28 +109,28 @@ export default function Home() {
         </div>
 
         {currentStep === 1 && (
-          <GetListedAgents 
+          <GetListedAgents
             onSubmit={handleSubmit}
           />
         )}
-        
+
         {currentStep === 2 && (
-          <GetListedLendersProfileInfo 
+          <GetListedLendersProfileInfo
             onSubmit={handleSubmit}
             onBack={handleBack}
             shouldValidate={true}
           />
         )}
-        
+
         {currentStep === 3 && (
-          <CurrentLocation 
+          <CurrentLocation
             onSubmit={handleSubmit}
             onBack={handleBack}
           />
         )}
 
         {currentStep === 4 && (
-          <AgentInfo 
+          <AgentInfo
             onBack={handleBack}
             onSubmit={handleSubmit}
             shouldSubmit={shouldSubmit}

@@ -1,10 +1,8 @@
-import { memo } from "react"
 import AgentServices from "@/services/agentService";
 import Slider from "@/components/common/Slider";
 
-const MemoizedSlider = memo(Slider);
 
-export default async function Agent() {
+export default async function FeaturedLogos() {
     let agentList = null;
 
     try {
@@ -15,7 +13,7 @@ export default async function Agent() {
     }
 
     return (
-        <MemoizedSlider agentList={agentList} />
+        <Slider agentList={agentList} />
     );
 }
 
