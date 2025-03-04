@@ -97,7 +97,9 @@ export async function POST(req: NextRequest) {
         status: 400,
       });
     } else {
+      console.log(`Revalidating type: ${body._type}`);
       for (const path of paths) {
+        console.log(`Revalidating path: ${path}`);
         revalidatePath(path);
         console.log(`Revalidated path: ${path}`);
       }
