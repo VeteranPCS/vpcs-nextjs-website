@@ -2,8 +2,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import agentService from "@/services/agentService";
 import { revalidatePath } from "next/cache";
 
-export const runtime = "edge";
-
 // Utility function to verify Salesforce signature (if using HMAC-based verification)
 function verifySalesforceSignature(req: NextRequest): boolean {
     const salesforceSignature = req.headers.get("X-Salesforce-Signature");
