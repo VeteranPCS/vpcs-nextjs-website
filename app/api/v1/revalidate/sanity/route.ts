@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     const revalidatePathMap: RevalidatePathMap = {
       aboutSupportComponent: ["/about", "/spanish"],
       aboutUsPage: ["/about", "/spanish"],
-      additionalSuccessStories: ["stories"],
+      additionalSuccessStories: ["/stories"],
       approved_company_list: ["/militaryspouse"],
       author: ["/pcs-resources", "/thank-you", "/blog"],
       blog: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"],
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       real_state_agents: ["/"],
       review: ["/", "/contact", "/impact", "/militaryspouse", "/pcs-resources", "/stories"],
       stories_poster: ["/impact"],
-      support_veterence: ["/", "/impact", "/pcs-resources", "spanish", "stories"],
+      support_veterence: ["/", "/impact", "/pcs-resources", "/spanish", "/stories"],
       trusted_resources: ["/militaryspouse", "/pcs-resources"],
       users: ["/", `/blog/${slug}`, "/impact", "/militaryspouse", "/pcs-resources", "/stories", "/spanish", "/thank-you"],
       video_review: ["/impact", "/militaryspouse", "/pcs-resources", "/thank-you"],
@@ -87,7 +87,6 @@ export async function POST(req: NextRequest) {
         break;
       default:
         paths = revalidatePathMap[body._type];
-        break;
     }
 
     if (!paths) {
