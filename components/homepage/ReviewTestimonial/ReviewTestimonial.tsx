@@ -27,22 +27,22 @@ const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({
   reviewsList,
 }) => {
   return (
-    <div className="w-full relative">
-      <div className={classes.ReviewTestimonialContainer}>
-        <div className="xl:py-16 lg:py-16 px-5 mx-auto">
-          <div className="">
-            <h1 className="text-white tahoma text-center xl:text-[48px] lg:text-[48px] md:text-[38px] sm:text-[35px] text-[35px] font-bold leading-[50px] mt-5">
-              We’ve helped hundreds
-            </h1>
-            <p className="text-center tahoma text-white  lg:text-[25px] md:text-[25px] sm:text-[17px] text-[17px] my-5">
-              Of military, veterans, & their families
-            </p>
-          </div>
-          <div>
-            <ReviewTestimonialSlider reviews={reviewsList} />
-          </div>
+    <div className="w-full relative bg-gradient-to-b from-[#1E1B3F] to-[#0F0D1F] py-16">
+      <div className="container mx-auto px-4 md:px-12 lg:px-16 max-w-7xl">
+        <div className="text-center mb-12">
+          <h2 className="text-white text-[35px] md:text-[38px] lg:text-[48px] font-bold leading-tight mb-4">
+            We&apos;ve helped hundreds
+          </h2>
+          <p className="text-white text-[17px] md:text-[25px]">
+            Of military, veterans, & their families
+          </p>
         </div>
-        <div className="flex justify-center mt-10">
+
+        <div className="relative px-4 md:px-10 lg:px-12">
+          <ReviewTestimonialSlider reviews={reviewsList} />
+        </div>
+
+        <div className="flex justify-center mt-12">
           <Link href="/stories">
             <Button buttonText="More success stories" />
           </Link>
