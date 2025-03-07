@@ -23,7 +23,7 @@ interface CarouselProps {
 }
 
 const Carousel: React.FC<CarouselProps> = ({ userImageList }) => {
-  const carouselData = [
+  const fallbackData = [
     {
       title: "Item 1",
       description: "Description for item 1",
@@ -78,7 +78,7 @@ const Carousel: React.FC<CarouselProps> = ({ userImageList }) => {
         },
       },
       {
-        breakpoint: 768,
+        breakpoint: 500,
         settings: {
           slidesToShow: 1,
         },
@@ -107,7 +107,7 @@ const Carousel: React.FC<CarouselProps> = ({ userImageList }) => {
             </div>
           ))}
           {userImageList.length == 0 &&
-            carouselData.map((item, index) => (
+            fallbackData.map((item, index) => (
               <div
                 key={index}
                 className="xl:w-[230px] lg:w-[300px] md:w-[300px] sm:w-full w-full px-2"

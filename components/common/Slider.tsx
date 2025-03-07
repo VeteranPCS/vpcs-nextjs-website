@@ -33,7 +33,7 @@ const Carousel = ({ logoList }: { logoList: any }) => {
       {
         breakpoint: 768,
         settings: {
-          slidesToShow: 1,
+          slidesToShow: 2,
         },
       },
     ],

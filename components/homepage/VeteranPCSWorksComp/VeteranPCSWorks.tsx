@@ -30,16 +30,16 @@ const VeteranPCS = () => {
     <div className="bg-[#F4F4F4]">
       <div className="container mx-auto w-full lg:py-16 md:py-10 sm:py-10 py-5">
         <div className="px-10 sm:px-4 mx-auto text-center">
-          <div>
-            <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[35px] sm:text-[28px] text-[28px] tahoma">
+          <div className="space-y-4">
+            <h2 className="text-[#292F6C] font-bold lg:text-3xl md:text-2xl text-xl tahoma">
               How VeteranPCS Works
             </h2>
-            <p className="normal text-[#292F6C] lg:text-[18px] md:text-[19px] sm:text-[15px] text-[15px] leading-[32px] font-normal poppins">
+            <p className="text-[#292F6C] lg:text-2xl md:text-xl text-base leading-8 poppins">
               VeteranPCS is FREE for anyone to use.
             </p>
           </div>
         </div>
-        <div className="flex flex-wrap justify-center mt-10 xl:gap-11 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3 mx-auto">
+        <div className="flex flex-wrap justify-center mt-10 lg:gap-10 md:gap-6 sm:gap-2 gap-2 lg:px-10 md:px-10 sm:px-3 px-3 mx-auto">
           {cardsData.map((card, index) => (
             <VeteranPCSWorksComp key={index} veteranpcs={card} />
           ))}
