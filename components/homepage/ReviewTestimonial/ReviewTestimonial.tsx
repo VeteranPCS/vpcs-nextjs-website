@@ -27,7 +27,7 @@ const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({
   reviewsList,
 }) => {
   return (
-    <div className="w-full relative bg-gradient-to-b from-[#1E1B3F] to-[#0F0D1F] py-16">
+    <div className="w-full relative bg-gradient-to-b from-[#2A2F6C] to-[#545CA4] py-16">
       <div className="container mx-auto px-4 md:px-12 lg:px-16 max-w-7xl">
         <div className="text-center mb-12">
           <h2 className="text-white text-[35px] md:text-[38px] lg:text-[48px] font-bold leading-tight mb-4">
