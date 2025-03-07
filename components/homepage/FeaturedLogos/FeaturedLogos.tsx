@@ -3,17 +3,17 @@ import Slider from "@/components/common/Slider";
 
 
 export default async function FeaturedLogos() {
-    let agentList = null;
+    let logoList = null;
 
     try {
-        agentList = await AgentServices.fetchAgentsList();
+        logoList = await AgentServices.fetchLogosList();
     } catch (error) {
-        console.error('Error fetching Agent Data:', error);
-        return <p>Failed to load Agent Data.</p>;
+        console.error('Error fetching Logo Data:', error);
+        return <p>Failed to load Logo Data.</p>;
     }
 
     return (
-        <Slider agentList={agentList} />
+        <Slider logoList={logoList} />
     );
 }
 
