@@ -4,9 +4,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { Box } from "@mui/material";
-import Image from "next/image"; // Ensure you use the Next.js Image component
+import Image from "next/image";
 
-const Carousel = ({ agentList }: { agentList: any }) => {
+const Carousel = ({ logoList }: { logoList: any }) => {
   const settings = {
     dots: false,
     infinite: true,
@@ -46,7 +46,7 @@ const Carousel = ({ agentList }: { agentList: any }) => {
       </h3>
       <Box className="w-full">
         <Slider {...settings} className="md:py-8 py-3">
-          {agentList.map((item: any, index: number) => (
+          {logoList.map((item: any, index: number) => (
             <a
               key={"logo-slider" + (item._id || index)}
               className="w-[230px] px-9"

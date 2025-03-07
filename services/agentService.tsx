@@ -121,23 +121,23 @@ function getStateFullNames(abbreviations: string[]) {
 
 
 const agentService = {
-    fetchAgentsList: async (): Promise<AgentDocument[]> => {
+    fetchLogosList: async (): Promise<AgentDocument[]> => {
         try {
-            const agents = await client.fetch<AgentDocument[]>(`*[_type == "real_state_agents"]`);
+            const logos = await client.fetch<AgentDocument[]>(`*[_type == "real_state_agents"]`);
 
-            agents.forEach((agent: AgentDocument) => {
-                if (agent.mainImage?.asset?._ref) {
-                    agent.mainImage.asset.image_url = urlForImage(agent.mainImage.asset);
+            logos.forEach((logo: AgentDocument) => {
+                if (logo.mainImage?.asset?._ref) {
+                    logo.mainImage.asset.image_url = urlForImage(logo.mainImage.asset);
                 }
             });
 
-            if (agents) {
-                return agents;
+            if (logos) {
+                return logos;
             } else {
-                throw new Error('Failed to Fetch Agent Details');
+                throw new Error('Failed to Fetch Logos');
             }
         } catch (error: any) {
-            console.error('Error fetching Agent Details:', error);
+            console.error('Error fetching Logos:', error);
             throw error; // You can handle the error more gracefully based on your needs
         }
     },
