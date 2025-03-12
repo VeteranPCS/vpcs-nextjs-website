@@ -65,6 +65,7 @@ const stateUrlToStateName = {
   "vermont": "vermont",
   "virginia": "virginia",
   "washington-dc": "district of columbia",
+  "washington": "washington",
   "west-virginia": "west virginia",
   "wisconsin": "wisconsin",
   "wyoming": "wyoming"
