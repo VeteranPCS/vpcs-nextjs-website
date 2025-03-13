@@ -67,7 +67,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                 </div>
               )}
               {page == "home" && (
-                <div className="lg:mt-28 md:mt-4 sm:mt-10 mt-10">
+                <div className="lg:mb-28 md:mt-4 sm:mt-10 mt-10">
                   <Link href="#map-container">
                     <Button buttonText="Find An Agent" />
                   </Link>
