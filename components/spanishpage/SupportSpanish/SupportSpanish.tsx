@@ -1,4 +1,3 @@
-// "use client";
 import React from "react";
 import "@/styles/globals.css";
 import Button from "@/components/common/Button";
@@ -37,66 +36,45 @@ const SupportSpanish = async () => {
   }
 
   return (
-    <div>
+    <div className="mx-auto">
       <div className="w-full lg:py-10 md:py-10 sm:py-10 py-10 px-9 sm:px-0">
         <div>
-          <div className="container mx-auto w-full">
+          <div className="mx-auto w-full container">
             <div
               className="px-4 bg-[#ffffff] mx-auto text-center"
               data-aos="fade-right"
               data-aos-duration="1000"
             >
-              <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4 justify-between items-start mt-10">
-                <div className="lg:text-left sm:text-center text-left flex flex-col gap-4 justify-between">
-                  <div>
-                    <h2 className="text-[#292F6C] font-bold xl:text-[42px] lg:text-[40px] sm:text-[40px] text-[40px] leading-[54px] tahoma">
-                      {pageData?.header_1}
-                    </h2>
+              <div className="flex justify-center items-center mt-10">
+                <div className="flex flex-col lg:flex-row md:flex-row gap-8 justify-between items-center">
+                  <div className="lg:text-left sm:text-center text-left flex flex-col gap-4 justify-between px-12">
+                    <div>
+                      <h2 className="text-[#292F6C] font-bold xl:text-[42px] lg:text-[40px] sm:text-[40px] text-[40px] leading-[54px] tahoma">
+                        Ayuda con el préstamo VA
+                      </h2>
+                    </div>
+                    <div>
+                      <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px] tahoma">
+                        El beneficio del préstamo VA puede ser difícil de entender. Además, muchas empresas cobran de más a los miembros del servicio y veteranos en tasas y comisiones. VeteranPCS puede ayudarte a ahorrar dinero conectándote con un prestamista hipotecario de préstamo VA que habla español.
+                      </p>
+                    </div>
+                    <div className="flex justify-start">
+                      <Link href="/contact-agent">
+                        <Button
+                          buttonText={"Descubre cómo conectarte con un prestamista"}
+                        />
+                      </Link>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px] tahoma">
-                      {pageData?.description_1}
-                    </p>
-                  </div>
-                  <div className="flex justify-start">
-                    <Button
-                      buttonText={pageData?.buttonText_1 || "Default Button"}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex gap-4 items-center">
+                  <div className="flex justify-center">
                     <Image
                       width={1000}
                       height={1000}
-                      className="w-auto h-auto"
-                      src={
-                        pageData?.image?.asset?.image_url ||
-                        "/assets/military-image-2.png"
-                      }
+                      className="w-auto h-auto min-w-[400px] min-h-[400px]"
+                      src={"/assets/agent-image.png"}
                       alt="Move in bonus"
                     />
                   </div>
-                </div>
-                <div className="lg:text-left sm:text-left text-left flex flex-col sm:gap-7 gap-4 justify-between lg:ml-5 md:ml-5 sm:ml-0 ml-0">
-                  <div>
-                    <h2 className="text-[#292F6C] font-bold xl:text-[42px] lg:text-[40px] sm:text-[40px] text-[40px] leading-[54px] tahoma">
-                      {pageData?.header_2}
-                    </h2>
-                  </div>
-                  <div>
-                    <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px] tahoma">
-                      {pageData?.description_2}
-                    </p>
-                  </div>
-                  <Link
-                    href="/impact"
-                    className="flex lg:justify-start md:justify-start sm:justify-start justify-start items-center"
-                  >
-                    <Button
-                      buttonText={pageData?.buttonText_2 || "Default Button"}
-                    />
-                  </Link>
                 </div>
               </div>
             </div>

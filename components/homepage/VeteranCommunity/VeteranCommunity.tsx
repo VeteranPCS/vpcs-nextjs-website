@@ -46,12 +46,12 @@ export interface VeteranCommunityProps {
   points?: Point[];
 }
 
-const VeteranComunity = async () => {
+const VeteranCommunity = async ({ component_slug }: { component_slug: string }) => {
   let pageData: VeteranCommunityProps | null = null;
 
   try {
     pageData = await veterenceSupportService.fetchVeterenceSupport(
-      "support-our-veteran-community"
+      component_slug
     );
   } catch (error) {
     console.error("Failed to fetch Veterence Data:", error);
@@ -147,4 +147,4 @@ const VeteranComunity = async () => {
   );
 };
 
-export default VeteranComunity;
+export default VeteranCommunity;

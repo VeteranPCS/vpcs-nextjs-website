@@ -25,7 +25,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                 {subTitle}
               </h1>
               {page == "spanish" && (
-                <div className="flex flex-col gap-4 text-white text-lg">
+                <div className="hidden md:flex flex-col gap-4 text-white text-lg">
                   <ul className="list-disc list-outside">
                     <li>
                       Entendemos el desafío de encontrar un agente inmobiliario militar que comprenda el préstamo VA y hable español también.
@@ -74,14 +74,14 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                 </div>
               )}
               {page == "spanish" && (
-                <div className="lg:flex md:flex sm:hidden hidden justify-start items-center gap-4 flex-wrap ">
+                <div className="lg:flex md:flex justify-start items-center gap-4 flex-wrap ">
                   <Link href="#map-container">
                     <Button buttonText="Explora nuestro mapa" />
                   </Link>
-                  <p className="text-white font-normal xl:text-[30px] lg:text-[30px] md:text-[20px] sm:text-[20px] text-[20px] mx-10 xl:w-auto w-full">
+                  <p className="text-white font-normal xl:text-[30px] lg:text-[30px] md:text-[20px] sm:text-[20px] text-[20px] mx-10 xl:w-auto w-full hidden md:block">
                     O
                   </p>
-                  <Link href="/contact-agent">
+                  <Link href="/contact-agent" className="hidden md:block">
                     <Button buttonText="Encuentra un agente" />
                   </Link>
                 </div>

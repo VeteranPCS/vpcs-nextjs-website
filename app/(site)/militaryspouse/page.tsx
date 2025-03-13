@@ -68,6 +68,8 @@ export default function MilitarySpousePage() {
       <StateMap
         title="Buying or Selling?"
         subTitle="Choose a state below to connect with our veteran and military spouse agents and lenders"
+        buttonText="Don't want to browse? Find an Agent For Me"
+        buttonLink="/contact-agent"
       />
       <VideoFamily />
       <Testimonials />

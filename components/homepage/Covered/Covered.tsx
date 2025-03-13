@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import "@/styles/globals.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import CoveredComp from "./CoverdComp";
+import CoveredComp from "./CoveredComp";
 import Link from "next/link";
 
 const cardsData = [
@@ -66,10 +66,10 @@ const Covered = () => {
         data-aos-duration="1000"
       >
         <div className="md:block sm:hidden hidden">
-          <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-[20px] tahoma lg:block md:block ">
+          <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-[20px] tahoma  md:block ">
             We’ve got you covered
           </h2>
-          <p className="normal text-[#7E1618] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] leading-[32px] font-medium lg:block md:block tahoma">
+          <p className="normal text-[#7E1618] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] leading-[32px] font-medium  md:block tahoma">
             Military community helping our military community move.
           </p>
         </div>
