@@ -19,7 +19,7 @@ const MissionSpanish = async () => {
                             width={1000}
                             height={1000}
                             src={"/assets/military-image-2.png"}
-                            className="lg:w-[552px] lg:h-[552px] md:w-[552px] md:h-[552px] sm:w-[326px] sm:h-[326px] w-[326px] h-[326px]"
+                            className="lg:w-[552px] lg:h-[552px] md:w-[552px] md:h-[552px] sm:w-[326px] sm:h-[326px] w-[326px] h-[326px] object-cover"
                             alt="Description of the image"
                         />
                     </div>

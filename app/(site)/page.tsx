@@ -7,7 +7,7 @@ import Covered from "@/components/homepage/Covered/Covered";
 import FamilySupport from "@/components/homepage/FamilySupport/FamilySupport";
 import VeteranPCS from "@/components/homepage/VeteranPCSWorksComp/VeteranPCSWorks";
 import MakeItHome from "@/components/homepage/MakeItHome";
-import VeteranComunity from "@/components/homepage/VeteranCommunity/VeteranCommunity";
+import VeteranCommunity from "@/components/homepage/VeteranCommunity/VeteranCommunity";
 import WhyVeteranPcs from "@/components/homepage/WhyVeteranPCS";
 import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpert";
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
@@ -36,7 +36,7 @@ export default function Home() {
       <VeteranPCS />
       <ReviewsList />
       <MakeItHome />
-      <VeteranComunity />
+      <VeteranCommunity component_slug="support-our-veteran-community" />
       <WhyVeteranPcs />
       <AgentLoanExpert />
       <SkillFuturesBuild />
