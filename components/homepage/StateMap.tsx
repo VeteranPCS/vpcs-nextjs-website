@@ -11,7 +11,7 @@ interface TooltipState {
   y: number;
 }
 
-const StateMap = ({ title, subTitle }: { title: string, subTitle: string }) => {
+const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, subTitle: string, buttonText: string, buttonLink: string }) => {
   const [tooltip, setTooltip] = useState<TooltipState>({
     display: false,
     name: "",
@@ -1664,8 +1664,8 @@ const StateMap = ({ title, subTitle }: { title: string, subTitle: string }) => {
                 </div>
               )}
             </div>
-            <Link href="/contact-agent" className="md:py-8 py-2 flex justify-center" onClick={handleSendGtmEvent}>
-              <Button buttonText="Don't want to browse? Find an Agent For Me" />
+            <Link href={buttonLink} className="md:py-8 py-2 flex justify-center" onClick={handleSendGtmEvent}>
+              <Button buttonText={buttonText} />
             </Link>
           </div>
         </div>

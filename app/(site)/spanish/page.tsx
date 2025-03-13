@@ -1,10 +1,7 @@
 import { Metadata } from "next";
 import HeroSection from "@/components/homepage/HeroSection/HeroSection";
 import StateMap from "@/components/homepage/StateMap";
-import Mission from "@/components/spanishpage/Mission/Mission";
-import Covered from "@/components/homepage/Covered/Covered";
 import FamilySupport from "@/components/homepage/FamilySupport/FamilySupport";
-import VeteranPCS from "@/components/homepage/VeteranPCSWorksComp/VeteranPCSWorks";
 import MakeItHome from "@/components/homepage/MakeItHome";
 import VeteranComunity from "@/components/homepage/VeteranCommunity/VeteranCommunity";
 import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpert";
@@ -12,7 +9,8 @@ import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFu
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import SupportSpanish from "@/components/spanishpage/SupportSpanish/SupportSpanish";
 import Testimonials from "@/components/Testimonials/TestimonialPage";
-
+import MissionSpanish from "@/components/spanishpage/Mission/MissionSpanish";
+import CoveredSpanish from "@/components/spanishpage/CoveredSpanish/CoveredSpanish";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "Military Members & Veterans: Get a Top Agent, VA Loan Support & Up to $4,000, for Free";
 const META_DESCRIPTION = "Tired of navigating the home buying process alone during every PCS? With VeteranPCS, get a trusted veteran or military spouse agent, expert VA loan guidance, and a Move In Bonus up to $4,000—so you save money, avoid costly mistakes, and buy or sell with confidence. No cost, no hassle, just results.";
@@ -60,13 +58,14 @@ export default function Home() {
       <StateMap
         title="¿Quieres comprar o vender?"
         subTitle="VeteranPCS esta empoderando a los miembros de las fuerzas armadas hispanohablantes y a sus familias al comprar o vender una vivienda."
+        buttonText="¿No ves un agente que hable español? Haz clic aquí"
+        buttonLink="/contact-agent"
       />
-      <Mission />
+      <MissionSpanish />
       <SupportSpanish />
       <Testimonials />
-      <Covered />
+      <CoveredSpanish />
       <FamilySupport />
-      <VeteranPCS />
       <VeteranComunity />
       <MakeItHome />
       <AgentLoanExpert />
