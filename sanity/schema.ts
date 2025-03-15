@@ -27,7 +27,7 @@ import militarySpouseApproved from '@/sanity/schemas/militarySpouseApproved'
 import approvedCompanyList from '@/sanity/schemas/approvedCompanyList'
 import howVeterencePCSWorks from '@/sanity/schemas/howVeterencePCSWorks'
 import moveInBonus from '@/sanity/schemas/moveInBonus'
-import cityList from '@/sanity/schemas/cityList'
+import stateList from '@/sanity/schemas/stateList'
 import videoSuccessStories from '@/sanity/schemas/videoSuccessStories'
 import veterenceImage from './schemas/veterenceImage'
 import agent from './schemas/agent'
@@ -61,7 +61,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     approvedCompanyList,
     howVeterencePCSWorks,
     moveInBonus,
-    cityList,
+    stateList,
     videoSuccessStories,
     veterenceImage,
     agent

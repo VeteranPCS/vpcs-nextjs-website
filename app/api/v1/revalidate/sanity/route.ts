@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
         _type: "slug";
         current: string;
       };
-      city_slug?: {
+      state_slug?: {
         _type: "slug";
         current: string;
       };
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     }
 
     const slug = body.slug?.current || "";
-    const city_slug = body.city_slug?.current || "";
+    const state_slug = body.state_slug?.current || "";
     const revalidatePathMap: RevalidatePathMap = {
       aboutSupportComponent: ["/about", "/spanish"],
       aboutUsPage: ["/about", "/spanish"],
@@ -51,15 +51,15 @@ export async function POST(req: NextRequest) {
       author: ["/pcs-resources", "/thank-you", "/blog"],
       blog: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"],
       category: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"],
-      city_list: ["/contact-agent", "/get-listed-agents", "/get-listed-lenders", `/${city_slug}`],
-      frequently_asked_questions: [`/${city_slug}`, "/about", `/blog/${slug}`, "/impact", "/internship", "/militaryspouse", "/pcs-resources", "/stories"],
+      state_list: ["/contact-agent", "/get-listed-agents", "/get-listed-lenders", `/${state_slug}`],
+      frequently_asked_questions: [`/${state_slug}`, "/about", `/blog/${slug}`, "/impact", "/internship", "/militaryspouse", "/pcs-resources", "/stories"],
       how_veterence_pcs_works: ["/how-it-works"],
       impact_page: ["/impact", "/militaryspouse", "/pcs-resources", "/thank-you"],
       internship_action: ["/internship"],
       internship_benefits: ["/internship"],
       internship_offer: ["/internship"],
       life_resources: ["/pcs-resources"],
-      media_account: ["/contact", "/", `/${city_slug}`, "/about", "/blog", `/blog/${slug}`, "/contact", "/how-it-works", "/impact", "/internship", "/militaryspouse", "/pcs-resources", "/stories", "/thank-you", "/spanish"],
+      media_account: ["/contact", "/", `/${state_slug}`, "/about", "/blog", `/blog/${slug}`, "/contact", "/how-it-works", "/impact", "/internship", "/militaryspouse", "/pcs-resources", "/stories", "/thank-you", "/spanish"],
       member_info: ["/about"],
       military_spouse_approved: ["/militaryspouse"],
       military_spouse_employment: ["/militaryspouse"],

@@ -36,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }))
 
     const mappedStateRoutes = stateRoutes.map((route) => {
-        const path = route.city_slug.current;
+        const path = route.state_slug.current;
         return {
             url: `${baseUrl}/${path}`,
             lastModified: new Date(),

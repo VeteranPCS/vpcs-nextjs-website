@@ -25,12 +25,12 @@ export interface StateList {
   short_name: string;
   _id: string;
   _updatedAt: string;
-  city_map: StateMap;
-  city_name: string;
+  state_map: StateMap;
+  state_name: string;
   _createdAt: string;
   _rev: string;
-  _type: 'city_list';
-  city_slug: StateSlug;
+  _type: 'state_list';
+  state_slug: StateSlug;
 }
 
 export interface Agent {
@@ -93,7 +93,7 @@ export interface LendersData {
 const stateService = {
   fetchStateList: async (): Promise<StateList[]> => {
     try {
-      const response = await client.fetch(`*[_type == "city_list"]{ city_slug, short_name }`)
+      const response = await client.fetch(`*[_type == "state_list"]{ state_slug, short_name }`)
       if (response) {
         return response as StateList[];
       } else {
@@ -106,10 +106,10 @@ const stateService = {
   },
   fetchStateDetails: async (state: string): Promise<StateList> => {
     try {
-      const state_detail = await client.fetch<StateList>(`*[_type == "city_list" && city_slug.current == $city][0]`, { city: state });
+      const state_detail = await client.fetch<StateList>(`*[_type == "state_list" && state_slug.current == $state][0]`, { state: state });
 
-      if (state_detail.city_map?.asset?._ref) {
-        state_detail.city_map.asset.image_url = urlForImage(state_detail.city_map);  // Add the image URL to the response
+      if (state_detail.state_map?.asset?._ref) {
+        state_detail.state_map.asset.image_url = urlForImage(state_detail.state_map);  // Add the image URL to the response
       }
       if (state_detail) {
         return state_detail as StateList
@@ -230,8 +230,8 @@ const stateService = {
   },
   fetchStateImage: async (state_slug: string): Promise<string> => {
     try {
-      const state_map = await client.fetch(`*[_type == "city_list" && city_slug.current == $city][0] { city_map }`, { city: state_slug });
-      const image_url = urlForImage(state_map.city_map.asset);
+      const state_map = await client.fetch(`*[_type == "state_list" && state_slug.current == $state][0] { state_map }`, { state: state_slug });
+      const image_url = urlForImage(state_map.state_map.asset);
       return image_url;
     } catch (error: any) {
       console.error('Error fetching State Image:', error);

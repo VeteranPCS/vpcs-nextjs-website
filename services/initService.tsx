@@ -3,7 +3,7 @@ import { client } from '@/sanity/lib/client';
 const initService = {
     getStateListFetch: async () => {
         try {
-            const response = await client.fetch(`*[_type == "city_list"]{ city_name, short_name }`)
+            const response = await client.fetch(`*[_type == "state_list"]{ state_name, short_name }`)
 
             if (response) {
                 return response;

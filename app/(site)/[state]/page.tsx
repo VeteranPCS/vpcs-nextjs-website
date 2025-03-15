@@ -75,7 +75,7 @@ export async function generateStaticParams() {
   try {
     const states = await stateService.fetchStateList();
     return states.map((state) => ({
-      state: state.city_slug.current,
+      state: state.state_slug.current,
     }));
 
   } catch (error) {
@@ -176,28 +176,28 @@ export default async function StatePage({ params }: { params: { state: string } 
   }
 
   if (!state_data) {
-    return <p>Failed to load data for the city.</p>;
+    return <p>Failed to load data for the state.</p>;
   }
 
   return (
     <>
       <StatePageHeroSection
-        stateName={state_data?.city_name || 'Unknown'}
-        stateImage={state_data?.city_map}  // Pass cityImage as an object
+        stateName={state_data?.state_name || 'Unknown'}
+        stateImage={state_data?.state_map}
         cityList={Object.keys(formatted_data).sort()}
       />
       <StatePageHeroSecondSection
-        stateName={state_data?.city_name || 'Unknown'}
+        stateName={state_data?.state_name || 'Unknown'}
       />
-      <StatePageVaLoan cityName={state_data?.city_name || 'Unknown'} lendersData={lenders_data} state={params.state} />
-      <StatePageCTA cityName={state_data?.city_name || 'Unknown'} />
+      <StatePageVaLoan cityName={state_data?.state_name || 'Unknown'} lendersData={lenders_data} state={params.state} />
+      <StatePageCTA cityName={state_data?.state_name || 'Unknown'} />
 
       {Object.entries(formatted_data).sort().map(([cityName, agents]: [string, any[]]) => (
         <StatePageCityAgents key={cityName} city={cityName} agent_data={agents} state={params.state} />
       ))}
 
       <StatePageLetFindAgent />
-      <StatePageWhyChooseVetpcs cityName={state_data?.city_name || 'Unknown'} />
+      <StatePageWhyChooseVetpcs cityName={state_data?.state_name || 'Unknown'} />
       <FrequentlyAskedQuestion />
       <KeepInTouch />
     </>
