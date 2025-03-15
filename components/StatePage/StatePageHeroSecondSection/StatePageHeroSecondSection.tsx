@@ -10,7 +10,7 @@ const StatePageHeroSecondSection = ({ stateName }: StatePageHeroSecondSectionPro
   return (
     <div>
       <div className="flex flex-wrap items-start justify-between h-full">
-        <div className="bg-[#212557] flex-wrap md:flex-nowrap items-center justify-center w-full h-full md:flex sm:hidden hidden">
+        <div className="bg-[#212557] flex-wrap md:flex-nowrap items-center justify-center w-full h-full lg:flex hidden">
           <div className="h-full xl:px-20 lg:px-10 md:px-8 py-10 flex flex-col justify-center items-center mx-auto md:w-[45%]">
             <Image
               src="/icon/VeteranPCSlogo.svg"
