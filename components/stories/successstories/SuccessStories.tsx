@@ -1,5 +1,5 @@
 import React from "react";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import storiesService from "@/services/storiesService";
 import { VideoSuccessStory } from '@/services/storiesService'
 import { ChildrenProps } from '@/services/storiesService'

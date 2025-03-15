@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Image from "next/image";
 import aboutService from "@/services/aboutService";
 import BlockContent from "@/components/Blog/BlockContent";

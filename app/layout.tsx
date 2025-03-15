@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Poppins, Roboto, Lora } from "next/font/google";
 import "./globals.css";
-import "@/styles/globals.css";
 import { RealEstateAgent, WithContext } from "schema-dts";
 import Script from "next/script";
 import { GoogleTagManager } from '@next/third-parties/google'
@@ -9,7 +8,32 @@ import { GoogleTagManager } from '@next/third-parties/google'
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const GTM_ID = process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID || "";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+    subsets: ["latin"],
+    display: 'swap',
+    variable: '--font-inter',
+});
+
+const poppins = Poppins({
+    weight: ['400', '500', '600', '700'],
+    subsets: ['latin'],
+    display: 'swap',
+    variable: '--font-poppins',
+});
+
+const roboto = Roboto({
+    weight: ['400', '500', '700'],
+    subsets: ['latin'],
+    display: 'swap',
+    variable: '--font-roboto',
+});
+
+const lora = Lora({
+    weight: ['400', '700'],
+    subsets: ['latin'],
+    display: 'swap',
+    variable: '--font-lora',
+});
 
 const META_TITLE = "Military Members & Veterans: Get a Top Agent, VA Loan Support & Up to $4,000, for Free";
 const META_DESCRIPTION = "Tired of navigating the home buying process alone during every PCS? With VeteranPCS, get a trusted veteran or military spouse agent, expert VA loan guidance, and a Move In Bonus up to $4,000—so you save money, avoid costly mistakes, and buy or sell with confidence. No cost, no hassle, just results.";
@@ -102,7 +126,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" className={`${inter.variable} ${poppins.variable} ${roboto.variable} ${lora.variable}`}>
             <head>
                 <GoogleTagManager gtmId={GTM_ID} />
                 <Script defer src="https://www.google.com/recaptcha/api.js"></Script>

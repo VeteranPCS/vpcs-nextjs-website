@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Link from "next/link";
 import ClassNames from "./CoveredComp.module.css";
 import Image from "next/image";

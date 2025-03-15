@@ -1,6 +1,6 @@
 "use client"
 import Button from "@/components/common/Button";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import classes from "./ContactForm.module.css";
 import Image from "next/image";
 import Link from "next/link";

@@ -1,5 +1,5 @@
 import React from "react";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
 import aboutService from "@/services/aboutService";
@@ -22,7 +22,7 @@ interface PageData {
   background_image?: ForegroundImage;
 }
 
-export interface AboutVetPcsResponse extends PageData {}
+export interface AboutVetPcsResponse extends PageData { }
 
 const HowVetPcsStarted = async () => {
   let pageData: AboutVetPcsResponse | null = null;

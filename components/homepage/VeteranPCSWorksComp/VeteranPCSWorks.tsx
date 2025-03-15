@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import VeteranPCSWorksComp from "./VeteranPCSWorksComp";
 
 const cardsData = [

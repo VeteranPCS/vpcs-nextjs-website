@@ -1,5 +1,5 @@
 import React from "react"; // No need for useState or useEffect
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import Link from "next/link";
 import classes from "./internshipapplication.module.css";

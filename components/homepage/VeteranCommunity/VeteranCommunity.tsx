@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import styled from "styled-components";
 import Button from "@/components/common/Button";
 import classes from "./VeteranCommunity.module.css";

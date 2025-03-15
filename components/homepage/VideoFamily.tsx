@@ -1,5 +1,5 @@
 "use client"
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Image from "next/image";
 
 const FamilyVideo = () => {

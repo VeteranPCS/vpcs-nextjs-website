@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react"; // No need for useState or useEffect
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import classes from "./KeepInTouch.module.css";
 import Image from "next/image";
 import Link from "next/link";

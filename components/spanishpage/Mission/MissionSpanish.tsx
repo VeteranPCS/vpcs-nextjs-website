@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import classes from "./Mission.module.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";

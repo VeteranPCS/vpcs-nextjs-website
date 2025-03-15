@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Image from "next/image";
 import SliderValueLabel from "@/components/MilitarySpouse/SquaredAway/SquaredAwaySlider";
 import { MilitarySpouseApprovedProps } from '@/services/militarySpouseService';

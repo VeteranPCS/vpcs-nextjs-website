@@ -2,6 +2,129 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Reset Styles */
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Font Classes */
+.poppins {
+  font-family: var(--font-poppins), sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.roboto {
+  font-family: var(--font-roboto), sans-serif;
+}
+
+.lora {
+  font-family: var(--font-lora), serif;
+}
+
+/* Form Styles */
+.text-error {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+select option[value=""] {
+  color: #6B7280;
+}
+
+select option:not([value=""]) {
+  color: black;
+}
+
+/* Header Styles */
+.header {
+  box-shadow: 0 12px 18px -6px rgba(0, 0, 0, 0.3);
+}
+
+@media screen and (max-width: 575px) {
+  .header {
+    box-shadow: none;
+  }
+}
+
+/* Navigation Styles */
+.menu-nav ul li {
+  position: relative;
+}
+
+.nav li ul {
+  position: absolute;
+  padding: 20px 0;
+  z-index: 9999;
+  width: 240px;
+  background: #fff;
+  visibility: hidden;
+  opacity: 0;
+  border-top: 3px solid #2ea3f2;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  background-color: #292e6c !important;
+}
+
+.nav .sub-menu {
+  z-index: 9999;
+  top: 200%;
+  left: 0;
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.45s ease-in-out;
+}
+
+@media screen and (max-width: 992px) {
+  .nav .sub-menu {
+    left: -170px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .nav .sub-menu {
+    left: -150px;
+  }
+}
+
+.nav li:hover>.sub-menu,
+.nav .sub-menu:hover {
+  opacity: 1;
+  visibility: visible;
+  transition: all 0.3s ease-in-out;
+}
+
+.menu .menu-nav ul ul {
+  padding: 20px 0;
+  text-align: left;
+}
+
+.nav li ul,
+blockquote {
+  border-color: #003486;
+}
+
 /* State Map Styling */
 .map-container {
   @apply relative w-full h-[600px] bg-white;
@@ -11,21 +134,10 @@
   @apply cursor-pointer;
 }
 
-.st0:hover,
-.st2:hover,
-.st3:hover,
-.small-state-group:hover .st0,
-.small-state-group:hover .st2,
-.small-state-group:hover .st3 {
-  @apply fill-red-700 transition ease-linear duration-300 cursor-pointer;
-}
-
-.tooltip {
-  @apply absolute bg-white border border-black p-1 block pointer-events-none;
-}
-
 .st0 {
   @apply fill-blue-800 stroke-white stroke-[0.75] rounded-lg;
+  border-radius: 0.5rem;
+  fill: #292F6C !important;
 }
 
 .st1 {
@@ -34,21 +146,29 @@
 
 .st2 {
   @apply fill-blue-800 stroke-white stroke-[0.75];
+  fill: #292F6C !important;
 }
 
 .st3 {
   @apply fill-blue-800 stroke-white stroke-[0.77];
+  fill: #292F6C !important;
 }
 
-.poppins {
-  font-family: Poppins, sans-serif;
-  letter-spacing: 0.5px;
+.st0:hover,
+.st2:hover,
+.st3:hover,
+.small-state-group:hover .st0,
+.small-state-group:hover .st2,
+.small-state-group:hover .st3 {
+  cursor: pointer;
+  fill: #4E5489 !important;
 }
 
-.roboto {
-  font-family: Roboto, sans-serif;
+.tooltip {
+  @apply absolute bg-white border border-black p-1 block pointer-events-none;
 }
 
+/* Loading Spinner */
 .loader {
   position: fixed;
   top: 0;
@@ -58,13 +178,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
-  z-index: 1000; /* Ensure it's above other content */
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 1000;
 }
 
 .spinner {
   border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid #3498db; /* Spinner color */
+  border-top: 4px solid #3498db;
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -76,22 +196,21 @@
   100% { transform: rotate(360deg); }
 }
 
+/* Slider Styles */
 .slick-dots li button:before {
   font-size: 0;
 }
 
-/* Base dot style */
 .slick-dots li button {
   width: 15px;
   height: 15px;
   border-radius: 50%;
   background-color: #9599b3;
   cursor: pointer;
-  transition: all 0.3s ease-in-out; /* Smooth transition */
+  transition: all 0.3s ease-in-out;
   position: relative;
 }
 
-/* Active dot */
 .slick-dots li.slick-active button {
   width: 20px;
   height: 20px;
@@ -101,7 +220,6 @@
   transition: all 0.3s ease-in-out;
 }
 
-/* Add glow effect using ::before */
 .slick-dots li.slick-active button::before {
   content: "";
   position: absolute;
@@ -116,16 +234,95 @@
   transition: all 0.3s ease-in-out;
 }
 
-/* Hide the glow for inactive dots */
 .slick-dots li button::before {
   opacity: 0;
   transition: all 0.3s ease-in-out;
 }
 
-select option[value=""] {
-    color: #6B7280;
+.slick-active:nth-child(1) {
+  background-color: #a81f23;
 }
 
-select option:not([value=""]) {
-    color: black;
+.slick-active:nth-child(6) {
+  margin-left: 10px;
+}
+
+.comlogoslider .slick-track {
+  display: flex;
+  align-items: center;
+}
+
+.reviw-topslider .slick-list {
+  width: 1000px !important;
+  margin: 0px auto !important;
+}
+
+.reviw-topslider .slick-slide .withoutdatasliderbox {
+  width: 80px !important;
+}
+
+.reviw-topslider .slick-slide .activesliderbox {
+  width: 256px !important;
+}
+
+.custom-slider .slick-slide:not(.slick-active:nth-child(4)) {
+  width: 256px !important;
+}
+
+/* UI Component Styles */
+.custom-bg-gradient {
+  background: linear-gradient(233deg, #5a72ea 28.37%, #8468b1 95.18%), #d9d9d9;
+  border-radius: 32px;
+  padding: 40px 30px;
+}
+
+.buyingsellingbtn .findagent .arrowicon {
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.buyingsellingbtn .findagent:hover .arrowicon {
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+.fingantagent .arrowicon {
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.fingantagent:hover .arrowicon {
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Card Styles */
+.cover-card:hover .coverd-link-img {
+  display: none;
+  transition: all 0.3s ease;
+}
+
+.cover-card:hover .coverd-link-imgred {
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.cover-card .coverd-link-imgred {
+  display: none;
+  transition: all 0.3s ease;
+}
+
+/* List Styles */
+.list-disc li::marker {
+  color: #a81f23;
+  font-size: 1.5rem;
+  margin-right: 8px;
+}
+
+/* Responsive Fixes */
+@media screen and (max-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
 }

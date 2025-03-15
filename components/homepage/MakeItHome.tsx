@@ -1,5 +1,5 @@
 import Button from "@/components/common/Button";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import "aos/dist/aos.css";
 import Image from "next/image";
 import Link from "next/link";

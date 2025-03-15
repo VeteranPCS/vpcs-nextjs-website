@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Link from "next/link";
 import classes from "./PcsResourcesBlog.module.css";
 import { urlForImage } from "@/sanity/lib/image";

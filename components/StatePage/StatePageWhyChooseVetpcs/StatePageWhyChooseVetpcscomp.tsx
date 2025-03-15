@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Link from "next/link";
 import ClassNames from "./StatePageWhyChooseVetpcs.module.css";
 import Image from "next/image";
@@ -52,7 +52,7 @@ const Covered: React.FC<CoveredProps> = ({ card }) => {
                 </h4>
               </div>
               <div className="xl:mt-3 lg:mt-3 md:mt-3 sm:mt-0 mt-0 px-10">
-                <span className="text-[#FFFFFF] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[13px] "> 
+                <span className="text-[#FFFFFF] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[13px] ">
                   {subTitle}
                 </span>
               </div>

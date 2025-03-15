@@ -1,5 +1,5 @@
 import React from "react";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Image from "next/image";
 import Link from "next/link";
 import resourcesService from "@/services/resourcesService";

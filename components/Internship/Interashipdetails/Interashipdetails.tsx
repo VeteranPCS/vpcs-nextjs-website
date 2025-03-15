@@ -1,5 +1,5 @@
 import React from "react"; // No need for useState or useEffect
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Image from "next/image";
 import internshipPageService from "@/services/internshipPageService";
 

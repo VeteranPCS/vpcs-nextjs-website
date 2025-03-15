@@ -1,5 +1,5 @@
 import Button from "@/components/common/Button";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import classes from "./HeroSection.module.css";
 import Image from "next/image";
 import Link from "next/link";

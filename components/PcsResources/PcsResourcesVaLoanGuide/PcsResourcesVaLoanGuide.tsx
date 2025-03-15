@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Link from "next/link";
 import classes from "./PcsResourcesVaLoanGuide.module.css";
 import Image from "next/image";
@@ -66,10 +66,10 @@ const PcsResourcesVaLoanGuide = () => {
         event: "conversion_download",
         content: "VA Loan Guide",
       });
-      
+
       const server_response = await vaLoanGuideForm(data);
       if (server_response?.success) {
-        setValue('firstName', '');  
+        setValue('firstName', '');
         setValue('lastName', '');
         setValue('email', '');
         setValue('captchaToken', '');
@@ -85,7 +85,7 @@ const PcsResourcesVaLoanGuide = () => {
         document.body.removeChild(link);
       } else {
         console.log("No redirect URL found");
-      } 
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
     }

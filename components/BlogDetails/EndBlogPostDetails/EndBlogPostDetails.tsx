@@ -1,5 +1,5 @@
 import React from "react";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Link from "next/link";
 import Image from "next/image";
 import Button from "@/components/common/Button";
@@ -20,7 +20,7 @@ interface Blog {
   // Add other fields as needed
 }
 
-const EndBlogPostDetails = ({blog}: { blog: Record<string, any> }) => {
+const EndBlogPostDetails = ({ blog }: { blog: Record<string, any> }) => {
   const contentLength = blog.content.length;
   const halfwayPoint = Math.ceil(contentLength / 2);
   const secondHalfContent = blog.content.slice(halfwayPoint);

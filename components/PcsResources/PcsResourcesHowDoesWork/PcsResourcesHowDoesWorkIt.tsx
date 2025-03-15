@@ -1,5 +1,5 @@
 import React from "react";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./PcsResourcesHowDoesWorkIt.module.css";
 import Link from "next/link";

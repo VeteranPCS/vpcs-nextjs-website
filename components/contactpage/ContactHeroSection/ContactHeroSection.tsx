@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import classes from "./ContactHeroSection.module.css";
 import Image from "next/image";
 

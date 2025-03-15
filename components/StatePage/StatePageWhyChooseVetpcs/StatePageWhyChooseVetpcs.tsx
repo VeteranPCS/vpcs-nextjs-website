@@ -1,5 +1,5 @@
 import React from "react";
-import "@/styles/globals.css";
+import "@/app/globals.css";
 import Image from "next/image";
 import Link from "next/link";
 import StatePageWhyChooseVetpcsComp from "@/components/StatePage/StatePageWhyChooseVetpcs/StatePageWhyChooseVetpcscomp";
@@ -25,7 +25,7 @@ const cardsData = [
     title: "Bonus",
     subTitle: "RECEIVE CASHBACK OF $200 - $4,000 AT CLOSING",
   },
-  
+
 ];
 
 
