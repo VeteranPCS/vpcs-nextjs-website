@@ -1,5 +1,4 @@
 import { type SchemaTypeDefinition } from 'sanity'
-
 import blockContent from '@/sanity/schemas/blockContent'
 import category from '@/sanity/schemas/category'
 import author from '@/sanity/schemas/author'
@@ -31,7 +30,6 @@ import stateList from '@/sanity/schemas/stateList'
 import videoSuccessStories from '@/sanity/schemas/videoSuccessStories'
 import veterenceImage from './schemas/veterenceImage'
 import agent from './schemas/agent'
-import cityList from './schemas/cityList'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -65,7 +63,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     stateList,
     videoSuccessStories,
     veterenceImage,
-    agent,
-    cityList
+    agent
   ],
 }

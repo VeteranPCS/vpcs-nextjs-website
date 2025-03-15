@@ -108,11 +108,17 @@ const stateService = {
     try {
       const state_detail = await client.fetch<StateList>(`*[_type == "state_list" && state_slug.current == $state][0]`, { state: state });
 
-      if (state_detail.state_map?.asset?._ref) {
-        state_detail.state_map.asset.image_url = urlForImage(state_detail.state_map);  // Add the image URL to the response
-      }
       if (state_detail) {
-        return state_detail as StateList
+        return {
+          ...state_detail,
+          state_map: state_detail.state_map ? {
+            ...state_detail.state_map,
+            asset: {
+              ...state_detail.state_map.asset,
+              image_url: urlForImage(state_detail.state_map)
+            }
+          } : null
+        } as StateList;
       } else {
         throw new Error('Failed to fetch State Details');
       }
@@ -231,8 +237,10 @@ const stateService = {
   fetchStateImage: async (state_slug: string): Promise<string> => {
     try {
       const state_map = await client.fetch(`*[_type == "state_list" && state_slug.current == $state][0] { state_map }`, { state: state_slug });
-      const image_url = urlForImage(state_map.state_map.asset);
-      return image_url;
+      if (!state_map?.state_map) {
+        throw new Error('No state map found');
+      }
+      return urlForImage(state_map.state_map);
     } catch (error: any) {
       console.error('Error fetching State Image:', error);
       throw error;
