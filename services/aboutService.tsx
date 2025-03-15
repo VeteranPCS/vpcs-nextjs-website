@@ -1,6 +1,6 @@
 import { TeamMember } from '@/components/About/AdminTeam/AdminTeam';
 import { AboutVetPcsResponse } from '@/components/About/HowVetPcsStarted/HowVetPcsStarted'
-import { SupportSpanishProps } from '@/components/spanishpage/SupportSpanish/SupportSpanish';
+import { SupportComponentProps } from '@/components/About/Support/SupportOurVeterans';
 import { client } from "@/sanity/lib/client";
 import { SanityDocument } from "@sanity/client";
 import { urlForImage } from "@/sanity/lib/image";
@@ -85,7 +85,7 @@ const aboutService = {
             throw error;
         }
     },
-    fetchSupportComponent: async (): Promise<SupportSpanishProps> => {
+    fetchSupportComponent: async (): Promise<SupportComponentProps> => {
         try {
             const details = await client.fetch(
                 `*[_type == "aboutSupportComponent"][0]`
@@ -100,7 +100,7 @@ const aboutService = {
             }
 
             if (details) {
-                return details as SupportSpanishProps;
+                return details as SupportComponentProps;
             } else {
                 throw new Error('Failed to Fetch About Page Details');
             }

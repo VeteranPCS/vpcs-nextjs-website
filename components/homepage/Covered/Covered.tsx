@@ -4,7 +4,6 @@ import "@/app/globals.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import CoveredComp from "./CoveredComp";
-import Link from "next/link";
 
 const cardsData = [
   {
@@ -80,12 +79,10 @@ const Covered = () => {
         data-aos-duration="1000"
       >
         {cardsData.map((card, index) => (
-          // <Link href={card.link} key={index}>
           <CoveredComp
             key={index}
             card={card} // Only pass 'card' object here
           />
-          // </Link>
         ))}
       </div>
     </div>

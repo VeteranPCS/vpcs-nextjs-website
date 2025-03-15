@@ -70,10 +70,10 @@ const AdminTeam = async () => {
                   />
                 </div>
                 <div className="px-5 py-5">
-                  <h6 className="text-black tahoma font-semibold text-2xl">
+                  <h6 className="text-black tahoma font-semibold text-lg md:text-2xl">
                     {details.name}
                   </h6>
-                  <span className="text-[#3E3E59] text-lg font-light">
+                  <span className="text-[#3E3E59] text-sm md:text-lg font-light">
                     {details.designation}
                   </span>
                   <div className="relative">
@@ -81,7 +81,7 @@ const AdminTeam = async () => {
                     <input type="checkbox" id={`toggle-${details._id}`} className="peer hidden" />
 
                     {/* Text that expands/collapses */}
-                    <p className="text-[#5F6980] max-h-28 text-lg font-light mt-3 mb-3 overflow-hidden peer-checked:max-h-full transition-all duration-300">
+                    <p className="text-[#5F6980] max-h-28 text-sm md:text-lg font-light mt-3 mb-3 overflow-hidden peer-checked:max-h-full transition-all duration-300">
                       {details?.description?.map((block, index) => (
                         <BlockContent
                           key={block._key || index}

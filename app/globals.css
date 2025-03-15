@@ -4,125 +4,96 @@
 
 /* Reset Styles */
 * {
-  padding: 0px;
-  margin: 0px;
-  box-sizing: border-box;
+  @apply p-0 m-0 box-border;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  overflow-x: hidden;
+  @apply m-0 p-0 box-border overflow-x-hidden;
 }
 
 html,
 body {
-  overflow-x: hidden;
+  @apply overflow-x-hidden;
 }
 
 html {
-  scroll-behavior: smooth;
+  @apply scroll-smooth;
 }
 
 /* Font Classes */
 .poppins {
-  font-family: var(--font-poppins), sans-serif;
-  letter-spacing: 0.5px;
+  @apply font-poppins tracking-wider;
 }
 
 .roboto {
-  font-family: var(--font-roboto), sans-serif;
+  @apply font-roboto;
 }
 
 .lora {
-  font-family: var(--font-lora), serif;
+  @apply font-lora;
 }
 
 /* Form Styles */
 .text-error {
-  color: red;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
+  @apply text-accent-red text-sm mt-1;
 }
 
 select option[value=""] {
-  color: #6B7280;
+  @apply text-gray-500;
 }
 
 select option:not([value=""]) {
-  color: black;
+  @apply text-black;
 }
 
 /* Header Styles */
 .header {
-  box-shadow: 0 12px 18px -6px rgba(0, 0, 0, 0.3);
+  @apply shadow-header;
 }
 
 @media screen and (max-width: 575px) {
   .header {
-    box-shadow: none;
+    @apply shadow-none;
   }
 }
 
 /* Navigation Styles */
 .menu-nav ul li {
-  position: relative;
+  @apply relative;
 }
 
 .nav li ul {
-  position: absolute;
-  padding: 20px 0;
-  z-index: 9999;
-  width: 240px;
-  background: #fff;
-  visibility: hidden;
-  opacity: 0;
-  border-top: 3px solid #2ea3f2;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  text-align: left;
-  background-color: #292e6c !important;
+  @apply absolute py-5 z-nav w-60 invisible opacity-0 border-t-2 border-t-accent-blue-light shadow-nav text-left bg-primary;
 }
 
 .nav .sub-menu {
-  z-index: 9999;
-  top: 200%;
-  left: 0;
-  position: absolute;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.45s ease-in-out;
+  @apply z-nav top-nav-submenu left-0 absolute opacity-0 invisible transition-visibility duration-450;
 }
 
 @media screen and (max-width: 992px) {
   .nav .sub-menu {
-    left: -170px;
+    @apply -left-[170px];
   }
 }
 
 @media screen and (max-width: 768px) {
   .nav .sub-menu {
-    left: -150px;
+    @apply -left-[150px];
   }
 }
 
 .nav li:hover>.sub-menu,
 .nav .sub-menu:hover {
-  opacity: 1;
-  visibility: visible;
-  transition: all 0.3s ease-in-out;
+  @apply opacity-100 visible transition-visibility duration-300;
 }
 
 .menu .menu-nav ul ul {
-  padding: 20px 0;
-  text-align: left;
+  @apply py-5 text-left;
 }
 
 .nav li ul,
 blockquote {
-  border-color: #003486;
+  @apply border-accent-blue;
 }
 
 /* State Map Styling */
@@ -135,9 +106,8 @@ blockquote {
 }
 
 .st0 {
-  @apply fill-blue-800 stroke-white stroke-[0.75] rounded-lg;
-  border-radius: 0.5rem;
-  fill: #292F6C !important;
+  @apply rounded-lg stroke-white stroke-[0.75];
+  fill: theme('colors.primary.DEFAULT') !important;
 }
 
 .st1 {
@@ -145,13 +115,13 @@ blockquote {
 }
 
 .st2 {
-  @apply fill-blue-800 stroke-white stroke-[0.75];
-  fill: #292F6C !important;
+  @apply stroke-white stroke-[0.75];
+  fill: theme('colors.primary.DEFAULT') !important;
 }
 
 .st3 {
-  @apply fill-blue-800 stroke-white stroke-[0.77];
-  fill: #292F6C !important;
+  @apply stroke-white stroke-[0.77];
+  fill: theme('colors.primary.DEFAULT') !important;
 }
 
 .st0:hover,
@@ -160,8 +130,8 @@ blockquote {
 .small-state-group:hover .st0,
 .small-state-group:hover .st2,
 .small-state-group:hover .st3 {
-  cursor: pointer;
-  fill: #4E5489 !important;
+  @apply cursor-pointer;
+  fill: theme('colors.primary.hover') !important;
 }
 
 .tooltip {
@@ -170,30 +140,11 @@ blockquote {
 
 /* Loading Spinner */
 .loader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.8);
-  z-index: 1000;
+  @apply fixed inset-0 flex justify-center items-center bg-white/80 z-loader;
 }
 
 .spinner {
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  @apply border-4 border-white/30 border-t-spinner rounded-full w-[50px] h-[50px] animate-spin;
 }
 
 /* Slider Styles */

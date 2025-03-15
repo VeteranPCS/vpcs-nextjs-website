@@ -2,38 +2,9 @@ import React from "react";
 import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
-import aboutService from "@/services/aboutService";
 import Link from "next/link";
-interface ImageAsset {
-  image_url?: string;
-}
-
-interface ForegroundImage {
-  asset?: ImageAsset;
-}
-
-export interface SupportSpanishProps {
-  _id: string;
-  image?: ForegroundImage;
-  header_1?: string;
-  header_2?: string;
-  description_1?: string;
-  description_2?: string;
-  buttonText_1: string;
-  buttonText_2: string;
-  name?: string;
-  designation?: string;
-}
 
 const SupportSpanish = async () => {
-  let pageData: SupportSpanishProps | null = null;
-
-  try {
-    pageData = await aboutService.fetchSupportComponent();
-  } catch (error) {
-    console.error("Error fetching Support Spanish Page:", error);
-    return <p>Failed to load the Support Spanish Page.</p>;
-  }
 
   return (
     <div className="mx-auto">
