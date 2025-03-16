@@ -22,7 +22,7 @@ const PcsResourcesMilitarySpouse = () => {
                 </p>
                 <div>
                   <Button buttonText="Mil Spouse Employment Articles" />
-                  <Link href="/militaryspouse">
+                  <Link href="/military-spouse">
                     <Button buttonText="More Mil Spouse Resources" />
                   </Link>
                 </div>

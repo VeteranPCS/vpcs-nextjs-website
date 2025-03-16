@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   description: META_DESCRIPTION,
   alternates: {
-    canonical: `${BASE_URL}/militaryspouse`,
+    canonical: `${BASE_URL}/military-spouse`,
   },
   openGraph: {
     type: "website",
