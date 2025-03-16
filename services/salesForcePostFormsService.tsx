@@ -1,5 +1,6 @@
 // services/salesForcePostFormsService.ts
 'use server'
+import sendToSlack from '@/actions/sendToSlack';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -55,6 +56,14 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
                 body: formBody,
             }
         );
+
+        await sendToSlack({
+            headerText: '🔔 New Agent Lead',
+            name: `${formData.firstName} ${formData.lastName}` || "",
+            email: formData.email || "",
+            phoneNumber: formData.phone || "",
+            message: formData.additionalComments || "",
+        });
 
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
@@ -123,6 +132,14 @@ export async function GetListedAgentsPostForm(formData: any) {
             }
         );
 
+        await sendToSlack({
+            headerText: '🔔 New Agent Listing Request',
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email || "",
+            phoneNumber: formData.phone || "",
+            message: formData.additionalComments || "",
+        });
+
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
@@ -187,6 +204,14 @@ export async function GetListedLendersPostForm(formData: any) {
             }
         );
 
+        await sendToSlack({
+            headerText: '🔔 New Lender Listing Request',
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email || "",
+            phoneNumber: formData.phone || "",
+            message: formData.additionalComments || "",
+        });
+
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
@@ -230,6 +255,14 @@ export async function KeepInTouchForm(formData: any) {
                 body: formBody,
             }
         );
+
+        await sendToSlack({
+            headerText: '🔔 New Keep In Touch Submission',
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email || "",
+            phoneNumber: formData.phone || "",
+            message: formData.additionalComments || "",
+        });
 
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
@@ -281,6 +314,14 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             }
         );
 
+        await sendToSlack({
+            headerText: '🔔 New Lender Leader',
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email || "",
+            phoneNumber: formData.phone || "",
+            message: formData.additionalComments || "",
+        });
+
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
@@ -324,6 +365,15 @@ export async function contactPostForm(formData: any) {
                 body: formBody,
             }
         );
+
+        await sendToSlack({
+            headerText: '🔔 New Contact Form Submission',
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email || "",
+            phoneNumber: formData.phone || "",
+            message: formData.additionalComments || "",
+        });
+
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         };
@@ -358,6 +408,14 @@ export async function vaLoanGuideForm(formData: any) {
                 body: formBody,
             }
         );
+
+        await sendToSlack({
+            headerText: '🔔 New VA Loan Guide Download',
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email || "",
+            phoneNumber: formData.phone || "",
+            message: formData.additionalComments || "",
+        });
 
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
@@ -395,6 +453,14 @@ export async function internshipFormSubmission(formData: any) {
                 body: formBody,
             }
         );
+
+        await sendToSlack({
+            headerText: '🔔 New Internship Submission',
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email || "",
+            phoneNumber: formData.phone || "",
+            message: formData.additionalComments || "",
+        });
 
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
