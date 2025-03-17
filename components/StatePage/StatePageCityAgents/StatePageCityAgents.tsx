@@ -39,7 +39,6 @@ function toTitleCase(str: string): string {
 const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
 
   return (
-    // <div id={city.replace(/\s+/g, "-").toLowerCase()}>
     <div id={city.toLowerCase().split(" ").join("-")}>
       <div className="bg-[#F4F4F4]">
         <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">
@@ -77,9 +76,6 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                       {agent?.Name}
                     </h3>
                     <div className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[10px] text-[10px] font-normal sm:mt-4 mt-0">
-                      <p>
-                        {`${agent.BillingAddress?.city ? toTitleCase(agent.BillingAddress?.city) + "," : ""} ${agent.BillingAddress?.state}`}
-                      </p>
                       <p className="font-bold">
                         {orderMilitaryServiceInfo(agent?.Military_Status__pc || "", agent?.Military_Service__pc || "")}
                       </p>
