@@ -79,7 +79,7 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/(new|old|backup|bk|bc|wp|wordpress)',
+        source: '/(new|old|backup|bk|bc|wp|wordpress|feed)',
         destination: '/',
         permanent: true,
       },
