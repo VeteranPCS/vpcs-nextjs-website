@@ -63,6 +63,26 @@ const nextConfig = {
         destination: "/blog/:slug",
         permanent: true,
       },
+      {
+        source: "/sitemap_index.xml",
+        destination: "/sitemap.xml",
+        permanent: true,
+      },
+      {
+        source: '/home',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/main',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/(new|old|backup|bk|bc|wp|wordpress)',
+        destination: '/',
+        permanent: true,
+      },
     ]
   }
 };
