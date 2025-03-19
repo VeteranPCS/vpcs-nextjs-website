@@ -83,6 +83,11 @@ const nextConfig = {
         destination: '/',
         permanent: true,
       },
+      {
+        source: '/va-loan',
+        destination: '/',
+        permanent: true,
+      }
     ]
   }
 };
