@@ -153,23 +153,34 @@ export default async function StatePage({ params }: { params: { state: string } 
       // Filter to only areas within the current state
       const areasInState = areaAssignments
         .filter((record: any) => record.Area__r.State__c.toLowerCase() === stateUrlToStateName[state as keyof typeof stateUrlToStateName])
-        .map((record: any) => record.Area__r.Name);
+        .map((record: any) => ({
+          name: record.Area__r.Name,
+          score: record.AA_Score__c
+        }));
 
       // If the agent has no areas in the current state, skip them
       if (areasInState.length === 0) {
         return groups;
       }
 
-      // Add the agent to each relevant group
-      areasInState.forEach((areaName: string) => {
-        if (!groups[areaName]) {
-          groups[areaName] = [];
+      // Add the agent to each relevant group with their score for that city
+      areasInState.forEach((area: { name: string, score: number }) => {
+        if (!groups[area.name]) {
+          groups[area.name] = [];
         }
-        groups[areaName].push(agent);
+        groups[area.name].push({
+          ...agent,
+          cityScore: area.score
+        });
       });
 
       return groups;
     }, {});
+
+    // Sort agents within each city group by their cityScore
+    Object.keys(formatted_data).forEach(city => {
+      formatted_data[city].sort((a: any, b: any) => b.cityScore - a.cityScore);
+    });
 
   } catch (error) {
     console.error("Error fetching State Agent List", error);
