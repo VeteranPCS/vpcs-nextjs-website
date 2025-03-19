@@ -1,6 +1,7 @@
 // services/salesForcePostFormsService.ts
 'use server'
 import sendToSlack from '@/actions/sendToSlack';
+import stateService from '@/services/stateService';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -10,6 +11,16 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
         new URLSearchParams(queryString).forEach((value, key) => {
             paramsObj[key] = value;
         });
+
+        // Fetch agent information if ID is provided
+        let agentInfo = null;
+        if (paramsObj.id) {
+            try {
+                agentInfo = await stateService.fetchAgentById(paramsObj.id);
+            } catch (error) {
+                console.error('Error fetching agent information:', error);
+            }
+        }
 
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
@@ -45,7 +56,6 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
             "captcha_settings": formData.captcha_settings || "",
         }).toString();
 
-
         const response = await fetch(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             {
@@ -63,6 +73,13 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
             email: formData.email || "",
             phoneNumber: formData.phone || "",
             message: formData.additionalComments || "",
+            agentInfo: agentInfo ? {
+                name: agentInfo.Name || "",
+                email: agentInfo.PersonEmail || "",
+                phoneNumber: agentInfo.PersonMobilePhone || "",
+                brokerage: agentInfo.Brokerage_Name__pc,
+                state: paramsObj.state
+            } : undefined
         });
 
         if (!response.ok) {
@@ -281,10 +298,21 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
         paramsObj[key] = value;
     });
 
+    let agentInfo = null;
+    console.log(paramsObj.id);
+    if (paramsObj.id) {
+        try {
+            agentInfo = await stateService.fetchAgentById(paramsObj.id);
+        } catch (error) {
+            console.error('Error fetching agent information:', error);
+        }
+    }
+    console.log(agentInfo);
+
     const formBody = new URLSearchParams({
         oid: "00D4x000003yaV2",
         retURL: `${BASE_URL}/thank-you`,
-        "00N4x00000QPJUT": paramsObj.id,
+        "00N4x00000QPJUT": paramsObj.id || "",
         recordType: "0124x000000Z5yD",
         lead_source: "Website",
         "00N4x00000Lsr0G": "true",
@@ -315,11 +343,18 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
         );
 
         await sendToSlack({
-            headerText: '🔔 New Lender Leader',
+            headerText: '🔔 New Lender Lead',
             name: `${formData.firstName} ${formData.lastName}`,
             email: formData.email || "",
             phoneNumber: formData.phone || "",
             message: formData.additionalComments || "",
+            agentInfo: agentInfo ? {
+                name: agentInfo.Name || "",
+                email: agentInfo.PersonEmail || "",
+                phoneNumber: agentInfo.PersonMobilePhone || "",
+                brokerage: agentInfo.Brokerage_Name__pc,
+                state: paramsObj.state
+            } : undefined
         });
 
         if (!response.ok) {

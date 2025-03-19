@@ -50,6 +50,8 @@ export interface Agent {
   BillingStateCode: string;
   State_s_Licensed_in__pc: string;
   Other_States__pc?: string[]; // INCLUDES can return an array
+  PersonEmail?: string;
+  PersonMobilePhone?: string;
   Area_Assignments__r?: {
     records: {
       Id: string;
@@ -243,6 +245,40 @@ const stateService = {
       return urlForImage(state_map.state_map);
     } catch (error: any) {
       console.error('Error fetching State Image:', error);
+      throw error;
+    }
+  },
+  fetchAgentById: async (agentId: string): Promise<Agent | null> => {
+    try {
+      const query = `
+        SELECT Name, Brokerage_Name__pc, PersonEmail, PersonMobilePhone
+        FROM Account
+        WHERE Id = '${agentId}'
+          AND Active_on_Website__pc = true
+      `.replace(/\s+/g, ' ').trim();
+
+      const response = await salesForceAPI({
+        endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
+        type: RequestType.GET,
+      });
+
+      if (response?.status === 200 && response.data.records.length > 0) {
+        const agent = response.data.records[0];
+        return agent as Agent;
+      } else if (response?.status === 401) {
+        // Token expired: Refresh and retry
+        try {
+          await getSalesforceToken(); // Refresh token
+          return await stateService.fetchAgentById(agentId); // Retry the request
+        } catch (tokenError) {
+          console.error("Failed to refresh token:", tokenError);
+          throw tokenError;
+        }
+      }
+
+      return null;
+    } catch (error: any) {
+      console.error("Error fetching Agent by ID:", error);
       throw error;
     }
   }
