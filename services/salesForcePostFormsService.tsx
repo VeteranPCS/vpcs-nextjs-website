@@ -14,7 +14,7 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
-            "00N4x00000Lsn28": paramsObj.id,
+            "00N4x00000Lsn28": paramsObj.id || "",
             recordType: "0124x000000Z5yD",
             lead_source: "Website",
             "00N4x00000Lsr0G": "true",
