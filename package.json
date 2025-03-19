@@ -19,6 +19,7 @@
     "@sanity/image-url": "^1.0.2",
     "@sanity/vision": "^3.62.0",
     "@vercel/og": "^0.6.4",
+    "@vercel/speed-insights": "^1.2.0",
     "aos": "^2.3.4",
     "axios": "^1.7.9",
     "next": "^14.2.23",
