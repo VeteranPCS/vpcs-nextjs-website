@@ -6,6 +6,7 @@ import { WithContext, Review as Testimonial } from "schema-dts";
 
 export default async function ReviewsList() {
     let reviewsList = null;
+    let aggregateRating = null;
 
     try {
         reviewsList = await reviewService.fetchReviews();
@@ -13,6 +14,14 @@ export default async function ReviewsList() {
         reviewsList = reviewsList.filter((review: Review) =>
             Boolean(review.comment?.trim())
         );
+
+        aggregateRating = reviewsList.reduce((acc: number, review: Review) => {
+            return acc + (review.starRating === "ONE" ? 1 :
+                review.starRating === "TWO" ? 2 :
+                    review.starRating === "THREE" ? 3 :
+                        review.starRating === "FOUR" ? 4 : 5);
+        }, 0);
+        aggregateRating = aggregateRating / reviewsList.length;
     } catch (error) {
         console.error("Error fetching reviews", error);
     }
@@ -24,6 +33,12 @@ export default async function ReviewsList() {
     const jsonLd: WithContext<Testimonial> = {
         "@context": "https://schema.org",
         "@type": "Review",
+        aggregateRating: aggregateRating ? {
+            "@type": "AggregateRating",
+            ratingValue: aggregateRating,
+            bestRating: 5,
+            reviewCount: reviewsList.length
+        } : undefined,
         review: reviewsList.map((review) => ({
             "@type": "Review",
             author: {

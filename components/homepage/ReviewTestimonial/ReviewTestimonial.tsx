@@ -1,7 +1,6 @@
 import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import ReviewTestimonialSlider from "@/components/homepage/ReviewTestimonial/ReviewTestimonialSlider";
-import classes from "./ReviewTestimonial.module.css";
 import Link from "next/link";
 
 interface Reviewer {
