@@ -69,32 +69,37 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
             }
         );
 
-        await sendToSlack({
-            headerText: '🔔 New Agent Lead',
-            name: `${formData.firstName} ${formData.lastName}` || "",
-            email: formData.email || "",
-            phoneNumber: formData.phone || "",
-            message: formData.additionalComments || "",
-            agentInfo: agentInfo ? {
-                name: agentInfo.Name || "",
-                email: agentInfo.PersonEmail || "",
-                phoneNumber: agentInfo.PersonMobilePhone || "",
-                brokerage: agentInfo.Brokerage_Name__pc,
-                state: paramsObj.state
-            } : undefined
-        });
-
-        await sendOpenPhoneMessage({
-            content: `New Lead From VeteranPCS: 
-            ${formData.firstName} ${formData.lastName}
-            Email: ${formData.email}
-            Phone: ${formatPhoneNumberForDisplay(formData.phone)}
-            Current Base: ${formData.currentBase || 'Not Specified'}
-            Destination Base: ${formData.destinationBase || 'Not Specified'}
-            Additional Comments: ${formData.additionalComments || 'None'}
-            `,
-            from: OPEN_PHONE_FROM_NUMBER,
-            to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
+        // Fire and forget notifications - don't await them
+        Promise.all([
+            sendToSlack({
+                headerText: '🔔 New Agent Lead',
+                name: `${formData.firstName} ${formData.lastName}` || "",
+                email: formData.email || "",
+                phoneNumber: formData.phone || "",
+                message: formData.additionalComments || "",
+                agentInfo: agentInfo ? {
+                    name: agentInfo.Name || "",
+                    email: agentInfo.PersonEmail || "",
+                    phoneNumber: agentInfo.PersonMobilePhone || "",
+                    brokerage: agentInfo.Brokerage_Name__pc,
+                    state: paramsObj.state
+                } : undefined
+            }),
+            sendOpenPhoneMessage({
+                content: `New Lead From VeteranPCS: 
+                ${formData.firstName} ${formData.lastName}
+                Email: ${formData.email}
+                Phone: ${formatPhoneNumberForDisplay(formData.phone)}
+                Current Base: ${formData.currentBase || 'Not Specified'}
+                Destination Base: ${formData.destinationBase || 'Not Specified'}
+                Additional Comments: ${formData.additionalComments || 'None'}
+                `,
+                from: OPEN_PHONE_FROM_NUMBER,
+                to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
+            })
+        ]).catch(error => {
+            // Log any errors but don't block the main flow
+            console.error('Error sending notifications:', error);
         });
 
         if (!response.ok) {
@@ -357,32 +362,37 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             }
         );
 
-        await sendToSlack({
-            headerText: '🔔 New Lender Lead',
-            name: `${formData.firstName} ${formData.lastName}`,
-            email: formData.email || "",
-            phoneNumber: formData.phone || "",
-            message: formData.additionalComments || "",
-            agentInfo: agentInfo ? {
-                name: agentInfo.Name || "",
-                email: agentInfo.PersonEmail || "",
-                phoneNumber: agentInfo.PersonMobilePhone || "",
-                brokerage: agentInfo.Brokerage_Name__pc,
-                state: paramsObj.state
-            } : undefined
-        });
-
-        await sendOpenPhoneMessage({
-            content: `New Lead From VeteranPCS: 
-            ${formData.firstName} ${formData.lastName}
-            Email: ${formData.email}
-            Phone: ${formatPhoneNumberForDisplay(formData.phone)}
-            Current Base: ${formData.currentBase || 'Not Specified'}
-            Destination Base: ${formData.destinationBase || 'Not Specified'}
-            Additional Comments: ${formData.additionalComments || 'None'}
-            `,
-            from: OPEN_PHONE_FROM_NUMBER,
-            to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
+        // Fire and forget notifications - don't await them
+        Promise.all([
+            sendToSlack({
+                headerText: '🔔 New Lender Lead',
+                name: `${formData.firstName} ${formData.lastName}`,
+                email: formData.email || "",
+                phoneNumber: formData.phone || "",
+                message: formData.additionalComments || "",
+                agentInfo: agentInfo ? {
+                    name: agentInfo.Name || "",
+                    email: agentInfo.PersonEmail || "",
+                    phoneNumber: agentInfo.PersonMobilePhone || "",
+                    brokerage: agentInfo.Brokerage_Name__pc,
+                    state: paramsObj.state
+                } : undefined
+            }),
+            sendOpenPhoneMessage({
+                content: `New Lead From VeteranPCS: 
+                ${formData.firstName} ${formData.lastName}
+                Email: ${formData.email}
+                Phone: ${formatPhoneNumberForDisplay(formData.phone)}
+                Current Base: ${formData.currentBase || 'Not Specified'}
+                Destination Base: ${formData.destinationBase || 'Not Specified'}
+                Additional Comments: ${formData.additionalComments || 'None'}
+                `,
+                from: OPEN_PHONE_FROM_NUMBER,
+                to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
+            })
+        ]).catch(error => {
+            // Log any errors but don't block the main flow
+            console.error('Error sending notifications:', error);
         });
 
         if (!response.ok) {

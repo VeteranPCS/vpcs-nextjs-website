@@ -3,30 +3,13 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // Apply these headers to all routes
-        source: '/:path*',
+        source: "/(.*)",
         headers: [
           {
             key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains'
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY'
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block'
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
+            value: 'max-age=63072000; includeSubDomains; preload'
           }
-        ]
+        ],
       },
       {
         source: "/api/:path*",
