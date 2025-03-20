@@ -1,9 +1,7 @@
-"use client";
-import { useState, useEffect, useCallback } from "react";
+import { WithContext, FAQPage } from "schema-dts";
 import AccordionItem from "@/components/common/AccordionItem";
 import commonService from "@/services/commonServices";
 import Script from "next/script";
-import { WithContext, FAQPage } from "schema-dts";
 
 export type FreqAskedQuestionsProps = {
   _id: string;
@@ -11,35 +9,9 @@ export type FreqAskedQuestionsProps = {
   answer: string;
 };
 
-export default function ControlledAccordions() {
-  const [expanded, setExpanded] = useState<string | false>("panel1");
-  const [questions, setQuestions] = useState<FreqAskedQuestionsProps[] | null>(
-    []
-  );
+export default async function FrequentlyAskedQuestions() {
+  const questions = await commonService.fetchFrequentlyAskedQuestions();
 
-  const fetchQuestion = useCallback(async () => {
-    try {
-      const response = await commonService.fetchFrequentlyAskedQuestions();
-      setQuestions(response);
-    } catch (error) {
-      console.error("Error fetching Frequently Asked questions:", error);
-      return (
-        <div>
-          <p>
-            Failed to load Frequently Asked questions. Please try again later.
-          </p>
-        </div>
-      );
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchQuestion();
-  }, [fetchQuestion]);
-
-  const handleChange = (panel: string) => {
-    setExpanded(expanded === panel ? false : panel); // Toggle panel visibility
-  };
   const jsonLd: WithContext<FAQPage> = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -67,8 +39,6 @@ export default function ControlledAccordions() {
           id={question._id}
           title={question.question}
           content={question.answer}
-          expanded={expanded}
-          handleChange={handleChange}
         />
       ))}
     </div>
