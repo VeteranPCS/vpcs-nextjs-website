@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import GetListedLenders from "@/components/GetListedLenders/GetListedLendersContactDiane";
+import GetListedLenders from "@/components/GetListedLenders/GetListedLenders";
 import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListedLendersProfileInfo";
 import GetListedLendersProfileInfoWantShareMore from "@/components/GetListedLenders/GetListedLendersProfileInfoWantShareMore";
 import MortgageCompanyInfo from "@/components/GetListedLenders/MortgageCompanyInfo";
@@ -60,12 +60,13 @@ export default function GetListedLendersPage() {
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = (stepData: any) => {
+  const handleSubmit = async (stepData: any): Promise<{ success?: boolean; redirectUrl?: string }> => {
     setFormData(prev => ({
       ...prev,
       ...stepData
     }));
     handleNext();
+    return Promise.resolve({ success: true });
   };
 
 

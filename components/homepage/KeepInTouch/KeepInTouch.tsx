@@ -43,11 +43,13 @@ const contactFormSchema = yup.object().shape({
 const KeepInTouch = () => {
   const router = useRouter()
   const pathname = usePathname()
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: yupResolver<ContactFormData>(contactFormSchema),
@@ -63,6 +65,7 @@ const KeepInTouch = () => {
   const [mediaAccount, SetMediaAccount] = useState<MediaAccountProps[]>([]);
 
   const handleFormSubmission = async (data: ContactFormData) => {
+    setIsSubmitting(true);
     try {
       sendGTMEvent({
         event: 'keep_in_touch_form_submission',
@@ -70,12 +73,16 @@ const KeepInTouch = () => {
       });
       const server_response = await KeepInTouchForm(data);
       if (server_response?.success) {
-        router.push(`${BASE_URL}/thank-you`);
+        reset();
+        window.location.href = `${BASE_URL}/thank-you`;
+        return;
       } else {
         console.log("No redirect URL found");
       }
     } catch (error) {
       console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -206,13 +213,14 @@ const KeepInTouch = () => {
                     <div className="lg:py-8 md:py-8 sm:py-2 py-2">
                       <button
                         type="submit"
-                        className="items-center bg-[#A81F23] w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px] px-[20px] xl:py-[15px] lg:py-[15px] sm:py-[14px] py-[14px] rounded-[16px] text-center tracking-[1px] hover:tracking-[5px] duration-500 transition-all hover:bg-[#871B1C]"
+                        disabled={isSubmitting}
+                        className={`items-center ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#A81F23]'} w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px] px-[20px] xl:py-[15px] lg:py-[15px] sm:py-[14px] py-[14px] rounded-[16px] text-center tracking-[1px] hover:tracking-[5px] duration-500 transition-all hover:bg-[#871B1C]`}
                       >
                         <span
                           className="xl:text-[18px] lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal leading-6 bg-cover 
             text-white text-nowrap tahoma"
                         >
-                          Submit
+                          {isSubmitting ? 'Submitting...' : 'Submit'}
                         </span>
                       </button>
                     </div>

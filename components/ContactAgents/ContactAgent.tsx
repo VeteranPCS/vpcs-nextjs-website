@@ -20,7 +20,7 @@ export interface FormData {
 }
 
 interface ContactFormProps {
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: FormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
 }
 
 // Define validation schema using yup
@@ -44,11 +44,13 @@ const contactFormSchema = yup.object().shape({
 });
 
 const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(contactFormSchema),
@@ -69,8 +71,22 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
 
   const howDidYouHearValue = watch("howDidYouHear");
 
-  const handleFormSubmit: SubmitHandler<FormData> = (data) => {
-    onSubmit(data);
+  const handleFormSubmit: SubmitHandler<FormData> = async (data) => {
+    setIsSubmitting(true);
+    try {
+      const response = await onSubmit(data);
+      if (response?.success || response?.redirectUrl) {
+        reset(); // Reset form after successful submission
+        if (response?.redirectUrl) {
+          window.location.href = response.redirectUrl; // Immediate redirect
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const onCaptchaChange = (token: string | null) => {
@@ -312,9 +328,10 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
             <div className="flex md:justify-start justify-center">
               <button
                 type="submit"
-                className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
+                disabled={isSubmitting}
+                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
               >
-                Submit
+                {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
             </div>
           </div>

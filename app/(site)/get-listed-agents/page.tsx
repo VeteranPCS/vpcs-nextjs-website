@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import GetListedAgents from "@/components/GetListedAgents/GetListedAgentsContactDiane";
+import GetListedAgents from "@/components/GetListedAgents/GetListedAgents";
 import CurrentLocation from "@/components/GetListedAgents/CurrentLocation";
 import AgentInfo from "@/components/GetListedAgents/AgentInfo";
 import Image from "next/image";
@@ -27,12 +27,13 @@ export default function GetListedAgentsPage() {
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = (stepData: any) => {
+  const handleSubmit = async (stepData: any): Promise<{ success?: boolean; redirectUrl?: string }> => {
     setFormData(prev => ({
       ...prev,
       ...stepData
     }));
     handleNext();
+    return Promise.resolve({ success: true });
   };
 
   useEffect(() => {

@@ -32,7 +32,7 @@ interface FormData {
 export default function ContactAgentPage() {
   const router = useRouter()
 
-  const handleSubmit = async (formData: FormData) => {
+  const handleSubmit = async (formData: FormData): Promise<{ success?: boolean; redirectUrl?: string }> => {
     const fullQueryString = window.location.search;
     const queryParams = new URLSearchParams(fullQueryString);
 
@@ -44,14 +44,14 @@ export default function ContactAgentPage() {
       });
 
       const server_response = await contactAgentPostForm(formData, fullQueryString);
-
       if (server_response?.redirectUrl) {
-        router.push(server_response.redirectUrl);
-      } else {
-        console.log("No redirect URL found");
+        window.location.href = server_response.redirectUrl;
+        return { success: true, redirectUrl: server_response.redirectUrl };
       }
+      return { success: false };
     } catch (error) {
       console.error("Error submitting form:", error);
+      return { success: false };
     }
   };
 

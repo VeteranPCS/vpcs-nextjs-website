@@ -45,10 +45,12 @@ const contactFormSchema = yup.object().shape({
 const ContactForm = () => {
   const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: yupResolver<ContactFormData>(contactFormSchema),
@@ -63,6 +65,7 @@ const ContactForm = () => {
   });
 
   async function onSubmit(data: ContactFormData) {
+    setIsSubmitting(true);
     try {
       sendGTMEvent({
         event: 'contact_form_submission',
@@ -70,12 +73,16 @@ const ContactForm = () => {
 
       const server_response = await contactPostForm(data);
       if (server_response?.success) {
-        router.push(`${BASE_URL}/thank-you`);
+        reset();
+        window.location.href = `${BASE_URL}/thank-you`;
+        return;
       } else {
         console.log("No redirect URL found");
       }
     } catch (error) {
       console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   }
   const [mediaAccount, SetMediaAccount] = useState<MediaAccountProps[]>([]);
@@ -257,13 +264,14 @@ const ContactForm = () => {
                 <div className="flex justify-end lg:py-8 md:py-8 sm:py-2 py-2">
                   <button
                     type="submit"
-                    className="items-center bg-[#A81F23] w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px] px-[20px] xl:py-[15px] lg:py-[15px] sm:py-[14px] py-[14px] rounded-[16px] text-center tracking-[1px] hover:tracking-[5px] duration-500 transition-all"
+                    disabled={isSubmitting}
+                    className={`items-center ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#A81F23]'} w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px] px-[20px] xl:py-[15px] lg:py-[15px] sm:py-[14px] py-[14px] rounded-[16px] text-center tracking-[1px] hover:tracking-[5px] duration-500 transition-all`}
                   >
                     <span
                       className="xl:text-[18px] lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal leading-6 bg-cover 
                         text-white text-nowrap tahoma"
                     >
-                      Send Message
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
                     </span>
                   </button>
                 </div>

@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Link from "next/link";
+import { useState } from "react";
 
 // Define validation schema using yup
 const contactFormSchema = yup.object().shape({
@@ -23,19 +24,36 @@ interface FormData {
 }
 
 interface ContactFormProps {
-  onSubmit: (formData: FormData) => void;
+  onSubmit: (formData: FormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
 }
+
 const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(contactFormSchema),
   });
 
-  const handleFormSubmit: SubmitHandler<FormData> = (data) => {
-    onSubmit(data);
+  const handleFormSubmit: SubmitHandler<FormData> = async (data) => {
+    setIsSubmitting(true);
+    try {
+      const response = await onSubmit(data);
+      if (response?.success || response?.redirectUrl) {
+        reset(); // Reset form after successful submission
+        if (response?.redirectUrl) {
+          window.location.href = response.redirectUrl; // Immediate redirect
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -122,9 +140,10 @@ const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
             <div className="flex md:justify-start justify-center">
               <button
                 type="submit"
-                className="rounded-md border border-[#BBBFC1] bg-white px-8 py-2 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
+                disabled={isSubmitting}
+                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-white'} px-8 py-2 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg`}
               >
-                Go Next
+                {isSubmitting ? 'Processing...' : 'Go Next'}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
