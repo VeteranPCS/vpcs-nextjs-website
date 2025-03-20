@@ -1,5 +1,5 @@
 'use server';
-import formatPhoneNumber from '@/utils/formatPhoneNumber';
+import { formatPhoneNumberForDisplay, formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
 
 interface SlackBlock {
     type: string;
@@ -68,7 +68,7 @@ export default async function sendToSlack({
                 },
                 {
                     type: 'mrkdwn',
-                    text: `*Phone Number:*\n<tel:${phoneNumber}|${formatPhoneNumber(phoneNumber)}>`
+                    text: `*Phone Number:*\n<tel:${formatPhoneNumberE164(phoneNumber)}|${formatPhoneNumberForDisplay(phoneNumber)}>`
                 }
             ]
         }
@@ -96,7 +96,7 @@ export default async function sendToSlack({
             },
             {
                 type: 'mrkdwn',
-                text: `*Agent Phone:*\n${agentInfo.phoneNumber || ''}`
+                text: `*Agent Phone:*\n<tel:${formatPhoneNumberE164(agentInfo.phoneNumber)}|${formatPhoneNumberForDisplay(agentInfo.phoneNumber)}>`
             }
         ];
 

@@ -1,6 +1,8 @@
-// services/salesForcePostFormsService.ts
 'use server'
 import sendToSlack from '@/actions/sendToSlack';
+import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
+import { formatPhoneNumberForDisplay, formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
+import { OPEN_PHONE_FROM_NUMBER } from '@/actions/sendOpenPhoneMessage';
 import stateService from '@/services/stateService';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -80,6 +82,19 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
                 brokerage: agentInfo.Brokerage_Name__pc,
                 state: paramsObj.state
             } : undefined
+        });
+
+        await sendOpenPhoneMessage({
+            content: `New Lead From VeteranPCS: 
+            ${formData.firstName} ${formData.lastName}
+            Email: ${formData.email}
+            Phone: ${formatPhoneNumberForDisplay(formData.phone)}
+            Current Base: ${formData.currentBase || 'Not Specified'}
+            Destination Base: ${formData.destinationBase || 'Not Specified'}
+            Additional Comments: ${formData.additionalComments || 'None'}
+            `,
+            from: OPEN_PHONE_FROM_NUMBER,
+            to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
         });
 
         if (!response.ok) {
@@ -355,6 +370,19 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
                 brokerage: agentInfo.Brokerage_Name__pc,
                 state: paramsObj.state
             } : undefined
+        });
+
+        await sendOpenPhoneMessage({
+            content: `New Lead From VeteranPCS: 
+            ${formData.firstName} ${formData.lastName}
+            Email: ${formData.email}
+            Phone: ${formatPhoneNumberForDisplay(formData.phone)}
+            Current Base: ${formData.currentBase || 'Not Specified'}
+            Destination Base: ${formData.destinationBase || 'Not Specified'}
+            Additional Comments: ${formData.additionalComments || 'None'}
+            `,
+            from: OPEN_PHONE_FROM_NUMBER,
+            to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
         });
 
         if (!response.ok) {
