@@ -2,10 +2,10 @@
 import sendToSlack from '@/actions/sendToSlack';
 import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
 import { formatPhoneNumberForDisplay, formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
-import { OPEN_PHONE_FROM_NUMBER } from '@/actions/sendOpenPhoneMessage';
 import stateService from '@/services/stateService';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const OPEN_PHONE_FROM_NUMBER = process.env.OPEN_PHONE_FROM_NUMBER || "";
 
 export async function contactAgentPostForm(formData: any, queryString: string) {
     try {
