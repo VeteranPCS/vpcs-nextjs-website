@@ -56,13 +56,15 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
               >
                 <div className="justify-center items-center flex flex-col">
                   <div className="rounded-full bg-[#E1EDFB] md:w-[200px] md:h-[200px] sm:w-[100px] sm:h-[100px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
-                    <Image
-                      src={agent?.PhotoUrl || ""}
-                      alt={`${agent?.Name}'s Profile Picture`}
-                      width={1000}
-                      height={1000}
-                      className="object-cover"
-                    />
+                    <Link href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}>
+                      <Image
+                        src={agent?.PhotoUrl || ""}
+                        alt={`${agent?.Name}'s Profile Picture`}
+                        width={1000}
+                        height={1000}
+                        className="object-cover"
+                      />
+                    </Link>
                   </div>
                   <Link
                     href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}
@@ -72,9 +74,11 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                 </div>
                 <div className="md:pl-10 sm:pl-4 pl-4">
                   <div>
-                    <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[20px] text-[20px] font-bold">
-                      {agent?.Name}
-                    </h3>
+                    <Link href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}>
+                      <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[20px] text-[20px] font-bold">
+                        {agent?.Name}
+                      </h3>
+                    </Link>
                     <div className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[10px] text-[10px] font-normal sm:mt-4 mt-0">
                       <p className="font-bold">
                         {orderMilitaryServiceInfo(agent?.Military_Status__pc || "", agent?.Military_Service__pc || "")}

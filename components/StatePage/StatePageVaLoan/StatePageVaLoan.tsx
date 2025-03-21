@@ -30,13 +30,15 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
               <div key={lender.AccountId_15__c} className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4">
                 <div className="justify-center items-center flex flex-col">
                   <div className="rounded-full bg-[#E1EDFB] sm:w-[200px] sm:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
-                    <Image
-                      src={lender?.PhotoUrl || ""}
-                      alt={`${lender?.Name}'s Profile Picture`}
-                      width={1000}
-                      height={1000}
-                      className="object-cover"
-                    />
+                    <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}>
+                      <Image
+                        src={lender?.PhotoUrl || ""}
+                        alt={`${lender?.Name}'s Profile Picture`}
+                        width={1000}
+                        height={1000}
+                        className="object-cover"
+                      />
+                    </Link>
                   </div>
                   <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}>
                     <Button buttonText="Contact Now" />
@@ -44,10 +46,12 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                 </div>
                 <div className="pl-10">
                   <div>
-                    <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[24px] text-[24px] font-bold">
-                      {lender?.Name}
-                    </h3>
-                    <div className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal sm:mt-4 mt-0">
+                    <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}>
+                      <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[24px] text-[24px] font-bold">
+                        {lender?.Name}
+                      </h3>
+                    </Link>
+                    <div className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[10px] text-[10px] font-normal sm:mt-4 mt-0">
                       <p className="font-bold">
                         {orderMilitaryServiceInfo(lender?.Military_Status__pc || "", lender?.Military_Service__pc || "")}
                       </p>
@@ -70,7 +74,7 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                       </p>
 
                       {/* Single label that toggles state */}
-                      <label htmlFor={`toggle-${index + lender.Name}`} className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold absolute bottom-0 right-0 bg-white peer-checked:before:content-['Read_Less'] before:content-['...Read_More'] mt-10 before:bg-white">
+                      <label htmlFor={`toggle-${index + lender.Name}`} className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 block peer-checked:before:content-['Read_Less'] before:content-['...Read_More']">
                       </label>
                     </div>
 
