@@ -178,6 +178,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
                     type="text"
                     id="firstName"
                     placeholder="Alexander"
+                    autoComplete="given-name"
                   />
                   {renderError('firstName')}
                 </div>
@@ -195,6 +196,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
                     type="text"
                     id="lastName"
                     placeholder="Smith"
+                    autoComplete="family-name"
                   />
                   {renderError('lastName')}
                 </div>
@@ -211,6 +213,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
                     type="email"
                     id="email"
                     placeholder="alex_manager@gmail.com"
+                    autoComplete="email"
                   />
                   {renderError('email')}
                 </div>
@@ -227,6 +230,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
                     type="tel"
                     id="phone"
                     placeholder="+1 555 555-1234"
+                    autoComplete="tel"
                   />
                   {renderError('phone')}
                 </div>
@@ -243,6 +247,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
                     type="text"
                     id="currentBase"
                     placeholder="Current Base/City"
+                    autoComplete="off"
                   />
                   {renderError('currentBase')}
                 </div>
@@ -259,6 +264,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
                     type="text"
                     id="destinationBase"
                     placeholder="Destination Base/City"
+                    autoComplete="off"
                   />
                   {renderError('destinationBase')}
                 </div>
@@ -275,6 +281,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     id="additionalComments"
                     placeholder="Add comments"
+                    autoComplete="off"
                   />
                 </div>
 

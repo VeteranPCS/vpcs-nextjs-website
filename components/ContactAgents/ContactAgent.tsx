@@ -144,6 +144,7 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
                     type="text"
                     id="firstName"
                     placeholder="Alexander"
+                    autoComplete="given-name"
                   />
                   {errors.firstName && (
                     <p className="text-red-500 text-xs mt-1">{errors.firstName.message}</p>
@@ -163,6 +164,7 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
                     type="text"
                     id="lastName"
                     placeholder="Smith"
+                    autoComplete="family-name"
                   />
                   {errors.lastName && (
                     <p className="text-red-500 text-xs mt-1">{errors.lastName.message}</p>
@@ -182,6 +184,7 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
                     type="email"
                     id="email"
                     placeholder="alex_manager@gmail.com"
+                    autoComplete="email"
                   />
                   {errors.email && (
                     <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
@@ -201,6 +204,7 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
                     type="tel"
                     id="phone"
                     placeholder="+1 555 555-1234"
+                    autoComplete="tel"
                   />
                   {errors.phone && (
                     <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>
@@ -220,6 +224,7 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
                     type="text"
                     id="currentBase"
                     placeholder="Current Base/City"
+                    autoComplete="off"
                   />
                   {errors.currentBase && (
                     <p className="text-red-500 text-xs mt-1">{errors.currentBase.message}</p>
@@ -239,6 +244,7 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
                     type="text"
                     id="destinationBase"
                     placeholder="Destination Base/City"
+                    autoComplete="off"
                   />
                   {errors.destinationBase && (
                     <p className="text-red-500 text-xs mt-1">{errors.destinationBase.message}</p>

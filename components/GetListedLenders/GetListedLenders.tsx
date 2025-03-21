@@ -94,6 +94,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
                     id="firstName"
                     placeholder="Please Enter First Name"
                     {...register('firstName')}
+                    autoComplete="given-name"
                   />
                   {errors.firstName && (
                     <span className="text-error">{errors.firstName.message}</span>
@@ -112,6 +113,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
                     id="lastName"
                     placeholder="Please Enter Last Name"
                     {...register('lastName')}
+                    autoComplete="family-name"
                   />
                   {errors.lastName && (
                     <span className="text-error">{errors.lastName.message}</span>
@@ -131,6 +133,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
                       id="email"
                       {...register('email')}
                       placeholder="Please Enter Email"
+                      autoComplete="email"
                     />
                     <span className="absolute left-1 w-6 h-6 text-[#B1B3B8]">
                       <svg
@@ -165,6 +168,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
                       id="phone"
                       placeholder="Please Enter Phone"
                       {...register('phone')}
+                      autoComplete="tel"
                     />
                     <span className="absolute left-1 w-6 h-6 text-[#B1B3B8]">
                       <svg
