@@ -209,6 +209,7 @@ const ContactForm = () => {
                       type="text"
                       id="firstName"
                       placeholder="First Name"
+                      autoComplete="given-name"
                     />
                     {renderError('firstName')}
                   </div>
@@ -223,6 +224,7 @@ const ContactForm = () => {
                       placeholder="Last Name"
                       id="lastName"
                       {...register('lastName')}
+                      autoComplete="family-name"
                     />
                     {renderError('lastName')}
                   </div>
@@ -236,6 +238,7 @@ const ContactForm = () => {
                       id="email"
                       placeholder="Email"
                       {...register('email')}
+                      autoComplete="email"
                     />
                     {renderError('email')}
                   </div>
@@ -251,6 +254,7 @@ const ContactForm = () => {
                     placeholder="Write your message.."
                     {...register('additionalComments')}
                     rows={1}
+                    autoComplete="off"
                   ></textarea>
                 </div>
 

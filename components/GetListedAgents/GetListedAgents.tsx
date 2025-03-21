@@ -82,6 +82,7 @@ const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
                     type="text"
                     id="firstName"
                     placeholder="Alexander"
+                    autoComplete="given-name"
                   />
                   {errors.firstName && (
                     <p className="text-red-500 text-xs mt-1">{errors.firstName.message}</p>
@@ -98,6 +99,7 @@ const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
                     type="text"
                     id="lastName"
                     placeholder="Smith"
+                    autoComplete="family-name"
                   />
                   {errors.lastName && (
                     <p className="text-red-500 text-xs mt-1">{errors.lastName.message}</p>
@@ -114,6 +116,7 @@ const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
                     type="email"
                     id="email"
                     placeholder="alex_manager@gmail.com"
+                    autoComplete="email"
                   />
                   {errors.email && (
                     <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
@@ -130,6 +133,7 @@ const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
                     type="tel"
                     id="phone"
                     placeholder="+1 555 555-1234"
+                    autoComplete="tel"
                   />
                   {errors.phone && (
                     <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>

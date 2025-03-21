@@ -1,5 +1,6 @@
 'use server';
 import { formatPhoneNumberForDisplay, formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
+import fetchWithRetry from '@/utils/fetchWithRetry';
 
 interface SlackBlock {
     type: string;
@@ -133,7 +134,7 @@ export default async function sendToSlack({
     const payload = { blocks };
 
     try {
-        const response = await fetch(webhookUrl, {
+        const response = await fetchWithRetry(webhookUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

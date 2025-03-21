@@ -86,14 +86,13 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
                 } : undefined
             }),
             sendOpenPhoneMessage({
-                content: `New Lead From VeteranPCS: 
-                ${formData.firstName} ${formData.lastName}
-                Email: ${formData.email}
-                Phone: ${formatPhoneNumberForDisplay(formData.phone)}
-                Current Base: ${formData.currentBase || 'Not Specified'}
-                Destination Base: ${formData.destinationBase || 'Not Specified'}
-                Additional Comments: ${formData.additionalComments || 'None'}
-                `,
+                content: `New Lead From VeteranPCS:
+${formData.firstName} ${formData.lastName}
+Email: ${formData.email}
+Phone: ${formatPhoneNumberForDisplay(formData.phone)}
+Current Base: ${formData.currentBase || 'Not Specified'}
+Destination Base: ${formData.destinationBase || 'Not Specified'}
+Additional Comments: ${formData.additionalComments || 'None'}`,
                 from: OPEN_PHONE_FROM_NUMBER,
                 to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
             })
@@ -379,14 +378,13 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
                 } : undefined
             }),
             sendOpenPhoneMessage({
-                content: `New Lead From VeteranPCS: 
-                ${formData.firstName} ${formData.lastName}
-                Email: ${formData.email}
-                Phone: ${formatPhoneNumberForDisplay(formData.phone)}
-                Current Base: ${formData.currentBase || 'Not Specified'}
-                Destination Base: ${formData.destinationBase || 'Not Specified'}
-                Additional Comments: ${formData.additionalComments || 'None'}
-                `,
+                content: `New Lead From VeteranPCS:
+${formData.firstName} ${formData.lastName}
+Email: ${formData.email}
+Phone: ${formatPhoneNumberForDisplay(formData.phone)}
+Current Base: ${formData.currentBase || 'Not Specified'}
+Destination Base: ${formData.destinationBase || 'Not Specified'}
+Additional Comments: ${formData.additionalComments || 'None'}`,
                 from: OPEN_PHONE_FROM_NUMBER,
                 to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
             })
