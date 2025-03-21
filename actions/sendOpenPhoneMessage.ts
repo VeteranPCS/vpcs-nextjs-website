@@ -1,3 +1,5 @@
+'use server';
+
 export const OPEN_PHONE_FROM_NUMBER = "+17194153014";
 
 interface OpenPhoneMessageParams {
