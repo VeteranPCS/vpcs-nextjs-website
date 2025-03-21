@@ -26,12 +26,12 @@ export async function getSalesforceToken() {
 export async function getGoogleAuthToken() {
     try {
         const authorizationUrl = process.env.GOOGLE_AUTH_URL +
-        `client_id=${process.env.GOOGLE_CLIENT_ID}&` +
-        // `redirect_uri=${process.env.GOOGLE_REDIRECT_URI}&` +
-        `response_type=code&` +
-        `scope=${process.env.GOOGLE_SCOPES}&` +
-        `access_type=offline&` +
-        `prompt=consent`;
+            `client_id=${process.env.GOOGLE_CLIENT_ID}&` +
+            // `redirect_uri=${process.env.GOOGLE_REDIRECT_URI}&` +
+            `response_type=code&` +
+            `scope=${process.env.GOOGLE_SCOPES}&` +
+            `access_type=offline&` +
+            `prompt=consent`;
 
         const response = await salesForceTokenAPI({
             endpoint: authorizationUrl,
@@ -42,10 +42,10 @@ export async function getGoogleAuthToken() {
             GOOGLEAUTH = response.data.access_token;
             return response.data.access_token
         } else {
-            throw new Error('Failed to FETCH Salesforce Token');
+            throw new Error('Failed to FETCH Google Auth Token');
         }
     } catch (error) {
-        console.error('Error fetching Salesforce token:', error);
+        console.error('Error fetching Google Auth token:', error);
         throw error;
     }
 }

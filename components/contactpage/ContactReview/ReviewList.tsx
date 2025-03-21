@@ -1,11 +1,11 @@
 import ReviewTestimonial from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
-import reviewService from "@/services/reviewService";
 import { Review } from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
+import { fetchGoogleReviews } from "@/utils/googleBusinessProfile";
 export default async function ReviewList() {
   let reviewsList = [];
 
   try {
-    reviewsList = await reviewService.fetchReviews();
+    reviewsList = await fetchGoogleReviews();
   } catch (error) {
     console.error('Failed to fetch Reviews:', error);
     return <p>Failed to load Reviews.</p>;
