@@ -18,8 +18,34 @@ export function middleware(request: NextRequest) {
 
     const path = url.pathname.toLowerCase().replace(/^\//, '')
 
+    // Handle redirects
     if (baseRedirects[path]) {
         url.pathname = baseRedirects[path]
         return NextResponse.redirect(url)
     }
+
+    // For API routes, ensure proper headers
+    if (url.pathname.startsWith('/api/')) {
+        const response = NextResponse.next()
+
+        // Add CORS headers
+        response.headers.set('Access-Control-Allow-Origin', '*')
+        response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+
+        return response
+    }
+
+    // For all other routes, continue without modification
+    return NextResponse.next()
+}
+
+// Configure which routes should trigger the middleware
+export const config = {
+    matcher: [
+        // Match all API routes
+        '/api/:path*',
+        // Match base redirects
+        '/((?!_next/static|_next/image|favicon.ico).*)',
+    ],
 }
