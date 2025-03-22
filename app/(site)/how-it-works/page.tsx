@@ -6,8 +6,8 @@ import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import StateMap from "@/components/homepage/StateMap";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const META_TITLE = "How VeteranPCS Connects Military Families with Trusted Real Estate Agents";
-const META_DESCRIPTION = "Learn how VeteranPCS simplifies your move by connecting you with veteran or military spouse real estate agents. Enjoy a seamless process, receive a Move-In Bonus up to $4,000, and contribute to veteran-focused charities with each transaction.";
+const META_TITLE = "The VeteranPCS Process: PCS Support, VA Loan Expertise & $4,000 Bonuses";
+const META_DESCRIPTION = "Your military move, simplified. From PCS orders to closing, we connect you with agents who understand military timelines and VA requirements. Receive personalized support, expert guidance, and up to $4,000 in Move-In Bonuses—all while supporting veteran charities.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL || ""),

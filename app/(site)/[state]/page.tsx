@@ -92,7 +92,7 @@ export async function generateMetadata({ params }: { params: { state: string } }
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
     .join(" ");
 
-  const ogTitle = `Find Military Friendly Real Estate Agents in ${stateName} - Veteran PCS`;
+  const ogTitle = `Military PCS Moves: Top Veteran Real Estate Agents in ${stateName} - VA Loan Experts`;
   const ogDescription = `Connect with the best veteran real estate agents in ${stateName} who understand the unique needs of veterans and military families.`;
   const ogImage = await stateService.fetchStateImage(params.state);
 

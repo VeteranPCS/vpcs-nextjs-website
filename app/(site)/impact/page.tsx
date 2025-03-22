@@ -16,8 +16,8 @@ import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuesti
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const META_TITLE = "Supporting Military Families Through Real Estate";
-const META_DESCRIPTION = "Discover how VeteranPCS has given back over $300,000 in hero savings, facilitated $2+ million in real estate transactions, and donated $25,000+ to veteran-focused charities. Join us in empowering military families and veterans nationwide.";
+const META_TITLE = "Our Mission Impact: Supporting Military Families & Veteran Charities";
+const META_DESCRIPTION = "The VeteranPCS difference: $300,000+ in service member savings, $25,000+ donated to veteran charities, and 2,000+ successful military moves. See how your transaction helps fellow service members and strengthens the veteran community.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL || ""),

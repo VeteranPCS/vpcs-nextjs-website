@@ -20,8 +20,8 @@ import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const META_TITLE = "PCS Resources - Essential Tools for Military Relocation";
-const META_DESCRIPTION = "Access free VA loan guides, moving calculators, and employment resources tailored for military families. VeteranPCS offers support to ensure a seamless Permanent Change of Station (PCS) experience, including connections to veteran-owned businesses and charitable contributions with each move.";
+const META_TITLE = "Military PCS Toolkit: Moving Guides, BAH Calculators & VA Loan Resources";
+const META_DESCRIPTION = "Complete PCS preparation headquarters: download customizable PCS checklists, calculate BAH for your next duty station, access VA loan eligibility guides, and connect with military-friendly businesses near your new base—all designed by veterans who've navigated multiple PCS moves.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL || ""),

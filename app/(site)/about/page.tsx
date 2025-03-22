@@ -11,8 +11,8 @@ import type { Metadata } from "next";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
-const META_TITLE = "Earn Up to $4,000 Move In Bonus & Support Veteran Charities";
-const META_DESCRIPTION = "Learn about VeteranPCS, a platform built by veterans for veterans. We connect military members with real estate agents who understand PCS moves, VA loans, and the unique challenges of military relocations. Enjoy top-tier service, a Move In Bonus up to $4,000, and the satisfaction of giving back—every closing supports a veteran-focused charity.";
+const META_TITLE = "Veteran-Founded Real Estate Network - Up to $4,000 Move-In Bonus";
+const META_DESCRIPTION = "Founded by military veterans who experienced the PCS struggle firsthand. Our nationwide network of veteran and military spouse agents understand your BAH, timeline constraints, and VA loan requirements. Earn up to $4,000 in Move-In Bonuses while supporting veteran charities with every transaction.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL || ""),
