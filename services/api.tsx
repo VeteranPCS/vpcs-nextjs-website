@@ -49,14 +49,14 @@ export const api = async ({
         method: type as any,
         data,
         headers: {
-            "Cache-Control": "no-cache", 
+            "Cache-Control": "no-cache",
         },
     };
 
     try {
-        res = await axios(config);  
+        res = await axios(config);
     } catch (err: any) {
-        res = err.response; 
+        res = err.response;
     }
 
     return res;  // Return the response or error
@@ -70,24 +70,24 @@ export const salesForceAPI = async ({
 }: ApiParams): Promise<AxiosResponse | undefined> => {
     let res: AxiosResponse | undefined;
 
-    if(!SALESFORCETOKEN) {
+    if (!SALESFORCETOKEN) {
         await getSalesforceToken()
     }
-    
+
     const config: AxiosRequestConfig = {
         url: endpoint,
         method: type as any,
         data,
         headers: {
-            "Cache-Control": "no-cache",                                                                                                                                
+            "Cache-Control": "no-cache",
             Authorization: `Bearer ${SALESFORCETOKEN}`,
-        },                                                                                  
+        },
     };
-                                    
+
     try {
-        res = await axios(config);  
+        res = await axios(config);
     } catch (err: any) {
-        res = err.response; 
+        res = err.response;
     }
 
     return res;  // Return the response or error
@@ -96,28 +96,28 @@ export const salesForceAPI = async ({
 export const googleReviewsAPI = async ({
     endpoint,
     data,
-    type
+    type,
 }: ApiParams): Promise<AxiosResponse | undefined> => {
     let res: AxiosResponse | undefined;
 
-    if(!GOOGLEAUTH) {
+    if (!GOOGLEAUTH) {
         await getGoogleAuthToken()
     }
-    
+
     const config: AxiosRequestConfig = {
         url: endpoint,
         method: type as any,
         data,
         headers: {
-            "Cache-Control": "no-cache",                                                                                                                                
-            Authorization: `Bearer ${SALESFORCETOKEN}`,
-        },                                                                                  
+            "Cache-Control": "no-cache",
+            Authorization: `Bearer ${GOOGLEAUTH}`,
+        },
     };
-                                    
+
     try {
-        res = await axios(config);  
+        res = await axios(config);
     } catch (err: any) {
-        res = err.response; 
+        res = err.response;
     }
 
     return res;  // Return the response or error
@@ -130,25 +130,25 @@ export const salesForceImageAPI = async ({
 }: ApiParams): Promise<AxiosResponse | undefined> => {
     let res: AxiosResponse | undefined;
 
-    if(!SALESFORCETOKEN) {
+    if (!SALESFORCETOKEN) {
         await getSalesforceToken()
     }
-    
+
     const config: AxiosRequestConfig = {
         url: endpoint,
         method: type as any,
         data,
         headers: {
-            "Cache-Control": "no-cache", 
+            "Cache-Control": "no-cache",
             Authorization: `Bearer ${SALESFORCETOKEN}`,
         },
         responseType: 'arraybuffer'
     };
 
     try {
-        res = await axios(config);  
+        res = await axios(config);
     } catch (err: any) {
-        res = err.response; 
+        res = err.response;
     }
 
     return res;  // Return the response or error
@@ -160,20 +160,20 @@ export const salesForceTokenAPI = async ({
     type
 }: ApiParams): Promise<AxiosResponse | undefined> => {
     let res: AxiosResponse | undefined;
-    
+
     const config: AxiosRequestConfig = {
         url: endpoint,
         method: type as any,
         data,
         headers: {
-            "Cache-Control": "no-cache", 
+            "Cache-Control": "no-cache",
         },
     };
 
     try {
-        res = await axios(config);  
+        res = await axios(config);
     } catch (err: any) {
-        res = err.response; 
+        res = err.response;
     }
 
     return res;  // Return the response or error

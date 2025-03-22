@@ -44,8 +44,9 @@ export interface BlogService {
   fetchBlogs: () => Promise<BlogDetails[]>;
 }
 
-const META_TITLE = "Real Estate Tips, Tricks, and Advice for Military Families";
-const META_DESCRIPTION = "VeteranPCS blog is your go-to resource for real estate tips, tricks, and advice for military families. Learn about VA loans, PCS moves, and more.";
+const META_TITLE = "Military PCS & VA Loan Guides - Real Estate Advice for Service Members";
+const META_DESCRIPTION = "Expert resources for military homebuyers and sellers. Get PCS checklists, BAH maximization strategies, VA loan qualification guides, and base-specific housing insights written by veterans who've been in your boots.";
+
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL || ""),

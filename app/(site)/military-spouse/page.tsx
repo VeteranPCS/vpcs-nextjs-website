@@ -18,8 +18,8 @@ import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuesti
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const META_TITLE = "Support for Military Spouses - Employment & Moving Resources";
-const META_DESCRIPTION = "Explore VeteranPCS's dedicated resources for military spouses, including remote employment opportunities with Squared Away, moving assistance from Porch and BoxOps, and access to veteran-owned businesses. Empower your journey with our community-driven support.";
+const META_TITLE = "Military Spouse Careers in Real Estate | PCS-Proof Employment";
+const META_DESCRIPTION = "Military spouses: Build a portable career that moves with you. Our network of spouse agents shares PCS-proof business strategies, licensing reciprocity guidance, and military-specific training. Plus, connect with spouse-friendly employers and moving resources for your next PCS.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL || ""),

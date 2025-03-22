@@ -8,8 +8,8 @@ import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuesti
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const META_TITLE = "Real Estate Internships for Veterans & Military Spouses - Launch Your Career with VeteranPCS";
-const META_DESCRIPTION = "Kickstart your real estate career with VeteranPCS's tailored internships for veterans and military spouses. Gain hands-on experience, receive a 40% discount on pre-licensing courses, and connect with trusted agents nationwide. Apply now to start your journey in the real estate industry.";
+const META_TITLE = "Military to Real Estate: Career Programs for Veterans & Military Spouses";
+const META_DESCRIPTION = "Transition your military leadership skills to a rewarding real estate career. Our veteran-focused internship program offers 40% off licensing courses, hands-on mentorship with successful military-affiliated agents, and flexible schedules that work with PCS moves and deployments.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL || ""),

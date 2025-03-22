@@ -3,13 +3,14 @@ import reviewService from "@/services/reviewService";
 import ReviewTestimonial from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
 import { Review } from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
 import { WithContext, Review as Testimonial } from "schema-dts";
+import { fetchGoogleReviews } from "@/utils/googleBusinessProfile";
 
 export default async function ReviewsList() {
     let reviewsList = null;
     let aggregateRating = null;
 
     try {
-        reviewsList = await reviewService.fetchReviews();
+        reviewsList = await fetchGoogleReviews();
 
         reviewsList = reviewsList.filter((review: Review) =>
             Boolean(review.comment?.trim())

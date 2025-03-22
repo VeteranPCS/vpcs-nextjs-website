@@ -8,8 +8,8 @@ import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpert";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const META_TITLE = "Get Connected with a Veteran-Friendly Realtor or Lender";
-const META_DESCRIPTION = "Have questions or need help with your military move? Contact Veteran PCS to connect with a veteran or military spouse real estate agent who understands PCS moves, VA loans, and the challenges of relocation.";
+const META_TITLE = "Connect with Military-Experienced Real Estate Agents | PCS with Confidence";
+const META_DESCRIPTION = "Facing a short-notice PCS or first-time VA loan? Our veteran and military spouse agents understand your unique timeline, BAH considerations, and base requirements. Free consultation with no obligation—we're here to serve you.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL || ""),

@@ -9,9 +9,10 @@ import MissionSpanish from "@/components/spanishpage/Mission/MissionSpanish";
 import CoveredSpanish from "@/components/spanishpage/CoveredSpanish/CoveredSpanish";
 import AgentLoanExpertSpanish from "@/components/spanishpage/AgentLoanExpertSpanish/AgentLoanExpertSpanish";
 import SkillFuturesBuildSpanish from "@/components/spanishpage/SkillsFuturesBuild/SkillsFuturesBuildSpanish";
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const META_TITLE = "Military Members & Veterans: Get a Top Agent, VA Loan Support & Up to $4,000, for Free";
-const META_DESCRIPTION = "Tired of navigating the home buying process alone during every PCS? With VeteranPCS, get a trusted veteran or military spouse agent, expert VA loan guidance, and a Move In Bonus up to $4,000—so you save money, avoid costly mistakes, and buy or sell with confidence. No cost, no hassle, just results.";
+const META_TITLE = "Agentes Inmobiliarios para Militares - Bono de $4,000";
+const META_DESCRIPTION = "¿Órdenes de PCS? Conecte con agentes hispanos con experiencia militar que entienden préstamos VA, asignaciones de vivienda militar, y requisitos de bases. Gane hasta $4,000 en bonos de mudanza mientras apoya organizaciones de veteranos—sin costo para usted."
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL || ""),
