@@ -42,6 +42,6 @@ export async function fetchGoogleReviews() {
         return data?.reviews as Review[] || fallBackReviews.reviews as Review[];
     } catch (error) {
         console.error('Error fetching Google Reviews:', error);
-        return [];
+        return fallBackReviews.reviews as Review[];
     }
 }

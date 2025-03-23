@@ -1,5 +1,4 @@
 import Script from "next/script";
-import reviewService from "@/services/reviewService";
 import ReviewTestimonial from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
 import { Review } from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
 import { WithContext, Review as Testimonial } from "schema-dts";
