@@ -1,7 +1,7 @@
 import Script from "next/script";
 import ReviewTestimonial from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
 import { Review } from "@/components/homepage/ReviewTestimonial/ReviewTestimonial";
-import { WithContext, Review as Testimonial } from "schema-dts";
+import { WithContext, Review as Testimonial, AggregateRating, Organization } from "schema-dts";
 import { fetchGoogleReviews } from "@/utils/googleBusinessProfile";
 
 export default async function ReviewsList() {
@@ -30,41 +30,43 @@ export default async function ReviewsList() {
     if (!reviewsList) {
         return <p>Failed to load the Reviews.</p>;
     }
-    const jsonLd: WithContext<Testimonial> = {
+
+    const reviewSchema: WithContext<Testimonial>[] = reviewsList.map((review) => ({
         "@context": "https://schema.org",
         "@type": "Review",
-        aggregateRating: aggregateRating ? {
-            "@type": "AggregateRating",
-            ratingValue: aggregateRating,
+        author: {
+            "@type": "Person",
+            name: review.reviewer.displayName,
+        },
+        reviewRating: {
+            "@type": "Rating",
+            ratingValue: review.starRating === "ONE" ? 1 :
+                review.starRating === "TWO" ? 2 :
+                    review.starRating === "THREE" ? 3 :
+                        review.starRating === "FOUR" ? 4 : 5,
             bestRating: 5,
+        },
+        reviewBody: review.comment,
+        datePublished: review.createTime,
+    }));
+
+    const jsonLd: WithContext<Organization> = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: "VeteranPCS",
+        aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: aggregateRating || undefined,
+            bestRating: 5,
+            worstRating: 1,
             reviewCount: reviewsList.length
-        } : undefined,
-        review: reviewsList.map((review) => ({
-            "@type": "Review",
-            author: {
-                "@type": "Person",
-                name: review.reviewer.displayName,
-            },
-            reviewRating: {
-                "@type": "Rating",
-                ratingValue: review.starRating === "ONE" ? 1 :
-                    review.starRating === "TWO" ? 2 :
-                        review.starRating === "THREE" ? 3 :
-                            review.starRating === "FOUR" ? 4 : 5,
-                bestRating: 5
-            },
-            reviewBody: review.comment,
-            datePublished: review.createTime,
-            itemReviewed: {
-                "@type": "Organization",
-                "name": "VeteranPCS"
-            }
-        }))
+        },
+        review: reviewSchema
     };
 
     return (
         <div>
-            <Script id={`json-ld-testimonials`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+            <Script id="json-ld-testimonials" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
             <ReviewTestimonial reviewsList={reviewsList} />
         </div>
     )

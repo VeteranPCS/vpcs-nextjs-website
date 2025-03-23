@@ -88,7 +88,7 @@ const jsonLd: WithContext<RealEstateAgent> =
         streetAddress: "415 N. Tejon St.",
         addressLocality: "Colorado Spring",
         postalCode: "CO 809003",
-        addressCountry: "USA"
+        addressCountry: "US"
     },
     geo: {
         "@type": "GeoCoordinates",
