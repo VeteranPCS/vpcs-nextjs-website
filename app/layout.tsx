@@ -117,7 +117,7 @@ const jsonLd: WithContext<RealEstateAgent> =
     aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: "5",
-        reviewCount: "76"
+        reviewCount: "80"
     }
 }
 
