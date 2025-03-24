@@ -96,6 +96,11 @@ const nextConfig = {
         source: '/va-loan',
         destination: '/',
         permanent: true,
+      },
+      {
+        source: '/blog/what-military-bases-are-in-colorado-2',
+        destination: '/blog/what-military-bases-are-in-colorado',
+        permanent: true,
       }
     ]
   }
