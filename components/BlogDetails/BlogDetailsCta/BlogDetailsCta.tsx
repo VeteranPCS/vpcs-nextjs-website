@@ -1,7 +1,7 @@
 import "@/app/globals.css";
-import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./BlogDetailsCta.module.css";
+import Link from "next/link";
 
 const BlogDetailsCta = () => {
   return (
@@ -15,7 +15,9 @@ const BlogDetailsCta = () => {
               </h2>
             </div>
             <div>
-              <Button buttonText="Find An Agent" />
+              <Link href="/contact-agent">
+                <Button buttonText="Find An Agent" />
+              </Link>
             </div>
             <div>
               <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold">
@@ -23,7 +25,9 @@ const BlogDetailsCta = () => {
               </h2>
             </div>
             <div>
-              <Button buttonText="Find A Lender" />
+              <Link href="/contact-lender">
+                <Button buttonText="Find A Lender" />
+              </Link>
             </div>
           </div>
         </div>

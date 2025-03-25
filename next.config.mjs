@@ -101,7 +101,12 @@ const nextConfig = {
         source: '/blog/what-military-bases-are-in-colorado-2',
         destination: '/blog/what-military-bases-are-in-colorado',
         permanent: true,
-      }
+      },
+      {
+        source: '/what-military-bases-are-in-colorado-2',
+        destination: '/blog/what-military-bases-are-in-colorado',
+        permanent: true,
+      },
     ]
   }
 };
