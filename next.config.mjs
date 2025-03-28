@@ -29,10 +29,6 @@ const nextConfig = {
         hostname: 'cdn.sanity.io',
       },
       {
-        protocol: 'http',
-        hostname: '127.0.0.1',
-      },
-      {
         protocol: 'https',
         hostname: 'veteranpcs.my.salesforce.com',
       },
@@ -44,6 +40,7 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    minimumCacheTTL: 2678400, // 31 days
   },
   async redirects() {
     return [
