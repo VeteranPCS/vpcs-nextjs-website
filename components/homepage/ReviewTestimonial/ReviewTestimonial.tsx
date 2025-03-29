@@ -9,21 +9,23 @@ interface Reviewer {
 }
 
 export interface Review {
-  comment: string;
+  comment: string | null;
   createTime: string;
-  name: string;
   reviewId: string;
   reviewer: Reviewer;
   starRating: 'ONE' | 'TWO' | 'THREE' | 'FOUR' | 'FIVE';
-  updateTime: string;
 }
 
 interface ReviewTestimonialProps {
   reviewsList: Review[];
+  averageRating: number;
+  totalReviewCount: number;
 }
 
 const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({
   reviewsList,
+  averageRating,
+  totalReviewCount,
 }) => {
   return (
     <div className="w-full relative bg-gradient-to-b from-[#2A2F6C] to-[#545CA4] py-16">
@@ -35,10 +37,19 @@ const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({
           <p className="text-white text-[17px] md:text-[25px]">
             Of military, veterans, & their families
           </p>
+          <div className="text-white mt-4">
+            <span className="text-2xl font-bold">{averageRating.toFixed(1)}</span> out of 5 stars
+            <span className="mx-2">•</span>
+            <span>{totalReviewCount} reviews</span>
+          </div>
         </div>
 
         <div className="relative px-4 md:px-10 lg:px-12">
-          <ReviewTestimonialSlider reviews={reviewsList} />
+          <ReviewTestimonialSlider
+            reviews={reviewsList}
+            averageRating={averageRating}
+            totalReviewCount={totalReviewCount}
+          />
         </div>
 
         <div className="flex justify-center mt-12">

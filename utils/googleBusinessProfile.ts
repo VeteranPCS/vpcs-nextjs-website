@@ -5,7 +5,21 @@ import fallBackReviews from '@/public/json/reviews.json';
 const LOCATION_ID = process.env.LOCATION_ID;
 const ACCOUNT_ID = process.env.GOOGLE_REVIEWS_ACCOUNT_ID;
 
-export async function fetchGoogleReviews() {
+// First, let's create an interface for the API response
+interface GoogleReviewsResponse {
+    reviews: Review[];
+    averageRating: number;
+    totalReviewCount: number;
+}
+
+// Update the fallback reviews type
+interface ReviewsData {
+    reviews: Review[];
+    averageRating: number;
+    totalReviewCount: number;
+}
+
+export async function fetchGoogleReviews(): Promise<ReviewsData> {
     try {
         const serviceAccountJson = JSON.parse(
             Buffer.from(process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS as string, 'base64').toString('utf-8')
@@ -39,9 +53,13 @@ export async function fetchGoogleReviews() {
 
         const data = await response.json();
 
-        return data?.reviews as Review[] || fallBackReviews.reviews as Review[];
+        return {
+            reviews: data?.reviews || fallBackReviews.reviews,
+            averageRating: data?.averageRating || fallBackReviews.averageRating,
+            totalReviewCount: data?.totalReviewCount || fallBackReviews.totalReviewCount
+        };
     } catch (error) {
         console.error('Error fetching Google Reviews:', error);
-        return fallBackReviews.reviews as Review[];
+        return fallBackReviews as ReviewsData;
     }
 }

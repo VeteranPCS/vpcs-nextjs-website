@@ -11,7 +11,7 @@ interface Reviewer {
 }
 
 interface Review {
-  comment: string;
+  comment: string | null;
   createTime: string;
   reviewId: string;
   reviewer: Reviewer;
@@ -20,6 +20,8 @@ interface Review {
 
 interface ReviewsSliderProps {
   reviews: Review[];
+  averageRating: number;
+  totalReviewCount: number;
 }
 
 const StarRating: React.FC<{ rating: "ONE" | "TWO" | "THREE" | "FOUR" | "FIVE" }> = ({ rating }) => {
@@ -45,7 +47,8 @@ const StarRating: React.FC<{ rating: "ONE" | "TWO" | "THREE" | "FOUR" | "FIVE" }
 const ReviewCard: React.FC<{ review: Review }> = ({ review }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const formattedDate = new Date(review.createTime).toLocaleDateString();
-  const shouldShowReadMore = review.comment.length > 250;
+  const comment = review.comment?.trim() || "No review provided.";
+  const shouldShowReadMore = comment.length > 250;
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-lg mx-4 h-full">
@@ -72,7 +75,7 @@ const ReviewCard: React.FC<{ review: Review }> = ({ review }) => {
 
       <div className="relative">
         <p className={`text-gray-700 ${!isExpanded ? 'line-clamp-4' : ''}`}>
-          {review.comment || "No review provided."}
+          {comment}
         </p>
 
         {shouldShowReadMore && (
@@ -88,7 +91,7 @@ const ReviewCard: React.FC<{ review: Review }> = ({ review }) => {
   );
 };
 
-const ReviewsSlider: React.FC<ReviewsSliderProps> = ({ reviews }) => {
+const ReviewsSlider: React.FC<ReviewsSliderProps> = ({ reviews, averageRating, totalReviewCount }) => {
   const sliderSettings = {
     infinite: true,
     speed: 500,
