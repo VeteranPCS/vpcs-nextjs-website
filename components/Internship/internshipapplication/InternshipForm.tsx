@@ -12,7 +12,7 @@ export interface FormData {
     last_name: string;
     email: string;
     mobile: string;
-    "00N4x00000LsnP2": string[];
+    "00N4x00000LsnP2": string;
     "00N4x00000LsnOx": string;
     "00N4x00000QQ0Vz": string[];
     state_code: string;
@@ -34,7 +34,7 @@ const schema = yup.object().shape({
     last_name: yup.string().required("Last name is required"),
     email: yup.string().email("Invalid email").required("Email is required"),
     mobile: yup.string().required("Phone is required"),
-    "00N4x00000LsnP2": yup.array().of(yup.string().defined()).required().min(1, "Military status is required"),
+    "00N4x00000LsnP2": yup.string().required("Military status is required"),
     "00N4x00000LsnOx": yup.string().required("Military branch is required"),
     "00N4x00000QQ0Vz": yup.array().of(yup.string().defined()).required().min(1, "Discharge status is required"),
     state_code: yup.string().required("State is required"),
@@ -91,7 +91,7 @@ const WebToLeadForm = () => {
             last_name: "",
             email: "",
             mobile: "",
-            "00N4x00000LsnP2": [],
+            "00N4x00000LsnP2": "",
             "00N4x00000LsnOx": "",
             "00N4x00000QQ0Vz": [],
             state_code: "",
