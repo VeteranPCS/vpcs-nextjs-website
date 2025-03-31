@@ -510,7 +510,6 @@ export async function vaLoanGuideForm(formData: any) {
 }
 
 export async function internshipFormSubmission(formData: any) {
-
     const formBody = new URLSearchParams({
         oid: "00D4x000003yaV2",
         recordType: "0124x000000ZGKv",
@@ -518,9 +517,25 @@ export async function internshipFormSubmission(formData: any) {
         lead_source: "Website",
         "00N4x00000Lsr0G": "true",
         country_code: "US",
-        "g-recaptcha-response": formData.captchaToken || "",
+        first_name: formData.first_name || "",
+        last_name: formData.last_name || "",
+        email: formData.email || "",
+        mobile: formData.mobile || "",
+        "00N4x00000LsnP2": formData["00N4x00000LsnP2"] || "",
+        "00N4x00000LsnOx": formData["00N4x00000LsnOx"] || "",
+        "00N4x00000QQ0Vz": Array.isArray(formData["00N4x00000QQ0Vz"]) ? formData["00N4x00000QQ0Vz"][0] : formData["00N4x00000QQ0Vz"] || "",
+        state_code: formData.state_code || "",
+        city: formData.city || "",
+        base: formData.base || "",
+        "00N4x00000QPK7L": formData["00N4x00000QPK7L"] || "",
+        "00N4x00000LspV2": formData["00N4x00000LspV2"] || "",
+        "00N4x00000LspUi": formData["00N4x00000LspUi"] || "",
+        "00N4x00000QPLQY": formData["00N4x00000QPLQY"] || "",
+        "00N4x00000QPLQd": formData["00N4x00000QPLQd"] || "",
+        "00N4x00000QPksj": formData["00N4x00000QPksj"] || "",
+        "00N4x00000QPS7V": formData["00N4x00000QPS7V"] || "",
+        "g-recaptcha-response": formData["g-recaptcha-response"] || "",
         "captcha_settings": formData.captcha_settings || "",
-        ...formData,
     }).toString();
 
     try {
@@ -538,10 +553,10 @@ export async function internshipFormSubmission(formData: any) {
         Promise.all([
             sendToSlack({
                 headerText: '🔔 New Internship Submission',
-                name: `${formData.firstName} ${formData.lastName}`,
+                name: `${formData.first_name} ${formData.last_name}`,
                 email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
+                phoneNumber: formData.mobile || "",
+                message: "",
             })
         ]);
 
