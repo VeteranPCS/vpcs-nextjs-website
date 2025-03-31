@@ -1,6 +1,6 @@
 import React from 'react';
 import '@/app/globals.css';
-
+import Link from 'next/link';
 interface Child {
   _key: string;
   marks: string[];
@@ -40,14 +40,14 @@ const TextSpan: React.FC<TextSpanProps> = ({ child, block }) => {
       const linkDef = block.markDefs.find(def => def._key === linkMark);
       if (linkDef) {
         return (
-          <a
+          <Link
             href={linkDef.href}
             className="text-blue-600 hover:text-blue-800 underline"
             target="_blank"
             rel="noopener noreferrer"
           >
             {renderText()}
-          </a>
+          </Link>
         );
       }
     }
