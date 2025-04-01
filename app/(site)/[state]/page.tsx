@@ -7,7 +7,7 @@ import StatePageLetFindAgent from "@/components/StatePage/StatePageLetFindAgent/
 import StatePageWhyChooseVetpcs from "@/components/StatePage/StatePageWhyChooseVetpcs/StatePageWhyChooseVetpcs";
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import stateService, { StateList as StateList, AgentsData, LendersData } from "@/services/stateService";
+import stateService, { StateList as StateList, AgentsData, LendersData, Lenders } from "@/services/stateService";
 import { AgentData } from '@/components/StatePage/StatePageCityAgents/StatePageCityAgents'
 import { Agent } from "@/services/stateService";
 
@@ -141,6 +141,23 @@ export default async function StatePage({ params }: { params: { state: string } 
   }
   try {
     lenders_data = await stateService.fetchLendersListByState(state_code);
+
+    // Sort lenders based on AA_Score__c for the current state
+    const currentStateName = stateUrlToStateName[state as keyof typeof stateUrlToStateName];
+    if (lenders_data?.records) {
+      lenders_data.records.forEach((lender: Lenders) => {
+        const areaAssignments = lender.Area_Assignments__r?.records || [];
+        const stateAssignment = areaAssignments.find(
+          (record: any) => record.Area__r.State__c.toLowerCase() === currentStateName
+        );
+        // Assign the score for the current state, default to 0 if not found
+        (lender as any).currentStateScore = stateAssignment ? stateAssignment.AA_Score__c : 0;
+      });
+
+      // Sort lenders in descending order based on currentStateScore
+      lenders_data.records.sort((a: any, b: any) => b.currentStateScore - a.currentStateScore);
+    }
+
   } catch (error) {
     console.error("Error fetching State Agent List", error);
   }
