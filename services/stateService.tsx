@@ -78,6 +78,17 @@ export interface Lenders {
   BillingState: string;
   Individual_NMLS_ID__pc: string;
   Company_NMLS_ID__pc: string;
+  Area_Assignments__r?: {
+    records: {
+      Id: string;
+      Name: string;
+      AA_Score__c: number;
+      Area__r: {
+        Name: string;
+        State__c: string;
+      };
+    }[];
+  };
 }
 
 export interface AgentsData {
@@ -187,7 +198,8 @@ const stateService = {
   fetchLendersListByState: async (state: string): Promise<LendersData> => {
     try {
       const query = `
-      SELECT Name, PhotoUrl, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, Individual_NMLS_ID__pc, Company_NMLS_ID__pc
+      SELECT Name, PhotoUrl, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, Individual_NMLS_ID__pc, Company_NMLS_ID__pc,
+      (SELECT Id, Name, AA_Score__c, Area__r.Name, Area__r.State__c FROM Area_Assignments__r ORDER BY AA_Score__c DESC)
       FROM Account
       WHERE isLender__pc = true
         AND Active_on_Website__pc = true
