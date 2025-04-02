@@ -1,27 +1,9 @@
-import { SanityDocument } from '@sanity/client'
 import { urlForImage } from '@/sanity/lib/image'
 import { client } from '@/sanity/lib/client'
 import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
 import { RequestType, salesForceAPI, salesForceImageAPI } from '@/services/api';
 import { getSalesforceToken } from '@/services/salesForceTokenService';
-
-interface MainImage {
-    alt: string; // Alternative text for the image
-    asset: {
-        image_url: string; // URL of the image
-        _ref: string; // Reference ID for the image asset
-        _type: string; // Type of the asset, typically "reference"
-    };
-    _type: "image"; // Type of the main image, typically "image"
-}
-
-interface AgentDocument extends SanityDocument {
-    image: MainImage;
-    mainImage?: MainImage;
-    _id: string;
-    _rev: string;
-    _type: 'agent';
-}
+import { AgentDocument } from '@/types/agent';
 
 const stateAbbreviations = {
     AL: "alabama",
@@ -149,7 +131,13 @@ const agentService = {
                 agent.image.asset.image_url = urlForImage(agent.image.asset);
             }
             if (agent) {
-                return agent.image.asset.image_url;
+                // Ensure image_url exists and is a string before returning
+                if (typeof agent.image?.asset?.image_url === 'string') {
+                    return agent.image.asset.image_url;
+                } else {
+                    // Throw an error if image_url is missing or not a string
+                    throw new Error('Agent image URL is missing or invalid');
+                }
             } else {
                 throw new Error('Failed to Fetch Agent Image');
             }

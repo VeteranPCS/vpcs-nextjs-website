@@ -9,10 +9,12 @@ interface OpenPhoneMessageParams {
 }
 
 export async function sendOpenPhoneMessage(params: OpenPhoneMessageParams) {
+    const { content, from, to } = params;
+    // Log function invocation and recipient count
+    console.log(`Initiating sendOpenPhoneMessage for ${to.length} recipients.`);
     try {
-        const { content, from, to } = params;
-        console.log("Sending OpenPhone message:", { content, from, to });
-        const startTime = Date.now();
+        // Log API call attempt
+        console.log('Attempting to send message via OpenPhone API...');
         const response = await fetchWithRetry('https://api.openphone.com/v1/messages', {
             method: 'POST',
             headers: {
@@ -25,21 +27,29 @@ export async function sendOpenPhoneMessage(params: OpenPhoneMessageParams) {
                 to
             }),
         });
-        const endTime = Date.now();
-        console.log(`OpenPhone request completed in ${endTime - startTime}ms`);
 
-        console.log("OpenPhone response status:", response.status);
-        console.log("OpenPhone response headers:", Object.fromEntries(response.headers));
+        // Log API response status
+        console.log(`Received response from OpenPhone API with status: ${response.status}`);
+
         const responseData = await response.json();
-        console.log("OpenPhone response data:", responseData);
 
         if (!response.ok) {
+            // Log API error status before throwing
+            console.error(`OpenPhone API request failed with status: ${response.status}`);
             throw new Error(`OpenPhone API error: ${response.status} - ${JSON.stringify(responseData)}`);
+        }
+
+        // Log successful API call
+        console.log('Successfully sent message via OpenPhone API.');
+        // Optionally log a non-sensitive ID if available and safe:
+        if (responseData.id) {
+            console.log(`OpenPhone Message ID: ${responseData.id}`);
         }
 
         return responseData;
     } catch (error) {
-        console.error('Error sending OpenPhone message:', error);
+        // Enhance existing error logging with recipient count
+        console.error(`Error sending OpenPhone message for ${to.length} recipients:`, error);
         throw error;
     }
 }

@@ -4,14 +4,7 @@ import Link from "next/link";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, SubmitHandler } from 'react-hook-form';
-
-// Define FormData interface
-export interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-}
+import { LenderListingFormData } from '@/types';
 
 // Define validation schema using yup
 const lenderPersonalDataSchema = yup.object().shape({
@@ -25,7 +18,7 @@ const lenderPersonalDataSchema = yup.object().shape({
 });
 
 interface ContactFormProps {
-  onSubmit: (formData: FormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
+  onSubmit: (formData: LenderListingFormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
 }
 
 const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
@@ -35,12 +28,12 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<LenderListingFormData>({
     resolver: yupResolver(lenderPersonalDataSchema),
   });
 
   // Handle form submission
-  const handleSubmitPersonal: SubmitHandler<FormData> = async (data) => {
+  const handleSubmitPersonal: SubmitHandler<LenderListingFormData> = async (data) => {
     setIsSubmitting(true);
     try {
       const response = await onSubmit(data);

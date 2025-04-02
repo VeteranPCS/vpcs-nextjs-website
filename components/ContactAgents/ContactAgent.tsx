@@ -5,22 +5,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import ReCAPTCHA from 'react-google-recaptcha';
 
-export interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  currentBase: string;
-  destinationBase: string;
-  howDidYouHear: string;
-  additionalComments?: string; // Optional field
-  tellusMore?: string; // Optional field for 'Other' option
-  captchaToken?: string;
-  captcha_settings?: string;
-}
+import { ContactAgentFormData } from '@/types';
 
 interface ContactFormProps {
-  onSubmit: (data: FormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
+  onSubmit: (data: ContactAgentFormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
 }
 
 // Define validation schema using yup
@@ -52,7 +40,7 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
     watch,
     reset,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<ContactAgentFormData>({
     resolver: yupResolver(contactFormSchema),
     defaultValues: {
       firstName: '',
@@ -71,7 +59,7 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
 
   const howDidYouHearValue = watch("howDidYouHear");
 
-  const handleFormSubmit: SubmitHandler<FormData> = async (data) => {
+  const handleFormSubmit: SubmitHandler<ContactAgentFormData> = async (data) => {
     setIsSubmitting(true);
     try {
       const response = await onSubmit(data);
