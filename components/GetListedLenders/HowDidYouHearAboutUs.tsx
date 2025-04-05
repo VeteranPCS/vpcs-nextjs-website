@@ -1,11 +1,11 @@
 import React from 'react';
 import { UseFormRegister, UseFormWatch, FieldErrors } from 'react-hook-form';
-import { ContactFormData, HowDidYouHearOptions } from '@/components/ContactLender/ContactLender'; // Adjust import path as needed
+import { ContactLenderFormData } from '@/types';
 
 interface HowDidYouHearAboutUsProps {
-    register: UseFormRegister<ContactFormData>;
-    watch: UseFormWatch<ContactFormData>;
-    errors: FieldErrors<ContactFormData>;
+    register: UseFormRegister<ContactLenderFormData>;
+    watch: UseFormWatch<ContactLenderFormData>;
+    errors: FieldErrors<ContactLenderFormData>;
 }
 
 const HowDidYouHearAboutUs: React.FC<HowDidYouHearAboutUsProps> = ({

@@ -2,36 +2,9 @@
 import { useForm, SubmitHandler, Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { MilitaryServiceInfo, MilitaryStatusOptions, MilitaryBranchOptions, type DischargeStatusOptions } from '@/types';
 
-export type StatusOptions =
-  | 'Active'
-  | 'National Guard'
-  | 'Retired'
-  | 'Spouse'
-  | 'Veteran'
-  | '';
-
-export type BranchOptions =
-  | 'Air Force'
-  | 'Coast Guard'
-  | 'Navy'
-  | 'Marine Corps'
-  | 'Space Force'
-  | 'Army'
-  | '';
-
-export type DischargeStatusOptions =
-  | 'Honorable Discharge'
-  | 'Retired'
-  | 'Medical Retirement'
-  | 'Currently Serving'
-  | '';
-
-export interface ContactFormData {
-  status_select: StatusOptions;
-  branch_select: BranchOptions;
-  discharge_status: DischargeStatusOptions;
-}
+type ContactFormData = MilitaryServiceInfo;
 
 interface ContactFormProps {
   onSubmit: (data: ContactFormData) => void;
@@ -39,7 +12,7 @@ interface ContactFormProps {
   shouldValidate: boolean;
 }
 
-const StatusOptions: StatusOptions[] = [
+const StatusOptions: MilitaryStatusOptions[] = [
   'Active',
   'National Guard',
   'Retired',
@@ -47,7 +20,7 @@ const StatusOptions: StatusOptions[] = [
   'Veteran',
 ];
 
-const BranchOptions: BranchOptions[] = [
+const BranchOptions: MilitaryBranchOptions[] = [
   'Air Force',
   'Coast Guard',
   'Navy',
@@ -83,7 +56,7 @@ const GetListedLendersProfileInfo = ({ onSubmit, onBack, shouldValidate }: Conta
     register,
     handleSubmit,
     formState: { errors },
-    setValue, 
+    setValue,
   } = useForm<ContactFormData>({
     resolver: yupResolver(contactFormSchema(shouldValidate)) as Resolver<ContactFormData>,
     defaultValues: {

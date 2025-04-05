@@ -6,44 +6,15 @@ import HowDidYouHearAboutUs from '@/components/GetListedLenders/HowDidYouHearAbo
 import * as yup from 'yup';
 import ReCAPTCHA from 'react-google-recaptcha';
 
-// Define the possible values for howDidYouHear
-export type HowDidYouHearOptions =
-  | 'Google'
-  | 'Facebook'
-  | 'Instagram'
-  | 'Linkedin'
-  | 'Tiktok'
-  | 'Base Event'
-  | 'Transition Brief'
-  | 'Agent Referral'
-  | 'Friend Referral'
-  | 'Skillbridge'
-  | 'Youtube'
-  | 'Other'
-  | ''
-
-// Define the shape of the form data
-export interface ContactFormData {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string;
-  currentBase?: string;
-  destinationBase?: string;
-  additionalComments?: string | null;
-  howDidYouHear?: string;
-  tellusMore?: string;
-  captchaToken?: string;
-  captcha_settings?: string;
-}
+import { ContactLenderFormData, HowDidYouHearOptions } from '@/types';
 
 // Props type for ContactForm component
 interface ContactFormProps {
-  onSubmit: (data: ContactFormData) => void;
+  onSubmit: (data: ContactLenderFormData) => void;
 }
 
 // Define form errors type
-type FormErrors = Partial<Record<keyof ContactFormData, { message?: string }>>;
+type FormErrors = Partial<Record<keyof ContactLenderFormData, { message?: string }>>;
 
 // Define available options for "howDidYouHear" field
 const howDidYouHearOptions: HowDidYouHearOptions[] = [
@@ -95,8 +66,8 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     watch,
     setValue,
     formState: { errors },
-  } = useForm<ContactFormData>({
-    resolver: yupResolver<ContactFormData>(contactFormSchema),
+  } = useForm<ContactLenderFormData>({
+    resolver: yupResolver<ContactLenderFormData>(contactFormSchema),
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -113,7 +84,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
   });
 
   // Form submit handler
-  const handleFormSubmit: SubmitHandler<ContactFormData> = async (data) => {
+  const handleFormSubmit: SubmitHandler<ContactLenderFormData> = async (data) => {
     setIsSubmitting(true);
     try {
       await onSubmit(data);

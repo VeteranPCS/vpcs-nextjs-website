@@ -44,7 +44,7 @@ const howDidYouHearOptions: HowDidYouHearOptions[] = [
 
 const schema = yup.object().shape({
   primaryState: yup.string(),
-  otherStates: yup.string(),
+  otherStates: yup.array().of(yup.string()),
   licenseNumber: yup.string().required("License number is required."),
   brokerageName: yup.string().required("Brokerage name is required."),
   managingBrokerName: yup.string().required("Managing broker name is required."),
@@ -174,17 +174,16 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                 <select
                   id="otherStates"
                   {...register("otherStates")}
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-1 h-32"
+                  multiple
                 >
-                  <option value="" disabled selected>
-                    Select an option
-                  </option>
-                  <option value="friend">A friend</option>
-                  <option value="advertisement">Advertisement</option>
-                  <option value="socialMedia">Social Media</option>
-                  <option value="searchEngine">Search Engine</option>
-                  <option value="other">Other</option>
+                  {stateList.sort((a, b) => a.short_name < b.short_name ? -1 : 1).map((state) => (
+                    <option key={state.short_name} value={state.short_name}>
+                      {state.short_name}
+                    </option>
+                  ))}
                 </select>
+                <span className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple states</span>
                 {errors.otherStates && (
                   <span className="text-error">{errors.otherStates.message}</span>
                 )}
@@ -320,7 +319,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   htmlFor="personallyPCS"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
-                  Have you personally PCS’d?
+                  Have you personally PCS&apos;d?
                 </label>
                 <select
                   id="personallyPCS"

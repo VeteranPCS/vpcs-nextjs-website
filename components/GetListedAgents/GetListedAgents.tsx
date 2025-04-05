@@ -16,15 +16,10 @@ const contactFormSchema = yup.object().shape({
     .required("Phone number is required"),
 });
 
-interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-}
+import { AgentListingFormData } from '@/types';
 
 interface ContactFormProps {
-  onSubmit: (formData: FormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
+  onSubmit: (formData: AgentListingFormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
 }
 
 const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
@@ -34,11 +29,11 @@ const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<AgentListingFormData>({
     resolver: yupResolver(contactFormSchema),
   });
 
-  const handleFormSubmit: SubmitHandler<FormData> = async (data) => {
+  const handleFormSubmit: SubmitHandler<AgentListingFormData> = async (data) => {
     setIsSubmitting(true);
     try {
       const response = await onSubmit(data);
