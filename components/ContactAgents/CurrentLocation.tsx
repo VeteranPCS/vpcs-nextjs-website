@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -26,6 +27,7 @@ const validationSchema = yup.object({
   destination: yup.string().required('Destination is required'),
   buyingSelling: yup.string().required('Please select if you are buying or selling'),
   timeframe: yup.string().required('Please select a timeframe'),
+  captchaToken: yup.string().required('Captcha verification is required'),
 });
 
 const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
@@ -34,6 +36,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
   const getStateList = useCallback(async () => {
     try {
       const response = await initService.getStateListFetch();
+      console.log('Fetched state list:', response);
       setStateList(response);
     } catch (error) {
       console.error('Error fetching states:', error);
@@ -51,7 +54,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
     setValue,
     watch,
   } = useForm<FormData>({
-    // resolver: yupResolver(validationSchema),
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       state: '',
       city: '',

@@ -3,7 +3,6 @@ import sendToSlack from '@/actions/sendToSlack';
 import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
 import { formatPhoneNumberForDisplay, formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
 import stateService from '@/services/stateService';
-import { ContactAgentFormData, CompleteAgentListingFormData, CompleteLenderListingFormData, ContactLenderFormData, ContactFormData, KeepInTouchFormData, VALoanGuideFormData, InternshipFormData } from '@/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const OPEN_PHONE_FROM_NUMBER = process.env.OPEN_PHONE_FROM_NUMBER || "";
@@ -141,7 +140,7 @@ export async function GetListedAgentsPostForm(formData: any) {
             "state_code": formData.state || "",
             "city": formData.city || "",
             "00N4x00000LpcBo": formData.primaryState || "",
-            "00N4x00000QPIOt": formData.otherStates || "",
+            "00N4x00000QPIOt": Array.isArray(formData.otherStates) ? formData.otherStates.join(';') : formData.otherStates || "",
             "00N4x00000LpcCm": formData.licenseNumber || "",
             "00N4x00000LpcCr": formData.brokerageName || "",
             "00N4x00000c4kPN": formData.managingBrokerName || "",
@@ -216,7 +215,7 @@ export async function GetListedLendersPostForm(formData: any) {
             "00N4x00000LsnOx": formData.branch_select || "",
             "00N4x00000QQ0Vz": formData.discharge_status || "",
             "00N4x00000LpcBo": formData.primaryState || "",
-            "00N4x00000QPIOt": formData.otherStates || "",
+            "00N4x00000QPIOt": Array.isArray(formData.otherStates) ? formData.otherStates.join(';') : formData.otherStates || "",
             "00N4x00000LsqCV": formData.localCities || "",
             "00N4x00000QPIOZ": formData.nmlsId || "",
             "00N4x00000LpcCr": formData.name || "",
