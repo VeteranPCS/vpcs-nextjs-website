@@ -90,9 +90,9 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
 ${formData.firstName} ${formData.lastName}
 Email: ${formData.email}
 Phone: ${formatPhoneNumberForDisplay(formData.phone)}
-Current Base: ${formData.currentBase || 'Not Specified'}
-Destination Base: ${formData.destinationBase || 'Not Specified'}
-Additional Comments: ${formData.additionalComments || 'None'}`,
+${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
+${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
+${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
                 from: OPEN_PHONE_FROM_NUMBER,
                 to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
             })
@@ -388,9 +388,9 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
 ${formData.firstName} ${formData.lastName}
 Email: ${formData.email}
 Phone: ${formatPhoneNumberForDisplay(formData.phone)}
-Current Base: ${formData.currentBase || 'Not Specified'}
-Destination Base: ${formData.destinationBase || 'Not Specified'}
-Additional Comments: ${formData.additionalComments || 'None'}`,
+${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
+${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
+${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
                 from: OPEN_PHONE_FROM_NUMBER,
                 to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
             })
