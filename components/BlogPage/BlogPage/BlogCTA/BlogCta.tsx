@@ -1,39 +1,38 @@
 "use client"
 import React from "react";
 import "@/app/globals.css";
-import classes from "./BlogCts.module.css";
-import Button from "@/components/common/Button";
-import Image from "next/image";
-import Link from "next/link";
+import CTASection from "@/components/common/CTASection";
 
-const StatePageHeroSecondSection = () => {
-    return (
-        <div className={classes.BlogCtsContainer}>
-            <div className="container mx-auto">
-                <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-center justify-between gap-4 mt-10">
-                    <div>
-                        <div>
-                            <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold">Buying Or Selling</h2>
-                        </div>
-                        <Link href="/#map-container">
-                            <Button buttonText="Find An Agent" />
-                        </Link>
-                        <div>
-                            <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold">VA Loan Expert</h2>
-                        </div>
-                        <Link href="/#map-container">
-                            <Button buttonText="Find A Lender" />
-                        </Link>
-                    </div>
-                    <div>
-                        <div>
-                            <Image src="/assets/blogpcsright.png" alt="Description of the image" width={1000} height={1000} className="w-auto h-auto object-cover" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+const BlogCta = () => {
+  const buttons = [
+    { text: "Find An Agent", link: "/#map-container" },
+    { text: "Find A Lender", link: "/#map-container" },
+  ];
+
+  return (
+    <CTASection
+      backgroundImage="/assets/blogctabgimage.webp"
+      title={
+        <>
+          <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold mb-4">
+            Buying Or Selling
+          </h2>
+          <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold mt-6">
+            VA Loan Expert
+          </h2>
+        </>
+      }
+      buttons={buttons}
+      image={{
+        src: "/assets/blogpcsright.png",
+        alt: "Blog PCS right",
+        width: 1000,
+        height: 1000,
+        className: "w-auto h-auto object-cover",
+      }}
+      containerClassName="py-[50px]"
+    />
+  );
 };
 
-export default StatePageHeroSecondSection;
+export default BlogCta;
