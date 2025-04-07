@@ -50,15 +50,15 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="container mx-auto px-5">
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-6 mb-6">
             <div className="mx-auto lg:text-left md:text-left text-left w-full sm:order-2 order-2 lg:order-none md:order-none">
-              <h1 className={`text-white font-bold text-hero md:text-hero-md sm:text-hero-sm text-hero-xs font-poppins leading-[1.3] font-tahoma ${titleClassName}`}>
+              <h1 className={`text-white font-bold text-hero md:text-hero-md sm:text-hero-sm xs:text-hero-xs leading-[1.3] font-tahoma ${titleClassName}`}>
                 {title}
               </h1>
               {description && (
-                <p className={`lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] font-normal text-white font-poppins sm:mb-10 mb-5 mt-4 font-tahoma leading-[26px] ${descriptionClassName}`}>
+                <p className={`lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] font-normal text-white font-poppins sm:mb-10 mb-5 mt-4 leading-[26px] ${descriptionClassName}`}>
                   {description}
                 </p>
               )}
-              
+
               {buttonText && buttonLink && (
                 <div>
                   <Link href={buttonLink}>
