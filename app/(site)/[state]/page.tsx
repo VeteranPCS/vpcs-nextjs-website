@@ -56,6 +56,7 @@ const stateUrlToStateName = {
   "oklahoma": "oklahoma",
   "oregon": "oregon",
   "pennsylvania": "pennsylvania",
+  "puerto-rico": "puerto rico",
   "rhode-island": "rhode island",
   "south-carolina": "south carolina",
   "south-dakota": "south dakota",
