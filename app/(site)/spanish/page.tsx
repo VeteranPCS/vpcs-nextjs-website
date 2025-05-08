@@ -9,6 +9,9 @@ import MissionSpanish from "@/components/spanishpage/Mission/MissionSpanish";
 import CoveredSpanish from "@/components/spanishpage/CoveredSpanish/CoveredSpanish";
 import AgentLoanExpertSpanish from "@/components/spanishpage/AgentLoanExpertSpanish/AgentLoanExpertSpanish";
 import SkillFuturesBuildSpanish from "@/components/spanishpage/SkillsFuturesBuild/SkillsFuturesBuildSpanish";
+import Image from "next/image";
+import Link from "next/link";
+import Button from "@/components/common/Button";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "Agentes Inmobiliarios para Militares - Bono de $4,000";
@@ -63,6 +66,42 @@ export default function Home() {
       <MissionSpanish />
       <SupportSpanish />
       <Testimonials />
+      {/* Latinos in Uniform Section */}
+      <div className="bg-[#F4F4F4] px-6 sm:px-0">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center justify-center py-10 md:py-20">
+            <div className="w-full md:w-1/2 flex justify-center">
+              <Image
+                width={400}
+                height={400}
+                src={"/assets/latinos_in_uniform.webp"}
+                alt="Latinos in Uniform"
+                className="lg:w-[400px] w-[300px] lg:h-[400px] h-auto"
+              />
+            </div>
+            <div className="w-full md:w-1/2 mt-10 md:mt-0 max-w-[500px] flex flex-col items-center md:items-start text-center md:text-left">
+              <h6 className="text-[22px] md:text-[25px] font-bold text-[#292F6C] mt-5 tahoma uppercase">
+                Apoya a los miembros del servicio latino, veteranos y sus familias
+              </h6>
+              <p className="text-black font-roboto text-base font-medium mt-4">
+                Cada agente y experto en préstamos VA en VeteranPCS es un veterano o cónyuge de militar que comprende el estrés de mudarse en el servicio o después de éste. Aunque solo algunos agentes en VeteranPCS hablan español, estamos comprometidos a identificar más agentes para ayudar a servir a la comunidad latina.
+              </p>
+              <div className="mt-6 w-full">
+                <p className="text-[#292F6C] font-bold">Visita a nuestros socios Latinos in Uniform</p>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center sm:items-start justify-center sm:justify-start mt-4">
+                  <Link href="https://latinosinuniform.com/" className="underline text-black">latinosinuniform.com</Link>
+                  <Link href="https://www.instagram.com/latinosinuniform/" className="underline text-black">@latinosinuniform</Link>
+                </div>
+              </div>
+              <div className="flex justify-center md:justify-start mt-6 w-full">
+                <Link href="https://latinosinuniform.com/">
+                  <Button buttonText="Latinos en uniforme" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <VeteranCommunity component_slug="support-our-veteran-community-spanish" />
       <CoveredSpanish />
       <AgentLoanExpertSpanish />
