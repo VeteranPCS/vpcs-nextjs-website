@@ -28,10 +28,10 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                 <div className="hidden md:flex flex-col gap-4 text-white text-lg">
                   <ul className="list-disc list-outside">
                     <li>
-                      Entendemos el desafío de encontrar un agente inmobiliario militar que comprenda el préstamo VA y hable español también.
+                      Encuentra un agente inmobiliario que sea militar, veterano o cónyuge de un militar, que entienda el préstamo VA y hable español.
                     </li>
                     <li>
-                      Los miembros militares reciben entre $200 a $4,000 dólares en el cierre de casa para ayudar con los costos de la compra de su hogar.
+                      Los miembros del servicio pueden recibir entre $200 y $4,000 al cierre para ayudar con los gastos de la compra de su vivienda.
                     </li>
                   </ul>
                 </div>

@@ -50,7 +50,7 @@ export default function Home() {
   return (
     <main>
       <HeroSection
-        title="Juntos, Llegaremos a Casa."
+        title="Tu hogar, nuestra mision."
         subTitle="VeteranPCS esta empoderando a los miembros de las fuerzas armadas hispanohablantes y a sus familias al comprar o vender una vivienda."
         page="spanish"
       />
