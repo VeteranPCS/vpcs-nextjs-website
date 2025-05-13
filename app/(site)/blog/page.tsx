@@ -90,9 +90,16 @@ export default async function Home() {
     blogs = await blogService.fetchBlogs();
 
     if (blogs) {
+      // Sort all blogs by publishedAt date first
+      blogs.sort((a, b) => {
+        const dateA = new Date(a.publishedAt);
+        const dateB = new Date(b.publishedAt);
+        return dateB.getTime() - dateA.getTime();
+      });
+
       // Group and sort blogs
       groupedBlogs = blogs.reduce((acc: GroupedBlogs, blog: BlogDetails) => {
-        const { component, publishedAt } = blog;
+        const { component } = blog;
 
         categories_list.add(component);
         // Add component as a key in the accumulator
@@ -101,9 +108,9 @@ export default async function Home() {
 
         // Sort blogs in descending order of publishedAt
         acc[component].sort((a, b) => {
-          const dateA = new Date(a.publishedAt); // Convert to Date object
-          const dateB = new Date(b.publishedAt); // Convert to Date object
-          return dateB.getTime() - dateA.getTime(); // Compare as timestamps
+          const dateA = new Date(a.publishedAt);
+          const dateB = new Date(b.publishedAt);
+          return dateB.getTime() - dateA.getTime();
         });
 
         return acc;
