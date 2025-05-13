@@ -20,6 +20,7 @@ interface BlogDetails {
   title: string;
   content: any[]; // Adjust type based on the actual structure of content
   _createdAt: string;
+  publishedAt: string;
   slug: { current: string };
   mainImage: { image_url: string; alt: string };
   categories: Category[];
@@ -89,7 +90,7 @@ const BlogMovingPcsingPost: React.FC<StatePageHeroSecondSectionProps> = ({ blogD
           ) : null}
           <div className="p-5 bg-[#FFFFFF]">
             <p className="text-[#6C757D] lora text-sm font-normal">
-              {formatDate(blogDetails?._createdAt)}
+              {formatDate(blogDetails?.publishedAt)}
             </p>
             <h3 className="text-[#495057] tahoma text-lg font-bold my-4 line-clamp-2">
               {blogDetails?.title}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import classes from "./PcsResourcesBlog.module.css";
 import { urlForImage } from "@/sanity/lib/image";
 import { BlogDetails } from "@/app/(site)/blog/page";
+import { formatDate } from "@/utils/helper";
 
 // Define types for the props
 interface Category {
@@ -32,15 +33,6 @@ interface Block {
 }
 
 const PcsResourcesBlog: React.FC<PcsResourcesBlogProps> = async ({ blogList, component }) => {
-  function formatDate(timestamp: string): string {
-    const date = new Date(timestamp); // Parse the timestamp into a Date object
-    const day = String(date.getDate()).padStart(2, "0"); // Get day with leading zero
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Get month (0-based index, add 1)
-    const year = date.getFullYear(); // Get full year
-
-    return `${day}.${month}.${year}`; // Return formatted date
-  }
-
   // Function to extract plain text from the content
   const getPlainText = (content: Block[]): string => {
     if (!content) return '';
@@ -89,7 +81,7 @@ const PcsResourcesBlog: React.FC<PcsResourcesBlogProps> = async ({ blogList, com
 
               <div className="absolute bottom-4 left-2 px-6 py-1">
                 <p className="text-[#E5E5E5] lg:text-[14px] md:text-[14px] sm:text-[12px] text-[12px] font-normal leading-normal">
-                  {formatDate(blog?._createdAt)}
+                  {formatDate(blog?.publishedAt)}
                 </p>
                 <h3 className="text-white tahoma lg:text-[21px] md:text-[21px] sm:text-[15px] text-[15px] font-bold my-3">
                   {blog?.title}

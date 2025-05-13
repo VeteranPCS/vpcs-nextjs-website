@@ -24,7 +24,8 @@ export interface BlogDetails {
   categories: Category[];
   author: Author;
   short_title: string,
-  logo: string
+  logo: string,
+  publishedAt: string
 }
 
 const BlogMovingPcsingBlogPostSection = async ({ blogList, component, categories_list }: { blogList: BlogDetails[], component: string, categories_list: any }) => {

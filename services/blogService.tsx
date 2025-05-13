@@ -29,7 +29,7 @@ const blogService = {
       `);
 
       const blogs = await client.fetch<ReviewDocument[]>(`
-                            *[_type == "blog" && is_show == true] | order(_createdAt desc) {
+                            *[_type == "blog" && is_show == true && publishedAt <= now()] | order(_publishedAt desc) {
                               ...,
                               mainImage{
                                 ...,
@@ -73,7 +73,7 @@ const blogService = {
       `);
 
       const blog = await client.fetch<ReviewDocument>(
-        `*[_type == "blog" && slug.current == $slug]{
+        `*[_type == "blog" && slug.current == $slug && publishedAt <= now()]{
                               ...,
                               mainImage{
                                 ...,
@@ -120,8 +120,9 @@ const blogService = {
       const blogs = await client.fetch(
         `*[
           _type == "blog" &&
+          publishedAt <= now() &&
           (pt::text(title) match "*${query}*" || pt::text(content) match "*${query}*")
-        ] | order(_createdAt desc) {
+        ] | order(_publishedAt desc) {
           _id,
           title,
           content,
@@ -164,7 +165,7 @@ const blogService = {
       `);
 
       const blog = await client.fetch(
-        `*[_type == "blog" && component == $component]{
+        `*[_type == "blog" && component == $component && publishedAt <= now()]{
                               ...,
                               mainImage{
                                 ...,
@@ -201,7 +202,7 @@ const blogService = {
   fetchBlogSlugs: async (): Promise<BlogSlugs[]> => {
     try {
       const blogSlugs = await client.fetch<BlogSlugs[]>(`
-                            *[_type == "blog"]{
+                            *[_type == "blog" && publishedAt <= now()]{
                               "slug": slug.current
                             }
                           `);
@@ -219,7 +220,7 @@ const blogService = {
   fetchBlogsByAuthor: async (author: string) => {
     try {
       const blogSlugs = await client.fetch(`
-        *[_type == "blog" && author._ref == $author]{
+        *[_type == "blog" && author._ref == $author && publishedAt <= now()]{
           "slug": slug.current
         }
         `,
