@@ -1,5 +1,3 @@
-import { ContactAgentFormData } from '@/types';
-
 // Environment-specific logging (more detailed in dev)
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -11,7 +9,7 @@ export enum LogLevel {
     DEBUG = 'DEBUG'
 }
 
-// Structured log format
+// Structured log format (kept for typing purposes)
 interface LogEntry {
     timestamp: string;
     level: LogLevel;
@@ -20,12 +18,9 @@ interface LogEntry {
     error?: any;
 }
 
-// Optional persistent storage for logs (can be expanded later)
-const logStorage: LogEntry[] = [];
-
 // Main logging function
 export function log(level: LogLevel, message: string, data?: any, error?: any): void {
-    const entry: LogEntry = {
+    const entry = {
         timestamp: new Date().toISOString(),
         level,
         message,
@@ -38,10 +33,6 @@ export function log(level: LogLevel, message: string, data?: any, error?: any): 
         } : undefined
     };
 
-    // Store log in memory (recent logs only, for dev debugging)
-    if (logStorage.length > 1000) logStorage.shift();
-    logStorage.push(entry);
-
     // Send to console
     const consoleMethod = level === LogLevel.ERROR ? console.error :
         level === LogLevel.WARN ? console.warn :
@@ -52,12 +43,6 @@ export function log(level: LogLevel, message: string, data?: any, error?: any): 
         entry.data ? { data: entry.data } : '',
         entry.error ? { error: entry.error } : ''
     );
-
-    // In production, send to monitoring service if available (commented for now)
-    if (process.env.NODE_ENV === 'production') {
-        // TODO: Send to monitoring service like Sentry or custom endpoint
-        // sendToMonitoringService(entry);
-    }
 }
 
 // Convenience methods
@@ -92,15 +77,9 @@ export function logFormSubmission(
     }, error);
 }
 
-// Gets recent logs (for debugging/admin purposes)
-export function getRecentLogs(count = 100, level?: LogLevel): LogEntry[] {
-    let filteredLogs = [...logStorage];
-
-    if (level) {
-        filteredLogs = filteredLogs.filter(entry => entry.level === level);
-    }
-
-    return filteredLogs.slice(-count);
+// Kept as a no-op function for API compatibility
+export function getRecentLogs(): LogEntry[] {
+    return [];
 }
 
 // Helper to sanitize sensitive data before logging
@@ -138,4 +117,4 @@ function sanitizeResponse(responseData: any): any {
             )
         ) : undefined,
     };
-} 
+}

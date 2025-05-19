@@ -1,4 +1,4 @@
-import { LogLevel, logError, logInfo } from './loggingService';
+import { logError, logInfo } from './loggingService';
 
 // Form submission status
 export enum FormSubmissionStatus {
@@ -7,7 +7,7 @@ export enum FormSubmissionStatus {
     FAILURE = 'FAILURE',
 }
 
-// Structure of a form submission record
+// Structure of a form submission record (kept for typing purposes)
 export interface FormSubmissionRecord {
     id: string;
     formType: string;
@@ -26,14 +26,8 @@ export interface FormSubmissionRecord {
     errorMessage?: string;
 }
 
-// Local storage key for development/debugging mode
-const FORM_SUBMISSIONS_KEY = 'vpcs_form_submissions';
-
-// Maximum number of records to keep in localStorage
-const MAX_LOCAL_RECORDS = 100;
-
 /**
- * Tracks a form submission attempt
+ * Tracks a form submission attempt - server-side logging only
  */
 export async function trackFormSubmission(
     formType: string,
@@ -46,11 +40,10 @@ export async function trackFormSubmission(
     const submissionId = generateSubmissionId();
 
     try {
-        // Create the submission record
-        const record: FormSubmissionRecord = {
+        // Log the form submission
+        const logData = {
             id: submissionId,
             formType,
-            timestamp: new Date().toISOString(),
             status,
             formData: {
                 firstName: formData.firstName,
@@ -60,24 +53,17 @@ export async function trackFormSubmission(
                 currentBase: formData.currentBase,
                 destinationBase: formData.destinationBase,
             },
+            timestamp: new Date().toISOString(),
             responseCode: response?.status,
             responseText: response?.statusText || (response?.ok ? 'OK' : undefined),
             errorMessage: error?.message,
         };
 
-        // Store the submission
-        await storeSubmission(record);
-
-        logInfo('Form submission tracked', {
-            id: submissionId,
-            formType,
-            status
-        });
-
+        logInfo(`Form submission started: ${formType}`, logData);
         return submissionId;
-    } catch (storeError) {
-        logError('Failed to track form submission', { formType }, storeError);
-        return submissionId; // Still return the ID even if storage failed
+    } catch (logError) {
+        console.error('Failed to log form submission:', logError);
+        return submissionId; // Still return the ID even if logging failed
     }
 }
 
@@ -91,109 +77,44 @@ export async function updateSubmissionStatus(
     error?: Error
 ): Promise<boolean> {
     try {
-        // In development mode, we'll use localStorage
-        if (typeof window !== 'undefined') {
-            const storedSubmissions = getLocalSubmissions();
-            const submissionIndex = storedSubmissions.findIndex(s => s.id === submissionId);
+        // Just log the update to server logs
+        const updateInfo = {
+            submissionId,
+            status,
+            timestamp: new Date().toISOString(),
+            responseCode: response?.status,
+            responseText: response?.statusText || (response?.ok ? 'OK' : undefined),
+            errorMessage: error?.message,
+        };
 
-            if (submissionIndex !== -1) {
-                storedSubmissions[submissionIndex] = {
-                    ...storedSubmissions[submissionIndex],
-                    status,
-                    timestamp: new Date().toISOString(), // Update timestamp
-                    responseCode: response?.status,
-                    responseText: response?.statusText || (response?.ok ? 'OK' : undefined),
-                    errorMessage: error?.message,
-                };
-
-                localStorage.setItem(FORM_SUBMISSIONS_KEY, JSON.stringify(storedSubmissions));
-                return true;
-            }
-            return false;
-        }
-
-        // In production, would use database
-        if (process.env.NODE_ENV === 'production') {
-            // TODO: Implement database update
-            // Example: await updateSubmissionInDatabase(submissionId, status, response, error);
+        if (status === FormSubmissionStatus.SUCCESS) {
+            logInfo(`Form submission successful [${submissionId}]`, updateInfo);
+        } else if (status === FormSubmissionStatus.FAILURE) {
+            logError(`Form submission failed [${submissionId}]`, updateInfo, error || new Error('Unknown error'));
+        } else {
+            logInfo(`Form submission status updated [${submissionId}]: ${status}`, updateInfo);
         }
 
         return true;
     } catch (updateError) {
-        logError('Failed to update submission status', { submissionId, status }, updateError);
+        console.error('Failed to log submission status update:', updateError);
         return false;
     }
 }
 
-/**
- * Get recent submission records
- */
-export function getRecentSubmissions(count = 20): FormSubmissionRecord[] {
-    if (typeof window === 'undefined') {
-        return []; // Server-side rendering, no localStorage
-    }
+// The following functions remain as stubs for API compatibility
+// but don't do anything since the admin page is removed
 
-    const submissions = getLocalSubmissions();
-    return submissions.slice(-count);
+export function getRecentSubmissions(): FormSubmissionRecord[] {
+    return [];
 }
 
-/**
- * Get submission by ID
- */
-export function getSubmissionById(id: string): FormSubmissionRecord | null {
-    if (typeof window === 'undefined') {
-        return null; // Server-side rendering, no localStorage
-    }
-
-    const submissions = getLocalSubmissions();
-    return submissions.find(s => s.id === id) || null;
+export function getSubmissionById(): FormSubmissionRecord | null {
+    return null;
 }
 
-/**
- * Clear all tracked submissions (mainly for development)
- */
 export function clearSubmissions(): void {
-    if (typeof window !== 'undefined') {
-        localStorage.removeItem(FORM_SUBMISSIONS_KEY);
-    }
-}
-
-// Helper function to store a submission
-async function storeSubmission(record: FormSubmissionRecord): Promise<void> {
-    // In development mode, use localStorage for simplicity
-    if (typeof window !== 'undefined') {
-        const submissions = getLocalSubmissions();
-
-        // Add new submission and maintain max size
-        submissions.push(record);
-        if (submissions.length > MAX_LOCAL_RECORDS) {
-            submissions.shift(); // Remove oldest record
-        }
-
-        localStorage.setItem(FORM_SUBMISSIONS_KEY, JSON.stringify(submissions));
-        return;
-    }
-
-    // In production, would use a database
-    if (process.env.NODE_ENV === 'production') {
-        // TODO: Implement database storage
-        // Example: await storeSubmissionInDatabase(record);
-    }
-}
-
-// Get submissions from localStorage
-function getLocalSubmissions(): FormSubmissionRecord[] {
-    if (typeof window === 'undefined') {
-        return [];
-    }
-
-    try {
-        const storedData = localStorage.getItem(FORM_SUBMISSIONS_KEY);
-        return storedData ? JSON.parse(storedData) : [];
-    } catch (e) {
-        console.error('Error reading form submissions from localStorage:', e);
-        return [];
-    }
+    // No-op
 }
 
 // Generate a unique ID for submissions
