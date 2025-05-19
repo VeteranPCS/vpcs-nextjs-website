@@ -78,7 +78,7 @@ const schema = yup.object({
 });
 
 const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [stateList, setStateList] = useState<any[]>([]);
 
   // Fetch state list
@@ -132,8 +132,10 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
   };
 
   const onFormSubmit = (data: FormData) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     onSubmit(data);
-    shouldSubmit()
+    shouldSubmit();
   };
 
   const handleBack = (e: FormEvent) => {
@@ -331,21 +333,24 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
             <div className="flex md:justify-start justify-center">
               <button
                 type="submit"
-                className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
+                disabled={isSubmitting}
+                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
               >
-                Submit Now
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <path
-                    d="M14.0098 11H5.99976V13H14.0098V16L17.9998 12L14.0098 8.00003V11Z"
-                    fill="#FFFFFF"
-                  />
-                </svg>
+                {isSubmitting ? 'Submitting...' : 'Submit Now'}
+                {!isSubmitting && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M14.0098 11H5.99976V13H14.0098V16L17.9998 12L14.0098 8.00003V11Z"
+                      fill="#FFFFFF"
+                    />
+                  </svg>
+                )}
               </button>
             </div>
           </div>
