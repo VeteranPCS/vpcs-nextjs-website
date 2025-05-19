@@ -14,9 +14,12 @@ export default function GetListedAgentsPage() {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState({});
   const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const shouldSubmit = () => {
-    setShouldSubmitForm(true)
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    setShouldSubmitForm(true);
   }
 
   const handleNext = () => {
@@ -47,9 +50,13 @@ export default function GetListedAgentsPage() {
           router.push(server_response.redirectUrl);
         } else {
           console.log("No redirect URL found");
+          setIsSubmitting(false);
+          setShouldSubmitForm(false);
         }
       } catch (error) {
         console.error('Error submitting form:', error);
+        setIsSubmitting(false);
+        setShouldSubmitForm(false);
       }
     };
 

@@ -5,7 +5,7 @@ import * as yup from "yup";
 import ReCAPTCHA from 'react-google-recaptcha';
 import { internshipFormSubmission } from "@/services/salesForcePostFormsService";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export interface FormData {
     first_name: string;
@@ -14,7 +14,7 @@ export interface FormData {
     mobile: string;
     "00N4x00000LsnP2": string;
     "00N4x00000LsnOx": string;
-    "00N4x00000QQ0Vz": string[];
+    "00N4x00000QQ0Vz": string;
     state_code: string;
     city: string;
     base?: string;
@@ -29,6 +29,10 @@ export interface FormData {
     captcha_settings?: string;
 }
 
+interface ApiSubmissionData extends Omit<FormData, '00N4x00000QQ0Vz'> {
+    "00N4x00000QQ0Vz": string[];
+}
+
 const schema = yup.object().shape({
     first_name: yup.string().required("First name is required"),
     last_name: yup.string().required("Last name is required"),
@@ -36,7 +40,7 @@ const schema = yup.object().shape({
     mobile: yup.string().required("Phone is required"),
     "00N4x00000LsnP2": yup.string().required("Military status is required"),
     "00N4x00000LsnOx": yup.string().required("Military branch is required"),
-    "00N4x00000QQ0Vz": yup.array().of(yup.string().defined()).required().min(1, "Discharge status is required"),
+    "00N4x00000QQ0Vz": yup.string().required("Discharge status is required"),
     state_code: yup.string().required("State is required"),
     city: yup.string().required("City is required"),
     base: yup.string(),
@@ -78,6 +82,7 @@ const schema = yup.object().shape({
 });
 
 const WebToLeadForm = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const {
         register,
         handleSubmit,
@@ -93,7 +98,7 @@ const WebToLeadForm = () => {
             mobile: "",
             "00N4x00000LsnP2": "",
             "00N4x00000LsnOx": "",
-            "00N4x00000QQ0Vz": [],
+            "00N4x00000QQ0Vz": "",
             state_code: "",
             city: "",
             base: "",
@@ -116,18 +121,29 @@ const WebToLeadForm = () => {
 
     useEffect(() => {
         if (militaryStatus.includes("Active")) {
-            setValue("00N4x00000QQ0Vz", ["Currently Serving"]);
+            setValue("00N4x00000QQ0Vz", "Currently Serving");
         }
     }, [militaryStatus, setValue]);
 
     const handleFormSubmit: SubmitHandler<FormData> = async (data) => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
         try {
-            const response = await internshipFormSubmission(data);
+            // Transform the form data to the API format
+            const apiData: ApiSubmissionData = {
+                ...data,
+                "00N4x00000QQ0Vz": [data["00N4x00000QQ0Vz"]]
+            };
+
+            const response = await internshipFormSubmission(apiData);
             if (response.redirectUrl) {
                 router.push(response.redirectUrl);
+            } else {
+                setIsSubmitting(false);
             }
         } catch (error) {
             console.error('Error submitting form:', error);
+            setIsSubmitting(false);
         }
     };
 
@@ -687,9 +703,10 @@ const WebToLeadForm = () => {
                             <button
                                 type="submit"
                                 name="submit"
-                                className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
+                                disabled={isSubmitting}
+                                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
                             >
-                                Submit
+                                {isSubmitting ? 'Submitting...' : 'Submit'}
                             </button>
                         </div>
                     </div>
