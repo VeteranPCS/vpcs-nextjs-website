@@ -3,11 +3,25 @@ import sendToSlack from '@/actions/sendToSlack';
 import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
 import { formatPhoneNumberForDisplay, formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
 import stateService from '@/services/stateService';
+import { logDebug, logError, logInfo } from './loggingService';
+import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const OPEN_PHONE_FROM_NUMBER = process.env.OPEN_PHONE_FROM_NUMBER || "";
 
 export async function contactAgentPostForm(formData: any, queryString: string) {
+    // Start tracking the submission
+    const submissionId = await trackFormSubmission(
+        'contactAgent',
+        formData,
+        FormSubmissionStatus.PENDING
+    );
+
+    logInfo('Processing contact agent form submission', {
+        submissionId,
+        agent_id: new URLSearchParams(queryString).get('id')
+    });
+
     try {
         const paramsObj: { [key: string]: string } = {};
         new URLSearchParams(queryString).forEach((value, key) => {
@@ -19,8 +33,15 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
         if (paramsObj.id) {
             try {
                 agentInfo = await stateService.fetchAgentById(paramsObj.id);
+                logDebug('Agent information fetched successfully', {
+                    agent_id: paramsObj.id,
+                    submissionId
+                });
             } catch (error) {
-                console.error('Error fetching agent information:', error);
+                logError('Error fetching agent information', {
+                    agent_id: paramsObj.id,
+                    submissionId
+                }, error);
             }
         }
 
@@ -58,16 +79,46 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
             "captcha_settings": formData.captcha_settings || "",
         }).toString();
 
-        const response = await fetch(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formBody,
-            }
-        );
+        logDebug('Sending form data to Salesforce', {
+            submissionId,
+            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
+        });
+
+        let response;
+        try {
+            response = await fetch(
+                "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formBody,
+                }
+            );
+
+            logInfo('Received response from Salesforce', {
+                submissionId,
+                status: response.status,
+                statusText: response.statusText,
+                ok: response.ok
+            });
+        } catch (fetchError) {
+            // Track the network failure
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.FAILURE,
+                null,
+                fetchError instanceof Error ? fetchError : new Error('Network request failed')
+            );
+
+            logError('Network error while submitting to Salesforce', {
+                submissionId
+            }, fetchError);
+
+            throw fetchError;
+        }
 
         // Fire and forget notifications - don't await them
         await Promise.all([
@@ -98,29 +149,93 @@ ${formData.additionalComments ? `Additional Comments: ${formData.additionalComme
             })
         ]).catch(error => {
             // Log any errors but don't block the main flow
-            console.error('Error sending notifications:', error);
+            logError('Error sending notifications', { submissionId }, error);
         });
 
         if (!response.ok) {
+            // Track the unsuccessful response
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.FAILURE,
+                response,
+                new Error(`Salesforce API error: ${response.status}`)
+            );
+
+            logError('Received unsuccessful response from Salesforce', {
+                submissionId,
+                status: response.status
+            });
+
             throw new Error(`Error: ${response.status}`);
         }
 
-        const data = await response.text();
+        // At this point, the request to Salesforce was successful
+        let data;
+        try {
+            data = await response.text();
+            logDebug('Received text response from Salesforce', {
+                submissionId,
+                responseLength: data.length
+            });
+        } catch (textError) {
+            // Log the error but don't fail the submission since the POST was successful
+            logError('Error reading response text', { submissionId }, textError);
+
+            // Track successful submission even though we couldn't read the response text
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.SUCCESS,
+                response
+            );
+
+            return { message: 'Form submitted successfully!' };
+        }
+
         const redirectUrlMatch = data.match(/window.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
         const redirectUrl = redirectUrlMatch ? redirectUrlMatch[1] : null;
 
+        // Track the successful submission
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.SUCCESS,
+            response
+        );
+
         if (redirectUrl) {
+            logInfo('Form submitted with redirect URL', {
+                submissionId,
+                redirectUrl
+            });
             return { redirectUrl };
         }
 
+        logInfo('Form submitted successfully', { submissionId });
         return { message: 'Form submitted successfully!' };
     } catch (error) {
-        console.error('Error:', error);
+        // If this is an unknown error that wasn't caught earlier,
+        // make sure to update the submission status
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.FAILURE,
+            null,
+            error instanceof Error ? error : new Error('Unknown error')
+        );
+
+        logError('Error in contactAgentPostForm', { submissionId }, error);
         throw new Error('Failed to submit form');
     }
 }
 
 export async function GetListedAgentsPostForm(formData: any) {
+    // Start tracking the submission
+    const submissionId = await trackFormSubmission(
+        'getListedAgents',
+        formData,
+        FormSubmissionStatus.PENDING
+    );
+
+    logInfo('Processing agent listing form submission', { submissionId });
+
     try {
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
@@ -156,17 +271,45 @@ export async function GetListedAgentsPostForm(formData: any) {
             "captcha_settings": formData.captcha_settings || "",
         }).toString();
 
+        logDebug('Sending agent listing data to Salesforce', {
+            submissionId,
+            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+        });
 
-        const response = await fetch(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formBody,
-            }
-        );
+        let response;
+        try {
+            response = await fetch(
+                "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formBody,
+                }
+            );
+
+            logInfo('Received response from Salesforce for agent listing', {
+                submissionId,
+                status: response.status,
+                statusText: response.statusText,
+                ok: response.ok
+            });
+        } catch (fetchError) {
+            // Track the network failure
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.FAILURE,
+                null,
+                fetchError instanceof Error ? fetchError : new Error('Network request failed')
+            );
+
+            logError('Network error while submitting agent listing to Salesforce', {
+                submissionId
+            }, fetchError);
+
+            throw fetchError;
+        }
 
         Promise.all([
             sendToSlack({
@@ -176,23 +319,80 @@ export async function GetListedAgentsPostForm(formData: any) {
                 phoneNumber: formData.phone || "",
                 message: formData.additionalComments || "",
             })
-        ]);
+        ]).catch(error => {
+            logError('Error sending agent listing notifications', { submissionId }, error);
+        });
 
         if (!response.ok) {
+            // Track the unsuccessful response
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.FAILURE,
+                response,
+                new Error(`Salesforce API error: ${response.status}`)
+            );
+
+            logError('Received unsuccessful response from Salesforce for agent listing', {
+                submissionId,
+                status: response.status
+            });
+
             throw new Error(`Error: ${response.status}`);
         }
 
-        const data = await response.text();
+        // At this point, the request to Salesforce was successful
+        let data;
+        try {
+            data = await response.text();
+            logDebug('Received text response from Salesforce for agent listing', {
+                submissionId,
+                responseLength: data.length
+            });
+        } catch (textError) {
+            // Log the error but don't fail the submission since the POST was successful
+            logError('Error reading response text for agent listing', { submissionId }, textError);
+
+            // Track successful submission even though we couldn't read the response text
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.SUCCESS,
+                response
+            );
+
+            return { message: 'Form submitted successfully!' };
+        }
+
         const redirectUrlMatch = data.match(/window.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
         const redirectUrl = redirectUrlMatch ? redirectUrlMatch[1] : null;
 
+        // Track the successful submission
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.SUCCESS,
+            response
+        );
+
         if (redirectUrl) {
+            logInfo('Agent listing form submitted with redirect URL', {
+                submissionId,
+                redirectUrl
+            });
             return { redirectUrl };
         }
 
+        logInfo('Agent listing form submitted successfully', { submissionId });
         return { message: 'Form submitted successfully!' };
     } catch (error) {
-        console.error('Error:', error);
+        // If this is an unknown error that wasn't caught earlier,
+        // make sure to update the submission status
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.FAILURE,
+            null,
+            error instanceof Error ? error : new Error('Unknown error')
+        );
+
+        logError('Error in GetListedAgentsPostForm', { submissionId }, error);
         throw new Error('Failed to submit form');
     }
 }
