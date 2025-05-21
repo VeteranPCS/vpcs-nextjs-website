@@ -1,3 +1,6 @@
+import { Metadata } from "next";
+import Script from "next/script";
+import { WithContext, ItemList } from "schema-dts";
 import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
 import VideoFamily from "@/components/homepage/VideoFamily"
 import PcsResourcesTrustedResources from "@/components/PcsResources/PcsResourcesTrustedResources/PcsResourcesTrustedResources";
@@ -12,9 +15,88 @@ import GuidesHero from "@/components/GuidesHero/GuidesHero";
 import VaLoanGuideDownload from "@/components/homepage/VaLoanGuideDownload";
 import HomebuyerGuideDownload from "@/components/homepage/VeteranPCSWorksComp/HomebuyerGuideDownload";
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const META_TITLE = "Free VA Loan & First-Time Homebuyer Guides";
+const META_DESCRIPTION = "Download our free guides to help you navigate PCS moves, VA loans, and first-time homebuying. Our veteran and military spouse agents are here to support you every step of the way.";
+
+export const metadata: Metadata = {
+    metadataBase: new URL(BASE_URL || ""),
+    title: {
+        template: "%s | VeteranPCS",
+        default: META_TITLE,
+    },
+    alternates: {
+        canonical: `${BASE_URL}/guides`,
+    },
+    description: META_DESCRIPTION,
+    openGraph: {
+        type: "website",
+        locale: "en_US",
+        url: BASE_URL,
+        siteName: "VeteranPCS",
+        images: [
+            {
+                url: `${BASE_URL}/opengraph/og-guides.png`,
+                width: 1200,
+                height: 630,
+                alt: "VeteranPCS",
+            },
+        ],
+    },
+    twitter: {
+        card: "summary_large_image",
+        description: META_DESCRIPTION,
+        title: META_TITLE,
+        images: ['/opengraph/og-guides.png'],
+    },
+};
+
+
 function GuidesPage() {
+    const jsonLd: WithContext<ItemList> = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                    "@type": "DigitalDocument",
+                    "name": "VA Loan Guide",
+                    "description": "A comprehensive guide to understanding VA loans and benefits for veterans and military families.",
+                    "url": `${BASE_URL}/guides#va-loan-guide`,
+                    "provider": {
+                        "@type": "Organization",
+                        "name": "VeteranPCS",
+                        "url": BASE_URL
+                    }
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                    "@type": "DigitalDocument",
+                    "name": "First-Time Homebuyer Guide",
+                    "description": "Essential information for first-time homebuyers, with specialized guidance for military families.",
+                    "url": `${BASE_URL}/guides#homebuyer-guide`,
+                    "provider": {
+                        "@type": "Organization",
+                        "name": "VeteranPCS",
+                        "url": BASE_URL
+                    }
+                }
+            }
+        ]
+    };
+
     return (
         <>
+            <Script
+                id="json-ld-guides"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <GuidesHero />
             <div id="va-loan-guide">
                 <VaLoanGuideDownload />
