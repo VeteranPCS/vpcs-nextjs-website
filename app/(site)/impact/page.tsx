@@ -12,7 +12,7 @@ import AboutOurStory from "@/components/Impact/AboutOurStory/AboutOurStory";
 import WhyVeteranPcs from "@/components/homepage/WhyVeteranPCS";
 import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpert";
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
-import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
+import FrequentlyAskedQuestions from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -68,7 +68,7 @@ export default function ImpactPage() {
       <WhyVeteranPcs />
       <AgentLoanExpert />
       <SkillFuturesBuild />
-      <FrequentlyAskedQuestion />
+      <FrequentlyAskedQuestions />
       <KeepInTouch />
     </>
   );
