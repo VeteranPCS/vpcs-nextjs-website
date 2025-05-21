@@ -1,0 +1,23 @@
+.guidesHeroContainer {
+  background-image: url("/assets/pcsresourceherobg.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #aeb0c7;
+  padding: 180px 0px 100px;
+  z-index: 10;
+  position: relative;
+  width: 100%;
+}
+
+.guidesImageContainer {
+  position: relative;
+  transform: translateY(10px);
+}
+
+@media screen and (max-width: 575px) {
+  .guidesHeroContainer {
+    padding: 120px 30px 60px 30px;
+    margin-bottom: 120px;
+  }
+} 
