@@ -19,7 +19,7 @@ const PcsResourcesMovingPcsing = () => {
           </div>
           <div>
             <h1 className="text-[#292F6C] poppins text-center  lg:text-[35px] md:text-[35px] sm:text-[35px] text-[35px] font-bold uppercase mb-5">
-              MOVING OR PCSING IN 2024?
+              MOVING OR PCSING IN 2025?
             </h1>
             <Link href="/blog" className="flex justify-center">
               <Button buttonText="Articles" />
