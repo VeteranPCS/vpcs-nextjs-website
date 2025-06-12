@@ -26,8 +26,17 @@ const EndBlogPostDetails = ({ blog }: { blog: Record<string, any> }) => {
   const secondHalfContent = blog.content.slice(halfwayPoint);
 
   return (
-    <div className="relative py-12 px-[16%]">
-      <BlogContent blocks={secondHalfContent} />
+    <div className="relative py-12 md:px-10 px-5">
+      <div className="container mx-auto">
+        <div className="flex flex-wrap lg:gap-0 gap-10">
+          <div className="lg:w-1/5 md:w-1/5 sm:w-full w-full">
+            {/* Empty div to maintain layout structure */}
+          </div>
+          <article className="lg:w-4/5 md:w-4/5 sm:w-full w-full lg:pl-10">
+            <BlogContent blocks={secondHalfContent} />
+          </article>
+        </div>
+      </div>
     </div>
   );
 };
