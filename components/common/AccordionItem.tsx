@@ -8,7 +8,7 @@ const AccordionItem = ({
 }: {
   id: string;
   title: string;
-  content: string;
+  content: string | React.ReactNode;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -37,7 +37,7 @@ const AccordionItem = ({
       >
         {isExpanded && (
           <div className="p-4 border border-white bg-white shadow-[0px_12px_7px_-6px_rgba(0,_0,_0,_0.30)]">
-            <p className="text-gray-600">{content}</p>
+            <div className="text-gray-600">{content}</div>
           </div>
         )}
       </div>
