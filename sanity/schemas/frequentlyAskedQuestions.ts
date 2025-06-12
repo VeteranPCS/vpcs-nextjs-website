@@ -13,7 +13,7 @@ export default defineType({
     defineField({
       name: 'answer',
       title: 'Answer',
-      type: 'text',
+      type: 'blockContent',
     }),
   ],
   preview: {

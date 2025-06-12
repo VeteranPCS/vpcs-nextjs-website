@@ -2,7 +2,7 @@ import Image from 'next/image';
 import BlockContent from './BlockContent';
 
 // Define the Block type that matches BlockContent's expectations
-export type BlockStyle = "h1" | "h2" | "h3" | "normal";
+export type BlockStyle = "h1" | "h2" | "h3" | "h4" | "normal";
 
 // Update BlogData to use a more flexible content type
 interface BlogData {
@@ -27,9 +27,14 @@ interface BlogData {
 export interface Block {
   _key: string;
   children: Child[];
-  style: 'h1' | 'h2' | 'h3' | 'normal'; // Explicitly define the style types
-  listItem?: 'bullet'; // Optional property for list items
-  level?: number; // Optional property for list nesting level
+  style: 'h1' | 'h2' | 'h3' | 'h4' | 'normal';
+  listItem?: 'bullet';
+  level?: number;
+  markDefs?: {
+    _key: string;
+    _type: string;
+    href: string;
+  }[];
 }
 
 interface Child {
@@ -47,7 +52,7 @@ interface BlockContentProps {
 }
 
 export const validateBlockStyle = (style: string): BlockStyle => {
-  const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];
+  const validStyles: BlockStyle[] = ["h1", "h2", "h3", "h4", "normal"];
   return validStyles.includes(style as BlockStyle)
     ? (style as BlockStyle)
     : "normal";
@@ -87,6 +92,7 @@ const BlogDetail: React.FC<BlogDetailProps> = ({ blogData }) => {
                 {
                   ...block,
                   style: validateBlockStyle(block.style),
+                  children: block.children || [],
                 },
               ]}
             />

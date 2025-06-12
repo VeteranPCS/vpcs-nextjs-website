@@ -62,6 +62,9 @@ interface BlockContentProps {
 
 const BlockContent: React.FC<BlockContentProps> = ({ blocks }) => {
   const renderContent = (children: Child[], block: Block) => {
+    if (!children || !Array.isArray(children)) {
+      return null;
+    }
     return children.map((child) => (
       <TextSpan key={child._key} child={child} block={block} />
     ));
