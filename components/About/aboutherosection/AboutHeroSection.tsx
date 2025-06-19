@@ -32,6 +32,9 @@ const AboutHeroSection = async () => {
                 <p className="lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] font-normal text-white poppins sm:mb-10 mb-5 mt-4 tahoma leading-[26px]">
                   {pageData?.description}
                 </p>
+                <p className="lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] font-normal text-white poppins sm:mb-10 mb-5 mt-4 tahoma leading-[26px]">
+                  This is military families, helping military families move.
+                </p>
                 <div>
                   <Link href="/#map-container">
                     <Button buttonText={pageData?.buttonText || "default button"} />

@@ -10,6 +10,16 @@ const DigitalTeam = async () => {
 
   try {
     DigitalTeamDetails = await aboutService.fetchMembersDetail('digital_innovation');
+
+    // Sort team members by specific order
+    if (DigitalTeamDetails) {
+      const nameOrder = ['Stephanie Camfield', 'Harper Foley', 'Michelle Bowler'];
+      DigitalTeamDetails.sort((a, b) => {
+        const aIndex = nameOrder.indexOf(a.name);
+        const bIndex = nameOrder.indexOf(b.name);
+        return aIndex - bIndex;
+      });
+    }
   } catch (error) {
     console.error('Error fetching Digital Innovation Team&apos;s Data:', error);
     return <p>Failed to load the Digital Innovation Team&apos;s Data.</p>;
