@@ -10,8 +10,7 @@ const MakeAnImpact = () => {
             Make An Impact
           </h1>
           <p className="lg:text-[18px] md:text-[18px] sm:text-[18px] text-[18px] font-normal text-[#292F6C] tahoma mb-5 mt-5 mx-auto md:w-[550px] sm:w-auto w-auto">
-            By using VeteranPCS, or spreading the word you can support veterans
-            and their families businesses thrive.
+            By using VeteranPCS, or spreading the word, you&apos;re supporting veteran and military spouse businesses, nationwide.
           </p>
         </div>
       </div>

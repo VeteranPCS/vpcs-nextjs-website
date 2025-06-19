@@ -15,7 +15,7 @@ const HeroSec = () => {
                 Impact
               </h1>
               <p className="lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] font-normal text-white poppins mb-10 tahoma">
-                By supporting VeteranPCS you are supporting veteran communities
+                By using VeteranPCS you are supporting our military and veteran community
               </p>
               <div className="flex justify-between xl:justify-start lg:justify-start md:justify-start sm:justify-between gap-4 mb-10 mt-10 mx-auto text-center">
                 <div className="flex items-center gap-4">
@@ -41,7 +41,7 @@ const HeroSec = () => {
                     loading="eager"
                   />
                   <p className="text-white font-medium text-sm tahoma">
-                    Free To Use
+                    Money Back
                   </p>
                 </div>
               </div>

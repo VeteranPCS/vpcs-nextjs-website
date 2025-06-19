@@ -40,6 +40,16 @@ const AdminTeam = async () => {
 
   try {
     DigitalAdminDetails = await aboutService.fetchMembersDetail('administration');
+
+    // Sort team members by specific order
+    if (DigitalAdminDetails) {
+      const nameOrder = ['Beth Soldner', 'Stephanie Guree', 'Jessica Brown'];
+      DigitalAdminDetails.sort((a, b) => {
+        const aIndex = nameOrder.indexOf(a.name);
+        const bIndex = nameOrder.indexOf(b.name);
+        return aIndex - bIndex;
+      });
+    }
   } catch (error) {
     console.error('Error fetching Administrations Team&apos;s Data:', error);
     return <p>Failed to load the Administrations Team&apos;s Data.</p>;
