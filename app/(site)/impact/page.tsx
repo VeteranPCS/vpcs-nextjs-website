@@ -14,6 +14,7 @@ import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpe
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
 import FrequentlyAskedQuestions from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
+import VeteranPcsGivesBack from '@/components/Impact/VeteranPcsGivesBack/VeteranPcsGivesBack';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "Our Mission Impact: Supporting Military Families & Veteran Charities";
@@ -61,7 +62,7 @@ export default function ImpactPage() {
       <Testimonials />
       <FamilySupport />
       <WearBlueSection />
-      <ImpactVaLoan />
+      <VeteranPcsGivesBack />
       <ReviewsList />
       <VideoReview />
       <AboutOurStory />

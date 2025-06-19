@@ -13,7 +13,7 @@ import PcsResourcesMilSpouse from "@/components/PcsResources/PcsResourcesMilSpou
 import PcsResourcesMovingYourLife from "@/components/PcsResources/PcsResourcesMovingYourLife/PcsResourcesMovingYourLife";
 import PcsResourcesTrustedResources from "@/components/PcsResources/PcsResourcesTrustedResources/PcsResourcesTrustedResources";
 import PcsResourcesHowDoesWork from "@/components/PcsResources/PcsResourcesHowDoesWork/PcsResourcesHowDoesWorkIt";
-import PcsResourcesMovingPcsing from "@/components/PcsResources/PcsResourcesMovingPcsing/PcsResourcesMovingPcsing";
+// import PcsResourcesMovingPcsing from "@/components/PcsResources/PcsResourcesMovingPcsing/PcsResourcesMovingPcsing";
 import VideoReview from "@/components/Impact/VideoReview/VideoReview";
 import AboutOurStory from "@/components/Impact/AboutOurStory/AboutOurStory";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
@@ -62,7 +62,7 @@ export default function PcsResourcesPage() {
       <Covered />
       <VideoFamily />
       <Testimonials />
-      <CommonBlog component="Let’s talk VA loan" />
+      <CommonBlog component="PCS Help" />
       <FamilySupport />
       <PcsResourcesVaLoanGuide />
       <FrequentlyAskedQuestion />
@@ -73,7 +73,7 @@ export default function PcsResourcesPage() {
       <PcsResourcesMovingYourLife />
       <PcsResourcesTrustedResources />
       <PcsResourcesHowDoesWork />
-      <PcsResourcesMovingPcsing />
+      {/* <PcsResourcesMovingPcsing /> */}
       <div className="bg-[#EEEEEE]">
         <VideoReview />
         <AboutOurStory />

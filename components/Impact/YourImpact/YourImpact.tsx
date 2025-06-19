@@ -13,8 +13,7 @@ const HeroSec = () => {
               Your Impact
             </p>
             <h1 className="lg:text-[18px] md:text-[18px] sm:text-[18px] text-[18px] font-normal text-white poppins mb-10 mt-3 tahoma">
-              With your support we have been able to aid the military community
-              in amazing ways
+              With your support we have been able to Impact the military community in amazing ways
             </h1>
           </div>
           <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 items-start justify-between sm:gap-3 gap-3">
