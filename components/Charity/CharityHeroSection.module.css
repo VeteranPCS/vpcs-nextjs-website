@@ -1,0 +1,17 @@
+.charityherosectioncontainer {
+  background-image: url("/assets/charity-hero.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #aeb0c7;
+  padding-top: 180px;
+  z-index: 10;
+  position: relative;
+  width: 100%;
+}
+
+@media screen and (max-width: 575px) {
+  .charityherosectioncontainer {
+    padding: 100px 30px 60px 30px;
+  }
+}

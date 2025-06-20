@@ -1,12 +1,12 @@
 import React from "react";
 import "@/app/globals.css";
-import classes from "@/components/Impact/ImpactHeroSection/ImpactHeroSection.module.css";
+import classes from "@/components/Charity/CharityHeroSection.module.css";
 import Image from "next/image";
 
 const HeroSec = () => {
     return (
         <div className="relative">
-            <div className={classes.impactherosectioncontainer}>
+            <div className={classes.charityherosectioncontainer}>
                 <div className="container mx-auto px-5">
                     <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-4">
                         <div className="mx-auto lg:text-left md:text-left sm:text-center text-left w-full sm:order-2 order-2 lg:order-none md:order-none">
