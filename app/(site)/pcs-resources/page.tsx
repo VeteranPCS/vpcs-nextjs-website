@@ -4,7 +4,6 @@ import Covered from "@/components/homepage/Covered/Covered";
 import VideoFamily from "@/components/homepage/VideoFamily";
 import Testimonials from "@/components/Testimonials/TestimonialPage";
 import FamilySupport from "@/components/homepage/FamilySupport/FamilySupport";
-import PcsResourcesVaLoanGuide from "@/components/PcsResources/PcsResourcesVaLoanGuide/PcsResourcesVaLoanGuide";
 import FrequentlyAskedQuestion from "@/components//stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import PcsResourcesCalculators from "@/components/PcsResources/PcsResourcesCalculators/PcsResourcesCalculators";
 import PcsResourcesEmployment from "@/components/PcsResources/PcsResourcesEmployment/PcsResourcesEmployment";
@@ -13,11 +12,12 @@ import PcsResourcesMilSpouse from "@/components/PcsResources/PcsResourcesMilSpou
 import PcsResourcesMovingYourLife from "@/components/PcsResources/PcsResourcesMovingYourLife/PcsResourcesMovingYourLife";
 import PcsResourcesTrustedResources from "@/components/PcsResources/PcsResourcesTrustedResources/PcsResourcesTrustedResources";
 import PcsResourcesHowDoesWork from "@/components/PcsResources/PcsResourcesHowDoesWork/PcsResourcesHowDoesWorkIt";
-// import PcsResourcesMovingPcsing from "@/components/PcsResources/PcsResourcesMovingPcsing/PcsResourcesMovingPcsing";
 import VideoReview from "@/components/Impact/VideoReview/VideoReview";
 import AboutOurStory from "@/components/Impact/AboutOurStory/AboutOurStory";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
+import DownloadGuideComponent from "@/components/common/DownloadGuideComponent";
+import StateMap from "@/components/homepage/StateMap";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "Military PCS Toolkit: Moving Guides, BAH Calculators & VA Loan Resources";
@@ -62,20 +62,51 @@ export default function PcsResourcesPage() {
       <Covered />
       <VideoFamily />
       <Testimonials />
+      <DownloadGuideComponent
+        icon="/icon/home-icon.webp"
+        iconAlt="First Time Home Buyer Guide"
+        headerText="First Time Home Buyer Guide"
+        contentText="First time buying a home? It can seem overwhelming. Check out our free first time home buyer guide to understand the process."
+        downloadButtonText="Download Now"
+        secondaryButtonText="Connect me with an Agent!"
+        secondaryButtonLink="/contact-agent"
+        downloadFileName="first-time-home-buyer-guide.pdf"
+        downloadDisplayName="First-Time-Home-Buyer-Guide.pdf"
+        gtmEventContent="First Time Home Buyer Guide"
+        className="my-8"
+      />
+      <DownloadGuideComponent
+        icon="/icon/home-dollar.webp"
+        iconAlt="VA Loan Guide"
+        headerText="VA Loan Guide"
+        contentText="Don’t overpay using your VA loan, make the VA Loan work for you! Download our free VA Loan guide to learn more about the VA loan and how it can work for you."
+        downloadButtonText="Download Now"
+        secondaryButtonText="VA Loan Questions?"
+        secondaryButtonLink="/contact-lender"
+        downloadFileName="VA-Loan-Guide.pdf"
+        downloadDisplayName="VA-Loan-Guide.pdf"
+        gtmEventContent="VA Loan Guide"
+        className="my-8"
+      />
       <CommonBlog component="PCS Help" />
+      <PcsResourcesHowDoesWork />
       <FamilySupport />
-      <PcsResourcesVaLoanGuide />
+
       <FrequentlyAskedQuestion />
       <PcsResourcesCalculators />
       <PcsResourcesEmployment />
       <ReviewsList />
+      <VideoReview />
       <PcsResourcesMilSpouse />
       <PcsResourcesMovingYourLife />
       <PcsResourcesTrustedResources />
-      <PcsResourcesHowDoesWork />
-      {/* <PcsResourcesMovingPcsing /> */}
+      <StateMap
+        title="Buying or Selling?"
+        subTitle="Choose a state below to connect with our veteran and military spouse agents and lenders"
+        buttonText="Don't want to browse? Connect me with an Agent!"
+        buttonLink="/contact-agent"
+      />
       <div className="bg-[#EEEEEE]">
-        <VideoReview />
         <AboutOurStory />
       </div>
       <FrequentlyAskedQuestion />
