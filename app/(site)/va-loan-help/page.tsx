@@ -17,6 +17,8 @@ import AboutOurStory from "@/components/Impact/AboutOurStory/AboutOurStory";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 import DownloadGuideComponent from "@/components/common/DownloadGuideComponent";
+import MovingBonusCalculator from "@/components/PcsResources/MovingBonusCalculator/MovingBonusCalculator";
+
 import StateMap from "@/components/homepage/StateMap";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -78,6 +80,7 @@ export default function VaLoanPage() {
             />
             <VideoFamily />
             <Testimonials />
+            <MovingBonusCalculator />
             <PcsResourcesCalculators />
             <CommonBlog component="VA Loan Help" />
             <PcsResourcesHowDoesWork />

@@ -12,6 +12,7 @@ import PcsResourcesMilSpouse from "@/components/PcsResources/PcsResourcesMilSpou
 import PcsResourcesMovingYourLife from "@/components/PcsResources/PcsResourcesMovingYourLife/PcsResourcesMovingYourLife";
 import PcsResourcesTrustedResources from "@/components/PcsResources/PcsResourcesTrustedResources/PcsResourcesTrustedResources";
 import PcsResourcesHowDoesWork from "@/components/PcsResources/PcsResourcesHowDoesWork/PcsResourcesHowDoesWorkIt";
+import MovingBonusCalculator from "@/components/PcsResources/MovingBonusCalculator/MovingBonusCalculator";
 import VideoReview from "@/components/Impact/VideoReview/VideoReview";
 import AboutOurStory from "@/components/Impact/AboutOurStory/AboutOurStory";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
@@ -88,12 +89,12 @@ export default function PcsResourcesPage() {
         gtmEventContent="VA Loan Guide"
         className="my-8"
       />
+      <PcsResourcesCalculators />
       <CommonBlog component="PCS Help" />
       <PcsResourcesHowDoesWork />
+      <MovingBonusCalculator />
       <FamilySupport />
-
       <FrequentlyAskedQuestion />
-      <PcsResourcesCalculators />
       <PcsResourcesEmployment />
       <ReviewsList />
       <VideoReview />
