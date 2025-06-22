@@ -1,0 +1,44 @@
+/* Custom slider styling for webkit browsers */
+.sliderThumb::-webkit-slider-thumb {
+  appearance: none;
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  background: #27306d;
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+/* Firefox slider thumb styling */
+.sliderThumb::-moz-range-thumb {
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  background: #27306d;
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  -moz-appearance: none;
+}
+
+/* Firefox slider track styling */
+.sliderThumb::-moz-range-track {
+  height: 12px;
+  border-radius: 6px;
+  border: none;
+}
+
+/* Focus styles */
+.sliderThumb:focus {
+  outline: none;
+}
+
+.sliderThumb:focus::-webkit-slider-thumb {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(39, 48, 109, 0.3);
+}
+
+.sliderThumb:focus::-moz-range-thumb {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(39, 48, 109, 0.3);
+} 

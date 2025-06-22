@@ -4,6 +4,7 @@ import Covered from "@/components/homepage/Covered/Covered";
 import HowItWorkText from "@/components/HowItWork/HowItWorkText/HowItWorkText";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import StateMap from "@/components/homepage/StateMap";
+import MovingBonusCalculator from "@/components/PcsResources/MovingBonusCalculator/MovingBonusCalculator";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "The VeteranPCS Process: PCS Support, VA Loan Expertise & $4,000 Bonuses";
@@ -45,6 +46,9 @@ export default function HowItWorksPage() {
   return (
     <>
       <HowItWorkHeroSection />
+      <div className="mt-10">
+        <MovingBonusCalculator />
+      </div>
       <div id="agent-map" className="bg-[#aeb0c7] pt-24 lg:pt-32 xl:pt-40">
         <StateMap
           title="Buying or Selling?"

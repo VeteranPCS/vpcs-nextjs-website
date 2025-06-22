@@ -13,6 +13,8 @@ import AgentLoanExpert from "@/components/homepage/AgentLoanExpert/AgentLoanExpe
 import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFuturesBuild";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
+import MovingBonusCalculator from "@/components/PcsResources/MovingBonusCalculator/MovingBonusCalculator";
+
 
 export default function Home() {
   return (
@@ -31,6 +33,7 @@ export default function Home() {
       <FeaturedLogos />
       <VideoFamily />
       <Testimonials />
+      <MovingBonusCalculator />
       <Covered />
       <FamilySupport />
       <VeteranPCS />
