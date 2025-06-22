@@ -1,6 +1,9 @@
 import React from 'react';
 import '@/app/globals.css';
 import Link from 'next/link';
+import Image from 'next/image';
+import { urlForImage } from '@/sanity/lib/image';
+
 interface Child {
   _key: string;
   marks: string[];
@@ -9,8 +12,9 @@ interface Child {
 
 interface Block {
   _key: string;
-  children: Child[];
-  style: 'h1' | 'h2' | 'h3' | 'h4' | 'normal';
+  _type?: string;
+  children?: Child[];
+  style?: 'h1' | 'h2' | 'h3' | 'h4' | 'normal';
   listItem?: 'bullet';
   level?: number;
   markDefs?: {
@@ -18,6 +22,12 @@ interface Block {
     _type: string;
     href: string;
   }[];
+  // Image-specific properties
+  asset?: {
+    _ref: string;
+    _type: string;
+  };
+  alt?: string;
 }
 
 interface TextSpanProps {
@@ -71,29 +81,52 @@ const BlockContent: React.FC<BlockContentProps> = ({ blocks }) => {
   };
 
   const renderBlock = (block: Block) => {
+    // Handle image blocks
+    if (block._type === 'image') {
+      if (!block.asset) return null;
+
+      const imageUrl = urlForImage(block as any);
+
+      return (
+        <div key={block._key} className="flex justify-center my-8">
+          <div className="w-full max-w-none">
+            <Image
+              src={imageUrl}
+              alt={block.alt || 'Blog image'}
+              width={800}
+              height={400}
+              className="w-full h-auto rounded-lg"
+              style={{ objectFit: 'contain' }}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    // Handle text blocks
     switch (block.style) {
       case 'h1':
         return (
           <h1 key={block._key} className="text-4xl font-bold mb-4 text-gray-900">
-            {renderContent(block.children, block)}
+            {renderContent(block.children || [], block)}
           </h1>
         );
       case 'h2':
         return (
           <h2 key={block._key} className="text-2xl font-bold my-6 text-gray-900">
-            {renderContent(block.children, block)}
+            {renderContent(block.children || [], block)}
           </h2>
         );
       case 'h3':
         return (
           <h3 key={block._key} className="text-xl font-bold mb-4 text-gray-900">
-            {renderContent(block.children, block)}
+            {renderContent(block.children || [], block)}
           </h3>
         );
       case 'h4':
         return (
           <h4 key={block._key} className="text-lg font-bold mb-4 text-gray-900">
-            {renderContent(block.children, block)}
+            {renderContent(block.children || [], block)}
           </h4>
         );
       case 'normal':
@@ -104,13 +137,13 @@ const BlockContent: React.FC<BlockContentProps> = ({ blocks }) => {
               key={block._key}
               className={`ml-${block.level || 1} mb-2 text-gray-700 leading-relaxed`}
             >
-              {renderContent(block.children, block)}
+              {renderContent(block.children || [], block)}
             </li>
           );
         }
         return (
           <p key={block._key} className="mb-6 text-gray-700 leading-relaxed">
-            {renderContent(block.children, block)}
+            {renderContent(block.children || [], block)}
           </p>
         );
     }
@@ -124,7 +157,10 @@ const BlockContent: React.FC<BlockContentProps> = ({ blocks }) => {
     blocks.forEach((block) => {
       if (block.listItem === 'bullet') {
         isInsideList = true;
-        currentList.push(renderBlock(block));
+        const renderedBlock = renderBlock(block);
+        if (renderedBlock) {
+          currentList.push(renderedBlock);
+        }
       } else {
         if (isInsideList) {
           result.push(
@@ -135,7 +171,10 @@ const BlockContent: React.FC<BlockContentProps> = ({ blocks }) => {
           currentList = [];
           isInsideList = false;
         }
-        result.push(renderBlock(block));
+        const renderedBlock = renderBlock(block);
+        if (renderedBlock) {
+          result.push(renderedBlock);
+        }
       }
     });
 
