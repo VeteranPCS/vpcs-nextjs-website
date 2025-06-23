@@ -15,7 +15,7 @@ const VeteranPcsGivesBack = () => {
                                 Veteran<span className="text-white">PCS</span> Gives Back
                             </h1>
                             <p className="text-white font-montserrat lg:text-[26px] md:text-[26px] sm:text-[20px] text-[20px] font-medium pt-6">
-                                Every closing <b>$10-$40</b> is donated to military focused charities
+                                Every closing <b>$20-$400</b> is donated to military focused charities
                             </p>
                         </div>
                         <div className="mt-5 md:block flex justify-center">
