@@ -1,9 +1,21 @@
-import { NextResponse } from 'next/server';
-import { extractBAHData, RANK_MAPPING } from '@/lib/bah-scraper';
+import { NextRequest, NextResponse } from 'next/server';
+import { extractBAHData, RANK_MAPPING, BAHData } from '@/lib/bah-scraper';
 
-export async function POST(request) {
+interface BAHRequest {
+    year: string;
+    zipCode: string;
+    rank: string;
+}
+
+interface BAHResponse {
+    success: boolean;
+    data?: BAHData;
+    error?: string;
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse<BAHResponse>> {
     try {
-        const { year, zipCode, rank } = await request.json();
+        const { year, zipCode, rank }: BAHRequest = await request.json();
 
         // Validate input
         if (!year || !zipCode || !rank) {
@@ -40,10 +52,11 @@ export async function POST(request) {
         });
 
     } catch (error) {
-        console.error('BAH extraction error:', error.message);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        console.error('BAH extraction error:', errorMessage);
         return NextResponse.json({ 
             success: false, 
-            error: error.message 
+            error: errorMessage 
         }, { status: 500 });
     }
 }

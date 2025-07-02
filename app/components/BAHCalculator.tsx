@@ -1,26 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, FormEvent, ChangeEvent } from 'react';
+import { BAHData } from '@/lib/bah-scraper';
+
+interface FormData {
+    zipCode: string;
+    year: string;
+    rank: string;
+}
+
+interface APIResponse {
+    success: boolean;
+    data?: BAHData;
+    error?: string;
+}
 
 export default function BAHCalculator() {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<FormData>({
         zipCode: '',
         year: '',
         rank: ''
     });
-    const [loading, setLoading] = useState(false);
-    const [result, setResult] = useState(null);
-    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [result, setResult] = useState<BAHData | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     // Currency formatter
-    const formatCurrency = (amount) => {
+    const formatCurrency = (amount: number): string => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD'
         }).format(amount);
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         setLoading(true);
         setError(null);
@@ -35,12 +48,12 @@ export default function BAHCalculator() {
                 body: JSON.stringify(formData)
             });
 
-            const data = await response.json();
+            const data: APIResponse = await response.json();
 
-            if (data.success) {
+            if (data.success && data.data) {
                 setResult(data.data);
             } else {
-                setError(data.error);
+                setError(data.error || 'Unknown error occurred');
             }
         } catch (err) {
             setError('Failed to calculate BAH. Please try again.');
@@ -49,7 +62,7 @@ export default function BAHCalculator() {
         }
     };
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: ChangeEvent<HTMLSelectElement>): void => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -93,7 +106,7 @@ export default function BAHCalculator() {
                         id="zipCode"
                         name="zipCode"
                         value={formData.zipCode}
-                        onChange={(e) => {
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
                             // Only allow numbers, max 5 digits
                             const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 5);
                             setFormData(prev => ({ ...prev, zipCode: value }));

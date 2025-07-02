@@ -1,8 +1,27 @@
 import https from 'https';
 import * as cheerio from 'cheerio';
 
+// TypeScript interfaces
+export interface BAHData {
+    year: string;
+    zipCode: string;
+    rank: string;
+    mha: string;
+    withDependents: number;
+    withoutDependents: number;
+    difference: number;
+    isValid: boolean;
+}
+
+export interface PostData extends Record<string, string> {
+    report: string;
+    YEAR: string;
+    Zipcode: string;
+    Rank: string;
+}
+
 // CRITICAL: This rank mapping must be exact
-export const RANK_MAPPING = {
+export const RANK_MAPPING: Record<string, string> = {
     '1': 'E-1', '2': 'E-2', '3': 'E-3', '4': 'E-4', '5': 'E-5',
     '6': 'E-6', '7': 'E-7', '8': 'E-8', '9': 'E-9',
     '10': 'W-1', '11': 'W-2', '12': 'W-3', '13': 'W-4', '14': 'W-5',
@@ -12,10 +31,10 @@ export const RANK_MAPPING = {
 };
 
 // HTTPS request helper
-function fetchPage(url, postData = null) {
+function fetchPage(url: string, postData: PostData | null = null): Promise<string> {
     return new Promise((resolve, reject) => {
         const urlObj = new URL(url);
-        const options = {
+        const options: https.RequestOptions = {
             hostname: urlObj.hostname,
             port: urlObj.port || 443,
             path: urlObj.pathname + urlObj.search,
@@ -31,8 +50,11 @@ function fetchPage(url, postData = null) {
 
         if (postData) {
             const formData = new URLSearchParams(postData).toString();
-            options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-            options.headers['Content-Length'] = Buffer.byteLength(formData);
+            options.headers = {
+                ...options.headers,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': Buffer.byteLength(formData).toString()
+            };
         }
 
         const request = https.request(options, (response) => {
@@ -59,7 +81,13 @@ function fetchPage(url, postData = null) {
 }
 
 // Data extraction from HTML document
-async function extractDataFromDocument($, year, zipCode, rankId, rankName) {
+async function extractDataFromDocument(
+    $: cheerio.CheerioAPI, 
+    year: string, 
+    zipCode: string, 
+    rankId: string, 
+    rankName: string
+): Promise<BAHData> {
     const importDiv = $('#ImportDiv2');
     
     if (importDiv.length === 0) {
@@ -121,7 +149,7 @@ async function extractDataFromDocument($, year, zipCode, rankId, rankName) {
 }
 
 // Main extraction function
-export async function extractBAHData(year, zipCode, rankId) {
+export async function extractBAHData(year: string, zipCode: string, rankId: string): Promise<BAHData> {
     const rankName = RANK_MAPPING[rankId];
     
     if (!rankName) {
@@ -131,7 +159,7 @@ export async function extractBAHData(year, zipCode, rankId) {
     console.log(`Extracting BAH data: Year=${year}, ZIP=${zipCode}, Rank=${rankName} (ID=${rankId})`);
 
     // CRITICAL: Direct POST data structure
-    const postData = {
+    const postData: PostData = {
         report: 'bah',
         YEAR: year,
         Zipcode: zipCode,
