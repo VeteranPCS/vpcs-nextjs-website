@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect, useRef } from 'react';
 import { BAHData } from '@/lib/bah-scraper';
+import Link from 'next/link';
 
 interface FormData {
     zipCode: string;
@@ -26,6 +27,7 @@ export default function BAHCalculator() {
     const [loading, setLoading] = useState<boolean>(false);
     const [result, setResult] = useState<BAHData | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const lastRequestRef = useRef<string>('');
 
     // Currency formatter
     const formatCurrency = (amount: number): string => {
@@ -86,6 +88,61 @@ export default function BAHCalculator() {
         setFormData(prev => ({ ...prev, dependents: !prev.dependents }));
     };
 
+    // Auto-submit when all required fields are filled (excluding dependents as it doesn't affect API call)
+    useEffect(() => {
+        const { zipCode, rank } = formData;
+        if (zipCode && rank && !loading) {
+            // Create a unique request key to prevent duplicate requests (excluding dependents)
+            const requestKey = `${zipCode}-${rank}-${formData.year}`;
+
+            // Don't make the same request twice
+            if (requestKey === lastRequestRef.current) {
+                return;
+            }
+
+            // Auto-submit after a short delay to prevent excessive API calls
+            const timer = setTimeout(async () => {
+                // Check again if this is still the latest request
+                if (requestKey !== `${formData.zipCode}-${formData.rank}-${formData.year}`) {
+                    return;
+                }
+
+                lastRequestRef.current = requestKey;
+
+                try {
+                    setLoading(true);
+                    setError(null);
+                    setResult(null);
+
+                    const response = await fetch('/api/bah', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            zipCode: formData.zipCode,
+                            year: formData.year,
+                            rank: formData.rank
+                        })
+                    });
+
+                    const data: APIResponse = await response.json();
+
+                    if (data.success && data.data) {
+                        setResult(data.data);
+                    } else {
+                        setError(data.error || 'Unknown error occurred');
+                    }
+                } catch (err) {
+                    setError('Failed to calculate BAH. Please try again.');
+                } finally {
+                    setLoading(false);
+                }
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [formData.zipCode, formData.rank, formData.year, loading]);
+
     const getRankDisplayName = (rankValue: string): string => {
         const rankMap: { [key: string]: string } = {
             '1': 'E-1', '2': 'E-2', '3': 'E-3', '4': 'E-4', '5': 'E-5',
@@ -98,67 +155,50 @@ export default function BAHCalculator() {
     };
 
     return (
-        <div className="w-full max-w-6xl mx-auto my-8 bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div id="bah-calculator" className="w-full max-w-6xl mx-auto my-8 bg-white rounded-2xl shadow-xl overflow-hidden">
             <div className="flex flex-col lg:flex-row">
                 {/* Left Column - Calculator Form */}
-                <div className="flex-1 p-6 lg:p-12">
+                <div className="flex-1 p-6 md:p-10 lg:p-12">
                     {/* Header with Icon */}
-                    <div className="flex items-start mb-8">
-                        <div className="mr-6 flex-shrink-0">
+                    <div className="flex items-start mb-6 md:mb-8">
+                        <div className="mr-4 flex-shrink-0">
                             {/* House + Calculator Icon */}
                             <div className="relative">
-                                <svg width="80" height="80" viewBox="0 0 80 80" className="text-blue-900">
+                                <svg width="60" height="60" viewBox="0 0 60 60" className="text-blue-900">
                                     {/* House */}
-                                    <path d="M40 10L16 28v32h16V40h16v20h16V28L40 10z" fill="currentColor" />
-                                    <path d="M40 10L16 28v32h16V40h16v20h16V28L40 10z" stroke="currentColor" strokeWidth="2" fill="none" />
+                                    <path d="M30 8L12 21v24h12V30h12v15h12V21L30 8z" fill="currentColor" />
                                     {/* Calculator */}
-                                    <rect x="50" y="45" width="24" height="30" rx="3" fill="currentColor" />
-                                    <rect x="52" y="47" width="20" height="4" fill="white" />
-                                    <circle cx="55" cy="55" r="2" fill="white" />
-                                    <circle cx="61" cy="55" r="2" fill="white" />
-                                    <circle cx="67" cy="55" r="2" fill="white" />
-                                    <circle cx="55" cy="61" r="2" fill="white" />
-                                    <circle cx="61" cy="61" r="2" fill="white" />
-                                    <circle cx="67" cy="61" r="2" fill="white" />
-                                    <circle cx="55" cy="67" r="2" fill="white" />
-                                    <circle cx="61" cy="67" r="2" fill="white" />
-                                    <circle cx="67" cy="67" r="2" fill="white" />
+                                    <rect x="35" y="32" width="18" height="22" rx="2" fill="currentColor" />
+                                    <rect x="37" y="34" width="14" height="3" fill="white" />
+                                    <circle cx="39" cy="41" r="1.5" fill="white" />
+                                    <circle cx="44" cy="41" r="1.5" fill="white" />
+                                    <circle cx="49" cy="41" r="1.5" fill="white" />
+                                    <circle cx="39" cy="46" r="1.5" fill="white" />
+                                    <circle cx="44" cy="46" r="1.5" fill="white" />
+                                    <circle cx="49" cy="46" r="1.5" fill="white" />
+                                    <circle cx="39" cy="51" r="1.5" fill="white" />
+                                    <circle cx="44" cy="51" r="1.5" fill="white" />
+                                    <circle cx="49" cy="51" r="1.5" fill="white" />
                                 </svg>
                             </div>
                         </div>
                         <div className="flex-1">
-                            <h1 className="text-3xl lg:text-4xl font-bold text-blue-900 mb-3">BAH Calculator</h1>
-                            <p className="text-gray-600 text-base lg:text-lg leading-relaxed">
+                            <h1 className="text-2xl md:text-3xl font-bold text-blue-900 mb-2">BAH Calculator</h1>
+                            <p className="text-gray-600 text-sm md:text-base leading-relaxed">
                                 Use the BAH calculator below to find your 2025 BAH rates. Enter your
-                                pay grade, dependent status and duty station (Zip code or city) to see
+                                pay grade, dependent status and duty station ZIP code to see
                                 your monthly and annual BAH amount.
                             </p>
                         </div>
                     </div>
 
-                    {/* Info Box */}
-                    <div className="mb-8 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-lg">
-                        <p className="text-gray-700 mb-2 leading-relaxed text-sm">
-                            A member assigned to permanent duty within the 50 United States, who is not
-                            furnished Government housing, is eligible for BAH, based on the member&apos;s rank,
-                            dependency status, and permanent duty station zip code.
-                        </p>
-                        <a
-                            href="https://tools.usps.com/go/ZipLookupAction!input.action"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 font-medium underline text-sm"
-                        >
-                            Look up duty station ZIP code [usps.com]
-                        </a>
-                    </div>
 
                     {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+                        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
                             {/* Paygrade */}
-                            <div>
-                                <label htmlFor="rank" className="block text-sm font-medium text-gray-700 mb-2">
+                            <div className="flex-1">
+                                <label htmlFor="rank" className="block text-sm md:text-base font-medium text-gray-700 mb-3">
                                     Paygrade
                                 </label>
                                 <select
@@ -166,10 +206,10 @@ export default function BAHCalculator() {
                                     name="rank"
                                     value={formData.rank}
                                     onChange={handleInputChange}
-                                    className="w-full px-3 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                                    className="w-full px-4 py-3 md:py-4 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                                     required
                                 >
-                                    <option value="">E-4</option>
+                                    {!formData.rank && <option value="">--Select--</option>}
                                     <option value="1">E-1</option>
                                     <option value="2">E-2</option>
                                     <option value="3">E-3</option>
@@ -198,26 +238,26 @@ export default function BAHCalculator() {
                             </div>
 
                             {/* Dependents */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <div className="flex-1">
+                                <label className="block text-sm md:text-base font-medium text-gray-700 mb-3">
                                     Dependents
                                 </label>
                                 <button
                                     type="button"
                                     onClick={toggleDependents}
-                                    className={`w-full px-3 py-3 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${formData.dependents
-                                        ? 'bg-blue-600 text-white border-blue-600 shadow-md'
-                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
+                                    className={`w-full px-4 py-3 md:py-4 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${formData.dependents
+                                        ? 'bg-blue-600 text-white border-blue-600'
+                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                                         }`}
                                 >
-                                    I have dependents
+                                    {formData.dependents ? 'With dependents' : 'No dependents'}
                                 </button>
                             </div>
 
                             {/* ZIP Code */}
-                            <div>
-                                <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Duty Station ZIP Code or City
+                            <div className="flex-1">
+                                <label htmlFor="zipCode" className="block text-sm md:text-base font-medium text-gray-700 mb-3">
+                                    Duty Station ZIP Code
                                 </label>
                                 <input
                                     type="text"
@@ -225,21 +265,11 @@ export default function BAHCalculator() {
                                     name="zipCode"
                                     value={formData.zipCode}
                                     onChange={handleZipCodeChange}
-                                    placeholder="Columbia, MO"
-                                    className="w-full px-3 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="12345"
+                                    className="w-full px-4 py-3 md:py-4 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     required
                                 />
                             </div>
-                        </div>
-
-                        <div className="pt-2">
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="bg-blue-600 text-white py-3 px-8 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-lg transition-colors"
-                            >
-                                {loading ? 'Calculating...' : 'Calculate BAH'}
-                            </button>
                         </div>
                     </form>
 
@@ -251,7 +281,7 @@ export default function BAHCalculator() {
                 </div>
 
                 {/* Right Column - Results */}
-                <div className="flex-1 bg-red-800 p-6 lg:p-12 text-white min-h-[400px] lg:min-h-[500px]">
+                <div className="flex-1 bg-red-800 p-6 md:p-10 lg:p-12 text-white">
                     {loading && (
                         <div className="flex flex-col items-center justify-center h-full">
                             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
@@ -261,40 +291,40 @@ export default function BAHCalculator() {
 
                     {result && !loading && (
                         <div className="h-full flex flex-col">
-                            <div className="mb-8">
-                                <h2 className="text-2xl lg:text-3xl font-bold mb-3">{result.mha}</h2>
-                                <p className="text-base lg:text-lg opacity-90">
-                                    {getRankDisplayName(result.rank)} {formData.dependents ? 'With' : 'Without'} Dependents at {result.zipCode}
+                            <div className="mb-6">
+                                <h2 className="text-2xl font-bold mb-1">{result.mha}</h2>
+                                <p className="text-sm opacity-90">
+                                    {getRankDisplayName(formData.rank)} {formData.dependents ? 'With' : 'Without'} Dependents at {result.zipCode}
                                 </p>
                                 <div className="w-full h-px bg-white opacity-30 mt-4"></div>
                             </div>
 
-                            <div className="space-y-6 flex-1">
+                            <div className="space-y-4 flex-1">
                                 <div>
-                                    <p className="text-base opacity-90 mb-2">Monthly Allowance</p>
-                                    <p className="text-3xl lg:text-4xl font-bold leading-none">
+                                    <p className="text-sm opacity-90 mb-1">Monthly Allowance</p>
+                                    <p className="text-4xl font-bold leading-none">
                                         {formatCurrency(formData.dependents ? result.withDependents : result.withoutDependents)}
                                     </p>
                                 </div>
 
                                 <div>
-                                    <p className="text-base opacity-90 mb-2">Yearly Allowance</p>
-                                    <p className="text-2xl lg:text-3xl font-bold leading-none">
+                                    <p className="text-sm opacity-90 mb-1">Yearly Allowance</p>
+                                    <p className="text-2xl font-bold leading-none">
                                         {formatCurrency((formData.dependents ? result.withDependents : result.withoutDependents) * 12)}
                                     </p>
                                 </div>
                             </div>
 
                             <div className="mt-6">
-                                <button className="w-full bg-blue-800 text-white py-3 px-6 rounded-lg hover:bg-blue-900 transition-colors font-semibold text-base">
+                                <Link href="/contact-lender" className="w-full bg-blue-800 text-white py-3 px-6 rounded-lg hover:bg-blue-900 transition-colors font-semibold text-sm">
                                     Questions about VA Loan?
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     )}
 
                     {!result && !loading && (
-                        <div className="flex items-center justify-center h-full">
+                        <div className="flex items-center justify-center">
                             <div className="text-center">
                                 <h3 className="text-xl lg:text-2xl font-bold mb-4">Calculate Your BAH</h3>
                                 <p className="text-base opacity-90 leading-relaxed">

@@ -19,6 +19,7 @@ import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 import DownloadGuideComponent from "@/components/common/DownloadGuideComponent";
 import StateMap from "@/components/homepage/StateMap";
+import BAHCalculator from "@/components/BAHCalculator";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const META_TITLE = "Military PCS Toolkit: Moving Guides, BAH Calculators & VA Loan Resources";
@@ -90,6 +91,7 @@ export default function PcsResourcesPage() {
         className="my-8"
       />
       <PcsResourcesCalculators />
+      <BAHCalculator />
       <CommonBlog component="PCS Help" />
       <PcsResourcesHowDoesWork />
       <MovingBonusCalculator />
