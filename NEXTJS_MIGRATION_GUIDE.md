@@ -432,7 +432,6 @@ export default function BAHCalculator() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     >
-                        <option value="">Select Pay Grade</option>
                         <option value="1">E-1</option>
                         <option value="2">E-2</option>
                         <option value="3">E-3</option>
