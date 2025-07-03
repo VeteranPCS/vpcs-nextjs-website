@@ -3,6 +3,7 @@
 import { useState, FormEvent, ChangeEvent, useEffect, useRef } from 'react';
 import { BAHData } from '@/lib/bah-scraper';
 import Link from 'next/link';
+import { sendGTMEvent } from "@next/third-parties/google";
 
 interface FormData {
     zipCode: string;
@@ -60,6 +61,13 @@ export default function BAHCalculator() {
 
             if (data.success && data.data) {
                 setResult(data.data);
+
+                // Send GTM event for successful BAH calculation
+                sendGTMEvent({
+                    event: 'bah_calculator_use',
+                    bah_zip_code: formData.zipCode,
+                    bah_paygrade: getRankDisplayName(formData.rank)
+                });
             } else {
                 setError(data.error || 'Unknown error occurred');
             }
@@ -130,6 +138,13 @@ export default function BAHCalculator() {
 
                     if (data.success && data.data) {
                         setResult(data.data);
+
+                        // Send GTM event for successful BAH calculation
+                        sendGTMEvent({
+                            event: 'bah_calculator_use',
+                            bah_zip_code: formData.zipCode,
+                            bah_paygrade: getRankDisplayName(formData.rank)
+                        });
                     } else {
                         setError(data.error || 'Unknown error occurred');
                     }
