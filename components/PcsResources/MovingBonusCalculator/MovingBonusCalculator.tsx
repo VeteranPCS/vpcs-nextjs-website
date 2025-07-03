@@ -15,19 +15,33 @@ const MovingBonusCalculator = () => {
     const sliderMaxValue = 1000000; // $1M - slider maxes out at this
     const absoluteMaxValue = 10000000; // $10M - maximum input allowed
 
-    // Calculate moving bonus based on requirements
-    // 15% of agent's commission (~3% of home value)
+    // Calculate moving bonus based on fixed price ranges
     const calculateMovingBonus = (value: number) => {
-        const agentCommission = value * 0.03; // 3% agent commission
-        const bonus = agentCommission * 0.15; // 15% of agent commission
-
-        // Apply min/max constraints
-        if (bonus < 200) return 200;
-        if (bonus > 4000) return 4000;
-        return Math.round(bonus);
+        if (value < 100000) {
+            return 200;
+        } else if (value >= 100000 && value <= 199999) {
+            return 400;
+        } else if (value >= 200000 && value <= 299999) {
+            return 700;
+        } else if (value >= 300000 && value <= 399999) {
+            return 1000;
+        } else if (value >= 400000 && value <= 499999) {
+            return 1200;
+        } else if (value >= 500000 && value <= 599999) {
+            return 1500;
+        } else if (value >= 600000 && value <= 749999) {
+            return 2000;
+        } else if (value >= 750000 && value <= 999999) {
+            return 3000;
+        } else { // $1,000,000+
+            return 4000;
+        }
     };
 
     const movingBonus = calculateMovingBonus(homeValue);
+
+    // Calculate charity donation (10% of move-in bonus)
+    const charityDonation = Math.round(movingBonus * 0.1);
 
     // Format currency
     const formatCurrency = (amount: number) => {

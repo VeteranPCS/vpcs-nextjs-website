@@ -22,8 +22,8 @@ const PcsResourcesCalculators = () => {
           <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-8">
             {/* BAH Calculator */}
             <Link
-              href="https://www.travel.dod.mil/Allowances/Basic-Allowance-for-Housing/BAH-Rate-Lookup/"
-              target="_blank"
+              href="/pcs-resources#bah-calculator"
+              target=""
               rel="noopener noreferrer"
               className="bg-white rounded-lg shadow-lg p-8 text-center hover:shadow-xl transition-shadow duration-300 block"
             >
