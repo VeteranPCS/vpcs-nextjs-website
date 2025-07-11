@@ -27,11 +27,11 @@ const MovingBonusCalculator = () => {
             return 1000;
         } else if (value >= 400000 && value <= 499999) {
             return 1200;
-        } else if (value >= 500000 && value <= 599999) {
+        } else if (value >= 500000 && value <= 649999) {
             return 1500;
-        } else if (value >= 600000 && value <= 749999) {
+        } else if (value >= 650000 && value <= 799999) {
             return 2000;
-        } else if (value >= 750000 && value <= 999999) {
+        } else if (value >= 800000 && value <= 999999) {
             return 3000;
         } else { // $1,000,000+
             return 4000;
