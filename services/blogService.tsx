@@ -154,7 +154,7 @@ const blogService = {
       throw error; // You can handle the error more gracefully based on your needs
     }
   },
-  fetchBlogsByComponent: async (component: string) => {
+  fetchBlogsByComponent: async (component: string, limit?: number) => {
     try {
       const logo_url = await client.fetch<ReviewDocument[]>(`
         *[_type == "veterence_logo"]{
@@ -164,24 +164,26 @@ const blogService = {
         }
       `);
 
-      const blog = await client.fetch(
-        `*[_type == "blog" && component == $component && publishedAt <= now()]{
-                              ...,
-                              mainImage{
+      const query = `*[_type == "blog" && component == $component && publishedAt <= now()]|order(publishedAt desc)${typeof limit === 'number' ? `[0...${limit}]` : ''}{
                                 ...,
-                                "image_url": asset->url // Directly fetch the main image URL
-                              },
-                              author->{
-                                _id,
-                                name,
-                                designation,
-                                "image": image.asset->url // Fetch author's image URL
-                              },
-                              categories[]->{
-                                _id,
-                                title
-                              }
-                            }`,
+                                mainImage{
+                                  ...,
+                                  "image_url": asset->url // Directly fetch the main image URL
+                                },
+                                author->{
+                                  _id,
+                                  name,
+                                  designation,
+                                  "image": image.asset->url // Fetch author's image URL
+                                },
+                                categories[]->{
+                                  _id,
+                                  title
+                                }
+                              }`;
+
+      const blog = await client.fetch(
+        query,
         { component }
       );
       if (blog) {

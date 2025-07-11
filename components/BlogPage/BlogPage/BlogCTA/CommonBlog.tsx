@@ -29,11 +29,11 @@ export interface Category {
     title: string;
 }
 
-const CommonBlog = async ({ component }: { component: string }) => {
+const CommonBlog = async ({ component, limit }: { component: string; limit?: number }) => {
     let blogList: BlogDetails[] = [];
 
     try {
-        blogList = await blogService.fetchBlogsByComponent(component);
+        blogList = await blogService.fetchBlogsByComponent(component, limit);
     } catch (error) {
         console.error("Error fetching blogs", error);
     }

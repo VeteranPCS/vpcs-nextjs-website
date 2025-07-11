@@ -923,7 +923,7 @@ const ContactForm = () => {
                 </tr>
                 <tr className="border">
                   <td className="text-[#000000] roboto p-3">
-                    <b>$500,000 – $599,999</b>
+                    <b>$500,000 – $649,999</b>
                   </td>
                   <td className="text-[#000000] roboto font-normal leading-8 p-3">
                     $1,500
@@ -934,7 +934,7 @@ const ContactForm = () => {
                 </tr>
                 <tr className="border">
                   <td className="text-[#000000] roboto p-3">
-                    <b>$600,000 – $749,999</b>
+                    <b>$650,000 – $799,999</b>
                   </td>
                   <td className="text-[#000000] roboto font-normal leading-8 p-3">
                     $2,000
@@ -945,7 +945,7 @@ const ContactForm = () => {
                 </tr>
                 <tr className="border">
                   <td className="text-[#000000] roboto p-3">
-                    <b>$750,000 – $999,999</b>
+                    <b>$800,000 – $999,999</b>
                   </td>
                   <td className="text-[#000000] roboto font-normal leading-8 p-3">
                     $3,000

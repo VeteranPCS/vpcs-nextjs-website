@@ -92,7 +92,7 @@ export default function PcsResourcesPage() {
       />
       <PcsResourcesCalculators />
       <BAHCalculator />
-      <CommonBlog component="PCS Help" />
+      <CommonBlog component="PCS Help" limit={3} />
       <PcsResourcesHowDoesWork />
       <MovingBonusCalculator />
       <FamilySupport />

@@ -27,11 +27,11 @@ const MovingBonusCalculator = () => {
             return 1000;
         } else if (value >= 400000 && value <= 499999) {
             return 1200;
-        } else if (value >= 500000 && value <= 599999) {
+        } else if (value >= 500000 && value <= 649999) {
             return 1500;
-        } else if (value >= 600000 && value <= 749999) {
+        } else if (value >= 650000 && value <= 799999) {
             return 2000;
-        } else if (value >= 750000 && value <= 999999) {
+        } else if (value >= 800000 && value <= 999999) {
             return 3000;
         } else { // $1,000,000+
             return 4000;
@@ -103,10 +103,10 @@ const MovingBonusCalculator = () => {
                             <div className="flex-1">
                                 {/* Header */}
                                 <div className="mb-8">
-                                    <h2 className="text-[#27306d] font-bold text-2xl lg:text-3xl mb-2 font-['Tahoma,sans-serif']">
+                                    <h2 className="text-[#27306d] font-bold text-2xl lg:text-3xl mb-2 tahoma">
                                         Estimated <span className="font-normal">Veteran</span>PCS Bonus
                                     </h2>
-                                    <p className="text-[#231f20] text-sm font-['Tahoma,sans-serif']">
+                                    <p className="text-[#231f20] text-sm tahoma">
                                         Adjust the slider to see your estimated Move-In-Bonus! Are you a Veteran? See if you qualify today!
                                     </p>
                                 </div>
@@ -132,7 +132,7 @@ const MovingBonusCalculator = () => {
                                 <div className="flex flex-col md:grid md:grid-cols-3 gap-6 md:items-center">
                                     {/* Home Price Input */}
                                     <div>
-                                        <label className="block text-[#231f20] text-sm mb-2 font-['Tahoma,sans-serif']">
+                                        <label className="block text-[#231f20] text-sm mb-2 tahoma">
                                             Home Price
                                         </label>
                                         <input
@@ -140,16 +140,16 @@ const MovingBonusCalculator = () => {
                                             value={homeValue === 0 ? '' : formatCurrency(homeValue)}
                                             onChange={handleInputChange}
                                             placeholder="$0"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded text-[#231f20] text-sm font-['Tahoma,sans-serif']"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded text-[#231f20] text-sm tahoma"
                                         />
                                     </div>
 
                                     {/* Move-In-Bonus Display */}
                                     <div className="text-center md:text-center">
-                                        <p className="text-[#231f20] text-sm mb-1 font-['Tahoma,sans-serif']">
+                                        <p className="text-[#231f20] text-sm mb-1 tahoma">
                                             Move-In-Bonus
                                         </p>
-                                        <p className="text-[#27306d] font-bold text-2xl font-['Tahoma,sans-serif']">
+                                        <p className="text-[#27306d] font-bold text-2xl tahoma">
                                             {formatCurrency(movingBonus)}
                                         </p>
                                     </div>
@@ -170,7 +170,7 @@ const MovingBonusCalculator = () => {
 
                     {/* Disclaimer */}
                     <div className="mt-8 text-center">
-                        <p className="text-gray-500 text-sm max-w-2xl mx-auto font-['Tahoma,sans-serif']">
+                        <p className="text-gray-500 text-sm max-w-2xl mx-auto tahoma">
                             * Bonus amounts are estimates and may vary based on final purchase price and actual commission rates.
                         </p>
                     </div>
