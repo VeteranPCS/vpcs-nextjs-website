@@ -87,7 +87,7 @@ const Header = () => {
                 <div className="text-center py-[28px]">
                   <p className="text-white text-[33px]">
                     <strong className="text-[33px] text-white font-bold">
-                      $317,000<strong></strong>
+                      $384,287<strong></strong>
                     </strong>
                   </p>
                   <p className="py-4 text-white mb-0 pb-0 text-xs">

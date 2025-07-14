@@ -36,7 +36,7 @@ const FamilyVideo = () => {
                 </div>
                 <div className="text-center lg:space-y-5">
                   <h2 className="text-white font-bold lg:text-4xl md:text-4xl text-base tahoma mt-5 mb-2">
-                    $317,000+
+                    $384,287+
                   </h2>
                   <p className="text-white font-normal lg:text-xl md:text-base sm:text-xs text-[10px] tahoma">
                     Savings Given Back
