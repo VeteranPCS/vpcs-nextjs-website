@@ -70,14 +70,30 @@ VeteranPCS is a NextJS-based web application designed to connect military person
 
 ### Server Action: `sendOpenPhoneMessage`
 
-- **Description**: Sends SMS messages via OpenPhone API.
+- **Description**: Sends SMS messages via OpenPhone API with state-based routing.
 - **Parameters**:
   - `content`: string - Message content
-  - `from`: string - Sender phone number
+  - `from`: string - Sender phone number (automatically routed based on state)
   - `to`: string[] - Array of recipient phone numbers
 - **Response**: OpenPhone API response data
 - **Authentication**: Requires OpenPhone API key
 - **Side Effects**: Sends SMS messages to recipients
+- **State Routing**: Automatically selects admin phone number based on agent/lender state
+
+---
+
+### Service: `stateRoutingService`
+
+- **Description**: Routes OpenPhone messages to appropriate admin phone numbers based on state.
+- **Admin Assignments**:
+  - **Beth (719-249-5359)**: Alaska, Arizona, California, Colorado, Hawaii, Idaho, Iowa, Kansas, Missouri, Montana, Nebraska, Nevada, New Mexico, North Dakota, Oregon, South Dakota, Utah, Washington, Wyoming
+  - **Jessica (719-782-5065)**: Alabama, Arkansas, Florida, Georgia, Kentucky, Louisiana, Mississippi, North Carolina, Oklahoma, South Carolina, Tennessee, Texas
+  - **Stephanie (719-249-4757)**: Connecticut, Delaware, Illinois, Indiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, New Hampshire, New Jersey, New York, Ohio, Pennsylvania, Rhode Island, Vermont, Virginia, West Virginia, Wisconsin, Washington D.C., Puerto Rico
+- **Functions**:
+  - `getAdminContactForState(state)`: Returns admin contact info for a state
+  - `getAdminPhoneNumberForState(state)`: Returns admin phone number for a state
+  - `getStatesByAdmin(adminKey)`: Returns all states managed by an admin
+- **Fallback**: Uses `OPEN_PHONE_FROM_NUMBER` for unmapped or missing states
 
 ---
 

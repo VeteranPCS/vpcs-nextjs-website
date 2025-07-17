@@ -5,6 +5,7 @@ import { formatPhoneNumberForDisplay, formatPhoneNumberE164 } from '@/utils/form
 import stateService from '@/services/stateService';
 import { logDebug, logError, logInfo } from './loggingService';
 import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
+import { getAdminPhoneNumberForState } from '@/services/stateRoutingService';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const OPEN_PHONE_FROM_NUMBER = process.env.OPEN_PHONE_FROM_NUMBER || "";
@@ -144,7 +145,7 @@ Phone: ${formatPhoneNumberForDisplay(formData.phone)}
 ${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
 ${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
 ${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
-                from: OPEN_PHONE_FROM_NUMBER,
+                from: getAdminPhoneNumberForState(paramsObj.state),
                 to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
             })
         ]).catch(error => {
@@ -591,7 +592,7 @@ Phone: ${formatPhoneNumberForDisplay(formData.phone)}
 ${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
 ${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
 ${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
-                from: OPEN_PHONE_FROM_NUMBER,
+                from: getAdminPhoneNumberForState(paramsObj.state),
                 to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
             })
         ]).catch(error => {
