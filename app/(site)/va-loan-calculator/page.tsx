@@ -30,6 +30,7 @@ export default function VaLoanCalculatorPage() {
     const [homeValue, setHomeValue] = useState(250000);
     const [downPaymentPercent, setDownPaymentPercent] = useState(0);
     const [downPaymentAmount, setDownPaymentAmount] = useState(0);
+    const [isEditingAmount, setIsEditingAmount] = useState(false);
     const [interestRate, setInterestRate] = useState(6.625);
     const [loanTerm, setLoanTerm] = useState(30); // in years
     const [loanType, setLoanType] = useState("purchase");
@@ -97,12 +98,14 @@ export default function VaLoanCalculatorPage() {
         monthlyPI + monthlyTaxes + monthlyInsurance; // the "Principal+Interest + Taxes + Insurance"
 
     // --------------------------
-    // 3) Update down payment when percent changes
+    // 3) Update down payment when percent changes (but not when user is editing amount)
     // --------------------------
     useEffect(() => {
-        const newDpAmount = Math.round((downPaymentPercent / 100) * homeValue);
-        setDownPaymentAmount(newDpAmount);
-    }, [downPaymentPercent, homeValue]);
+        if (!isEditingAmount) {
+            const newDpAmount = Math.round((downPaymentPercent / 100) * homeValue);
+            setDownPaymentAmount(newDpAmount);
+        }
+    }, [downPaymentPercent, homeValue, isEditingAmount]);
 
     // Or if user changes the numeric down payment, update the percentage:
     const handleDownPaymentAmount = (val: string) => {
@@ -121,6 +124,14 @@ export default function VaLoanCalculatorPage() {
         } else {
             setDownPaymentPercent(0);
         }
+    };
+
+    const handleDownPaymentAmountFocus = () => {
+        setIsEditingAmount(true);
+    };
+
+    const handleDownPaymentAmountBlur = () => {
+        setIsEditingAmount(false);
     };
 
     // --------------------------
@@ -265,7 +276,7 @@ export default function VaLoanCalculatorPage() {
                                     setHomeValue(!isNaN(num) && num >= 0 ? num : 0);
                                 }}
                                 min={50000}
-                                step={25000}
+                                step={1}
                                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                             />
                         </div>
@@ -281,8 +292,10 @@ export default function VaLoanCalculatorPage() {
                                 inputMode="numeric"
                                 value={downPaymentAmount.toLocaleString('en-US')}
                                 onChange={(e) => handleDownPaymentAmount(e.target.value)}
+                                onFocus={handleDownPaymentAmountFocus}
+                                onBlur={handleDownPaymentAmountBlur}
                                 min={0}
-                                step={1000}
+                                step={1}
                                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                             />
                         </div>
