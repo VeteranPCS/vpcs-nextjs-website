@@ -1,5 +1,7 @@
 # VeteranPCS LLM.txt
 
+> VeteranPCS operates as a referral network connecting military families with qualified, military-experienced real estate and lending professionals. The company's unique model combines professional real estate services with military community support through commission rebates and charitable giving. All content and services are designed specifically for the military lifestyle, including frequent moves, deployment challenges, and military-specific financial benefits like VA loans and BAH. The company's blog content focuses on practical, actionable advice for military families navigating real estate decisions during PCS moves, with emphasis on maximizing military benefits and making informed housing decisions that align with military career timelines and family goals.
+
 ## Company Overview
 
 **Company Name:** VeteranPCS
@@ -238,9 +240,3 @@ All blog content is researched using authoritative sources including:
 - [Spanish Resources](https://www.veteranpcs.com/spanish): Spanish language resources and support
 - [Charity Information](https://www.veteranpcs.com/charity): Details about supported military charities
 - [Thank You Page](https://www.veteranpcs.com/thank-you): Post-form submission information
-
-## Additional Context
-
-VeteranPCS operates as a referral network connecting military families with qualified, military-experienced real estate and lending professionals. The company's unique model combines professional real estate services with military community support through commission rebates and charitable giving. All content and services are designed specifically for the military lifestyle, including frequent moves, deployment challenges, and military-specific financial benefits like VA loans and BAH.
-
-The company's blog content focuses on practical, actionable advice for military families navigating real estate decisions during PCS moves, with emphasis on maximizing military benefits and making informed housing decisions that align with military career timelines and family goals.
