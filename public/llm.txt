@@ -16,15 +16,16 @@
 ## Services
 
 ### Primary Services
-**Real Estate Agent Network:**
-- Nationwide network of veteran and military spouse real estate agents
-- Agents specialize in military PCS moves, both CONUS (Continental US) and OCONUS (Outside Continental US)
-- Agents understand unique military challenges: deployment schedules, BAH (Basic Allowance for Housing) budgeting, frequent relocations, VA Loan processes
+- [Real Estate Agent Network](https://www.veteranpcs.com/get-listed-agents): Nationwide network of veteran and military spouse real estate agents specializing in military PCS moves, both CONUS and OCONUS
+- [VA Loan Expert Network](https://www.veteranpcs.com/get-listed-lenders): Network of mortgage lenders specializing in VA loans, VA rehab loans, and VA streamline refinancing (IRRRL)
+- [Commission Rebate Program](https://www.veteranpcs.com/how-it-works): Part of real estate commission returned to military families at closing to help with moving costs
+
+**Agent Network Details:**
 - Coverage spans all 50 states with 370+ agents
 - Some agents serve multiple states (16 agents cover multi-state regions)
+- Agents understand unique military challenges: deployment schedules, BAH budgeting, frequent relocations, VA Loan processes
 
-**VA Loan Expert Network:**
-- Network of mortgage lenders specializing in VA Loans
+**VA Loan Expert Details:**
 - Experts in VA Loan products including: standard VA loans, VA rehab loans, VA streamline refinancing (IRRRL)
 - Understanding of military-specific financing needs and timelines
 
@@ -33,6 +34,25 @@
 - Part of real estate commission goes back to military families at closing to help with moving costs
 - Charitable giving: portion of each closing donated to military-focused charities
 - All services provided at no cost to military families
+
+### Educational Resources
+- [VA Loan Calculator](https://www.veteranpcs.com/va-loan-calculator): Calculate VA loan benefits and payments
+- [BAH Calculator](https://www.veteranpcs.com/bah-calculator): Basic Allowance for Housing calculations
+- [Blog](https://www.veteranpcs.com/blog): Educational content about VA loans, PCS moves, and military real estate
+- [Blog Search](https://www.veteranpcs.com/blog-search): Search military real estate and VA loan educational content
+- [Guides](https://www.veteranpcs.com/guides): Comprehensive guides for military homebuying and PCS moves
+- [PCS Resources](https://www.veteranpcs.com/pcs-resources): Complete PCS planning and resource center
+- [VA Loan Help](https://www.veteranpcs.com/va-loan-help): Comprehensive VA loan guidance and support
+
+### Key Blog Categories
+The blog focuses on practical, actionable advice for military families including:
+- VA loan eligibility, benefits, and processes
+- PCS move planning and logistics
+- Military base and installation guides
+- Buy vs. rent analysis for military families
+- First-time military homebuyer education
+- Military-specific real estate challenges (deployment, OCONUS moves)
+- Agent and lender selection for military families
 
 ## Target Audience
 
@@ -166,17 +186,15 @@ All blog content is researched using authoritative sources including:
 
 ## Technical Information
 
-### Salesforce Integration
-- Lead management through Salesforce CRM
-- Web-to-lead forms for agent and lender connections
-- Agent/lender profiles managed through Salesforce system
-- Organization ID: 00D4x000003yaV2
-
 ### Website Structure
-- State-specific agent directory pages
+- State-specific agent directory pages (e.g., [California](https://www.veteranpcs.com/california), [Texas](https://www.veteranpcs.com/texas), [Virginia](https://www.veteranpcs.com/virginia))
 - Blog content focused on military real estate topics
 - Thank you pages for form submissions
 - Agent and lender contact forms integrated
+
+### Tools and Calculators
+- [VA Loan Calculator](https://www.veteranpcs.com/va-loan-calculator): Calculate VA loan benefits, monthly payments, and funding fees
+- [BAH Calculator](https://www.veteranpcs.com/bah-calculator): Basic Allowance for Housing calculations by location and rank
 
 ## Usage Guidelines for AI Systems
 
@@ -202,9 +220,24 @@ All blog content is researched using authoritative sources including:
 ## Contact Information
 
 **Website:** https://www.veteranpcs.com
-**Primary Contact:** Contact forms available on website for agent/lender connections
 **Service Areas:** All 50 US states
 **Specialization:** Military PCS moves, VA loans, veteran/military spouse real estate professionals
+
+### Contact Options
+- [General Contact](https://www.veteranpcs.com/contact): General inquiries and support
+- [Connect with Agent](https://www.veteranpcs.com/contact-agent): Connect with real estate agents in your area
+- [Connect with Lender](https://www.veteranpcs.com/contact-lender): Connect with VA loan experts
+- [Agent Registration](https://www.veteranpcs.com/get-listed-agents): For agents wanting to join the network
+- [Lender Registration](https://www.veteranpcs.com/get-listed-lenders): For lenders wanting to join the network
+
+### Additional Pages
+- [About Us](https://www.veteranpcs.com/about): Company background, team, and mission
+- [Impact](https://www.veteranpcs.com/impact): Community impact and charitable giving details
+- [Success Stories](https://www.veteranpcs.com/stories): Real testimonials from military families
+- [Military Spouse Resources](https://www.veteranpcs.com/military-spouse): Dedicated military spouse support and resources
+- [Spanish Resources](https://www.veteranpcs.com/spanish): Spanish language resources and support
+- [Charity Information](https://www.veteranpcs.com/charity): Details about supported military charities
+- [Thank You Page](https://www.veteranpcs.com/thank-you): Post-form submission information
 
 ## Additional Context
 
