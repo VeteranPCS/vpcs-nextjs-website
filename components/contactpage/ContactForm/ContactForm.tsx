@@ -160,7 +160,7 @@ const ContactForm = () => {
                     src="/icon/phone-call.svg"
                     alt="phone"
                   />
-                  <Link href="tel:7192494757">719-249-4757</Link>
+                  <Link href="tel:7197825065">719-782-5065</Link>
                 </div>
                 <div className={classes.ContactItem}>
                   <Image
