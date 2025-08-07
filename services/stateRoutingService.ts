@@ -60,6 +60,7 @@ const STATE_TO_ADMIN_MAP: Record<string, keyof typeof ADMIN_CONTACTS> = {
     'south-carolina': 'JESSICA',
     'tennessee': 'JESSICA',
     'texas': 'JESSICA',
+    'puerto-rico': 'JESSICA',
 
     // Stephanie's states
     'connecticut': 'STEPHANIE',
@@ -82,7 +83,6 @@ const STATE_TO_ADMIN_MAP: Record<string, keyof typeof ADMIN_CONTACTS> = {
     'west-virginia': 'STEPHANIE',
     'wisconsin': 'STEPHANIE',
     'washington-dc': 'STEPHANIE',
-    'puerto-rico': 'STEPHANIE',
 };
 
 /**
