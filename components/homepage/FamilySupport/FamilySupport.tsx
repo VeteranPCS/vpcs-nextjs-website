@@ -50,11 +50,11 @@ const FamilySupport = async () => {
 
           {/* Content Section */}
           <div className="text-left">
-            <div className="lg:block md:block sm:hidden hidden">
+            <div className="">
               <Image
                 width={100}
-                height={100}
-                className="w-auto h-auto"
+                height={150}
+                className="w-auto h-auto min-w-64"
                 src={pageData?.icon?.asset?.image_url || "/icon/userplus.svg"}
                 alt={pageData?.icon?.alt || "Description of the image"}
               />
@@ -104,7 +104,7 @@ const FamilySupport = async () => {
             </div>
 
             <Link
-              href="/impact"
+              href="https://freedomservicedogs.org"
               className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center"
             >
               <Button buttonText={pageData?.button_text || "Learn More"} />
