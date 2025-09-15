@@ -1005,7 +1005,7 @@ const ContactForm = () => {
                 will not be entitled to receive the Move-In Bonus
               </b>
               <span className="font-normal leading-8">
-                . The Move-In Bonus will be distributed to the Service Member at
+                . The Move-In Bonus will be distributed to the Service Member after
                 closing however best determined by the settlement closing
                 service appointed and must be approved by the lender if
                 purchasing with a new loan.&nbsp;
