@@ -40,7 +40,7 @@ const MovingBonusCalculator = () => {
 
     const movingBonus = calculateMovingBonus(homeValue);
 
-    // Calculate charity donation (10% of move-in bonus)
+    // Calculate charity donation (10% of VeteranPCS Bonus)
     const charityDonation = Math.round(movingBonus * 0.1);
 
     // Format currency
@@ -107,7 +107,7 @@ const MovingBonusCalculator = () => {
                                         Estimated <span className="font-normal">Veteran</span>PCS Bonus
                                     </h2>
                                     <p className="text-[#231f20] text-sm tahoma">
-                                        Adjust the slider to see your estimated Move-In-Bonus! Are you a Veteran? See if you qualify today!
+                                        Adjust the slider to see your estimated VeteranPCSBonus! Are you a Veteran? See if you qualify today!
                                     </p>
                                 </div>
 
@@ -144,10 +144,10 @@ const MovingBonusCalculator = () => {
                                         />
                                     </div>
 
-                                    {/* Move-In-Bonus Display */}
+                                    {/* VeteranPCS Bonus Display */}
                                     <div className="text-center md:text-center">
                                         <p className="text-[#231f20] text-sm mb-1 tahoma">
-                                            Move-In-Bonus
+                                            VeteranPCS Bonus
                                         </p>
                                         <p className="text-[#27306d] font-bold text-2xl tahoma">
                                             {formatCurrency(movingBonus)}

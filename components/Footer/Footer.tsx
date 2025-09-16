@@ -156,18 +156,18 @@ const Locations = () => {
             </div>
             <div>
               <p className="text-white text-[14px] font-medium roboto mb-2">
-                The Move-In Bonus is offered in most states, but due to local
+                The VeteranPCS Bonus is offered in most states, but due to local
                 regulations, it may not be available in your state. In such
                 states, VeteranPCS may offer a “Relocation Grant” in lieu of the
-                Move-In Bonus if it is not available in your state. You must
+                VeteranPCS Bonus if it is not available in your state. You must
                 apply and be approved for the Relocation Grant, and VeteranPCS
                 is under no obligation to approve such application. We will
                 reach out to you once you begin using the service and notify you
-                if the Move- In Bonus is not available in your state and what
+                if the VeteranPCS Bonus is not available in your state and what
                 next steps may be available.
               </p>
               <p className="text-white text-[14px] font-medium roboto">
-                The Move-In Bonus (or Relocation Grant, as applicable) is only
+                The VeteranPCS Bonus (or Relocation Grant, as applicable) is only
                 available with the purchase and/or sale of your home through the
                 use of a VeteranPCS-introduced real estate agent. Other terms
                 and conditions may apply. This is not a solicitation if you are
