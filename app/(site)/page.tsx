@@ -35,7 +35,10 @@ export default function Home() {
       <Testimonials />
       <MovingBonusCalculator />
       <Covered />
-      <FamilySupport />
+      <FamilySupport
+        link="https://www.veteranpcs.com/impact"
+        component_slug="support-our-veteran-community"
+      />
       <VeteranPCS />
       <ReviewsList />
       <MakeItHome />

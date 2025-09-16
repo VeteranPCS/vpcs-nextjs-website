@@ -95,7 +95,10 @@ export default function PcsResourcesPage() {
       <CommonBlog component="PCS Help" limit={3} />
       <PcsResourcesHowDoesWork />
       <MovingBonusCalculator />
-      <FamilySupport />
+      <FamilySupport
+        link="https://www.veteranpcs.com/impact"
+        component_slug="support-our-veteran-community"
+      />
       <FrequentlyAskedQuestion />
       <PcsResourcesEmployment />
       <ReviewsList />

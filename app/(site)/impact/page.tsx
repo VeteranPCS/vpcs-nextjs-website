@@ -60,7 +60,10 @@ export default function ImpactPage() {
       <YourImpact />
       <MakeAnImpact />
       <Testimonials />
-      <FamilySupport />
+      <FamilySupport
+        link="https://freedomservicedogs.org"
+        component_slug="freedom-service-dogs"
+      />
       <WearBlueSection />
       <VeteranPcsGivesBack />
       <ReviewsList />
