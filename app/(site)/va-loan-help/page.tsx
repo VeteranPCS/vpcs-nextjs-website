@@ -84,7 +84,10 @@ export default function VaLoanPage() {
             <PcsResourcesCalculators />
             <CommonBlog component="VA Loan Help" />
             <PcsResourcesHowDoesWork />
-            <FamilySupport />
+            <FamilySupport
+                link="https://www.veteranpcs.com/impact"
+                component_slug="support-our-veteran-community"
+            />
             <FrequentlyAskedQuestion />
             <PcsResourcesEmployment />
             <ReviewsList />

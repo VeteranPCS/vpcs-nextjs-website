@@ -9,19 +9,19 @@ import { VeteranCommunityProps } from "@/components/homepage/VeteranCommunity/Ve
 
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
-const FamilySupport = async () => {
+const FamilySupport = async ({ link, component_slug }: { link: string, component_slug: string }) => {
   let pageData: VeteranCommunityProps | null = null;
 
   try {
     pageData = await veterenceSupportService.fetchVeterenceSupport(
-      "support-our-veteran-community"
+      component_slug
     );
   } catch (error) {
     console.error("Failed to fetch Veterence Data:", error);
     return <p>Failed to load Veterence Data.</p>;
   }
 
-  const validateBlockStyle = (style: string): BlockStyle => {
+  const validateBlockStyle = (style: string | undefined): BlockStyle => {
     const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];
     return validStyles.includes(style as BlockStyle)
       ? (style as BlockStyle)
@@ -54,7 +54,7 @@ const FamilySupport = async () => {
               <Image
                 width={100}
                 height={150}
-                className="w-auto h-auto min-w-64"
+                className={component_slug === "freedom-service-dogs" ? "w-auto h-auto min-w-64" : "hidden md:block w-auto h-auto lg:min-w-32 min-w-32"}
                 src={pageData?.icon?.asset?.image_url || "/icon/userplus.svg"}
                 alt={pageData?.icon?.alt || "Description of the image"}
               />
@@ -104,7 +104,7 @@ const FamilySupport = async () => {
             </div>
 
             <Link
-              href="https://freedomservicedogs.org"
+              href={link}
               className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center"
             >
               <Button buttonText={pageData?.button_text || "Learn More"} />

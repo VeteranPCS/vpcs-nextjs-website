@@ -7,8 +7,8 @@ interface Child {
 }
 
 interface Block {
-  children?: Child[]; 
-  style: "h1" | "h2" | "h3" | "normal"; 
+  children?: Child[];
+  style: "h1" | "h2" | "h3" | "normal";
 }
 
 interface TextSpanProps {
@@ -24,9 +24,9 @@ const TextSpan: React.FC<TextSpanProps> = ({ child }) => {
     </React.Fragment>
   ));
 
-  if (child.marks.includes("strong")) {
+  if (child.marks && child.marks.includes("strong")) {
     return <strong className="font-bold">{formattedText}</strong>;
-  } else if (child.marks.includes("em")) {
+  } else if (child.marks && child.marks.includes("em")) {
     return <em className="italic">{formattedText}</em>;
   }
 

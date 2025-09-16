@@ -57,7 +57,10 @@ export default function StoriesPage() {
       <OptionSection />
       <VideoFamily />
       <Covered />
-      <FamilySupport />
+      <FamilySupport
+        link="https://www.veteranpcs.com/impact"
+        component_slug="support-our-veteran-community"
+      />
       <WhyVeteranPcs />
       <FrequentlyAskedQuestion />
       <KeepInTouch />
