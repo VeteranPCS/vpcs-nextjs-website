@@ -1,16 +1,9 @@
 "use client"
 
+import { sanitizeCityName } from "@/utils/sanitizeCityName";
+
 interface CitySelectionProps {
     cityList: string[]; // Define the type of cityList as an array of strings
-}
-
-function sanitizeCityName(city: string): string {
-    return city
-        .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, '') // Remove all special characters except letters, numbers, and spaces
-        .split(" ")
-        .filter(word => word.length > 0) // Remove empty strings from split
-        .join("-");
 }
 
 const CitySelection = ({ cityList }: CitySelectionProps) => {

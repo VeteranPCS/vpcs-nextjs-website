@@ -5,16 +5,8 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import stateService, { StateList } from '@/services/stateService';
 import { clientAreaService, type AreaAssignment } from '@/services/clientAreaService';
+import { sanitizeCityName } from '@/utils/sanitizeCityName';
 import './AgentFinderPopup.css';
-
-function sanitizeCityName(city: string): string {
-    return city
-        .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, '') // Remove all special characters except letters, numbers, and spaces
-        .split(" ")
-        .filter(word => word.length > 0) // Remove empty strings from split
-        .join("-");
-}
 
 
 interface AgentFinderPopupProps {

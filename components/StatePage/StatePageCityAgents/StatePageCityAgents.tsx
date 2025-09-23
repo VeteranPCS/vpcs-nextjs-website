@@ -4,6 +4,7 @@ import Image from "next/image";
 import Button from "@/components/common/Button";
 import Link from "next/link";
 import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
+import { sanitizeCityName } from "@/utils/sanitizeCityName";
 import { Agent } from "@/services/stateService";
 
 type Props = {
@@ -36,14 +37,6 @@ function toTitleCase(str: string): string {
     .join(" ");
 }
 
-function sanitizeCityName(city: string): string {
-  return city
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, '') // Remove all special characters except letters, numbers, and spaces
-    .split(" ")
-    .filter(word => word.length > 0) // Remove empty strings from split
-    .join("-");
-}
 
 const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
 
