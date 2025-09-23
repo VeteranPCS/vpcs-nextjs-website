@@ -4,6 +4,7 @@ import Image from "next/image";
 import Button from "@/components/common/Button";
 import Link from "next/link";
 import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
+import { sanitizeCityName } from "@/utils/sanitizeCityName";
 import { Agent } from "@/services/stateService";
 
 type Props = {
@@ -36,10 +37,11 @@ function toTitleCase(str: string): string {
     .join(" ");
 }
 
+
 const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
 
   return (
-    <div id={city.toLowerCase().split(" ").join("-")}>
+    <div id={sanitizeCityName(city)}>
       <div className="bg-[#F4F4F4]">
         <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">
           <div className="text-center">

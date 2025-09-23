@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import stateService, { StateList } from '@/services/stateService';
 import { clientAreaService, type AreaAssignment } from '@/services/clientAreaService';
+import { sanitizeCityName } from '@/utils/sanitizeCityName';
 import './AgentFinderPopup.css';
 
 
@@ -113,8 +114,12 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
             return;
         }
 
-        // Navigate to the state page with area anchor
-        const url = `/${selectedStateSlug}#${selectedArea}`;
+        // Find the area name to sanitize for the anchor
+        const selectedAreaData = areas.find(area => area.slug === selectedArea);
+        const sanitizedAreaName = selectedAreaData ? sanitizeCityName(selectedAreaData.name) : sanitizeCityName(selectedArea);
+
+        // Navigate to the state page with sanitized area anchor
+        const url = `/${selectedStateSlug}#${sanitizedAreaName}`;
         router.push(url);
         onClose();
     };
@@ -149,8 +154,8 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
                             <Image
                                 src={stateImage}
                                 alt={`${selectedState} map`}
-                                width={150}
-                                height={150}
+                                width={250}
+                                height={250}
                                 className="object-contain"
                             />
                         </div>

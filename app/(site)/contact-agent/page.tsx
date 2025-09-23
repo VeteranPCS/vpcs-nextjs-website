@@ -43,6 +43,11 @@ export default function ContactAgentPage() {
         state: queryParams.get("state") || "",
       });
 
+      // Enhanced contactAgentPostForm now includes:
+      // - Automatic retry logic (up to 3 attempts)
+      // - Better Salesforce response validation
+      // - Exponential backoff between retries
+      // - Proper error handling and logging
       const server_response = await contactAgentPostForm(formData, fullQueryString);
       if (server_response?.redirectUrl) {
         window.location.href = server_response.redirectUrl;
