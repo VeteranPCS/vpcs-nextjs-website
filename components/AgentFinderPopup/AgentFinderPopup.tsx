@@ -7,6 +7,15 @@ import stateService, { StateList } from '@/services/stateService';
 import { clientAreaService, type AreaAssignment } from '@/services/clientAreaService';
 import './AgentFinderPopup.css';
 
+function sanitizeCityName(city: string): string {
+    return city
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, '') // Remove all special characters except letters, numbers, and spaces
+        .split(" ")
+        .filter(word => word.length > 0) // Remove empty strings from split
+        .join("-");
+}
+
 
 interface AgentFinderPopupProps {
     isVisible: boolean;
@@ -113,8 +122,12 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
             return;
         }
 
-        // Navigate to the state page with area anchor
-        const url = `/${selectedStateSlug}#${selectedArea}`;
+        // Find the area name to sanitize for the anchor
+        const selectedAreaData = areas.find(area => area.slug === selectedArea);
+        const sanitizedAreaName = selectedAreaData ? sanitizeCityName(selectedAreaData.name) : sanitizeCityName(selectedArea);
+
+        // Navigate to the state page with sanitized area anchor
+        const url = `/${selectedStateSlug}#${sanitizedAreaName}`;
         router.push(url);
         onClose();
     };
