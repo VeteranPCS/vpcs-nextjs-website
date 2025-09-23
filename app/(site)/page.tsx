@@ -14,6 +14,7 @@ import SkillFuturesBuild from "@/components/homepage/SkillsFuturesBuild/SkillsFu
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import ReviewsList from "@/components/homepage/ReviewsList/ReviewList";
 import MovingBonusCalculator from "@/components/PcsResources/MovingBonusCalculator/MovingBonusCalculator";
+import AgentFinderPopupWrapper from "@/components/AgentFinderPopup/AgentFinderPopupWrapper";
 
 
 export default function Home() {
@@ -47,6 +48,7 @@ export default function Home() {
       <AgentLoanExpert />
       <SkillFuturesBuild />
       <KeepInTouch />
+      <AgentFinderPopupWrapper />
     </main>
   );
 }
