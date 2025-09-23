@@ -12,10 +12,12 @@ interface AreasResponse {
     error?: string;
 }
 
+// Mark this route as dynamic
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest): Promise<NextResponse<AreasResponse>> {
     try {
-        const { searchParams } = new URL(request.url);
-        const stateCode = searchParams.get('state');
+        const stateCode = request.nextUrl.searchParams.get('state');
 
         if (!stateCode) {
             return NextResponse.json({

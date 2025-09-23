@@ -27,26 +27,24 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
     useEffect(() => {
         const loadStates = async () => {
             try {
-                console.log('Loading states from Sanity...');
                 const statesData = await stateService.fetchStateList();
-                console.log('Raw states data:', statesData);
 
                 if (!statesData || statesData.length === 0) {
                     console.warn('No states data received from Sanity');
                     return;
                 }
 
-                // Check if state_name exists on the first item
+                // Check if state_slug exists on the first item
                 if (statesData[0] && !statesData[0].state_slug) {
-                    console.error('state_name field missing from Sanity response:', statesData[0]);
+                    console.error('state_slug field missing from Sanity response:', statesData[0]);
                 }
 
                 // Sort states alphabetically by state name
                 const sortedStates = statesData
-                    .filter(state => state.state_slug) // Filter out items without state_name
+                    .filter(state => state.state_slug) // Filter out items without state_slug
                     .sort((a, b) => a.state_slug.current.localeCompare(b.state_slug.current));
 
-                console.log('Sorted states:', sortedStates);
+                console.log(`Loaded ${sortedStates.length} states from Sanity`);
                 setStates(sortedStates);
             } catch (error) {
                 console.error('Error loading states:', error);
@@ -72,9 +70,7 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
             setIsLoadingAreas(true);
             try {
                 // Load state image
-                console.log('Loading state image for:', selectedStateSlug);
                 const imageUrl = await stateService.fetchStateImage(selectedStateSlug);
-                console.log('State image loaded:', imageUrl);
                 setStateImage(imageUrl);
 
                 // Load areas from API route (server-side)
@@ -130,11 +126,8 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
     };
 
     if (!isVisible) {
-        console.log('Popup not visible');
         return null;
     }
-
-    console.log('Popup rendering, states count:', states.length);
 
     return (
         <div className="agent-finder-popup-backdrop" onClick={handleBackdropClick}>
