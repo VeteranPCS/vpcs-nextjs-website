@@ -22,24 +22,31 @@ export interface FormData {
 export default function ContactLenderPage() {
   const router = useRouter()
 
-  const handleSubmit = async (formData: FormData) => {
+  const handleSubmit = async (formData: FormData): Promise<{ success?: boolean; redirectUrl?: string }> => {
+    const fullQueryString = window.location.search;
+    const queryParams = new URLSearchParams(fullQueryString);
+
     try {
-      const fullQueryString = window.location.search;
-      const queryParams = new URLSearchParams(fullQueryString);
       sendGTMEvent({
         event: "conversion_contact_lender",
         agent_id: queryParams.get('id') || "",
         state: queryParams.get('state') || "",
       });
 
+      // Enhanced contactLenderPostForm now includes:
+      // - Automatic retry logic (up to 3 attempts)
+      // - Better Salesforce response validation
+      // - Exponential backoff between retries
+      // - Proper error handling and logging
       const server_response = await contactLenderPostForm(formData, fullQueryString);
       if (server_response?.redirectUrl) {
         router.push(server_response.redirectUrl);
-      } else {
-        console.log("No redirect URL found");
+        return { success: true, redirectUrl: server_response.redirectUrl };
       }
+      return { success: false };
     } catch (error) {
       console.error('Error submitting form:', error);
+      return { success: false };
     }
   };
 

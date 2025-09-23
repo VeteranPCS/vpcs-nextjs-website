@@ -71,16 +71,25 @@ const ContactForm = () => {
         event: 'contact_form_submission',
       });
 
+      // Ensure captcha_settings is included from the hidden input
+      const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
+      if (captchaSettingsElem) {
+        data.captcha_settings = captchaSettingsElem.value;
+      }
+
+      console.log('Submitting contact form with data:', data); // Debug log
+
       const server_response = await contactPostForm(data);
-      if (server_response?.success) {
+      if (server_response?.success || server_response?.message) {
         reset();
         window.location.href = `${BASE_URL}/thank-you`;
         return;
       } else {
-        console.log("No redirect URL found");
+        console.log("Form submission failed or no success indicator found");
       }
     } catch (error) {
       console.error('Error submitting form:', error);
+      // You might want to show an error message to the user here
     } finally {
       setIsSubmitting(false);
     }

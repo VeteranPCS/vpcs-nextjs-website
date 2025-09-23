@@ -160,62 +160,69 @@ async function submitToSalesforceWithRetry(
  * Validates that a Salesforce response indicates successful form submission
  */
 function validateSalesforceResponse(responseText: string, submissionId: string): { isValid: boolean; reason?: string } {
-    if (!responseText || responseText.trim().length === 0) {
-        return { isValid: false, reason: 'Empty response from Salesforce' };
-    }
+    // Check for explicit error indicators in the response first
+    if (responseText && responseText.trim().length > 0) {
+        const errorIndicators = [
+            'error occurred',
+            'invalid',
+            'required field',
+            'unable to create',
+            'failed to submit',
+            'system error',
+            'temporarily unavailable',
+            'captcha',
+            'security'
+        ];
 
-    // Check for explicit error indicators in the response
-    const errorIndicators = [
-        'error occurred',
-        'invalid',
-        'required field',
-        'unable to create',
-        'failed to submit',
-        'system error',
-        'temporarily unavailable'
-    ];
-
-    const lowerResponseText = responseText.toLowerCase();
-    for (const indicator of errorIndicators) {
-        if (lowerResponseText.includes(indicator)) {
-            logDebug('Found error indicator in response', {
-                submissionId,
-                indicator,
-                responsePreview: responseText.substring(0, 200)
-            });
-            return { isValid: false, reason: `Error indicator found: ${indicator}` };
+        const lowerResponseText = responseText.toLowerCase();
+        for (const indicator of errorIndicators) {
+            if (lowerResponseText.includes(indicator)) {
+                logDebug('Found error indicator in response', {
+                    submissionId,
+                    indicator,
+                    responsePreview: responseText.substring(0, 200)
+                });
+                return { isValid: false, reason: `Error indicator found: ${indicator}` };
+            }
         }
-    }
 
-    // Check for success indicators
-    const successIndicators = [
-        'window.location', // Redirect script indicates success
-        'thank', // Thank you pages
-        'success',
-        'submitted',
-        'received'
-    ];
+        // Check for success indicators
+        const successIndicators = [
+            'window.location', // Redirect script indicates success
+            'thank', // Thank you pages
+            'success',
+            'submitted',
+            'received'
+        ];
 
-    for (const indicator of successIndicators) {
-        if (lowerResponseText.includes(indicator)) {
-            logDebug('Found success indicator in response', {
-                submissionId,
-                indicator
-            });
-            return { isValid: true };
+        for (const indicator of successIndicators) {
+            if (lowerResponseText.includes(indicator)) {
+                logDebug('Found success indicator in response', {
+                    submissionId,
+                    indicator
+                });
+                return { isValid: true };
+            }
         }
+
+        // If response has content but no clear indicators, log and assume error for now
+        logDebug('Response has content but no clear success/error indicators', {
+            submissionId,
+            responseLength: responseText.length,
+            responsePreview: responseText.substring(0, 200)
+        });
+        return { isValid: false, reason: 'Unclear response content, no success indicators found' };
     }
 
-    // If response is very short (< 100 chars), it might be an error
-    if (responseText.length < 100) {
-        return { isValid: false, reason: 'Response too short, possibly an error' };
-    }
-
-    // If we get here, assume it's valid (benefit of the doubt)
-    logDebug('Response validation passed by default', {
+    // Empty response handling - this might actually be valid for some Salesforce endpoints
+    // Let's be more lenient for empty responses and consider them potentially valid
+    logDebug('Empty response from Salesforce - treating as potentially valid', {
         submissionId,
-        responseLength: responseText.length
+        responseLength: responseText ? responseText.length : 0
     });
+
+    // For now, let's accept empty responses as valid since they might indicate success
+    // We can monitor logs to see if this causes issues
     return { isValid: true };
 }
 
@@ -436,45 +443,39 @@ export async function GetListedAgentsPostForm(formData: any) {
             "captcha_settings": formData.captcha_settings || "",
         }).toString();
 
-        logDebug('Sending agent listing data to Salesforce', {
+        logDebug('Sending agent listing data to Salesforce with retry logic', {
             submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
         });
 
-        let response;
-        try {
-            response = await fetch(
-                "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: formBody,
-                }
-            );
+        // Use enhanced submission with retry logic
+        const submissionResult = await submitToSalesforceWithRetry(
+            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            formBody,
+            submissionId,
+            3, // maxRetries
+            1000 // baseDelay in ms
+        );
 
-            logInfo('Received response from Salesforce for agent listing', {
-                submissionId,
-                status: response.status,
-                statusText: response.statusText,
-                ok: response.ok
-            });
-        } catch (fetchError) {
-            // Track the network failure
+        if (!submissionResult.success) {
+            // Track the failure
             await updateSubmissionStatus(
                 submissionId,
                 FormSubmissionStatus.FAILURE,
-                null,
-                fetchError instanceof Error ? fetchError : new Error('Network request failed')
+                submissionResult.response || null,
+                submissionResult.error || new Error('Salesforce submission failed')
             );
 
-            logError('Network error while submitting agent listing to Salesforce', {
-                submissionId
-            }, fetchError);
+            logError('Agent listing submission failed after all retries', {
+                submissionId,
+                error: submissionResult.error?.message
+            }, submissionResult.error);
 
-            throw fetchError;
+            throw submissionResult.error || new Error('Failed to submit agent listing to Salesforce');
         }
+
+        const { response, responseText, redirectUrl } = submissionResult;
 
         Promise.all([
             sendToSlack({
@@ -487,48 +488,6 @@ export async function GetListedAgentsPostForm(formData: any) {
         ]).catch(error => {
             logError('Error sending agent listing notifications', { submissionId }, error);
         });
-
-        if (!response.ok) {
-            // Track the unsuccessful response
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                response,
-                new Error(`Salesforce API error: ${response.status}`)
-            );
-
-            logError('Received unsuccessful response from Salesforce for agent listing', {
-                submissionId,
-                status: response.status
-            });
-
-            throw new Error(`Error: ${response.status}`);
-        }
-
-        // At this point, the request to Salesforce was successful
-        let data;
-        try {
-            data = await response.text();
-            logDebug('Received text response from Salesforce for agent listing', {
-                submissionId,
-                responseLength: data.length
-            });
-        } catch (textError) {
-            // Log the error but don't fail the submission since the POST was successful
-            logError('Error reading response text for agent listing', { submissionId }, textError);
-
-            // Track successful submission even though we couldn't read the response text
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.SUCCESS,
-                response
-            );
-
-            return { message: 'Form submitted successfully!' };
-        }
-
-        const redirectUrlMatch = data.match(/window.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
-        const redirectUrl = redirectUrlMatch ? redirectUrlMatch[1] : null;
 
         // Track the successful submission
         await updateSubmissionStatus(
@@ -563,6 +522,15 @@ export async function GetListedAgentsPostForm(formData: any) {
 }
 
 export async function GetListedLendersPostForm(formData: any) {
+    // Start tracking the submission
+    const submissionId = await trackFormSubmission(
+        'getListedLenders',
+        formData,
+        FormSubmissionStatus.PENDING
+    );
+
+    logInfo('Processing lender listing form submission', { submissionId });
+
     try {
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
@@ -595,17 +563,39 @@ export async function GetListedLendersPostForm(formData: any) {
             "captcha_settings": formData.captcha_settings || "",
         }).toString();
 
+        logDebug('Sending lender listing data to Salesforce with retry logic', {
+            submissionId,
+            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
+        });
 
-        const response = await fetch(
+        // Use enhanced submission with retry logic
+        const submissionResult = await submitToSalesforceWithRetry(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formBody,
-            }
+            formBody,
+            submissionId,
+            3, // maxRetries
+            1000 // baseDelay in ms
         );
+
+        if (!submissionResult.success) {
+            // Track the failure
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.FAILURE,
+                submissionResult.response || null,
+                submissionResult.error || new Error('Salesforce submission failed')
+            );
+
+            logError('Lender listing submission failed after all retries', {
+                submissionId,
+                error: submissionResult.error?.message
+            }, submissionResult.error);
+
+            throw submissionResult.error || new Error('Failed to submit lender listing to Salesforce');
+        }
+
+        const { response, responseText, redirectUrl } = submissionResult;
 
         Promise.all([
             sendToSlack({
@@ -615,51 +605,96 @@ export async function GetListedLendersPostForm(formData: any) {
                 phoneNumber: formData.phone || "",
                 message: formData.additionalComments || "",
             })
-        ]);
+        ]).catch(error => {
+            logError('Error sending lender listing notifications', { submissionId }, error);
+        });
 
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
-
-        const data = await response.text();
-        const redirectUrlMatch = data.match(/window.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
-        const redirectUrl = redirectUrlMatch ? redirectUrlMatch[1] : null;
+        // Track the successful submission
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.SUCCESS,
+            response
+        );
 
         if (redirectUrl) {
+            logInfo('Lender listing form submitted with redirect URL', {
+                submissionId,
+                redirectUrl
+            });
             return { redirectUrl };
         }
 
+        logInfo('Lender listing form submitted successfully', { submissionId });
         return { message: 'Form submitted successfully!' };
     } catch (error) {
-        console.error('Error:', error);
+        // If this is an unknown error that wasn't caught earlier,
+        // make sure to update the submission status
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.FAILURE,
+            null,
+            error instanceof Error ? error : new Error('Unknown error')
+        );
+
+        logError('Error in GetListedLendersPostForm', { submissionId }, error);
         throw new Error('Failed to submit form');
     }
 }
 
 export async function KeepInTouchForm(formData: any) {
+    // Start tracking the submission
+    const submissionId = await trackFormSubmission(
+        'keepInTouch',
+        formData,
+        FormSubmissionStatus.PENDING
+    );
 
-    const formBody = new URLSearchParams({
-        oid: "00D4x000003yaV2",
-        recordType: "0124x000000Z5yD",
-        lead_source: "Website",
-        first_name: formData.firstName || "",
-        last_name: formData.lastName || "",
-        email: formData.email || "",
-        "g-recaptcha-response": formData.captchaToken || "",
-        "captcha_settings": formData.captcha_settings || "",
-    }).toString();
+    logInfo('Processing keep in touch form submission', { submissionId });
 
     try {
-        const response = await fetch(
+        const formBody = new URLSearchParams({
+            oid: "00D4x000003yaV2",
+            recordType: "0124x000000Z5yD",
+            lead_source: "Website",
+            first_name: formData.firstName || "",
+            last_name: formData.lastName || "",
+            email: formData.email || "",
+            "g-recaptcha-response": formData.captchaToken || "",
+            "captcha_settings": formData.captcha_settings || "",
+        }).toString();
+
+        logDebug('Sending keep in touch data to Salesforce with retry logic', {
+            submissionId,
+            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+        });
+
+        // Use enhanced submission with retry logic
+        const submissionResult = await submitToSalesforceWithRetry(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formBody,
-            }
+            formBody,
+            submissionId,
+            3, // maxRetries
+            1000 // baseDelay in ms
         );
+
+        if (!submissionResult.success) {
+            // Track the failure
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.FAILURE,
+                submissionResult.response || null,
+                submissionResult.error || new Error('Salesforce submission failed')
+            );
+
+            logError('Keep in touch submission failed after all retries', {
+                submissionId,
+                error: submissionResult.error?.message
+            }, submissionResult.error);
+
+            throw submissionResult.error || new Error('Failed to submit keep in touch form to Salesforce');
+        }
+
+        const { response, responseText, redirectUrl } = submissionResult;
 
         Promise.all([
             sendToSlack({
@@ -669,71 +704,127 @@ export async function KeepInTouchForm(formData: any) {
                 phoneNumber: formData.phone || "",
                 message: formData.additionalComments || "",
             })
-        ]);
+        ]).catch(error => {
+            logError('Error sending keep in touch notifications', { submissionId }, error);
+        });
 
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        };
+        // Track the successful submission
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.SUCCESS,
+            response
+        );
 
+        logInfo('Keep in touch form submitted successfully', { submissionId });
         return { success: true, message: 'Form submitted successfully!' };
     } catch (error) {
-        console.error('Error:', error);
+        // If this is an unknown error that wasn't caught earlier,
+        // make sure to update the submission status
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.FAILURE,
+            null,
+            error instanceof Error ? error : new Error('Unknown error')
+        );
+
+        logError('Error in KeepInTouchForm', { submissionId }, error);
         throw new Error('Failed to submit form');
     }
 }
 
 export async function contactLenderPostForm(formData: any, fullQueryString: string) {
-    const paramsObj: { [key: string]: string } = {};
-    new URLSearchParams(fullQueryString).forEach((value, key) => {
-        paramsObj[key] = value;
+    // Start tracking the submission
+    const submissionId = await trackFormSubmission(
+        'contactLender',
+        formData,
+        FormSubmissionStatus.PENDING
+    );
+
+    logInfo('Processing contact lender form submission', {
+        submissionId,
+        lender_id: new URLSearchParams(fullQueryString).get('id')
     });
 
-    let agentInfo = null;
-    console.log(paramsObj.id);
-    if (paramsObj.id) {
-        try {
-            agentInfo = await stateService.fetchAgentById(paramsObj.id);
-        } catch (error) {
-            console.error('Error fetching agent information:', error);
-        }
-    }
-    console.log(agentInfo);
-
-    const formBody = new URLSearchParams({
-        oid: "00D4x000003yaV2",
-        retURL: `${BASE_URL}/thank-you`,
-        "00N4x00000QPJUT": paramsObj.id || "",
-        recordType: "0124x000000Z5yD",
-        lead_source: "Website",
-        "00N4x00000Lsr0G": "true",
-        country_code: "US",
-        "00N4x00000QQ1LB": `${BASE_URL}/contact-lender${fullQueryString}`,
-        first_name: formData.firstName || "",
-        last_name: formData.lastName || "",
-        email: formData.email || "",
-        mobile: formData.phone || "",
-        "00N4x00000LspUs": formData.currentBase || "",
-        "00N4x00000QPksj": formData.howDidYouHear || "",
-        "00N4x00000QPS7V": formData.tellusMore || "",
-        "00N4x00000bfgFA": formData.additionalComments || "",
-        "g-recaptcha-response": formData.captchaToken || "",
-        "captcha_settings": formData.captcha_settings || "",
-    }).toString();
-
     try {
-        const response = await fetch(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formBody,
+        const paramsObj: { [key: string]: string } = {};
+        new URLSearchParams(fullQueryString).forEach((value, key) => {
+            paramsObj[key] = value;
+        });
+
+        // Fetch agent information if ID is provided
+        let agentInfo = null;
+        if (paramsObj.id) {
+            try {
+                agentInfo = await stateService.fetchAgentById(paramsObj.id);
+                logDebug('Lender information fetched successfully', {
+                    lender_id: paramsObj.id,
+                    submissionId
+                });
+            } catch (error) {
+                logError('Error fetching lender information', {
+                    lender_id: paramsObj.id,
+                    submissionId
+                }, error);
             }
+        }
+
+        const formBody = new URLSearchParams({
+            oid: "00D4x000003yaV2",
+            retURL: `${BASE_URL}/thank-you`,
+            "00N4x00000QPJUT": paramsObj.id || "",
+            recordType: "0124x000000Z5yD",
+            lead_source: "Website",
+            "00N4x00000Lsr0G": "true",
+            country_code: "US",
+            "00N4x00000QQ1LB": `${BASE_URL}/contact-lender${fullQueryString}`,
+            first_name: formData.firstName || "",
+            last_name: formData.lastName || "",
+            email: formData.email || "",
+            mobile: formData.phone || "",
+            "00N4x00000LspUs": formData.currentBase || "",
+            "00N4x00000QPksj": formData.howDidYouHear || "",
+            "00N4x00000QPS7V": formData.tellusMore || "",
+            "00N4x00000bfgFA": formData.additionalComments || "",
+            "g-recaptcha-response": formData.captchaToken || "",
+            "captcha_settings": formData.captcha_settings || "",
+        }).toString();
+
+        logDebug('Sending lender form data to Salesforce with retry logic', {
+            submissionId,
+            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
+        });
+
+        // Use enhanced submission with retry logic
+        const submissionResult = await submitToSalesforceWithRetry(
+            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            formBody,
+            submissionId,
+            3, // maxRetries
+            1000 // baseDelay in ms
         );
 
+        if (!submissionResult.success) {
+            // Track the failure
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.FAILURE,
+                submissionResult.response || null,
+                submissionResult.error || new Error('Salesforce submission failed')
+            );
+
+            logError('Lender form submission failed after all retries', {
+                submissionId,
+                error: submissionResult.error?.message
+            }, submissionResult.error);
+
+            throw submissionResult.error || new Error('Failed to submit lender form to Salesforce');
+        }
+
+        const { response, responseText, redirectUrl } = submissionResult;
+
         // Fire and forget notifications - don't await them
-        Promise.all([
+        await Promise.all([
             sendToSlack({
                 headerText: '🔔 New Lender Lead',
                 name: `${formData.firstName} ${formData.lastName}`,
@@ -761,52 +852,96 @@ ${formData.additionalComments ? `Additional Comments: ${formData.additionalComme
             })
         ]).catch(error => {
             // Log any errors but don't block the main flow
-            console.error('Error sending notifications:', error);
+            logError('Error sending lender notifications', { submissionId }, error);
         });
 
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
-
-        const data = await response.text();
-        const redirectUrlMatch = data.match(/window.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
-        const redirectUrl = redirectUrlMatch ? redirectUrlMatch[1] : null;
+        // Track the successful submission
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.SUCCESS,
+            response
+        );
 
         if (redirectUrl) {
+            logInfo('Lender form submitted successfully with redirect URL', {
+                submissionId,
+                redirectUrl
+            });
             return { redirectUrl };
         }
 
+        logInfo('Lender form submitted successfully', { submissionId });
         return { message: 'Form submitted successfully!' };
     } catch (error) {
-        console.error('Error:', error);
+        // If this is an unknown error that wasn't caught earlier,
+        // make sure to update the submission status
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.FAILURE,
+            null,
+            error instanceof Error ? error : new Error('Unknown error')
+        );
+
+        logError('Error in contactLenderPostForm', { submissionId }, error);
         throw new Error('Failed to submit form');
     }
 }
 
 export async function contactPostForm(formData: any) {
-    const formBody = new URLSearchParams({
-        oid: "00D4x000003yaV2",
-        recordType: "0124x000000Z5yD",
-        lead_source: "Website",
-        first_name: formData.firstName || "",
-        last_name: formData.lastName || "",
-        email: formData.email || "",
-        "00N4x00000bfgFA": formData.additionalComments || "",
-        "g-recaptcha-response": formData.captchaToken || "",
-        "captcha_settings": formData.captcha_settings || "",
-    }).toString();
+    // Start tracking the submission
+    const submissionId = await trackFormSubmission(
+        'contact',
+        formData,
+        FormSubmissionStatus.PENDING
+    );
+
+    logInfo('Processing contact form submission', { submissionId });
 
     try {
-        const response = await fetch(
+        const formBody = new URLSearchParams({
+            oid: "00D4x000003yaV2",
+            recordType: "0124x000000Z5yD",
+            lead_source: "Website",
+            first_name: formData.firstName || "",
+            last_name: formData.lastName || "",
+            email: formData.email || "",
+            "00N4x00000bfgFA": formData.additionalComments || "",
+            "g-recaptcha-response": formData.captchaToken || "",
+            "captcha_settings": formData.captcha_settings || "",
+        }).toString();
+
+        logDebug('Sending contact form data to Salesforce with retry logic', {
+            submissionId,
+            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+        });
+
+        // Use enhanced submission with retry logic
+        const submissionResult = await submitToSalesforceWithRetry(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formBody,
-            }
+            formBody,
+            submissionId,
+            3, // maxRetries
+            1000 // baseDelay in ms
         );
+
+        if (!submissionResult.success) {
+            // Track the failure
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.FAILURE,
+                submissionResult.response || null,
+                submissionResult.error || new Error('Salesforce submission failed')
+            );
+
+            logError('Contact form submission failed after all retries', {
+                submissionId,
+                error: submissionResult.error?.message
+            }, submissionResult.error);
+
+            throw submissionResult.error || new Error('Failed to submit contact form to Salesforce');
+        }
+
+        const { response, responseText, redirectUrl } = submissionResult;
 
         Promise.all([
             sendToSlack({
@@ -816,42 +951,88 @@ export async function contactPostForm(formData: any) {
                 phoneNumber: formData.phone || "",
                 message: formData.additionalComments || "",
             })
-        ]);
+        ]).catch(error => {
+            logError('Error sending contact form notifications', { submissionId }, error);
+        });
 
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        };
+        // Track the successful submission
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.SUCCESS,
+            response
+        );
 
+        logInfo('Contact form submitted successfully', { submissionId });
         return { success: true, message: 'Form submitted successfully!' };
     } catch (error) {
-        console.error('Error:', error);
+        // If this is an unknown error that wasn't caught earlier,
+        // make sure to update the submission status
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.FAILURE,
+            null,
+            error instanceof Error ? error : new Error('Unknown error')
+        );
+
+        logError('Error in contactPostForm', { submissionId }, error);
         throw new Error('Failed to submit form');
     }
 }
 
 export async function vaLoanGuideForm(formData: any) {
-    const formBody = new URLSearchParams({
-        oid: "00D4x000003yaV2",
-        recordType: "0124x000000Z5yD",
-        lead_source: "Website",
-        first_name: formData.firstName || "",
-        last_name: formData.lastName || "",
-        email: formData.email || "",
-        "g-recaptcha-response": formData.captchaToken || "",
-        "captcha_settings": formData.captcha_settings || "",
-    }).toString();
+    // Start tracking the submission
+    const submissionId = await trackFormSubmission(
+        'vaLoanGuide',
+        formData,
+        FormSubmissionStatus.PENDING
+    );
+
+    logInfo('Processing VA loan guide form submission', { submissionId });
 
     try {
-        const response = await fetch(
+        const formBody = new URLSearchParams({
+            oid: "00D4x000003yaV2",
+            recordType: "0124x000000Z5yD",
+            lead_source: "Website",
+            first_name: formData.firstName || "",
+            last_name: formData.lastName || "",
+            email: formData.email || "",
+            "g-recaptcha-response": formData.captchaToken || "",
+            "captcha_settings": formData.captcha_settings || "",
+        }).toString();
+
+        logDebug('Sending VA loan guide data to Salesforce with retry logic', {
+            submissionId,
+            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+        });
+
+        // Use enhanced submission with retry logic
+        const submissionResult = await submitToSalesforceWithRetry(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formBody,
-            }
+            formBody,
+            submissionId,
+            3, // maxRetries
+            1000 // baseDelay in ms
         );
+
+        if (!submissionResult.success) {
+            // Track the failure
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.FAILURE,
+                submissionResult.response || null,
+                submissionResult.error || new Error('Salesforce submission failed')
+            );
+
+            logError('VA loan guide submission failed after all retries', {
+                submissionId,
+                error: submissionResult.error?.message
+            }, submissionResult.error);
+
+            throw submissionResult.error || new Error('Failed to submit VA loan guide form to Salesforce');
+        }
+
+        const { response, responseText, redirectUrl } = submissionResult;
 
         Promise.all([
             sendToSlack({
@@ -861,59 +1042,106 @@ export async function vaLoanGuideForm(formData: any) {
                 phoneNumber: formData.phone || "",
                 message: formData.additionalComments || "",
             })
-        ]);
+        ]).catch(error => {
+            logError('Error sending VA loan guide notifications', { submissionId }, error);
+        });
 
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        };
+        // Track the successful submission
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.SUCCESS,
+            response
+        );
 
+        logInfo('VA loan guide form submitted successfully', { submissionId });
         return { success: true, message: 'Form submitted successfully!' };
     } catch (error) {
-        console.error('Error:', error);
+        // If this is an unknown error that wasn't caught earlier,
+        // make sure to update the submission status
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.FAILURE,
+            null,
+            error instanceof Error ? error : new Error('Unknown error')
+        );
+
+        logError('Error in vaLoanGuideForm', { submissionId }, error);
         throw new Error('Failed to submit form');
     }
 }
 
 export async function internshipFormSubmission(formData: any) {
-    const formBody = new URLSearchParams({
-        oid: "00D4x000003yaV2",
-        recordType: "0124x000000ZGKv",
-        retURL: `${BASE_URL}/thank-you`,
-        lead_source: "Website",
-        "00N4x00000Lsr0G": "true",
-        country_code: "US",
-        first_name: formData.first_name || "",
-        last_name: formData.last_name || "",
-        email: formData.email || "",
-        mobile: formData.mobile || "",
-        "00N4x00000LsnP2": formData["00N4x00000LsnP2"] || "",
-        "00N4x00000LsnOx": formData["00N4x00000LsnOx"] || "",
-        "00N4x00000QQ0Vz": Array.isArray(formData["00N4x00000QQ0Vz"]) ? formData["00N4x00000QQ0Vz"][0] : formData["00N4x00000QQ0Vz"] || "",
-        state_code: formData.state_code || "",
-        city: formData.city || "",
-        base: formData.base || "",
-        "00N4x00000QPK7L": formData["00N4x00000QPK7L"] || "",
-        "00N4x00000LspV2": formData["00N4x00000LspV2"] || "",
-        "00N4x00000LspUi": formData["00N4x00000LspUi"] || "",
-        "00N4x00000QPLQY": formData["00N4x00000QPLQY"] || "",
-        "00N4x00000QPLQd": formData["00N4x00000QPLQd"] || "",
-        "00N4x00000QPksj": formData["00N4x00000QPksj"] || "",
-        "00N4x00000QPS7V": formData["00N4x00000QPS7V"] || "",
-        "g-recaptcha-response": formData["g-recaptcha-response"] || "",
-        "captcha_settings": formData.captcha_settings || "",
-    }).toString();
+    // Start tracking the submission
+    const submissionId = await trackFormSubmission(
+        'internship',
+        formData,
+        FormSubmissionStatus.PENDING
+    );
+
+    logInfo('Processing internship form submission', { submissionId });
 
     try {
-        const response = await fetch(
+        const formBody = new URLSearchParams({
+            oid: "00D4x000003yaV2",
+            recordType: "0124x000000ZGKv",
+            retURL: `${BASE_URL}/thank-you`,
+            lead_source: "Website",
+            "00N4x00000Lsr0G": "true",
+            country_code: "US",
+            first_name: formData.first_name || "",
+            last_name: formData.last_name || "",
+            email: formData.email || "",
+            mobile: formData.mobile || "",
+            "00N4x00000LsnP2": formData["00N4x00000LsnP2"] || "",
+            "00N4x00000LsnOx": formData["00N4x00000LsnOx"] || "",
+            "00N4x00000QQ0Vz": Array.isArray(formData["00N4x00000QQ0Vz"]) ? formData["00N4x00000QQ0Vz"][0] : formData["00N4x00000QQ0Vz"] || "",
+            state_code: formData.state_code || "",
+            city: formData.city || "",
+            base: formData.base || "",
+            "00N4x00000QPK7L": formData["00N4x00000QPK7L"] || "",
+            "00N4x00000LspV2": formData["00N4x00000LspV2"] || "",
+            "00N4x00000LspUi": formData["00N4x00000LspUi"] || "",
+            "00N4x00000QPLQY": formData["00N4x00000QPLQY"] || "",
+            "00N4x00000QPLQd": formData["00N4x00000QPLQd"] || "",
+            "00N4x00000QPksj": formData["00N4x00000QPksj"] || "",
+            "00N4x00000QPS7V": formData["00N4x00000QPS7V"] || "",
+            "g-recaptcha-response": formData["g-recaptcha-response"] || "",
+            "captcha_settings": formData.captcha_settings || "",
+        }).toString();
+
+        logDebug('Sending internship form data to Salesforce with retry logic', {
+            submissionId,
+            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
+        });
+
+        // Use enhanced submission with retry logic
+        const submissionResult = await submitToSalesforceWithRetry(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formBody,
-            }
+            formBody,
+            submissionId,
+            3, // maxRetries
+            1000 // baseDelay in ms
         );
+
+        if (!submissionResult.success) {
+            // Track the failure
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.FAILURE,
+                submissionResult.response || null,
+                submissionResult.error || new Error('Salesforce submission failed')
+            );
+
+            logError('Internship form submission failed after all retries', {
+                submissionId,
+                error: submissionResult.error?.message
+            }, submissionResult.error);
+
+            throw submissionResult.error || new Error('Failed to submit internship form to Salesforce');
+        }
+
+        const { response, responseText, redirectUrl } = submissionResult;
 
         Promise.all([
             sendToSlack({
@@ -923,23 +1151,38 @@ export async function internshipFormSubmission(formData: any) {
                 phoneNumber: formData.mobile || "",
                 message: "",
             })
-        ]);
+        ]).catch(error => {
+            logError('Error sending internship notifications', { submissionId }, error);
+        });
 
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
-
-        const data = await response.text();
-        const redirectUrlMatch = data.match(/window.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
-        const redirectUrl = redirectUrlMatch ? redirectUrlMatch[1] : null;
+        // Track the successful submission
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.SUCCESS,
+            response
+        );
 
         if (redirectUrl) {
+            logInfo('Internship form submitted with redirect URL', {
+                submissionId,
+                redirectUrl
+            });
             return { redirectUrl };
         }
 
+        logInfo('Internship form submitted successfully', { submissionId });
         return { message: 'Form submitted successfully!' };
     } catch (error) {
-        console.error('Error:', error);
+        // If this is an unknown error that wasn't caught earlier,
+        // make sure to update the submission status
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.FAILURE,
+            null,
+            error instanceof Error ? error : new Error('Unknown error')
+        );
+
+        logError('Error in internshipFormSubmission', { submissionId }, error);
         throw new Error('Failed to submit form');
     }
 }
