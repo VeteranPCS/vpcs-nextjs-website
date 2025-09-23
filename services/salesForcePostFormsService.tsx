@@ -7,6 +7,218 @@ import { logDebug, logError, logInfo } from './loggingService';
 import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
 import { getAdminPhoneNumberForState } from '@/services/stateRoutingService';
 
+interface SalesforceSubmissionResult {
+    success: boolean;
+    response?: Response;
+    responseText?: string;
+    redirectUrl?: string;
+    error?: Error;
+}
+
+/**
+ * Enhanced Salesforce submission with retry logic and proper success validation
+ */
+async function submitToSalesforceWithRetry(
+    url: string,
+    formBody: string,
+    submissionId: string,
+    maxRetries = 3,
+    baseDelay = 1000
+): Promise<SalesforceSubmissionResult> {
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        logDebug(`Salesforce submission attempt ${attempt}/${maxRetries}`, { submissionId });
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formBody,
+                signal: controller.signal
+            });
+
+            clearTimeout(timeoutId);
+
+            logInfo(`Salesforce response received (attempt ${attempt})`, {
+                submissionId,
+                status: response.status,
+                statusText: response.statusText,
+                ok: response.ok
+            });
+
+            // Basic HTTP error check
+            if (!response.ok) {
+                const error = new Error(`Salesforce HTTP error: ${response.status} ${response.statusText}`);
+                logError(`HTTP error on attempt ${attempt}`, { submissionId, status: response.status }, error);
+                lastError = error;
+
+                // Don't retry on client errors (4xx), only on server errors (5xx) or network issues
+                if (response.status >= 400 && response.status < 500) {
+                    return { success: false, response, error };
+                }
+
+                // Retry on 5xx errors
+                if (attempt < maxRetries) {
+                    await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, attempt - 1)));
+                    continue;
+                }
+
+                return { success: false, response, error };
+            }
+
+            // Read response text for further validation
+            let responseText: string;
+            try {
+                responseText = await response.text();
+                logDebug(`Response text received (attempt ${attempt})`, {
+                    submissionId,
+                    responseLength: responseText.length,
+                    hasContent: responseText.length > 0
+                });
+            } catch (textError) {
+                const error = new Error('Failed to read response text from Salesforce');
+                logError(`Failed to read response text on attempt ${attempt}`, { submissionId }, textError);
+                lastError = error;
+
+                if (attempt < maxRetries) {
+                    await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, attempt - 1)));
+                    continue;
+                }
+
+                return { success: false, response, error };
+            }
+
+            // Validate Salesforce success - look for success indicators
+            const isValidSalesforceResponse = validateSalesforceResponse(responseText, submissionId);
+
+            if (!isValidSalesforceResponse.isValid) {
+                const error = new Error(`Salesforce validation failed: ${isValidSalesforceResponse.reason}`);
+                logError(`Response validation failed on attempt ${attempt}`, {
+                    submissionId,
+                    reason: isValidSalesforceResponse.reason,
+                    responsePreview: responseText.substring(0, 200)
+                }, error);
+                lastError = error;
+
+                if (attempt < maxRetries) {
+                    await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, attempt - 1)));
+                    continue;
+                }
+
+                return { success: false, response, responseText, error };
+            }
+
+            // Extract redirect URL if present
+            const redirectUrlMatch = responseText.match(/window\.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
+            const redirectUrl = redirectUrlMatch ? redirectUrlMatch[1] : undefined;
+
+            logInfo(`Salesforce submission successful on attempt ${attempt}`, {
+                submissionId,
+                hasRedirectUrl: !!redirectUrl,
+                redirectUrl
+            });
+
+            return {
+                success: true,
+                response,
+                responseText,
+                redirectUrl
+            };
+
+        } catch (networkError) {
+            const error = networkError instanceof Error ? networkError : new Error('Unknown network error');
+
+            if (error.name === 'AbortError') {
+                logError(`Request timeout on attempt ${attempt}`, { submissionId }, error);
+            } else {
+                logError(`Network error on attempt ${attempt}`, { submissionId }, error);
+            }
+
+            lastError = error;
+
+            if (attempt < maxRetries) {
+                const delay = baseDelay * Math.pow(2, attempt - 1);
+                logInfo(`Retrying after ${delay}ms (attempt ${attempt + 1}/${maxRetries})`, { submissionId });
+                await new Promise(resolve => setTimeout(resolve, delay));
+                continue;
+            }
+        }
+    }
+
+    // All retries exhausted
+    logError(`All ${maxRetries} submission attempts failed`, { submissionId }, lastError);
+    return { success: false, error: lastError || new Error('Max retries reached') };
+}
+
+/**
+ * Validates that a Salesforce response indicates successful form submission
+ */
+function validateSalesforceResponse(responseText: string, submissionId: string): { isValid: boolean; reason?: string } {
+    if (!responseText || responseText.trim().length === 0) {
+        return { isValid: false, reason: 'Empty response from Salesforce' };
+    }
+
+    // Check for explicit error indicators in the response
+    const errorIndicators = [
+        'error occurred',
+        'invalid',
+        'required field',
+        'unable to create',
+        'failed to submit',
+        'system error',
+        'temporarily unavailable'
+    ];
+
+    const lowerResponseText = responseText.toLowerCase();
+    for (const indicator of errorIndicators) {
+        if (lowerResponseText.includes(indicator)) {
+            logDebug('Found error indicator in response', {
+                submissionId,
+                indicator,
+                responsePreview: responseText.substring(0, 200)
+            });
+            return { isValid: false, reason: `Error indicator found: ${indicator}` };
+        }
+    }
+
+    // Check for success indicators
+    const successIndicators = [
+        'window.location', // Redirect script indicates success
+        'thank', // Thank you pages
+        'success',
+        'submitted',
+        'received'
+    ];
+
+    for (const indicator of successIndicators) {
+        if (lowerResponseText.includes(indicator)) {
+            logDebug('Found success indicator in response', {
+                submissionId,
+                indicator
+            });
+            return { isValid: true };
+        }
+    }
+
+    // If response is very short (< 100 chars), it might be an error
+    if (responseText.length < 100) {
+        return { isValid: false, reason: 'Response too short, possibly an error' };
+    }
+
+    // If we get here, assume it's valid (benefit of the doubt)
+    logDebug('Response validation passed by default', {
+        submissionId,
+        responseLength: responseText.length
+    });
+    return { isValid: true };
+}
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const OPEN_PHONE_FROM_NUMBER = process.env.OPEN_PHONE_FROM_NUMBER || "";
 
@@ -80,46 +292,39 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
             "captcha_settings": formData.captcha_settings || "",
         }).toString();
 
-        logDebug('Sending form data to Salesforce', {
+        logDebug('Sending form data to Salesforce with retry logic', {
             submissionId,
             url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
         });
 
-        let response;
-        try {
-            response = await fetch(
-                "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: formBody,
-                }
-            );
+        // Use enhanced submission with retry logic
+        const submissionResult = await submitToSalesforceWithRetry(
+            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            formBody,
+            submissionId,
+            3, // maxRetries
+            1000 // baseDelay in ms
+        );
 
-            logInfo('Received response from Salesforce', {
-                submissionId,
-                status: response.status,
-                statusText: response.statusText,
-                ok: response.ok
-            });
-        } catch (fetchError) {
-            // Track the network failure
+        if (!submissionResult.success) {
+            // Track the failure
             await updateSubmissionStatus(
                 submissionId,
                 FormSubmissionStatus.FAILURE,
-                null,
-                fetchError instanceof Error ? fetchError : new Error('Network request failed')
+                submissionResult.response || null,
+                submissionResult.error || new Error('Salesforce submission failed')
             );
 
-            logError('Network error while submitting to Salesforce', {
-                submissionId
-            }, fetchError);
+            logError('Salesforce submission failed after all retries', {
+                submissionId,
+                error: submissionResult.error?.message
+            }, submissionResult.error);
 
-            throw fetchError;
+            throw submissionResult.error || new Error('Failed to submit form to Salesforce');
         }
+
+        const { response, responseText, redirectUrl } = submissionResult;
 
         // Fire and forget notifications - don't await them
         await Promise.all([
@@ -153,48 +358,7 @@ ${formData.additionalComments ? `Additional Comments: ${formData.additionalComme
             logError('Error sending notifications', { submissionId }, error);
         });
 
-        if (!response.ok) {
-            // Track the unsuccessful response
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                response,
-                new Error(`Salesforce API error: ${response.status}`)
-            );
-
-            logError('Received unsuccessful response from Salesforce', {
-                submissionId,
-                status: response.status
-            });
-
-            throw new Error(`Error: ${response.status}`);
-        }
-
-        // At this point, the request to Salesforce was successful
-        let data;
-        try {
-            data = await response.text();
-            logDebug('Received text response from Salesforce', {
-                submissionId,
-                responseLength: data.length
-            });
-        } catch (textError) {
-            // Log the error but don't fail the submission since the POST was successful
-            logError('Error reading response text', { submissionId }, textError);
-
-            // Track successful submission even though we couldn't read the response text
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.SUCCESS,
-                response
-            );
-
-            return { message: 'Form submitted successfully!' };
-        }
-
-        const redirectUrlMatch = data.match(/window.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
-        const redirectUrl = redirectUrlMatch ? redirectUrlMatch[1] : null;
-
+        // At this point, we know the submission was successful based on our enhanced validation
         // Track the successful submission
         await updateSubmissionStatus(
             submissionId,
@@ -203,7 +367,7 @@ ${formData.additionalComments ? `Additional Comments: ${formData.additionalComme
         );
 
         if (redirectUrl) {
-            logInfo('Form submitted with redirect URL', {
+            logInfo('Form submitted successfully with redirect URL', {
                 submissionId,
                 redirectUrl
             });
