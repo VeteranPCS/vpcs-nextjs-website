@@ -98,10 +98,9 @@ export default function BAHCalculator() {
 
     // Auto-submit when all required fields are filled (excluding dependents as it doesn't affect API call)
     useEffect(() => {
-        const { zipCode, rank } = formData;
-        if (zipCode && rank && !loading) {
+        if (formData.zipCode && formData.rank && !loading) {
             // Create a unique request key to prevent duplicate requests (excluding dependents)
-            const requestKey = `${zipCode}-${rank}-${formData.year}`;
+            const requestKey = `${formData.zipCode}-${formData.rank}-${formData.year}`;
 
             // Don't make the same request twice
             if (requestKey === lastRequestRef.current) {
