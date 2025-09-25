@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { sendGTMEvent } from "@next/third-parties/google";
 import stateService, { StateList } from '@/services/stateService';
 import { clientAreaService, type AreaAssignment } from '@/services/clientAreaService';
 import { sanitizeCityName } from '@/utils/sanitizeCityName';
@@ -92,6 +93,15 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
         loadAreasForState();
     }, [selectedState, selectedStateSlug]);
 
+    // Track when popup becomes visible
+    useEffect(() => {
+        if (isVisible) {
+            sendGTMEvent({
+                event: "agent_finder_popup_shown",
+                trigger_type: "scroll_trigger", // You could make this dynamic if needed
+            });
+        }
+    }, [isVisible]);
 
     const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const stateAbbr = e.target.value;
@@ -118,14 +128,41 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
         const selectedAreaData = areas.find(area => area.slug === selectedArea);
         const sanitizedAreaName = selectedAreaData ? sanitizeCityName(selectedAreaData.name) : sanitizeCityName(selectedArea);
 
+        // Send GTM event to track agent finder popup usage
+        sendGTMEvent({
+            event: "agent_finder_popup_submission",
+            state: selectedStateSlug,
+            area_assignment: sanitizedAreaName,
+        });
+
         // Navigate to the state page with sanitized area anchor
         const url = `/${selectedStateSlug}#${sanitizedAreaName}`;
         router.push(url);
         onClose();
     };
 
+    const handleCloseButtonClick = () => {
+        // Send GTM event for close button click
+        sendGTMEvent({
+            event: "agent_finder_popup_closed",
+            closure_method: "close_button",
+            state: selectedState || "",
+            area_assignment: selectedArea || "",
+        });
+
+        onClose();
+    };
+
     const handleBackdropClick = (e: React.MouseEvent) => {
         if (e.target === e.currentTarget) {
+            // Send GTM event for backdrop click
+            sendGTMEvent({
+                event: "agent_finder_popup_closed",
+                closure_method: "backdrop_click",
+                state: selectedState || "",
+                area_assignment: selectedArea || "",
+            });
+
             onClose();
         }
     };
@@ -139,7 +176,7 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
             <div className="agent-finder-popup">
                 <button
                     className="agent-finder-popup__close"
-                    onClick={onClose}
+                    onClick={handleCloseButtonClick}
                     aria-label="Close popup"
                 >
                     ×
