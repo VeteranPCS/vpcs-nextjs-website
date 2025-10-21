@@ -1,10 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import "@/app/globals.css";
 import Image from "next/image";
 import styles from "./MovingBonusCalculator.module.css";
 import Button from "@/components/common/Button";
+import { sendGTMEvent } from "@next/third-parties/google";
 
 // Figma assets
 const imgHouse = "/icon/home-calculator-icon.webp";
@@ -81,6 +82,35 @@ const MovingBonusCalculator = () => {
 
     const sliderPercentage = getSliderPercentage();
 
+    // Track calculator interactions with debounce
+    useEffect(() => {
+        // Only track if there's a meaningful value (not zero or initial load)
+        if (homeValue === 300000) {
+            // Skip tracking the initial default value on mount
+            return;
+        }
+
+        // Debounce the GTM event to avoid excessive tracking
+        const timer = setTimeout(() => {
+            sendGTMEvent({
+                event: 'moving_bonus_calculator_interaction',
+                home_value: homeValue,
+                bonus_amount: movingBonus
+            });
+        }, 750); // 750ms debounce
+
+        return () => clearTimeout(timer);
+    }, [homeValue, movingBonus]);
+
+    // Handle Connect Now button click
+    const handleConnectClick = () => {
+        sendGTMEvent({
+            event: 'moving_bonus_calculator_cta_click',
+            home_value: homeValue,
+            bonus_amount: movingBonus
+        });
+    };
+
     return (
         <div className="bg-white py-16 px-5">
             <div className="container mx-auto">
@@ -156,7 +186,7 @@ const MovingBonusCalculator = () => {
 
                                     {/* Connect Button */}
                                     <div className="text-center md:text-center">
-                                        <Link href="/contact-agent">
+                                        <Link href="/contact-agent" onClick={handleConnectClick}>
                                             <Button
                                                 buttonText="Connect Now"
                                                 divClassName="py-0"
