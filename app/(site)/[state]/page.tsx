@@ -94,7 +94,7 @@ export async function generateMetadata({ params }: { params: { state: string } }
     .join(" ");
 
   const ogTitle = `Military PCS Moves: Top Veteran Real Estate Agents in ${stateName} - VA Loan Experts`;
-  const ogDescription = `Connect with the best veteran real estate agents in ${stateName} who understand the unique needs of veterans and military families.`;
+  const ogDescription = `Connect with the best veteran real estate agents in ${stateName} who understand the unique needs of veterans and military families. Contact a veteran real estate agent in ${stateName} today and start your PCS move with confidence.`;
   const ogImage = await stateService.fetchStateImage(params.state);
 
   return {
