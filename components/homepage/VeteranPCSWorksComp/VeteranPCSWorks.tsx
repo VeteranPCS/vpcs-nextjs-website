@@ -8,14 +8,14 @@ const cardsData = [
     title: "AGENTS",
     subTitle:
       "Find a veteran or military spouse real estate agent to help buy or sell a home.",
-    link: "#map-container",
+    link: "#state-map",
   },
   {
     img: "/icon/checkred.svg",
     title: "VA LOAN",
     subTitle:
       "Don’t overpay when using your va loan. Our va loan experts are here to help.",
-    link: "#map-container",
+    link: "#state-map",
   },
   {
     img: "/icon/checkred.svg",

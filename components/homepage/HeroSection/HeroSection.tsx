@@ -68,14 +68,14 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
               )}
               {page == "home" && (
                 <div className="lg:mb-28 md:mt-4 sm:mt-10 mt-10">
-                  <Link href="#map-container">
+                  <Link href="#state-map">
                     <Button buttonText="Find An Agent" />
                   </Link>
                 </div>
               )}
               {page == "spanish" && (
                 <div className="lg:flex md:flex justify-start items-center gap-4 flex-wrap ">
-                  <Link href="#map-container">
+                  <Link href="#state-map">
                     <Button buttonText="Explora nuestro mapa" />
                   </Link>
                   <p className="text-white font-normal xl:text-[30px] lg:text-[30px] md:text-[20px] sm:text-[20px] text-[20px] mx-10 xl:w-auto w-full hidden md:block">
