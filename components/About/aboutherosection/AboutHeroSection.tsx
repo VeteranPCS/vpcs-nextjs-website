@@ -36,7 +36,7 @@ const AboutHeroSection = async () => {
                   This is military families, helping military families move.
                 </p>
                 <div>
-                  <Link href="/#map-container">
+                  <Link href="/#state-map">
                     <Button buttonText={pageData?.buttonText || "default button"} />
                   </Link>
                 </div>

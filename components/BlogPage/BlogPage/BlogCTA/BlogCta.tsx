@@ -15,13 +15,13 @@ const StatePageHeroSecondSection = () => {
                         <div>
                             <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold">Buying Or Selling</h2>
                         </div>
-                        <Link href="/#map-container">
+                        <Link href="/#state-map">
                             <Button buttonText="Find An Agent" />
                         </Link>
                         <div>
                             <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold">VA Loan Expert</h2>
                         </div>
-                        <Link href="/#map-container">
+                        <Link href="/#state-map">
                             <Button buttonText="Find A Lender" />
                         </Link>
                     </div>

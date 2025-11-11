@@ -120,7 +120,7 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
 
   return (
     <>
-      <div className="z-0 w-full" id="state-map-component">
+      <div className="z-0 w-full" id="state-map">
         <div className="bg-[#aeb0c7] lg:px-16 py-10 w-full">
           <div>
             <div className="text-center pb-5 w-full relative">
