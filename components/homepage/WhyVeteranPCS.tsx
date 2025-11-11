@@ -113,7 +113,7 @@ const WhyVeteranPcs = () => {
               />
             </div>
             <div className="mx-auto justify-center text-center flex">
-              <Link href="/#map-container">
+              <Link href="/#state-map">
                 <Button buttonText="Find an Agent" />
               </Link>
             </div>
