@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { SALESFORCETOKEN, getSalesforceToken, GOOGLEAUTH, getGoogleAuthToken } from "@/services/salesForceTokenService";
+import { SALESFORCETOKEN, getSalesforceToken } from "@/services/salesForceTokenService";
 
 // ***** start - import from files *****
 import { BASE_API_URL } from "@/constants/api";
@@ -81,36 +81,6 @@ export const salesForceAPI = async ({
         headers: {
             "Cache-Control": "no-cache",
             Authorization: `Bearer ${SALESFORCETOKEN}`,
-        },
-    };
-
-    try {
-        res = await axios(config);
-    } catch (err: any) {
-        res = err.response;
-    }
-
-    return res;  // Return the response or error
-};
-
-export const googleReviewsAPI = async ({
-    endpoint,
-    data,
-    type,
-}: ApiParams): Promise<AxiosResponse | undefined> => {
-    let res: AxiosResponse | undefined;
-
-    if (!GOOGLEAUTH) {
-        await getGoogleAuthToken()
-    }
-
-    const config: AxiosRequestConfig = {
-        url: endpoint,
-        method: type as any,
-        data,
-        headers: {
-            "Cache-Control": "no-cache",
-            Authorization: `Bearer ${GOOGLEAUTH}`,
         },
     };
 
