@@ -65,16 +65,15 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                     </div>
                     <div className="relative">
                       {/* Hidden checkbox to track toggle state */}
-                      <input type="checkbox" id={`toggle-${index + lender.Name}`} className="peer hidden" />
+                      <input type="checkbox" id={`toggle-${index + ' ' + lender.Name + ' ' + cityName.toLowerCase().split(' ').join('-')}`} className="peer hidden" />
 
                       {/* Text that expands/collapses */}
-                      <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 
-      max-h-[80px] overflow-hidden peer-checked:max-h-full transition-all duration-300">
+                      <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 max-h-[80px] overflow-hidden peer-checked:max-h-full transition-all duration-300">
                         {lender?.Agent_Bio__pc}
                       </p>
 
                       {/* Single label that toggles state */}
-                      <label htmlFor={`toggle-${index + lender.Name}`} className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 block peer-checked:before:content-['Read_Less'] before:content-['...Read_More']">
+                      <label htmlFor={`toggle-${index + ' ' + lender.Name + ' ' + cityName.toLowerCase().split(' ').join('-')}`} className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 block peer-checked:before:content-['Read_Less'] before:content-['...Read_More']">
                       </label>
                     </div>
 
