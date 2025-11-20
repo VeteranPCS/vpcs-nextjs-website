@@ -87,8 +87,9 @@ VeteranPCS is a NextJS-based web application designed to connect military person
 - **Description**: Routes OpenPhone messages to appropriate admin phone numbers based on state.
 - **Admin Assignments**:
   - **Beth (719-249-5359)**: Alaska, Arizona, California, Colorado, Hawaii, Idaho, Iowa, Kansas, Missouri, Montana, Nebraska, Nevada, New Mexico, North Dakota, Oregon, South Dakota, Utah, Washington, Wyoming
-  - **Jessica (719-782-5065)**: Alabama, Arkansas, Florida, Georgia, Kentucky, Louisiana, Mississippi, North Carolina, Oklahoma, South Carolina, Tennessee, Texas
-  - **Stephanie (719-249-4757)**: Connecticut, Delaware, Illinois, Indiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, New Hampshire, New Jersey, New York, Ohio, Pennsylvania, Rhode Island, Vermont, Virginia, West Virginia, Wisconsin, Washington D.C., Puerto Rico
+  - **Stephanie (719-249-4757)**: Connecticut, Delaware, Illinois, Indiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, New Hampshire, New Jersey, New York, Ohio, Pennsylvania, Rhode Island, Vermont, Virginia, Washington D.C., West Virginia, Wisconsin
+  - **Jessica (719-782-5065)**: Alabama, Florida, Georgia, North Carolina, South Carolina
+  - **Tara (719-249-7898)**: Arkansas, Kentucky, Louisiana, Mississippi, Oklahoma, Tennessee, Texas
 - **Functions**:
   - `getAdminContactForState(state)`: Returns admin contact info for a state
   - `getAdminPhoneNumberForState(state)`: Returns admin phone number for a state
