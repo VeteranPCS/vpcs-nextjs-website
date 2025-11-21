@@ -14,7 +14,7 @@ export const clientAreaService = {
         try {
             console.log('Fetching areas from API for state:', stateCode);
 
-            const response = await fetch(`/api/areas?state=${stateCode}`);
+            const response = await fetch(`/api/v1/areas?state=${stateCode}`);
 
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: Failed to fetch areas`);

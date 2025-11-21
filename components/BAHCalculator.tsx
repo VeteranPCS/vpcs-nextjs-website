@@ -45,7 +45,7 @@ export default function BAHCalculator() {
         setResult(null);
 
         try {
-            const response = await fetch('/api/bah', {
+            const response = await fetch('/api/v1/bah', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ export default function BAHCalculator() {
                     setError(null);
                     setResult(null);
 
-                    const response = await fetch('/api/bah', {
+                    const response = await fetch('/api/v1/bah', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

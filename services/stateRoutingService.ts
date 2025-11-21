@@ -22,6 +22,10 @@ export const ADMIN_CONTACTS = {
         name: 'Stephanie',
         phoneNumber: process.env.STEPHANIE_PHONE_NUMBER || '+17192494757',
     },
+    TARA: {
+        name: 'Tara',
+        phoneNumber: process.env.TARA_PHONE_NUMBER || '+17192497898',
+    }
 } as const;
 
 // State-to-admin mapping based on provided chart
@@ -49,18 +53,10 @@ const STATE_TO_ADMIN_MAP: Record<string, keyof typeof ADMIN_CONTACTS> = {
 
     // Jessica's states
     'alabama': 'JESSICA',
-    'arkansas': 'JESSICA',
     'florida': 'JESSICA',
     'georgia': 'JESSICA',
-    'kentucky': 'JESSICA',
-    'louisiana': 'JESSICA',
-    'mississippi': 'JESSICA',
     'north-carolina': 'JESSICA',
-    'oklahoma': 'JESSICA',
     'south-carolina': 'JESSICA',
-    'tennessee': 'JESSICA',
-    'texas': 'JESSICA',
-    'puerto-rico': 'JESSICA',
 
     // Stephanie's states
     'connecticut': 'STEPHANIE',
@@ -80,9 +76,18 @@ const STATE_TO_ADMIN_MAP: Record<string, keyof typeof ADMIN_CONTACTS> = {
     'rhode-island': 'STEPHANIE',
     'vermont': 'STEPHANIE',
     'virginia': 'STEPHANIE',
+    'washington-dc': 'STEPHANIE',
     'west-virginia': 'STEPHANIE',
     'wisconsin': 'STEPHANIE',
-    'washington-dc': 'STEPHANIE',
+
+    // Tara's states
+    'arkansas': 'TARA',
+    'kentucky': 'TARA',
+    'louisiana': 'TARA',
+    'mississippi': 'TARA',
+    'oklahoma': 'TARA',
+    'tennessee': 'TARA',
+    'texas': 'TARA',
 };
 
 /**

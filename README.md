@@ -6,6 +6,83 @@ VeteranPCS is a NextJS-based web application designed to connect military person
 
 ## API Routes
 
+### Endpoint: `/api/v1/areas`
+
+- **HTTP Method**: GET
+- **Description**: Retrieves unique geographic areas by state where agents are assigned. Returns sorted list of areas with slugs for routing.
+- **Parameters**:
+  - **Query Parameters**:
+    - `state`: string (required) - Two-letter state abbreviation (e.g., "CA", "TX", "FL")
+- **Response**:
+  - **200 OK**:
+
+    ```json
+    {
+      "success": true,
+      "data": [
+        {
+          "name": "San Diego",
+          "slug": "san-diego"
+        },
+        {
+          "name": "Los Angeles",
+          "slug": "los-angeles"
+        }
+      ]
+    }
+    ```
+
+  - **400 Bad Request**: Missing state parameter
+  - **500 Internal Server Error**
+- **Authentication**: None required
+- **Side Effects**: Queries Salesforce for agent area assignments
+- **Dynamic**: Route marked as force-dynamic to prevent caching
+
+---
+
+### Endpoint: `/api/v1/bah`
+
+- **HTTP Method**: POST
+- **Description**: Calculates Basic Allowance for Housing (BAH) rates by scraping real-time data from defensetravel.dod.mil. Returns BAH amounts with and without dependents for specified rank and location.
+- **Parameters**:
+  - **Body (JSON)**:
+    - `year`: string (required) - Two-digit year code (e.g., "25" for 2025)
+    - `zipCode`: string (required) - Five-digit ZIP code (e.g., "98115")
+    - `rank`: string (required) - Military pay grade ID (1-24):
+      - Enlisted: 1-9 (E-1 through E-9)
+      - Warrant: 10-14 (W-1 through W-5)
+      - Officer with Prior Enlisted: 15-17 (O1E, O2E, O3E)
+      - Officer: 18-24 (O-1 through O-7/O-7+)
+- **Response**:
+  - **200 OK**:
+
+    ```json
+    {
+      "success": true,
+      "data": {
+        "year": "25",
+        "zipCode": "98115",
+        "rank": "E-5",
+        "mha": "Seattle, WA",
+        "withDependents": 3051,
+        "withoutDependents": 2574,
+        "difference": 477,
+        "isValid": true
+      }
+    }
+    ```
+
+  - **400 Bad Request**: Missing required fields, invalid ZIP code format, or invalid rank ID
+  - **500 Internal Server Error**: Scraping failure or data extraction error
+- **Authentication**: None required
+- **Side Effects**: Makes external HTTP request to defensetravel.dod.mil
+- **Technical Details**:
+  - Uses direct POST to `defensetravel.dod.mil/neorates/report/index.php`
+  - Parses HTML with Cheerio to extract BAH data from `#ImportDiv2` container
+  - Validates extracted amounts to ensure data integrity
+
+---
+
 ### Endpoint: `/api/v1/revalidate/salesforce`
 
 - **HTTP Method**: POST
@@ -87,8 +164,9 @@ VeteranPCS is a NextJS-based web application designed to connect military person
 - **Description**: Routes OpenPhone messages to appropriate admin phone numbers based on state.
 - **Admin Assignments**:
   - **Beth (719-249-5359)**: Alaska, Arizona, California, Colorado, Hawaii, Idaho, Iowa, Kansas, Missouri, Montana, Nebraska, Nevada, New Mexico, North Dakota, Oregon, South Dakota, Utah, Washington, Wyoming
-  - **Jessica (719-782-5065)**: Alabama, Arkansas, Florida, Georgia, Kentucky, Louisiana, Mississippi, North Carolina, Oklahoma, South Carolina, Tennessee, Texas
-  - **Stephanie (719-249-4757)**: Connecticut, Delaware, Illinois, Indiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, New Hampshire, New Jersey, New York, Ohio, Pennsylvania, Rhode Island, Vermont, Virginia, West Virginia, Wisconsin, Washington D.C., Puerto Rico
+  - **Stephanie (719-249-4757)**: Connecticut, Delaware, Illinois, Indiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, New Hampshire, New Jersey, New York, Ohio, Pennsylvania, Rhode Island, Vermont, Virginia, Washington D.C., West Virginia, Wisconsin
+  - **Jessica (719-782-5065)**: Alabama, Florida, Georgia, North Carolina, South Carolina
+  - **Tara (719-249-7898)**: Arkansas, Kentucky, Louisiana, Mississippi, Oklahoma, Tennessee, Texas
 - **Functions**:
   - `getAdminContactForState(state)`: Returns admin contact info for a state
   - `getAdminPhoneNumberForState(state)`: Returns admin phone number for a state
@@ -262,6 +340,7 @@ VeteranPCS is a NextJS-based web application designed to connect military person
 ### Blog Services
 
 #### Function: `fetchBlogs`
+
 - **Description**: Retrieves all blog posts from Sanity CMS.
 - **Parameters**: None
 - **Return Value**: Promise<Array> - Array of blog posts
@@ -294,6 +373,19 @@ VeteranPCS is a NextJS-based web application designed to connect military person
 - **Return Value**: Promise<Array> - Author's blog posts
 - **Side Effects**: None
 - **Exceptions/Errors**: Returns empty array on error
+
+---
+
+### Client Area Services
+
+#### Function: `fetchAreasByState`
+
+- **Description**: Retrieves geographic areas for a specific state from the areas API.
+- **Parameters**:
+  - `stateCode`: string - Two-letter state abbreviation
+- **Return Value**: Promise<Array> - Array of area assignments with name and slug
+- **Side Effects**: Makes client-side fetch request to `/api/v1/areas`
+- **Exceptions/Errors**: Throws error if request fails or API returns error
 
 ---
 
@@ -355,6 +447,69 @@ VeteranPCS is a NextJS-based web application designed to connect military person
 
 ---
 
+### BAH Calculator Component
+
+#### Component: `BAHCalculator`
+
+- **Description**: Client-side React component for calculating Basic Allowance for Housing (BAH) rates.
+- **Features**:
+  - Auto-submit on field completion with debouncing (500ms)
+  - Real-time BAH calculations via `/api/v1/bah` endpoint
+  - Currency formatting with commas ($X,XXX.XX)
+  - Dependent/non-dependent toggle
+  - Google Tag Manager integration for analytics
+  - Loading states and error handling
+- **User Inputs**:
+  - ZIP Code: 5-digit numeric input
+  - Year: Dropdown (defaults to current year)
+  - Rank: Military pay grade selection (E-1 through O-7+)
+  - Dependents: Toggle button for with/without dependents
+- **Display**:
+  - Monthly BAH allowance
+  - Yearly BAH allowance (monthly × 12)
+  - Military Housing Area (MHA)
+  - Automatic calculation on form completion
+- **Side Effects**:
+  - Sends GTM events on successful calculations
+  - Makes API calls to `/api/v1/bah`
+- **Technical Details**:
+  - Uses `useRef` to prevent duplicate API calls
+  - Implements request deduplication based on zip-rank-year key
+
+---
+
+### BAH Scraper Library
+
+#### Module: `lib/bah-scraper.ts`
+
+- **Description**: Server-side library for extracting BAH data from defensetravel.dod.mil.
+- **Key Functions**:
+  - `extractBAHData(year, zipCode, rankId)`: Main extraction function
+  - `RANK_MAPPING`: Constant mapping of rank IDs to pay grade names
+- **Technical Implementation**:
+  - Direct POST to `defensetravel.dod.mil/neorates/report/index.php`
+  - Uses Node.js native `https` module for requests
+  - Parses HTML with Cheerio library
+  - Extracts data from `#ImportDiv2` container
+  - Validates extracted amounts (with deps > without deps, both > 0)
+- **Return Value**:
+  - Object containing year, zipCode, rank, mha, withDependents, withoutDependents, difference, isValid
+- **Side Effects**: Makes external HTTPS requests
+- **Exceptions/Errors**:
+  - Throws on invalid rank ID
+  - Throws on missing container or table
+  - Throws on invalid BAH amounts
+
+---
+
 ## Additional Notes
 
 The codebase integrates multiple external services including Salesforce for CRM, Sanity for content management, Slack for notifications, OpenPhone for messaging, and Google for reviews. It employs Next.js cache revalidation strategies to ensure content is fresh while maintaining performance.
+
+### API Versioning
+
+All public API endpoints are versioned under `/api/v1/` to support future iterations without breaking existing integrations. Currently implemented v1 endpoints include:
+
+- BAH calculator (`/api/v1/bah`)
+- Geographic areas lookup (`/api/v1/areas`)
+- Cache revalidation webhooks (`/api/v1/revalidate/salesforce`, `/api/v1/revalidate/sanity`)
