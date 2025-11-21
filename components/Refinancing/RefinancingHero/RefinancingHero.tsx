@@ -24,22 +24,10 @@ const RefinancingHero = () => {
                                 </Link>
                                 <Link
                                     href="#how-it-works"
-                                    className="px-6 bg-white text-[#292F6C] rounded-lg py-3 text-base font-medium hover:bg-gray-100 transition-colors"
+                                    className="px-6 bg-white text-[#292F6C] rounded-lg py-3 text-base font-medium hover:bg-gray-100 transition-colors h-full my-auto"
                                 >
                                     Learn More
                                 </Link>
-                            </div>
-                        </div>
-                        <div className="hidden lg:flex justify-end items-center">
-                            <div className={styles.refinancingImageContainer}>
-                                <Image
-                                    src="/assets/happy-family.webp"
-                                    alt="Happy military family"
-                                    width={550}
-                                    height={350}
-                                    className="object-contain"
-                                    loading="eager"
-                                />
                             </div>
                         </div>
                     </div>
