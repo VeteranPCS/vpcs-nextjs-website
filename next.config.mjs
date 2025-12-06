@@ -105,6 +105,11 @@ const nextConfig = {
         destination: '/blog/best-places-to-live-near-ft-gordon-augusta-georgia',
         permanent: true,
       },
+      {
+        source: '/blog/best-places-to-live-near-fort-moore-a-comprehensive-guide-for-pcsing-military-personnel',
+        destination: '/blog/best-places-to-live-near-fort-benning',
+        permanent: true,
+      },
     ]
   }
 };
