@@ -1,10 +1,29 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [cashBackAmount, setCashBackAmount] = useState("$500,000");
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const response = await fetch('/api/v1/impact');
+        const data = await response.json();
+
+        if (data.success && data.data) {
+          setCashBackAmount(data.data.cashBackAmount);
+        }
+      } catch (error) {
+        console.error('Error fetching impact metrics:', error);
+        // Keep default value on error
+      }
+    };
+
+    fetchMetrics();
+  }, []);
 
   const onMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -87,7 +106,7 @@ const Header = () => {
                 <div className="text-center py-[28px]">
                   <p className="text-white text-[33px]">
                     <strong className="text-[33px] text-white font-bold">
-                      $384,287<strong></strong>
+                      {cashBackAmount}<strong></strong>
                     </strong>
                   </p>
                   <p className="py-4 text-white mb-0 pb-0 text-xs">
