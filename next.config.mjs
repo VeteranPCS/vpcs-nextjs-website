@@ -110,6 +110,11 @@ const nextConfig = {
         destination: '/blog/best-places-to-live-near-fort-benning',
         permanent: true,
       },
+      {
+        source: '/blog/best-places-to-live-near-fort-cavazos-fort-hood',
+        destination: '/blog/best-places-to-live-near-fort-hood',
+        permanent: true,
+      },
     ]
   }
 };
