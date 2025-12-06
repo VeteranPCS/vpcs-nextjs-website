@@ -100,6 +100,11 @@ const nextConfig = {
         destination: '/blog/what-military-bases-are-in-colorado',
         permanent: true,
       },
+      {
+        source: '/blog/best-places-to-live-near-ft-eisenhower-augusta-georgia-veteranpcs',
+        destination: '/blog/best-places-to-live-near-ft-gordon-augusta-georgia',
+        permanent: true,
+      },
     ]
   }
 };
