@@ -1,8 +1,42 @@
 "use client"
 import "@/app/globals.css";
 import Image from "next/image";
+import { useState, useEffect } from "react";
+
+interface ImpactMetrics {
+  cashBackAmount: string;
+  charityAmount: string;
+  totalVolumeSold: string;
+}
 
 const FamilyVideo = () => {
+  const [metrics, setMetrics] = useState<ImpactMetrics>({
+    cashBackAmount: '$500,000',
+    charityAmount: '$50,000',
+    totalVolumeSold: '$189M+',
+  });
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const response = await fetch('/api/v1/impact');
+        const data = await response.json();
+
+        if (data.success && data.data) {
+          setMetrics({
+            cashBackAmount: `${data.data.cashBackAmount}+`,
+            charityAmount: data.data.charityAmount,
+            totalVolumeSold: data.data.totalVolumeSold.replace(' Million', 'M+'),
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching impact metrics:', error);
+        // Keep default values on error
+      }
+    };
+
+    fetchMetrics();
+  }, []);
 
   return (
     <div className="w-full relative overflow-hidden">
@@ -36,7 +70,7 @@ const FamilyVideo = () => {
                 </div>
                 <div className="text-center lg:space-y-5">
                   <h2 className="text-white font-bold lg:text-4xl md:text-4xl text-base tahoma mt-5 mb-2">
-                    $384,287+
+                    {metrics.cashBackAmount}
                   </h2>
                   <p className="text-white font-normal lg:text-xl md:text-base sm:text-xs text-[10px] tahoma">
                     Savings Given Back
@@ -56,7 +90,7 @@ const FamilyVideo = () => {
                 </div>
                 <div className="text-center lg:space-y-5">
                   <h2 className="text-white font-bold lg:text-4xl md:text-4xl text-base tahoma mt-5 mb-2">
-                    $113M+
+                    {metrics.totalVolumeSold}
                   </h2>
                   <p className="text-white font-normal lg:text-xl md:text-base sm:text-xs text-[10px] tahoma">
                     Real Estate Volume Sold
@@ -76,7 +110,7 @@ const FamilyVideo = () => {
                 </div>
                 <div className="text-center lg:space-y-5">
                   <h2 className="text-white font-bold lg:text-4xl md:text-4xl text-base tahoma mt-5 mb-2">
-                    $33,000
+                    {metrics.charityAmount}
                   </h2>
                   <p className="text-white font-normal lg:text-xl md:text-base sm:text-xs text-[10px] tahoma">
                     Donated to Military Foundations

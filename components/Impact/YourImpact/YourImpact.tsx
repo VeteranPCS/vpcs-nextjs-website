@@ -2,8 +2,11 @@ import React from "react";
 import "@/app/globals.css";
 import classes from "./YourImpact.module.css";
 import Image from "next/image";
+import { getAllImpactMetrics } from "@/services/salesforceImpactService";
 
-const HeroSec = () => {
+const HeroSec = async () => {
+  const metrics = await getAllImpactMetrics();
+
   return (
     <div>
       <div className={classes.yourimpactsectioncontainer}>
@@ -29,7 +32,7 @@ const HeroSec = () => {
               </div>
               <div className="md:text-center sm:text-left text-left md:pl-0 sm:pl-3 pl-3">
                 <h2 className="text-white font-bold md:text-[42px] sm:text-[35px] text-[35px] tahoma md:mt-5 mb-2">
-                  $384,287+
+                  {metrics.cashBackAmount}
                 </h2>
                 <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
                   Savings Given Back
@@ -48,7 +51,7 @@ const HeroSec = () => {
               </div>
               <div className="md:text-center sm:text-left text-left md:pl-0 sm:pl-3 pl-3">
                 <h2 className="text-white font-bold md:text-[42px] sm:text-[35px] text-[35px] tahoma md:mt-5 mb-2">
-                  $136 Million
+                  {metrics.totalVolumeSold}
                 </h2>
                 <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
                   Real Estate Volume Sold
@@ -67,7 +70,7 @@ const HeroSec = () => {
               </div>
               <div className="md:text-center sm:text-left text-left md:pl-0 sm:pl-3 pl-3">
                 <h2 className="text-white font-bold md:text-[42px] sm:text-[35px] text-[35px] tahoma md:mt-5 mb-2">
-                  $36,000
+                  {metrics.charityAmount}
                 </h2>
                 <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
                   Donated to Military Foundations
