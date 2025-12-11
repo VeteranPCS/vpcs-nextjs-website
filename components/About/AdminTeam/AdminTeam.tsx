@@ -41,13 +41,15 @@ const AdminTeam = async () => {
   try {
     DigitalAdminDetails = await aboutService.fetchMembersDetail('administration');
 
-    // Sort team members by specific order
+    // Sort team members by specific order (unknown names appear at the end)
     if (DigitalAdminDetails) {
-      const nameOrder = ['Beth Soldner', 'Stephanie Guree', 'Jessica Brown'];
+      const nameOrder = ['Beth Soldner', 'Stephanie Guree', 'Jessica Brown', 'Tara Gould'];
       DigitalAdminDetails.sort((a, b) => {
         const aIndex = nameOrder.indexOf(a.name);
         const bIndex = nameOrder.indexOf(b.name);
-        return aIndex - bIndex;
+        const aPos = aIndex === -1 ? nameOrder.length : aIndex;
+        const bPos = bIndex === -1 ? nameOrder.length : bIndex;
+        return aPos - bPos;
       });
     }
   } catch (error) {
