@@ -25,6 +25,8 @@
     "axios": "^1.7.9",
     "chart.js": "^4.4.8",
     "cheerio": "^1.1.0",
+    "csv-parse": "^6.1.0",
+    "jsonwebtoken": "^9.0.3",
     "next": "14.2.35",
     "next-sanity": "^9.8.7",
     "react": "^18.3.1",
@@ -39,6 +41,9 @@
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.13",
     "yup": "^1.6.1"
+  },
+  "overrides": {
+    "glob": "^11.0.0"
   },
   "devDependencies": {
     "@types/aos": "^3.0.7",
