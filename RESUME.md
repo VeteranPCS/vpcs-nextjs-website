@@ -1,7 +1,9 @@
 # Resume Work - Quick Start Guide
 
-**Last Updated:** 2024-12-29
+**Last Updated:** 2024-12-29 20:03:52 PST
 **Project:** VeteranPCS Salesforce → Attio CRM Migration
+**Last Commit:** fa624c8 (pushed to origin/attio-migration)
+**Linear Ticket:** Created for Attio UI setup (manual)
 
 ---
 
@@ -47,22 +49,54 @@ git log -3 --oneline
 - Attio objects must be created via UI before scripts can run
 - User needs to complete `docs/migration/ATTIO-SETUP-GUIDE.md` (90-120 min)
 
-### 4. Ask User About Blockers
+### 4. Understand Current Blockers
+
+**🚨 CRITICAL BLOCKER:**
+- **What:** Attio objects must be created via UI before migration scripts can run
+- **Why:** Scripts use Attio API to create records - objects must exist first
+- **How Long:** 90-120 minutes (manual UI work)
+- **Guide:** `docs/migration/ATTIO-SETUP-GUIDE.md` (comprehensive, step-by-step)
+- **Status:** Linear ticket created, user working on it
+
+**⚠️ API Slug Verification Required:**
+When Attio setup is complete, user MUST verify these exact API slugs exist:
+- `states` (not "state")
+- `areas` (not "area")
+- `agents` (not "agent")
+- `lenders` (not "lender")
+- `customers` (not "customer" or "clients")
+- `area_assignments` (not "area_assignment")
+- `agent_onboarding` (not "agent-onboarding")
+- `lender_onboarding` (not "lender-onboarding")
+- `customer_deals` (not "customer-deals" or "deals")
+
+### 5. Ask User About Blockers
 
 Before starting work, ask:
 ```
 "Have you completed the Attio UI setup from docs/migration/ATTIO-SETUP-GUIDE.md?
-This is required before I can implement the migration scripts."
+This is required before I can implement the migration scripts.
+
+Please confirm:
+1. All 9 objects/pipelines created? (6 objects + 3 pipelines)
+2. All API slugs verified against the checklist in ATTIO-SETUP-GUIDE.md?
+3. ATTIO_API_KEY in .env.local still valid and has proper permissions?"
 ```
 
-**If YES:**
-- Proceed to implement scripts/clean-data.ts
-- Mark Phase 3a complete in SESSION-NOTES.md
+**If YES (Attio Setup Complete):**
+- ✅ Proceed to implement scripts/clean-data.ts
+- ✅ Mark Phase 3a complete in SESSION-NOTES.md
+- ✅ Begin Phase 3b: Migration Scripts Implementation
 
-**If NO:**
-- User is still working through ATTIO-SETUP-GUIDE.md
-- Can work on: documentation improvements, planning, architecture discussions
-- Cannot work on: migration scripts (need Attio objects first)
+**If NO (Still Working on Attio):**
+- ⏸️  User is still working through ATTIO-SETUP-GUIDE.md
+- ✅ Can work on: documentation improvements, planning, architecture discussions
+- ❌ Cannot work on: migration scripts (need Attio objects first)
+
+**If PARTIAL (Some Objects Created):**
+- ⚠️  Ask which objects are done
+- ⚠️  May be able to test individual scripts if dependencies met
+- ⚠️  Recommend completing all before starting (cleaner)
 
 ---
 
@@ -103,6 +137,29 @@ Output: data/mappings/agents.json
 2. Design data validation test suite
 3. Plan error handling strategy for migration scripts
 4. Draft API integration patterns for post-migration features
+
+---
+
+## 🔗 Linear Integration Status
+
+**MCP Configuration:** ⏸️ NOT CONFIGURED (optional future enhancement)
+
+**What Happened:**
+- User asked about connecting Claude Code to Linear
+- Provided complete MCP server setup instructions
+- User manually created Linear ticket for Attio UI setup instead
+- Linear MCP configuration deferred (not blocking current work)
+
+**If User Wants to Configure Later:**
+1. Get Linear API key from https://linear.app/settings/api
+2. Find Linear MCP server URL (check MCP registry or npm)
+3. Run: `claude mcp add --transport http linear <URL> --scope project --header "Authorization: Bearer <KEY>"`
+4. Restart Claude Code session
+5. Can then create/update Linear tasks directly from CLI
+
+**Current Workaround:**
+- User creates Linear tickets manually as needed
+- Migration work proceeds independently of Linear integration
 
 ---
 
@@ -296,6 +353,45 @@ exit
 - "Where do I get email addresses?" → Contact.Email via PersonContactId join
 - "How many area assignments should I migrate?" → ALL 663
 - "What's the state slug for Puerto Rico?" → "puerto-rico"
+
+---
+
+## ✅ Session Continuity Verification
+
+**Before ending this session, verify all context is saved:**
+
+```bash
+# 1. Check all files are committed
+git status  # Should show "working tree clean"
+
+# 2. Verify files exist and have content
+ls -lh SESSION-NOTES.md RESUME.md CLAUDE.md docs/migration/ATTIO-SETUP-GUIDE.md
+
+# 3. Check commit is pushed
+git log origin/attio-migration -1 --oneline  # Should show: fa624c8
+
+# 4. Verify .env.local has API key
+grep ATTIO_API_KEY .env.local  # Should show the key
+
+# 5. Verify migration plan exists
+ls -lh ~/.claude/plans/floating-booping-puzzle.md
+
+# 6. Quick content check
+head -20 RESUME.md  # Should show "Last Updated: 2024-12-29"
+tail -30 SESSION-NOTES.md  # Should show latest session details
+```
+
+**All checks pass?** ✅ Safe to end session!
+
+**Next Session Will Resume Because:**
+- ✅ CLAUDE.md instructs me to read RESUME.md and SESSION-NOTES.md on startup
+- ✅ All work is committed and pushed to Git
+- ✅ RESUME.md has clear instructions for next steps
+- ✅ SESSION-NOTES.md documents all decisions and context
+- ✅ ATTIO-SETUP-GUIDE.md provides complete manual steps
+- ✅ Migration plan preserved in ~/.claude/plans/
+
+**Confidence Level:** 🟢 HIGH - Session designed for clean resumption
 
 ---
 
