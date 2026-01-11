@@ -189,17 +189,93 @@ class AttioClient {
   }
 
   /**
-   * Create a status (stage) on a list
+   * Get all attributes for a list
+   */
+  async getListAttributes(listSlug: string): Promise<any[]> {
+    const res = await this.request(`/lists/${listSlug}/attributes`);
+    return res.data;
+  }
+
+  /**
+   * Find the status attribute for a list
+   * Lists need a status-type attribute to track stages
+   */
+  async getListStatusAttribute(listSlug: string): Promise<any | null> {
+    const attributes = await this.getListAttributes(listSlug);
+    // The status attribute has type "status"
+    return attributes.find((attr: any) => attr.type === 'status') || null;
+  }
+
+  /**
+   * Create or get the status attribute for a list
+   * Status attributes are how lists track pipeline stages
+   */
+  async ensureListStatusAttribute(listSlug: string, attributeSlug: string = 'stage'): Promise<any> {
+    // Check if status attribute already exists
+    const existing = await this.getListStatusAttribute(listSlug);
+    if (existing) {
+      return existing;
+    }
+
+    // Create status attribute on the list
+    // Status type requires a config object (can be empty)
+    const res = await this.request(`/lists/${listSlug}/attributes`, {
+      method: 'POST',
+      body: JSON.stringify({
+        data: {
+          title: 'Stage',
+          api_slug: attributeSlug,
+          type: 'status',
+          description: 'Pipeline stage for tracking progress',
+          is_required: false,
+          is_unique: false,
+          is_multiselect: false,
+          config: {},
+        },
+      }),
+    });
+    return res.data;
+  }
+
+  /**
+   * Get all statuses for a list's status attribute
+   */
+  async getListStatuses(listSlug: string): Promise<any[]> {
+    const statusAttr = await this.getListStatusAttribute(listSlug);
+    if (!statusAttr) {
+      return [];
+    }
+
+    const attributeSlug = statusAttr.api_slug || statusAttr.id?.attribute_id;
+    if (!attributeSlug) {
+      return [];
+    }
+
+    const res = await this.request(`/lists/${listSlug}/attributes/${attributeSlug}/statuses`);
+    return res.data || [];
+  }
+
+  /**
+   * Create a status (stage) on a list's status attribute
+   * If no status attribute exists, creates one first
+   * Correct endpoint: POST /lists/{list}/attributes/{status_attr}/statuses
    */
   async createListStatus(listSlug: string, status: StatusDefinition): Promise<any> {
-    const res = await this.request(`/lists/${listSlug}/statuses`, {
+    // Ensure the status attribute exists (create if needed)
+    const statusAttr = await this.ensureListStatusAttribute(listSlug, 'stage');
+
+    const attributeSlug = statusAttr.api_slug || statusAttr.id?.attribute_id;
+    if (!attributeSlug) {
+      throw new Error(`Could not determine attribute slug for list "${listSlug}" status attribute`);
+    }
+
+    const res = await this.request(`/lists/${listSlug}/attributes/${attributeSlug}/statuses`, {
       method: 'POST',
       body: JSON.stringify({
         data: {
           title: status.title,
-          is_active: status.is_active,
-          target_time_in_status: status.target_time_in_status ?? null,
           celebration_enabled: status.celebration_enabled ?? false,
+          target_time_in_status: status.target_time_in_status ?? null,
         },
       }),
     });
