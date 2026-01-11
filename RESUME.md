@@ -43,50 +43,33 @@ git log -3 --oneline
 - ✅ Phase 3b: All 10 migration scripts created and ready
 
 **Next:**
-- 🟡 Create pipeline stages in Attio UI (API limitation - cannot create via API)
+- ✅ Schema complete (stages now created via API!)
 - ⏳ Phase 4: Execute migration scripts in order
 
 **Blocked On:**
-- Pipeline stages must be created manually in Attio UI before running pipeline migration scripts
-- See SESSION-NOTES.md for exact stage names needed
+- Nothing! All Attio setup is automated via `npx tsx scripts/setup-attio-schema.ts`
 
 ### 4. Understand Current Blockers
 
-**🚨 MINOR BLOCKER (Pipeline Stages Only):**
-- **What:** Pipeline stages cannot be created via API - must use Attio UI
-- **Why:** `POST /v2/lists/{slug}/statuses` returns 404 (endpoint doesn't exist)
-- **How Long:** ~15 minutes (create 25 stages total across 3 pipelines)
-- **Status:** Objects and pipelines created via API, only stages pending
+**✅ NO BLOCKERS - Everything Created via API!**
 
-**Required Pipeline Stages:**
+All Attio schema setup is now fully automated:
+- 6 custom objects with ~80 attributes
+- 3 pipelines with all stages
+- No manual UI work required
 
-**Agent Onboarding (8 stages):**
-1. New Application
-2. Interviewing
-3. Internship
-4. Waitlist
-5. Contract Sent
-6. Contract Signed
-7. Live on Website
-8. Closed Lost
+**How it works:**
+```bash
+npx tsx scripts/setup-attio-schema.ts
+```
+This creates:
+- Objects: `states`, `areas`, `agents`, `lenders`, `customers`, `area_assignments`
+- Pipelines: `agent_onboarding`, `lender_onboarding`, `customer_deals`
+- All 25 pipeline stages (8 + 8 + 9)
 
-**Lender Onboarding (8 stages):** Same as Agent Onboarding
-
-**Customer Deals (9 stages):**
-1. New Lead
-2. Contacted
-3. Touring
-4. Under Contract
-5. Pending Close
-6. Closed Won
-7. Lender Only
-8. Closed Lost
-9. Duplicate
-
-**✅ API Slugs Already Created:**
-All objects and pipelines created successfully via `npx tsx scripts/setup-attio-schema.ts`:
-- `states`, `areas`, `agents`, `lenders`, `customers`, `area_assignments`
-- `agent_onboarding`, `lender_onboarding`, `customer_deals`
+**API Discovery:** Stages are created by:
+1. Creating a `status` type attribute on each list
+2. Adding statuses to that attribute via `POST /lists/{slug}/attributes/stage/statuses`
 
 ### 5. Ask User About Blockers
 
