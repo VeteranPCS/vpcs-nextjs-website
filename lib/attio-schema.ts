@@ -340,6 +340,12 @@ export const PIPELINES: ListDefinition[] = [
 // Pipeline entry attributes
 export const AGENT_ONBOARDING_ATTRIBUTES: AttributeDefinition[] = [
   { title: 'Salesforce ID', api_slug: 'salesforce_id', type: 'text' },
+  {
+    title: 'Owner',
+    api_slug: 'owner',
+    type: 'actor-reference',
+    description: 'Workspace member responsible for this onboarding'
+  },
   { title: 'Application Sent Date', api_slug: 'application_sent_date', type: 'date' },
   { title: 'Application Received Date', api_slug: 'application_received_date', type: 'date' },
   { title: 'Phone Interview Complete', api_slug: 'phone_interview_complete', type: 'checkbox' },
@@ -359,6 +365,12 @@ export const LENDER_ONBOARDING_ATTRIBUTES: AttributeDefinition[] = AGENT_ONBOARD
 
 export const CUSTOMER_DEALS_ATTRIBUTES: AttributeDefinition[] = [
   { title: 'Salesforce ID', api_slug: 'salesforce_id', type: 'text' },
+  {
+    title: 'Owner',
+    api_slug: 'owner',
+    type: 'actor-reference',
+    description: 'Workspace member responsible for this deal'
+  },
   {
     title: 'Agent',
     api_slug: 'agent',
