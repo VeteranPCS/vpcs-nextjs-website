@@ -1,9 +1,9 @@
 # Resume Work - Quick Start Guide
 
-**Last Updated:** 2024-12-29 20:03:52 PST
+**Last Updated:** 2026-01-10
 **Project:** VeteranPCS Salesforce → Attio CRM Migration
-**Last Commit:** fa624c8 (pushed to origin/attio-migration)
-**Linear Ticket:** Created for Attio UI setup (manual)
+**Last Commit:** (pending - session checkpoint)
+**Phase:** Phase 3b Complete - Schema & Scripts Ready
 
 ---
 
@@ -34,109 +34,139 @@ git log -3 --oneline
 
 ### 3. Check Current Phase Status
 
-**Current Phase:** Phase 2 Complete → Phase 3 Starting
+**Current Phase:** Phase 3b Complete → Phase 4 Starting
 
 **Completed:**
 - ✅ Phase 1: Plan Mode & Data Exploration
 - ✅ Phase 2: Documentation Updates (CLAUDE.md, HLD.md, LLD.md, PRD.md)
-- ✅ Created ATTIO-SETUP-GUIDE.md for manual UI setup
+- ✅ Phase 3a: Attio Schema Automation (6/6 objects, 3/3 pipelines via API)
+- ✅ Phase 3b: All 10 migration scripts created and ready
 
 **Next:**
-- 🟡 Phase 3a: Attio UI Setup (manual - user task)
-- ⏳ Phase 3b: Implement migration scripts
+- 🟡 Create pipeline stages in Attio UI (API limitation - cannot create via API)
+- ⏳ Phase 4: Execute migration scripts in order
 
 **Blocked On:**
-- Attio objects must be created via UI before scripts can run
-- User needs to complete `docs/migration/ATTIO-SETUP-GUIDE.md` (90-120 min)
+- Pipeline stages must be created manually in Attio UI before running pipeline migration scripts
+- See SESSION-NOTES.md for exact stage names needed
 
 ### 4. Understand Current Blockers
 
-**🚨 CRITICAL BLOCKER:**
-- **What:** Attio objects must be created via UI before migration scripts can run
-- **Why:** Scripts use Attio API to create records - objects must exist first
-- **How Long:** 90-120 minutes (manual UI work)
-- **Guide:** `docs/migration/ATTIO-SETUP-GUIDE.md` (comprehensive, step-by-step)
-- **Status:** Linear ticket created, user working on it
+**🚨 MINOR BLOCKER (Pipeline Stages Only):**
+- **What:** Pipeline stages cannot be created via API - must use Attio UI
+- **Why:** `POST /v2/lists/{slug}/statuses` returns 404 (endpoint doesn't exist)
+- **How Long:** ~15 minutes (create 25 stages total across 3 pipelines)
+- **Status:** Objects and pipelines created via API, only stages pending
 
-**⚠️ API Slug Verification Required:**
-When Attio setup is complete, user MUST verify these exact API slugs exist:
-- `states` (not "state")
-- `areas` (not "area")
-- `agents` (not "agent")
-- `lenders` (not "lender")
-- `customers` (not "customer" or "clients")
-- `area_assignments` (not "area_assignment")
-- `agent_onboarding` (not "agent-onboarding")
-- `lender_onboarding` (not "lender-onboarding")
-- `customer_deals` (not "customer-deals" or "deals")
+**Required Pipeline Stages:**
+
+**Agent Onboarding (8 stages):**
+1. New Application
+2. Interviewing
+3. Internship
+4. Waitlist
+5. Contract Sent
+6. Contract Signed
+7. Live on Website
+8. Closed Lost
+
+**Lender Onboarding (8 stages):** Same as Agent Onboarding
+
+**Customer Deals (9 stages):**
+1. New Lead
+2. Contacted
+3. Touring
+4. Under Contract
+5. Pending Close
+6. Closed Won
+7. Lender Only
+8. Closed Lost
+9. Duplicate
+
+**✅ API Slugs Already Created:**
+All objects and pipelines created successfully via `npx tsx scripts/setup-attio-schema.ts`:
+- `states`, `areas`, `agents`, `lenders`, `customers`, `area_assignments`
+- `agent_onboarding`, `lender_onboarding`, `customer_deals`
 
 ### 5. Ask User About Blockers
 
 Before starting work, ask:
 ```
-"Have you completed the Attio UI setup from docs/migration/ATTIO-SETUP-GUIDE.md?
-This is required before I can implement the migration scripts.
+"Have you created the pipeline stages in Attio UI?
 
-Please confirm:
-1. All 9 objects/pipelines created? (6 objects + 3 pipelines)
-2. All API slugs verified against the checklist in ATTIO-SETUP-GUIDE.md?
-3. ATTIO_API_KEY in .env.local still valid and has proper permissions?"
+The objects and pipelines are already created via API, but stages cannot be
+created programmatically. Please confirm:
+
+1. Agent Onboarding pipeline has 8 stages? (New Application → Closed Lost)
+2. Lender Onboarding pipeline has 8 stages? (same as Agent)
+3. Customer Deals pipeline has 9 stages? (New Lead → Duplicate)
+
+See the Required Pipeline Stages section above for exact stage names."
 ```
 
-**If YES (Attio Setup Complete):**
-- ✅ Proceed to implement scripts/clean-data.ts
-- ✅ Mark Phase 3a complete in SESSION-NOTES.md
-- ✅ Begin Phase 3b: Migration Scripts Implementation
+**If YES (Pipeline Stages Created):**
+- ✅ Ready to run migration scripts in order
+- ✅ Start with: `npx tsx scripts/migrate-states.ts`
+- ✅ See SESSION-NOTES.md for full execution order
 
-**If NO (Still Working on Attio):**
-- ⏸️  User is still working through ATTIO-SETUP-GUIDE.md
-- ✅ Can work on: documentation improvements, planning, architecture discussions
-- ❌ Cannot work on: migration scripts (need Attio objects first)
+**If NO (Stages Not Created):**
+- ⏸️  User needs to create stages in Attio UI first
+- ✅ Can run object migrations (states, agents, lenders, areas, etc.)
+- ❌ Cannot run pipeline migrations until stages exist
 
-**If PARTIAL (Some Objects Created):**
-- ⚠️  Ask which objects are done
-- ⚠️  May be able to test individual scripts if dependencies met
-- ⚠️  Recommend completing all before starting (cleaner)
+**If PARTIAL (Some Stages Created):**
+- ⚠️  Can run migrations for pipelines that have all stages
+- ⚠️  Recommend completing all stages before starting
 
 ---
 
 ## 📋 Current Task Priority
 
-Based on the migration plan, here's what to do next:
+Based on the migration plan, all scripts are ready. Execute in order:
 
-### If Attio Setup Complete:
+### Migration Execution Order:
 
-**Priority 1: Data Cleaning**
 ```bash
-# Implement deduplication script
-File: scripts/clean-data.ts
-Purpose: Deduplicate 357 Lead emails, validate Contact joins
-Output: data/cleaned/*.csv
+# 1. States (52 records)
+npx tsx scripts/migrate-states.ts
+
+# 2. Agents (1,039 records)
+npx tsx scripts/migrate-agents.ts
+
+# 3. Lenders (141 records)
+npx tsx scripts/migrate-lenders.ts
+
+# 4. State-Lender Assignments (152 references)
+npx tsx scripts/migrate-state-lenders.ts
+
+# 5. Areas (~271 records, filters state-level areas)
+npx tsx scripts/migrate-areas.ts
+
+# 6. Area Assignments (511 agent-only records)
+npx tsx scripts/migrate-area-assignments.ts
+
+# 7. Customers (~983 records)
+npx tsx scripts/migrate-customers.ts
+
+# 8. Customer Deals (1,021 pipeline entries) - REQUIRES STAGES
+npx tsx scripts/migrate-customer-deals.ts
+
+# 9. Agent Onboarding (947 pipeline entries) - REQUIRES STAGES
+npx tsx scripts/migrate-agent-onboarding.ts
+
+# 10. Lender Onboarding (160 pipeline entries) - REQUIRES STAGES
+npx tsx scripts/migrate-lender-onboarding.ts
 ```
 
-**Priority 2: States Migration**
-```bash
-# Implement state migration with slug generation
-File: scripts/migrate-states.ts
-Purpose: Create 52 State records (50 states + DC + PR)
-Output: data/mappings/states.json
-```
+### Without Pipeline Stages (Can Run Now):
 
-**Priority 3: Agents Migration**
-```bash
-# Implement agent migration with Contact join
-File: scripts/migrate-agents.ts
-Purpose: Migrate 1,039 agents (Account → Contact join for emails)
-Output: data/mappings/agents.json
-```
+Steps 1-7 can be executed without pipeline stages:
+- States, Agents, Lenders, State-Lenders, Areas, Area Assignments, Customers
 
-### If Attio Setup NOT Complete:
+### Requires Pipeline Stages First:
 
-**Alternative Tasks:**
-1. Review and improve ATTIO-SETUP-GUIDE.md based on user feedback
-2. Design data validation test suite
-3. Plan error handling strategy for migration scripts
-4. Draft API integration patterns for post-migration features
+Steps 8-10 require stages to be created in Attio UI first:
+- Customer Deals, Agent Onboarding, Lender Onboarding
 
 ---
 

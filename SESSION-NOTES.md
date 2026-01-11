@@ -8,10 +8,10 @@
 
 ## Quick Status
 
-**Current Phase:** Phase 2 Complete - Documentation Updates Done
-**Next Phase:** Phase 3 - Attio UI Setup → Migration Scripts
-**Blocked On:** Attio UI setup (manual task - see `docs/migration/ATTIO-SETUP-GUIDE.md`)
-**Ready to Code:** ⏳ Waiting for Attio objects to be created
+**Current Phase:** Phase 3b Complete - Schema Automation & Migration Scripts
+**Next Phase:** Phase 4 - Execute Data Migration
+**Blocked On:** Create pipeline stages manually in Attio UI (statuses cannot be created via API)
+**Ready to Code:** ✅ All migration scripts ready to execute
 
 ---
 
@@ -82,6 +82,95 @@
 - Working directory: /Users/harperfoley/VPCS/vpcs-nextjs-website
 - Node.js and TypeScript ready
 - CSV files in data/salesforce/
+
+---
+
+## 2026-01-10 - Schema Automation & Migration Scripts Complete
+
+**Platform:** Claude Code CLI
+**Duration:** ~3 hours
+**Status:** ✅ Phase 3b Complete
+
+**Completed:**
+- ✅ Added bidirectional references to schema (State.areas, Area.area_assignments)
+- ✅ Fixed Attio API issues (description, config fields, currency format, email-address type)
+- ✅ Successfully ran setup-attio-schema.ts - created 6/6 objects, 3/3 pipelines
+- ✅ Created all migration scripts:
+  - scripts/migrate-states.ts (52 states)
+  - scripts/migrate-agents.ts (1,039 agents with Contact join)
+  - scripts/migrate-lenders.ts (141 lenders)
+  - scripts/migrate-state-lenders.ts (152 lender→State assignments)
+  - scripts/migrate-areas.ts (updated for bidirectional refs)
+  - scripts/migrate-area-assignments.ts (511 agent-only assignments)
+  - scripts/migrate-customers.ts (~983 customers)
+  - scripts/migrate-customer-deals.ts (1,021 deals)
+  - scripts/migrate-agent-onboarding.ts (947 records, 113 internships)
+  - scripts/migrate-lender-onboarding.ts (160 records, 4 internships)
+- ✅ Updated lib/attio.ts with list entry methods (createListEntry, updateListEntry, queryListEntries)
+
+**Key Discoveries:**
+- Attio API requires `description` and `config` fields for attributes
+- Attio lists require `workspace_access: 'full-access'` and `workspace_member_access: []`
+- `email-address` attribute type not supported - use `text` instead
+- Currency config needs `default_currency_code` + `display_type` (not `currency_code`)
+- List attributes cannot have `is_required: true`
+- **CRITICAL:** Pipeline stages/statuses CANNOT be created via API - must use Attio UI
+
+**API Limitations Discovered:**
+- `POST /v2/lists/{slug}/statuses` returns 404 - endpoint doesn't exist
+- Stages must be manually created in Attio UI for each pipeline
+
+**Files Created:**
+- scripts/migrate-states.ts
+- scripts/migrate-agents.ts
+- scripts/migrate-lenders.ts
+- scripts/migrate-state-lenders.ts
+- scripts/migrate-area-assignments.ts
+- scripts/migrate-customers.ts
+- scripts/migrate-customer-deals.ts
+- scripts/migrate-agent-onboarding.ts
+- scripts/migrate-lender-onboarding.ts
+
+**Files Modified:**
+- lib/attio-schema.ts (bidirectional refs, fixed types)
+- lib/attio.ts (list entry methods, API fixes)
+- scripts/migrate-areas.ts (bidirectional State.areas update)
+
+**Attio Objects Created:**
+1. agents - 18 attributes
+2. lenders - 22 attributes
+3. customers - 13 attributes
+4. states - 6 attributes (including areas[] and lenders[])
+5. areas - 6 attributes (including area_assignments[])
+6. area_assignments - 5 attributes
+
+**Attio Pipelines Created:**
+1. agent_onboarding (parent: agents)
+2. lender_onboarding (parent: lenders)
+3. customer_deals (parent: customers)
+
+**Next Session Tasks:**
+- [ ] Create pipeline stages manually in Attio UI:
+  - Agent Onboarding: 8 stages (New Application → Closed Lost)
+  - Lender Onboarding: 8 stages (same)
+  - Customer Deals: 9 stages (New Lead → Closed Lost)
+- [ ] Run migration scripts in order:
+  1. migrate-states.ts
+  2. migrate-agents.ts
+  3. migrate-lenders.ts
+  4. migrate-state-lenders.ts
+  5. migrate-areas.ts
+  6. migrate-area-assignments.ts
+  7. migrate-customers.ts
+  8. migrate-customer-deals.ts
+  9. migrate-agent-onboarding.ts
+  10. migrate-lender-onboarding.ts
+- [ ] Validate migration counts match expected
+
+**Notes:**
+- Use `npx tsx` not `npx ts-node` (ESM module resolution issue)
+- Schema setup script is idempotent - safe to re-run
+- All ~80 attributes successfully created via API
 
 ---
 
@@ -184,16 +273,17 @@ git push
 
 | Script | Status | Records | Notes |
 |--------|--------|---------|-------|
-| scripts/clean-data.ts | ⏳ Not Started | - | Dedup 357 Lead emails |
-| scripts/migrate-states.ts | ⏳ Not Started | ~52 | Generate state_slug |
-| scripts/migrate-areas.ts | ✅ Complete | 322 | Already exists |
-| scripts/migrate-agents.ts | ⏳ Not Started | 1,039 | Contact join required |
-| scripts/migrate-lenders.ts | ⏳ Not Started | 141 | Similar to agents |
-| scripts/migrate-area-assignments.ts | ⏳ Not Started | 663 | ALL assignments |
-| scripts/migrate-customers.ts | ⏳ Not Started | ~983 | From Opportunity.AccountId |
-| scripts/migrate-customer-deals.ts | ⏳ Not Started | 1,021 | RecordTypeId: 0124x000000Z7G3AAK |
-| scripts/migrate-agent-onboarding.ts | ⏳ Not Started | 947 | RecordTypeId: 0124x000000Z7FyAAK |
-| scripts/migrate-lender-onboarding.ts | ⏳ Not Started | 160 | RecordTypeId: 0124x000000ZGHrAAO |
+| scripts/setup-attio-schema.ts | ✅ Complete | 6 objects, 3 pipelines | All created via API |
+| scripts/migrate-states.ts | ✅ Ready | 52 | Generate state_slug |
+| scripts/migrate-agents.ts | ✅ Ready | 1,039 | Contact join for emails |
+| scripts/migrate-lenders.ts | ✅ Ready | 141 | Contact join + NMLS |
+| scripts/migrate-state-lenders.ts | ✅ Ready | 152 | State.lenders refs |
+| scripts/migrate-areas.ts | ✅ Ready | ~271 | Filters state-level areas |
+| scripts/migrate-area-assignments.ts | ✅ Ready | 511 | Agent-only assignments |
+| scripts/migrate-customers.ts | ✅ Ready | ~983 | From Opportunity.AccountId |
+| scripts/migrate-customer-deals.ts | ✅ Ready | 1,021 | Needs pipeline stages |
+| scripts/migrate-agent-onboarding.ts | ✅ Ready | 947 | Needs pipeline stages |
+| scripts/migrate-lender-onboarding.ts | ✅ Ready | 160 | Needs pipeline stages |
 | scripts/validate-migration.ts | ⏳ Not Started | - | Final validation |
 
 ---

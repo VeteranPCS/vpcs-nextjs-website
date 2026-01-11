@@ -67,33 +67,41 @@ Before we continue, please confirm:
 
 ### Current Migration Status
 
-**Last Updated:** 2024-12-29
-**Current Phase:** Phase 2 Complete → Phase 3 Starting
+**Last Updated:** 2026-01-10
+**Current Phase:** Phase 3b Complete → Phase 4 Starting
 **Branch:** attio-migration
 
 **✅ Completed:**
 - Phase 1: Plan Mode & Data Exploration
 - Phase 2: Documentation Updates (all 4 docs updated)
-- Created ATTIO-SETUP-GUIDE.md for UI setup
-- Created SESSION-NOTES.md and RESUME.md
+- Phase 3a: Attio Schema Automation (6/6 objects, 3/3 pipelines created via API)
+- Phase 3b: All 10 migration scripts implemented
 
 **🟡 In Progress:**
-- Phase 3a: Attio UI Setup (manual - user task)
+- Create pipeline stages in Attio UI (API cannot create stages)
 
 **⏳ Next:**
-- Phase 3b: Implement migration scripts (blocked on Attio UI completion)
+- Phase 4: Execute migration scripts in order
 
-**📋 Ready to Implement (once Attio setup complete):**
-1. scripts/clean-data.ts
-2. scripts/migrate-states.ts
-3. scripts/migrate-agents.ts
-4. scripts/migrate-lenders.ts
-5. scripts/migrate-area-assignments.ts
-6. scripts/migrate-customers.ts
-7. scripts/migrate-customer-deals.ts
-8. scripts/migrate-agent-onboarding.ts
-9. scripts/migrate-lender-onboarding.ts
-10. scripts/validate-migration.ts
+**📋 Migration Scripts (Ready to Execute):**
+```bash
+npx tsx scripts/migrate-states.ts        # 52 states
+npx tsx scripts/migrate-agents.ts        # 1,039 agents
+npx tsx scripts/migrate-lenders.ts       # 141 lenders
+npx tsx scripts/migrate-state-lenders.ts # 152 state-lender refs
+npx tsx scripts/migrate-areas.ts         # ~271 areas
+npx tsx scripts/migrate-area-assignments.ts # 511 assignments
+npx tsx scripts/migrate-customers.ts     # ~983 customers
+npx tsx scripts/migrate-customer-deals.ts    # 1,021 deals (needs stages)
+npx tsx scripts/migrate-agent-onboarding.ts  # 947 records (needs stages)
+npx tsx scripts/migrate-lender-onboarding.ts # 160 records (needs stages)
+```
+
+**⚠️ Attio API Limitation:**
+Pipeline stages cannot be created via API. Must create manually in Attio UI:
+- Agent Onboarding: 8 stages (New Application → Closed Lost)
+- Lender Onboarding: 8 stages (same)
+- Customer Deals: 9 stages (New Lead → Duplicate)
 
 ---
 
@@ -235,25 +243,28 @@ You MUST join Account records with Contact records to get email addresses.
 
 ### Migration Order
 
+**Step 0:** Run `scripts/setup-attio-schema.ts` to create all objects, attributes, and pipelines
+
 1. **States** - Create State objects with state_slug (e.g., "west-virginia", "puerto-rico")
-2. **Areas** - Link to States
+2. **Areas** - ~271 city/base areas (filter out ~51 state-level placeholder areas)
 3. **Agents** - Filter: `RecordTypeId = '0124x000000YzFsAAK'` (join with Contact for email)
 4. **Lenders** - Filter: `RecordTypeId = '0124x000000ZGGZAA4'` (join with Contact for email)
-5. **Area Assignments** - **ALL 663** assignments (includes 152 lenders + 115 inactive agents - CEO prepopulated)
-6. **Customers** - From Opportunity.AccountId where `RecordTypeId = '0124x000000Z83FAAS'`
-7. **Customer Deals Pipeline** - Filter: `RecordTypeId = '0124x000000Z7G3AAK'`
-8. **Agent Onboarding Pipeline** - Filter: `RecordTypeId = '0124x000000Z7FyAAK'` (includes 113 internships)
-9. **Lender Onboarding Pipeline** - Filter: `RecordTypeId = '0124x000000ZGHrAAO'` (includes 4 internships)
+5. **State Lender Assignments** - Convert 152 Salesforce lender area assignments → `State.lenders`
+6. **Area Assignments** - **511 agent-only** assignments (lenders now excluded)
+7. **Customers** - From Opportunity.AccountId where `RecordTypeId = '0124x000000Z83FAAS'`
+8. **Customer Deals Pipeline** - Filter: `RecordTypeId = '0124x000000Z7G3AAK'`
+9. **Agent Onboarding Pipeline** - Filter: `RecordTypeId = '0124x000000Z7FyAAK'` (includes 113 internships)
+10. **Lender Onboarding Pipeline** - Filter: `RecordTypeId = '0124x000000ZGHrAAO'` (includes 4 internships)
 
 ### Data Quality Notes
 
 **✅ Verified from Data Analysis:**
 
 - **Email Location:** Emails are in Contact.csv (NOT Account.Person_Account_Email__c which is empty)
-- **Area Assignments:** ALL 663 assignments are valid - NO deleted agents found
+- **Area Assignments:** 511 agent-only assignments (lenders now assigned via State.lenders)
   - 396 assignments → Active agents on website
   - 115 assignments → Inactive agents (CEO prepopulated for future activation)
-  - 152 assignments → Lenders (legacy data, CEO wants preserved)
+- **Lender State Assignments:** 152 lender area assignments → converted to State.lenders multi-select
 - **Phone Numbers:** Need E.164 normalization - mixed formats: `(719) 445-1843`, `214-578-1641`
 - **State Conversion:** Area__c.State__c has full names ("Colorado", "Puerto Rico") - convert to 2-letter codes ("CO", "PR")
 - **Customer Deals:** 965 of 1,021 (94%) have Agent__c populated - better than expected!
@@ -275,15 +286,17 @@ You MUST join Account records with Contact records to get email addresses.
 
 | Entity | Description |
 |--------|-------------|
-| State | US State with unique state_slug for URLs (e.g., "west-virginia", "puerto-rico") |
-| Area | City or military base within a State where agents operate |
-| Agent | Real estate agents, ranked by AA_Score per Area |
-| Lender | Mortgage lenders, operate at State level |
-| Area Assignment | Links Agent OR Lender to Area with AA_Score (663 total) |
-| Customer | Veterans seeking to buy/sell/get mortgage (renamed from "Client") |
+| State | US State with `state_slug` for URLs + `lenders` multi-ref for lender assignments |
+| Area | City or military base within a State (~271 migrated, excludes state-level placeholders) |
+| Agent | Real estate agents, ranked by AA_Score per Area (1,039 records) |
+| Lender | Mortgage lenders, assigned to States via `State.lenders` (141 records) |
+| Area Assignment | Links **Agents only** to Areas with AA_Score (511 records) |
+| Customer | Veterans seeking to buy/sell/get mortgage (983 records) |
 | Customer Deal Pipeline | Home buying/selling transactions (1,021 records) |
 | Agent Onboarding Pipeline | Agent recruitment with Internship stage (947 records, 113 internships) |
 | Lender Onboarding Pipeline | Lender recruitment with Internship stage (160 records, 4 internships) |
+
+**Key Design Change:** Lenders are assigned at the **State level** via `State.lenders` multi-select, not through Area Assignments. Area Assignments are **agent-only**.
 
 ## API Routes to Implement
 
@@ -330,15 +343,17 @@ Agent becomes "Active on Website" when ALL true:
 - 45 days in same stage → Auto-close as Lost
 
 ### Move-In Bonus Tiers
-| Sale Price | Bonus |
-|------------|-------|
-| < $150K | $250 |
-| $150K-$250K | $500 |
-| $250K-$350K | $1,000 |
-| $350K-$500K | $1,500 |
-| $500K-$750K | $2,500 |
-| $750K-$1M | $3,500 |
-| $1M+ | $4,000 |
+| Sale Price | Bonus | Charity |
+|------------|-------|---------|
+| < $100K | $200 | $20 |
+| $100K-$199K | $400 | $40 |
+| $200K-$299K | $700 | $70 |
+| $300K-$399K | $1,000 | $100 |
+| $400K-$499K | $1,200 | $120 |
+| $500K-$649K | $1,500 | $150 |
+| $650K-$799K | $2,000 | $200 |
+| $800K-$999K | $3,000 | $300 |
+| $1M+ | $4,000 | $400 |
 
 ## Environment Variables
 
