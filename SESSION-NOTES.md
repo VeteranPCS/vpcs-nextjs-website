@@ -114,11 +114,13 @@
 - `email-address` attribute type not supported - use `text` instead
 - Currency config needs `default_currency_code` + `display_type` (not `currency_code`)
 - List attributes cannot have `is_required: true`
-- **CRITICAL:** Pipeline stages/statuses CANNOT be created via API - must use Attio UI
+- **FIXED:** Pipeline stages CAN be created via API (see API Fix section below)
 
-**API Limitations Discovered:**
-- `POST /v2/lists/{slug}/statuses` returns 404 - endpoint doesn't exist
-- Stages must be manually created in Attio UI for each pipeline
+**API Fix - Stages/Statuses:**
+- Original endpoint `POST /v2/lists/{slug}/statuses` returns 404
+- **Correct approach:** Create `status` type attribute, then add statuses to it
+- Endpoint: `POST /lists/{slug}/attributes/{status_attr}/statuses`
+- Status attributes require `config: {}` in request body
 
 **Files Created:**
 - scripts/migrate-states.ts
@@ -150,10 +152,8 @@
 3. customer_deals (parent: customers)
 
 **Next Session Tasks:**
-- [ ] Create pipeline stages manually in Attio UI:
-  - Agent Onboarding: 8 stages (New Application → Closed Lost)
-  - Lender Onboarding: 8 stages (same)
-  - Customer Deals: 9 stages (New Lead → Closed Lost)
+- [x] ~~Create pipeline stages manually in Attio UI~~ **DONE VIA API**
+  - All 25 stages created programmatically (8 + 8 + 9)
 - [ ] Run migration scripts in order:
   1. migrate-states.ts
   2. migrate-agents.ts
@@ -176,6 +176,53 @@
 - Use `npx tsx` not `npx ts-node` (ESM module resolution issue)
 - Schema setup script is idempotent - safe to re-run
 - All ~80 attributes successfully created via API
+
+---
+
+## 2026-01-10 (continued) - API Fixes & Owner Attributes
+
+**Platform:** Claude Code CLI
+**Duration:** ~1 hour
+**Status:** ✅ Complete
+
+**Completed:**
+- ✅ Fixed Attio stage/status creation API (discovered correct endpoint)
+- ✅ All 25 pipeline stages created via API (no manual UI needed!)
+- ✅ Added `owner` (actor-reference) attribute to all 3 pipelines
+- ✅ Researched Lists vs Deals - confirmed Lists have full feature parity
+- ✅ Updated lib/attio.ts with status attribute management methods
+
+**Key Decisions:**
+- **Keep custom Lists** instead of native Deals for customer transactions
+  - Lists have identical functionality (stages, owner assignment, webhooks)
+  - Custom Lists allow `record-reference` to our custom objects (agents, lenders, areas)
+  - No features lost - `actor-reference` type enables admin assignment
+- **Added owner attribute** to all pipelines for team member assignment
+
+**Files Modified:**
+- lib/attio.ts (added getListAttributes, getListStatusAttribute, ensureListStatusAttribute, getListStatuses methods)
+- lib/attio-schema.ts (added owner attribute to all pipeline definitions)
+- SESSION-NOTES.md, RESUME.md (documentation updates)
+
+**Git Commits:**
+- c7f5d60 - "Fix Attio status/stage creation via API"
+- 2aebd96 - "Update docs: no more manual Attio UI steps needed"
+- b79c99f - "Add owner (actor-reference) attribute to all pipelines"
+
+**API Discovery:**
+```typescript
+// Create status attribute on list
+POST /lists/{slug}/attributes
+{ type: 'status', api_slug: 'stage', config: {} }
+
+// Add statuses to that attribute
+POST /lists/{slug}/attributes/stage/statuses
+{ title: 'New Lead', celebration_enabled: false }
+```
+
+**Next Steps:**
+- Ready to execute migration scripts (all 10 scripts ready)
+- Execution order documented in RESUME.md
 
 ---
 
