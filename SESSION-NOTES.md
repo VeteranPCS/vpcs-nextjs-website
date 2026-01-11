@@ -167,6 +167,11 @@
   10. migrate-lender-onboarding.ts
 - [ ] Validate migration counts match expected
 
+**Git Commits:**
+- 2c1f40f - "Phase 3b complete: Schema automation & all migration scripts"
+  - Pushed to origin/attio-migration successfully
+  - 17 files changed, 3170 insertions(+), 141 deletions(-)
+
 **Notes:**
 - Use `npx tsx` not `npx ts-node` (ESM module resolution issue)
 - Schema setup script is idempotent - safe to re-run
