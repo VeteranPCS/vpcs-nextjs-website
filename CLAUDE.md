@@ -90,16 +90,17 @@ Before we continue, please confirm:
 | migrate-state-lenders.ts | ✅ Done | 152/152 | 51 states updated |
 | migrate-areas.ts | ✅ Done | 271/271 | 51 state-level areas filtered |
 | migrate-area-assignments.ts | ✅ Done | 506/509 | 3 skipped (missing agents) |
-| migrate-customers.ts | ⏳ Pending | ~983 | |
+| migrate-customers.ts | ✅ Done | 953/983 | 12 phone errors, 18 no email |
 | migrate-customer-deals.ts | ⏳ Pending | 1,021 | |
 | migrate-agent-onboarding.ts | ⏳ Pending | 947 | |
 | migrate-lender-onboarding.ts | ⏳ Pending | 160 | |
 
 **📝 Post-Migration Review:**
 See `docs/post-migration-review/` for records that need manual attention:
-- agents-review.md - 9 records (phone errors + duplicate emails)
-- lenders-review.md - 1 real record (Mark Ambrose - phone format)
+- agents-review.md - 13 records (6 phone errors + 7 duplicate emails)
+- lenders-review.md - 2 records (phone format errors)
 - area-assignments-review.md - 3 records (missing agent mappings)
+- customers-review.md - 30 records (12 phone errors + 18 no email)
 
 ---
 

@@ -239,6 +239,7 @@ POST /lists/{slug}/attributes/stage/statuses
 - ✅ migrate-state-lenders.ts - 51 states updated, 152 lender assignments
 - ✅ migrate-areas.ts - 271 areas created, 51 states with bidirectional refs
 - ✅ migrate-area-assignments.ts - 506 created, 3 skipped (missing agents)
+- ✅ migrate-customers.ts - 953 created, 12 phone errors, 18 skipped (no email)
 - ✅ Fixed 3 critical Attio API issues (see API Fixes below)
 - ✅ Created fix-area-assignment-status-options.ts script
 - ✅ Created post-migration review docs for manual follow-up
@@ -266,6 +267,7 @@ POST /lists/{slug}/attributes/stage/statuses
 - docs/post-migration-review/agents-review.md
 - docs/post-migration-review/lenders-review.md
 - docs/post-migration-review/area-assignments-review.md
+- docs/post-migration-review/customers-review.md
 
 **Files Modified:**
 - lib/attio.ts (added createSelectOption, getSelectOptions methods)
@@ -284,6 +286,7 @@ POST /lists/{slug}/attributes/stage/statuses
 | State-Lenders | 152 | 152 | 0 | ✅ Complete |
 | Areas | ~271 | 271 | 0 | ✅ Complete |
 | Area Assignments | 511 | 506 | 3 | Missing agent refs |
+| Customers | ~983 | 953 | 30 | 12 phone, 18 no email |
 
 **Git Commits:**
 - [Pending - will commit after this update]
@@ -409,7 +412,7 @@ git push
 | scripts/migrate-state-lenders.ts | ✅ Complete | 152 | 51 states updated |
 | scripts/migrate-areas.ts | ✅ Complete | 271 | Bidirectional refs done |
 | scripts/migrate-area-assignments.ts | ✅ Complete | 506/511 | 3 missing agents |
-| scripts/migrate-customers.ts | 🟡 Ready | ~983 | Next up |
+| scripts/migrate-customers.ts | ✅ Complete | 953/983 | 12 phone, 18 no email |
 | scripts/migrate-customer-deals.ts | ⏳ Ready | 1,021 | After customers |
 | scripts/migrate-agent-onboarding.ts | ⏳ Ready | 947 | Pipeline migration |
 | scripts/migrate-lender-onboarding.ts | ⏳ Ready | 160 | Pipeline migration |
