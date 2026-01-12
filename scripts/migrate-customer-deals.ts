@@ -20,8 +20,8 @@ import path from 'path';
 // Load environment variables from .env.local
 dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 
-// Customer Deal RecordTypeId from Salesforce
-const CUSTOMER_DEAL_RECORD_TYPE_ID = '0124x000000Z7G3AAK';
+// Customer Deal RecordTypeId from Salesforce (15-char version as exported in CSV)
+const CUSTOMER_DEAL_RECORD_TYPE_ID = '0124x000000Z7G3';
 
 // Stage mapping: Salesforce → Attio
 const STAGE_MAP: Record<string, string> = {

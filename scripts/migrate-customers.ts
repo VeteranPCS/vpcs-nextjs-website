@@ -18,8 +18,8 @@ import path from 'path';
 // Load environment variables from .env.local
 dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 
-// Customer RecordTypeId from Salesforce
-const CUSTOMER_RECORD_TYPE_ID = '0124x000000Z83FAAS';
+// Customer RecordTypeId from Salesforce (15-char version as exported in CSV)
+const CUSTOMER_RECORD_TYPE_ID = '0124x000000Z83F';
 
 interface AccountRow {
   Id: string;

@@ -152,10 +152,11 @@ async function migrateAreas() {
       }
 
       // Create record in Attio with state as record reference
+      // Attio requires both target_object (object slug) and target_record_id
       const record = await attio.createRecord('areas', {
         salesforce_id: row.Id,
         name: row.Name,
-        state: { target_record_id: attioStateId },
+        state: { target_object: 'states', target_record_id: attioStateId },
         coverage_target: parseInt(row.Coverage_Target__c) || 0,
         coverage_active: parseInt(row.Coverage_Active__c) || 0,
       });
@@ -203,8 +204,9 @@ async function migrateAreas() {
     }
 
     try {
+      // Attio requires both target_object and target_record_id for record references
       await attio.updateRecord('states', attioStateId, {
-        areas: areaIds.map(id => ({ target_record_id: id }))
+        areas: areaIds.map(id => ({ target_object: 'areas', target_record_id: id }))
       });
       console.log(`✓ ${stateCode}: Updated with ${areaIds.length} areas`);
       stateUpdateSuccess++;

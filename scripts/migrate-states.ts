@@ -35,7 +35,7 @@ const STATES: StateDefinition[] = [
   { name: 'Colorado', state_code: 'CO', state_slug: 'colorado' },
   { name: 'Connecticut', state_code: 'CT', state_slug: 'connecticut' },
   { name: 'Delaware', state_code: 'DE', state_slug: 'delaware' },
-  { name: 'District of Columbia', state_code: 'DC', state_slug: 'district-of-columbia' },
+  { name: 'Washington D.C.', state_code: 'DC', state_slug: 'washington-dc' },
   { name: 'Florida', state_code: 'FL', state_slug: 'florida' },
   { name: 'Georgia', state_code: 'GA', state_slug: 'georgia' },
   { name: 'Hawaii', state_code: 'HI', state_slug: 'hawaii' },

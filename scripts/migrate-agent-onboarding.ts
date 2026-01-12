@@ -17,8 +17,8 @@ import path from 'path';
 // Load environment variables from .env.local
 dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 
-// Agent Onboarding RecordTypeId from Salesforce
-const AGENT_ONBOARDING_RECORD_TYPE_ID = '0124x000000Z7FyAAK';
+// Agent Onboarding RecordTypeId from Salesforce (15-char version as exported in CSV)
+const AGENT_ONBOARDING_RECORD_TYPE_ID = '0124x000000Z7Fy';
 
 // Stage mapping: Salesforce → Attio
 const STAGE_MAP: Record<string, string> = {

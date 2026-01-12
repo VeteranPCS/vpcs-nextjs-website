@@ -16,8 +16,8 @@ import path from 'path';
 // Load environment variables from .env.local
 dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 
-// Lender RecordTypeId from Salesforce
-const LENDER_RECORD_TYPE_ID = '0124x000000ZGGZAA4';
+// Lender RecordTypeId from Salesforce (15-char version as exported in CSV)
+const LENDER_RECORD_TYPE_ID = '0124x000000ZGGZ';
 
 // State name to code mapping (for looking up state from area name)
 const STATE_NAME_TO_CODE: Record<string, string> = {
@@ -239,8 +239,9 @@ async function migrateStateLenders() {
 
     try {
       // Update State.lenders with array of record references
+      // Attio requires both target_object (object slug) and target_record_id
       await attio.updateRecord('states', attioStateId, {
-        lenders: lenderIds.map(id => ({ target_record_id: id }))
+        lenders: lenderIds.map(id => ({ target_object: 'lenders', target_record_id: id }))
       });
 
       console.log(`✓ ${stateCode}: Updated with ${lenderIds.length} lenders`);

@@ -111,7 +111,7 @@ export const DEAL_TYPE_OPTIONS: SelectOption[] = [
 export const US_STATE_OPTIONS: SelectOption[] = [
   { title: 'Alabama' }, { title: 'Alaska' }, { title: 'Arizona' }, { title: 'Arkansas' },
   { title: 'California' }, { title: 'Colorado' }, { title: 'Connecticut' }, { title: 'Delaware' },
-  { title: 'District of Columbia' }, { title: 'Florida' }, { title: 'Georgia' }, { title: 'Hawaii' },
+  { title: 'Washington D.C.' }, { title: 'Florida' }, { title: 'Georgia' }, { title: 'Hawaii' },
   { title: 'Idaho' }, { title: 'Illinois' }, { title: 'Indiana' }, { title: 'Iowa' },
   { title: 'Kansas' }, { title: 'Kentucky' }, { title: 'Louisiana' }, { title: 'Maine' },
   { title: 'Maryland' }, { title: 'Massachusetts' }, { title: 'Michigan' }, { title: 'Minnesota' },

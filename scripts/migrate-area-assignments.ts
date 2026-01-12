@@ -18,9 +18,9 @@ import path from 'path';
 // Load environment variables from .env.local
 dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 
-// RecordTypeIds from Salesforce
-const AGENT_RECORD_TYPE_ID = '0124x000000YzFsAAK';
-const LENDER_RECORD_TYPE_ID = '0124x000000ZGGZAA4';
+// RecordTypeIds from Salesforce (15-char version as exported in CSV)
+const AGENT_RECORD_TYPE_ID = '0124x000000YzFs';
+const LENDER_RECORD_TYPE_ID = '0124x000000ZGGZ';
 
 interface AccountRow {
   Id: string;
@@ -164,10 +164,11 @@ async function migrateAreaAssignments() {
 
     try {
       // Create Area Assignment in Attio
+      // Attio requires both target_object and target_record_id for record references
       const record = await attio.createRecord('area_assignments', {
         salesforce_id: row.Id,
-        agent: { target_record_id: attioAgentId },
-        area: { target_record_id: attioAreaId },
+        agent: { target_object: 'agents', target_record_id: attioAgentId },
+        area: { target_object: 'areas', target_record_id: attioAreaId },
         aa_score: parseFloat(row.AA_Score__c) || 0,
         status: row.Status__c || 'Active',
       });
@@ -224,8 +225,9 @@ async function migrateAreaAssignments() {
     }
 
     try {
+      // Attio requires both target_object and target_record_id for record references
       await attio.updateRecord('areas', attioAreaId, {
-        area_assignments: assignmentIds.map(id => ({ target_record_id: id }))
+        area_assignments: assignmentIds.map(id => ({ target_object: 'area_assignments', target_record_id: id }))
       });
       console.log(`✓ ${areaName}: Updated with ${assignmentIds.length} assignments`);
       areaUpdateSuccess++;

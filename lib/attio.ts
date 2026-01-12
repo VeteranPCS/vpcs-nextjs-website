@@ -113,6 +113,40 @@ class AttioClient {
   }
 
   /**
+   * Create a select option for an attribute
+   * Used to add options to existing select-type attributes
+   */
+  async createSelectOption(
+    target: 'objects' | 'lists',
+    objectOrListSlug: string,
+    attributeSlug: string,
+    optionTitle: string
+  ): Promise<any> {
+    const res = await this.request(
+      `/${target}/${objectOrListSlug}/attributes/${attributeSlug}/options`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ data: { title: optionTitle } }),
+      }
+    );
+    return res.data;
+  }
+
+  /**
+   * Get select options for an attribute
+   */
+  async getSelectOptions(
+    target: 'objects' | 'lists',
+    objectOrListSlug: string,
+    attributeSlug: string
+  ): Promise<any[]> {
+    const res = await this.request(
+      `/${target}/${objectOrListSlug}/attributes/${attributeSlug}/options`
+    );
+    return res.data;
+  }
+
+  /**
    * List all lists (pipelines) in the workspace
    */
   async listLists(): Promise<any[]> {

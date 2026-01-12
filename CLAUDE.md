@@ -67,8 +67,8 @@ Before we continue, please confirm:
 
 ### Current Migration Status
 
-**Last Updated:** 2026-01-10
-**Current Phase:** Phase 3b Complete → Phase 4 Starting
+**Last Updated:** 2026-01-11
+**Current Phase:** Phase 4 - Data Migration In Progress
 **Branch:** attio-migration
 
 **✅ Completed:**
@@ -76,32 +76,62 @@ Before we continue, please confirm:
 - Phase 2: Documentation Updates (all 4 docs updated)
 - Phase 3a: Attio Schema Automation (6/6 objects, 3/3 pipelines created via API)
 - Phase 3b: All 10 migration scripts implemented
+- Phase 4a: Core data migration (states, agents, lenders, areas, area assignments)
 
 **🟡 In Progress:**
-- Create pipeline stages in Attio UI (API cannot create stages)
+- Phase 4b: Pipeline data migration (customers, deals, onboarding)
 
-**⏳ Next:**
-- Phase 4: Execute migration scripts in order
+**📋 Migration Progress:**
+| Script | Status | Records | Notes |
+|--------|--------|---------|-------|
+| migrate-states.ts | ✅ Done | 52/52 | All US states + DC + PR |
+| migrate-agents.ts | ✅ Done | 1,026/1,039 | 6 errors (phone), 7 skipped (dupe email) |
+| migrate-lenders.ts | ✅ Done | 139/141 | 2 errors (phone format) |
+| migrate-state-lenders.ts | ✅ Done | 152/152 | 51 states updated |
+| migrate-areas.ts | ✅ Done | 271/271 | 51 state-level areas filtered |
+| migrate-area-assignments.ts | ✅ Done | 506/509 | 3 skipped (missing agents) |
+| migrate-customers.ts | ⏳ Pending | ~983 | |
+| migrate-customer-deals.ts | ⏳ Pending | 1,021 | |
+| migrate-agent-onboarding.ts | ⏳ Pending | 947 | |
+| migrate-lender-onboarding.ts | ⏳ Pending | 160 | |
 
-**📋 Migration Scripts (Ready to Execute):**
-```bash
-npx tsx scripts/migrate-states.ts        # 52 states
-npx tsx scripts/migrate-agents.ts        # 1,039 agents
-npx tsx scripts/migrate-lenders.ts       # 141 lenders
-npx tsx scripts/migrate-state-lenders.ts # 152 state-lender refs
-npx tsx scripts/migrate-areas.ts         # ~271 areas
-npx tsx scripts/migrate-area-assignments.ts # 511 assignments
-npx tsx scripts/migrate-customers.ts     # ~983 customers
-npx tsx scripts/migrate-customer-deals.ts    # 1,021 deals (needs stages)
-npx tsx scripts/migrate-agent-onboarding.ts  # 947 records (needs stages)
-npx tsx scripts/migrate-lender-onboarding.ts # 160 records (needs stages)
-```
+**📝 Post-Migration Review:**
+See `docs/post-migration-review/` for records that need manual attention:
+- agents-review.md - 9 records (phone errors + duplicate emails)
+- lenders-review.md - 1 real record (Mark Ambrose - phone format)
+- area-assignments-review.md - 3 records (missing agent mappings)
 
-**⚠️ Attio API Limitation:**
-Pipeline stages cannot be created via API. Must create manually in Attio UI:
-- Agent Onboarding: 8 stages (New Application → Closed Lost)
-- Lender Onboarding: 8 stages (same)
-- Customer Deals: 9 stages (New Lead → Duplicate)
+---
+
+### Attio API Notes
+
+**Key Learnings:**
+
+1. **Record References require `target_object`:**
+   ```typescript
+   // WRONG - will fail
+   { target_record_id: 'uuid' }
+
+   // CORRECT
+   { target_object: 'agents', target_record_id: 'uuid' }
+   ```
+
+2. **Select options must be created separately:**
+   - When creating a `select` attribute, options are NOT created inline
+   - Use dedicated endpoint: `POST /objects/{obj}/attributes/{attr}/options`
+   - Body: `{ "data": { "title": "Option Name" } }`
+
+3. **RecordTypeIds in Salesforce CSV exports are 15-char:**
+   - CLAUDE.md documents 18-char IDs, but CSV exports use 15-char
+   - Migration scripts must use 15-char versions for filtering
+
+4. **Phone numbers require E.164 format:**
+   - Attio rejects phones not in E.164 format
+   - Use `lib/normalize-phone.ts` to convert
+
+5. **Useful lib/attio.ts methods added:**
+   - `createSelectOption(target, objectSlug, attrSlug, title)` - Add select option
+   - `getSelectOptions(target, objectSlug, attrSlug)` - List select options
 
 ---
 

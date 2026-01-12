@@ -8,10 +8,10 @@
 
 ## Quick Status
 
-**Current Phase:** Phase 3 Complete - Schema & Scripts Ready
-**Next Phase:** Phase 4 - Execute Data Migration
-**Blocked On:** Nothing! All Attio setup automated via API
-**Ready to Code:** ✅ All migration scripts ready to execute
+**Current Phase:** Phase 4a Complete - Core Data Migrated
+**Next Phase:** Phase 4b - Pipeline Migrations
+**Blocked On:** Nothing
+**Ready to Code:** ✅ Continuing with customer and pipeline migrations
 
 ---
 
@@ -226,6 +226,83 @@ POST /lists/{slug}/attributes/stage/statuses
 
 ---
 
+## 2026-01-11 - Phase 4a: Core Data Migration Complete
+
+**Platform:** Claude Code CLI
+**Duration:** ~3 hours
+**Status:** ✅ Phase 4a Complete
+
+**Completed:**
+- ✅ migrate-states.ts - 52 states created (50 states + DC + PR)
+- ✅ migrate-agents.ts - 1,026 created, 6 phone errors, 7 duplicate emails
+- ✅ migrate-lenders.ts - 139 created, 2 phone errors (1 real: Mark Ambrose)
+- ✅ migrate-state-lenders.ts - 51 states updated, 152 lender assignments
+- ✅ migrate-areas.ts - 271 areas created, 51 states with bidirectional refs
+- ✅ migrate-area-assignments.ts - 506 created, 3 skipped (missing agents)
+- ✅ Fixed 3 critical Attio API issues (see API Fixes below)
+- ✅ Created fix-area-assignment-status-options.ts script
+- ✅ Created post-migration review docs for manual follow-up
+
+**API Fixes (Key Learnings):**
+
+1. **RecordTypeId 15-char vs 18-char:**
+   - Salesforce CSV exports use 15-character case-sensitive IDs
+   - Documented 18-char IDs won't match - use 15-char versions
+   - Fix: `0124x000000ZGGZAA4` → `0124x000000ZGGZ`
+
+2. **Missing target_object on record references:**
+   - Attio API requires BOTH `target_object` AND `target_record_id`
+   - Error: `"Missing target_object on record reference value"`
+   - Fix: `{ target_record_id: id }` → `{ target_object: 'objectSlug', target_record_id: id }`
+
+3. **Select options must be created separately:**
+   - Select options cannot be created inline during attribute creation
+   - Must use dedicated endpoint: `POST /objects/{obj}/attributes/{attr}/options`
+   - Created `createSelectOption()` and `getSelectOptions()` methods in lib/attio.ts
+   - Created fix script to add missing options
+
+**Files Created:**
+- scripts/fix-area-assignment-status-options.ts
+- docs/post-migration-review/agents-review.md
+- docs/post-migration-review/lenders-review.md
+- docs/post-migration-review/area-assignments-review.md
+
+**Files Modified:**
+- lib/attio.ts (added createSelectOption, getSelectOptions methods)
+- scripts/migrate-state-lenders.ts (fixed RecordTypeId, target_object)
+- scripts/migrate-areas.ts (fixed target_object in state ref and bidirectional update)
+- scripts/migrate-area-assignments.ts (fixed target_object in all refs)
+- CLAUDE.md (added migration progress table, Attio API Notes section)
+- data/mappings/*.json (6 mapping files created)
+
+**Migration Progress:**
+| Object | Expected | Created | Errors | Notes |
+|--------|----------|---------|--------|-------|
+| States | 52 | 52 | 0 | ✅ Complete |
+| Agents | 1,039 | 1,026 | 13 | 6 phone, 7 dup email |
+| Lenders | 141 | 139 | 2 | Phone format errors |
+| State-Lenders | 152 | 152 | 0 | ✅ Complete |
+| Areas | ~271 | 271 | 0 | ✅ Complete |
+| Area Assignments | 511 | 506 | 3 | Missing agent refs |
+
+**Git Commits:**
+- [Pending - will commit after this update]
+
+**Next Session Tasks:**
+- [ ] Run migrate-customers.ts (~983 customers)
+- [ ] Run migrate-customer-deals.ts (1,021 deals)
+- [ ] Run migrate-agent-onboarding.ts (947 records)
+- [ ] Run migrate-lender-onboarding.ts (160 records)
+- [ ] Address skipped records from review docs
+- [ ] Create validation script
+
+**Notes:**
+- Pipeline migrations may need similar select option fixes
+- Review docs in docs/post-migration-review/ list all records needing manual attention
+- All mapping files saved to data/mappings/ for reference lookups
+
+---
+
 ## [NEXT SESSION DATE] - [TITLE]
 
 **Platform:** Claude Code CLI
@@ -326,16 +403,16 @@ git push
 | Script | Status | Records | Notes |
 |--------|--------|---------|-------|
 | scripts/setup-attio-schema.ts | ✅ Complete | 6 objects, 3 pipelines | All created via API |
-| scripts/migrate-states.ts | ✅ Ready | 52 | Generate state_slug |
-| scripts/migrate-agents.ts | ✅ Ready | 1,039 | Contact join for emails |
-| scripts/migrate-lenders.ts | ✅ Ready | 141 | Contact join + NMLS |
-| scripts/migrate-state-lenders.ts | ✅ Ready | 152 | State.lenders refs |
-| scripts/migrate-areas.ts | ✅ Ready | ~271 | Filters state-level areas |
-| scripts/migrate-area-assignments.ts | ✅ Ready | 511 | Agent-only assignments |
-| scripts/migrate-customers.ts | ✅ Ready | ~983 | From Opportunity.AccountId |
-| scripts/migrate-customer-deals.ts | ✅ Ready | 1,021 | Needs pipeline stages |
-| scripts/migrate-agent-onboarding.ts | ✅ Ready | 947 | Needs pipeline stages |
-| scripts/migrate-lender-onboarding.ts | ✅ Ready | 160 | Needs pipeline stages |
+| scripts/migrate-states.ts | ✅ Complete | 52/52 | All states created |
+| scripts/migrate-agents.ts | ✅ Complete | 1,026/1,039 | 6 phone, 7 dup email |
+| scripts/migrate-lenders.ts | ✅ Complete | 139/141 | 2 phone errors |
+| scripts/migrate-state-lenders.ts | ✅ Complete | 152 | 51 states updated |
+| scripts/migrate-areas.ts | ✅ Complete | 271 | Bidirectional refs done |
+| scripts/migrate-area-assignments.ts | ✅ Complete | 506/511 | 3 missing agents |
+| scripts/migrate-customers.ts | 🟡 Ready | ~983 | Next up |
+| scripts/migrate-customer-deals.ts | ⏳ Ready | 1,021 | After customers |
+| scripts/migrate-agent-onboarding.ts | ⏳ Ready | 947 | Pipeline migration |
+| scripts/migrate-lender-onboarding.ts | ⏳ Ready | 160 | Pipeline migration |
 | scripts/validate-migration.ts | ⏳ Not Started | - | Final validation |
 
 ---
