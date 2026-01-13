@@ -8,10 +8,10 @@
 
 ## Quick Status
 
-**Current Phase:** Phase 4b In Progress - Customer Deals Complete
-**Next Phase:** Agent & Lender Onboarding Pipelines
-**Blocked On:** Review migration data quality before proceeding
-**Ready to Code:** ⚠️ Need to review data quality issues first
+**Current Phase:** Phase 4c In Progress - Onboarding Pipelines Pending
+**Next Phase:** Run agent & lender onboarding migrations
+**Blocked On:** None
+**Ready to Code:** ✅ Ready to run remaining migrations
 
 ---
 
@@ -392,6 +392,67 @@ if (statusTitle) {
 
 ---
 
+## 2026-01-13 - Data Quality Fixes & Area Assignments Migration
+
+**Platform:** Claude Code CLI
+**Duration:** ~1.5 hours
+**Status:** ✅ Complete
+
+**Completed:**
+- ✅ Ran area assignments migration - 503 created, 0 errors, 6 skipped
+- ✅ Updated 243 areas with bidirectional area_assignments references
+- ✅ Updated CLAUDE.md with new API learnings (#9 name attribute, #10 Contact vs Account fields)
+- ✅ Updated migration progress table with accurate counts
+
+**Context from Previous Sessions:**
+This session was a continuation after context compaction. Previous sessions had:
+- Fixed data quality issues (customer names showing UUIDs, missing military/bio fields)
+- Added `name` attribute to agents, lenders, and customers objects
+- Re-ran migrations with correct Contact.csv field mappings for military/bio data
+- Ran lenders migration (139 created), customers migration (953 created), state-lenders (51 states)
+
+**Key API Discovery - Name Attribute:**
+- Attio UI displays record names based on a `name` attribute
+- Without it, records show auto-generated UUIDs like "d6b6f9a3-3b49-458e..."
+- Solution: Add `name` text attribute and populate with `${firstName} ${lastName}`
+- All migration scripts now include `name` field in createRecord calls
+
+**Key Data Discovery - Contact vs Account Fields:**
+- Account.csv x-prefixed fields (xMilitary_Service__c, etc.) are **0% populated**
+- Contact.csv non-prefixed fields have actual data:
+  - Military_Service__c: ~56% populated
+  - Military_Status__c: ~57% populated
+  - Agent_Bio__c: ~24% populated
+- Migration scripts updated to use Contact fields with Account fallback
+
+**Files Modified:**
+- CLAUDE.md (migration progress, API learnings #9 and #10)
+- SESSION-NOTES.md (this session entry)
+
+**Migration Results - Area Assignments:**
+| Metric | Count |
+|--------|-------|
+| Successfully created | 503 |
+| Errors | 0 |
+| Skipped (missing agent mapping) | 6 |
+| Areas updated with bidirectional refs | 243 |
+
+**Git Commits:**
+- 3c8563d - "Session checkpoint: Area assignments migration + documentation updates"
+
+**Next Session Tasks:**
+- [ ] Run migrate-agent-onboarding.ts (947 records, 113 internships)
+- [ ] Run migrate-lender-onboarding.ts (160 records, 4 internships)
+- [ ] Create validation script to verify migration completeness
+- [ ] Address skipped records from review docs
+
+**Notes:**
+- 6 area assignments skipped due to agents not in mapping (likely from phone validation errors during agent migration)
+- Area assignments script also updates Area.area_assignments for bidirectional references
+- All core data migrations complete - only onboarding pipelines remain
+
+---
+
 ## [NEXT SESSION DATE] - [TITLE]
 
 **Platform:** Claude Code CLI
@@ -497,12 +558,14 @@ git push
 | scripts/migrate-lenders.ts | ✅ Complete | 139/141 | 2 phone errors |
 | scripts/migrate-state-lenders.ts | ✅ Complete | 152 | 51 states updated |
 | scripts/migrate-areas.ts | ✅ Complete | 271 | Bidirectional refs done |
-| scripts/migrate-area-assignments.ts | ✅ Complete | 506/511 | 3 missing agents |
+| scripts/migrate-area-assignments.ts | ✅ Complete | 503/509 | 6 missing agents, 243 areas updated |
 | scripts/migrate-customers.ts | ✅ Complete | 953/983 | 12 phone, 18 no email |
 | scripts/migrate-customer-deals.ts | ✅ Complete | 975/1,021 | 1 error, 45 no customer |
 | scripts/migrate-agent-onboarding.ts | ⏳ Ready | 947 | Pipeline migration |
 | scripts/migrate-lender-onboarding.ts | ⏳ Ready | 160 | Pipeline migration |
 | scripts/delete-customer-deals.ts | ✅ Created | - | Cleanup utility |
+| scripts/add-name-attribute.ts | ✅ Created | - | Adds name attr to objects |
+| scripts/populate-names.ts | ✅ Created | - | Populates name field for existing records |
 | scripts/validate-migration.ts | ⏳ Not Started | - | Final validation |
 
 ---

@@ -1,9 +1,9 @@
 # Resume Work - Quick Start Guide
 
-**Last Updated:** 2026-01-10
+**Last Updated:** 2026-01-13
 **Project:** VeteranPCS Salesforce → Attio CRM Migration
-**Last Commit:** 2c1f40f (pushed to origin/attio-migration)
-**Phase:** Phase 3b Complete - Schema & Scripts Ready
+**Last Commit:** c44ac1e (pushed to origin/attio-migration)
+**Phase:** Phase 4c - Onboarding Pipelines Pending
 
 ---
 
@@ -34,20 +34,22 @@ git log -3 --oneline
 
 ### 3. Check Current Phase Status
 
-**Current Phase:** Phase 3b Complete → Phase 4 Starting
+**Current Phase:** Phase 4c - Onboarding Pipelines Pending
 
 **Completed:**
 - ✅ Phase 1: Plan Mode & Data Exploration
 - ✅ Phase 2: Documentation Updates (CLAUDE.md, HLD.md, LLD.md, PRD.md)
 - ✅ Phase 3a: Attio Schema Automation (6/6 objects, 3/3 pipelines via API)
 - ✅ Phase 3b: All 10 migration scripts created and ready
+- ✅ Phase 4a: Core data migrations (states, agents, lenders, areas, area assignments)
+- ✅ Phase 4b: Customer and deals migration (customers, customer deals)
 
 **Next:**
-- ✅ Schema complete (stages now created via API!)
-- ⏳ Phase 4: Execute migration scripts in order
+- ⏳ Phase 4c: Run agent & lender onboarding migrations
+- ⏳ Phase 5: Validation and cleanup
 
 **Blocked On:**
-- Nothing! All Attio setup is automated via `npx tsx scripts/setup-attio-schema.ts`
+- Nothing! Ready to run remaining 2 migrations.
 
 ### 4. Understand Current Blockers
 

@@ -48,6 +48,49 @@ interface ContactRow {
   Email: string;
   MobilePhone: string;
   Phone: string;
+  // Fields that have data (unlike x-prefixed Account fields which are empty)
+  Military_Service__c: string;
+  Military_Status__c: string;
+  Agent_Bio__c: string;
+}
+
+// Map military service values from Salesforce to Attio options
+const MILITARY_SERVICE_MAP: Record<string, string> = {
+  'Army': 'Army',
+  'Navy': 'Navy',
+  'Air Force': 'Air Force',
+  'Marines': 'Marines',
+  'Marine Corps': 'Marines',  // Salesforce uses "Marine Corps", Attio uses "Marines"
+  'Coast Guard': 'Coast Guard',
+  'Space Force': 'Space Force',
+};
+
+// Map military status values from Salesforce to Attio options
+const MILITARY_STATUS_MAP: Record<string, string> = {
+  'Active Duty': 'Active Duty',
+  'Active': 'Active Duty',  // Normalize "Active" to "Active Duty"
+  'Veteran': 'Veteran',
+  'Retired': 'Retired',  // 20+ years service - distinct from Veteran
+  'Reserves': 'Reserves',
+  'Reserve': 'Reserves',  // Normalize singular
+  'National Guard': 'National Guard',
+  'Spouse': 'Spouse',
+};
+
+// Normalize military service - handle semicolon-separated multi-values
+function normalizeMilitaryService(value: string | undefined): string | null {
+  if (!value) return null;
+  // Take first value if multi-select (e.g., "Army;Navy")
+  const firstValue = value.split(';')[0].trim();
+  return MILITARY_SERVICE_MAP[firstValue] || null;
+}
+
+// Normalize military status - handle semicolon-separated multi-values
+function normalizeMilitaryStatus(value: string | undefined): string | null {
+  if (!value) return null;
+  // Take first value if multi-select (e.g., "Spouse;Veteran")
+  const firstValue = value.split(';')[0].trim();
+  return MILITARY_STATUS_MAP[firstValue] || null;
 }
 
 // Normalize phone to E.164 format
@@ -128,6 +171,7 @@ async function migrateAgents() {
 
     try {
       const record = await attio.createRecord('agents', {
+        name: `${account.FirstName} ${account.LastName}`,  // Human-readable display name
         salesforce_id: account.Id,
         first_name: account.FirstName,
         last_name: account.LastName,
@@ -138,9 +182,9 @@ async function migrateAgents() {
         managing_broker_name: account.Managing_Broker__c || null,
         managing_broker_email: account.Managing_Broker_Email__c || null,
         managing_broker_phone: normalizePhone(account.Managing_Broker_Phone__c),
-        military_service: account.xMilitary_Service__c || null,
-        military_status: account.xMilitary_Status__c || null,
-        bio: account.xAgent_Bio__c || null,
+        military_service: normalizeMilitaryService(contact?.Military_Service__c || account.xMilitary_Service__c),
+        military_status: normalizeMilitaryStatus(contact?.Military_Status__c || account.xMilitary_Status__c),
+        bio: contact?.Agent_Bio__c || account.xAgent_Bio__c || null,
         commission_split: account.Commission_Split__c ? parseFloat(account.Commission_Split__c) : null,
         active_on_website: activeOnWebsite,
         contract_signed_date: account.Contract_Signed_Date__c || null,

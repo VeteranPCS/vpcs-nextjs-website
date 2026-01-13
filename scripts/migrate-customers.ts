@@ -42,6 +42,48 @@ interface ContactRow {
   Email: string;
   MobilePhone: string;
   Phone: string;
+  // Fields that have data (unlike x-prefixed Account fields which are empty)
+  Military_Service__c: string;
+  Military_Status__c: string;
+  Current_location__c: string;
+  City_and_or_Base_you_are_moving_to__c: string;
+}
+
+// Map military service values from Salesforce to Attio options
+const MILITARY_SERVICE_MAP: Record<string, string> = {
+  'Army': 'Army',
+  'Navy': 'Navy',
+  'Air Force': 'Air Force',
+  'Marines': 'Marines',
+  'Marine Corps': 'Marines',
+  'Coast Guard': 'Coast Guard',
+  'Space Force': 'Space Force',
+};
+
+// Map military status values from Salesforce to Attio options
+const MILITARY_STATUS_MAP: Record<string, string> = {
+  'Active Duty': 'Active Duty',
+  'Active': 'Active Duty',
+  'Veteran': 'Veteran',
+  'Retired': 'Retired',  // 20+ years service - distinct from Veteran
+  'Reserves': 'Reserves',
+  'Reserve': 'Reserves',
+  'National Guard': 'National Guard',
+  'Spouse': 'Spouse',
+};
+
+// Normalize military service - handle semicolon-separated multi-values
+function normalizeMilitaryService(value: string | undefined): string | null {
+  if (!value) return null;
+  const firstValue = value.split(';')[0].trim();
+  return MILITARY_SERVICE_MAP[firstValue] || null;
+}
+
+// Normalize military status - handle semicolon-separated multi-values
+function normalizeMilitaryStatus(value: string | undefined): string | null {
+  if (!value) return null;
+  const firstValue = value.split(';')[0].trim();
+  return MILITARY_STATUS_MAP[firstValue] || null;
 }
 
 // Normalize phone to E.164 format
@@ -124,15 +166,16 @@ async function migrateCustomers() {
 
     try {
       const record = await attio.createRecord('customers', {
+        name: `${account.FirstName} ${account.LastName}`,  // Human-readable display name
         salesforce_id: account.Id,
         first_name: account.FirstName,
         last_name: account.LastName,
         email: email,
         phone: phone,
-        current_location: currentLocation,
-        destination_city: account.Destination_City__c || null,
-        military_service: account.xMilitary_Service__c || null,
-        military_status: account.xMilitary_Status__c || null,
+        current_location: contact?.Current_location__c || currentLocation || null,
+        destination_city: contact?.City_and_or_Base_you_are_moving_to__c || account.Destination_City__c || null,
+        military_service: normalizeMilitaryService(contact?.Military_Service__c || account.xMilitary_Service__c),
+        military_status: normalizeMilitaryStatus(contact?.Military_Status__c || account.xMilitary_Status__c),
         rank: account.Rank__c || null,
         // Note: buying_agent, selling_agent, lender refs are populated during deal migration
       });

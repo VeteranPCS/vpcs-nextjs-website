@@ -67,7 +67,7 @@ Before we continue, please confirm:
 
 ### Current Migration Status
 
-**Last Updated:** 2026-01-12
+**Last Updated:** 2026-01-13
 **Current Phase:** Phase 4 - Data Migration In Progress
 **Branch:** attio-migration
 
@@ -77,9 +77,10 @@ Before we continue, please confirm:
 - Phase 3a: Attio Schema Automation (6/6 objects, 3/3 pipelines created via API)
 - Phase 3b: All 10 migration scripts implemented
 - Phase 4a: Core data migration (states, agents, lenders, areas, area assignments)
+- Phase 4b: Customer and deals migration (customers, customer deals)
 
 **🟡 In Progress:**
-- Phase 4b: Pipeline data migration (customers, deals, onboarding)
+- Phase 4c: Onboarding pipeline migrations (agent onboarding, lender onboarding)
 
 **📋 Migration Progress:**
 | Script | Status | Records | Notes |
@@ -89,7 +90,7 @@ Before we continue, please confirm:
 | migrate-lenders.ts | ✅ Done | 139/141 | 2 errors (phone format) |
 | migrate-state-lenders.ts | ✅ Done | 152/152 | 51 states updated |
 | migrate-areas.ts | ✅ Done | 271/271 | 51 state-level areas filtered |
-| migrate-area-assignments.ts | ✅ Done | 506/509 | 3 skipped (missing agents) |
+| migrate-area-assignments.ts | ✅ Done | 503/509 | 6 skipped (missing agents), 243 areas updated with bidirectional refs |
 | migrate-customers.ts | ✅ Done | 953/983 | 12 phone errors, 18 no email |
 | migrate-customer-deals.ts | ✅ Done | 975/1,021 | 1 error (500), 45 skipped (no customer) |
 | migrate-agent-onboarding.ts | ⏳ Pending | 947 | |
@@ -99,7 +100,7 @@ Before we continue, please confirm:
 See `docs/post-migration-review/` for records that need manual attention:
 - agents-review.md - 13 records (6 phone errors + 7 duplicate emails)
 - lenders-review.md - 2 records (phone format errors)
-- area-assignments-review.md - 3 records (missing agent mappings)
+- area-assignments-review.md - 6 records (missing agent mappings)
 - customers-review.md - 30 records (12 phone errors + 18 no email)
 - customer-deals-review.md - 46 records (1 API error + 45 missing customer mappings)
 
@@ -163,6 +164,21 @@ See `docs/post-migration-review/` for records that need manual attention:
    - Salesforce uses "Tracking 6+" but Attio was configured with "Tracking 6+mo"
    - Always verify actual field values in source data before creating stage mappings
    - Use proper CSV parsing (not awk) to handle commas in quoted fields
+
+9. **Custom objects need a `name` attribute for display:**
+   - Attio UI shows record display names based on a `name` attribute
+   - Without it, records display as auto-generated UUIDs (e.g., "d6b6f9a3-3b49-458e...")
+   - Add `name` as a text attribute and populate with human-readable values
+   - For Person records: `name: "${firstName} ${lastName}"`
+   - Migration scripts should include `name` field in createRecord calls
+
+10. **Contact.csv has the populated fields, Account.csv x-prefixed fields are EMPTY:**
+    - Account.xMilitary_Service__c, xMilitary_Status__c, xAgent_Bio__c are 0% populated
+    - Contact.Military_Service__c (~56%), Military_Status__c (~57%), Agent_Bio__c (~24%) have data
+    - Always use Contact fields as primary source with Account as fallback:
+    ```typescript
+    military_service: contact?.Military_Service__c || account.xMilitary_Service__c || null,
+    ```
 
 ---
 

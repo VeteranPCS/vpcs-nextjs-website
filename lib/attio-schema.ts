@@ -76,6 +76,7 @@ export const MILITARY_SERVICE_OPTIONS: SelectOption[] = [
 export const MILITARY_STATUS_OPTIONS: SelectOption[] = [
   { title: 'Active Duty' },
   { title: 'Veteran' },
+  { title: 'Retired' },  // 20+ years service - distinct from Veteran
   { title: 'Reserves' },
   { title: 'National Guard' },
   { title: 'Spouse' },
@@ -403,10 +404,10 @@ export const CUSTOMER_DEALS_ATTRIBUTES: AttributeDefinition[] = [
     config: { currency: { default_currency_code: 'USD', display_type: 'symbol' } }
   },
   {
-    title: 'Agent Commission',
+    title: 'Agent Commission %',
     api_slug: 'agent_commission',
-    type: 'currency',
-    config: { currency: { default_currency_code: 'USD', display_type: 'symbol' } }
+    type: 'number',
+    description: 'Agent commission percentage (e.g., 2.5 = 2.5%)'
   },
   {
     title: 'Payout Amount',
