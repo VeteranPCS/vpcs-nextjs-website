@@ -68,7 +68,7 @@ Before we continue, please confirm:
 ### Current Migration Status
 
 **Last Updated:** 2026-01-13
-**Current Phase:** Phase 4c - Onboarding Pipelines Pending
+**Current Phase:** Phase 4 COMPLETE ✅
 **Branch:** attio-migration
 
 **✅ Completed:**
@@ -78,9 +78,12 @@ Before we continue, please confirm:
 - Phase 3b: All 10 migration scripts implemented
 - Phase 4a: Core data migration (states, agents, lenders, areas, area assignments)
 - Phase 4b: Customer and deals migration (customers, customer deals)
+- Phase 4c: Onboarding pipelines (agent onboarding, lender onboarding)
 
-**🟡 In Progress:**
-- Phase 4c: Onboarding pipeline migrations (agent onboarding, lender onboarding)
+**📋 Next Steps:**
+- Create validation script to verify migration completeness
+- Address skipped records from post-migration review docs
+- Final data quality audit
 
 **🔧 Schema Fix Applied:**
 - `agent_commission` attribute archived (was incorrectly type `currency`)
@@ -97,8 +100,8 @@ Before we continue, please confirm:
 | migrate-area-assignments.ts | ✅ Done | 503/509 | 6 skipped (missing agents), 243 areas updated with bidirectional refs |
 | migrate-customers.ts | ✅ Done | 953/983 | 12 phone errors, 18 no email |
 | migrate-customer-deals.ts | ✅ Done | 975/1,021 | 1 error (500), 45 skipped (no customer) |
-| migrate-agent-onboarding.ts | ⏳ Pending | 947 | |
-| migrate-lender-onboarding.ts | ⏳ Pending | 160 | |
+| migrate-agent-onboarding.ts | ✅ Done | 913/947 | 1 error (502), 33 skipped (missing agents) |
+| migrate-lender-onboarding.ts | ✅ Done | 158/160 | 2 skipped (missing lenders) |
 
 **📝 Post-Migration Review:**
 See `docs/post-migration-review/` for records that need manual attention:
