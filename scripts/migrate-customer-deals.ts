@@ -162,7 +162,7 @@ async function migrateCustomerDeals() {
         deal_type: getDealType(opp.Buying_andor_Selling__c),
         destination_state: opp.Destination_State__c || null,                             // Customer destination state
         sale_price: opp.Sale_Price__c ? parseFloat(opp.Sale_Price__c) : null,
-        agent_commission: opp.Closing_Commission__c ? parseFloat(opp.Closing_Commission__c) : null,
+        commission_percent: opp.Closing_Commission__c ? parseFloat(opp.Closing_Commission__c) : null,
         payout_amount: opp.Payout_Amount__c ? parseFloat(opp.Payout_Amount__c) : null,
         move_in_bonus: opp.Payout_Amount__c ? parseFloat(opp.Payout_Amount__c) : null,   // Same as payout (historical)
         charity_amount: opp.Charity_Amount__c ? parseFloat(opp.Charity_Amount__c) : null, // Charity donation

@@ -68,7 +68,7 @@ Before we continue, please confirm:
 ### Current Migration Status
 
 **Last Updated:** 2026-01-13
-**Current Phase:** Phase 4 - Data Migration In Progress
+**Current Phase:** Phase 4c - Onboarding Pipelines Pending
 **Branch:** attio-migration
 
 **✅ Completed:**
@@ -81,6 +81,10 @@ Before we continue, please confirm:
 
 **🟡 In Progress:**
 - Phase 4c: Onboarding pipeline migrations (agent onboarding, lender onboarding)
+
+**🔧 Schema Fix Applied:**
+- `agent_commission` attribute archived (was incorrectly type `currency`)
+- `commission_percent` attribute created (type `number`, displays "2.75" not "$2.75")
 
 **📋 Migration Progress:**
 | Script | Status | Records | Notes |
@@ -179,6 +183,17 @@ See `docs/post-migration-review/` for records that need manual attention:
     ```typescript
     military_service: contact?.Military_Service__c || account.xMilitary_Service__c || null,
     ```
+
+11. **Cannot DELETE attributes via API - only archive:**
+    - Attio API returns 404 for `DELETE /lists/{slug}/attributes/{attr}`
+    - Use PATCH to archive instead: `{ "data": { "is_archived": true } }`
+    - **Archived attributes still occupy their slug** - cannot reuse slug for new attribute
+    - To "replace" an attribute type, must create new attribute with different slug
+
+12. **Commission stored as `commission_percent` (not `agent_commission`):**
+    - Original `agent_commission` was mistakenly created as `currency` type (displayed "$2.75")
+    - Archived and replaced with `commission_percent` as `number` type (displays "2.75")
+    - Values are whole percentages (e.g., 2.75 = 2.75%, not 0.0275)
 
 ---
 
@@ -298,7 +313,7 @@ You MUST join Account records with Contact records to get email addresses.
 | Lender__c | lender | Lookup → Lender.salesforce_id |
 | StageName | stage | Map to new stages |
 | Sale_Price__c | sale_price | |
-| Closing_Commission__c | agent_commission | |
+| Closing_Commission__c | commission_percent | Stored as whole % (2.75 = 2.75%) |
 | Payout_Amount__c | payout_amount | |
 | Property_Address__c | property_address | |
 | Actual_Close_Date__c | actual_close_date | |

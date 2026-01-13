@@ -405,9 +405,9 @@ export const CUSTOMER_DEALS_ATTRIBUTES: AttributeDefinition[] = [
   },
   {
     title: 'Agent Commission %',
-    api_slug: 'agent_commission',
+    api_slug: 'commission_percent',
     type: 'number',
-    description: 'Agent commission percentage (e.g., 2.5 = 2.5%)'
+    description: 'Agent commission percentage (e.g., 2.75 = 2.75%)'
   },
   {
     title: 'Payout Amount',

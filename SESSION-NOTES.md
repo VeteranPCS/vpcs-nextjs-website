@@ -453,6 +453,61 @@ This session was a continuation after context compaction. Previous sessions had:
 
 ---
 
+## 2026-01-13 - Agent Commission Attribute Type Fix
+
+**Platform:** Claude Code CLI
+**Duration:** ~1 hour
+**Status:** ✅ Complete
+
+**Completed:**
+- ✅ Diagnosed agent commission display issue (showing "$2.75" instead of "2.75")
+- ✅ Discovered root cause: attribute created as `currency` type instead of `number`
+- ✅ Created `scripts/fix-commission-attribute.ts` script
+- ✅ Archived old `agent_commission` attribute (currency type)
+- ✅ Created new `commission_percent` attribute (number type)
+- ✅ Repopulated 1,909 commission values to new attribute
+- ✅ Verified fix - attribute now displays as plain number
+
+**Blockers:**
+- None
+
+**Decisions Made:**
+- Keep new attribute slug `commission_percent` (more accurate than `agent_commission`)
+- Old `agent_commission` attribute archived (not deleted - Attio API doesn't support deletion)
+- Commission values stored as whole percentages (e.g., 2.75 for 2.75%)
+
+**Key API Discoveries:**
+1. **Cannot DELETE attributes via Attio API** - only archive them
+2. **Archived attributes still occupy their slug** - must use new slug for replacement
+3. **Can PATCH attributes to archive:** `is_archived: true`
+
+**Files Created:**
+- scripts/fix-commission-attribute.ts
+- data/backups/commission-backup.json (1,983 entries backed up)
+
+**Files Modified:**
+- [Session documentation updates pending]
+
+**Schema Changes:**
+- Old: `agent_commission` (type: currency) - ARCHIVED
+- New: `commission_percent` (type: number) - ACTIVE
+- Display: "2.75" instead of "$2.75"
+
+**Git Commits:**
+- [Pending]
+
+**Next Session Tasks:**
+- [ ] Run migrate-agent-onboarding.ts (947 records, 113 internships)
+- [ ] Run migrate-lender-onboarding.ts (160 records, 4 internships)
+- [ ] Create validation script
+
+**Notes:**
+- Customer re-migration was completed earlier this session (985 customers, 1,007 deals)
+- Total customer_deals entries now: 1,983
+- Commission values preserved correctly during attribute type change
+
+---
+
 ## [NEXT SESSION DATE] - [TITLE]
 
 **Platform:** Claude Code CLI

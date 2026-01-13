@@ -102,8 +102,9 @@ function normalizePhone(phone: string | undefined): string | null {
     return `+${digits}`;
   }
 
-  // Return as-is if can't normalize (might be international)
-  return phone;
+  // Return null if can't normalize - allows record creation without phone
+  // (phone is optional in Attio schema, but malformed phones cause API errors)
+  return null;
 }
 
 async function migrateCustomers() {
@@ -133,11 +134,22 @@ async function migrateCustomers() {
     contactMap[contact.Id] = contact;
   }
 
-  // Filter to customer accounts only
+  // Agents who also used VeteranPCS service as customers - need Customer records too
+  // These agents have customer deals but were never migrated as customers
+  const agentsWhoAreAlsoCustomers = [
+    '0014x00000KAObBAAX',  // Ricardo Garcia - 1 deal, $125k
+    '0014x00000KSLaeAAH',  // Elisa Amusu - 1 deal, $300k
+    '0014x00000OtW5iAAF',  // Steven Paulk - 3 deals, $1.94M
+    '0014x00000OtUi9AAF',  // Jeremy Armijo - 1 deal, $445k
+    '0014x00000W8w2cAAB',  // Rosa Maria Robertson - 1 deal, $195k
+  ];
+
+  // Filter to customer accounts + agents who are also customers
   const customerAccounts = accounts.filter(a =>
-    a.RecordTypeId === CUSTOMER_RECORD_TYPE_ID && a.IsDeleted === '0'
+    (a.RecordTypeId === CUSTOMER_RECORD_TYPE_ID || agentsWhoAreAlsoCustomers.includes(a.Id)) &&
+    a.IsDeleted === '0'
   );
-  console.log(`Found ${customerAccounts.length} customer accounts`);
+  console.log(`Found ${customerAccounts.length} customer accounts (includes ${agentsWhoAreAlsoCustomers.length} agents who are also customers)`);
   console.log();
 
   // Mapping: Salesforce ID → Attio ID
@@ -149,11 +161,16 @@ async function migrateCustomers() {
   for (const account of customerAccounts) {
     // Get contact for email
     const contact = contactMap[account.PersonContactId];
-    const email = contact?.Email;
 
+    // Use Gmail '+' alias for placeholder emails when email is missing
+    // Format: tech+{firstname}_{lastname}_{sf_id}@veteranpcs.com
+    // Gmail ignores everything after '+' and delivers to tech@veteranpcs.com
+    let email = contact?.Email;
     if (!email) {
-      skipped.push(`${account.FirstName} ${account.LastName} (${account.Id}): No email found`);
-      continue;
+      const firstName = (account.FirstName || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const lastName = (account.LastName || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '');
+      email = `tech+${firstName}_${lastName}_${account.Id}@veteranpcs.com`;
+      console.log(`   Using placeholder email for ${account.FirstName} ${account.LastName}`);
     }
 
     // Get best phone number (prefer mobile)
