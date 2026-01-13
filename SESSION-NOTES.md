@@ -8,10 +8,10 @@
 
 ## Quick Status
 
-**Current Phase:** Phase 4a Complete - Core Data Migrated
-**Next Phase:** Phase 4b - Pipeline Migrations
-**Blocked On:** Nothing
-**Ready to Code:** ✅ Continuing with customer and pipeline migrations
+**Current Phase:** Phase 4b In Progress - Customer Deals Complete
+**Next Phase:** Agent & Lender Onboarding Pipelines
+**Blocked On:** Review migration data quality before proceeding
+**Ready to Code:** ⚠️ Need to review data quality issues first
 
 ---
 
@@ -306,6 +306,92 @@ POST /lists/{slug}/attributes/stage/statuses
 
 ---
 
+## 2026-01-12 - Customer Deals Migration & Attio API Fixes
+
+**Platform:** Claude Code CLI
+**Duration:** ~2 hours
+**Status:** ✅ Phase 4b Partial Complete
+
+**Completed:**
+- ✅ Migrated customer deals pipeline - 975/1,021 created
+- ✅ Fixed critical Attio API status handling bug in lib/attio.ts
+- ✅ Added missing Attio attributes: charity_amount, deal_name, destination_state
+- ✅ Created delete-customer-deals.ts script for cleanup
+- ✅ Updated lib/attio-schema.ts with new attributes
+- ✅ Fixed stage mapping to match actual Salesforce values
+
+**Blockers:**
+- None
+
+**Key API Discoveries (CRITICAL):**
+
+1. **Status/Stage Setting for List Entries:**
+   - `status_title` at top level is IGNORED by Attio API
+   - Status must be inside `entry_values` using attribute slug
+   - Format: `{ stage: { status: "Status Title" } }` NOT `{ title: "..." }`
+
+2. **First Migration Attempt Failed Silently:**
+   - 976 deals created with NO stages (all in "No Stage" section)
+   - Financial data was missing due to incomplete field mappings
+   - Deal names were Attio auto-generated IDs
+
+3. **Root Causes Fixed:**
+   - STAGE_MAP used "Tracking 6+mo" but Salesforce has "Tracking 6+"
+   - Missing fields in OpportunityRow interface: Name, Charity_Amount__c, Destination_State__c
+   - createListEntry used wrong status format
+
+**Migration Results - Customer Deals:**
+| Metric | Count |
+|--------|-------|
+| Successfully created | 975 |
+| API errors | 1 (transient 500) |
+| Skipped (no customer mapping) | 45 |
+| Total in Salesforce | 1,021 |
+
+**Files Created:**
+- scripts/delete-customer-deals.ts
+
+**Files Modified:**
+- lib/attio.ts (fixed createListEntry and updateListEntry status handling)
+- lib/attio-schema.ts (added charity_amount, deal_name, destination_state)
+- scripts/migrate-customer-deals.ts (fixed stage map, interface, field mappings)
+- CLAUDE.md (updated migration progress, added API learnings)
+
+**API Fix Applied to lib/attio.ts:**
+```typescript
+// BEFORE (broken - status silently ignored)
+if (statusTitle) {
+  body.data.status_title = statusTitle;
+}
+
+// AFTER (working - status inside entry_values)
+if (statusTitle) {
+  entryValues[statusAttrSlug] = { status: statusTitle };
+}
+```
+
+**Verification Completed:**
+- Deals have proper stages (Paid Complete, Closed Lost, Tracking stages)
+- Human-readable names (e.g., "Rainy Lehman-GA")
+- Financial data populated: sale_price, payout_amount, charity_amount
+
+**Git Commits:**
+- [Pending this session]
+
+**Next Session Tasks:**
+- [ ] Review migration data quality issues
+- [ ] Decide: keep current migration or redo with fixes
+- [ ] Run migrate-agent-onboarding.ts (947 records)
+- [ ] Run migrate-lender-onboarding.ts (160 records)
+- [ ] Create customer-deals-review.md for 46 skipped records
+
+**Notes:**
+- The 45 skipped deals are for customers who weren't migrated (no email or phone errors)
+- Agent/Lender onboarding scripts will benefit from fixed status handling
+- May need to discuss data quality before proceeding
+
+---
+
 ## [NEXT SESSION DATE] - [TITLE]
 
 **Platform:** Claude Code CLI
@@ -413,9 +499,10 @@ git push
 | scripts/migrate-areas.ts | ✅ Complete | 271 | Bidirectional refs done |
 | scripts/migrate-area-assignments.ts | ✅ Complete | 506/511 | 3 missing agents |
 | scripts/migrate-customers.ts | ✅ Complete | 953/983 | 12 phone, 18 no email |
-| scripts/migrate-customer-deals.ts | ⏳ Ready | 1,021 | After customers |
+| scripts/migrate-customer-deals.ts | ✅ Complete | 975/1,021 | 1 error, 45 no customer |
 | scripts/migrate-agent-onboarding.ts | ⏳ Ready | 947 | Pipeline migration |
 | scripts/migrate-lender-onboarding.ts | ⏳ Ready | 160 | Pipeline migration |
+| scripts/delete-customer-deals.ts | ✅ Created | - | Cleanup utility |
 | scripts/validate-migration.ts | ⏳ Not Started | - | Final validation |
 
 ---

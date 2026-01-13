@@ -67,7 +67,7 @@ Before we continue, please confirm:
 
 ### Current Migration Status
 
-**Last Updated:** 2026-01-11
+**Last Updated:** 2026-01-12
 **Current Phase:** Phase 4 - Data Migration In Progress
 **Branch:** attio-migration
 
@@ -91,7 +91,7 @@ Before we continue, please confirm:
 | migrate-areas.ts | ✅ Done | 271/271 | 51 state-level areas filtered |
 | migrate-area-assignments.ts | ✅ Done | 506/509 | 3 skipped (missing agents) |
 | migrate-customers.ts | ✅ Done | 953/983 | 12 phone errors, 18 no email |
-| migrate-customer-deals.ts | ⏳ Pending | 1,021 | |
+| migrate-customer-deals.ts | ✅ Done | 975/1,021 | 1 error (500), 45 skipped (no customer) |
 | migrate-agent-onboarding.ts | ⏳ Pending | 947 | |
 | migrate-lender-onboarding.ts | ⏳ Pending | 160 | |
 
@@ -101,6 +101,7 @@ See `docs/post-migration-review/` for records that need manual attention:
 - lenders-review.md - 2 records (phone format errors)
 - area-assignments-review.md - 3 records (missing agent mappings)
 - customers-review.md - 30 records (12 phone errors + 18 no email)
+- customer-deals-review.md - 46 records (1 API error + 45 missing customer mappings)
 
 ---
 
@@ -133,6 +134,35 @@ See `docs/post-migration-review/` for records that need manual attention:
 5. **Useful lib/attio.ts methods added:**
    - `createSelectOption(target, objectSlug, attrSlug, title)` - Add select option
    - `getSelectOptions(target, objectSlug, attrSlug)` - List select options
+
+6. **List entry status/stage MUST be set inside `entry_values`:**
+   - Status is NOT a top-level parameter like `status_title`
+   - Must be included in `entry_values` using the attribute slug
+   ```typescript
+   // WRONG - will be silently ignored
+   body.data.status_title = 'Paid Complete';
+
+   // ALSO WRONG - 'title' key not recognized
+   entry_values.stage = { title: 'Paid Complete' };
+
+   // CORRECT - use 'status' key with status title as string
+   entry_values.stage = { status: 'Paid Complete' };
+   ```
+
+7. **List entry creation requires `parent_object`:**
+   - When creating list entries, you must specify `parent_object` alongside `parent_record_id`
+   ```typescript
+   // WRONG - missing parent_object
+   { parent_record_id: 'uuid', entry_values: {...} }
+
+   // CORRECT
+   { parent_object: 'customers', parent_record_id: 'uuid', entry_values: {...} }
+   ```
+
+8. **Stage names must match exactly:**
+   - Salesforce uses "Tracking 6+" but Attio was configured with "Tracking 6+mo"
+   - Always verify actual field values in source data before creating stage mappings
+   - Use proper CSV parsing (not awk) to handle commas in quoted fields
 
 ---
 

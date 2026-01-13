@@ -24,10 +24,17 @@ dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 const CUSTOMER_DEAL_RECORD_TYPE_ID = '0124x000000Z7G3';
 
 // Stage mapping: Salesforce → Attio
+// NOTE: Salesforce uses "Tracking 6+" not "Tracking 6+mo" - we map to Attio's "mo" suffix format
+// Free-text notes in StageName will default to 'New Lead' for admin follow-up
 const STAGE_MAP: Record<string, string> = {
   'New': 'New Lead',
   'Actively Looking': 'Tracking <1mo',
-  'Tracking <1mo': 'Tracking <1mo',
+  'Tracking': 'Tracking <1mo',           // No suffix variant
+  'Tracking <1': 'Tracking <1mo',        // Actual Salesforce value
+  'Tracking 1-2': 'Tracking 1-2mo',      // Actual Salesforce value
+  'Tracking 3-6': 'Tracking 3-6mo',      // Actual Salesforce value
+  'Tracking 6+': 'Tracking 6+mo',        // Actual Salesforce value
+  'Tracking <1mo': 'Tracking <1mo',      // In case some have suffix
   'Tracking 1-2mo': 'Tracking 1-2mo',
   'Tracking 3-6mo': 'Tracking 3-6mo',
   'Tracking 6+mo': 'Tracking 6+mo',
@@ -37,24 +44,30 @@ const STAGE_MAP: Record<string, string> = {
   'Closed Won': 'Paid Complete',
   'Closed - Lost': 'Closed Lost',
   'Closed Lost': 'Closed Lost',
+  'Interviewing': 'New Lead',            // Edge case - treat as new lead
+  'Waitlist': 'New Lead',                // Edge case - for admin follow-up
+  'Finalizing': 'Under Contract',        // Edge case
 };
 
 interface OpportunityRow {
   Id: string;
   IsDeleted: string;
   RecordTypeId: string;
-  AccountId: string;  // Customer
+  Name: string;                     // Opportunity name like "Ricardo Garcia-OH"
+  AccountId: string;                // Customer
   Agent__c: string;
   Lender__c: string;
   Area__c: string;
   StageName: string;
   Sale_Price__c: string;
   Closing_Commission__c: string;
-  Payout_Amount__c: string;
+  Payout_Amount__c: string;         // Move-in bonus (actual paid amount)
+  Charity_Amount__c: string;        // Charity donation amount
   Property_Address__c: string;
   Buying_andor_Selling__c: string;
   Expected_Close_Date__c: string;
   Actual_Close_Date__c: string;
+  Destination_State__c: string;     // Customer destination state
   CreatedDate: string;
   LastModifiedDate: string;
 }
@@ -142,22 +155,27 @@ async function migrateCustomerDeals() {
 
     try {
       // Create list entry (pipeline record)
-      await attio.createListEntry('customer_deals', attioCustomerId, {
+      // Note: Attio requires parent_object, and target_object for record references
+      await attio.createListEntry('customer_deals', 'customers', attioCustomerId, {
         salesforce_id: opp.Id,
+        deal_name: opp.Name || null,                                                     // Human-readable name
         deal_type: getDealType(opp.Buying_andor_Selling__c),
+        destination_state: opp.Destination_State__c || null,                             // Customer destination state
         sale_price: opp.Sale_Price__c ? parseFloat(opp.Sale_Price__c) : null,
         agent_commission: opp.Closing_Commission__c ? parseFloat(opp.Closing_Commission__c) : null,
         payout_amount: opp.Payout_Amount__c ? parseFloat(opp.Payout_Amount__c) : null,
+        move_in_bonus: opp.Payout_Amount__c ? parseFloat(opp.Payout_Amount__c) : null,   // Same as payout (historical)
+        charity_amount: opp.Charity_Amount__c ? parseFloat(opp.Charity_Amount__c) : null, // Charity donation
         property_address: opp.Property_Address__c || null,
         expected_close_date: opp.Expected_Close_Date__c || null,
         actual_close_date: opp.Actual_Close_Date__c || null,
-        ...(attioAgentId && { agent: { target_record_id: attioAgentId } }),
-        ...(attioLenderId && { lender: { target_record_id: attioLenderId } }),
-        ...(attioAreaId && { area: { target_record_id: attioAreaId } }),
+        ...(attioAgentId && { agent: { target_object: 'agents', target_record_id: attioAgentId } }),
+        ...(attioLenderId && { lender: { target_object: 'lenders', target_record_id: attioLenderId } }),
+        ...(attioAreaId && { area: { target_object: 'areas', target_record_id: attioAreaId } }),
       }, attioStage);
 
       successCount++;
-      console.log(`✓ Deal ${opp.Id} -> ${attioStage}`);
+      console.log(`✓ ${opp.Name} -> ${attioStage}`);
     } catch (error: any) {
       errorCount++;
       console.error(`❌ Deal ${opp.Id}: ${error.message}`);

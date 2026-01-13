@@ -118,7 +118,8 @@ async function migrateLenderOnboarding() {
 
     try {
       // Create list entry (pipeline record)
-      await attio.createListEntry('lender_onboarding', attioLenderId, {
+      // Note: Attio requires parent_object in addition to parent_record_id
+      await attio.createListEntry('lender_onboarding', 'lenders', attioLenderId, {
         salesforce_id: opp.Id,
         application_sent_date: opp.Application_Sent_Date__c || null,
         application_received_date: opp.Application_Received_Date__c || null,

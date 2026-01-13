@@ -420,6 +420,15 @@ export const CUSTOMER_DEALS_ATTRIBUTES: AttributeDefinition[] = [
     type: 'currency',
     config: { currency: { default_currency_code: 'USD', display_type: 'symbol' } }
   },
+  {
+    title: 'Charity Amount',
+    api_slug: 'charity_amount',
+    type: 'currency',
+    description: 'Charity donation amount based on Move-In Bonus tier',
+    config: { currency: { default_currency_code: 'USD', display_type: 'symbol' } }
+  },
+  { title: 'Deal Name', api_slug: 'deal_name', type: 'text', description: 'Human-readable deal name from Salesforce' },
+  { title: 'Destination State', api_slug: 'destination_state', type: 'text', description: 'Customer destination state' },
   { title: 'Property Address', api_slug: 'property_address', type: 'text' },
   { title: 'Expected Close Date', api_slug: 'expected_close_date', type: 'date' },
   { title: 'Actual Close Date', api_slug: 'actual_close_date', type: 'date' },

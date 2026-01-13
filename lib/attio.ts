@@ -322,18 +322,30 @@ class AttioClient {
 
   /**
    * Create a list entry (pipeline record)
+   * @param listSlug - The list/pipeline slug (e.g., 'customer_deals')
+   * @param parentObject - The parent object slug (e.g., 'customers')
+   * @param parentRecordId - The parent record UUID
+   * @param data - Entry values to set
+   * @param statusTitle - Optional stage/status title (must match a configured status title exactly)
+   * @param statusAttrSlug - Optional status attribute slug (defaults to 'stage')
    */
-  async createListEntry(listSlug: string, parentRecordId: string, data: Record<string, any>, statusTitle?: string) {
+  async createListEntry(listSlug: string, parentObject: string, parentRecordId: string, data: Record<string, any>, statusTitle?: string, statusAttrSlug: string = 'stage') {
+    // Build entry values with optional status
+    const entryValues = this.formatValues(data);
+
+    // Status must be set inside entry_values using the attribute slug
+    // Format: { status: "Status Title" } - status is the status title as a string
+    if (statusTitle) {
+      entryValues[statusAttrSlug] = { status: statusTitle };
+    }
+
     const body: any = {
       data: {
+        parent_object: parentObject,
         parent_record_id: parentRecordId,
-        entry_values: this.formatValues(data),
+        entry_values: entryValues,
       }
     };
-
-    if (statusTitle) {
-      body.data.status_title = statusTitle;
-    }
 
     return this.request(`/lists/${listSlug}/entries`, {
       method: 'POST',
@@ -343,17 +355,23 @@ class AttioClient {
 
   /**
    * Update a list entry
+   * @param statusAttrSlug - Optional status attribute slug (defaults to 'stage')
    */
-  async updateListEntry(listSlug: string, entryId: string, data: Record<string, any>, statusTitle?: string) {
+  async updateListEntry(listSlug: string, entryId: string, data: Record<string, any>, statusTitle?: string, statusAttrSlug: string = 'stage') {
+    // Build entry values with optional status
+    const entryValues = this.formatValues(data);
+
+    // Status must be set inside entry_values using the attribute slug
+    // Format: { status: "Status Title" } - status is the status title as a string
+    if (statusTitle) {
+      entryValues[statusAttrSlug] = { status: statusTitle };
+    }
+
     const body: any = {
       data: {
-        entry_values: this.formatValues(data),
+        entry_values: entryValues,
       }
     };
-
-    if (statusTitle) {
-      body.data.status_title = statusTitle;
-    }
 
     return this.request(`/lists/${listSlug}/entries/${entryId}`, {
       method: 'PATCH',
@@ -374,6 +392,15 @@ class AttioClient {
       body: JSON.stringify(query),
     });
     return res.data;
+  }
+
+  /**
+   * Delete a list entry by entry ID
+   */
+  async deleteListEntry(listSlug: string, entryId: string) {
+    return this.request(`/lists/${listSlug}/entries/${entryId}`, {
+      method: 'DELETE',
+    });
   }
 
   // ==========================================================================
