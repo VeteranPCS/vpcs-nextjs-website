@@ -550,19 +550,89 @@ This session was a continuation after context compaction. Previous sessions had:
 - CLAUDE.md (migration progress table)
 
 **Git Commits:**
-- [Pending]
+- 76e2692 - "Phase 4 complete: All data migrations finished"
 
 **Next Session Tasks:**
-- [ ] Create validation script to verify migration completeness
+- [x] Create validation script to verify migration completeness
 - [ ] Address skipped records from post-migration review docs
 - [ ] Manual review of records with phone validation errors
-- [ ] Final data quality audit
 
 **Notes:**
 - All 10 migration scripts have now been executed
 - Phase 4 data migration is COMPLETE
 - 35 total skipped onboarding records (33 agents + 2 lenders) need manual attention
 - These correspond to the agents/lenders that failed original migration due to phone format issues
+
+---
+
+## 2026-01-13 - Validation, Deduplication & Data Cleanup
+
+**Platform:** Claude Code CLI
+**Duration:** ~1.5 hours
+**Status:** ✅ Complete
+
+**Completed:**
+- ✅ Created `scripts/validate-migration.ts` - comprehensive validation script
+- ✅ Discovered duplicate records from re-migration (customers and deals)
+- ✅ Created `scripts/deduplicate-records.ts` - safe deduplication script
+- ✅ Verified duplicates had IDENTICAL business data before deletion
+- ✅ Removed 953 duplicate customers (cascade-deleted associated deals)
+- ✅ Final validation passed - all counts correct
+
+**Blockers:**
+- None
+
+**Decisions Made:**
+- Verified duplicates thoroughly before deletion (compared all business fields)
+- Confirmed Attio has cascade delete - deleting customers auto-deletes linked deals
+- Kept validation and deduplication scripts for future use
+
+**Duplicate Analysis Results:**
+| Object | Before | After | Duplicates Removed |
+|--------|--------|-------|-------------------|
+| Customers | 1,938 | 985 | 953 |
+| Customer Deals | 1,983 | 1,007 | 976 (cascade) |
+
+**Validation Script Checks:**
+- Record counts vs expected
+- Stage distribution across pipelines
+- Field completeness (name, email, salesforce_id)
+- Reference integrity (agent→area, customer→deal)
+- Duplicate detection with duplicate warning
+
+**Files Created:**
+- scripts/validate-migration.ts
+- scripts/deduplicate-records.ts
+
+**Files Removed (cleanup):**
+- scripts/check-duplicates.ts (temporary)
+- scripts/verify-duplicates.ts (temporary)
+
+**Git Commits:**
+- 4778968 - "Add validation and deduplication scripts for migration"
+
+**Final Migration State:**
+| Object | Count | Status |
+|--------|-------|--------|
+| States | 52 | ✅ |
+| Agents | 1,025 | ✅ |
+| Lenders | 139 | ✅ |
+| Areas | 271 | ✅ |
+| Area Assignments | 503 | ✅ |
+| Customers | 985 | ✅ |
+| Customer Deals | 1,007 | ✅ |
+| Agent Onboarding | 913 | ✅ |
+| Lender Onboarding | 158 | ✅ |
+
+**Next Session Tasks:**
+- [ ] Address skipped records from post-migration review docs
+- [ ] Manual review of records with phone validation errors
+- [ ] Begin Phase 5: API routes and webhook implementation
+
+**Notes:**
+- Phase 4 Data Migration is now FULLY COMPLETE and VALIDATED
+- All duplicates removed, data integrity verified
+- Ready to move to Phase 5 (API implementation)
 
 ---
 
@@ -679,7 +749,8 @@ git push
 | scripts/delete-customer-deals.ts | ✅ Created | - | Cleanup utility |
 | scripts/add-name-attribute.ts | ✅ Created | - | Adds name attr to objects |
 | scripts/populate-names.ts | ✅ Created | - | Populates name field for existing records |
-| scripts/validate-migration.ts | ⏳ Not Started | - | Final validation |
+| scripts/validate-migration.ts | ✅ Complete | - | Verifies counts, stages, fields, refs |
+| scripts/deduplicate-records.ts | ✅ Complete | - | Removes duplicate records safely |
 
 ---
 
