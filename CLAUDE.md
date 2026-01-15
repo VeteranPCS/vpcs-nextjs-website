@@ -68,7 +68,7 @@ Before we continue, please confirm:
 ### Current Migration Status
 
 **Last Updated:** 2026-01-14
-**Current Phase:** Phase 5 - Website Integration (IN PROGRESS)
+**Current Phase:** Phase 5 COMPLETE ✅ - Ready for Cutover
 **Branch:** attio-migration
 
 **✅ Completed:**
@@ -79,14 +79,16 @@ Before we continue, please confirm:
 - Phase 4a: Core data migration (states, agents, lenders, areas, area assignments)
 - Phase 4b: Customer and deals migration (customers, customer deals)
 - Phase 4c: Onboarding pipelines (agent onboarding, lender onboarding)
+- Phase 5A: Utility libraries (magic-link, slack, openphone)
+- Phase 5B: Website data layer (stateService, areas API refactored for Attio)
+- Phase 5C: Contact forms + magic-link API routes
+- Phase 5D: Webhook handler + cron jobs (stale leads/deals automation)
 
-**🚧 Phase 5 - Website Integration (Current):**
-| Sub-Phase | Description | Status |
-|-----------|-------------|--------|
-| 5A | Utility Libraries (magic-link, slack, openphone) | ⏳ Pending |
-| 5B | Website Data Layer (display agents/lenders from Attio) | ⏳ Pending |
-| 5C | Contact Form Migration (submit leads to Attio) | ⏳ Pending |
-| 5D | Webhooks & Automations | ⏳ Pending |
+**📋 Next Steps (Cutover):**
+- [ ] Configure Attio webhooks in Attio dashboard
+- [ ] Set up cron jobs (Vercel cron or external scheduler)
+- [ ] Test end-to-end lead flow
+- [ ] Final cutover preparation
 
 **📋 Phase 5 Key Decisions:**
 | Decision | Choice |

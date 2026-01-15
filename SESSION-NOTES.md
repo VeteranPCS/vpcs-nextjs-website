@@ -725,6 +725,91 @@ This session was a continuation after context compaction. Previous sessions had:
 
 ---
 
+## 2026-01-14 - Phase 5 Implementation: Website Attio Integration Complete
+
+**Platform:** Claude Code CLI
+**Duration:** ~4 hours (across context compaction)
+**Status:** ✅ Complete
+
+**Completed:**
+- ✅ Phase 5A: Utility libraries (magic-link, slack, openphone)
+- ✅ Phase 5B: Website data layer refactored for Attio
+- ✅ Phase 5C: Contact forms + magic-link API routes
+- ✅ Phase 5D: Webhook handler + cron jobs for stale leads/deals
+
+**Blockers:**
+- None
+
+**Phase 5A - Utility Libraries:**
+- `lib/magic-link.ts` - JWT generation/validation (48h expiry)
+- `lib/slack.ts` - Slack webhook notifications (alerts, errors, deal closed)
+- `lib/openphone.ts` - SMS via OpenPhone API (lead notifications, reminders)
+
+**Phase 5B - Website Data Layer:**
+- Refactored `services/stateService.tsx` - agents/lenders now fetched from Attio
+- Refactored `app/api/v1/areas/route.ts` - areas queried from Attio
+- Fixed Attio API query syntax issues (record reference fields, ID filtering)
+
+**Phase 5C - Contact Forms:**
+- Refactored `salesForcePostFormsService.tsx` - all 8 form functions now use Attio
+- Created `GET /api/magic-link/validate` - validates agent portal tokens
+- Created `POST /api/magic-link/update` - updates deals via magic link
+
+**Phase 5D - Webhooks & Automations:**
+- Created `POST /api/webhooks/attio` - cache revalidation on record updates
+- Created `GET /api/cron/check-stale-leads` - 12h lead re-routing
+- Created `GET /api/cron/check-stale-deals` - 7d/14d/45d deal monitoring
+
+**Key API Discoveries:**
+
+1. **Attio record reference field queries require nested syntax:**
+   ```typescript
+   // WRONG - causes "Filter cannot omit field" error
+   { state: { $eq: stateId } }
+
+   // CORRECT - must use target_record_id
+   { state: { target_record_id: { $eq: stateId } } }
+   ```
+
+2. **Attio cannot filter by record UUID:**
+   - `{ id: { $in: ['uuid1', 'uuid2'] } }` returns "Unknown attribute slug: id"
+   - Solution: Fetch all matching records, filter in memory using Set
+
+**Files Created:**
+- lib/magic-link.ts
+- lib/slack.ts
+- lib/openphone.ts
+- app/api/magic-link/validate/route.ts
+- app/api/magic-link/update/route.ts
+- app/api/webhooks/attio/route.ts
+- app/api/cron/check-stale-leads/route.ts
+- app/api/cron/check-stale-deals/route.ts
+
+**Files Modified:**
+- services/stateService.tsx (Attio queries)
+- services/salesForcePostFormsService.tsx (complete rewrite)
+- app/api/v1/areas/route.ts (Attio queries)
+
+**Git Commits:**
+- 7daa20d - "Phase 5A+5B: Utility libraries + Website data layer for Attio"
+- 14c9586 - "Phase 5C: Complete website Attio integration"
+- 829c4ad - "Phase 5D: Add Attio webhook handler and cron jobs"
+
+**Next Session Tasks:**
+- [ ] Configure Attio webhooks in Attio dashboard
+- [ ] Set up cron jobs (Vercel cron or external scheduler)
+- [ ] Test end-to-end lead flow
+- [ ] Final cutover preparation
+
+**Notes:**
+- Website now reads ALL data from Attio (agents, lenders, areas)
+- Forms create customers and deals directly in Attio
+- Magic links enable agent portal access
+- Stale lead re-routing and deal monitoring fully automated
+- Ready for final testing and cutover to production
+
+---
+
 ## Template for New Sessions
 
 Copy this template when starting a new session:
