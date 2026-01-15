@@ -68,8 +68,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<AreasRespo
         const stateId = states[0].id;
 
         // 2. Get all areas in this state
+        // Note: 'state' is a record reference field, so we use target_record_id syntax
         const areas = await attio.queryRecords('areas', {
-            filter: { state: { $eq: stateId } }
+            filter: { state: { target_record_id: { $eq: stateId } } }
         });
 
         // 3. Convert to sorted array with slugs

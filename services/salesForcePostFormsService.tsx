@@ -1,391 +1,212 @@
 'use server'
-import sendToSlack from '@/actions/sendToSlack';
-import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
-import { formatPhoneNumberForDisplay, formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
-import stateService from '@/services/stateService';
+import { attio } from '@/lib/attio';
+import { slack } from '@/lib/slack';
+import { openphone } from '@/lib/openphone';
+import { generateMagicLink } from '@/lib/magic-link';
+import { normalizePhone } from '@/lib/normalize-phone';
 import { logDebug, logError, logInfo } from './loggingService';
 import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
-import { getAdminPhoneNumberForState } from '@/services/stateRoutingService';
 
-interface SalesforceSubmissionResult {
-    success: boolean;
-    response?: Response;
-    responseText?: string;
-    redirectUrl?: string;
-    error?: Error;
-}
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://veteranpcs.com';
+const THANK_YOU_URL = `${BASE_URL}/thank-you`;
 
 /**
- * Enhanced Salesforce submission with retry logic and proper success validation
+ * Find or create a customer record in Attio
+ * Returns the customer record ID
  */
-async function submitToSalesforceWithRetry(
-    url: string,
-    formBody: string,
-    submissionId: string,
-    maxRetries = 3,
-    baseDelay = 1000
-): Promise<SalesforceSubmissionResult> {
-    let lastError: Error | null = null;
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        logDebug(`Salesforce submission attempt ${attempt}/${maxRetries}`, { submissionId });
-
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formBody,
-                signal: controller.signal
-            });
-
-            clearTimeout(timeoutId);
-
-            logInfo(`Salesforce response received (attempt ${attempt})`, {
-                submissionId,
-                status: response.status,
-                statusText: response.statusText,
-                ok: response.ok
-            });
-
-            // Basic HTTP error check
-            if (!response.ok) {
-                const error = new Error(`Salesforce HTTP error: ${response.status} ${response.statusText}`);
-                logError(`HTTP error on attempt ${attempt}`, { submissionId, status: response.status }, error);
-                lastError = error;
-
-                // Don't retry on client errors (4xx), only on server errors (5xx) or network issues
-                if (response.status >= 400 && response.status < 500) {
-                    return { success: false, response, error };
-                }
-
-                // Retry on 5xx errors
-                if (attempt < maxRetries) {
-                    await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, attempt - 1)));
-                    continue;
-                }
-
-                return { success: false, response, error };
-            }
-
-            // Read response text for further validation
-            let responseText: string;
-            try {
-                responseText = await response.text();
-                logDebug(`Response text received (attempt ${attempt})`, {
-                    submissionId,
-                    responseLength: responseText.length,
-                    hasContent: responseText.length > 0
-                });
-            } catch (textError) {
-                const error = new Error('Failed to read response text from Salesforce');
-                logError(`Failed to read response text on attempt ${attempt}`, { submissionId }, textError);
-                lastError = error;
-
-                if (attempt < maxRetries) {
-                    await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, attempt - 1)));
-                    continue;
-                }
-
-                return { success: false, response, error };
-            }
-
-            // Validate Salesforce success - look for success indicators
-            const isValidSalesforceResponse = validateSalesforceResponse(responseText, submissionId);
-
-            if (!isValidSalesforceResponse.isValid) {
-                const error = new Error(`Salesforce validation failed: ${isValidSalesforceResponse.reason}`);
-                logError(`Response validation failed on attempt ${attempt}`, {
-                    submissionId,
-                    reason: isValidSalesforceResponse.reason,
-                    responsePreview: responseText.substring(0, 200)
-                }, error);
-                lastError = error;
-
-                if (attempt < maxRetries) {
-                    await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, attempt - 1)));
-                    continue;
-                }
-
-                return { success: false, response, responseText, error };
-            }
-
-            // Extract redirect URL if present
-            const redirectUrlMatch = responseText.match(/window\.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
-            const redirectUrl = redirectUrlMatch ? redirectUrlMatch[1] : undefined;
-
-            logInfo(`Salesforce submission successful on attempt ${attempt}`, {
-                submissionId,
-                hasRedirectUrl: !!redirectUrl,
-                redirectUrl
-            });
-
-            return {
-                success: true,
-                response,
-                responseText,
-                redirectUrl
-            };
-
-        } catch (networkError) {
-            const error = networkError instanceof Error ? networkError : new Error('Unknown network error');
-
-            if (error.name === 'AbortError') {
-                logError(`Request timeout on attempt ${attempt}`, { submissionId }, error);
-            } else {
-                logError(`Network error on attempt ${attempt}`, { submissionId }, error);
-            }
-
-            lastError = error;
-
-            if (attempt < maxRetries) {
-                const delay = baseDelay * Math.pow(2, attempt - 1);
-                logInfo(`Retrying after ${delay}ms (attempt ${attempt + 1}/${maxRetries})`, { submissionId });
-                await new Promise(resolve => setTimeout(resolve, delay));
-                continue;
-            }
-        }
-    }
-
-    // All retries exhausted
-    logError(`All ${maxRetries} submission attempts failed`, { submissionId }, lastError);
-    return { success: false, error: lastError || new Error('Max retries reached') };
-}
-
-/**
- * Validates that a Salesforce response indicates successful form submission
- */
-function validateSalesforceResponse(responseText: string, submissionId: string): { isValid: boolean; reason?: string } {
-    // Check for explicit error indicators in the response first
-    if (responseText && responseText.trim().length > 0) {
-        const errorIndicators = [
-            'error occurred',
-            'invalid',
-            'required field',
-            'unable to create',
-            'failed to submit',
-            'system error',
-            'temporarily unavailable',
-            'captcha',
-            'security'
-        ];
-
-        const lowerResponseText = responseText.toLowerCase();
-        for (const indicator of errorIndicators) {
-            if (lowerResponseText.includes(indicator)) {
-                logDebug('Found error indicator in response', {
-                    submissionId,
-                    indicator,
-                    responsePreview: responseText.substring(0, 200)
-                });
-                return { isValid: false, reason: `Error indicator found: ${indicator}` };
-            }
-        }
-
-        // Check for success indicators
-        const successIndicators = [
-            'window.location', // Redirect script indicates success
-            'thank', // Thank you pages
-            'success',
-            'submitted',
-            'received'
-        ];
-
-        for (const indicator of successIndicators) {
-            if (lowerResponseText.includes(indicator)) {
-                logDebug('Found success indicator in response', {
-                    submissionId,
-                    indicator
-                });
-                return { isValid: true };
-            }
-        }
-
-        // If response has content but no clear indicators, log and assume error for now
-        logDebug('Response has content but no clear success/error indicators', {
-            submissionId,
-            responseLength: responseText.length,
-            responsePreview: responseText.substring(0, 200)
-        });
-        return { isValid: false, reason: 'Unclear response content, no success indicators found' };
-    }
-
-    // Empty response handling - this might actually be valid for some Salesforce endpoints
-    // Let's be more lenient for empty responses and consider them potentially valid
-    logDebug('Empty response from Salesforce - treating as potentially valid', {
-        submissionId,
-        responseLength: responseText ? responseText.length : 0
+async function findOrCreateCustomer(data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+    currentLocation?: string;
+    militaryStatus?: string;
+    militaryService?: string;
+}): Promise<string> {
+    // Try to find existing customer by email
+    const existing = await attio.queryRecords('customers', {
+        filter: { email: { $eq: data.email } },
+        limit: 1
     });
 
-    // For now, let's accept empty responses as valid since they might indicate success
-    // We can monitor logs to see if this causes issues
-    return { isValid: true };
+    if (existing.length > 0) {
+        // Update existing customer with any new data
+        const customerId = existing[0].id;
+        const updates: Record<string, any> = {};
+
+        if (data.phone) {
+            const normalized = normalizePhone(data.phone);
+            if (normalized) updates.phone = normalized;
+        }
+        if (data.currentLocation) updates.current_location = data.currentLocation;
+        if (data.militaryStatus) updates.military_status = data.militaryStatus;
+        if (data.militaryService) updates.military_service = data.militaryService;
+
+        if (Object.keys(updates).length > 0) {
+            await attio.updateRecord('customers', customerId, updates);
+        }
+
+        return customerId;
+    }
+
+    // Create new customer
+    const customerData: Record<string, any> = {
+        name: `${data.firstName} ${data.lastName}`,
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        lead_source: 'Website',
+    };
+
+    if (data.phone) {
+        const normalized = normalizePhone(data.phone);
+        if (normalized) customerData.phone = normalized;
+    }
+    if (data.currentLocation) customerData.current_location = data.currentLocation;
+    if (data.militaryStatus) customerData.military_status = data.militaryStatus;
+    if (data.militaryService) customerData.military_service = data.militaryService;
+
+    const result = await attio.createRecord('customers', customerData);
+    return result.data.id.record_id;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const OPEN_PHONE_FROM_NUMBER = process.env.OPEN_PHONE_FROM_NUMBER || "";
+/**
+ * Determine deal type from form data
+ */
+function getDealType(buyingSelling?: string): 'Buying' | 'Selling' | 'Buying' {
+    if (!buyingSelling) return 'Buying';
+    const lower = buyingSelling.toLowerCase();
+    if (lower.includes('sell')) return 'Selling';
+    return 'Buying';
+}
 
 export async function contactAgentPostForm(formData: any, queryString: string) {
-    // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'contactAgent',
         formData,
         FormSubmissionStatus.PENDING
     );
 
+    const params = new URLSearchParams(queryString);
+    const agentSalesforceId = params.get('id');
+    const stateCode = params.get('state');
+
     logInfo('Processing contact agent form submission', {
         submissionId,
-        agent_id: new URLSearchParams(queryString).get('id')
+        agent_salesforce_id: agentSalesforceId
     });
 
     try {
-        const paramsObj: { [key: string]: string } = {};
-        new URLSearchParams(queryString).forEach((value, key) => {
-            paramsObj[key] = value;
-        });
-
-        // Fetch agent information if ID is provided
+        // 1. Find the agent in Attio by salesforce_id
         let agentInfo = null;
-        if (paramsObj.id) {
+        let agentId: string | null = null;
+
+        if (agentSalesforceId) {
             try {
-                agentInfo = await stateService.fetchAgentById(paramsObj.id);
-                logDebug('Agent information fetched successfully', {
-                    agent_id: paramsObj.id,
-                    submissionId
+                const agents = await attio.queryRecords('agents', {
+                    filter: { salesforce_id: { $eq: agentSalesforceId } },
+                    limit: 1
                 });
+                if (agents.length > 0) {
+                    agentInfo = agents[0];
+                    agentId = agents[0].id;
+                    logDebug('Agent found in Attio', { submissionId, agentId });
+                }
             } catch (error) {
-                logError('Error fetching agent information', {
-                    agent_id: paramsObj.id,
-                    submissionId
-                }, error);
+                logError('Error finding agent in Attio', { submissionId, agentSalesforceId }, error);
             }
         }
 
-        const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
-            retURL: `${BASE_URL}/thank-you`,
-            "00N4x00000Lsn28": paramsObj.id || "",
-            recordType: "0124x000000Z5yD",
-            lead_source: "Website",
-            "00N4x00000Lsr0G": "true",
-            country_code: "US",
-            "00N4x00000QQ1LB": `${BASE_URL}/contact-agent${queryString}`,
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            mobile: formData.phone || "",
-            "00N4x00000Lpb0T": formData.currentBase || "",
-            "00N4x00000LspUs": formData.destinationBase || "",
-            "00N4x00000QPksj": formData.howDidYouHear || "",
-            "00N4x00000QPS7V": formData.tellusMore || "",
-            "00N4x00000bfgFA": formData.additionalComments || "",
-            "00N4x00000LsnP2": formData.status_select || "",
-            "00N4x00000LsnOx": formData.branch_select || "",
-            "00N4x00000QQ0Vz": formData.discharge_status || "",
-            "00N4x00000LspV2": formData.state || "",
-            "00N4x00000LspUi": formData.city || "",
-            "00N4x00000LsaDm": formData.buyingSelling || "",
-            "00N4x00000cKsNF": formData.timeframe || "",
-            "00N4x00000LssBZ": formData.typeOfHome || "",
-            "00N4x00000Lpb2K": formData.bedrooms || "",
-            "00N4x00000Lpb2Z": formData.bathrooms || "",
-            "00N4x00000LsaCy": formData.maxPrice || "",
-            "00N4x00000Lpbfw": formData.preApproval || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
-        }).toString();
-
-        logDebug('Sending form data to Salesforce with retry logic', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
+        // 2. Create or update customer record
+        const customerId = await findOrCreateCustomer({
+            firstName: formData.firstName || '',
+            lastName: formData.lastName || '',
+            email: formData.email || '',
+            phone: formData.phone,
+            currentLocation: formData.currentBase,
+            militaryStatus: formData.status_select,
+            militaryService: formData.branch_select,
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
-        );
+        logDebug('Customer record created/updated', { submissionId, customerId });
 
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
+        // 3. Create deal in customer_deals pipeline
+        const dealType = getDealType(formData.buyingSelling);
+        const dealData: Record<string, any> = {
+            deal_type: dealType,
+            contact_confirmed: false,
+            reroute_count: 0,
+            last_updated: new Date().toISOString(),
+            last_stage_change: new Date().toISOString(),
+        };
 
-            logError('Salesforce submission failed after all retries', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit form to Salesforce');
+        // Add agent reference if found
+        if (agentId) {
+            dealData.agent = { target_object: 'agents', target_record_id: agentId };
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        // Add notes/comments if provided
+        if (formData.additionalComments) {
+            dealData.notes = formData.additionalComments;
+        }
 
-        // Fire and forget notifications - don't await them
-        await Promise.all([
-            sendToSlack({
-                headerText: '🔔 New Agent Lead',
-                name: `${formData.firstName} ${formData.lastName}` || "",
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-                agentInfo: agentInfo ? {
-                    name: agentInfo.Name || "",
-                    email: agentInfo.PersonEmail || "",
-                    phoneNumber: agentInfo.PersonMobilePhone || "",
-                    brokerage: agentInfo.Brokerage_Name__pc,
-                    state: paramsObj.state
-                } : undefined
-            }),
-            sendOpenPhoneMessage({
-                content: `New Lead From VeteranPCS:
-${formData.firstName} ${formData.lastName}
-Email: ${formData.email}
-Phone: ${formatPhoneNumberForDisplay(formData.phone)}
-${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
-${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
-${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
-                from: getAdminPhoneNumberForState(paramsObj.state),
-                to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
+        const dealResult = await attio.createListEntry(
+            'customer_deals',
+            'customers',
+            customerId,
+            dealData,
+            'New Lead'  // Initial stage
+        );
+
+        const dealId = dealResult.data.id.entry_id;
+        logInfo('Deal created in Attio', { submissionId, dealId, dealType });
+
+        // 4. Send notifications (fire and forget)
+        const notificationPromises: Promise<any>[] = [];
+
+        // Slack notification
+        notificationPromises.push(
+            slack.sendNewLead({
+                customerName: `${formData.firstName} ${formData.lastName}`,
+                customerEmail: formData.email || '',
+                customerPhone: formData.phone,
+                agentName: agentInfo?.name || 'Unknown Agent',
+                dealType,
+                area: formData.destinationBase || formData.city,
+            }).catch(error => {
+                logError('Slack notification failed', { submissionId }, error);
             })
-        ]).catch(error => {
-            // Log any errors but don't block the main flow
-            logError('Error sending notifications', { submissionId }, error);
-        });
+        );
 
-        // At this point, we know the submission was successful based on our enhanced validation
-        // Track the successful submission
+        // SMS notification to agent if we have their phone
+        if (agentId && agentInfo?.phone) {
+            const magicLink = generateMagicLink(agentId, dealId, 'agent');
+            notificationPromises.push(
+                openphone.sendNewLeadNotification({
+                    to: agentInfo.phone,
+                    agentName: agentInfo.first_name || agentInfo.name || 'Agent',
+                    customerName: `${formData.firstName} ${formData.lastName}`,
+                    dealType,
+                    magicLink,
+                }).catch(error => {
+                    logError('SMS notification failed', { submissionId }, error);
+                })
+            );
+        }
+
+        await Promise.allSettled(notificationPromises);
+
+        // Track success
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.SUCCESS,
-            response
+            null
         );
 
-        if (redirectUrl) {
-            logInfo('Form submitted successfully with redirect URL', {
-                submissionId,
-                redirectUrl
-            });
-            return { redirectUrl };
-        }
+        logInfo('Contact agent form submitted successfully', { submissionId, dealId });
+        return { message: 'Form submitted successfully!', dealId, redirectUrl: THANK_YOU_URL };
 
-        logInfo('Form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!' };
     } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.FAILURE,
@@ -399,7 +220,6 @@ ${formData.additionalComments ? `Additional Comments: ${formData.additionalComme
 }
 
 export async function GetListedAgentsPostForm(formData: any) {
-    // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'getListedAgents',
         formData,
@@ -409,106 +229,74 @@ export async function GetListedAgentsPostForm(formData: any) {
     logInfo('Processing agent listing form submission', { submissionId });
 
     try {
-        const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
-            retURL: `${BASE_URL}/thank-you`,
-            recordType: "0124x000000Z5yI",
-            lead_source: "Website",
-            "00N4x00000Lsr0G": "true",
-            country_code: "US",
-            "00N4x00000QQ1LB": `${BASE_URL}/get-listed-agents`,
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            mobile: formData.phone || "",
-            "00N4x00000LsnP2": formData.status_select || "",
-            "00N4x00000LsnOx": formData.branch_select || "",
-            "00N4x00000QQ0Vz": formData.discharge_status || "",
-            "state_code": formData.state || "",
-            "city": formData.city || "",
-            "00N4x00000LpcBo": formData.primaryState || "",
-            "00N4x00000QPIOt": Array.isArray(formData.otherStates) ? formData.otherStates.join(';') : formData.otherStates || "",
-            "00N4x00000LpcCm": formData.licenseNumber || "",
-            "00N4x00000LpcCr": formData.brokerageName || "",
-            "00N4x00000c4kPN": formData.managingBrokerName || "",
-            "00N4x00000c4kPS": formData.managingBrokerPhone || "",
-            "00N4x00000c4kPX": formData.managingBrokerEmail || "",
-            "00N4x00000LsqCV": formData.citiesServiced || "",
-            "00N4x00000LsqCa": formData.basesServiced || "",
-            "00N4x00000LpcDQ": formData.personallyPCS || "",
-            "00N4x00000LpcDV": formData.leadAcceptance || "",
-            "00N4x00000QPksj": formData.howDidYouHear || "",
-            "00N4x00000QPS7V": formData.tellusMore || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
-        }).toString();
+        // Create agent record in agents object (pending status)
+        const agentData: Record<string, any> = {
+            name: `${formData.firstName} ${formData.lastName}`,
+            first_name: formData.firstName || '',
+            last_name: formData.lastName || '',
+            email: formData.email || '',
+            military_status: formData.status_select || null,
+            military_service: formData.branch_select || null,
+            brokerage_name: formData.brokerageName || null,
+            brokerage_license: formData.licenseNumber || null,
+            managing_broker_name: formData.managingBrokerName || null,
+            active_on_website: false,  // Not active until approved
+        };
 
-        logDebug('Sending agent listing data to Salesforce with retry logic', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
-        });
-
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('Agent listing submission failed after all retries', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit agent listing to Salesforce');
+        if (formData.phone) {
+            const normalized = normalizePhone(formData.phone);
+            if (normalized) agentData.phone = normalized;
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        const agentResult = await attio.createRecord('agents', agentData);
+        const agentId = agentResult.data.id.record_id;
 
-        Promise.all([
-            sendToSlack({
-                headerText: '🔔 New Agent Listing Request',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-            })
-        ]).catch(error => {
+        logDebug('Agent record created', { submissionId, agentId });
+
+        // Create entry in agent_onboarding pipeline
+        const onboardingData: Record<string, any> = {
+            primary_state: formData.primaryState || null,
+            other_states: formData.otherStates ?
+                (Array.isArray(formData.otherStates) ? formData.otherStates.join(', ') : formData.otherStates) : null,
+            cities_serviced: formData.citiesServiced || null,
+            bases_serviced: formData.basesServiced || null,
+            personally_pcs: formData.personallyPCS || null,
+            lead_acceptance: formData.leadAcceptance || null,
+            how_did_you_hear: formData.howDidYouHear || null,
+            tell_us_more: formData.tellusMore || null,
+        };
+
+        await attio.createListEntry(
+            'agent_onboarding',
+            'agents',
+            agentId,
+            onboardingData,
+            'New Application'  // Initial stage
+        );
+
+        logInfo('Agent onboarding entry created', { submissionId, agentId });
+
+        // Send Slack notification
+        slack.sendAlert('New Agent Listing Request', {
+            Name: `${formData.firstName} ${formData.lastName}`,
+            Email: formData.email || '',
+            Phone: formData.phone || '',
+            State: formData.primaryState || '',
+            Brokerage: formData.brokerageName || '',
+        }).catch(error => {
             logError('Error sending agent listing notifications', { submissionId }, error);
         });
 
-        // Track the successful submission
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.SUCCESS,
-            response
+            null
         );
 
-        if (redirectUrl) {
-            logInfo('Agent listing form submitted with redirect URL', {
-                submissionId,
-                redirectUrl
-            });
-            return { redirectUrl };
-        }
-
         logInfo('Agent listing form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!' };
+        return { message: 'Form submitted successfully!', redirectUrl: THANK_YOU_URL };
+
     } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.FAILURE,
@@ -522,7 +310,6 @@ export async function GetListedAgentsPostForm(formData: any) {
 }
 
 export async function GetListedLendersPostForm(formData: any) {
-    // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'getListedLenders',
         formData,
@@ -532,103 +319,73 @@ export async function GetListedLendersPostForm(formData: any) {
     logInfo('Processing lender listing form submission', { submissionId });
 
     try {
-        const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
-            retURL: `${BASE_URL}/thank-you`,
-            recordType: "0124x000000ZGGU",
-            lead_source: "Website",
-            "00N4x00000Lsr0G": "true",
-            country_code: "US",
-            "00N4x00000QQ1LB": `${BASE_URL}/get-listed-lenders`,
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            mobile: formData.phone || "",
-            "00N4x00000LsnP2": formData.status_select || "",
-            "00N4x00000LsnOx": formData.branch_select || "",
-            "00N4x00000QQ0Vz": formData.discharge_status || "",
-            "00N4x00000LpcBo": formData.primaryState || "",
-            "00N4x00000QPIOt": Array.isArray(formData.otherStates) ? formData.otherStates.join(';') : formData.otherStates || "",
-            "00N4x00000LsqCV": formData.localCities || "",
-            "00N4x00000QPIOZ": formData.nmlsId || "",
-            "00N4x00000LpcCr": formData.name || "",
-            "street": formData.street || "",
-            "state_code": formData.state || "",
-            "city": formData.city || "",
-            "zip": formData.zip || "",
-            "00N4x00000QPIOe": formData.companyNMLSId || "",
-            "00N4x00000QPksj": formData.howDidYouHear || "",
-            "00N4x00000QPS7V": formData.tellusMore || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
-        }).toString();
+        // Create lender record in lenders object (pending status)
+        const lenderData: Record<string, any> = {
+            name: `${formData.firstName} ${formData.lastName}`,
+            first_name: formData.firstName || '',
+            last_name: formData.lastName || '',
+            email: formData.email || '',
+            military_status: formData.status_select || null,
+            military_service: formData.branch_select || null,
+            company_name: formData.name || null,  // Company name field
+            individual_nmls: formData.nmlsId || null,
+            company_nmls: formData.companyNMLSId || null,
+            city: formData.city || null,
+            active_on_website: false,  // Not active until approved
+        };
 
-        logDebug('Sending lender listing data to Salesforce with retry logic', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
-        });
-
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('Lender listing submission failed after all retries', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit lender listing to Salesforce');
+        if (formData.phone) {
+            const normalized = normalizePhone(formData.phone);
+            if (normalized) lenderData.phone = normalized;
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        const lenderResult = await attio.createRecord('lenders', lenderData);
+        const lenderId = lenderResult.data.id.record_id;
 
-        Promise.all([
-            sendToSlack({
-                headerText: '🔔 New Lender Listing Request',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-            })
-        ]).catch(error => {
+        logDebug('Lender record created', { submissionId, lenderId });
+
+        // Create entry in lender_onboarding pipeline
+        const onboardingData: Record<string, any> = {
+            primary_state: formData.primaryState || null,
+            other_states: formData.otherStates ?
+                (Array.isArray(formData.otherStates) ? formData.otherStates.join(', ') : formData.otherStates) : null,
+            local_cities: formData.localCities || null,
+            how_did_you_hear: formData.howDidYouHear || null,
+            tell_us_more: formData.tellusMore || null,
+        };
+
+        await attio.createListEntry(
+            'lender_onboarding',
+            'lenders',
+            lenderId,
+            onboardingData,
+            'New Application'  // Initial stage
+        );
+
+        logInfo('Lender onboarding entry created', { submissionId, lenderId });
+
+        // Send Slack notification
+        slack.sendAlert('New Lender Listing Request', {
+            Name: `${formData.firstName} ${formData.lastName}`,
+            Email: formData.email || '',
+            Phone: formData.phone || '',
+            State: formData.primaryState || '',
+            'Company': formData.name || '',
+            'NMLS ID': formData.nmlsId || '',
+        }).catch(error => {
             logError('Error sending lender listing notifications', { submissionId }, error);
         });
 
-        // Track the successful submission
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.SUCCESS,
-            response
+            null
         );
 
-        if (redirectUrl) {
-            logInfo('Lender listing form submitted with redirect URL', {
-                submissionId,
-                redirectUrl
-            });
-            return { redirectUrl };
-        }
-
         logInfo('Lender listing form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!' };
+        return { message: 'Form submitted successfully!', redirectUrl: THANK_YOU_URL };
+
     } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.FAILURE,
@@ -642,7 +399,6 @@ export async function GetListedLendersPostForm(formData: any) {
 }
 
 export async function KeepInTouchForm(formData: any) {
-    // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'keepInTouch',
         formData,
@@ -652,74 +408,31 @@ export async function KeepInTouchForm(formData: any) {
     logInfo('Processing keep in touch form submission', { submissionId });
 
     try {
-        const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
-            recordType: "0124x000000Z5yD",
-            lead_source: "Website",
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
-        }).toString();
-
-        logDebug('Sending keep in touch data to Salesforce with retry logic', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+        // Create simple customer record for newsletter signup
+        await findOrCreateCustomer({
+            firstName: formData.firstName || '',
+            lastName: formData.lastName || '',
+            email: formData.email || '',
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('Keep in touch submission failed after all retries', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit keep in touch form to Salesforce');
-        }
-
-        const { response, responseText, redirectUrl } = submissionResult;
-
-        Promise.all([
-            sendToSlack({
-                headerText: '🔔 New Keep In Touch Submission',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-            })
-        ]).catch(error => {
+        // Send Slack notification
+        slack.sendAlert('New Keep In Touch Submission', {
+            Name: `${formData.firstName} ${formData.lastName}`,
+            Email: formData.email || '',
+        }).catch(error => {
             logError('Error sending keep in touch notifications', { submissionId }, error);
         });
 
-        // Track the successful submission
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.SUCCESS,
-            response
+            null
         );
 
         logInfo('Keep in touch form submitted successfully', { submissionId });
         return { success: true, message: 'Form submitted successfully!' };
+
     } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.FAILURE,
@@ -733,148 +446,128 @@ export async function KeepInTouchForm(formData: any) {
 }
 
 export async function contactLenderPostForm(formData: any, fullQueryString: string) {
-    // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'contactLender',
         formData,
         FormSubmissionStatus.PENDING
     );
 
+    const params = new URLSearchParams(fullQueryString);
+    const lenderSalesforceId = params.get('id');
+    const stateCode = params.get('state');
+
     logInfo('Processing contact lender form submission', {
         submissionId,
-        lender_id: new URLSearchParams(fullQueryString).get('id')
+        lender_salesforce_id: lenderSalesforceId
     });
 
     try {
-        const paramsObj: { [key: string]: string } = {};
-        new URLSearchParams(fullQueryString).forEach((value, key) => {
-            paramsObj[key] = value;
-        });
+        // 1. Find the lender in Attio by salesforce_id
+        let lenderInfo = null;
+        let lenderId: string | null = null;
 
-        // Fetch agent information if ID is provided
-        let agentInfo = null;
-        if (paramsObj.id) {
+        if (lenderSalesforceId) {
             try {
-                agentInfo = await stateService.fetchAgentById(paramsObj.id);
-                logDebug('Lender information fetched successfully', {
-                    lender_id: paramsObj.id,
-                    submissionId
+                const lenders = await attio.queryRecords('lenders', {
+                    filter: { salesforce_id: { $eq: lenderSalesforceId } },
+                    limit: 1
                 });
+                if (lenders.length > 0) {
+                    lenderInfo = lenders[0];
+                    lenderId = lenders[0].id;
+                    logDebug('Lender found in Attio', { submissionId, lenderId });
+                }
             } catch (error) {
-                logError('Error fetching lender information', {
-                    lender_id: paramsObj.id,
-                    submissionId
-                }, error);
+                logError('Error finding lender in Attio', { submissionId, lenderSalesforceId }, error);
             }
         }
 
-        const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
-            retURL: `${BASE_URL}/thank-you`,
-            "00N4x00000QPJUT": paramsObj.id || "",
-            recordType: "0124x000000Z5yD",
-            lead_source: "Website",
-            "00N4x00000Lsr0G": "true",
-            country_code: "US",
-            "00N4x00000QQ1LB": `${BASE_URL}/contact-lender${fullQueryString}`,
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            mobile: formData.phone || "",
-            "00N4x00000LspUs": formData.currentBase || "",
-            "00N4x00000QPksj": formData.howDidYouHear || "",
-            "00N4x00000QPS7V": formData.tellusMore || "",
-            "00N4x00000bfgFA": formData.additionalComments || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
-        }).toString();
-
-        logDebug('Sending lender form data to Salesforce with retry logic', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
+        // 2. Create or update customer record
+        const customerId = await findOrCreateCustomer({
+            firstName: formData.firstName || '',
+            lastName: formData.lastName || '',
+            email: formData.email || '',
+            phone: formData.phone,
+            currentLocation: formData.currentBase,
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
-        );
+        logDebug('Customer record created/updated', { submissionId, customerId });
 
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
+        // 3. Create deal in customer_deals pipeline
+        const dealData: Record<string, any> = {
+            deal_type: 'Lender',
+            contact_confirmed: false,
+            reroute_count: 0,
+            last_updated: new Date().toISOString(),
+            last_stage_change: new Date().toISOString(),
+        };
 
-            logError('Lender form submission failed after all retries', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit lender form to Salesforce');
+        // Add lender reference if found
+        if (lenderId) {
+            dealData.lender = { target_object: 'lenders', target_record_id: lenderId };
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        // Add notes/comments if provided
+        if (formData.additionalComments) {
+            dealData.notes = formData.additionalComments;
+        }
 
-        // Fire and forget notifications - don't await them
-        await Promise.all([
-            sendToSlack({
-                headerText: '🔔 New Lender Lead',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-                agentInfo: agentInfo ? {
-                    name: agentInfo.Name || "",
-                    email: agentInfo.PersonEmail || "",
-                    phoneNumber: agentInfo.PersonMobilePhone || "",
-                    brokerage: agentInfo.Brokerage_Name__pc,
-                    state: paramsObj.state
-                } : undefined
-            }),
-            sendOpenPhoneMessage({
-                content: `New Lead From VeteranPCS:
-${formData.firstName} ${formData.lastName}
-Email: ${formData.email}
-Phone: ${formatPhoneNumberForDisplay(formData.phone)}
-${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
-${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
-${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
-                from: getAdminPhoneNumberForState(paramsObj.state),
-                to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
+        const dealResult = await attio.createListEntry(
+            'customer_deals',
+            'customers',
+            customerId,
+            dealData,
+            'New Lead'  // Initial stage
+        );
+
+        const dealId = dealResult.data.id.entry_id;
+        logInfo('Lender deal created in Attio', { submissionId, dealId });
+
+        // 4. Send notifications (fire and forget)
+        const notificationPromises: Promise<any>[] = [];
+
+        // Slack notification
+        notificationPromises.push(
+            slack.sendNewLead({
+                customerName: `${formData.firstName} ${formData.lastName}`,
+                customerEmail: formData.email || '',
+                customerPhone: formData.phone,
+                agentName: lenderInfo?.name || 'Unknown Lender',
+                dealType: 'Lender',
+            }).catch(error => {
+                logError('Slack notification failed', { submissionId }, error);
             })
-        ]).catch(error => {
-            // Log any errors but don't block the main flow
-            logError('Error sending lender notifications', { submissionId }, error);
-        });
+        );
 
-        // Track the successful submission
+        // SMS notification to lender if we have their phone
+        if (lenderId && lenderInfo?.phone) {
+            const magicLink = generateMagicLink(lenderId, dealId, 'lender');
+            notificationPromises.push(
+                openphone.sendNewLeadNotification({
+                    to: lenderInfo.phone,
+                    agentName: lenderInfo.first_name || lenderInfo.name || 'Lender',
+                    customerName: `${formData.firstName} ${formData.lastName}`,
+                    dealType: 'Lender',
+                    magicLink,
+                }).catch(error => {
+                    logError('SMS notification failed', { submissionId }, error);
+                })
+            );
+        }
+
+        await Promise.allSettled(notificationPromises);
+
+        // Track success
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.SUCCESS,
-            response
+            null
         );
 
-        if (redirectUrl) {
-            logInfo('Lender form submitted successfully with redirect URL', {
-                submissionId,
-                redirectUrl
-            });
-            return { redirectUrl };
-        }
+        logInfo('Contact lender form submitted successfully', { submissionId, dealId });
+        return { message: 'Form submitted successfully!', dealId, redirectUrl: THANK_YOU_URL };
 
-        logInfo('Lender form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!' };
     } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.FAILURE,
@@ -888,7 +581,6 @@ ${formData.additionalComments ? `Additional Comments: ${formData.additionalComme
 }
 
 export async function contactPostForm(formData: any) {
-    // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'contact',
         formData,
@@ -898,75 +590,32 @@ export async function contactPostForm(formData: any) {
     logInfo('Processing contact form submission', { submissionId });
 
     try {
-        const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
-            recordType: "0124x000000Z5yD",
-            lead_source: "Website",
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            "00N4x00000bfgFA": formData.additionalComments || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
-        }).toString();
-
-        logDebug('Sending contact form data to Salesforce with retry logic', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+        // Create simple customer record
+        await findOrCreateCustomer({
+            firstName: formData.firstName || '',
+            lastName: formData.lastName || '',
+            email: formData.email || '',
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('Contact form submission failed after all retries', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit contact form to Salesforce');
-        }
-
-        const { response, responseText, redirectUrl } = submissionResult;
-
-        Promise.all([
-            sendToSlack({
-                headerText: '🔔 New Contact Form Submission',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-            })
-        ]).catch(error => {
+        // Send Slack notification
+        slack.sendAlert('New Contact Form Submission', {
+            Name: `${formData.firstName} ${formData.lastName}`,
+            Email: formData.email || '',
+            Message: formData.additionalComments || 'No message',
+        }).catch(error => {
             logError('Error sending contact form notifications', { submissionId }, error);
         });
 
-        // Track the successful submission
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.SUCCESS,
-            response
+            null
         );
 
         logInfo('Contact form submitted successfully', { submissionId });
         return { success: true, message: 'Form submitted successfully!' };
+
     } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.FAILURE,
@@ -980,7 +629,6 @@ export async function contactPostForm(formData: any) {
 }
 
 export async function vaLoanGuideForm(formData: any) {
-    // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'vaLoanGuide',
         formData,
@@ -990,74 +638,31 @@ export async function vaLoanGuideForm(formData: any) {
     logInfo('Processing VA loan guide form submission', { submissionId });
 
     try {
-        const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
-            recordType: "0124x000000Z5yD",
-            lead_source: "Website",
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
-        }).toString();
-
-        logDebug('Sending VA loan guide data to Salesforce with retry logic', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+        // Create simple customer record for download
+        await findOrCreateCustomer({
+            firstName: formData.firstName || '',
+            lastName: formData.lastName || '',
+            email: formData.email || '',
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('VA loan guide submission failed after all retries', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit VA loan guide form to Salesforce');
-        }
-
-        const { response, responseText, redirectUrl } = submissionResult;
-
-        Promise.all([
-            sendToSlack({
-                headerText: '🔔 New VA Loan Guide Download',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-            })
-        ]).catch(error => {
+        // Send Slack notification
+        slack.sendAlert('New VA Loan Guide Download', {
+            Name: `${formData.firstName} ${formData.lastName}`,
+            Email: formData.email || '',
+        }).catch(error => {
             logError('Error sending VA loan guide notifications', { submissionId }, error);
         });
 
-        // Track the successful submission
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.SUCCESS,
-            response
+            null
         );
 
         logInfo('VA loan guide form submitted successfully', { submissionId });
         return { success: true, message: 'Form submitted successfully!' };
+
     } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.FAILURE,
@@ -1071,7 +676,6 @@ export async function vaLoanGuideForm(formData: any) {
 }
 
 export async function internshipFormSubmission(formData: any) {
-    // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'internship',
         formData,
@@ -1081,100 +685,69 @@ export async function internshipFormSubmission(formData: any) {
     logInfo('Processing internship form submission', { submissionId });
 
     try {
-        const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
-            recordType: "0124x000000ZGKv",
-            retURL: `${BASE_URL}/thank-you`,
-            lead_source: "Website",
-            "00N4x00000Lsr0G": "true",
-            country_code: "US",
-            first_name: formData.first_name || "",
-            last_name: formData.last_name || "",
-            email: formData.email || "",
-            mobile: formData.mobile || "",
-            "00N4x00000LsnP2": formData["00N4x00000LsnP2"] || "",
-            "00N4x00000LsnOx": formData["00N4x00000LsnOx"] || "",
-            "00N4x00000QQ0Vz": Array.isArray(formData["00N4x00000QQ0Vz"]) ? formData["00N4x00000QQ0Vz"][0] : formData["00N4x00000QQ0Vz"] || "",
-            state_code: formData.state_code || "",
-            city: formData.city || "",
-            base: formData.base || "",
-            "00N4x00000QPK7L": formData["00N4x00000QPK7L"] || "",
-            "00N4x00000LspV2": formData["00N4x00000LspV2"] || "",
-            "00N4x00000LspUi": formData["00N4x00000LspUi"] || "",
-            "00N4x00000QPLQY": formData["00N4x00000QPLQY"] || "",
-            "00N4x00000QPLQd": formData["00N4x00000QPLQd"] || "",
-            "00N4x00000QPksj": formData["00N4x00000QPksj"] || "",
-            "00N4x00000QPS7V": formData["00N4x00000QPS7V"] || "",
-            "g-recaptcha-response": formData["g-recaptcha-response"] || "",
-            "captcha_settings": formData.captcha_settings || "",
-        }).toString();
+        // Create agent record in agents object (internship status)
+        const agentData: Record<string, any> = {
+            name: `${formData.first_name} ${formData.last_name}`,
+            first_name: formData.first_name || '',
+            last_name: formData.last_name || '',
+            email: formData.email || '',
+            military_status: formData['00N4x00000LsnP2'] || null,
+            military_service: formData['00N4x00000LsnOx'] || null,
+            city: formData.city || null,
+            active_on_website: false,  // Interns not active on website
+        };
 
-        logDebug('Sending internship form data to Salesforce with retry logic', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
-        });
-
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('Internship form submission failed after all retries', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit internship form to Salesforce');
+        if (formData.mobile) {
+            const normalized = normalizePhone(formData.mobile);
+            if (normalized) agentData.phone = normalized;
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        const agentResult = await attio.createRecord('agents', agentData);
+        const agentId = agentResult.data.id.record_id;
 
-        Promise.all([
-            sendToSlack({
-                headerText: '🔔 New Internship Submission',
-                name: `${formData.first_name} ${formData.last_name}`,
-                email: formData.email || "",
-                phoneNumber: formData.mobile || "",
-                message: "",
-            })
-        ]).catch(error => {
+        logDebug('Internship agent record created', { submissionId, agentId });
+
+        // Create entry in agent_onboarding pipeline with Internship stage
+        const onboardingData: Record<string, any> = {
+            primary_state: formData['00N4x00000LspV2'] || formData.state_code || null,
+            how_did_you_hear: formData['00N4x00000QPksj'] || null,
+            tell_us_more: formData['00N4x00000QPS7V'] || null,
+            // Internship-specific fields
+            base: formData.base || null,
+            current_duty_station: formData['00N4x00000QPK7L'] || null,
+        };
+
+        await attio.createListEntry(
+            'agent_onboarding',
+            'agents',
+            agentId,
+            onboardingData,
+            'Internship'  // Internship stage
+        );
+
+        logInfo('Internship onboarding entry created', { submissionId, agentId });
+
+        // Send Slack notification
+        slack.sendAlert('New Internship Submission', {
+            Name: `${formData.first_name} ${formData.last_name}`,
+            Email: formData.email || '',
+            Phone: formData.mobile || '',
+            State: formData.state_code || '',
+            Base: formData.base || '',
+        }).catch(error => {
             logError('Error sending internship notifications', { submissionId }, error);
         });
 
-        // Track the successful submission
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.SUCCESS,
-            response
+            null
         );
 
-        if (redirectUrl) {
-            logInfo('Internship form submitted with redirect URL', {
-                submissionId,
-                redirectUrl
-            });
-            return { redirectUrl };
-        }
-
         logInfo('Internship form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!' };
+        return { message: 'Form submitted successfully!', redirectUrl: THANK_YOU_URL };
+
     } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.FAILURE,
@@ -1186,4 +759,3 @@ export async function internshipFormSubmission(formData: any) {
         throw new Error('Failed to submit form');
     }
 }
-

@@ -200,8 +200,9 @@ const stateService = {
       const stateId = states[0].id;
 
       // 2. Get all areas in this state
+      // Note: 'state' is a record reference field, so we use target_record_id syntax
       const areas = await attio.queryRecords('areas', {
-        filter: { state: { $eq: stateId } }
+        filter: { state: { target_record_id: { $eq: stateId } } }
       });
 
       if (!areas.length) {
@@ -212,10 +213,11 @@ const stateService = {
       const areaMap = new Map<string, any>(areas.map((a: any) => [a.id, a]));
 
       // 3. Get all area assignments for these areas (active status only)
+      // Note: 'area' is a record reference field, so we use target_record_id syntax
       const assignments = await attio.queryRecords('area_assignments', {
         filter: {
           $and: [
-            { area: { $in: areaIds } },
+            { area: { target_record_id: { $in: areaIds } } },
             { status: { $eq: 'Active' } }
           ]
         }
@@ -226,21 +228,20 @@ const stateService = {
       }
 
       // 4. Get unique agent IDs from assignments
-      const agentIds = [...new Set(assignments.map((a: any) => a.agent))].filter(Boolean);
+      const agentIdSet = new Set(assignments.map((a: any) => a.agent).filter(Boolean));
 
-      if (!agentIds.length) {
+      if (!agentIdSet.size) {
         return { totalSize: 0, done: true, records: [] };
       }
 
-      // 5. Fetch all agents (only active on website)
-      const agents = await attio.queryRecords('agents', {
-        filter: {
-          $and: [
-            { id: { $in: agentIds } },
-            { active_on_website: { $eq: true } }
-          ]
-        }
+      // 5. Fetch all agents (only active on website) and filter by assignment IDs in memory
+      // Note: Attio doesn't support filtering by record ID, so we filter in memory
+      const allActiveAgents = await attio.queryRecords('agents', {
+        filter: { active_on_website: { $eq: true } }
       });
+
+      // Filter to only agents with area assignments in this state
+      const agents = allActiveAgents.filter((agent: any) => agentIdSet.has(agent.id));
 
       // 6. Fetch photos from Sanity and map to legacy interface
       const recordsWithPhotos = await Promise.all(
