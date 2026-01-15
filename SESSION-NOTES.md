@@ -8,10 +8,10 @@
 
 ## Quick Status
 
-**Current Phase:** Phase 4 COMPLETE - All Migrations Done ✅
-**Next Phase:** Phase 5 - Post-Migration Validation
+**Current Phase:** Phase 5 Planning COMPLETE ✅
+**Next Phase:** Phase 5 Implementation - Website Integration & Cutover
 **Blocked On:** None
-**Ready to Code:** ✅ Ready for validation and cleanup
+**Ready to Code:** ✅ Ready to implement Phase 5A-5D
 
 ---
 
@@ -636,34 +636,92 @@ This session was a continuation after context compaction. Previous sessions had:
 
 ---
 
-## [NEXT SESSION DATE] - [TITLE]
+## 2026-01-14 - Phase 5 Planning: Website Integration & Cutover
 
 **Platform:** Claude Code CLI
-**Duration:** [TIME]
-**Status:** [🟡 In Progress / ✅ Complete / ❌ Blocked]
+**Duration:** ~2 hours
+**Status:** ✅ Complete
 
 **Completed:**
-- [ ] Task 1
-- [ ] Task 2
+- ✅ Comprehensive Phase 5 implementation planning
+- ✅ Identified critical gap: website data layer missing from original plan
+- ✅ Discovered correct Attio query API syntax (MongoDB-style operators)
+- ✅ Updated CLAUDE.md with Phase 5 status, architecture, and Attio query best practices
+- ✅ Created detailed plan file: `~/.claude/plans/idempotent-conjuring-hammock.md`
+- ✅ Resolved all outstanding questions with user decisions
 
 **Blockers:**
-- None / [Describe blocker]
+- None
 
-**Decisions Made:**
-- [Key decisions this session]
+**Key Decisions Made:**
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Contact Form Strategy | Minimal first, enhance later | Get existing forms working with Attio, then build multi-step UX in future phase |
+| Image Lookup | Continue using salesforce_id | Simplest - no Sanity schema changes needed |
+| Cutover Strategy | Hard cutover | Final Salesforce sync right before merge to main |
+| Form Architecture | Refactor service file directly | No new API route needed - existing form components call service file |
+| SignWell | Deferred | Focus on Attio + OpenPhone first |
+
+**Critical Gap Identified & Resolved:**
+- **Problem:** Original plan jumped to lead flows without addressing how website reads data
+- **Discovery:** Website uses `services/stateService.tsx` to fetch agents/lenders from Salesforce
+- **Solution:** Added Phase 5B (Website Data Layer) to refactor stateService for Attio
+
+**Attio Query API Discovery:**
+
+```typescript
+// WRONG (was in original plan)
+{ field: 'email', equals: 'test@example.com' }
+
+// CORRECT (MongoDB-style operators)
+{ filter: { email: { $eq: 'test@example.com' } } }
+
+// Multiple conditions
+{ filter: { $and: [
+  { area: { $eq: areaId } },
+  { status: { $eq: 'Active' } }
+]}}
+```
+
+**Phase 5 Implementation Order:**
+
+| Phase | Focus | Files |
+|-------|-------|-------|
+| 5A | Utility Libraries | lib/magic-link.ts, lib/slack.ts, lib/openphone.ts |
+| 5B | Website Data Layer | services/stateService.tsx, app/api/v1/areas/route.ts |
+| 5C | Contact Form Migration | salesForcePostFormsService.tsx, magic-link routes |
+| 5D | Webhooks & Automations | Attio webhook, stale leads/deals crons |
 
 **Files Modified:**
-- [List files]
+- CLAUDE.md (Phase 5 status, Attio query syntax, architecture section)
+- SESSION-NOTES.md (this entry)
+- ~/.claude/plans/idempotent-conjuring-hammock.md (new plan file)
 
 **Git Commits:**
-- [Commit SHAs]
+- [Pending this session]
 
 **Next Session Tasks:**
-- [ ] Task 1
-- [ ] Task 2
+- [ ] Phase 5A: Create lib/magic-link.ts (JWT utilities)
+- [ ] Phase 5A: Create lib/slack.ts (Slack notifications)
+- [ ] Phase 5A: Create lib/openphone.ts (SMS via OpenPhone)
+- [ ] Phase 5B: Refactor services/stateService.tsx for Attio
+- [ ] Phase 5B: Refactor app/api/v1/areas/route.ts for Attio
+- [ ] Phase 5C: Refactor salesForcePostFormsService.tsx for Attio
 
 **Notes:**
-- [Any important context for next session]
+- Components are data-agnostic - only service layer needs to change
+- Website will continue using salesforce_id for Sanity image lookups
+- Hard cutover planned: pull fresh Salesforce data right before merge to main
+- SignWell integration deferred to future phase
+
+**Cutover Checklist (Before Merge to Main):**
+1. Pull latest Salesforce CSVs
+2. Run delta migration scripts for new/updated records
+3. Run validation scripts to verify data completeness
+4. Merge to main during low-traffic period
+5. Monitor for 24-48 hours post-cutover
+6. Keep Salesforce integration code in backup branch (not deleted)
 
 ---
 

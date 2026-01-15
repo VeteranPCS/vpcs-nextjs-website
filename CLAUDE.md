@@ -67,8 +67,8 @@ Before we continue, please confirm:
 
 ### Current Migration Status
 
-**Last Updated:** 2026-01-13
-**Current Phase:** Phase 4 COMPLETE ✅
+**Last Updated:** 2026-01-14
+**Current Phase:** Phase 5 - Website Integration (IN PROGRESS)
 **Branch:** attio-migration
 
 **✅ Completed:**
@@ -80,10 +80,29 @@ Before we continue, please confirm:
 - Phase 4b: Customer and deals migration (customers, customer deals)
 - Phase 4c: Onboarding pipelines (agent onboarding, lender onboarding)
 
-**📋 Next Steps:**
-- Create validation script to verify migration completeness
-- Address skipped records from post-migration review docs
-- Final data quality audit
+**🚧 Phase 5 - Website Integration (Current):**
+| Sub-Phase | Description | Status |
+|-----------|-------------|--------|
+| 5A | Utility Libraries (magic-link, slack, openphone) | ⏳ Pending |
+| 5B | Website Data Layer (display agents/lenders from Attio) | ⏳ Pending |
+| 5C | Contact Form Migration (submit leads to Attio) | ⏳ Pending |
+| 5D | Webhooks & Automations | ⏳ Pending |
+
+**📋 Phase 5 Key Decisions:**
+| Decision | Choice |
+|----------|--------|
+| Contact Forms | Minimal first, enhance multi-step UX later |
+| Image Lookup | Continue using salesforce_id for Sanity lookups |
+| Cutover Strategy | Hard cutover with final Salesforce sync before merge |
+| Form Architecture | Refactor service files directly (no new /api/leads route) |
+| SignWell | Deferred to future phase |
+
+**📝 Cutover Checklist (Before Merge to Main):**
+1. [ ] Pull latest Salesforce CSVs
+2. [ ] Run delta migration scripts for new/updated records
+3. [ ] Run validation scripts to verify data completeness
+4. [ ] Merge to main during low-traffic period
+5. [ ] Monitor for 24-48 hours post-cutover
 
 **🔧 Schema Fix Applied:**
 - `agent_commission` attribute archived (was incorrectly type `currency`)
@@ -197,6 +216,114 @@ See `docs/post-migration-review/` for records that need manual attention:
     - Original `agent_commission` was mistakenly created as `currency` type (displayed "$2.75")
     - Archived and replaced with `commission_percent` as `number` type (displays "2.75")
     - Values are whole percentages (e.g., 2.75 = 2.75%, not 0.0275)
+
+13. **Attio Query API uses MongoDB-style operators:**
+    ```typescript
+    // CORRECT - MongoDB-style operators
+    await attio.queryRecords('agents', {
+      filter: { email: { $eq: 'test@example.com' } }
+    });
+
+    // CORRECT - Multiple conditions with $and
+    await attio.queryRecords('area_assignments', {
+      filter: {
+        $and: [
+          { area: { $eq: areaId } },
+          { status: { $eq: 'Active' } }
+        ]
+      }
+    });
+
+    // CORRECT - Array membership with $in
+    await attio.queryRecords('agents', {
+      filter: { id: { $in: agentIds } }
+    });
+
+    // WRONG - will not work
+    await attio.queryRecords('agents', {
+      filter: { field: 'email', equals: 'test@example.com' }
+    });
+    ```
+
+    **Supported operators:** `$eq`, `$ne`, `$gt`, `$lt`, `$in`, `$nin`, `$and`, `$or`, `$contains`
+
+---
+
+## Phase 5 Architecture: Website Data Layer
+
+**Critical:** The website currently reads from Salesforce. Phase 5B refactors to read from Attio.
+
+### Current Architecture (Salesforce)
+```
+app/(site)/[state]/page.tsx
+  → services/stateService.fetchAgentsListByState()
+    → Salesforce SOQL query
+  → services/stateService.fetchLendersListByState()
+    → Salesforce SOQL query
+  → Components render data
+```
+
+### Target Architecture (Attio)
+```
+app/(site)/[state]/page.tsx
+  → services/stateService.fetchAgentsListByState()
+    → attio.queryRecords('states', ...)
+    → attio.queryRecords('areas', ...)
+    → attio.queryRecords('area_assignments', ...)
+    → attio.queryRecords('agents', ...)
+  → services/stateService.fetchLendersListByState()
+    → attio.queryRecords('states', ...) → state.lenders multi-ref
+  → Components render data (unchanged)
+```
+
+### Files to Modify for Phase 5
+
+**Phase 5A - Libraries:**
+- `lib/magic-link.ts` (NEW) - JWT token generation/validation
+- `lib/slack.ts` (NEW) - Slack webhook notifications
+- `lib/openphone.ts` (NEW) - SMS via OpenPhone API
+
+**Phase 5B - Website Data Layer:**
+- `services/stateService.tsx` (REFACTOR) - Replace Salesforce with Attio queries
+- `app/api/v1/areas/route.ts` (REFACTOR) - Query areas from Attio
+
+**Phase 5C - Contact Forms:**
+- `services/salesForcePostFormsService.tsx` (REFACTOR) - Submit to Attio instead of Salesforce
+- `app/api/magic-link/validate/route.ts` (NEW)
+- `app/api/magic-link/update/route.ts` (NEW)
+
+**Phase 5D - Automations:**
+- `app/api/webhooks/attio/route.ts` (NEW) - Cache revalidation on record changes
+- `app/api/cron/check-stale-leads/route.ts` (NEW) - Re-route uncontacted leads
+- `app/api/cron/check-stale-deals/route.ts` (NEW) - Send reminders, auto-close
+
+### Key Implementation Pattern: Preserve Salesforce Interface
+
+When refactoring `stateService.tsx`, return the **same interface** as the Salesforce version:
+
+```typescript
+// The components expect this interface - don't change it
+return {
+  records: agents.map(agent => ({
+    Name: agent.name,
+    AccountId_15__c: agent.salesforce_id,  // Keep for Sanity image lookup
+    FirstName: agent.first_name,
+    Agent_Bio__pc: agent.bio,
+    // ... map Attio fields to Salesforce field names
+    Area_Assignments__r: { records: [...] }
+  }))
+};
+```
+
+### Image Lookup Strategy
+
+Sanity images are linked by `salesforce_id`. We preserved this field in Attio during migration:
+
+```typescript
+// In Attio, agents have: { salesforce_id: '0014x00001...' }
+// Sanity queries: *[_type == "agent" && salesforceID == $salesforceID]
+// No changes needed to Sanity or image lookup
+```
 
 ---
 
