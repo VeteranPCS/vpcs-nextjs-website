@@ -1,10 +1,8 @@
-import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
-import { RequestType, salesForceAPI, salesForceImageAPI } from '@/services/api';
-import { getSalesforceToken } from '@/services/salesForceTokenService';
 import { client } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
 import agentService from './agentService';
 import { Image } from 'sanity';
+import { attio } from '@/lib/attio';
 
 interface StateMap extends Image {
   _type: 'image';
@@ -36,7 +34,7 @@ export interface StateList {
 export interface Agent {
   Name: string;
   AccountId_15__c: string;
-  PhotoUrl?: string; // Keeping optional as it's not returned in the query
+  PhotoUrl?: string;
   FirstName: string;
   LastName: string;
   Agent_Bio__pc: string;
@@ -49,7 +47,7 @@ export interface Agent {
   };
   BillingStateCode: string;
   State_s_Licensed_in__pc: string;
-  Other_States__pc?: string[]; // INCLUDES can return an array
+  Other_States__pc?: string[];
   PersonEmail?: string;
   PersonMobilePhone?: string;
   Area_Assignments__r?: {
@@ -103,7 +101,24 @@ export interface LendersData {
   records: Lenders[];
 }
 
+// Helper: Map state slug to state code (e.g., "texas" -> "TX")
+const stateSlugToCode: Record<string, string> = {
+  alabama: 'AL', alaska: 'AK', arizona: 'AZ', arkansas: 'AR', california: 'CA',
+  colorado: 'CO', connecticut: 'CT', delaware: 'DE', florida: 'FL', georgia: 'GA',
+  hawaii: 'HI', idaho: 'ID', illinois: 'IL', indiana: 'IN', iowa: 'IA',
+  kansas: 'KS', kentucky: 'KY', louisiana: 'LA', maine: 'ME', maryland: 'MD',
+  massachusetts: 'MA', michigan: 'MI', minnesota: 'MN', mississippi: 'MS', missouri: 'MO',
+  montana: 'MT', nebraska: 'NE', nevada: 'NV', 'new-hampshire': 'NH', 'new-jersey': 'NJ',
+  'new-mexico': 'NM', 'new-york': 'NY', 'north-carolina': 'NC', 'north-dakota': 'ND', ohio: 'OH',
+  oklahoma: 'OK', oregon: 'OR', pennsylvania: 'PA', 'puerto-rico': 'PR', 'rhode-island': 'RI',
+  'south-carolina': 'SC', 'south-dakota': 'SD', tennessee: 'TN', texas: 'TX', utah: 'UT',
+  vermont: 'VT', virginia: 'VA', washington: 'WA', 'west-virginia': 'WV', wisconsin: 'WI',
+  wyoming: 'WY', 'washington-dc': 'DC',
+};
+
 const stateService = {
+  // ========== SANITY FUNCTIONS (unchanged) ==========
+
   fetchStateList: async (): Promise<StateList[]> => {
     try {
       const response = await client.fetch(`*[_type == "state_list"]{ state_slug, short_name }`)
@@ -117,6 +132,7 @@ const stateService = {
       throw error;
     }
   },
+
   fetchStateDetails: async (state: string): Promise<StateList> => {
     try {
       const state_detail = await client.fetch<StateList>(`*[_type == "state_list" && state_slug.current == $state][0]`, { state: state });
@@ -140,114 +156,7 @@ const stateService = {
       throw error;
     }
   },
-  fetchAgentsListByState: async (state: string): Promise<AgentsData> => {
-    try {
-      const query = `
-        SELECT Name, PhotoUrl, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc,
-              Military_Service__pc, Brokerage_Name__pc, BillingAddress,
-              (SELECT Id, Name, AA_Score__c, Area__r.Name, Area__r.State__c FROM Area_Assignments__r ORDER BY AA_Score__c DESC)
-        FROM Account
-        WHERE isAgent__pc = true
-          AND Active_on_Website__pc = true
-          AND (State_s_Licensed_in__pc LIKE '%${state}%'
-              OR Other_States__pc INCLUDES ('${state}'))
-      `.replace(/\s+/g, ' ').trim();
 
-      const response = await salesForceAPI({
-        endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
-        type: RequestType.GET,
-      });
-
-      if (response?.status === 200) {
-
-        const recordsWithUpdatedPhotoUrl = await Promise.all(
-          response.data.records.map(async (agent: Agent) => {
-            if (agent.PhotoUrl) {
-              try {
-                const photoResponse = await agentService.getAgentImage(agent.AccountId_15__c);
-                agent.PhotoUrl = photoResponse;
-              } catch (error) {
-                console.error(`Error fetching photo URL for agent ${agent.AccountId_15__c}:`, error);
-                agent.PhotoUrl = undefined;
-              }
-            }
-            return agent;
-          })
-        );
-
-        const filterAgentsWithOutPhotos = recordsWithUpdatedPhotoUrl.filter((agent: Agent) => agent.PhotoUrl !== undefined);
-
-        return { ...response.data, records: filterAgentsWithOutPhotos } as AgentsData;
-      } else if (response?.status === 401) {
-        // Token expired: Refresh and retry
-        try {
-          await getSalesforceToken(); // Refresh token
-          return await stateService.fetchAgentsListByState(state); // Retry the request
-        } catch (tokenError) {
-          console.error("Failed to refresh token:", tokenError);
-          throw tokenError;
-        }
-      } else {
-        throw new Error("Failed to fetch State Based Agent List");
-      }
-    } catch (error: any) {
-      console.error("Error fetching State Based Agent List:", error);
-      throw error;
-    }
-  },
-  fetchLendersListByState: async (state: string): Promise<LendersData> => {
-    try {
-      const query = `
-      SELECT Name, PhotoUrl, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, Individual_NMLS_ID__pc, Company_NMLS_ID__pc,
-      (SELECT Id, Name, AA_Score__c, Area__r.Name, Area__r.State__c FROM Area_Assignments__r ORDER BY AA_Score__c DESC)
-      FROM Account
-      WHERE isLender__pc = true
-        AND Active_on_Website__pc = true
-        AND (State_s_Licensed_in__pc LIKE '%${state}%'
-            OR Other_States__pc INCLUDES ('${state}'))
-      `.replace(/\s+/g, ' ').trim();
-
-      const response = await salesForceAPI({
-        endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
-        type: RequestType.GET,
-      });
-      if (response?.status === 200) {
-        const recordsWithUpdatedPhotoUrl = await Promise.all(
-          response.data.records.map(async (agent: Agent) => {
-            if (agent.PhotoUrl) {
-              try {
-                const photoResponse = await agentService.getAgentImage(agent.AccountId_15__c);
-                agent.PhotoUrl = photoResponse;
-                // agent.PhotoUrl = photoResponse?.data; // Ensure fallback to original URL
-              } catch (error) {
-                console.error(`Error fetching photo URL for agent ${agent.AccountId_15__c}:`, error);
-                agent.PhotoUrl = undefined;
-              }
-            }
-            return agent;
-          })
-        );
-
-        const filterAgentsWithOutPhotos = recordsWithUpdatedPhotoUrl.filter((agent: Agent) => agent.PhotoUrl !== undefined);
-
-        return { ...response.data, records: filterAgentsWithOutPhotos } as LendersData;
-
-      } else if (response?.status === 401) {
-        try {
-          await getSalesforceToken();
-          return await stateService.fetchLendersListByState(state);
-        } catch (tokenError) {
-          console.error('Failed to refresh token:', tokenError);
-          throw tokenError;
-        }
-      } else {
-        throw new Error('Failed to fetch State Based Agent List');
-      }
-    } catch (error: any) {
-      console.error('Error fetching State Based Agent List:', error);
-      throw error;
-    }
-  },
   fetchStateImage: async (state_slug: string): Promise<string> => {
     try {
       const state_map = await client.fetch(`*[_type == "state_list" && state_slug.current == $state][0] { state_map }`, { state: state_slug });
@@ -260,40 +169,341 @@ const stateService = {
       throw error;
     }
   },
-  fetchAgentById: async (agentId: string): Promise<Agent | null> => {
-    try {
-      const query = `
-        SELECT Name, Brokerage_Name__pc, PersonEmail, PersonMobilePhone
-        FROM Account
-        WHERE Id = '${agentId}'
-          AND Active_on_Website__pc = true
-      `.replace(/\s+/g, ' ').trim();
 
-      const response = await salesForceAPI({
-        endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
-        type: RequestType.GET,
+  // ========== ATTIO FUNCTIONS (refactored from Salesforce) ==========
+
+  /**
+   * Fetch agents list by state from Attio
+   *
+   * Flow:
+   * 1. Get state record by state_code
+   * 2. Get all areas in that state
+   * 3. Get area assignments for those areas (active agents only)
+   * 4. Get agent records that are active on website
+   * 5. Fetch photos from Sanity using salesforce_id
+   * 6. Map to legacy interface format
+   */
+  fetchAgentsListByState: async (stateSlug: string): Promise<AgentsData> => {
+    try {
+      // Convert state slug to state code (e.g., "texas" -> "TX")
+      const stateCode = stateSlugToCode[stateSlug] || stateSlug.toUpperCase();
+
+      // 1. Get the state record
+      const states = await attio.queryRecords('states', {
+        filter: { state_code: { $eq: stateCode } },
+        limit: 1
       });
 
-      if (response?.status === 200 && response.data.records.length > 0) {
-        const agent = response.data.records[0];
-        return agent as Agent;
-      } else if (response?.status === 401) {
-        // Token expired: Refresh and retry
-        try {
-          await getSalesforceToken(); // Refresh token
-          return await stateService.fetchAgentById(agentId); // Retry the request
-        } catch (tokenError) {
-          console.error("Failed to refresh token:", tokenError);
-          throw tokenError;
-        }
+      if (!states.length) {
+        return { totalSize: 0, done: true, records: [] };
+      }
+      const stateId = states[0].id;
+
+      // 2. Get all areas in this state
+      const areas = await attio.queryRecords('areas', {
+        filter: { state: { $eq: stateId } }
+      });
+
+      if (!areas.length) {
+        return { totalSize: 0, done: true, records: [] };
       }
 
-      return null;
+      const areaIds = areas.map((a: any) => a.id);
+      const areaMap = new Map<string, any>(areas.map((a: any) => [a.id, a]));
+
+      // 3. Get all area assignments for these areas (active status only)
+      const assignments = await attio.queryRecords('area_assignments', {
+        filter: {
+          $and: [
+            { area: { $in: areaIds } },
+            { status: { $eq: 'Active' } }
+          ]
+        }
+      });
+
+      if (!assignments.length) {
+        return { totalSize: 0, done: true, records: [] };
+      }
+
+      // 4. Get unique agent IDs from assignments
+      const agentIds = [...new Set(assignments.map((a: any) => a.agent))].filter(Boolean);
+
+      if (!agentIds.length) {
+        return { totalSize: 0, done: true, records: [] };
+      }
+
+      // 5. Fetch all agents (only active on website)
+      const agents = await attio.queryRecords('agents', {
+        filter: {
+          $and: [
+            { id: { $in: agentIds } },
+            { active_on_website: { $eq: true } }
+          ]
+        }
+      });
+
+      // 6. Fetch photos from Sanity and map to legacy interface
+      const recordsWithPhotos = await Promise.all(
+        agents.map(async (agent: any) => {
+          let photoUrl: string | undefined;
+
+          // Fetch photo from Sanity using salesforce_id
+          if (agent.salesforce_id) {
+            try {
+              photoUrl = await agentService.getAgentImage(agent.salesforce_id);
+            } catch (error) {
+              console.error(`Error fetching photo for agent ${agent.salesforce_id}:`, error);
+            }
+          }
+
+          // Get this agent's area assignments
+          const agentAssignments = assignments
+            .filter((a: any) => a.agent === agent.id)
+            .map((a: any) => {
+              const area = areaMap.get(a.area);
+              return {
+                Id: a.id,
+                Name: a.name || '',
+                AA_Score__c: a.aa_score || 0,
+                Area__r: {
+                  Name: area?.name || '',
+                  State__c: stateCode,
+                },
+              };
+            })
+            .sort((a: any, b: any) => b.AA_Score__c - a.AA_Score__c);
+
+          // Map to legacy Agent interface
+          return {
+            Name: agent.name || `${agent.first_name || ''} ${agent.last_name || ''}`.trim(),
+            AccountId_15__c: agent.salesforce_id || agent.id,
+            PhotoUrl: photoUrl,
+            FirstName: agent.first_name || '',
+            LastName: agent.last_name || '',
+            Agent_Bio__pc: agent.bio || '',
+            Military_Status__pc: agent.military_status || '',
+            Military_Service__pc: agent.military_service || '',
+            Brokerage_Name__pc: agent.brokerage_name || '',
+            BillingAddress: {
+              city: agent.city || '',
+              state: stateCode,
+            },
+            BillingStateCode: stateCode,
+            State_s_Licensed_in__pc: stateCode,
+            PersonEmail: agent.email || '',
+            PersonMobilePhone: agent.phone || '',
+            Area_Assignments__r: {
+              records: agentAssignments,
+            },
+          } as Agent;
+        })
+      );
+
+      // Filter to only agents with photos
+      const recordsWithValidPhotos = recordsWithPhotos.filter((agent) => agent.PhotoUrl);
+
+      return {
+        totalSize: recordsWithValidPhotos.length,
+        done: true,
+        records: recordsWithValidPhotos,
+      };
     } catch (error: any) {
-      console.error("Error fetching Agent by ID:", error);
+      console.error('Error fetching agents from Attio:', error);
       throw error;
     }
-  }
+  },
+
+  /**
+   * Fetch lenders list by state from Attio
+   *
+   * Flow:
+   * 1. Get state record by state_code
+   * 2. Get lender IDs from State.lenders multi-ref
+   * 3. Fetch lender records that are active on website
+   * 4. Fetch photos from Sanity using salesforce_id
+   * 5. Map to legacy interface format
+   */
+  fetchLendersListByState: async (stateSlug: string): Promise<LendersData> => {
+    try {
+      // Convert state slug to state code
+      const stateCode = stateSlugToCode[stateSlug] || stateSlug.toUpperCase();
+
+      // 1. Get the state record with lenders
+      const states = await attio.queryRecords('states', {
+        filter: { state_code: { $eq: stateCode } },
+        limit: 1
+      });
+
+      if (!states.length) {
+        return { totalSize: 0, done: true, records: [] };
+      }
+
+      // 2. State.lenders is a multi-ref field containing lender IDs
+      const lenderIds = states[0].lenders || [];
+
+      if (!Array.isArray(lenderIds) || !lenderIds.length) {
+        return { totalSize: 0, done: true, records: [] };
+      }
+
+      // 3. Fetch all lenders (only active on website)
+      const lenders = await attio.queryRecords('lenders', {
+        filter: {
+          $and: [
+            { id: { $in: lenderIds } },
+            { active_on_website: { $eq: true } }
+          ]
+        }
+      });
+
+      // 4. Fetch photos from Sanity and map to legacy interface
+      const recordsWithPhotos = await Promise.all(
+        lenders.map(async (lender: any) => {
+          let photoUrl: string | undefined;
+
+          // Fetch photo from Sanity using salesforce_id
+          if (lender.salesforce_id) {
+            try {
+              photoUrl = await agentService.getAgentImage(lender.salesforce_id);
+            } catch (error) {
+              console.error(`Error fetching photo for lender ${lender.salesforce_id}:`, error);
+            }
+          }
+
+          // Map to legacy Lenders interface
+          return {
+            Name: lender.name || `${lender.first_name || ''} ${lender.last_name || ''}`.trim(),
+            AccountId_15__c: lender.salesforce_id || lender.id,
+            PhotoUrl: photoUrl,
+            FirstName: lender.first_name || '',
+            Agent_Bio__pc: lender.bio || '',
+            Military_Status__pc: lender.military_status || '',
+            Military_Service__pc: lender.military_service || '',
+            Brokerage_Name__pc: lender.company_name || '',
+            BillingCity: lender.city || null,
+            BillingState: stateCode,
+            Individual_NMLS_ID__pc: lender.individual_nmls || '',
+            Company_NMLS_ID__pc: lender.company_nmls || '',
+            // Lenders don't use area assignments - they're assigned at state level
+            Area_Assignments__r: { records: [] },
+          } as Lenders;
+        })
+      );
+
+      // Filter to only lenders with photos
+      const recordsWithValidPhotos = recordsWithPhotos.filter((lender) => lender.PhotoUrl);
+
+      return {
+        totalSize: recordsWithValidPhotos.length,
+        done: true,
+        records: recordsWithValidPhotos,
+      };
+    } catch (error: any) {
+      console.error('Error fetching lenders from Attio:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Fetch a single agent by Attio record ID
+   * Used by contact forms to get agent details
+   */
+  fetchAgentById: async (agentId: string): Promise<Agent | null> => {
+    try {
+      // Query by id (Attio record ID) or salesforce_id
+      let agents = await attio.queryRecords('agents', {
+        filter: { id: { $eq: agentId } },
+        limit: 1
+      });
+
+      // If not found by id, try salesforce_id
+      if (!agents.length) {
+        agents = await attio.queryRecords('agents', {
+          filter: { salesforce_id: { $eq: agentId } },
+          limit: 1
+        });
+      }
+
+      if (!agents.length) {
+        return null;
+      }
+
+      const agent = agents[0];
+
+      // Only return if active on website
+      if (!agent.active_on_website) {
+        return null;
+      }
+
+      return {
+        Name: agent.name || `${agent.first_name || ''} ${agent.last_name || ''}`.trim(),
+        AccountId_15__c: agent.salesforce_id || agent.id,
+        FirstName: agent.first_name || '',
+        LastName: agent.last_name || '',
+        Agent_Bio__pc: agent.bio || '',
+        Military_Status__pc: agent.military_status || '',
+        Military_Service__pc: agent.military_service || '',
+        Brokerage_Name__pc: agent.brokerage_name || '',
+        BillingAddress: { state: '' },
+        BillingStateCode: '',
+        State_s_Licensed_in__pc: '',
+        PersonEmail: agent.email || '',
+        PersonMobilePhone: agent.phone || '',
+      } as Agent;
+    } catch (error: any) {
+      console.error('Error fetching agent by ID from Attio:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Fetch a single lender by Attio record ID
+   * Used by contact forms to get lender details
+   */
+  fetchLenderById: async (lenderId: string): Promise<Lenders | null> => {
+    try {
+      // Query by id (Attio record ID) or salesforce_id
+      let lenders = await attio.queryRecords('lenders', {
+        filter: { id: { $eq: lenderId } },
+        limit: 1
+      });
+
+      // If not found by id, try salesforce_id
+      if (!lenders.length) {
+        lenders = await attio.queryRecords('lenders', {
+          filter: { salesforce_id: { $eq: lenderId } },
+          limit: 1
+        });
+      }
+
+      if (!lenders.length) {
+        return null;
+      }
+
+      const lender = lenders[0];
+
+      // Only return if active on website
+      if (!lender.active_on_website) {
+        return null;
+      }
+
+      return {
+        Name: lender.name || `${lender.first_name || ''} ${lender.last_name || ''}`.trim(),
+        AccountId_15__c: lender.salesforce_id || lender.id,
+        FirstName: lender.first_name || '',
+        Agent_Bio__pc: lender.bio || '',
+        Military_Status__pc: lender.military_status || '',
+        Military_Service__pc: lender.military_service || '',
+        Brokerage_Name__pc: lender.company_name || '',
+        BillingCity: lender.city || null,
+        BillingState: '',
+        Individual_NMLS_ID__pc: lender.individual_nmls || '',
+        Company_NMLS_ID__pc: lender.company_nmls || '',
+      } as Lenders;
+    } catch (error: any) {
+      console.error('Error fetching lender by ID from Attio:', error);
+      throw error;
+    }
+  },
 };
 
 export default stateService;
