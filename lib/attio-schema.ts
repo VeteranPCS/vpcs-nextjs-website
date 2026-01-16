@@ -150,6 +150,7 @@ export const AGENT_ATTRIBUTES: AttributeDefinition[] = [
   { title: 'Phone', api_slug: 'phone', type: 'phone-number' },
   { title: 'Brokerage Name', api_slug: 'brokerage_name', type: 'text' },
   { title: 'Brokerage License', api_slug: 'brokerage_license', type: 'text' },
+  { title: 'License Number', api_slug: 'license_number', type: 'text' },  // Agent's personal RE license
   { title: 'Managing Broker Name', api_slug: 'managing_broker_name', type: 'text' },
   { title: 'Managing Broker Email', api_slug: 'managing_broker_email', type: 'text' },
   { title: 'Managing Broker Phone', api_slug: 'managing_broker_phone', type: 'phone-number' },

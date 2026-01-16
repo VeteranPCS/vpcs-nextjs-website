@@ -52,6 +52,13 @@ interface ContactRow {
   Military_Service__c: string;
   Military_Status__c: string;
   Agent_Bio__c: string;
+  License_Number__c: string;  // Agent's personal RE license number
+  // Brokerage and managing broker fields (Contact has 81%+ population vs Account at 0-12%)
+  Brokerage_Name__c: string;
+  Active_on_Website__c: string;  // '1' or '0'
+  Managing_Broker_Name__c: string;
+  Managing_Broker_Email__c: string;
+  Managing_Broker_Phone__c: string;
 }
 
 // Map military service values from Salesforce to Attio options
@@ -166,8 +173,11 @@ async function migrateAgents() {
     // Get best phone number (prefer mobile)
     const phone = normalizePhone(contact?.MobilePhone || contact?.Phone || account.Phone);
 
-    // Determine if active on website
-    const activeOnWebsite = !!account.Added_to_Website_Date__c;
+    // Determine if active on website (Contact.Active_on_Website__c is 98.5% populated as '1'/'0')
+    // Fallback to Account.Added_to_Website_Date__c if Contact field not available
+    const activeOnWebsite = contact?.Active_on_Website__c
+      ? contact.Active_on_Website__c === '1'
+      : !!account.Added_to_Website_Date__c;
 
     try {
       const record = await attio.createRecord('agents', {
@@ -177,11 +187,14 @@ async function migrateAgents() {
         last_name: account.LastName,
         email: email,
         phone: phone,
-        brokerage_name: account.Website || null,
+        // Brokerage info: Contact has 81% vs Account at 12%
+        brokerage_name: contact?.Brokerage_Name__c || account.Website || null,
         brokerage_license: account.Brokerage_License_Number__c || null,
-        managing_broker_name: account.Managing_Broker__c || null,
-        managing_broker_email: account.Managing_Broker_Email__c || null,
-        managing_broker_phone: normalizePhone(account.Managing_Broker_Phone__c),
+        license_number: contact?.License_Number__c || null,  // Agent's personal RE license
+        // Managing broker: Contact has 35-41% vs Account at 0%
+        managing_broker_name: contact?.Managing_Broker_Name__c || account.Managing_Broker__c || null,
+        managing_broker_email: contact?.Managing_Broker_Email__c || account.Managing_Broker_Email__c || null,
+        managing_broker_phone: normalizePhone(contact?.Managing_Broker_Phone__c || account.Managing_Broker_Phone__c),
         military_service: normalizeMilitaryService(contact?.Military_Service__c || account.xMilitary_Service__c),
         military_status: normalizeMilitaryStatus(contact?.Military_Status__c || account.xMilitary_Status__c),
         bio: contact?.Agent_Bio__c || account.xAgent_Bio__c || null,
