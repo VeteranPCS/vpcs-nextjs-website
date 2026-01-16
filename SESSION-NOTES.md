@@ -8,10 +8,10 @@
 
 ## Quick Status
 
-**Current Phase:** Phase 5 Planning COMPLETE ✅
-**Next Phase:** Phase 5 Implementation - Website Integration & Cutover
+**Current Phase:** Phase 5 COMPLETE ✅ + Data Quality Fixes
+**Next Phase:** Cutover Preparation
 **Blocked On:** None
-**Ready to Code:** ✅ Ready to implement Phase 5A-5D
+**Last Session:** 2026-01-16 - Agent data quality fixes (license, brokerage, broker info)
 
 ---
 
@@ -807,6 +807,66 @@ This session was a continuation after context compaction. Previous sessions had:
 - Magic links enable agent portal access
 - Stale lead re-routing and deal monitoring fully automated
 - Ready for final testing and cutover to production
+
+---
+
+## 2026-01-16 - Agent Data Quality Fixes
+
+**Platform:** Claude Code CLI
+**Duration:** ~1 hour
+**Status:** ✅ Complete
+
+**Completed:**
+- ✅ Recovered from crashed session - identified license_number attribute was added to Attio
+- ✅ Created backfill script for agent license numbers (778 agents updated)
+- ✅ Investigated brokerage/broker data - discovered Contact.csv has the real data
+- ✅ Created backfill script for brokerage/broker/active fields (978 agents updated)
+- ✅ Updated migrate-agents.ts to use Contact fields as primary source
+- ✅ Updated lib/attio-schema.ts with license_number attribute
+
+**Blockers:**
+- None
+
+**Key Discovery - Contact vs Account Fields:**
+Same pattern as military_service and bio - Contact.csv has the populated data:
+
+| Field | Account.csv | Contact.csv |
+|-------|-------------|-------------|
+| Brokerage Name | 12.6% (Website) | **81.4%** (Brokerage_Name__c) |
+| Active on Website | 49.6% (Added_to_Website_Date__c) | **98.5%** (Active_on_Website__c) |
+| Managing Broker Name | 0% | **41.3%** |
+| Managing Broker Email | 0% | **40.2%** |
+| Managing Broker Phone | 0% | **35.4%** |
+| License Number | N/A | **79%** |
+
+**Files Created:**
+- scripts/backfill-agent-license-numbers.ts
+- scripts/backfill-agent-brokerage-info.ts
+
+**Files Modified:**
+- scripts/migrate-agents.ts (Contact fields as primary source)
+- lib/attio-schema.ts (added license_number attribute)
+
+**Git Commits:**
+- dda730f - "Fix agent data quality: add license_number, fix brokerage/broker fields"
+
+**Migration Results:**
+
+| Backfill | Updated | Skipped | Errors |
+|----------|---------|---------|--------|
+| License Numbers | 778 | 206 (no license in Contact) | 0 |
+| Brokerage/Broker Info | 978 | 5 (no data) | 1 (phone validation) |
+
+**Next Session Tasks:**
+- [ ] Configure Attio webhooks in Attio dashboard
+- [ ] Set up cron jobs (Vercel cron or external scheduler)
+- [ ] Test end-to-end lead flow
+- [ ] Final cutover preparation
+
+**Notes:**
+- 12 agents with license numbers weren't migrated (failed original migration due to phone/email errors)
+- The license_number attribute was successfully created in Attio before previous session crashed
+- Person Account pattern: Contact record holds working data, Account holds master record
 
 ---
 
