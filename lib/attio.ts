@@ -456,7 +456,10 @@ class AttioClient {
       } else if (arr[0].option) {
         parsed[key] = arr[0].option.title;
       } else if (arr[0].target_record_id) {
-        parsed[key] = arr[0].target_record_id;
+        // Handle multi-ref fields: return array if multiple, single value if one
+        parsed[key] = arr.length > 1
+          ? arr.map((v: any) => v.target_record_id)
+          : arr[0].target_record_id;
       } else if (arr[0].value !== undefined) {
         parsed[key] = arr[0].value;
       } else {
