@@ -480,7 +480,7 @@ const stateService = {
             Agent_Bio__pc: lender.bio || "",
             Military_Status__pc: lender.military_status || "",
             Military_Service__pc: lender.military_service || "",
-            Brokerage_Name__pc: lender.company_name || "",
+            Brokerage_Name__pc: lender.brokerage_name || lender.company_name || "",
             BillingCity: lender.city || null,
             BillingState: stateCode,
             Individual_NMLS_ID__pc: lender.individual_nmls || "",
