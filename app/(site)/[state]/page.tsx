@@ -7,8 +7,13 @@ import StatePageLetFindAgent from "@/components/StatePage/StatePageLetFindAgent/
 import StatePageWhyChooseVetpcs from "@/components/StatePage/StatePageWhyChooseVetpcs/StatePageWhyChooseVetpcs";
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import stateService, { StateList as StateList, AgentsData, LendersData, Lenders } from "@/services/stateService";
-import { AgentData } from '@/components/StatePage/StatePageCityAgents/StatePageCityAgents'
+import stateService, {
+  StateList as StateList,
+  AgentsData,
+  LendersData,
+  Lenders,
+} from "@/services/stateService";
+import { AgentData } from "@/components/StatePage/StatePageCityAgents/StatePageCityAgents";
 import { Agent } from "@/services/stateService";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -18,59 +23,59 @@ interface FormattedAgentData {
 }
 
 const stateUrlToStateName = {
-  "alabama": "alabama",
-  "alaska": "alaska",
-  "arizona": "arizona",
-  "arkansas": "arkansas",
-  "california": "california",
-  "colorado": "colorado",
-  "connecticut": "connecticut",
-  "delaware": "delaware",
-  "florida": "florida",
-  "georgia": "georgia",
-  "hawaii": "hawaii",
-  "idaho": "idaho",
-  "illinois": "illinois",
-  "indiana": "indiana",
-  "iowa": "iowa",
-  "kansas": "kansas",
-  "kentucky": "kentucky",
-  "louisiana": "louisiana",
-  "maine": "maine",
-  "maryland": "maryland",
-  "massachusetts": "massachusetts",
-  "michigan": "michigan",
-  "minnesota": "minnesota",
-  "mississippi": "mississippi",
-  "missouri": "missouri",
-  "montana": "montana",
-  "nebraska": "nebraska",
-  "nevada": "nevada",
+  alabama: "alabama",
+  alaska: "alaska",
+  arizona: "arizona",
+  arkansas: "arkansas",
+  california: "california",
+  colorado: "colorado",
+  connecticut: "connecticut",
+  delaware: "delaware",
+  florida: "florida",
+  georgia: "georgia",
+  hawaii: "hawaii",
+  idaho: "idaho",
+  illinois: "illinois",
+  indiana: "indiana",
+  iowa: "iowa",
+  kansas: "kansas",
+  kentucky: "kentucky",
+  louisiana: "louisiana",
+  maine: "maine",
+  maryland: "maryland",
+  massachusetts: "massachusetts",
+  michigan: "michigan",
+  minnesota: "minnesota",
+  mississippi: "mississippi",
+  missouri: "missouri",
+  montana: "montana",
+  nebraska: "nebraska",
+  nevada: "nevada",
   "new-hampshire": "new hampshire",
   "new-jersey": "new jersey",
   "new-mexico": "new mexico",
   "new-york": "new york",
   "north-carolina": "north carolina",
   "north-dakota": "north dakota",
-  "ohio": "ohio",
-  "oklahoma": "oklahoma",
-  "oregon": "oregon",
-  "pennsylvania": "pennsylvania",
+  ohio: "ohio",
+  oklahoma: "oklahoma",
+  oregon: "oregon",
+  pennsylvania: "pennsylvania",
   "puerto-rico": "puerto rico",
   "rhode-island": "rhode island",
   "south-carolina": "south carolina",
   "south-dakota": "south dakota",
-  "tennessee": "tennessee",
-  "texas": "texas",
-  "utah": "utah",
-  "vermont": "vermont",
-  "virginia": "virginia",
+  tennessee: "tennessee",
+  texas: "texas",
+  utah: "utah",
+  vermont: "vermont",
+  virginia: "virginia",
   "washington-dc": "district of columbia",
-  "washington": "washington",
+  washington: "washington",
   "west-virginia": "west virginia",
-  "wisconsin": "wisconsin",
-  "wyoming": "wyoming"
-}
+  wisconsin: "wisconsin",
+  wyoming: "wyoming",
+};
 
 export async function generateStaticParams() {
   try {
@@ -78,18 +83,21 @@ export async function generateStaticParams() {
     return states.map((state) => ({
       state: state.state_slug.current,
     }));
-
   } catch (error) {
     console.error("Error generating static params:", error);
     return []; // Return an empty array to avoid breaking the build
   }
 }
 
-export async function generateMetadata({ params }: { params: { state: string } }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { state: string };
+}) {
   const stateName = params.state
     .replace(/-/g, " ") // Replace hyphens with spaces
-    .toLowerCase()      // Convert to lowercase
-    .split(" ")         // Split into words
+    .toLowerCase() // Convert to lowercase
+    .split(" ") // Split into words
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
     .join(" ");
 
@@ -109,12 +117,14 @@ export async function generateMetadata({ params }: { params: { state: string } }
       description: ogDescription,
       url: `${BASE_URL}/${params.state}`,
       type: "website",
-      images: [{
-        url: ogImage,
-        alt: `Map of ${stateName}`,
-        width: 800,
-        height: 600,
-      }],
+      images: [
+        {
+          url: ogImage,
+          alt: `Map of ${stateName}`,
+          width: 800,
+          height: 600,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
@@ -125,14 +135,17 @@ export async function generateMetadata({ params }: { params: { state: string } }
   };
 }
 
-
-export default async function StatePage({ params }: { params: { state: string } }) {
+export default async function StatePage({
+  params,
+}: {
+  params: { state: string };
+}) {
   const { state } = await params;
   let state_data: StateList | null = null;
   let agents_data: AgentsData | [] = [];
   let lenders_data: LendersData | [] = [];
   let formatted_data: FormattedAgentData = {};
-  let state_code = '';
+  let state_code = "";
 
   try {
     state_data = await stateService.fetchStateDetails(state);
@@ -144,21 +157,26 @@ export default async function StatePage({ params }: { params: { state: string } 
     lenders_data = await stateService.fetchLendersListByState(state_code);
 
     // Sort lenders based on AA_Score__c for the current state
-    const currentStateName = stateUrlToStateName[state as keyof typeof stateUrlToStateName];
+    const currentStateName =
+      stateUrlToStateName[state as keyof typeof stateUrlToStateName];
     if (lenders_data?.records) {
       lenders_data.records.forEach((lender: Lenders) => {
         const areaAssignments = lender.Area_Assignments__r?.records || [];
         const stateAssignment = areaAssignments.find(
-          (record: any) => record.Area__r.State__c.toLowerCase() === currentStateName
+          (record: any) =>
+            record.Area__r.State__c.toLowerCase() === currentStateName,
         );
         // Assign the score for the current state, default to 0 if not found
-        (lender as any).currentStateScore = stateAssignment ? stateAssignment.AA_Score__c : 0;
+        (lender as any).currentStateScore = stateAssignment
+          ? stateAssignment.AA_Score__c
+          : 0;
       });
 
       // Sort lenders in descending order based on currentStateScore
-      lenders_data.records.sort((a: any, b: any) => b.currentStateScore - a.currentStateScore);
+      lenders_data.records.sort(
+        (a: any, b: any) => b.currentStateScore - a.currentStateScore,
+      );
     }
-
   } catch (error) {
     console.error("Error fetching State Agent List", error);
   }
@@ -170,10 +188,14 @@ export default async function StatePage({ params }: { params: { state: string } 
 
       // Filter to only areas within the current state
       const areasInState = areaAssignments
-        .filter((record: any) => record.Area__r.State__c.toLowerCase() === stateUrlToStateName[state as keyof typeof stateUrlToStateName])
+        .filter(
+          (record: any) =>
+            record.Area__r.State__c.toLowerCase() ===
+            stateUrlToStateName[state as keyof typeof stateUrlToStateName],
+        )
         .map((record: any) => ({
           name: record.Area__r.Name,
-          score: record.AA_Score__c
+          score: record.AA_Score__c,
         }));
 
       // If the agent has no areas in the current state, skip them
@@ -182,13 +204,13 @@ export default async function StatePage({ params }: { params: { state: string } 
       }
 
       // Add the agent to each relevant group with their score for that city
-      areasInState.forEach((area: { name: string, score: number }) => {
+      areasInState.forEach((area: { name: string; score: number }) => {
         if (!groups[area.name]) {
           groups[area.name] = [];
         }
         groups[area.name].push({
           ...agent,
-          cityScore: area.score
+          cityScore: area.score,
         });
       });
 
@@ -196,10 +218,9 @@ export default async function StatePage({ params }: { params: { state: string } 
     }, {});
 
     // Sort agents within each city group by their cityScore
-    Object.keys(formatted_data).forEach(city => {
+    Object.keys(formatted_data).forEach((city) => {
       formatted_data[city].sort((a: any, b: any) => b.cityScore - a.cityScore);
     });
-
   } catch (error) {
     console.error("Error fetching State Agent List", error);
   }
@@ -211,22 +232,35 @@ export default async function StatePage({ params }: { params: { state: string } 
   return (
     <>
       <StatePageHeroSection
-        stateName={state_data?.state_name || 'Unknown'}
+        stateName={state_data?.state_name || "Unknown"}
         stateImage={state_data?.state_map}
         cityList={Object.keys(formatted_data).sort()}
       />
       <StatePageHeroSecondSection
-        stateName={state_data?.state_name || 'Unknown'}
+        stateName={state_data?.state_name || "Unknown"}
       />
-      <StatePageVaLoan cityName={state_data?.state_name || 'Unknown'} lendersData={lenders_data} state={params.state} />
-      <StatePageCTA cityName={state_data?.state_name || 'Unknown'} />
+      <StatePageVaLoan
+        cityName={state_data?.state_name || "Unknown"}
+        lendersData={lenders_data}
+        state={params.state}
+      />
+      <StatePageCTA cityName={state_data?.state_name || "Unknown"} />
 
-      {Object.entries(formatted_data).sort().map(([cityName, agents]: [string, any[]]) => (
-        <StatePageCityAgents key={cityName} city={cityName} agent_data={agents} state={params.state} />
-      ))}
+      {Object.entries(formatted_data)
+        .sort()
+        .map(([cityName, agents]: [string, any[]]) => (
+          <StatePageCityAgents
+            key={cityName}
+            city={cityName}
+            agent_data={agents}
+            state={params.state}
+          />
+        ))}
 
       <StatePageLetFindAgent />
-      <StatePageWhyChooseVetpcs cityName={state_data?.state_name || 'Unknown'} />
+      <StatePageWhyChooseVetpcs
+        cityName={state_data?.state_name || "Unknown"}
+      />
       <FrequentlyAskedQuestion />
       <KeepInTouch />
     </>
