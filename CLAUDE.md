@@ -200,12 +200,26 @@ See `docs/post-migration-review/` for records that need manual attention:
    - For Person records: `name: "${firstName} ${lastName}"`
    - Migration scripts should include `name` field in createRecord calls
 
-10. **Contact.csv has the populated fields, Account.csv x-prefixed fields are EMPTY:**
-    - Account.xMilitary_Service__c, xMilitary_Status__c, xAgent_Bio__c are 0% populated
-    - Contact.Military_Service__c (~56%), Military_Status__c (~57%), Agent_Bio__c (~24%) have data
+10. **Contact.csv has the populated fields, Account.csv fields are EMPTY:**
+    - This applies to ALL Person Account data, not just military/bio fields:
+
+    | Field | Account.csv | Contact.csv |
+    |-------|-------------|-------------|
+    | Military Service | 0% (xMilitary_Service__c) | **56%** (Military_Service__c) |
+    | Military Status | 0% (xMilitary_Status__c) | **57%** (Military_Status__c) |
+    | Agent Bio | 0% (xAgent_Bio__c) | **24%** (Agent_Bio__c) |
+    | Brokerage Name | 12.6% (Website) | **81.4%** (Brokerage_Name__c) |
+    | Active on Website | 49.6% (Added_to_Website_Date__c) | **98.5%** (Active_on_Website__c) |
+    | Managing Broker Name | 0% | **41.3%** (Managing_Broker_Name__c) |
+    | Managing Broker Email | 0% | **40.2%** (Managing_Broker_Email__c) |
+    | Managing Broker Phone | 0% | **35.4%** (Managing_Broker_Phone__c) |
+    | License Number | N/A | **79%** (License_Number__c) |
+
     - Always use Contact fields as primary source with Account as fallback:
     ```typescript
-    military_service: contact?.Military_Service__c || account.xMilitary_Service__c || null,
+    brokerage_name: contact?.Brokerage_Name__c || account.Website || null,
+    active_on_website: contact?.Active_on_Website__c === '1',
+    license_number: contact?.License_Number__c || null,
     ```
 
 11. **Cannot DELETE attributes via API - only archive:**
@@ -327,6 +341,20 @@ Sanity images are linked by `salesforce_id`. We preserved this field in Attio du
 // No changes needed to Sanity or image lookup
 ```
 
+### Lender Field Mapping Note
+
+**⚠️ Lenders use `brokerage_name` field, NOT `company_name`:**
+
+Lenders have both `company_name` and `brokerage_name` attributes in Attio, but only `brokerage_name` is populated from the Salesforce migration. When mapping lender data in stateService:
+
+```typescript
+// CORRECT - brokerage_name is populated
+Brokerage_Name__pc: lender.brokerage_name || lender.company_name || ""
+
+// WRONG - company_name is empty
+Brokerage_Name__pc: lender.company_name || ""
+```
+
 ---
 
 ## Documentation
@@ -398,6 +426,8 @@ You MUST join Account records with Contact records to get email addresses.
 
 #### Account.csv + Contact.csv → Agents/Lenders
 
+**⚠️ IMPORTANT:** Contact.csv has the real data - Account x-prefixed fields are empty!
+
 | Salesforce Field | Attio Field | Notes |
 |------------------|-------------|-------|
 | Account.Id | salesforce_id | Preserve for lookups |
@@ -407,13 +437,17 @@ You MUST join Account records with Contact records to get email addresses.
 | Contact.MobilePhone | phone | Priority: MobilePhone > Account.Phone |
 | Account.Phone | phone (fallback) | Normalize to E.164 |
 | BillingState / BillingStateCode | state | Use StateCode (2-letter) |
-| Website | brokerage_name | Website field stores brokerage |
-| Brokerage_License_Number__c | brokerage_license | |
-| Managing_Broker__c | managing_broker_name | |
-| xMilitary_Service__c | military_service | Army, Navy, etc. |
-| xMilitary_Status__c | military_status | Active Duty, Veteran, etc. |
-| xAgent_Bio__c | bio | |
-| Added_to_Website_Date__c | added_to_website_date | If set, agent is Active |
+| **Contact.Brokerage_Name__c** | brokerage_name | **81% populated (not Account.Website at 12%)** |
+| Account.Brokerage_License_Number__c | brokerage_license | |
+| **Contact.License_Number__c** | license_number | **79% populated - agent's personal RE license** |
+| **Contact.Managing_Broker_Name__c** | managing_broker_name | **41% (not Account.Managing_Broker__c at 0%)** |
+| **Contact.Managing_Broker_Email__c** | managing_broker_email | **40% populated** |
+| **Contact.Managing_Broker_Phone__c** | managing_broker_phone | **35% populated** |
+| **Contact.Military_Service__c** | military_service | **56% (not Account.xMilitary_Service__c at 0%)** |
+| **Contact.Military_Status__c** | military_status | **57% (not Account.xMilitary_Status__c at 0%)** |
+| **Contact.Agent_Bio__c** | bio | **24% (not Account.xAgent_Bio__c at 0%)** |
+| **Contact.Active_on_Website__c** | active_on_website | **98% as '1'/'0' (not Added_to_Website_Date__c at 50%)** |
+| Account.Added_to_Website_Date__c | added_to_website_date | Preserve for historical reference |
 
 #### Area__c.csv → Areas
 

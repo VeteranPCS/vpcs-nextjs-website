@@ -810,10 +810,10 @@ This session was a continuation after context compaction. Previous sessions had:
 
 ---
 
-## 2026-01-16 - Agent Data Quality Fixes
+## 2026-01-16 - Agent Data Quality Fixes & Lender Display Bug
 
 **Platform:** Claude Code CLI
-**Duration:** ~1 hour
+**Duration:** ~1.5 hours
 **Status:** ✅ Complete
 
 **Completed:**
@@ -823,6 +823,7 @@ This session was a continuation after context compaction. Previous sessions had:
 - ✅ Created backfill script for brokerage/broker/active fields (978 agents updated)
 - ✅ Updated migrate-agents.ts to use Contact fields as primary source
 - ✅ Updated lib/attio-schema.ts with license_number attribute
+- ✅ Fixed lender brokerage name display bug on state pages
 
 **Blockers:**
 - None
@@ -839,6 +840,11 @@ Same pattern as military_service and bio - Contact.csv has the populated data:
 | Managing Broker Phone | 0% | **35.4%** |
 | License Number | N/A | **79%** |
 
+**Lender Display Bug Fix:**
+- stateService was using `lender.company_name` (empty) instead of `lender.brokerage_name` (populated)
+- Lenders have both fields but only `brokerage_name` was migrated from Salesforce
+- Fixed: `Brokerage_Name__pc: lender.brokerage_name || lender.company_name || ""`
+
 **Files Created:**
 - scripts/backfill-agent-license-numbers.ts
 - scripts/backfill-agent-brokerage-info.ts
@@ -846,9 +852,12 @@ Same pattern as military_service and bio - Contact.csv has the populated data:
 **Files Modified:**
 - scripts/migrate-agents.ts (Contact fields as primary source)
 - lib/attio-schema.ts (added license_number attribute)
+- services/stateService.tsx (fixed lender brokerage name mapping)
 
 **Git Commits:**
 - dda730f - "Fix agent data quality: add license_number, fix brokerage/broker fields"
+- c539121 - "Update session notes with data quality fixes session"
+- a0ee57f - "Fix lender brokerage name display on state pages"
 
 **Migration Results:**
 
@@ -867,6 +876,7 @@ Same pattern as military_service and bio - Contact.csv has the populated data:
 - 12 agents with license numbers weren't migrated (failed original migration due to phone/email errors)
 - The license_number attribute was successfully created in Attio before previous session crashed
 - Person Account pattern: Contact record holds working data, Account holds master record
+- Lenders use `brokerage_name` field (not `company_name`) for company display
 
 ---
 
