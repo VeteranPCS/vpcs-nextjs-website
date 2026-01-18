@@ -67,8 +67,8 @@ Before we continue, please confirm:
 
 ### Current Migration Status
 
-**Last Updated:** 2026-01-14
-**Current Phase:** Phase 5 COMPLETE ✅ - Ready for Cutover
+**Last Updated:** 2026-01-17
+**Current Phase:** READY FOR CUTOVER ✅
 **Branch:** attio-migration
 
 **✅ Completed:**
@@ -83,12 +83,17 @@ Before we continue, please confirm:
 - Phase 5B: Website data layer (stateService, areas API refactored for Attio)
 - Phase 5C: Contact forms + magic-link API routes
 - Phase 5D: Webhook handler + cron jobs (stale leads/deals automation)
+- V2 Re-Migration: All data re-uploaded from cleaned CSVs
+- Cutover Prep: vercel.json created, docs/CUTOVER-PLAN.md written
 
-**📋 Next Steps (Cutover):**
-- [ ] Configure Attio webhooks in Attio dashboard
-- [ ] Set up cron jobs (Vercel cron or external scheduler)
-- [ ] Test end-to-end lead flow
-- [ ] Final cutover preparation
+**📋 Next Steps (CUTOVER - User Action Required):**
+1. [ ] Add `CRON_SECRET` to Vercel Production env vars
+2. [ ] Add `ATTIO_WEBHOOK_SECRET` to Vercel Production env vars
+3. [ ] Configure Attio webhook (see `docs/CUTOVER-PLAN.md` for details)
+4. [ ] Export fresh Salesforce CSVs (day of cutover)
+5. [ ] Run data cleaning + V2 migrations (final sync)
+6. [ ] Merge `attio-migration` → `main`
+7. [ ] Monitor for 24-48 hours post-cutover
 
 **📋 Phase 5 Key Decisions:**
 | Decision | Choice |

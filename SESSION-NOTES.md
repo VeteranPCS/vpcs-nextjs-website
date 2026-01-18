@@ -8,14 +8,84 @@
 
 ## Quick Status
 
-**Current Phase:** Phase 5 COMPLETE ✅ + V2 Re-Migration COMPLETE ✅
-**Next Phase:** Cutover Preparation
-**Blocked On:** None
-**Last Session:** 2026-01-17 - V2 Re-Migration (cleaned data upload)
+**Current Phase:** Phase 5 COMPLETE ✅ + V2 Re-Migration COMPLETE ✅ + Cutover Prep COMPLETE ✅
+**Next Phase:** CUTOVER (Final Data Sync + Merge to Main)
+**Blocked On:** User to configure Attio webhook + Vercel env vars
+**Last Session:** 2026-01-17 - Cutover Plan & Vercel Cron Configuration
 
 ---
 
 ## Session Log
+
+### 2026-01-17 - Cutover Plan & Vercel Cron Configuration
+
+**Platform:** Claude Code CLI
+**Status:** ✅ Complete
+
+**Completed:**
+- ✅ Committed V2 migration scripts (all 9 scripts + rebuild-mappings.ts utility)
+- ✅ Fixed TypeScript errors (added offset to queryRecords type, CsvRow types)
+- ✅ Removed redundant scripts/v2/ directory (working versions are in scripts/ root)
+- ✅ Created `vercel.json` with cron job configuration
+- ✅ Created comprehensive `docs/CUTOVER-PLAN.md` with step-by-step instructions
+- ✅ Researched and documented Attio webhook setup (signature verification with Attio-Signature header)
+- ✅ Researched and documented Vercel cron job setup (CRON_SECRET + Authorization header)
+
+**Files Created:**
+- `vercel.json` - Cron job configuration (hourly stale-leads, daily stale-deals)
+- `docs/CUTOVER-PLAN.md` - Complete cutover instructions with env vars, webhooks, data sync
+
+**Files Modified:**
+- `lib/attio.ts` - Added `offset` parameter to queryRecords type
+- `scripts/rebuild-mappings.ts` - Added CsvRow interface for type safety
+- `.gitignore` - Added `data/cleaned/` to ignore PII data
+
+**Git Commits:**
+- `23fec7e` - Add V2 migration scripts for cleaned data re-migration
+- `b27e274` - Add Vercel cron jobs configuration and cutover plan
+
+**V2 Migration Results (Current Attio State):**
+| Object | Count |
+|--------|-------|
+| Agents | 1,027 |
+| Lenders | 138 |
+| Customers | 944 |
+| Areas | 271 |
+| Area Assignments | 503 |
+| Customer Deals | 925 |
+| Agent Onboarding | 902 |
+| Lender Onboarding | 138 |
+
+**Cutover Prerequisites (User Action Required):**
+1. Add `CRON_SECRET` to Vercel Production env vars (generate 16+ char random string)
+2. Add `ATTIO_WEBHOOK_SECRET` to Vercel Production env vars (generate 16+ char random string)
+3. Configure Attio webhook in Attio → Workspace Settings → Developers → Webhooks:
+   - URL: `https://www.veteranpcs.com/api/webhooks/attio`
+   - Secret: Same as `ATTIO_WEBHOOK_SECRET`
+   - Events: `record.created`, `record.updated`, `record.deleted` for agents, lenders, areas, area_assignments
+
+**Cron Jobs Configured:**
+| Job | Schedule | Purpose |
+|-----|----------|---------|
+| `/api/cron/check-stale-leads` | Hourly (`0 * * * *`) | Re-route leads after 12h without contact |
+| `/api/cron/check-stale-deals` | Daily 6am UTC (`0 6 * * *`) | 7-day reminders, 14-day alerts, 45-day auto-close |
+
+**Next Session Tasks:**
+- [ ] Verify user has configured Attio webhook and Vercel env vars
+- [ ] Export fresh Salesforce CSVs (day of cutover)
+- [ ] Run data cleaning to generate fresh `data/cleaned/` files
+- [ ] Clear Attio and re-run V2 migrations (final sync)
+- [ ] Merge `attio-migration` → `main`
+- [ ] Verify cron jobs appear in Vercel dashboard
+- [ ] Test end-to-end lead flow on production
+- [ ] Monitor for 24-48 hours post-cutover
+
+**Reference:**
+- Full cutover instructions: `docs/CUTOVER-PLAN.md`
+- Vercel cron docs: https://vercel.com/docs/cron-jobs
+- Attio webhook docs: https://docs.attio.com/rest-api/guides/webhooks
+
+---
 
 ### 2024-12-29 - Documentation & Planning Complete
 
