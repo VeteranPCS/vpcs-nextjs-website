@@ -430,6 +430,7 @@ class AttioClient {
     filter?: any;
     sort?: any[];
     limit?: number;
+    offset?: number;
   }) {
     const res = await this.request(`/objects/${objectSlug}/records/query`, {
       method: 'POST',

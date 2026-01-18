@@ -5,15 +5,21 @@
 //   npx ts-node scripts/delete-attio-data.ts <object-type>
 //
 // Object types:
-//   customer_deals  - Delete all customer deal entries (list)
-//   customers       - Delete all customer records (object)
-//   agents          - Delete all agent records (object)
-//   lenders         - Delete all lender records (object)
+//   customer_deals     - Delete all customer deal entries (list)
+//   agent_onboarding   - Delete all agent onboarding entries (list)
+//   lender_onboarding  - Delete all lender onboarding entries (list)
+//   area_assignments   - Delete all area assignment records (object)
+//   areas              - Delete all area records (object)
+//   customers          - Delete all customer records (object)
+//   agents             - Delete all agent records (object)
+//   lenders            - Delete all lender records (object)
 //
 // IMPORTANT: Run deletions in this order to avoid reference errors:
-//   1. customer_deals (depends on customers)
-//   2. customers (depends on agents/lenders)
-//   3. agents, lenders (independent)
+//   1. Pipeline entries (customer_deals, agent_onboarding, lender_onboarding)
+//   2. area_assignments (depends on agents, areas)
+//   3. areas (depends on states)
+//   4. customers, agents, lenders (independent)
+//   5. states - DO NOT DELETE (static reference data)
 
 import dotenv from 'dotenv';
 import path from 'path';
@@ -150,13 +156,24 @@ async function main() {
   if (!objectType) {
     console.log('Usage: npx ts-node scripts/delete-attio-data.ts <object-type>');
     console.log();
-    console.log('Object types:');
-    console.log('  customer_deals  - Delete all customer deal entries (list)');
-    console.log('  customers       - Delete all customer records (object)');
-    console.log('  agents          - Delete all agent records (object)');
-    console.log('  lenders         - Delete all lender records (object)');
+    console.log('Object types (lists):');
+    console.log('  customer_deals     - Delete all customer deal entries');
+    console.log('  agent_onboarding   - Delete all agent onboarding entries');
+    console.log('  lender_onboarding  - Delete all lender onboarding entries');
     console.log();
-    console.log('Run deletions in order: customer_deals -> customers -> agents/lenders');
+    console.log('Object types (records):');
+    console.log('  area_assignments   - Delete all area assignment records');
+    console.log('  areas              - Delete all area records');
+    console.log('  customers          - Delete all customer records');
+    console.log('  agents             - Delete all agent records');
+    console.log('  lenders            - Delete all lender records');
+    console.log();
+    console.log('Run deletions in order:');
+    console.log('  1. customer_deals, agent_onboarding, lender_onboarding (pipelines)');
+    console.log('  2. area_assignments');
+    console.log('  3. areas');
+    console.log('  4. customers, agents, lenders');
+    console.log('  5. DO NOT delete states (static reference data)');
     process.exit(1);
   }
 
@@ -174,8 +191,22 @@ async function main() {
   await new Promise(resolve => setTimeout(resolve, 3000));
 
   switch (objectType) {
+    // Lists (pipelines)
     case 'customer_deals':
       await deleteListEntries('customer_deals');
+      break;
+    case 'agent_onboarding':
+      await deleteListEntries('agent_onboarding');
+      break;
+    case 'lender_onboarding':
+      await deleteListEntries('lender_onboarding');
+      break;
+    // Objects
+    case 'area_assignments':
+      await deleteObjectRecords('area_assignments');
+      break;
+    case 'areas':
+      await deleteObjectRecords('areas');
       break;
     case 'customers':
       await deleteObjectRecords('customers');
@@ -186,12 +217,15 @@ async function main() {
     case 'lenders':
       await deleteObjectRecords('lenders');
       break;
-    case 'area_assignments':
-      await deleteObjectRecords('area_assignments');
+    case 'states':
+      console.error('⚠️  Cannot delete states - they are static reference data');
+      console.log('States are required for area→state references');
+      process.exit(1);
       break;
     default:
       console.error(`Unknown object type: ${objectType}`);
-      console.log('Valid types: customer_deals, customers, agents, lenders');
+      console.log('Valid types: customer_deals, agent_onboarding, lender_onboarding,');
+      console.log('             area_assignments, areas, customers, agents, lenders');
       process.exit(1);
   }
 
