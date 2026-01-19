@@ -2,7 +2,7 @@
 
 ## Overview
 
-VeteranPCS is a NextJS-based web application designed to connect military personnel, veterans, and their families with real estate agents and mortgage lenders during Permanent Change of Station (PCS) moves. The platform integrates with Salesforce for CRM, Sanity for content management, Slack for notifications, OpenPhone for SMS messaging, and Google Business Profile for reviews.
+VeteranPCS is a NextJS-based web application designed to connect military personnel, veterans, and their families with real estate agents and mortgage lenders during Permanent Change of Station (PCS) moves. The platform integrates with **Attio for CRM** (migrated from Salesforce in January 2026), Sanity for content management, Slack for notifications, OpenPhone for SMS messaging, and Google Business Profile for reviews.
 
 ## API Routes
 
@@ -35,7 +35,7 @@ VeteranPCS is a NextJS-based web application designed to connect military person
   - **400 Bad Request**: Missing state parameter
   - **500 Internal Server Error**
 - **Authentication**: None required
-- **Side Effects**: Queries Salesforce for agent area assignments
+- **Side Effects**: Queries Attio for agent area assignments
 - **Dynamic**: Route marked as force-dynamic to prevent caching
 
 ---
@@ -502,9 +502,97 @@ VeteranPCS is a NextJS-based web application designed to connect military person
 
 ---
 
+---
+
+### Endpoint: `/api/webhooks/attio`
+
+- **HTTP Method**: POST
+- **Description**: Handles Attio webhook events for cache revalidation when CRM records change.
+- **Parameters**:
+  - **Headers**:
+    - `x-attio-signature`: string (required) - HMAC signature for webhook verification
+  - **Body (JSON)**: Attio webhook payload containing:
+    - `event`: string - Event type (e.g., `record.created`, `record.updated`, `record.deleted`)
+    - `object`: string - Object type (e.g., `agents`, `lenders`, `areas`)
+    - `data`: object - Record data
+- **Response**:
+  - **200 OK**: Webhook processed successfully
+  - **401 Unauthorized**: Invalid signature
+  - **500 Internal Server Error**
+- **Authentication**: Requires `ATTIO_WEBHOOK_SECRET` for signature verification
+- **Side Effects**: Revalidates Next.js cached paths for affected state pages
+
+---
+
+### Endpoint: `/api/cron/check-stale-leads`
+
+- **HTTP Method**: GET
+- **Description**: Cron job that re-routes leads after 12 hours without contact confirmation.
+- **Parameters**:
+  - **Headers**:
+    - `Authorization`: `Bearer <CRON_SECRET>` (required)
+- **Response**:
+  - **200 OK**: Processed successfully
+  - **401 Unauthorized**: Invalid or missing CRON_SECRET
+- **Authentication**: Requires `CRON_SECRET` environment variable
+- **Schedule**: Hourly (`0 * * * *`)
+- **Side Effects**: Updates lead assignments in Attio, sends notifications
+
+---
+
+### Endpoint: `/api/cron/check-stale-deals`
+
+- **HTTP Method**: GET
+- **Description**: Cron job that sends reminders for stale deals and auto-closes after 45 days.
+- **Parameters**:
+  - **Headers**:
+    - `Authorization`: `Bearer <CRON_SECRET>` (required)
+- **Response**:
+  - **200 OK**: Processed successfully
+  - **401 Unauthorized**: Invalid or missing CRON_SECRET
+- **Authentication**: Requires `CRON_SECRET` environment variable
+- **Schedule**: Daily at 6:00 AM UTC (`0 6 * * *`)
+- **Side Effects**: Updates deal stages in Attio, sends SMS reminders, Slack alerts
+
+---
+
+### Endpoint: `/api/magic-link/validate`
+
+- **HTTP Method**: GET
+- **Description**: Validates magic link tokens for agent portal access.
+- **Parameters**:
+  - **Query Parameters**:
+    - `token`: string (required) - JWT magic link token
+- **Response**:
+  - **200 OK**: Token valid, returns deal data
+  - **400 Bad Request**: Missing or invalid token
+  - **401 Unauthorized**: Token expired or invalid signature
+- **Authentication**: Token must be signed with `MAGIC_LINK_SECRET`
+
+---
+
+### Endpoint: `/api/magic-link/update`
+
+- **HTTP Method**: POST
+- **Description**: Updates deal information from agent portal via magic link.
+- **Parameters**:
+  - **Body (JSON)**:
+    - `token`: string (required) - JWT magic link token
+    - `updates`: object (required) - Deal field updates
+- **Response**:
+  - **200 OK**: Deal updated successfully
+  - **400 Bad Request**: Invalid request
+  - **401 Unauthorized**: Invalid token
+- **Authentication**: Token must be signed with `MAGIC_LINK_SECRET`
+- **Side Effects**: Updates deal record in Attio
+
+---
+
 ## Additional Notes
 
-The codebase integrates multiple external services including Salesforce for CRM, Sanity for content management, Slack for notifications, OpenPhone for messaging, and Google for reviews. It employs Next.js cache revalidation strategies to ensure content is fresh while maintaining performance.
+The codebase integrates multiple external services including **Attio for CRM** (primary data source), Sanity for content management, Slack for notifications, OpenPhone for messaging, and Google for reviews. It employs Next.js cache revalidation strategies to ensure content is fresh while maintaining performance.
+
+**CRM Migration Note (January 2026):** The platform was migrated from Salesforce to Attio. Legacy Salesforce IDs are preserved in Attio records (`salesforce_id` field) for Sanity image lookups and historical reference.
 
 ### API Versioning
 

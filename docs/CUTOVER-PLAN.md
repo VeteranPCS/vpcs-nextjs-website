@@ -266,7 +266,7 @@ npx tsx scripts/migrate-customers-v2.ts
 # 2. Areas (depends on states)
 npx tsx scripts/migrate-areas-v2.ts
 
-# 3. State-lender assignments
+# 3. State-lender assignments (IMPORTANT: Run AFTER lenders migration)
 npx tsx scripts/migrate-state-lenders-v2.ts
 
 # 4. Area assignments (depends on agents + areas)
@@ -277,6 +277,14 @@ npx tsx scripts/migrate-customer-deals-v2.ts
 npx tsx scripts/migrate-agent-onboarding-v2.ts
 npx tsx scripts/migrate-lender-onboarding-v2.ts
 ```
+
+**⚠️ IMPORTANT:** If you previously ran migrations and State.lenders contains stale UUIDs:
+```bash
+# Clean up orphaned lender references (run after migrate-state-lenders-v2.ts)
+npx tsx scripts/cleanup-stale-lender-refs.ts
+```
+
+This fixes an issue where re-migrating lenders creates new UUIDs, but State.lenders still references old UUIDs. Symptoms: state pages show 0 lenders despite lenders being assigned.
 
 ### 4.5 Verify Migration Counts
 
@@ -421,6 +429,34 @@ If you have Slack configured, you should receive alerts for:
 1. Verify `CRON_SECRET` is set in Vercel Production environment
 2. Redeploy after adding environment variable
 3. Check logs for exact error message
+
+### State Pages Showing 0 Lenders
+
+**Symptom:** Texas (or other states) shows agents but no lenders, even though lenders are assigned in Attio.
+
+**Cause:** After V2 re-migration, lender records got new UUIDs, but `State.lenders` multi-ref field still contains old (orphaned) UUIDs.
+
+**Fix:**
+```bash
+# Re-run state-lenders migration to add new UUIDs
+npx tsx scripts/migrate-state-lenders-v2.ts
+
+# Then clean up stale references
+npx tsx scripts/cleanup-stale-lender-refs.ts
+```
+
+**Verification:**
+```bash
+# Test that lenders are returned correctly
+set -a && source .env.local && set +a && npx tsx -e '
+const stateService = require("./services/stateService.tsx").default;
+async function test() {
+  const lenders = await stateService.fetchLendersListByState("texas");
+  console.log("Texas lenders:", lenders.totalSize);
+}
+test();
+'
+```
 
 ---
 

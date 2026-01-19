@@ -67,7 +67,7 @@ Before we continue, please confirm:
 
 ### Current Migration Status
 
-**Last Updated:** 2026-01-17
+**Last Updated:** 2026-01-18
 **Current Phase:** READY FOR CUTOVER ✅
 **Branch:** attio-migration
 
@@ -111,9 +111,10 @@ Before we continue, please confirm:
 4. [ ] Merge to main during low-traffic period
 5. [ ] Monitor for 24-48 hours post-cutover
 
-**🔧 Schema Fix Applied:**
+**🔧 Schema Fixes Applied:**
 - `agent_commission` attribute archived (was incorrectly type `currency`)
 - `commission_percent` attribute created (type `number`, displays "2.75" not "$2.75")
+- `State.lenders` stale references cleaned (V2 migration created new lender UUIDs, old refs needed cleanup)
 
 **📋 Migration Progress:**
 | Script | Status | Records | Notes |
@@ -267,6 +268,26 @@ See `docs/post-migration-review/` for records that need manual attention:
     ```
 
     **Supported operators:** `$eq`, `$ne`, `$gt`, `$lt`, `$in`, `$nin`, `$and`, `$or`, `$contains`
+
+14. **Multi-ref fields can accumulate stale UUIDs after V2 re-migrations:**
+    - When re-running migrations (V2), records get **new UUIDs**
+    - Multi-ref fields (like `State.lenders`) may still contain **old UUIDs** from V1
+    - PATCH updates to multi-ref fields **append** new values, they don't replace
+    - Use `cleanup-stale-lender-refs.ts` script pattern to fix:
+      1. Fetch all valid record IDs from target object
+      2. For each parent record, filter lender IDs to only valid ones
+      3. Clear the field (set to empty array), then set new valid IDs
+    ```typescript
+    // To REPLACE a multi-ref field (not append):
+    // Step 1: Clear the field
+    await attio.updateRecord('states', stateId, { lenders: [] });
+    // Step 2: Set new values
+    await attio.updateRecord('states', stateId, {
+      lenders: validIds.map(id => ({ target_object: 'lenders', target_record_id: id }))
+    });
+    ```
+    - **Symptom:** stateService returns 0 lenders (IDs exist in State.lenders but records don't exist)
+    - **Prevention:** Always re-run `migrate-state-lenders-v2.ts` after re-migrating lenders
 
 ---
 
