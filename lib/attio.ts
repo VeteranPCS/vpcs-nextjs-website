@@ -421,6 +421,24 @@ class AttioClient {
     });
   }
 
+  /**
+   * Assert (upsert) a record using PUT - this OVERWRITES multi-ref/multiselect fields
+   * Unlike PATCH which appends, PUT completely replaces multi-ref field values
+   * @param objectSlug - The object type (e.g., 'states')
+   * @param matchingAttribute - Attribute slug used to find existing record (e.g., 'state_code')
+   * @param data - Full record data including the matching attribute value
+   */
+  async assertRecord(objectSlug: string, matchingAttribute: string, data: Record<string, any>) {
+    return this.request(`/objects/${objectSlug}/records?matching_attribute=${matchingAttribute}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        data: {
+          values: this.formatValues(data),
+        }
+      }),
+    });
+  }
+
   async getRecord(objectSlug: string, recordId: string) {
     const res = await this.request(`/objects/${objectSlug}/records/${recordId}`);
     return this.parseRecord(res.data);

@@ -11,13 +11,70 @@
 **Current Phase:** Phase 5 COMPLETE ✅ + V2 Re-Migration COMPLETE ✅ + Cutover Prep COMPLETE ✅
 **Next Phase:** CUTOVER (Final Data Sync + Merge to Main)
 **Blocked On:** User to configure Attio webhook + Vercel env vars
-**Last Session:** 2026-01-18 - Fixed Stale Lender References
+**Last Session:** 2026-01-18 - Migration Audit & Multi-Ref Field Fix
 
 ---
 
 ## Session Log
 
-### 2026-01-18 - Fixed Stale Lender References
+### 2026-01-18 - Migration Audit & Multi-Ref Field Fix (Continued Session)
+
+**Platform:** Claude Code CLI
+**Status:** ✅ Complete
+
+**Issue Reported:**
+- User reported agents and lenders still not populating properly across all 50 states + DC + PR
+- Previous session's cleanup script appeared to work but didn't actually persist changes
+
+**Root Cause Identified:**
+- **CRITICAL DISCOVERY:** Attio PATCH API (`updateRecord`) for multi-ref fields **only APPENDS**, never replaces
+- Setting `lenders: []` via PATCH is **silently ignored** - it does NOT clear the field
+- The cleanup script was reporting success but the stale UUIDs persisted
+
+**Fix Applied:**
+1. ✅ Added `assertRecord()` method to `lib/attio.ts` using PUT endpoint
+2. ✅ Updated `cleanup-stale-lender-refs.ts` to use `assertRecord` instead of `updateRecord`
+3. ✅ Created Puerto Rico area (San Juan) + assigned agent Sara Quinones via `fix-puerto-rico.ts`
+4. ✅ Re-ran cleanup - all 50 states cleaned, 0 stale references remaining
+
+**Key Technical Learning:**
+| Method | Endpoint | Multi-Ref Behavior |
+|--------|----------|-------------------|
+| `updateRecord()` | PATCH `/objects/{obj}/records/{id}` | **APPENDS** only, ignores empty arrays |
+| `assertRecord()` | PUT `/objects/{obj}/records?matching_attribute={attr}` | **REPLACES** completely |
+
+**Final Audit Results:**
+| Metric | Value |
+|--------|-------|
+| Total states | 52 |
+| States with agents | 50 |
+| States with lenders | 51 |
+| Stale lender references | **0** (was 304) |
+| Invalid area references | 0 |
+| Invalid agent references | 0 |
+
+**Expected Gaps (Source Data Limitation):**
+- **Maine (ME):** 0 agents, 2 lenders - No active area assignments in Salesforce source
+- **Puerto Rico (PR):** 1 agent, 0 lenders - Created area today, no lenders assigned in source
+
+**Files Modified:**
+- `lib/attio.ts` - Added `assertRecord()` method for PUT-based multi-ref replacement
+- `scripts/cleanup-stale-lender-refs.ts` - Updated to use assertRecord
+- `CLAUDE.md` - Updated API notes with PATCH vs PUT behavior
+
+**Files Created:**
+- `scripts/fix-puerto-rico.ts` - Creates San Juan area and assigns active agent
+- `scripts/audit-migration.ts` - Comprehensive migration audit script
+
+**Migration Data Verification:**
+- Active agents on website: 329/1026 (matches Salesforce source)
+- Active lenders on website: 19/138 (matches Salesforce source)
+- Areas: 272 (includes new San Juan for PR)
+- Area Assignments: 509 (includes new PR assignment)
+
+---
+
+### 2026-01-18 - Fixed Stale Lender References (Earlier Session)
 
 **Platform:** Claude Code CLI
 **Status:** ✅ Complete

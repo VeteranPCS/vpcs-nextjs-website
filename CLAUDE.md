@@ -269,25 +269,32 @@ See `docs/post-migration-review/` for records that need manual attention:
 
     **Supported operators:** `$eq`, `$ne`, `$gt`, `$lt`, `$in`, `$nin`, `$and`, `$or`, `$contains`
 
-14. **Multi-ref fields can accumulate stale UUIDs after V2 re-migrations:**
+14. **Multi-ref fields require PUT (assert) to overwrite, PATCH only appends:**
     - When re-running migrations (V2), records get **new UUIDs**
-    - Multi-ref fields (like `State.lenders`) may still contain **old UUIDs** from V1
-    - PATCH updates to multi-ref fields **append** new values, they don't replace
-    - Use `cleanup-stale-lender-refs.ts` script pattern to fix:
-      1. Fetch all valid record IDs from target object
-      2. For each parent record, filter lender IDs to only valid ones
-      3. Clear the field (set to empty array), then set new valid IDs
+    - Multi-ref fields (like `State.lenders`) may contain **old UUIDs** from V1
+    - **CRITICAL:** PATCH (`updateRecord`) only APPENDS to multi-ref fields - it never removes
+    - **CRITICAL:** Setting an empty array `[]` via PATCH does NOTHING - values are preserved
+    - Use `assertRecord` (PUT endpoint) to REPLACE multi-ref field values completely
     ```typescript
-    // To REPLACE a multi-ref field (not append):
-    // Step 1: Clear the field
-    await attio.updateRecord('states', stateId, { lenders: [] });
-    // Step 2: Set new values
-    await attio.updateRecord('states', stateId, {
+    // WRONG - PATCH appends, does not replace
+    await attio.updateRecord('states', stateId, { lenders: [] }); // Ignored!
+    await attio.updateRecord('states', stateId, { lenders: [...] }); // Only appends!
+
+    // CORRECT - PUT (assert) completely replaces multi-ref values
+    await attio.assertRecord('states', 'state_code', {
+      state_code: 'TX',  // Matching attribute value
       lenders: validIds.map(id => ({ target_object: 'lenders', target_record_id: id }))
     });
     ```
-    - **Symptom:** stateService returns 0 lenders (IDs exist in State.lenders but records don't exist)
+    - **Symptom:** stateService returns 0 lenders (IDs exist but records don't)
+    - **Fix:** Run `cleanup-stale-lender-refs.ts` (uses `assertRecord`)
     - **Prevention:** Always re-run `migrate-state-lenders-v2.ts` after re-migrating lenders
+
+15. **assertRecord method (PUT) for multi-ref field replacement:**
+    - Added `attio.assertRecord(objectSlug, matchingAttribute, data)` method
+    - Uses PUT to `/objects/{object}/records?matching_attribute={attr}`
+    - Finds existing record by matching attribute, then OVERWRITES all values
+    - Unlike PATCH, this completely replaces multi-ref/multiselect field values
 
 ---
 

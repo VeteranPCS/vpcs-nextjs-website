@@ -53,21 +53,15 @@ async function cleanupStaleLenderRefs() {
     );
 
     try {
-      // To replace the multi-ref field, we need to clear it first then set new values
-      // Attio API: setting to empty array clears the field
-      await attio.updateRecord("states", state.id, {
-        lenders: [], // Clear first
+      // Use assertRecord (PUT) to OVERWRITE the multi-ref field
+      // PATCH (updateRecord) only appends, PUT completely replaces
+      await attio.assertRecord("states", "state_code", {
+        state_code: state.state_code,
+        lenders: validIds.map((id: string) => ({
+          target_object: "lenders",
+          target_record_id: id,
+        })),
       });
-
-      // Now set the valid IDs
-      if (validIds.length > 0) {
-        await attio.updateRecord("states", state.id, {
-          lenders: validIds.map((id: string) => ({
-            target_object: "lenders",
-            target_record_id: id,
-          })),
-        });
-      }
 
       console.log(`  ✓ Updated ${state.state_code}`);
       cleanedCount++;
