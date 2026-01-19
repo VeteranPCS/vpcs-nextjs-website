@@ -11,11 +11,58 @@
 **Current Phase:** Phase 5 COMPLETE ✅ + V2 Re-Migration COMPLETE ✅ + Cutover Prep COMPLETE ✅
 **Next Phase:** CUTOVER (Final Data Sync + Merge to Main)
 **Blocked On:** User to configure Attio webhook + Vercel env vars
-**Last Session:** 2026-01-18 - Migration Audit & Multi-Ref Field Fix
+**Last Session:** 2026-01-18 - Fix State Page Data Loading
 
 ---
 
 ## Session Log
+
+### 2026-01-18 - Fix State Page Data Loading (Latest Session)
+
+**Platform:** Claude Code CLI
+**Status:** ✅ Complete
+
+**Issue Reported:**
+- User reported agents and lenders not consistently populating on state pages during build
+- Hard refresh (cmd+shift+r) made data appear, suggesting caching/fetching issue
+- After local build, data population was "hit or miss"
+
+**Root Cause Identified:**
+1. **260+ uncached API calls during build** - Each of 52 state pages was making 5+ POST requests to Attio
+2. **POST requests bypass Next.js fetch cache** - POST method is never cached by Next.js
+3. **`unstable_cache` serialization issue** - Map objects become plain objects when JSON serialized
+
+**Solution Implemented:**
+1. ✅ Created `lib/attio-data-loader.ts` - Pre-fetches ALL Attio data once (5 API calls total)
+2. ✅ Uses `unstable_cache` with 1-hour revalidation for build-time caching
+3. ✅ Changed from Map<> to Record<> for JSON serialization compatibility
+4. ✅ Refactored `services/stateService.tsx` to use data loader
+5. ✅ Added fallback for standalone script execution (testing/debugging)
+
+**Key Technical Learning:**
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| POST not cached | Next.js only caches GET requests | Use `unstable_cache` wrapper |
+| Map serialization | JSON.stringify converts Map to {} | Use Record<string, T> instead |
+| unstable_cache context | Only works during Next.js rendering | Try/catch with direct fetch fallback |
+
+**Build Results After Fix:**
+| Page | Before | After |
+|------|--------|-------|
+| Texas | 106KB, 2 images | **439KB, 47 images** |
+| Puerto Rico | 106KB, 2 images | **114KB, 3 images** |
+
+**Files Modified:**
+- `lib/attio-data-loader.ts` - New file: Pre-fetches and caches all Attio data
+- `services/stateService.tsx` - Refactored to use data loader instead of individual API calls
+
+**Architecture Change:**
+```
+Before: 52 pages × 5 API calls = 260 uncached calls during build
+After:  1 data fetch (cached) → 52 pages filter in memory
+```
+
+---
 
 ### 2026-01-18 - Migration Audit & Multi-Ref Field Fix (Continued Session)
 

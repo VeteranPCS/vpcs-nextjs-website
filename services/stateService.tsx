@@ -3,6 +3,13 @@ import { urlForImage } from "@/sanity/lib/image";
 import agentService from "./agentService";
 import { Image } from "sanity";
 import { attio } from "@/lib/attio";
+import {
+  getAttioData,
+  getAgentsForState,
+  getLendersForState,
+  getAreaAssignmentsForAgent,
+  getAreaById,
+} from "@/lib/attio-data-loader";
 
 interface StateMap extends Image {
   _type: "image";
@@ -231,86 +238,69 @@ const stateService = {
     }
   },
 
-  // ========== ATTIO FUNCTIONS (refactored from Salesforce) ==========
+  // ========== ATTIO FUNCTIONS (using pre-loaded data cache) ==========
 
   /**
    * Fetch agents list by state from Attio
    *
+   * Uses pre-loaded data cache to avoid redundant API calls during build.
+   * All Attio data is fetched once and cached, then filtered in memory.
+   *
    * Flow:
-   * 1. Get state record by state_code
-   * 2. Get all areas in that state
-   * 3. Get area assignments for those areas (active agents only)
-   * 4. Get agent records that are active on website
-   * 5. Fetch photos from Sanity using salesforce_id
-   * 6. Map to legacy interface format
+   * 1. Get agents for state from cache (pre-filtered by active status and area assignments)
+   * 2. Fetch photos from Sanity using salesforce_id
+   * 3. Map to legacy interface format
    */
   fetchAgentsListByState: async (stateSlug: string): Promise<AgentsData> => {
     try {
       // Convert state slug to state code (e.g., "texas" -> "TX")
       const stateCode = stateSlugToCode[stateSlug] || stateSlug.toUpperCase();
 
-      // 1. Get the state record
-      const states = await attio.queryRecords("states", {
-        filter: { state_code: { $eq: stateCode } },
-        limit: 1,
-      });
+      // Get pre-loaded data cache (fetches once, reused across all pages)
+      const dataCache = await getAttioData();
 
-      if (!states.length) {
-        return { totalSize: 0, done: true, records: [] };
-      }
-      const stateId = states[0].id;
-
-      // 2. Get all areas in this state
-      // Note: 'state' is a record reference field, so we use target_record_id syntax
-      const areas = await attio.queryRecords("areas", {
-        filter: { state: { target_record_id: { $eq: stateId } } },
-      });
-
-      if (!areas.length) {
+      // Get state from cache (using plain object access)
+      const state = dataCache.states[stateCode];
+      if (!state) {
         return { totalSize: 0, done: true, records: [] };
       }
 
-      const areaIds = areas.map((a: any) => a.id);
-      const areaMap = new Map<string, any>(areas.map((a: any) => [a.id, a]));
-
-      // 3. Get all area assignments for these areas (active status only)
-      // Note: 'area' is a record reference field, so we use target_record_id syntax
-      const assignments = await attio.queryRecords("area_assignments", {
-        filter: {
-          $and: [
-            { area: { target_record_id: { $in: areaIds } } },
-            { status: { $eq: "Active" } },
-          ],
-        },
-      });
-
-      if (!assignments.length) {
+      // Get all areas in this state from cache
+      const stateAreas = dataCache.areasByState[state.id] || [];
+      if (stateAreas.length === 0) {
         return { totalSize: 0, done: true, records: [] };
       }
 
-      // 4. Get unique agent IDs from assignments
-      const agentIdSet = new Set(
-        assignments.map((a: any) => a.agent).filter(Boolean),
-      );
+      // Build area ID set and map for quick lookup
+      const areaIds = new Set(stateAreas.map(a => a.id));
+      const areaMap: Record<string, any> = {};
+      for (const a of stateAreas) {
+        areaMap[a.id] = a;
+      }
 
-      if (!agentIdSet.size) {
+      // Get active assignments for these areas
+      const assignments: any[] = [];
+      const agentIdSet = new Set<string>();
+      for (const areaId of areaIds) {
+        const areaAssignments = dataCache.assignmentsByArea[areaId] || [];
+        for (const aa of areaAssignments) {
+          if (aa.status === 'Active' && aa.agent) {
+            assignments.push(aa);
+            agentIdSet.add(aa.agent);
+          }
+        }
+      }
+
+      if (agentIdSet.size === 0) {
         return { totalSize: 0, done: true, records: [] };
       }
 
-      // 5. Fetch all agents (only active on website) and filter by assignment IDs in memory
-      // Note: Attio doesn't support filtering by record ID, so we filter in memory
-      const allActiveAgents = await attio.queryRecords("agents", {
-        filter: { active_on_website: { $eq: true } },
-      });
+      // Filter active agents to only those with assignments in this state
+      const agents = dataCache.activeAgents.filter(agent => agentIdSet.has(agent.id));
 
-      // Filter to only agents with area assignments in this state
-      const agents = allActiveAgents.filter((agent: any) =>
-        agentIdSet.has(agent.id),
-      );
-
-      // 6. Fetch photos from Sanity and map to legacy interface
+      // Fetch photos from Sanity and map to legacy interface
       const recordsWithPhotos = await Promise.all(
-        agents.map(async (agent: any) => {
+        agents.map(async (agent) => {
           let photoUrl: string | undefined;
 
           // Fetch photo from Sanity using salesforce_id
@@ -327,16 +317,16 @@ const stateService = {
             }
           }
 
-          // Get this agent's area assignments
+          // Get this agent's area assignments for this state
           // Note: State__c needs to be lowercase state name (e.g., "texas") to match page component comparison
           const stateNameLower = stateCodeToName[stateCode] || stateCode.toLowerCase();
           const agentAssignments = assignments
-            .filter((a: any) => a.agent === agent.id)
-            .map((a: any) => {
-              const area = areaMap.get(a.area);
+            .filter((a) => a.agent === agent.id)
+            .map((a) => {
+              const area = areaMap[a.area];
               return {
                 Id: a.id,
-                Name: a.name || "",
+                Name: "",
                 AA_Score__c: a.aa_score || 0,
                 Area__r: {
                   Name: area?.name || "",
@@ -344,7 +334,7 @@ const stateService = {
                 },
               };
             })
-            .sort((a: any, b: any) => b.AA_Score__c - a.AA_Score__c);
+            .sort((a, b) => b.AA_Score__c - a.AA_Score__c);
 
           // Map to legacy Agent interface
           // Note: AccountId_15__c should be 15-char for Sanity compatibility
@@ -352,25 +342,23 @@ const stateService = {
             ? agent.salesforce_id.substring(0, 15)
             : agent.id;
           return {
-            Name:
-              agent.name ||
-              `${agent.first_name || ""} ${agent.last_name || ""}`.trim(),
+            Name: agent.name,
             AccountId_15__c: sfId15,
             PhotoUrl: photoUrl,
-            FirstName: agent.first_name || "",
-            LastName: agent.last_name || "",
-            Agent_Bio__pc: agent.bio || "",
-            Military_Status__pc: agent.military_status || "",
-            Military_Service__pc: agent.military_service || "",
-            Brokerage_Name__pc: agent.brokerage_name || "",
+            FirstName: agent.first_name,
+            LastName: agent.last_name,
+            Agent_Bio__pc: agent.bio,
+            Military_Status__pc: agent.military_status,
+            Military_Service__pc: agent.military_service,
+            Brokerage_Name__pc: agent.brokerage_name,
             BillingAddress: {
-              city: agent.city || "",
+              city: agent.city,
               state: stateCode,
             },
             BillingStateCode: stateCode,
             State_s_Licensed_in__pc: stateCode,
-            PersonEmail: agent.email || "",
-            PersonMobilePhone: agent.phone || "",
+            PersonEmail: agent.email,
+            PersonMobilePhone: agent.phone,
             Area_Assignments__r: {
               records: agentAssignments,
             },
@@ -397,58 +385,44 @@ const stateService = {
   /**
    * Fetch lenders list by state from Attio
    *
+   * Uses pre-loaded data cache to avoid redundant API calls during build.
+   *
    * Flow:
-   * 1. Get state record by state_code
-   * 2. Get lender IDs from State.lenders multi-ref
-   * 3. Fetch lender records that are active on website
-   * 4. Fetch photos from Sanity using salesforce_id
-   * 5. Map to legacy interface format
+   * 1. Get lenders for state from cache (pre-filtered by State.lenders and active status)
+   * 2. Fetch photos from Sanity using salesforce_id
+   * 3. Map to legacy interface format
    */
   fetchLendersListByState: async (stateSlug: string): Promise<LendersData> => {
     try {
       // Convert state slug to state code
       const stateCode = stateSlugToCode[stateSlug] || stateSlug.toUpperCase();
 
-      // 1. Get the state record with lenders
-      const states = await attio.queryRecords("states", {
-        filter: { state_code: { $eq: stateCode } },
-        limit: 1,
-      });
+      // Get pre-loaded data cache (fetches once, reused across all pages)
+      const dataCache = await getAttioData();
 
-      if (!states.length) {
+      // Get state from cache (using plain object access)
+      const state = dataCache.states[stateCode];
+      if (!state) {
         return { totalSize: 0, done: true, records: [] };
       }
 
-      // 2. State.lenders is a multi-ref field containing lender IDs
-      // Attio may return single value or array depending on number of records
-      const rawLenderIds = states[0].lenders;
-      const lenderIds = Array.isArray(rawLenderIds)
-        ? rawLenderIds
-        : rawLenderIds
-          ? [rawLenderIds]
-          : [];
-
-      if (!lenderIds.length) {
+      // State.lenders is already parsed as an array of lender IDs
+      const lenderIds = state.lenders;
+      if (lenderIds.length === 0) {
         return { totalSize: 0, done: true, records: [] };
       }
 
       // Convert to Set for O(1) lookup
       const lenderIdSet = new Set(lenderIds);
 
-      // 3. Fetch all lenders (only active on website) and filter in memory
-      // Note: Attio doesn't support filtering by record ID, so we filter in memory
-      const allActiveLenders = await attio.queryRecords("lenders", {
-        filter: { active_on_website: { $eq: true } },
-      });
-
-      // Filter to only lenders assigned to this state
-      const lenders = allActiveLenders.filter((lender: any) =>
+      // Filter active lenders to only those assigned to this state
+      const lenders = dataCache.activeLenders.filter(lender =>
         lenderIdSet.has(lender.id),
       );
 
-      // 4. Fetch photos from Sanity and map to legacy interface
+      // Fetch photos from Sanity and map to legacy interface
       const recordsWithPhotos = await Promise.all(
-        lenders.map(async (lender: any) => {
+        lenders.map(async (lender) => {
           let photoUrl: string | undefined;
 
           // Fetch photo from Sanity using salesforce_id
@@ -471,20 +445,18 @@ const stateService = {
             ? lender.salesforce_id.substring(0, 15)
             : lender.id;
           return {
-            Name:
-              lender.name ||
-              `${lender.first_name || ""} ${lender.last_name || ""}`.trim(),
+            Name: lender.name,
             AccountId_15__c: sfId15,
             PhotoUrl: photoUrl,
-            FirstName: lender.first_name || "",
-            Agent_Bio__pc: lender.bio || "",
-            Military_Status__pc: lender.military_status || "",
-            Military_Service__pc: lender.military_service || "",
-            Brokerage_Name__pc: lender.brokerage_name || lender.company_name || "",
+            FirstName: lender.first_name,
+            Agent_Bio__pc: lender.bio,
+            Military_Status__pc: lender.military_status,
+            Military_Service__pc: lender.military_service,
+            Brokerage_Name__pc: lender.brokerage_name || lender.company_name,
             BillingCity: lender.city || null,
             BillingState: stateCode,
-            Individual_NMLS_ID__pc: lender.individual_nmls || "",
-            Company_NMLS_ID__pc: lender.company_nmls || "",
+            Individual_NMLS_ID__pc: lender.individual_nmls,
+            Company_NMLS_ID__pc: lender.company_nmls,
             // Lenders don't use area assignments - they're assigned at state level
             Area_Assignments__r: { records: [] },
           } as Lenders;
