@@ -11,11 +11,62 @@
 **Current Phase:** Phase 5 COMPLETE ✅ + V2 Re-Migration COMPLETE ✅ + Cutover Prep COMPLETE ✅
 **Next Phase:** CUTOVER (Final Data Sync + Merge to Main)
 **Blocked On:** User to configure Attio webhook + Vercel env vars
-**Last Session:** 2026-01-17 - Cutover Plan & Vercel Cron Configuration
+**Last Session:** 2026-01-18 - Fixed Stale Lender References
 
 ---
 
 ## Session Log
+
+### 2026-01-18 - Fixed Stale Lender References
+
+**Platform:** Claude Code CLI
+**Status:** ✅ Complete
+
+**Issue Reported:**
+- Colorado state page working correctly
+- Texas state page showing agents but no lenders
+- Some state pages showing no agents or lenders
+
+**Root Cause Identified:**
+- The V2 migration re-created lenders with **new UUIDs**
+- The `State.lenders` multi-ref field still contained **old V1 UUIDs** (orphaned references)
+- Example: Texas had 8 lender IDs assigned, but **none** existed in the lenders table
+- The stateService filtered out non-existent IDs, resulting in 0 lenders on some pages
+
+**Fix Applied:**
+1. ✅ Re-ran `migrate-state-lenders-v2.ts` to add correct V2 lender UUIDs to State.lenders
+2. ✅ Created `cleanup-stale-lender-refs.ts` script to remove orphaned V1 UUIDs
+3. ✅ Verified fix across all 52 states
+
+**Post-Fix Results:**
+| Metric | Value |
+|--------|-------|
+| States with agents | 50/52 |
+| States with lenders | 51/52 |
+| Total agents (with photos) | 374 |
+| Total lenders (with photos) | 151 |
+
+**States without data (expected):**
+- Maine: 0 agents (2 lenders) - No agents assigned yet
+- Puerto Rico: 0 agents, 0 lenders - No coverage yet
+
+**API Status:**
+- ✅ Attio Pro trial expiration did **NOT** cause data loss
+- ✅ API is fully functional (read/write operations work)
+- ⚠️ Occasional 500 errors on Attio API (transient, retry works)
+
+**Files Created:**
+- `scripts/cleanup-stale-lender-refs.ts` - Removes orphaned lender references
+
+**Key Insight:**
+When the V2 migration re-created records, the old UUIDs became orphaned. Multi-ref fields like `State.lenders` don't automatically clean up orphaned references. The stateService's filtering logic masked this issue by silently excluding non-existent lenders, making the root cause hard to identify.
+
+**Next Session Tasks:**
+- [ ] Verify website pages are displaying correctly in browser
+- [ ] Consider adding error logging for orphaned references in stateService
+- [ ] Proceed with cutover when ready
+
+---
 
 ### 2026-01-17 - Cutover Plan & Vercel Cron Configuration
 
