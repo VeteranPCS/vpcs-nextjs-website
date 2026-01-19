@@ -55,6 +55,8 @@
 **Files Modified:**
 - `lib/attio-data-loader.ts` - New file: Pre-fetches and caches all Attio data
 - `services/stateService.tsx` - Refactored to use data loader instead of individual API calls
+- `CLAUDE.md` - Added API note #16 (POST caching + unstable_cache patterns), updated architecture docs
+- `SESSION-NOTES.md` - Updated with session details
 
 **Architecture Change:**
 ```

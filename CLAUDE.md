@@ -296,6 +296,43 @@ See `docs/post-migration-review/` for records that need manual attention:
     - Finds existing record by matching attribute, then OVERWRITES all values
     - Unlike PATCH, this completely replaces multi-ref/multiselect field values
 
+16. **POST requests bypass Next.js fetch cache - use unstable_cache:**
+    - Attio's query API uses POST (to accept complex filter/sort in JSON body)
+    - **Problem:** Next.js only caches GET requests - POST requests are NEVER cached
+    - **Symptom:** 52 state pages × 5 API calls = 260 uncached requests during build
+    - **Solution:** Use `unstable_cache` wrapper from `next/cache`:
+    ```typescript
+    import { unstable_cache } from 'next/cache';
+
+    const getCachedData = unstable_cache(
+      async () => fetchAllData(),
+      ['attio-all-data'],
+      { revalidate: 3600, tags: ['attio-data'] }
+    );
+    ```
+    - **CRITICAL:** `unstable_cache` serializes data to JSON
+    - Map objects become plain objects (lose `.get()` method)
+    - Use `Record<string, T>` instead of `Map<string, T>` for cached data
+    ```typescript
+    // WRONG - Map.get() won't work after cache serialization
+    const states: Map<string, State> = new Map();
+    states.get('TX'); // Error: states.get is not a function
+
+    // CORRECT - Use plain objects with bracket notation
+    const states: Record<string, State> = {};
+    states['TX']; // Works correctly
+    ```
+    - **Testing scripts:** `unstable_cache` only works during Next.js rendering
+    - Add try/catch fallback for standalone script execution:
+    ```typescript
+    try {
+      data = await getCachedData();
+    } catch {
+      // unstable_cache unavailable - fetch directly
+      data = await fetchAllData();
+    }
+    ```
+
 ---
 
 ## Phase 5 Architecture: Website Data Layer
@@ -312,20 +349,31 @@ app/(site)/[state]/page.tsx
   → Components render data
 ```
 
-### Target Architecture (Attio)
+### Implemented Architecture (Attio with Data Loader)
 ```
+lib/attio-data-loader.ts
+  → Fetches ALL Attio data once (5 API calls total)
+  → Uses unstable_cache with 1-hour revalidation
+  → Builds in-memory lookup maps (Record<>, not Map<>)
+  → Exports: getAttioData(), getAgentsForState(), getLendersForState()
+
 app/(site)/[state]/page.tsx
   → services/stateService.fetchAgentsListByState()
-    → attio.queryRecords('states', ...)
-    → attio.queryRecords('areas', ...)
-    → attio.queryRecords('area_assignments', ...)
-    → attio.queryRecords('agents', ...)
+    → getAttioData() (cached, returns in-memory data)
+    → Filter agents by state from cached data
+    → Fetch photos from Sanity (per agent)
   → services/stateService.fetchLendersListByState()
-    → attio.queryRecords('states', ...) → state.lenders multi-ref
+    → getAttioData() (cached, returns same data)
+    → Filter lenders by State.lenders from cached data
   → Components render data (unchanged)
 ```
 
-### Files to Modify for Phase 5
+**Why Data Loader?**
+- Individual API calls: 52 pages × 5 calls = 260 uncached POST requests
+- Data loader: 5 API calls total, cached, filter in memory
+- Build time reduced, consistent data across all pages
+
+### Files Modified in Phase 5
 
 **Phase 5A - Libraries:**
 - `lib/magic-link.ts` (NEW) - JWT token generation/validation
@@ -333,7 +381,8 @@ app/(site)/[state]/page.tsx
 - `lib/openphone.ts` (NEW) - SMS via OpenPhone API
 
 **Phase 5B - Website Data Layer:**
-- `services/stateService.tsx` (REFACTOR) - Replace Salesforce with Attio queries
+- `lib/attio-data-loader.ts` (NEW) - Pre-fetches ALL Attio data, caches with unstable_cache
+- `services/stateService.tsx` (REFACTOR) - Uses data loader instead of individual API calls
 - `app/api/v1/areas/route.ts` (REFACTOR) - Query areas from Attio
 
 **Phase 5C - Contact Forms:**
@@ -602,17 +651,18 @@ You MUST join Account records with Contact records to get email addresses.
 | GET /api/cron/check-stale-deals | Send reminders, auto-close | 4.2 |
 | GET /api/cron/check-renewals | Trigger annual renewals | 4.3 |
 
-## Libraries to Implement
+## Libraries Implemented
 
-| File | Purpose | See LLD Section |
-|------|---------|-----------------|
-| lib/attio.ts | Attio API client | 5.1 |
-| lib/signwell.ts | SignWell API + helpers | 5.2 |
-| lib/openphone.ts | SMS sending | 5.3 |
-| lib/slack.ts | Admin notifications | 5.4 |
-| lib/magic-link.ts | JWT token utils | 5.5 |
-| lib/bonus-calculator.ts | Move-in bonus tiers | 5.6 |
-| lib/normalize-phone.ts | E.164 formatting | 5.7 |
+| File | Purpose | Notes |
+|------|---------|-------|
+| lib/attio.ts | Attio API client | CRUD, query, assertRecord for multi-ref |
+| lib/attio-data-loader.ts | Cached data loader | Pre-fetches ALL Attio data once, uses unstable_cache |
+| lib/signwell.ts | SignWell API + helpers | E-signature contracts |
+| lib/openphone.ts | SMS sending | OpenPhone API |
+| lib/slack.ts | Admin notifications | Webhook-based |
+| lib/magic-link.ts | JWT token utils | Agent portal links |
+| lib/bonus-calculator.ts | Move-in bonus tiers | Sale price → bonus amount |
+| lib/normalize-phone.ts | E.164 formatting | Phone number normalization |
 
 ## Business Rules
 
