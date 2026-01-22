@@ -2,7 +2,7 @@
 
 **Domain:** https://www.veteranpcs.com
 **Environment Variable:** `NEXT_PUBLIC_BASE_URL=https://www.veteranpcs.com`
-**Last Updated:** 2026-01-17
+**Last Updated:** 2026-01-21
 
 ---
 
@@ -25,11 +25,11 @@ This document contains step-by-step instructions for completing the Attio migrat
 
 ---
 
-## 1. Pre-Cutover: Environment Variables
+## 1. Pre-Cutover: Environment Variables ✅ COMPLETED
 
-### 1.1 Generate Required Secrets
+### 1.1 Generate Required Secrets ✅
 
-You need two new secrets. Generate them using a password generator (16+ random characters each):
+~~You need two new secrets. Generate them using a password generator (16+ random characters each):~~
 
 ```bash
 # Option 1: Use openssl
@@ -40,17 +40,17 @@ openssl rand -hex 16  # For ATTIO_WEBHOOK_SECRET
 # Generate 32-character random strings
 ```
 
-### 1.2 Add Environment Variables in Vercel
+### 1.2 Add Environment Variables in Vercel ✅
 
-1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
-2. Select your project: **vpcs-nextjs-website**
-3. Navigate to **Settings** → **Environment Variables**
-4. Add the following variables for **Production** environment:
+~~1. Go to [Vercel Dashboard](https://vercel.com/dashboard)~~
+~~2. Select your project: **vpcs-nextjs-website**~~
+~~3. Navigate to **Settings** → **Environment Variables**~~
+~~4. Add the following variables for **Production** environment:~~
 
-| Variable | Value | Description |
-|----------|-------|-------------|
-| `CRON_SECRET` | `<your-generated-secret>` | Authenticates Vercel cron job requests |
-| `ATTIO_WEBHOOK_SECRET` | `<your-generated-secret>` | Verifies Attio webhook signatures |
+| Variable | Value | Status |
+|----------|-------|--------|
+| `CRON_SECRET` | (configured) | ✅ Added to Vercel Production |
+| `ATTIO_WEBHOOK_SECRET` | (configured) | ✅ Added to Vercel Production |
 
 **Note:** These should already exist in your `.env.local` for local testing:
 - `ATTIO_API_KEY` ✅ (already configured)
@@ -58,16 +58,18 @@ openssl rand -hex 16  # For ATTIO_WEBHOOK_SECRET
 - `OPENPHONE_API_KEY` ✅ (already configured)
 - `MAGIC_LINK_SECRET` ✅ (already configured)
 
-### 1.3 Verify Existing Variables
+### 1.3 Verify Existing Variables ✅
 
-Confirm these are set in Vercel Production:
+All required variables are now set in Vercel Production:
 
 ```
-ATTIO_API_KEY
-SLACK_WEBHOOK_URL
-OPENPHONE_API_KEY
-MAGIC_LINK_SECRET
-NEXT_PUBLIC_BASE_URL=https://www.veteranpcs.com
+ATTIO_API_KEY ✅
+SLACK_WEBHOOK_URL ✅
+OPENPHONE_API_KEY ✅
+MAGIC_LINK_SECRET ✅
+CRON_SECRET ✅ (newly added)
+ATTIO_WEBHOOK_SECRET ✅ (newly added)
+NEXT_PUBLIC_BASE_URL=https://www.veteranpcs.com ✅
 ```
 
 ---
