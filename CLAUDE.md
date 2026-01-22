@@ -267,7 +267,11 @@ See `docs/post-migration-review/` for records that need manual attention:
     });
     ```
 
-    **Supported operators:** `$eq`, `$ne`, `$gt`, `$lt`, `$in`, `$nin`, `$and`, `$or`, `$contains`
+    **Supported operators:** `$eq`, `$ne`, `$gt`, `$lt`, `$in`, `$nin`, `$and`, `$or`
+
+    **⚠️ CRITICAL: `$contains` is NOT supported for record-reference fields!**
+    - Only `$eq` and `$in` work on `target_record_id`
+    - See learning #17 below for workarounds
 
 14. **Multi-ref fields require PUT (assert) to overwrite, PATCH only appends:**
     - When re-running migrations (V2), records get **new UUIDs**
@@ -332,6 +336,172 @@ See `docs/post-migration-review/` for records that need manual attention:
       data = await fetchAllData();
     }
     ```
+
+17. **Cannot query "which records contain this ID in a multi-ref field":**
+    - Attio doesn't support reverse lookups on multi-ref fields
+    - `$contains` operator does NOT work on record-reference fields
+    - Error: `Invalid operator "$contains" for field "target_record_id", must be one of ("$eq", "$in")`
+    
+    **Problem Example:** Finding states where a lender is assigned
+    ```typescript
+    // WRONG - $contains not supported
+    await attio.queryRecords('states', {
+      filter: { lenders: { $contains: lenderId } }
+    });
+    
+    // WRONG - nested syntax also fails
+    await attio.queryRecords('states', {
+      filter: { lenders: { target_record_id: { $contains: lenderId } } }
+    });
+    ```
+    
+    **Solution: Create bidirectional references**
+    - Add a reverse reference field (e.g., `Lender.states` → multi-ref to states)
+    - Query the reverse field directly: `lender.states` returns assigned state IDs
+    - Use parallel `getRecord` calls to fetch state details
+    
+    ```typescript
+    // CORRECT - query the reverse reference
+    const lender = await attio.getRecord('lenders', lenderId);
+    const stateIds = Array.isArray(lender.states) ? lender.states : [lender.states];
+    
+    // Parallel fetch state details
+    const states = await Promise.all(
+      stateIds.map(id => attio.getRecord('states', id).catch(() => null))
+    );
+    ```
+    
+    **Scripts for adding reverse references:**
+    - `scripts/add-lender-states-attribute.ts` - Create the attribute
+    - `scripts/backfill-lender-states.ts` - Populate existing assignments
+
+18. **Cannot query by internal `id` field:**
+    - Attio's query API doesn't support filtering by the record's internal `id`
+    - Error: `Unknown attribute slug: id`
+    
+    ```typescript
+    // WRONG - id is not a queryable field
+    await attio.queryRecords('areas', {
+      filter: { id: { $in: areaIds } }
+    });
+    
+    // CORRECT - use parallel getRecord calls instead
+    const areas = await Promise.all(
+      areaIds.map(id => attio.getRecord('areas', id).catch(() => null))
+    );
+    ```
+
+19. **Record-reference queries require nested `target_record_id` syntax:**
+    - When filtering by a record-reference field, use nested structure
+    
+    ```typescript
+    // WRONG - flat structure
+    await attio.queryRecords('area_assignments', {
+      filter: { agent: agentId }
+    });
+    
+    // CORRECT - nested with target_record_id
+    await attio.queryRecords('area_assignments', {
+      filter: { agent: { target_record_id: { $eq: agentId } } }
+    });
+    ```
+
+20. **Attio webhook signature header is `attio-signature` (lowercase):**
+    - NOT `x-attio-signature` or `Attio-Signature`
+    - Use timing-safe comparison with `crypto.timingSafeEqual()`
+    
+    ```typescript
+    const signature = request.headers.get('attio-signature');
+    const expectedSig = crypto
+      .createHmac('sha256', ATTIO_WEBHOOK_SECRET)
+      .update(body, 'utf8')
+      .digest('hex');
+    
+    // Timing-safe comparison
+    const bufA = Buffer.from(signature, 'hex');
+    const bufB = Buffer.from(expectedSig, 'hex');
+    const isValid = bufA.length === bufB.length && crypto.timingSafeEqual(bufA, bufB);
+    ```
+
+21. **Attio webhook payload structure:**
+    - Events are wrapped in an array, not flat
+    - Object type is a UUID (`object_id`), not a slug
+    
+    ```typescript
+    interface AttioWebhookPayload {
+      webhook_id: string;
+      events: Array<{
+        event_type: 'record.created' | 'record.updated' | 'record.deleted';
+        id: {
+          workspace_id: string;
+          object_id: string;      // UUID, not slug!
+          record_id: string;
+          attribute_id?: string;  // Which attribute changed (for updates)
+        };
+      }>;
+    }
+    
+    // Get object slug from UUID
+    const objectInfo = await attio.getObject(event.id.object_id);
+    const objectSlug = objectInfo.api_slug; // 'agents', 'lenders', etc.
+    ```
+
+22. **Scripts must use dynamic imports for env vars:**
+    - Static imports are hoisted before `dotenv.config()` runs
+    - The `attio` singleton is instantiated at import time with empty env vars
+    
+    ```typescript
+    // WRONG - attio instantiated before dotenv runs
+    import dotenv from 'dotenv';
+    dotenv.config({ path: '.env.local' });
+    import { attio } from '../lib/attio';  // API key is undefined!
+    
+    // CORRECT - dynamic import after dotenv
+    import dotenv from 'dotenv';
+    dotenv.config({ path: path.join(process.cwd(), '.env.local') });
+    
+    async function main() {
+      const { attio } = await import('../lib/attio');  // API key loaded!
+      // ...
+    }
+    ```
+
+---
+
+## Attio Data Model: Bidirectional References
+
+**Critical Design Pattern:** When you need to query relationships from both directions, create bidirectional references.
+
+### Current Bidirectional References
+
+| Object A | Field on A | Object B | Field on B | Notes |
+|----------|-----------|----------|-----------|-------|
+| State | `lenders` | Lender | `states` | Which lenders serve which states |
+| State | `areas` | Area | `state` | Parent-child relationship |
+| Area | `area_assignments` | Area Assignment | `area` | Agent assignments per area |
+| Agent | (via area_assignments) | Area Assignment | `agent` | Agent's area coverage |
+
+### Why Bidirectional?
+
+Attio doesn't support reverse queries on multi-ref fields. Without bidirectional references:
+
+```typescript
+// ❌ IMPOSSIBLE: "Find all states where lender X is assigned"
+// Attio has no $contains operator for record-reference fields
+
+// ✅ WITH BIDIRECTIONAL: Read lender.states directly
+const lender = await attio.getRecord('lenders', lenderId);
+const assignedStateIds = lender.states;  // Direct lookup!
+```
+
+### Maintaining Bidirectional Consistency
+
+When updating one side, update both:
+1. Add lender to `State.lenders` → also add state to `Lender.states`
+2. Remove lender from `State.lenders` → also remove state from `Lender.states`
+
+Or run sync scripts periodically:
+- `scripts/backfill-lender-states.ts` - Syncs `Lender.states` from `State.lenders`
 
 ---
 
@@ -629,14 +799,17 @@ You MUST join Account records with Contact records to get email addresses.
 | State | US State with `state_slug` for URLs + `lenders` multi-ref for lender assignments |
 | Area | City or military base within a State (~271 migrated, excludes state-level placeholders) |
 | Agent | Real estate agents, ranked by AA_Score per Area (1,039 records) |
-| Lender | Mortgage lenders, assigned to States via `State.lenders` (141 records) |
+| Lender | Mortgage lenders with `states` reverse-ref (141 records) |
 | Area Assignment | Links **Agents only** to Areas with AA_Score (511 records) |
 | Customer | Veterans seeking to buy/sell/get mortgage (983 records) |
 | Customer Deal Pipeline | Home buying/selling transactions (1,021 records) |
 | Agent Onboarding Pipeline | Agent recruitment with Internship stage (947 records, 113 internships) |
 | Lender Onboarding Pipeline | Lender recruitment with Internship stage (160 records, 4 internships) |
 
-**Key Design Change:** Lenders are assigned at the **State level** via `State.lenders` multi-select, not through Area Assignments. Area Assignments are **agent-only**.
+**Key Design Decisions:**
+- Lenders are assigned at the **State level** via `State.lenders` multi-select (not Area Assignments)
+- **Bidirectional reference:** `Lender.states` mirrors `State.lenders` for efficient reverse lookups
+- Area Assignments are **agent-only**
 
 ## API Routes to Implement
 
