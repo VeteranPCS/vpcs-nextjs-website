@@ -386,23 +386,24 @@ async function revalidateAffectedPaths(
 
       case "lenders":
         // Lender updated → find states where lender is assigned via State.lenders multi-ref
-        // For record-reference fields, must use nested syntax: { field: { target_record_id: { $contains: id } } }
-        debugLog("Querying states with this lender assigned");
-        const statesWithLender = await attio.queryRecords("states", {
-          filter: {
-            lenders: { target_record_id: { $contains: recordId } },
-          },
-          limit: 100,
-        });
-        debugLog("Found states with lender", {
-          count: statesWithLender.length,
-        });
+        // Attio doesn't support reverse queries on multi-ref fields (no $contains operator)
+        // Fetch all 52 states in one API call, then filter server-side to find assignments
+        debugLog("Fetching all states to find lender assignments");
+        const allStates = await attio.queryRecords("states", { limit: 100 });
+        debugLog("Fetched states", { count: allStates.length });
 
-        for (const state of statesWithLender) {
-          if (state.state_slug) {
+        for (const state of allStates) {
+          // lenders field can be a single ID string or array of IDs
+          const lenderIds = state.lenders;
+          const hasLender = Array.isArray(lenderIds)
+            ? lenderIds.includes(recordId)
+            : lenderIds === recordId;
+
+          if (hasLender && state.state_slug) {
             paths.push(`/${state.state_slug}`);
           }
         }
+        debugLog("Found states with lender", { count: paths.length });
         break;
 
       case "areas":
