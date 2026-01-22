@@ -386,10 +386,11 @@ async function revalidateAffectedPaths(
 
       case "lenders":
         // Lender updated → find states where lender is assigned via State.lenders multi-ref
+        // For record-reference fields, must use nested syntax: { field: { target_record_id: { $contains: id } } }
         debugLog("Querying states with this lender assigned");
         const statesWithLender = await attio.queryRecords("states", {
           filter: {
-            lenders: { $contains: recordId },
+            lenders: { target_record_id: { $contains: recordId } },
           },
           limit: 100,
         });
