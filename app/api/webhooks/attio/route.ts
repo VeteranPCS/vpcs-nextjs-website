@@ -385,25 +385,42 @@ async function revalidateAffectedPaths(
         break;
 
       case "lenders":
-        // Lender updated → find states where lender is assigned via State.lenders multi-ref
-        // Attio doesn't support reverse queries on multi-ref fields (no $contains operator)
-        // Fetch all 52 states in one API call, then filter server-side to find assignments
-        debugLog("Fetching all states to find lender assignments");
-        const allStates = await attio.queryRecords("states", { limit: 100 });
-        debugLog("Fetched states", { count: allStates.length });
+        // Lender updated → get states directly from lender.states reverse reference
+        // (Similar to how agents work via area_assignments)
+        debugLog("Fetching lender record to get assigned states");
+        const lender = await attio.getRecord("lenders", recordId);
+        debugLog("Lender record", {
+          id: lender?.id,
+          hasStates: !!lender?.states,
+        });
 
-        for (const state of allStates) {
-          // lenders field can be a single ID string or array of IDs
-          const lenderIds = state.lenders;
-          const hasLender = Array.isArray(lenderIds)
-            ? lenderIds.includes(recordId)
-            : lenderIds === recordId;
+        if (lender?.states) {
+          // states field can be a single ID string or array of IDs
+          const stateIds = Array.isArray(lender.states)
+            ? lender.states
+            : [lender.states];
+          debugLog("Lender state IDs", { count: stateIds.length });
 
-          if (hasLender && state.state_slug) {
-            paths.push(`/${state.state_slug}`);
+          if (stateIds.length > 0) {
+            // Parallel fetch all states by ID
+            const stateResults = await Promise.all(
+              stateIds.map((stateId: string) =>
+                attio.getRecord("states", stateId).catch(() => null),
+              ),
+            );
+            const lenderStates = stateResults.filter(
+              (s): s is { state_slug?: string } => s !== null,
+            );
+            debugLog("Fetched lender states", { count: lenderStates.length });
+
+            for (const state of lenderStates) {
+              if (state.state_slug) {
+                paths.push(`/${state.state_slug}`);
+              }
+            }
           }
         }
-        debugLog("Found states with lender", { count: paths.length });
+        debugLog("Found states for lender", { count: paths.length });
         break;
 
       case "areas":
