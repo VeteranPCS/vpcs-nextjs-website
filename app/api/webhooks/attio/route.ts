@@ -323,7 +323,8 @@ async function revalidateAffectedPaths(
   try {
     switch (objectType) {
       case "agents":
-        // Agent updated → find states where agent is assigned (optimized batch queries)
+        // Agent updated → find states where agent is assigned
+        // Strategy: Query assignments, then parallel fetch areas, then parallel fetch states
         debugLog("Querying area_assignments for agent");
         const agentAssignments = await attio.queryRecords("area_assignments", {
           filter: { agent: { target_record_id: { $eq: recordId } } },
@@ -333,39 +334,44 @@ async function revalidateAffectedPaths(
 
         if (agentAssignments.length > 0) {
           // Extract unique area IDs
-          const areaIds = [
-            ...new Set(
-              agentAssignments
-                .map((a: { area?: string }) => a.area)
-                .filter((id: string | undefined): id is string => !!id),
-            ),
-          ];
+          const areaIdSet = new Set<string>();
+          for (const assignment of agentAssignments) {
+            const a = assignment as { area?: string };
+            if (a.area) areaIdSet.add(a.area);
+          }
+          const areaIds = Array.from(areaIdSet);
           debugLog("Unique area IDs", { count: areaIds.length });
 
           if (areaIds.length > 0) {
-            // Batch query all areas
-            const areas = await attio.queryRecords("areas", {
-              filter: { id: { $in: areaIds } },
-              limit: 100,
-            });
+            // Parallel fetch all areas by ID (Attio doesn't support $in filter on id field)
+            const areaResults = await Promise.all(
+              areaIds.map((areaId) =>
+                attio.getRecord("areas", areaId).catch(() => null),
+              ),
+            );
+            const areas = areaResults.filter(
+              (a): a is { state?: string } => a !== null,
+            );
             debugLog("Fetched areas", { count: areas.length });
 
             // Extract unique state IDs
-            const stateIds = [
-              ...new Set(
-                areas
-                  .map((a: { state?: string }) => a.state)
-                  .filter((id: string | undefined): id is string => !!id),
-              ),
-            ];
+            const stateIdSet = new Set<string>();
+            for (const area of areas) {
+              if (area.state) stateIdSet.add(area.state);
+            }
+            const stateIds = Array.from(stateIdSet);
             debugLog("Unique state IDs", { count: stateIds.length });
 
             if (stateIds.length > 0) {
-              // Batch query all states
-              const states = await attio.queryRecords("states", {
-                filter: { id: { $in: stateIds } },
-                limit: 100,
-              });
+              // Parallel fetch all states by ID
+              const stateResults = await Promise.all(
+                stateIds.map((stateId) =>
+                  attio.getRecord("states", stateId).catch(() => null),
+                ),
+              );
+              const states = stateResults.filter(
+                (s): s is { state_slug?: string } => s !== null,
+              );
               debugLog("Fetched states", { count: states.length });
 
               for (const state of states) {
