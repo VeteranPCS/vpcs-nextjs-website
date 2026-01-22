@@ -323,34 +323,77 @@ async function revalidateAffectedPaths(
   try {
     switch (objectType) {
       case "agents":
-        // Agent updated → revalidate all state pages where agent is assigned
+        // Agent updated → find states where agent is assigned (optimized batch queries)
         debugLog("Querying area_assignments for agent");
         const agentAssignments = await attio.queryRecords("area_assignments", {
           filter: { agent: { target_record_id: { $eq: recordId } } },
+          limit: 100,
         });
         debugLog("Found agent assignments", { count: agentAssignments.length });
 
-        for (const assignment of agentAssignments) {
-          const areaId = assignment.area;
-          if (areaId) {
-            const statePath = await getStatePathForArea(areaId);
-            if (statePath) paths.push(statePath);
+        if (agentAssignments.length > 0) {
+          // Extract unique area IDs
+          const areaIds = [
+            ...new Set(
+              agentAssignments
+                .map((a: { area?: string }) => a.area)
+                .filter((id: string | undefined): id is string => !!id),
+            ),
+          ];
+          debugLog("Unique area IDs", { count: areaIds.length });
+
+          if (areaIds.length > 0) {
+            // Batch query all areas
+            const areas = await attio.queryRecords("areas", {
+              filter: { id: { $in: areaIds } },
+              limit: 100,
+            });
+            debugLog("Fetched areas", { count: areas.length });
+
+            // Extract unique state IDs
+            const stateIds = [
+              ...new Set(
+                areas
+                  .map((a: { state?: string }) => a.state)
+                  .filter((id: string | undefined): id is string => !!id),
+              ),
+            ];
+            debugLog("Unique state IDs", { count: stateIds.length });
+
+            if (stateIds.length > 0) {
+              // Batch query all states
+              const states = await attio.queryRecords("states", {
+                filter: { id: { $in: stateIds } },
+                limit: 100,
+              });
+              debugLog("Fetched states", { count: states.length });
+
+              for (const state of states) {
+                if (state.state_slug) {
+                  paths.push(`/${state.state_slug}`);
+                }
+              }
+            }
           }
         }
         break;
 
       case "lenders":
-        // Lender updated → revalidate all state pages where lender is assigned
-        debugLog("Querying all states for lender assignments");
-        const allStates = await attio.queryRecords("states", { limit: 100 });
-        debugLog("Found states", { count: allStates.length });
+        // Lender updated → find states where lender is assigned via State.lenders multi-ref
+        debugLog("Querying states with this lender assigned");
+        const statesWithLender = await attio.queryRecords("states", {
+          filter: {
+            lenders: { $contains: recordId },
+          },
+          limit: 100,
+        });
+        debugLog("Found states with lender", {
+          count: statesWithLender.length,
+        });
 
-        for (const state of allStates) {
-          const lenders = state.lenders;
-          if (Array.isArray(lenders) && lenders.includes(recordId)) {
-            if (state.state_slug) {
-              paths.push(`/${state.state_slug}`);
-            }
+        for (const state of statesWithLender) {
+          if (state.state_slug) {
+            paths.push(`/${state.state_slug}`);
           }
         }
         break;
