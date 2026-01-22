@@ -8,6 +8,16 @@ const ATTIO_WEBHOOK_SECRET = process.env.ATTIO_WEBHOOK_SECRET;
 // Your Attio workspace ID - webhooks from other workspaces will be rejected
 const ALLOWED_WORKSPACE_ID = process.env.ATTIO_WORKSPACE_ID;
 
+// Enable debug logging in preview/development environments
+const IS_PRODUCTION = process.env.VERCEL_ENV === "production";
+const DEBUG = !IS_PRODUCTION;
+
+function debugLog(...args: unknown[]) {
+  if (DEBUG) {
+    console.log("[attio-webhook]", ...args);
+  }
+}
+
 // Maximum payload size (100KB should be more than enough for webhook events)
 const MAX_PAYLOAD_SIZE = 100 * 1024;
 
@@ -98,9 +108,15 @@ function verifySignature(
 export async function POST(
   request: NextRequest,
 ): Promise<NextResponse<WebhookResponse>> {
+  debugLog("Received webhook request", {
+    env: process.env.VERCEL_ENV,
+    url: request.url,
+  });
+
   try {
     // 1. Require webhook secret in production
     if (!ATTIO_WEBHOOK_SECRET) {
+      debugLog("ERROR: Webhook secret not configured");
       return NextResponse.json(
         { success: false, error: "Webhook not configured" },
         { status: 503 },
@@ -110,6 +126,7 @@ export async function POST(
     // 2. Check content-length to prevent large payload attacks
     const contentLength = request.headers.get("content-length");
     if (contentLength && parseInt(contentLength, 10) > MAX_PAYLOAD_SIZE) {
+      debugLog("ERROR: Payload too large", { contentLength });
       return NextResponse.json(
         { success: false, error: "Payload too large" },
         { status: 413 },
@@ -122,8 +139,14 @@ export async function POST(
       request.headers.get("x-attio-signature");
     const body = await request.text();
 
+    debugLog("Verifying signature", {
+      hasSignature: !!signature,
+      bodyLength: body.length,
+    });
+
     // Double-check body size after reading (content-length can be spoofed)
     if (body.length > MAX_PAYLOAD_SIZE) {
+      debugLog("ERROR: Body too large after reading");
       return NextResponse.json(
         { success: false, error: "Payload too large" },
         { status: 413 },
@@ -131,17 +154,21 @@ export async function POST(
     }
 
     if (!verifySignature(body, signature, ATTIO_WEBHOOK_SECRET)) {
+      debugLog("ERROR: Invalid signature");
       return NextResponse.json(
         { success: false, error: "Invalid signature" },
         { status: 401 },
       );
     }
 
+    debugLog("Signature verified successfully");
+
     // 4. Parse and validate payload structure
     let payload: AttioWebhookPayload;
     try {
       payload = JSON.parse(body);
     } catch {
+      debugLog("ERROR: Invalid JSON in body");
       return NextResponse.json(
         { success: false, error: "Invalid JSON" },
         { status: 400 },
@@ -150,11 +177,17 @@ export async function POST(
 
     // 5. Validate payload has expected structure
     if (!payload.events || !Array.isArray(payload.events)) {
+      debugLog("ERROR: Invalid payload structure", { payload });
       return NextResponse.json(
         { success: false, error: "Invalid payload structure" },
         { status: 400 },
       );
     }
+
+    debugLog("Payload parsed", {
+      webhookId: payload.webhook_id,
+      eventCount: payload.events.length,
+    });
 
     // 6. Limit number of events to prevent DoS
     if (payload.events.length > MAX_EVENTS_PER_WEBHOOK) {
@@ -162,7 +195,8 @@ export async function POST(
     }
 
     return await handleWebhookPayload(payload);
-  } catch {
+  } catch (error) {
+    debugLog("ERROR: Unhandled exception", { error });
     // Don't leak error details to client
     return NextResponse.json(
       { success: false, error: "Internal error" },
@@ -180,13 +214,17 @@ async function handleWebhookPayload(
   for (const event of events) {
     const { event_type, id } = event;
 
+    debugLog("Processing event", { event_type, id });
+
     // Validate event structure
     if (!event_type || !id || typeof id !== "object") {
+      debugLog("Skipping event: invalid structure");
       continue;
     }
 
     // Only handle record events
     if (!event_type.startsWith("record.")) {
+      debugLog("Skipping event: not a record event");
       continue;
     }
 
@@ -194,49 +232,70 @@ async function handleWebhookPayload(
 
     // Validate workspace ID if configured (prevents cross-workspace attacks)
     if (ALLOWED_WORKSPACE_ID && workspace_id !== ALLOWED_WORKSPACE_ID) {
+      debugLog("Skipping event: workspace mismatch", {
+        expected: ALLOWED_WORKSPACE_ID,
+        received: workspace_id,
+      });
       continue;
     }
 
     // Validate IDs are present and look like UUIDs (basic format check)
     if (!isValidUUID(object_id) || !isValidUUID(record_id)) {
+      debugLog("Skipping event: invalid UUID format", { object_id, record_id });
       continue;
     }
 
     // Look up the object slug from UUID (or fetch it if not cached)
     let objectSlug = OBJECT_ID_TO_SLUG[object_id];
+    debugLog("Object slug lookup", { object_id, cachedSlug: objectSlug });
+
     if (!objectSlug) {
       try {
+        debugLog("Fetching object info from Attio API", { object_id });
         const objectInfo = await attio.getObject(object_id);
         objectSlug = objectInfo?.api_slug;
-      } catch {
-        // Object lookup failed, skip this event
+        debugLog("Fetched object slug", { objectSlug });
+      } catch (error) {
+        debugLog("Failed to fetch object info", { error });
         continue;
       }
     }
 
     // Only process allowed object types (defense in depth)
     if (!objectSlug || !ALLOWED_OBJECT_SLUGS.has(objectSlug)) {
+      debugLog("Skipping event: object type not allowed", { objectSlug });
       continue;
     }
 
+    debugLog("Finding paths to revalidate", { objectSlug, record_id });
     const revalidatedPaths = await revalidateAffectedPaths(
       objectSlug,
       record_id,
     );
+    debugLog("Paths found", { revalidatedPaths });
     allRevalidatedPaths.push(...revalidatedPaths);
   }
 
   const uniquePaths = [...new Set(allRevalidatedPaths)];
+  debugLog("Total unique paths to revalidate", {
+    count: uniquePaths.length,
+    paths: uniquePaths,
+  });
 
   // Revalidate but don't expose which paths were affected
   for (const path of uniquePaths) {
     try {
+      debugLog("Calling revalidatePath", { path });
       revalidatePath(path);
-    } catch {
-      // Revalidation failed for this path
+      debugLog("revalidatePath completed", { path });
+    } catch (error) {
+      debugLog("revalidatePath failed", { path, error });
     }
   }
 
+  debugLog("Webhook processing complete", {
+    revalidatedCount: uniquePaths.length,
+  });
   return NextResponse.json({ success: true });
 }
 
@@ -259,26 +318,33 @@ async function revalidateAffectedPaths(
 ): Promise<string[]> {
   const paths: string[] = [];
 
+  debugLog("revalidateAffectedPaths called", { objectType, recordId });
+
   try {
     switch (objectType) {
       case "agents":
-        // Agent updated → revalidate all state/area pages where agent is assigned
+        // Agent updated → revalidate all state pages where agent is assigned
+        debugLog("Querying area_assignments for agent");
         const agentAssignments = await attio.queryRecords("area_assignments", {
           filter: { agent: { target_record_id: { $eq: recordId } } },
         });
+        debugLog("Found agent assignments", { count: agentAssignments.length });
 
         for (const assignment of agentAssignments) {
           const areaId = assignment.area;
           if (areaId) {
-            const areaPaths = await getPathsForArea(areaId);
-            paths.push(...areaPaths);
+            const statePath = await getStatePathForArea(areaId);
+            if (statePath) paths.push(statePath);
           }
         }
         break;
 
       case "lenders":
         // Lender updated → revalidate all state pages where lender is assigned
+        debugLog("Querying all states for lender assignments");
         const allStates = await attio.queryRecords("states", { limit: 100 });
+        debugLog("Found states", { count: allStates.length });
+
         for (const state of allStates) {
           const lenders = state.lenders;
           if (Array.isArray(lenders) && lenders.includes(recordId)) {
@@ -290,64 +356,66 @@ async function revalidateAffectedPaths(
         break;
 
       case "areas":
-        // Area updated → revalidate state page and area page
-        const areaPaths = await getPathsForArea(recordId);
-        paths.push(...areaPaths);
+        // Area updated → revalidate state page
+        debugLog("Getting state path for area");
+        const areaStatePath = await getStatePathForArea(recordId);
+        if (areaStatePath) paths.push(areaStatePath);
         break;
 
       case "area_assignments":
-        // Area assignment updated → revalidate area's state and area pages
+        // Area assignment updated → revalidate area's state page
+        debugLog("Getting area_assignment record");
         const assignment = await attio.getRecord("area_assignments", recordId);
+        debugLog("Area assignment", { assignment });
         if (assignment?.area) {
-          const assignmentAreaPaths = await getPathsForArea(assignment.area);
-          paths.push(...assignmentAreaPaths);
+          const assignmentStatePath = await getStatePathForArea(
+            assignment.area,
+          );
+          if (assignmentStatePath) paths.push(assignmentStatePath);
         }
         break;
+
+      default:
+        debugLog("Unknown object type, no paths to revalidate");
     }
-  } catch {
-    // Error determining paths, return empty
+  } catch (error) {
+    debugLog("Error in revalidateAffectedPaths", { error });
   }
 
+  debugLog("revalidateAffectedPaths result", { paths });
   return [...new Set(paths)];
 }
 
 /**
- * Get the state and area page paths for a given area ID
+ * Get the state page path for a given area ID
  */
-async function getPathsForArea(areaId: string): Promise<string[]> {
-  const paths: string[] = [];
+async function getStatePathForArea(areaId: string): Promise<string | null> {
+  debugLog("getStatePathForArea called", { areaId });
 
   try {
     const area = await attio.getRecord("areas", areaId);
-    if (!area) return paths;
+    debugLog("Area record", {
+      area: area ? { name: area.name, state: area.state } : null,
+    });
+    if (!area) return null;
 
     const stateId = area.state;
-    if (!stateId) return paths;
+    if (!stateId) {
+      debugLog("No state ID on area");
+      return null;
+    }
 
     const state = await attio.getRecord("states", stateId);
-    if (!state?.state_slug) return paths;
+    debugLog("State record", {
+      state: state ? { state_slug: state.state_slug } : null,
+    });
+    if (!state?.state_slug) return null;
 
-    // State page: /texas
-    paths.push(`/${state.state_slug}`);
-
-    // Area page: /texas/san-antonio
-    if (area.name) {
-      const areaSlug = slugify(area.name);
-      paths.push(`/${state.state_slug}/${areaSlug}`);
-    }
-  } catch {
-    // Error fetching area/state data
+    const path = `/${state.state_slug}`;
+    debugLog("getStatePathForArea result", { path });
+    return path;
+  } catch (error) {
+    debugLog("Error in getStatePathForArea", { error });
+    return null;
   }
-
-  return paths;
-}
-
-/**
- * Create URL-safe slug from text
- */
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
 }
