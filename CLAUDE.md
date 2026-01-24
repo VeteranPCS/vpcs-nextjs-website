@@ -67,8 +67,8 @@ Before we continue, please confirm:
 
 ### Current Migration Status
 
-**Last Updated:** 2026-01-18
-**Current Phase:** READY FOR CUTOVER ✅
+**Last Updated:** 2026-01-23
+**Current Phase:** POST-CUTOVER FIXES ✅
 **Branch:** attio-migration
 
 **✅ Completed:**
@@ -85,15 +85,24 @@ Before we continue, please confirm:
 - Phase 5D: Webhook handler + cron jobs (stale leads/deals automation)
 - V2 Re-Migration: All data re-uploaded from cleaned CSVs
 - Cutover Prep: vercel.json created, docs/CUTOVER-PLAN.md written
+- **Contact Form Fix Phase 1:** Removed `lead_source`, added deal tracking fields
+- **Contact Form Fix Phase 2:** Fixed agent/lender reference lookup (15 vs 18 char Salesforce ID issue)
 
-**📋 Next Steps (CUTOVER - User Action Required):**
-1. [ ] Add `CRON_SECRET` to Vercel Production env vars
-2. [ ] Add `ATTIO_WEBHOOK_SECRET` to Vercel Production env vars
-3. [ ] Configure Attio webhook (see `docs/CUTOVER-PLAN.md` for details)
-4. [ ] Export fresh Salesforce CSVs (day of cutover)
-5. [ ] Run data cleaning + V2 migrations (final sync)
-6. [ ] Merge `attio-migration` → `main`
-7. [ ] Monitor for 24-48 hours post-cutover
+**📋 Next Steps (ENHANCEMENT PHASE):**
+1. [ ] **Phase 3 Enhancement:** Multi-step contact form with Buying/Selling/Both selection
+2. [ ] Design new form flow and component architecture
+3. [ ] Implement form state management
+4. [ ] Add area-based agent routing for unselected agents
+5. [ ] Handle "Both" → creates 2 separate deals
+
+**📋 Cutover Checklist (Completed):**
+1. [x] Add `CRON_SECRET` to Vercel Production env vars
+2. [x] Add `ATTIO_WEBHOOK_SECRET` to Vercel Production env vars
+3. [x] Configure Attio webhook (see `docs/CUTOVER-PLAN.md` for details)
+4. [x] Export fresh Salesforce CSVs (day of cutover)
+5. [x] Run data cleaning + V2 migrations (final sync)
+6. [x] Merge `attio-migration` → `main`
+7. [x] Monitor for 24-48 hours post-cutover
 
 **📋 Phase 5 Key Decisions:**
 | Decision | Choice |
@@ -465,6 +474,44 @@ See `docs/post-migration-review/` for records that need manual attention:
       // ...
     }
     ```
+
+23. **Salesforce IDs: 15-char vs 18-char mismatch in URL params:**
+    - Salesforce stores 18-char case-insensitive IDs internally
+    - UI/API often returns 15-char case-sensitive IDs
+    - **Problem:** `stateService` returns 15-char IDs, Attio stores 18-char
+    - Query by `salesforce_id` fails: `"0014x00001HWTqI"` ≠ `"0014x00001HWTqIAAX"`
+    
+    **Solution: Use Attio UUIDs instead of Salesforce IDs in URL params**
+    ```typescript
+    // BEFORE (broken) - 15-char Salesforce ID in URL
+    href={`/contact-agent?id=${agent.AccountId_15__c}`}
+    // Form service: queryRecords("agents", { salesforce_id: { $eq: id } })
+    // Result: No match, agent reference missing from deal
+    
+    // AFTER (working) - Attio UUID in URL
+    href={`/contact-agent?id=${agent.attio_id}`}
+    // Form service: attio.getRecord("agents", id)
+    // Result: Direct O(1) lookup, agent reference linked correctly
+    ```
+    
+    **Files changed:**
+    - `services/stateService.tsx` - Added `attio_id` to agent/lender interfaces
+    - `components/StatePage/StatePageCityAgents.tsx` - Uses `attio_id` in links
+    - `components/StatePage/StatePageVaLoan.tsx` - Uses `attio_id` in links
+    - `services/salesForcePostFormsService.tsx` - Uses `getRecord()` not `queryRecords()`
+
+24. **Customer Deals pipeline attributes for form tracking:**
+    - Added 4 new deal-level attributes for marketing/location tracking:
+    
+    | Attribute | Type | Purpose |
+    |-----------|------|---------|
+    | `current_location` | text | Customer's current base/city when contacting |
+    | `destination_city` | text | Customer's destination for this deal |
+    | `how_did_you_hear` | select | Marketing attribution (Referral, Social Media, etc.) |
+    | `how_did_you_hear_other` | text | Free text for "Other" selection |
+    
+    - Added "Lender" to `deal_type` options (Buying, Selling, Lender)
+    - Script: `scripts/add-deal-form-attributes.ts` creates these in Attio
 
 ---
 

@@ -8,16 +8,101 @@
 
 ## Quick Status
 
-**Current Phase:** Phase 5 COMPLETE ✅ + V2 Re-Migration COMPLETE ✅ + Cutover Prep COMPLETE ✅
-**Next Phase:** CUTOVER (Final Data Sync + Merge to Main)
-**Blocked On:** User to configure Attio webhook + Vercel env vars
-**Last Session:** 2026-01-18 - Fix State Page Data Loading
+**Current Phase:** POST-CUTOVER FIXES COMPLETE ✅
+**Next Phase:** ENHANCEMENT - Multi-step contact form with Buying/Selling/Both
+**Blocked On:** None - ready to plan Phase 3 enhancement
+**Last Session:** 2026-01-23 - Fix Contact Form Agent/Lender References
 
 ---
 
 ## Session Log
 
-### 2026-01-18 - Fix State Page Data Loading (Latest Session)
+### 2026-01-23 - Fix Contact Form Agent/Lender References (Latest Session)
+
+**Platform:** Claude Code CLI
+**Status:** ✅ Complete
+
+**Issues Reported:**
+1. Form submission failed with `Cannot find attribute with slug/ID "lead_source"`
+2. Agent/lender references not being linked to deals in Attio
+
+**Root Causes Identified:**
+
+**Issue 1 - lead_source error:**
+- `findOrCreateCustomer()` was setting `lead_source: 'Website'`
+- This attribute doesn't exist in the Attio customers schema
+- User confirmed lead_source is unnecessary since all leads come from website
+
+**Issue 2 - Agent reference missing:**
+- State pages used 15-char Salesforce IDs in contact URLs: `?id=0014x00001HWTqI`
+- Form service queried Attio by `salesforce_id` field
+- But Attio stores 18-char Salesforce IDs: `0014x00001HWTqIAAX`
+- 15 ≠ 18 chars → query returned no results → `agentId` stayed null
+
+**Solutions Implemented:**
+
+**Phase 1 - Fix form submission error:**
+- Removed `lead_source` from `findOrCreateCustomer()`
+- Added 4 new deal-level attributes for tracking:
+  - `current_location` - Customer's current base/city
+  - `destination_city` - Customer's destination for this deal
+  - `how_did_you_hear` - Marketing attribution (select)
+  - `how_did_you_hear_other` - Free text for "Other"
+- Added "Lender" to `deal_type` options
+- Created `scripts/add-deal-form-attributes.ts` to add attributes to Attio
+
+**Phase 2 - Fix agent/lender reference lookup:**
+- Added `attio_id` field to Agent/Lenders interfaces in stateService
+- Updated state page components to use `attio_id` in contact URLs
+- Changed form service from `queryRecords()` to `getRecord()` for direct lookup
+
+**Key Technical Learning:**
+
+| Problem | Root Cause | Solution |
+|---------|-----------|----------|
+| lead_source error | Attribute doesn't exist in Attio | Remove from code (not needed) |
+| Agent not linked | 15-char SF ID ≠ 18-char in Attio | Use Attio UUID in URLs |
+| Query fails silently | queryRecords returns empty array | Use getRecord for direct lookup |
+
+**URL Format Change:**
+```
+Before: /contact-agent?id=0014x00001HWTqI (15-char Salesforce ID)
+After:  /contact-agent?id=550e8400-e29b-41d4-a716-... (36-char Attio UUID)
+```
+
+**Files Modified:**
+- `lib/attio-schema.ts` - Added HOW_DID_YOU_HEAR_OPTIONS, "Lender" to deal_type, 4 new attributes
+- `services/salesForcePostFormsService.tsx` - Removed lead_source, added form fields to deals, changed to getRecord()
+- `services/stateService.tsx` - Added `attio_id` to interfaces and all 4 mapping locations
+- `components/StatePage/StatePageCityAgents/StatePageCityAgents.tsx` - Changed 3 links to use `attio_id`
+- `components/StatePage/StatePageVaLoan/StatePageVaLoan.tsx` - Changed 3 links to use `attio_id`
+
+**Files Created:**
+- `scripts/add-deal-form-attributes.ts` - Creates new attributes in Attio
+
+**Git Commits:**
+- `fdd3a8e` - Document Attio API learnings and create development tools
+- `a425f70` - Fix agent/lender reference in contact forms
+
+**Plan Updated:**
+- Updated `~/.claude/plans/buzzing-moseying-phoenix.md` with Phase 3 enhancement planning
+- Phase 1 & 2 marked complete
+- Phase 3 (multi-step form) outlined with design decisions
+
+**Design Decisions for Future Phase 3:**
+- Deal model is transaction-based (1 deal = 1 type)
+- Deal types: Buying, Selling, Lender (not "Both" as single type)
+- "Both" selection creates 2 separate deals
+- Form flow: Basic Info → Service Selection → Location → Agent Selection
+
+**Next Session Tasks:**
+- [ ] Plan Phase 3 multi-step form implementation when ready
+- [ ] Design component architecture for new form flow
+- [ ] Implement form state management
+
+---
+
+### 2026-01-18 - Fix State Page Data Loading (Previous Session)
 
 **Platform:** Claude Code CLI
 **Status:** ✅ Complete
