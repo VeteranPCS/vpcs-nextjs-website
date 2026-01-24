@@ -33,13 +33,11 @@ function toTitleCase(str: string): string {
   return str
     .toLowerCase()
     .split(" ")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }
 
-
 const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
-
   return (
     <div id={sanitizeCityName(city)}>
       <div className="bg-[#F4F4F4]">
@@ -58,7 +56,9 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
               >
                 <div className="justify-center items-center flex flex-col">
                   <div className="rounded-full bg-[#E1EDFB] md:w-[200px] md:h-[200px] sm:w-[100px] sm:h-[100px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
-                    <Link href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}>
+                    <Link
+                      href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.attio_id}&state=${state}`}
+                    >
                       <Image
                         src={agent?.PhotoUrl || ""}
                         alt={`${agent?.Name}'s Profile Picture`}
@@ -69,27 +69,36 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                     </Link>
                   </div>
                   <Link
-                    href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}
+                    href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.attio_id}&state=${state}`}
                   >
                     <Button buttonText="Contact Now" />
                   </Link>
                 </div>
                 <div className="md:pl-10 sm:pl-4 pl-4">
                   <div>
-                    <Link href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}>
+                    <Link
+                      href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.attio_id}&state=${state}`}
+                    >
                       <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[20px] text-[20px] font-bold">
                         {agent?.Name}
                       </h3>
                     </Link>
                     <div className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[10px] text-[10px] font-normal sm:mt-4 mt-0">
                       <p className="font-bold">
-                        {orderMilitaryServiceInfo(agent?.Military_Status__pc || "", agent?.Military_Service__pc || "")}
+                        {orderMilitaryServiceInfo(
+                          agent?.Military_Status__pc || "",
+                          agent?.Military_Service__pc || "",
+                        )}
                       </p>
                       <p>{agent?.Brokerage_Name__pc}</p>
                     </div>
                     <div className="relative">
                       {/* Hidden checkbox to track toggle state */}
-                      <input type="checkbox" id={`toggle-${index + ' ' + agent.Name + ' ' + city.toLowerCase().split(' ').join('-')}`} className="peer hidden" />
+                      <input
+                        type="checkbox"
+                        id={`toggle-${index + " " + agent.Name + " " + city.toLowerCase().split(" ").join("-")}`}
+                        className="peer hidden"
+                      />
 
                       {/* Text that expands/collapses */}
                       <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 max-h-[80px] overflow-hidden peer-checked:max-h-full transition-all duration-300">
@@ -97,8 +106,10 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                       </p>
 
                       {/* Single label that toggles state */}
-                      <label htmlFor={`toggle-${index + ' ' + agent.Name + ' ' + city.toLowerCase().split(' ').join('-')}`} className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 block peer-checked:before:content-['Read_Less'] before:content-['...Read_More']">
-                      </label>
+                      <label
+                        htmlFor={`toggle-${index + " " + agent.Name + " " + city.toLowerCase().split(" ").join("-")}`}
+                        className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 block peer-checked:before:content-['Read_Less'] before:content-['...Read_More']"
+                      ></label>
                     </div>
                   </div>
                 </div>

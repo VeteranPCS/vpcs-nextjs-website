@@ -41,6 +41,7 @@ export interface StateList {
 export interface Agent {
   Name: string;
   AccountId_15__c: string;
+  attio_id?: string; // Attio record UUID for contact form links
   PhotoUrl?: string;
   FirstName: string;
   LastName: string;
@@ -73,6 +74,7 @@ export interface Agent {
 export interface Lenders {
   Name: string;
   AccountId_15__c: string;
+  attio_id?: string; // Attio record UUID for contact form links
   PhotoUrl?: string;
   FirstName: string;
   Agent_Bio__pc: string;
@@ -165,13 +167,15 @@ const stateSlugToCode: Record<string, string> = {
 };
 
 // Reverse mapping: state code to lowercase state name for Area__r.State__c
-const stateCodeToName: Record<string, string> = Object.entries(stateSlugToCode).reduce(
+const stateCodeToName: Record<string, string> = Object.entries(
+  stateSlugToCode,
+).reduce(
   (acc, [slug, code]) => {
     // Convert slug to state name (e.g., "new-york" -> "new york")
     acc[code] = slug.replace(/-/g, " ");
     return acc;
   },
-  {} as Record<string, string>
+  {} as Record<string, string>,
 );
 
 const stateService = {
@@ -272,7 +276,7 @@ const stateService = {
       }
 
       // Build area ID set and map for quick lookup
-      const areaIds = new Set(stateAreas.map(a => a.id));
+      const areaIds = new Set(stateAreas.map((a) => a.id));
       const areaMap: Record<string, any> = {};
       for (const a of stateAreas) {
         areaMap[a.id] = a;
@@ -284,7 +288,7 @@ const stateService = {
       for (const areaId of areaIds) {
         const areaAssignments = dataCache.assignmentsByArea[areaId] || [];
         for (const aa of areaAssignments) {
-          if (aa.status === 'Active' && aa.agent) {
+          if (aa.status === "Active" && aa.agent) {
             assignments.push(aa);
             agentIdSet.add(aa.agent);
           }
@@ -296,7 +300,9 @@ const stateService = {
       }
 
       // Filter active agents to only those with assignments in this state
-      const agents = dataCache.activeAgents.filter(agent => agentIdSet.has(agent.id));
+      const agents = dataCache.activeAgents.filter((agent) =>
+        agentIdSet.has(agent.id),
+      );
 
       // Fetch photos from Sanity and map to legacy interface
       const recordsWithPhotos = await Promise.all(
@@ -319,7 +325,8 @@ const stateService = {
 
           // Get this agent's area assignments for this state
           // Note: State__c needs to be lowercase state name (e.g., "texas") to match page component comparison
-          const stateNameLower = stateCodeToName[stateCode] || stateCode.toLowerCase();
+          const stateNameLower =
+            stateCodeToName[stateCode] || stateCode.toLowerCase();
           const agentAssignments = assignments
             .filter((a) => a.agent === agent.id)
             .map((a) => {
@@ -344,6 +351,7 @@ const stateService = {
           return {
             Name: agent.name,
             AccountId_15__c: sfId15,
+            attio_id: agent.id, // Attio UUID for contact form links
             PhotoUrl: photoUrl,
             FirstName: agent.first_name,
             LastName: agent.last_name,
@@ -416,7 +424,7 @@ const stateService = {
       const lenderIdSet = new Set(lenderIds);
 
       // Filter active lenders to only those assigned to this state
-      const lenders = dataCache.activeLenders.filter(lender =>
+      const lenders = dataCache.activeLenders.filter((lender) =>
         lenderIdSet.has(lender.id),
       );
 
@@ -447,6 +455,7 @@ const stateService = {
           return {
             Name: lender.name,
             AccountId_15__c: sfId15,
+            attio_id: lender.id, // Attio UUID for contact form links
             PhotoUrl: photoUrl,
             FirstName: lender.first_name,
             Agent_Bio__pc: lender.bio,
@@ -519,6 +528,7 @@ const stateService = {
           agent.name ||
           `${agent.first_name || ""} ${agent.last_name || ""}`.trim(),
         AccountId_15__c: sfId15,
+        attio_id: agent.id, // Attio UUID for contact form links
         FirstName: agent.first_name || "",
         LastName: agent.last_name || "",
         Agent_Bio__pc: agent.bio || "",
@@ -577,6 +587,7 @@ const stateService = {
           lender.name ||
           `${lender.first_name || ""} ${lender.last_name || ""}`.trim(),
         AccountId_15__c: sfId15,
+        attio_id: lender.id, // Attio UUID for contact form links
         FirstName: lender.first_name || "",
         Agent_Bio__pc: lender.bio || "",
         Military_Status__pc: lender.military_status || "",

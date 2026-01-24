@@ -94,34 +94,31 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
   );
 
   const params = new URLSearchParams(queryString);
-  const agentSalesforceId = params.get("id");
+  const agentAttioId = params.get("id"); // Now receives Attio UUID instead of Salesforce ID
   const stateCode = params.get("state");
 
   logInfo("Processing contact agent form submission", {
     submissionId,
-    agent_salesforce_id: agentSalesforceId,
+    agent_attio_id: agentAttioId,
   });
 
   try {
-    // 1. Find the agent in Attio by salesforce_id
+    // 1. Find the agent in Attio by direct record lookup
     let agentInfo = null;
     let agentId: string | null = null;
 
-    if (agentSalesforceId) {
+    if (agentAttioId) {
       try {
-        const agents = await attio.queryRecords("agents", {
-          filter: { salesforce_id: { $eq: agentSalesforceId } },
-          limit: 1,
-        });
-        if (agents.length > 0) {
-          agentInfo = agents[0];
-          agentId = agents[0].id;
+        const agent = await attio.getRecord("agents", agentAttioId);
+        if (agent) {
+          agentInfo = agent;
+          agentId = agent.id;
           logDebug("Agent found in Attio", { submissionId, agentId });
         }
       } catch (error) {
         logError(
-          "Error finding agent in Attio",
-          { submissionId, agentSalesforceId },
+          "Error fetching agent from Attio",
+          { submissionId, agentAttioId },
           error,
         );
       }
@@ -517,34 +514,31 @@ export async function contactLenderPostForm(
   );
 
   const params = new URLSearchParams(fullQueryString);
-  const lenderSalesforceId = params.get("id");
+  const lenderAttioId = params.get("id"); // Now receives Attio UUID instead of Salesforce ID
   const stateCode = params.get("state");
 
   logInfo("Processing contact lender form submission", {
     submissionId,
-    lender_salesforce_id: lenderSalesforceId,
+    lender_attio_id: lenderAttioId,
   });
 
   try {
-    // 1. Find the lender in Attio by salesforce_id
+    // 1. Find the lender in Attio by direct record lookup
     let lenderInfo = null;
     let lenderId: string | null = null;
 
-    if (lenderSalesforceId) {
+    if (lenderAttioId) {
       try {
-        const lenders = await attio.queryRecords("lenders", {
-          filter: { salesforce_id: { $eq: lenderSalesforceId } },
-          limit: 1,
-        });
-        if (lenders.length > 0) {
-          lenderInfo = lenders[0];
-          lenderId = lenders[0].id;
+        const lender = await attio.getRecord("lenders", lenderAttioId);
+        if (lender) {
+          lenderInfo = lender;
+          lenderId = lender.id;
           logDebug("Lender found in Attio", { submissionId, lenderId });
         }
       } catch (error) {
         logError(
-          "Error finding lender in Attio",
-          { submissionId, lenderSalesforceId },
+          "Error fetching lender from Attio",
+          { submissionId, lenderAttioId },
           error,
         );
       }

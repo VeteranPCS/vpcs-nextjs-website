@@ -6,8 +6,15 @@ import Link from "next/link";
 import { LendersData, Lenders } from "@/services/stateService";
 import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
 
-const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, lendersData: LendersData | [], state: string }) => {
-
+const StatePageVaLoan = ({
+  cityName,
+  lendersData,
+  state,
+}: {
+  cityName: string;
+  lendersData: LendersData | [];
+  state: string;
+}) => {
   return (
     <div>
       <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">
@@ -24,13 +31,19 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
           </p>
         </div>
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-10 mt-10">
-          {Array.isArray(lendersData) || !lendersData.records
-            ? <p>No lenders available</p>
-            : lendersData.records.map((lender: Lenders, index: number) => (
-              <div key={lender.AccountId_15__c} className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4">
+          {Array.isArray(lendersData) || !lendersData.records ? (
+            <p>No lenders available</p>
+          ) : (
+            lendersData.records.map((lender: Lenders, index: number) => (
+              <div
+                key={lender.AccountId_15__c}
+                className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4"
+              >
                 <div className="justify-center items-center flex flex-col">
                   <div className="rounded-full bg-[#E1EDFB] sm:w-[200px] sm:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
-                    <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}>
+                    <Link
+                      href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.attio_id}&state=${state}`}
+                    >
                       <Image
                         src={lender?.PhotoUrl || ""}
                         alt={`${lender?.Name}'s Profile Picture`}
@@ -40,32 +53,43 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                       />
                     </Link>
                   </div>
-                  <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}>
+                  <Link
+                    href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.attio_id}&state=${state}`}
+                  >
                     <Button buttonText="Contact Now" />
                   </Link>
                 </div>
                 <div className="pl-10">
                   <div>
-                    <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}>
+                    <Link
+                      href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.attio_id}&state=${state}`}
+                    >
                       <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[24px] text-[24px] font-bold">
                         {lender?.Name}
                       </h3>
                     </Link>
                     <div className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] sm:text-[10px] text-[10px] font-normal sm:mt-4 mt-0">
                       <p className="font-bold">
-                        {orderMilitaryServiceInfo(lender?.Military_Status__pc || "", lender?.Military_Service__pc || "")}
+                        {orderMilitaryServiceInfo(
+                          lender?.Military_Status__pc || "",
+                          lender?.Military_Service__pc || "",
+                        )}
                       </p>
                       <p>NMLS: {lender.Individual_NMLS_ID__pc}</p>
-                      {lender.Company_NMLS_ID__pc &&
+                      {lender.Company_NMLS_ID__pc && (
                         <>
                           <p>{lender.Brokerage_Name__pc}</p>
                           <p>NMLS: {lender.Company_NMLS_ID__pc}</p>
                         </>
-                      }
+                      )}
                     </div>
                     <div className="relative">
                       {/* Hidden checkbox to track toggle state */}
-                      <input type="checkbox" id={`toggle-${index + ' ' + lender.Name + ' ' + cityName.toLowerCase().split(' ').join('-')}`} className="peer hidden" />
+                      <input
+                        type="checkbox"
+                        id={`toggle-${index + " " + lender.Name + " " + cityName.toLowerCase().split(" ").join("-")}`}
+                        className="peer hidden"
+                      />
 
                       {/* Text that expands/collapses */}
                       <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 max-h-[80px] overflow-hidden peer-checked:max-h-full transition-all duration-300">
@@ -73,14 +97,16 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                       </p>
 
                       {/* Single label that toggles state */}
-                      <label htmlFor={`toggle-${index + ' ' + lender.Name + ' ' + cityName.toLowerCase().split(' ').join('-')}`} className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 block peer-checked:before:content-['Read_Less'] before:content-['...Read_More']">
-                      </label>
+                      <label
+                        htmlFor={`toggle-${index + " " + lender.Name + " " + cityName.toLowerCase().split(" ").join("-")}`}
+                        className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 block peer-checked:before:content-['Read_Less'] before:content-['...Read_More']"
+                      ></label>
                     </div>
-
                   </div>
                 </div>
               </div>
-            ))}
+            ))
+          )}
         </div>
       </div>
     </div>
