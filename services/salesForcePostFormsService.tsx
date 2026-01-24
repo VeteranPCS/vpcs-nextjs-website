@@ -1,13 +1,18 @@
-'use server'
-import { attio } from '@/lib/attio';
-import { slack } from '@/lib/slack';
-import { openphone } from '@/lib/openphone';
-import { generateMagicLink } from '@/lib/magic-link';
-import { normalizePhone } from '@/lib/normalize-phone';
-import { logDebug, logError, logInfo } from './loggingService';
-import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
+"use server";
+import { attio } from "@/lib/attio";
+import { slack } from "@/lib/slack";
+import { openphone } from "@/lib/openphone";
+import { generateMagicLink } from "@/lib/magic-link";
+import { normalizePhone } from "@/lib/normalize-phone";
+import { logDebug, logError, logInfo } from "./loggingService";
+import {
+  FormSubmissionStatus,
+  trackFormSubmission,
+  updateSubmissionStatus,
+} from "./formTrackingService";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://veteranpcs.com';
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://veteranpcs.com";
 const THANK_YOU_URL = `${BASE_URL}/thank-you`;
 
 /**
@@ -15,747 +20,855 @@ const THANK_YOU_URL = `${BASE_URL}/thank-you`;
  * Returns the customer record ID
  */
 async function findOrCreateCustomer(data: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone?: string;
-    currentLocation?: string;
-    militaryStatus?: string;
-    militaryService?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  currentLocation?: string;
+  militaryStatus?: string;
+  militaryService?: string;
 }): Promise<string> {
-    // Try to find existing customer by email
-    const existing = await attio.queryRecords('customers', {
-        filter: { email: { $eq: data.email } },
-        limit: 1
-    });
+  // Try to find existing customer by email
+  const existing = await attio.queryRecords("customers", {
+    filter: { email: { $eq: data.email } },
+    limit: 1,
+  });
 
-    if (existing.length > 0) {
-        // Update existing customer with any new data
-        const customerId = existing[0].id;
-        const updates: Record<string, any> = {};
-
-        if (data.phone) {
-            const normalized = normalizePhone(data.phone);
-            if (normalized) updates.phone = normalized;
-        }
-        if (data.currentLocation) updates.current_location = data.currentLocation;
-        if (data.militaryStatus) updates.military_status = data.militaryStatus;
-        if (data.militaryService) updates.military_service = data.militaryService;
-
-        if (Object.keys(updates).length > 0) {
-            await attio.updateRecord('customers', customerId, updates);
-        }
-
-        return customerId;
-    }
-
-    // Create new customer
-    const customerData: Record<string, any> = {
-        name: `${data.firstName} ${data.lastName}`,
-        first_name: data.firstName,
-        last_name: data.lastName,
-        email: data.email,
-        lead_source: 'Website',
-    };
+  if (existing.length > 0) {
+    // Update existing customer with any new data
+    const customerId = existing[0].id;
+    const updates: Record<string, any> = {};
 
     if (data.phone) {
-        const normalized = normalizePhone(data.phone);
-        if (normalized) customerData.phone = normalized;
+      const normalized = normalizePhone(data.phone);
+      if (normalized) updates.phone = normalized;
     }
-    if (data.currentLocation) customerData.current_location = data.currentLocation;
-    if (data.militaryStatus) customerData.military_status = data.militaryStatus;
-    if (data.militaryService) customerData.military_service = data.militaryService;
+    if (data.currentLocation) updates.current_location = data.currentLocation;
+    if (data.militaryStatus) updates.military_status = data.militaryStatus;
+    if (data.militaryService) updates.military_service = data.militaryService;
 
-    const result = await attio.createRecord('customers', customerData);
-    return result.data.id.record_id;
+    if (Object.keys(updates).length > 0) {
+      await attio.updateRecord("customers", customerId, updates);
+    }
+
+    return customerId;
+  }
+
+  // Create new customer
+  const customerData: Record<string, any> = {
+    name: `${data.firstName} ${data.lastName}`,
+    first_name: data.firstName,
+    last_name: data.lastName,
+    email: data.email,
+  };
+
+  if (data.phone) {
+    const normalized = normalizePhone(data.phone);
+    if (normalized) customerData.phone = normalized;
+  }
+  if (data.currentLocation)
+    customerData.current_location = data.currentLocation;
+  if (data.militaryStatus) customerData.military_status = data.militaryStatus;
+  if (data.militaryService)
+    customerData.military_service = data.militaryService;
+
+  const result = await attio.createRecord("customers", customerData);
+  return result.data.id.record_id;
 }
 
 /**
  * Determine deal type from form data
  */
-function getDealType(buyingSelling?: string): 'Buying' | 'Selling' | 'Buying' {
-    if (!buyingSelling) return 'Buying';
-    const lower = buyingSelling.toLowerCase();
-    if (lower.includes('sell')) return 'Selling';
-    return 'Buying';
+function getDealType(buyingSelling?: string): "Buying" | "Selling" | "Buying" {
+  if (!buyingSelling) return "Buying";
+  const lower = buyingSelling.toLowerCase();
+  if (lower.includes("sell")) return "Selling";
+  return "Buying";
 }
 
 export async function contactAgentPostForm(formData: any, queryString: string) {
-    const submissionId = await trackFormSubmission(
-        'contactAgent',
-        formData,
-        FormSubmissionStatus.PENDING
-    );
+  const submissionId = await trackFormSubmission(
+    "contactAgent",
+    formData,
+    FormSubmissionStatus.PENDING,
+  );
 
-    const params = new URLSearchParams(queryString);
-    const agentSalesforceId = params.get('id');
-    const stateCode = params.get('state');
+  const params = new URLSearchParams(queryString);
+  const agentSalesforceId = params.get("id");
+  const stateCode = params.get("state");
 
-    logInfo('Processing contact agent form submission', {
-        submissionId,
-        agent_salesforce_id: agentSalesforceId
+  logInfo("Processing contact agent form submission", {
+    submissionId,
+    agent_salesforce_id: agentSalesforceId,
+  });
+
+  try {
+    // 1. Find the agent in Attio by salesforce_id
+    let agentInfo = null;
+    let agentId: string | null = null;
+
+    if (agentSalesforceId) {
+      try {
+        const agents = await attio.queryRecords("agents", {
+          filter: { salesforce_id: { $eq: agentSalesforceId } },
+          limit: 1,
+        });
+        if (agents.length > 0) {
+          agentInfo = agents[0];
+          agentId = agents[0].id;
+          logDebug("Agent found in Attio", { submissionId, agentId });
+        }
+      } catch (error) {
+        logError(
+          "Error finding agent in Attio",
+          { submissionId, agentSalesforceId },
+          error,
+        );
+      }
+    }
+
+    // 2. Create or update customer record
+    const customerId = await findOrCreateCustomer({
+      firstName: formData.firstName || "",
+      lastName: formData.lastName || "",
+      email: formData.email || "",
+      phone: formData.phone,
+      currentLocation: formData.currentBase,
+      militaryStatus: formData.status_select,
+      militaryService: formData.branch_select,
     });
 
-    try {
-        // 1. Find the agent in Attio by salesforce_id
-        let agentInfo = null;
-        let agentId: string | null = null;
+    logDebug("Customer record created/updated", { submissionId, customerId });
 
-        if (agentSalesforceId) {
-            try {
-                const agents = await attio.queryRecords('agents', {
-                    filter: { salesforce_id: { $eq: agentSalesforceId } },
-                    limit: 1
-                });
-                if (agents.length > 0) {
-                    agentInfo = agents[0];
-                    agentId = agents[0].id;
-                    logDebug('Agent found in Attio', { submissionId, agentId });
-                }
-            } catch (error) {
-                logError('Error finding agent in Attio', { submissionId, agentSalesforceId }, error);
-            }
-        }
+    // 3. Create deal in customer_deals pipeline
+    const dealType = getDealType(formData.buyingSelling);
+    const dealData: Record<string, any> = {
+      deal_type: dealType,
+      contact_confirmed: false,
+      reroute_count: 0,
+      last_updated: new Date().toISOString(),
+      last_stage_change: new Date().toISOString(),
+    };
 
-        // 2. Create or update customer record
-        const customerId = await findOrCreateCustomer({
-            firstName: formData.firstName || '',
-            lastName: formData.lastName || '',
-            email: formData.email || '',
-            phone: formData.phone,
-            currentLocation: formData.currentBase,
-            militaryStatus: formData.status_select,
-            militaryService: formData.branch_select,
-        });
-
-        logDebug('Customer record created/updated', { submissionId, customerId });
-
-        // 3. Create deal in customer_deals pipeline
-        const dealType = getDealType(formData.buyingSelling);
-        const dealData: Record<string, any> = {
-            deal_type: dealType,
-            contact_confirmed: false,
-            reroute_count: 0,
-            last_updated: new Date().toISOString(),
-            last_stage_change: new Date().toISOString(),
-        };
-
-        // Add agent reference if found
-        if (agentId) {
-            dealData.agent = { target_object: 'agents', target_record_id: agentId };
-        }
-
-        // Add notes/comments if provided
-        if (formData.additionalComments) {
-            dealData.notes = formData.additionalComments;
-        }
-
-        const dealResult = await attio.createListEntry(
-            'customer_deals',
-            'customers',
-            customerId,
-            dealData,
-            'New Lead'  // Initial stage
-        );
-
-        const dealId = dealResult.data.id.entry_id;
-        logInfo('Deal created in Attio', { submissionId, dealId, dealType });
-
-        // 4. Send notifications (fire and forget)
-        const notificationPromises: Promise<any>[] = [];
-
-        // Slack notification
-        notificationPromises.push(
-            slack.sendNewLead({
-                customerName: `${formData.firstName} ${formData.lastName}`,
-                customerEmail: formData.email || '',
-                customerPhone: formData.phone,
-                agentName: agentInfo?.name || 'Unknown Agent',
-                dealType,
-                area: formData.destinationBase || formData.city,
-            }).catch(error => {
-                logError('Slack notification failed', { submissionId }, error);
-            })
-        );
-
-        // SMS notification to agent if we have their phone
-        if (agentId && agentInfo?.phone) {
-            const magicLink = generateMagicLink(agentId, dealId, 'agent');
-            notificationPromises.push(
-                openphone.sendNewLeadNotification({
-                    to: agentInfo.phone,
-                    agentName: agentInfo.first_name || agentInfo.name || 'Agent',
-                    customerName: `${formData.firstName} ${formData.lastName}`,
-                    dealType,
-                    magicLink,
-                }).catch(error => {
-                    logError('SMS notification failed', { submissionId }, error);
-                })
-            );
-        }
-
-        await Promise.allSettled(notificationPromises);
-
-        // Track success
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            null
-        );
-
-        logInfo('Contact agent form submitted successfully', { submissionId, dealId });
-        return { message: 'Form submitted successfully!', dealId, redirectUrl: THANK_YOU_URL };
-
-    } catch (error) {
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in contactAgentPostForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
+    // Add agent reference if found
+    if (agentId) {
+      dealData.agent = { target_object: "agents", target_record_id: agentId };
     }
+
+    // Add form fields to deal for tracking
+    if (formData.currentBase) {
+      dealData.current_location = formData.currentBase;
+    }
+    if (formData.destinationBase) {
+      dealData.destination_city = formData.destinationBase;
+    }
+    if (formData.howDidYouHear) {
+      dealData.how_did_you_hear = formData.howDidYouHear;
+    }
+    if (formData.tellusMore) {
+      dealData.how_did_you_hear_other = formData.tellusMore;
+    }
+
+    // Add notes/comments if provided
+    if (formData.additionalComments) {
+      dealData.notes = formData.additionalComments;
+    }
+
+    const dealResult = await attio.createListEntry(
+      "customer_deals",
+      "customers",
+      customerId,
+      dealData,
+      "New Lead", // Initial stage
+    );
+
+    const dealId = dealResult.data.id.entry_id;
+    logInfo("Deal created in Attio", { submissionId, dealId, dealType });
+
+    // 4. Send notifications (fire and forget)
+    const notificationPromises: Promise<any>[] = [];
+
+    // Slack notification
+    notificationPromises.push(
+      slack
+        .sendNewLead({
+          customerName: `${formData.firstName} ${formData.lastName}`,
+          customerEmail: formData.email || "",
+          customerPhone: formData.phone,
+          agentName: agentInfo?.name || "Unknown Agent",
+          dealType,
+          area: formData.destinationBase || formData.city,
+        })
+        .catch((error) => {
+          logError("Slack notification failed", { submissionId }, error);
+        }),
+    );
+
+    // SMS notification to agent if we have their phone
+    if (agentId && agentInfo?.phone) {
+      const magicLink = generateMagicLink(agentId, dealId, "agent");
+      notificationPromises.push(
+        openphone
+          .sendNewLeadNotification({
+            to: agentInfo.phone,
+            agentName: agentInfo.first_name || agentInfo.name || "Agent",
+            customerName: `${formData.firstName} ${formData.lastName}`,
+            dealType,
+            magicLink,
+          })
+          .catch((error) => {
+            logError("SMS notification failed", { submissionId }, error);
+          }),
+      );
+    }
+
+    await Promise.allSettled(notificationPromises);
+
+    // Track success
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.SUCCESS,
+      null,
+    );
+
+    logInfo("Contact agent form submitted successfully", {
+      submissionId,
+      dealId,
+    });
+    return {
+      message: "Form submitted successfully!",
+      dealId,
+      redirectUrl: THANK_YOU_URL,
+    };
+  } catch (error) {
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.FAILURE,
+      null,
+      error instanceof Error ? error : new Error("Unknown error"),
+    );
+
+    logError("Error in contactAgentPostForm", { submissionId }, error);
+    throw new Error("Failed to submit form");
+  }
 }
 
 export async function GetListedAgentsPostForm(formData: any) {
-    const submissionId = await trackFormSubmission(
-        'getListedAgents',
-        formData,
-        FormSubmissionStatus.PENDING
+  const submissionId = await trackFormSubmission(
+    "getListedAgents",
+    formData,
+    FormSubmissionStatus.PENDING,
+  );
+
+  logInfo("Processing agent listing form submission", { submissionId });
+
+  try {
+    // Create agent record in agents object (pending status)
+    const agentData: Record<string, any> = {
+      name: `${formData.firstName} ${formData.lastName}`,
+      first_name: formData.firstName || "",
+      last_name: formData.lastName || "",
+      email: formData.email || "",
+      military_status: formData.status_select || null,
+      military_service: formData.branch_select || null,
+      brokerage_name: formData.brokerageName || null,
+      brokerage_license: formData.licenseNumber || null,
+      managing_broker_name: formData.managingBrokerName || null,
+      active_on_website: false, // Not active until approved
+    };
+
+    if (formData.phone) {
+      const normalized = normalizePhone(formData.phone);
+      if (normalized) agentData.phone = normalized;
+    }
+
+    const agentResult = await attio.createRecord("agents", agentData);
+    const agentId = agentResult.data.id.record_id;
+
+    logDebug("Agent record created", { submissionId, agentId });
+
+    // Create entry in agent_onboarding pipeline
+    const onboardingData: Record<string, any> = {
+      primary_state: formData.primaryState || null,
+      other_states: formData.otherStates
+        ? Array.isArray(formData.otherStates)
+          ? formData.otherStates.join(", ")
+          : formData.otherStates
+        : null,
+      cities_serviced: formData.citiesServiced || null,
+      bases_serviced: formData.basesServiced || null,
+      personally_pcs: formData.personallyPCS || null,
+      lead_acceptance: formData.leadAcceptance || null,
+      how_did_you_hear: formData.howDidYouHear || null,
+      tell_us_more: formData.tellusMore || null,
+    };
+
+    await attio.createListEntry(
+      "agent_onboarding",
+      "agents",
+      agentId,
+      onboardingData,
+      "New Application", // Initial stage
     );
 
-    logInfo('Processing agent listing form submission', { submissionId });
+    logInfo("Agent onboarding entry created", { submissionId, agentId });
 
-    try {
-        // Create agent record in agents object (pending status)
-        const agentData: Record<string, any> = {
-            name: `${formData.firstName} ${formData.lastName}`,
-            first_name: formData.firstName || '',
-            last_name: formData.lastName || '',
-            email: formData.email || '',
-            military_status: formData.status_select || null,
-            military_service: formData.branch_select || null,
-            brokerage_name: formData.brokerageName || null,
-            brokerage_license: formData.licenseNumber || null,
-            managing_broker_name: formData.managingBrokerName || null,
-            active_on_website: false,  // Not active until approved
-        };
-
-        if (formData.phone) {
-            const normalized = normalizePhone(formData.phone);
-            if (normalized) agentData.phone = normalized;
-        }
-
-        const agentResult = await attio.createRecord('agents', agentData);
-        const agentId = agentResult.data.id.record_id;
-
-        logDebug('Agent record created', { submissionId, agentId });
-
-        // Create entry in agent_onboarding pipeline
-        const onboardingData: Record<string, any> = {
-            primary_state: formData.primaryState || null,
-            other_states: formData.otherStates ?
-                (Array.isArray(formData.otherStates) ? formData.otherStates.join(', ') : formData.otherStates) : null,
-            cities_serviced: formData.citiesServiced || null,
-            bases_serviced: formData.basesServiced || null,
-            personally_pcs: formData.personallyPCS || null,
-            lead_acceptance: formData.leadAcceptance || null,
-            how_did_you_hear: formData.howDidYouHear || null,
-            tell_us_more: formData.tellusMore || null,
-        };
-
-        await attio.createListEntry(
-            'agent_onboarding',
-            'agents',
-            agentId,
-            onboardingData,
-            'New Application'  // Initial stage
+    // Send Slack notification
+    slack
+      .sendAlert("New Agent Listing Request", {
+        Name: `${formData.firstName} ${formData.lastName}`,
+        Email: formData.email || "",
+        Phone: formData.phone || "",
+        State: formData.primaryState || "",
+        Brokerage: formData.brokerageName || "",
+      })
+      .catch((error) => {
+        logError(
+          "Error sending agent listing notifications",
+          { submissionId },
+          error,
         );
+      });
 
-        logInfo('Agent onboarding entry created', { submissionId, agentId });
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.SUCCESS,
+      null,
+    );
 
-        // Send Slack notification
-        slack.sendAlert('New Agent Listing Request', {
-            Name: `${formData.firstName} ${formData.lastName}`,
-            Email: formData.email || '',
-            Phone: formData.phone || '',
-            State: formData.primaryState || '',
-            Brokerage: formData.brokerageName || '',
-        }).catch(error => {
-            logError('Error sending agent listing notifications', { submissionId }, error);
-        });
+    logInfo("Agent listing form submitted successfully", { submissionId });
+    return {
+      message: "Form submitted successfully!",
+      redirectUrl: THANK_YOU_URL,
+    };
+  } catch (error) {
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.FAILURE,
+      null,
+      error instanceof Error ? error : new Error("Unknown error"),
+    );
 
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            null
-        );
-
-        logInfo('Agent listing form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!', redirectUrl: THANK_YOU_URL };
-
-    } catch (error) {
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in GetListedAgentsPostForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
+    logError("Error in GetListedAgentsPostForm", { submissionId }, error);
+    throw new Error("Failed to submit form");
+  }
 }
 
 export async function GetListedLendersPostForm(formData: any) {
-    const submissionId = await trackFormSubmission(
-        'getListedLenders',
-        formData,
-        FormSubmissionStatus.PENDING
+  const submissionId = await trackFormSubmission(
+    "getListedLenders",
+    formData,
+    FormSubmissionStatus.PENDING,
+  );
+
+  logInfo("Processing lender listing form submission", { submissionId });
+
+  try {
+    // Create lender record in lenders object (pending status)
+    const lenderData: Record<string, any> = {
+      name: `${formData.firstName} ${formData.lastName}`,
+      first_name: formData.firstName || "",
+      last_name: formData.lastName || "",
+      email: formData.email || "",
+      military_status: formData.status_select || null,
+      military_service: formData.branch_select || null,
+      company_name: formData.name || null, // Company name field
+      individual_nmls: formData.nmlsId || null,
+      company_nmls: formData.companyNMLSId || null,
+      city: formData.city || null,
+      active_on_website: false, // Not active until approved
+    };
+
+    if (formData.phone) {
+      const normalized = normalizePhone(formData.phone);
+      if (normalized) lenderData.phone = normalized;
+    }
+
+    const lenderResult = await attio.createRecord("lenders", lenderData);
+    const lenderId = lenderResult.data.id.record_id;
+
+    logDebug("Lender record created", { submissionId, lenderId });
+
+    // Create entry in lender_onboarding pipeline
+    const onboardingData: Record<string, any> = {
+      primary_state: formData.primaryState || null,
+      other_states: formData.otherStates
+        ? Array.isArray(formData.otherStates)
+          ? formData.otherStates.join(", ")
+          : formData.otherStates
+        : null,
+      local_cities: formData.localCities || null,
+      how_did_you_hear: formData.howDidYouHear || null,
+      tell_us_more: formData.tellusMore || null,
+    };
+
+    await attio.createListEntry(
+      "lender_onboarding",
+      "lenders",
+      lenderId,
+      onboardingData,
+      "New Application", // Initial stage
     );
 
-    logInfo('Processing lender listing form submission', { submissionId });
+    logInfo("Lender onboarding entry created", { submissionId, lenderId });
 
-    try {
-        // Create lender record in lenders object (pending status)
-        const lenderData: Record<string, any> = {
-            name: `${formData.firstName} ${formData.lastName}`,
-            first_name: formData.firstName || '',
-            last_name: formData.lastName || '',
-            email: formData.email || '',
-            military_status: formData.status_select || null,
-            military_service: formData.branch_select || null,
-            company_name: formData.name || null,  // Company name field
-            individual_nmls: formData.nmlsId || null,
-            company_nmls: formData.companyNMLSId || null,
-            city: formData.city || null,
-            active_on_website: false,  // Not active until approved
-        };
-
-        if (formData.phone) {
-            const normalized = normalizePhone(formData.phone);
-            if (normalized) lenderData.phone = normalized;
-        }
-
-        const lenderResult = await attio.createRecord('lenders', lenderData);
-        const lenderId = lenderResult.data.id.record_id;
-
-        logDebug('Lender record created', { submissionId, lenderId });
-
-        // Create entry in lender_onboarding pipeline
-        const onboardingData: Record<string, any> = {
-            primary_state: formData.primaryState || null,
-            other_states: formData.otherStates ?
-                (Array.isArray(formData.otherStates) ? formData.otherStates.join(', ') : formData.otherStates) : null,
-            local_cities: formData.localCities || null,
-            how_did_you_hear: formData.howDidYouHear || null,
-            tell_us_more: formData.tellusMore || null,
-        };
-
-        await attio.createListEntry(
-            'lender_onboarding',
-            'lenders',
-            lenderId,
-            onboardingData,
-            'New Application'  // Initial stage
+    // Send Slack notification
+    slack
+      .sendAlert("New Lender Listing Request", {
+        Name: `${formData.firstName} ${formData.lastName}`,
+        Email: formData.email || "",
+        Phone: formData.phone || "",
+        State: formData.primaryState || "",
+        Company: formData.name || "",
+        "NMLS ID": formData.nmlsId || "",
+      })
+      .catch((error) => {
+        logError(
+          "Error sending lender listing notifications",
+          { submissionId },
+          error,
         );
+      });
 
-        logInfo('Lender onboarding entry created', { submissionId, lenderId });
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.SUCCESS,
+      null,
+    );
 
-        // Send Slack notification
-        slack.sendAlert('New Lender Listing Request', {
-            Name: `${formData.firstName} ${formData.lastName}`,
-            Email: formData.email || '',
-            Phone: formData.phone || '',
-            State: formData.primaryState || '',
-            'Company': formData.name || '',
-            'NMLS ID': formData.nmlsId || '',
-        }).catch(error => {
-            logError('Error sending lender listing notifications', { submissionId }, error);
-        });
+    logInfo("Lender listing form submitted successfully", { submissionId });
+    return {
+      message: "Form submitted successfully!",
+      redirectUrl: THANK_YOU_URL,
+    };
+  } catch (error) {
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.FAILURE,
+      null,
+      error instanceof Error ? error : new Error("Unknown error"),
+    );
 
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            null
-        );
-
-        logInfo('Lender listing form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!', redirectUrl: THANK_YOU_URL };
-
-    } catch (error) {
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in GetListedLendersPostForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
+    logError("Error in GetListedLendersPostForm", { submissionId }, error);
+    throw new Error("Failed to submit form");
+  }
 }
 
 export async function KeepInTouchForm(formData: any) {
-    const submissionId = await trackFormSubmission(
-        'keepInTouch',
-        formData,
-        FormSubmissionStatus.PENDING
-    );
+  const submissionId = await trackFormSubmission(
+    "keepInTouch",
+    formData,
+    FormSubmissionStatus.PENDING,
+  );
 
-    logInfo('Processing keep in touch form submission', { submissionId });
+  logInfo("Processing keep in touch form submission", { submissionId });
 
-    try {
-        // Create simple customer record for newsletter signup
-        await findOrCreateCustomer({
-            firstName: formData.firstName || '',
-            lastName: formData.lastName || '',
-            email: formData.email || '',
-        });
-
-        // Send Slack notification
-        slack.sendAlert('New Keep In Touch Submission', {
-            Name: `${formData.firstName} ${formData.lastName}`,
-            Email: formData.email || '',
-        }).catch(error => {
-            logError('Error sending keep in touch notifications', { submissionId }, error);
-        });
-
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            null
-        );
-
-        logInfo('Keep in touch form submitted successfully', { submissionId });
-        return { success: true, message: 'Form submitted successfully!' };
-
-    } catch (error) {
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in KeepInTouchForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
-}
-
-export async function contactLenderPostForm(formData: any, fullQueryString: string) {
-    const submissionId = await trackFormSubmission(
-        'contactLender',
-        formData,
-        FormSubmissionStatus.PENDING
-    );
-
-    const params = new URLSearchParams(fullQueryString);
-    const lenderSalesforceId = params.get('id');
-    const stateCode = params.get('state');
-
-    logInfo('Processing contact lender form submission', {
-        submissionId,
-        lender_salesforce_id: lenderSalesforceId
+  try {
+    // Create simple customer record for newsletter signup
+    await findOrCreateCustomer({
+      firstName: formData.firstName || "",
+      lastName: formData.lastName || "",
+      email: formData.email || "",
     });
 
-    try {
-        // 1. Find the lender in Attio by salesforce_id
-        let lenderInfo = null;
-        let lenderId: string | null = null;
+    // Send Slack notification
+    slack
+      .sendAlert("New Keep In Touch Submission", {
+        Name: `${formData.firstName} ${formData.lastName}`,
+        Email: formData.email || "",
+      })
+      .catch((error) => {
+        logError(
+          "Error sending keep in touch notifications",
+          { submissionId },
+          error,
+        );
+      });
 
-        if (lenderSalesforceId) {
-            try {
-                const lenders = await attio.queryRecords('lenders', {
-                    filter: { salesforce_id: { $eq: lenderSalesforceId } },
-                    limit: 1
-                });
-                if (lenders.length > 0) {
-                    lenderInfo = lenders[0];
-                    lenderId = lenders[0].id;
-                    logDebug('Lender found in Attio', { submissionId, lenderId });
-                }
-            } catch (error) {
-                logError('Error finding lender in Attio', { submissionId, lenderSalesforceId }, error);
-            }
-        }
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.SUCCESS,
+      null,
+    );
 
-        // 2. Create or update customer record
-        const customerId = await findOrCreateCustomer({
-            firstName: formData.firstName || '',
-            lastName: formData.lastName || '',
-            email: formData.email || '',
-            phone: formData.phone,
-            currentLocation: formData.currentBase,
+    logInfo("Keep in touch form submitted successfully", { submissionId });
+    return { success: true, message: "Form submitted successfully!" };
+  } catch (error) {
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.FAILURE,
+      null,
+      error instanceof Error ? error : new Error("Unknown error"),
+    );
+
+    logError("Error in KeepInTouchForm", { submissionId }, error);
+    throw new Error("Failed to submit form");
+  }
+}
+
+export async function contactLenderPostForm(
+  formData: any,
+  fullQueryString: string,
+) {
+  const submissionId = await trackFormSubmission(
+    "contactLender",
+    formData,
+    FormSubmissionStatus.PENDING,
+  );
+
+  const params = new URLSearchParams(fullQueryString);
+  const lenderSalesforceId = params.get("id");
+  const stateCode = params.get("state");
+
+  logInfo("Processing contact lender form submission", {
+    submissionId,
+    lender_salesforce_id: lenderSalesforceId,
+  });
+
+  try {
+    // 1. Find the lender in Attio by salesforce_id
+    let lenderInfo = null;
+    let lenderId: string | null = null;
+
+    if (lenderSalesforceId) {
+      try {
+        const lenders = await attio.queryRecords("lenders", {
+          filter: { salesforce_id: { $eq: lenderSalesforceId } },
+          limit: 1,
         });
-
-        logDebug('Customer record created/updated', { submissionId, customerId });
-
-        // 3. Create deal in customer_deals pipeline
-        const dealData: Record<string, any> = {
-            deal_type: 'Lender',
-            contact_confirmed: false,
-            reroute_count: 0,
-            last_updated: new Date().toISOString(),
-            last_stage_change: new Date().toISOString(),
-        };
-
-        // Add lender reference if found
-        if (lenderId) {
-            dealData.lender = { target_object: 'lenders', target_record_id: lenderId };
+        if (lenders.length > 0) {
+          lenderInfo = lenders[0];
+          lenderId = lenders[0].id;
+          logDebug("Lender found in Attio", { submissionId, lenderId });
         }
-
-        // Add notes/comments if provided
-        if (formData.additionalComments) {
-            dealData.notes = formData.additionalComments;
-        }
-
-        const dealResult = await attio.createListEntry(
-            'customer_deals',
-            'customers',
-            customerId,
-            dealData,
-            'New Lead'  // Initial stage
+      } catch (error) {
+        logError(
+          "Error finding lender in Attio",
+          { submissionId, lenderSalesforceId },
+          error,
         );
-
-        const dealId = dealResult.data.id.entry_id;
-        logInfo('Lender deal created in Attio', { submissionId, dealId });
-
-        // 4. Send notifications (fire and forget)
-        const notificationPromises: Promise<any>[] = [];
-
-        // Slack notification
-        notificationPromises.push(
-            slack.sendNewLead({
-                customerName: `${formData.firstName} ${formData.lastName}`,
-                customerEmail: formData.email || '',
-                customerPhone: formData.phone,
-                agentName: lenderInfo?.name || 'Unknown Lender',
-                dealType: 'Lender',
-            }).catch(error => {
-                logError('Slack notification failed', { submissionId }, error);
-            })
-        );
-
-        // SMS notification to lender if we have their phone
-        if (lenderId && lenderInfo?.phone) {
-            const magicLink = generateMagicLink(lenderId, dealId, 'lender');
-            notificationPromises.push(
-                openphone.sendNewLeadNotification({
-                    to: lenderInfo.phone,
-                    agentName: lenderInfo.first_name || lenderInfo.name || 'Lender',
-                    customerName: `${formData.firstName} ${formData.lastName}`,
-                    dealType: 'Lender',
-                    magicLink,
-                }).catch(error => {
-                    logError('SMS notification failed', { submissionId }, error);
-                })
-            );
-        }
-
-        await Promise.allSettled(notificationPromises);
-
-        // Track success
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            null
-        );
-
-        logInfo('Contact lender form submitted successfully', { submissionId, dealId });
-        return { message: 'Form submitted successfully!', dealId, redirectUrl: THANK_YOU_URL };
-
-    } catch (error) {
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in contactLenderPostForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
+      }
     }
+
+    // 2. Create or update customer record
+    const customerId = await findOrCreateCustomer({
+      firstName: formData.firstName || "",
+      lastName: formData.lastName || "",
+      email: formData.email || "",
+      phone: formData.phone,
+      currentLocation: formData.currentBase,
+    });
+
+    logDebug("Customer record created/updated", { submissionId, customerId });
+
+    // 3. Create deal in customer_deals pipeline
+    const dealData: Record<string, any> = {
+      deal_type: "Lender",
+      contact_confirmed: false,
+      reroute_count: 0,
+      last_updated: new Date().toISOString(),
+      last_stage_change: new Date().toISOString(),
+    };
+
+    // Add lender reference if found
+    if (lenderId) {
+      dealData.lender = {
+        target_object: "lenders",
+        target_record_id: lenderId,
+      };
+    }
+
+    // Add form fields to deal for tracking
+    if (formData.currentBase) {
+      dealData.current_location = formData.currentBase;
+    }
+    if (formData.destinationBase) {
+      dealData.destination_city = formData.destinationBase;
+    }
+    if (formData.howDidYouHear) {
+      dealData.how_did_you_hear = formData.howDidYouHear;
+    }
+    if (formData.tellusMore) {
+      dealData.how_did_you_hear_other = formData.tellusMore;
+    }
+
+    // Add notes/comments if provided
+    if (formData.additionalComments) {
+      dealData.notes = formData.additionalComments;
+    }
+
+    const dealResult = await attio.createListEntry(
+      "customer_deals",
+      "customers",
+      customerId,
+      dealData,
+      "New Lead", // Initial stage
+    );
+
+    const dealId = dealResult.data.id.entry_id;
+    logInfo("Lender deal created in Attio", { submissionId, dealId });
+
+    // 4. Send notifications (fire and forget)
+    const notificationPromises: Promise<any>[] = [];
+
+    // Slack notification
+    notificationPromises.push(
+      slack
+        .sendNewLead({
+          customerName: `${formData.firstName} ${formData.lastName}`,
+          customerEmail: formData.email || "",
+          customerPhone: formData.phone,
+          agentName: lenderInfo?.name || "Unknown Lender",
+          dealType: "Lender",
+        })
+        .catch((error) => {
+          logError("Slack notification failed", { submissionId }, error);
+        }),
+    );
+
+    // SMS notification to lender if we have their phone
+    if (lenderId && lenderInfo?.phone) {
+      const magicLink = generateMagicLink(lenderId, dealId, "lender");
+      notificationPromises.push(
+        openphone
+          .sendNewLeadNotification({
+            to: lenderInfo.phone,
+            agentName: lenderInfo.first_name || lenderInfo.name || "Lender",
+            customerName: `${formData.firstName} ${formData.lastName}`,
+            dealType: "Lender",
+            magicLink,
+          })
+          .catch((error) => {
+            logError("SMS notification failed", { submissionId }, error);
+          }),
+      );
+    }
+
+    await Promise.allSettled(notificationPromises);
+
+    // Track success
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.SUCCESS,
+      null,
+    );
+
+    logInfo("Contact lender form submitted successfully", {
+      submissionId,
+      dealId,
+    });
+    return {
+      message: "Form submitted successfully!",
+      dealId,
+      redirectUrl: THANK_YOU_URL,
+    };
+  } catch (error) {
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.FAILURE,
+      null,
+      error instanceof Error ? error : new Error("Unknown error"),
+    );
+
+    logError("Error in contactLenderPostForm", { submissionId }, error);
+    throw new Error("Failed to submit form");
+  }
 }
 
 export async function contactPostForm(formData: any) {
-    const submissionId = await trackFormSubmission(
-        'contact',
-        formData,
-        FormSubmissionStatus.PENDING
+  const submissionId = await trackFormSubmission(
+    "contact",
+    formData,
+    FormSubmissionStatus.PENDING,
+  );
+
+  logInfo("Processing contact form submission", { submissionId });
+
+  try {
+    // Create simple customer record
+    await findOrCreateCustomer({
+      firstName: formData.firstName || "",
+      lastName: formData.lastName || "",
+      email: formData.email || "",
+    });
+
+    // Send Slack notification
+    slack
+      .sendAlert("New Contact Form Submission", {
+        Name: `${formData.firstName} ${formData.lastName}`,
+        Email: formData.email || "",
+        Message: formData.additionalComments || "No message",
+      })
+      .catch((error) => {
+        logError(
+          "Error sending contact form notifications",
+          { submissionId },
+          error,
+        );
+      });
+
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.SUCCESS,
+      null,
     );
 
-    logInfo('Processing contact form submission', { submissionId });
+    logInfo("Contact form submitted successfully", { submissionId });
+    return { success: true, message: "Form submitted successfully!" };
+  } catch (error) {
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.FAILURE,
+      null,
+      error instanceof Error ? error : new Error("Unknown error"),
+    );
 
-    try {
-        // Create simple customer record
-        await findOrCreateCustomer({
-            firstName: formData.firstName || '',
-            lastName: formData.lastName || '',
-            email: formData.email || '',
-        });
-
-        // Send Slack notification
-        slack.sendAlert('New Contact Form Submission', {
-            Name: `${formData.firstName} ${formData.lastName}`,
-            Email: formData.email || '',
-            Message: formData.additionalComments || 'No message',
-        }).catch(error => {
-            logError('Error sending contact form notifications', { submissionId }, error);
-        });
-
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            null
-        );
-
-        logInfo('Contact form submitted successfully', { submissionId });
-        return { success: true, message: 'Form submitted successfully!' };
-
-    } catch (error) {
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in contactPostForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
+    logError("Error in contactPostForm", { submissionId }, error);
+    throw new Error("Failed to submit form");
+  }
 }
 
 export async function vaLoanGuideForm(formData: any) {
-    const submissionId = await trackFormSubmission(
-        'vaLoanGuide',
-        formData,
-        FormSubmissionStatus.PENDING
+  const submissionId = await trackFormSubmission(
+    "vaLoanGuide",
+    formData,
+    FormSubmissionStatus.PENDING,
+  );
+
+  logInfo("Processing VA loan guide form submission", { submissionId });
+
+  try {
+    // Create simple customer record for download
+    await findOrCreateCustomer({
+      firstName: formData.firstName || "",
+      lastName: formData.lastName || "",
+      email: formData.email || "",
+    });
+
+    // Send Slack notification
+    slack
+      .sendAlert("New VA Loan Guide Download", {
+        Name: `${formData.firstName} ${formData.lastName}`,
+        Email: formData.email || "",
+      })
+      .catch((error) => {
+        logError(
+          "Error sending VA loan guide notifications",
+          { submissionId },
+          error,
+        );
+      });
+
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.SUCCESS,
+      null,
     );
 
-    logInfo('Processing VA loan guide form submission', { submissionId });
+    logInfo("VA loan guide form submitted successfully", { submissionId });
+    return { success: true, message: "Form submitted successfully!" };
+  } catch (error) {
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.FAILURE,
+      null,
+      error instanceof Error ? error : new Error("Unknown error"),
+    );
 
-    try {
-        // Create simple customer record for download
-        await findOrCreateCustomer({
-            firstName: formData.firstName || '',
-            lastName: formData.lastName || '',
-            email: formData.email || '',
-        });
-
-        // Send Slack notification
-        slack.sendAlert('New VA Loan Guide Download', {
-            Name: `${formData.firstName} ${formData.lastName}`,
-            Email: formData.email || '',
-        }).catch(error => {
-            logError('Error sending VA loan guide notifications', { submissionId }, error);
-        });
-
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            null
-        );
-
-        logInfo('VA loan guide form submitted successfully', { submissionId });
-        return { success: true, message: 'Form submitted successfully!' };
-
-    } catch (error) {
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in vaLoanGuideForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
+    logError("Error in vaLoanGuideForm", { submissionId }, error);
+    throw new Error("Failed to submit form");
+  }
 }
 
 export async function internshipFormSubmission(formData: any) {
-    const submissionId = await trackFormSubmission(
-        'internship',
-        formData,
-        FormSubmissionStatus.PENDING
+  const submissionId = await trackFormSubmission(
+    "internship",
+    formData,
+    FormSubmissionStatus.PENDING,
+  );
+
+  logInfo("Processing internship form submission", { submissionId });
+
+  try {
+    // Create agent record in agents object (internship status)
+    const agentData: Record<string, any> = {
+      name: `${formData.first_name} ${formData.last_name}`,
+      first_name: formData.first_name || "",
+      last_name: formData.last_name || "",
+      email: formData.email || "",
+      military_status: formData["00N4x00000LsnP2"] || null,
+      military_service: formData["00N4x00000LsnOx"] || null,
+      city: formData.city || null,
+      active_on_website: false, // Interns not active on website
+    };
+
+    if (formData.mobile) {
+      const normalized = normalizePhone(formData.mobile);
+      if (normalized) agentData.phone = normalized;
+    }
+
+    const agentResult = await attio.createRecord("agents", agentData);
+    const agentId = agentResult.data.id.record_id;
+
+    logDebug("Internship agent record created", { submissionId, agentId });
+
+    // Create entry in agent_onboarding pipeline with Internship stage
+    const onboardingData: Record<string, any> = {
+      primary_state: formData["00N4x00000LspV2"] || formData.state_code || null,
+      how_did_you_hear: formData["00N4x00000QPksj"] || null,
+      tell_us_more: formData["00N4x00000QPS7V"] || null,
+      // Internship-specific fields
+      base: formData.base || null,
+      current_duty_station: formData["00N4x00000QPK7L"] || null,
+    };
+
+    await attio.createListEntry(
+      "agent_onboarding",
+      "agents",
+      agentId,
+      onboardingData,
+      "Internship", // Internship stage
     );
 
-    logInfo('Processing internship form submission', { submissionId });
+    logInfo("Internship onboarding entry created", { submissionId, agentId });
 
-    try {
-        // Create agent record in agents object (internship status)
-        const agentData: Record<string, any> = {
-            name: `${formData.first_name} ${formData.last_name}`,
-            first_name: formData.first_name || '',
-            last_name: formData.last_name || '',
-            email: formData.email || '',
-            military_status: formData['00N4x00000LsnP2'] || null,
-            military_service: formData['00N4x00000LsnOx'] || null,
-            city: formData.city || null,
-            active_on_website: false,  // Interns not active on website
-        };
-
-        if (formData.mobile) {
-            const normalized = normalizePhone(formData.mobile);
-            if (normalized) agentData.phone = normalized;
-        }
-
-        const agentResult = await attio.createRecord('agents', agentData);
-        const agentId = agentResult.data.id.record_id;
-
-        logDebug('Internship agent record created', { submissionId, agentId });
-
-        // Create entry in agent_onboarding pipeline with Internship stage
-        const onboardingData: Record<string, any> = {
-            primary_state: formData['00N4x00000LspV2'] || formData.state_code || null,
-            how_did_you_hear: formData['00N4x00000QPksj'] || null,
-            tell_us_more: formData['00N4x00000QPS7V'] || null,
-            // Internship-specific fields
-            base: formData.base || null,
-            current_duty_station: formData['00N4x00000QPK7L'] || null,
-        };
-
-        await attio.createListEntry(
-            'agent_onboarding',
-            'agents',
-            agentId,
-            onboardingData,
-            'Internship'  // Internship stage
+    // Send Slack notification
+    slack
+      .sendAlert("New Internship Submission", {
+        Name: `${formData.first_name} ${formData.last_name}`,
+        Email: formData.email || "",
+        Phone: formData.mobile || "",
+        State: formData.state_code || "",
+        Base: formData.base || "",
+      })
+      .catch((error) => {
+        logError(
+          "Error sending internship notifications",
+          { submissionId },
+          error,
         );
+      });
 
-        logInfo('Internship onboarding entry created', { submissionId, agentId });
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.SUCCESS,
+      null,
+    );
 
-        // Send Slack notification
-        slack.sendAlert('New Internship Submission', {
-            Name: `${formData.first_name} ${formData.last_name}`,
-            Email: formData.email || '',
-            Phone: formData.mobile || '',
-            State: formData.state_code || '',
-            Base: formData.base || '',
-        }).catch(error => {
-            logError('Error sending internship notifications', { submissionId }, error);
-        });
+    logInfo("Internship form submitted successfully", { submissionId });
+    return {
+      message: "Form submitted successfully!",
+      redirectUrl: THANK_YOU_URL,
+    };
+  } catch (error) {
+    await updateSubmissionStatus(
+      submissionId,
+      FormSubmissionStatus.FAILURE,
+      null,
+      error instanceof Error ? error : new Error("Unknown error"),
+    );
 
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            null
-        );
-
-        logInfo('Internship form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!', redirectUrl: THANK_YOU_URL };
-
-    } catch (error) {
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in internshipFormSubmission', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
+    logError("Error in internshipFormSubmission", { submissionId }, error);
+    throw new Error("Failed to submit form");
+  }
 }

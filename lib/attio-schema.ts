@@ -106,6 +106,23 @@ export const DEAL_TYPE_OPTIONS: SelectOption[] = [
   { title: "Buying" },
   { title: "Selling" },
   { title: "Both" },
+  { title: "Lender" },
+];
+
+// How did you hear about us options (for marketing attribution)
+export const HOW_DID_YOU_HEAR_OPTIONS: SelectOption[] = [
+  { title: "Google" },
+  { title: "Facebook" },
+  { title: "Instagram" },
+  { title: "LinkedIn" },
+  { title: "TikTok" },
+  { title: "Base Event" },
+  { title: "Transition Brief" },
+  { title: "Agent Referral" },
+  { title: "Friend Referral" },
+  { title: "Skillbridge" },
+  { title: "YouTube" },
+  { title: "Other" },
 ];
 
 // US States for select options
@@ -657,6 +674,32 @@ export const CUSTOMER_DEALS_ATTRIBUTES: AttributeDefinition[] = [
   { title: "Reroute Count", api_slug: "reroute_count", type: "number" },
   { title: "Bonus Waiver URL", api_slug: "bonus_waiver_url", type: "text" },
   { title: "Notes", api_slug: "notes", type: "text" },
+  // Form submission fields (added for contact form integration)
+  {
+    title: "Current Location",
+    api_slug: "current_location",
+    type: "text",
+    description: "Customer's current base/city when contacting",
+  },
+  {
+    title: "Destination City",
+    api_slug: "destination_city",
+    type: "text",
+    description: "Customer's destination base/city for this deal",
+  },
+  {
+    title: "How Did You Hear",
+    api_slug: "how_did_you_hear",
+    type: "select",
+    description: "Marketing attribution - how customer found VeteranPCS",
+    config: { select: { options: HOW_DID_YOU_HEAR_OPTIONS } },
+  },
+  {
+    title: "How Did You Hear Other",
+    api_slug: "how_did_you_hear_other",
+    type: "text",
+    description: "Free text explanation when 'Other' is selected",
+  },
 ];
 
 export const PIPELINE_ATTRIBUTES: Record<string, AttributeDefinition[]> = {
