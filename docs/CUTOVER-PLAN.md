@@ -17,8 +17,8 @@ This document contains step-by-step instructions for completing the Attio migrat
 ## Table of Contents
 
 1. [Pre-Cutover: Environment Variables](#1-pre-cutover-environment-variables)
-2. [Create vercel.json for Cron Jobs](#2-create-verceljson-for-cron-jobs)
-3. [Configure Attio Webhooks](#3-configure-attio-webhooks)
+2. [Configure Attio Webhooks](#2-configure-attio-webhooks)
+3. [Configure Attio Workflows](#3-configure-attio-workflows)
 4. [Final Data Sync (Day of Cutover)](#4-final-data-sync-day-of-cutover)
 5. [Deploy and Verify](#5-deploy-and-verify)
 6. [Post-Cutover Monitoring](#6-post-cutover-monitoring)
@@ -49,8 +49,9 @@ openssl rand -hex 16  # For ATTIO_WEBHOOK_SECRET
 
 | Variable | Value | Status |
 |----------|-------|--------|
-| `CRON_SECRET` | (configured) | ✅ Added to Vercel Production |
 | `ATTIO_WEBHOOK_SECRET` | (configured) | ✅ Added to Vercel Production |
+
+**Note:** `CRON_SECRET` is no longer needed - scheduled automations are handled by Attio native workflows.
 
 **Note:** These should already exist in your `.env.local` for local testing:
 - `ATTIO_API_KEY` ✅ (already configured)
@@ -67,80 +68,15 @@ ATTIO_API_KEY ✅
 SLACK_WEBHOOK_URL ✅
 OPENPHONE_API_KEY ✅
 MAGIC_LINK_SECRET ✅
-CRON_SECRET ✅ (newly added)
-ATTIO_WEBHOOK_SECRET ✅ (newly added)
+ATTIO_WEBHOOK_SECRET ✅
 NEXT_PUBLIC_BASE_URL=https://www.veteranpcs.com ✅
 ```
 
 ---
 
-## 2. Create vercel.json for Cron Jobs
+## 2. Configure Attio Webhooks
 
-### 2.1 Create the Configuration File
-
-Create `vercel.json` in your project root with this content:
-
-```json
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "crons": [
-    {
-      "path": "/api/cron/check-stale-leads",
-      "schedule": "0 * * * *"
-    },
-    {
-      "path": "/api/cron/check-stale-deals",
-      "schedule": "0 6 * * *"
-    }
-  ]
-}
-```
-
-### 2.2 Cron Schedule Explanation
-
-| Cron Job | Schedule | Meaning | Purpose |
-|----------|----------|---------|---------|
-| `check-stale-leads` | `0 * * * *` | Every hour at minute 0 | Re-routes leads after 12 hours without contact confirmation |
-| `check-stale-deals` | `0 6 * * *` | Daily at 6:00 AM UTC (1:00 AM EST) | Sends 7-day reminders, 14-day alerts, 45-day auto-close |
-
-### 2.3 How Cron Security Works
-
-Your cron routes already implement security verification:
-
-```typescript
-// From app/api/cron/check-stale-leads/route.ts
-const authHeader = request.headers.get('authorization');
-if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-  return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-}
-```
-
-When Vercel invokes your cron job, it automatically sends:
-```
-Authorization: Bearer <CRON_SECRET>
-```
-
-**Reference:** [Vercel Cron Jobs - Managing Cron Jobs](https://vercel.com/docs/cron-jobs/manage-cron-jobs)
-
-### 2.4 Commit the Configuration
-
-```bash
-git add vercel.json
-git commit -m "Add Vercel cron jobs configuration
-
-Configures two cron jobs:
-- check-stale-leads: hourly, re-routes uncontacted leads after 12h
-- check-stale-deals: daily, sends reminders and auto-closes stale deals
-
-Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
-git push origin attio-migration
-```
-
----
-
-## 3. Configure Attio Webhooks
-
-### 3.1 Access Attio Developer Settings
+### 2.1 Access Attio Developer Settings
 
 1. Log in to [Attio](https://app.attio.com)
 2. Click your **profile icon** (bottom left)
@@ -148,7 +84,7 @@ git push origin attio-migration
 4. Navigate to **Developers** section
 5. Click **Webhooks** tab
 
-### 3.2 Create the Webhook
+### 2.2 Create the Webhook
 
 Click **Create webhook** and configure:
 
@@ -157,7 +93,7 @@ Click **Create webhook** and configure:
 | **Target URL** | `https://www.veteranpcs.com/api/webhooks/attio` |
 | **Secret** | Use the same value you set for `ATTIO_WEBHOOK_SECRET` in Vercel |
 
-### 3.3 Subscribe to Events
+### 2.3 Subscribe to Events
 
 Select these events to trigger the webhook:
 
@@ -173,7 +109,7 @@ If Attio allows filtering by object type, select only:
 - `areas`
 - `area_assignments`
 
-### 3.4 How Webhook Verification Works
+### 2.4 How Webhook Verification Works
 
 Your webhook route already implements Attio's signature verification:
 
@@ -196,7 +132,7 @@ Attio sends the signature in the `Attio-Signature` header (also `X-Attio-Signatu
 
 **Reference:** [Attio Webhook Documentation](https://docs.attio.com/rest-api/guides/webhooks)
 
-### 3.5 Test the Webhook (After Deploy)
+### 2.5 Test the Webhook (After Deploy)
 
 After deploying to production, test the webhook:
 
@@ -207,6 +143,91 @@ After deploying to production, test the webhook:
    - Go to Vercel Dashboard → Your Project → **Logs**
    - Filter by path: `/api/webhooks/attio`
    - Should see: `Processing Attio webhook: record.updated on agents/...`
+
+---
+
+## 3. Configure Attio Workflows
+
+Attio's native workflow automation replaces custom cron jobs for scheduled tasks. Configure these in Attio's UI.
+
+### 3.1 Access Workflow Builder
+
+1. Log in to [Attio](https://app.attio.com)
+2. Click **Automations** in the left sidebar
+3. Click **Create workflow**
+
+### 3.2 Stale Lead Re-routing Workflow
+
+**Purpose:** Re-route leads to next-best agent after 12 hours without contact confirmation.
+
+**Configuration:**
+1. **Trigger:** Recurring Schedule → Every 6 hours (or hourly for faster response)
+2. **Action:** Query Customer Deals where:
+   - Stage = "New Lead"
+   - `contact_confirmed` = false
+   - `created_at` < 12 hours ago
+   - `reroute_count` = 0
+3. **For Each** matching deal:
+   - Find agent's area from area_assignments
+   - Query next-highest AA_Score agent in that area
+   - **If** agent found:
+     - Update deal: set `agent` to new agent, `reroute_count` = 1
+     - Send Slack notification to new agent (or HTTP Request to OpenPhone)
+   - **Else:**
+     - Send Slack alert to admin channel ("Manual assignment needed")
+
+### 3.3 Stale Deal Reminders (7-day)
+
+**Purpose:** Send SMS reminder to agents for deals with no activity in 7 days.
+
+**Configuration:**
+1. **Trigger:** Recurring Schedule → Daily at 8:00 AM
+2. **Action:** Query Customer Deals where:
+   - Stage in: New Lead, Contacted, Touring, Tracking <1mo, Tracking 1-2mo, Tracking 3-6mo, Tracking 6+, Under Contract
+   - `last_updated` < 7 days ago
+   - `last_updated` >= 14 days ago (to avoid overlap with 14-day alert)
+3. **For Each** matching deal:
+   - Get assigned agent's phone number
+   - Send notification via Slack or HTTP Request to OpenPhone API
+
+### 3.4 Stale Deal Admin Alert (14-day)
+
+**Purpose:** Alert admins about deals stalled for 14+ days.
+
+**Configuration:**
+1. **Trigger:** Recurring Schedule → Daily at 8:00 AM
+2. **Action:** Query Customer Deals where:
+   - Stage in open stages (same as above)
+   - `last_updated` < 14 days ago
+3. **For Each** matching deal:
+   - Send Slack message with deal details, customer name, agent name, days stalled
+
+### 3.5 Auto-Close Stale Deals (45-day)
+
+**Purpose:** Automatically close deals that have been in the same stage for 45+ days.
+
+**Configuration:**
+1. **Trigger:** Recurring Schedule → Daily at 6:00 AM
+2. **Action:** Query Customer Deals where:
+   - Stage in open stages
+   - `last_stage_change` < 45 days ago
+3. **For Each** matching deal:
+   - Update stage to "Closed Lost"
+   - Append to notes: "[Auto-closed: 45 days in same stage - {date}]"
+
+### 3.6 Open Stages Reference
+
+Use these stages when filtering for "open" deals:
+- New Lead
+- Contacted
+- Touring
+- Tracking <1mo
+- Tracking 1-2mo
+- Tracking 3-6mo
+- Tracking 6+
+- Under Contract
+
+**Reference:** [Attio Workflows Documentation](https://attio.com/help/reference/automations/workflows/getting-started-with-workflows)
 
 ---
 
@@ -333,12 +354,14 @@ git push origin main
 3. Wait for deployment to complete (green checkmark)
 4. Verify the deployment URL: https://www.veteranpcs.com
 
-### 5.3 Verify Cron Jobs Registered
+### 5.3 Verify Attio Workflows
 
-1. In Vercel Dashboard → Your Project → **Settings** → **Cron Jobs**
-2. You should see:
-   - `/api/cron/check-stale-leads` - Every hour
-   - `/api/cron/check-stale-deals` - Daily at 6:00 AM UTC
+1. In Attio → **Automations** → **Workflows**
+2. Verify these workflows are active:
+   - Stale Lead Re-routing (every 6 hours or hourly)
+   - Stale Deal Reminders (daily)
+   - Stale Deal Admin Alert (daily)
+   - Auto-Close Stale Deals (daily)
 
 ### 5.4 Test End-to-End Lead Flow
 
@@ -376,12 +399,12 @@ git push origin main
 - ❌ 500 Internal Server errors (code bugs)
 - ❌ Timeout errors (slow queries)
 
-### 6.2 Verify Cron Job Execution
+### 6.2 Verify Attio Workflow Execution
 
-**After 1 hour:** Check that `check-stale-leads` ran
-- Vercel Dashboard → Settings → Cron Jobs → View Logs
-
-**After first 6 AM UTC:** Check that `check-stale-deals` ran
+**After first scheduled run:** Check workflow execution in Attio
+1. Go to Attio → **Automations** → **Workflows**
+2. Click on each workflow to view execution history
+3. Verify workflows are running on schedule and processing records
 
 ### 6.3 Verify Cache Revalidation
 
@@ -398,39 +421,20 @@ If you have Slack configured, you should receive alerts for:
 
 ---
 
-## Quick Reference: Cron Expressions
-
-| Expression | Meaning |
-|------------|---------|
-| `0 * * * *` | Every hour at minute 0 |
-| `0 6 * * *` | Daily at 6:00 AM UTC |
-| `*/15 * * * *` | Every 15 minutes |
-| `0 0 * * 0` | Weekly on Sunday at midnight |
-
-**Format:** `minute hour day-of-month month day-of-week`
-
----
-
 ## Troubleshooting
 
-### Cron Jobs Not Running
+### Attio Workflows Not Running
 
-1. Verify `vercel.json` is in project root
-2. Verify deployment is **Production** (not Preview)
-3. Check Vercel Dashboard → Settings → Cron Jobs
-4. Run `vercel build --prod` locally and check `.vercel/output/config.json` for `crons` property
+1. Verify workflow is **Active** (not paused) in Attio → Automations
+2. Check workflow execution history for errors
+3. Verify trigger schedule is configured correctly
+4. Test with a manual run to verify logic works
 
 ### Webhook Signature Mismatch
 
 1. Verify `ATTIO_WEBHOOK_SECRET` in Vercel matches Attio webhook secret exactly
 2. Check for leading/trailing whitespace
 3. Test locally with the secret
-
-### 401 Unauthorized on Cron
-
-1. Verify `CRON_SECRET` is set in Vercel Production environment
-2. Redeploy after adding environment variable
-3. Check logs for exact error message
 
 ### State Pages Showing 0 Lenders
 
@@ -464,8 +468,8 @@ test();
 
 ## Sources
 
-- [Vercel Cron Jobs - Getting Started](https://vercel.com/docs/cron-jobs/quickstart)
-- [Vercel Cron Jobs - Managing Cron Jobs](https://vercel.com/docs/cron-jobs/manage-cron-jobs)
 - [Attio Developer Documentation](https://docs.attio.com/)
 - [Attio Webhook Reference](https://docs.attio.com/rest-api/guides/webhooks)
 - [Attio Record Events](https://docs.attio.com/rest-api/webhook-reference/record-events/recordcreated)
+- [Attio Workflows - Getting Started](https://attio.com/help/reference/automations/workflows/getting-started-with-workflows)
+- [Attio Workflows - Block Library](https://attio.com/help/reference/automations/workflows/workflows-block-library)

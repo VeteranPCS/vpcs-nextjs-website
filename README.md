@@ -524,38 +524,6 @@ VeteranPCS is a NextJS-based web application designed to connect military person
 
 ---
 
-### Endpoint: `/api/cron/check-stale-leads`
-
-- **HTTP Method**: GET
-- **Description**: Cron job that re-routes leads after 12 hours without contact confirmation.
-- **Parameters**:
-  - **Headers**:
-    - `Authorization`: `Bearer <CRON_SECRET>` (required)
-- **Response**:
-  - **200 OK**: Processed successfully
-  - **401 Unauthorized**: Invalid or missing CRON_SECRET
-- **Authentication**: Requires `CRON_SECRET` environment variable
-- **Schedule**: Hourly (`0 * * * *`)
-- **Side Effects**: Updates lead assignments in Attio, sends notifications
-
----
-
-### Endpoint: `/api/cron/check-stale-deals`
-
-- **HTTP Method**: GET
-- **Description**: Cron job that sends reminders for stale deals and auto-closes after 45 days.
-- **Parameters**:
-  - **Headers**:
-    - `Authorization`: `Bearer <CRON_SECRET>` (required)
-- **Response**:
-  - **200 OK**: Processed successfully
-  - **401 Unauthorized**: Invalid or missing CRON_SECRET
-- **Authentication**: Requires `CRON_SECRET` environment variable
-- **Schedule**: Daily at 6:00 AM UTC (`0 6 * * *`)
-- **Side Effects**: Updates deal stages in Attio, sends SMS reminders, Slack alerts
-
----
-
 ### Endpoint: `/api/magic-link/validate`
 
 - **HTTP Method**: GET

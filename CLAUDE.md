@@ -82,7 +82,7 @@ Before we continue, please confirm:
 - Phase 5A: Utility libraries (magic-link, slack, openphone)
 - Phase 5B: Website data layer (stateService, areas API refactored for Attio)
 - Phase 5C: Contact forms + magic-link API routes
-- Phase 5D: Webhook handler + cron jobs (stale leads/deals automation)
+- Phase 5D: Webhook handler (cron jobs removed - use Attio native workflows instead)
 - V2 Re-Migration: All data re-uploaded from cleaned CSVs
 - Cutover Prep: vercel.json created, docs/CUTOVER-PLAN.md written
 - **Contact Form Fix Phase 1:** Removed `lead_source`, added deal tracking fields
@@ -98,13 +98,14 @@ Before we continue, please confirm:
 5. [ ] Handle "Both" → creates 2 separate deals
 
 **📋 Cutover Checklist (Completed):**
-1. [x] Add `CRON_SECRET` to Vercel Production env vars
+1. [x] ~~Add `CRON_SECRET` to Vercel Production env vars~~ (removed - using Attio workflows)
 2. [x] Add `ATTIO_WEBHOOK_SECRET` to Vercel Production env vars
 3. [x] Configure Attio webhook (see `docs/CUTOVER-PLAN.md` for details)
 4. [x] Export fresh Salesforce CSVs (day of cutover)
 5. [x] Run data cleaning + V2 migrations (final sync)
 6. [x] Merge `attio-migration` → `main`
 7. [x] Monitor for 24-48 hours post-cutover
+8. [ ] **Configure Attio Workflows** for stale lead/deal automation (see below)
 
 **📋 Phase 5 Key Decisions:**
 | Decision | Choice |
@@ -945,9 +946,54 @@ You MUST join Account records with Contact records to get email addresses.
 | POST /api/magic-link/update | Update deal from portal | 2.3 |
 | POST /api/webhooks/attio | Handle Attio events | 3.1 |
 | POST /api/webhooks/signwell | Handle contract events | 3.2 |
-| GET /api/cron/check-stale-leads | Re-route uncontacted leads | 4.1 |
-| GET /api/cron/check-stale-deals | Send reminders, auto-close | 4.2 |
-| GET /api/cron/check-renewals | Trigger annual renewals | 4.3 |
+
+**Note:** Cron jobs removed. Use Attio native workflows for scheduled automation (see below).
+
+---
+
+## Attio Workflows (Configure in Attio UI)
+
+These automations should be configured in Attio's workflow builder, NOT in code:
+
+### 1. Stale Lead Re-routing
+**Trigger:** Recurring Schedule (hourly or every 6 hours)
+**Logic:**
+1. Filter deals: `stage = "New Lead"` AND `contact_confirmed = false` AND `created_at < 12 hours ago` AND `reroute_count = 0`
+2. For each matching deal:
+   - Find next highest AA_Score agent in same area
+   - Update `agent` field to new agent
+   - Set `reroute_count = 1`
+   - Send notification to new agent (via Slack integration or HTTP Request to OpenPhone)
+3. If no agent available, send Slack alert to admin
+
+### 2. Stale Deal Reminders (7-day)
+**Trigger:** Recurring Schedule (daily at 8am)
+**Logic:**
+1. Filter deals in open stages where `last_updated < 7 days ago`
+2. Send reminder to assigned agent (Slack or HTTP Request to OpenPhone)
+
+### 3. Stale Deal Admin Alert (14-day)
+**Trigger:** Recurring Schedule (daily at 8am)
+**Logic:**
+1. Filter deals in open stages where `last_updated < 14 days ago`
+2. Send Slack alert to admin channel with deal details
+
+### 4. Auto-Close Stale Deals (45-day)
+**Trigger:** Recurring Schedule (daily at 6am)
+**Logic:**
+1. Filter deals in open stages where `last_stage_change < 45 days ago`
+2. Move to "Closed Lost" stage
+3. Append note: "[Auto-closed: 45 days in same stage]"
+
+### Open Stages for Stale Checks
+- New Lead
+- Contacted
+- Touring
+- Tracking <1mo
+- Tracking 1-2mo
+- Tracking 3-6mo
+- Tracking 6+
+- Under Contract
 
 ## Libraries Implemented
 
