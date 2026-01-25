@@ -1,0 +1,59 @@
+# Semgrep Ignore Configuration for VeteranPCS
+# Focuses security scans on production code only
+#
+# Usage: semgrep scan --config p/default
+# This file automatically excludes non-production paths
+
+# Include existing .gitignore patterns
+:include .gitignore
+
+# ===========================================
+# One-time migration scripts (not deployed)
+# ===========================================
+scripts/
+
+# ===========================================
+# Data files (CSVs, backups - not executable)
+# ===========================================
+data/
+
+# ===========================================
+# Documentation (no executable code)
+# ===========================================
+docs/
+
+# ===========================================
+# Test files (not deployed to production)
+# ===========================================
+**/*.test.ts
+**/*.test.tsx
+**/__tests__/
+*.spec.ts
+*.spec.tsx
+
+# ===========================================
+# Sanity CMS schemas (admin-only, not public)
+# ===========================================
+sanity/
+
+# ===========================================
+# IDE, tool configs, and build artifacts
+# ===========================================
+.claude/
+.husky/
+.vercel/
+
+# ===========================================
+# Static assets (images, fonts, JSON data)
+# ===========================================
+public/
+
+# ===========================================
+# Type definitions only (no runtime code)
+# ===========================================
+types/
+
+# ===========================================
+# Constants/config (static data, not logic)
+# ===========================================
+constants/

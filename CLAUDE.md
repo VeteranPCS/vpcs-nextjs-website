@@ -915,6 +915,70 @@ You MUST join Account records with Contact records to get email addresses.
 - **Sanity** - Headshot images only
 - **Slack** - Admin notifications
 
+## Security Scanning
+
+This project uses **Semgrep** (open source, LGPL-2.1) for static security analysis.
+
+### Quick Start
+
+```bash
+# Install (if not already installed)
+brew install semgrep  # macOS
+# or: pip install semgrep
+
+# Run security scan
+npm run security
+```
+
+### Available Scripts
+
+| Script | Command | Purpose |
+|--------|---------|---------|
+| `npm run security` | `semgrep scan --config p/default` | Quick scan with terminal output |
+| `npm run security:json` | Outputs `semgrep-results.json` | Machine-readable results |
+| `npm run security:sarif` | Outputs `semgrep-results.sarif` | GitHub Code Scanning format |
+| `npm run security:ci` | Adds `--error` flag | Fails if findings exist (for CI) |
+
+### Configuration
+
+- **`.semgrepignore`** - Defines which paths to exclude from scanning
+- **`p/default` ruleset** - Community rules covering OWASP Top 10, React, TypeScript, Node.js
+
+### What Gets Scanned
+
+| Scanned (Production Code) | Excluded (Non-Production) |
+|---------------------------|---------------------------|
+| `app/` - Pages & API routes | `scripts/` - Migration scripts |
+| `components/` - React components | `data/` - CSV exports |
+| `services/` - Business logic | `docs/` - Documentation |
+| `lib/` - Utility libraries | `sanity/` - CMS schemas |
+| `actions/` - Server actions | `types/` - Type definitions |
+| `utils/` - Helper functions | `public/` - Static assets |
+
+### What It Detects
+
+- **Injection vulnerabilities** - SQL, command, XSS
+- **SSRF** - Unvalidated URLs in fetch calls
+- **Hardcoded secrets** - API keys in code
+- **Insecure crypto** - Weak algorithms
+- **React-specific** - `dangerouslySetInnerHTML` misuse
+- **Path traversal** - User input in file paths
+
+### CI/CD Integration (Optional)
+
+Add to `.github/workflows/security.yml`:
+```yaml
+name: Security Scan
+on: [push, pull_request]
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip3 install semgrep
+      - run: npm run security:ci
+```
+
 ## Key Entities
 
 | Entity | Description |

@@ -8,7 +8,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "security": "semgrep scan --config p/default",
+    "security:json": "semgrep scan --config p/default --json --json-output=semgrep-results.json",
+    "security:sarif": "semgrep scan --config p/default --sarif --sarif-output=semgrep-results.sarif",
+    "security:ci": "semgrep scan --config p/default --error"
   },
   "dependencies": {
     "@emotion/react": "^11.13.5",

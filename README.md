@@ -556,6 +556,52 @@ VeteranPCS is a NextJS-based web application designed to connect military person
 
 ---
 
+## Security Scanning
+
+This project uses **Semgrep** for static security analysis, configured to scan production code for OWASP Top 10 vulnerabilities.
+
+### Running Security Scans
+
+```bash
+# Quick scan (terminal output)
+npm run security
+
+# JSON output for tooling
+npm run security:json
+
+# SARIF output for GitHub Code Scanning
+npm run security:sarif
+
+# CI mode (fails on findings)
+npm run security:ci
+```
+
+### Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `.semgrepignore` | Excludes non-production paths (scripts, data, docs, etc.) |
+
+### Ruleset
+
+Uses `p/default` which includes community rules for:
+- JavaScript/TypeScript security
+- React patterns (XSS, `dangerouslySetInnerHTML`)
+- Node.js server-side vulnerabilities
+- OWASP Top 10 coverage
+
+### Installation
+
+```bash
+# macOS
+brew install semgrep
+
+# All platforms
+pip install semgrep
+```
+
+---
+
 ## Additional Notes
 
 The codebase integrates multiple external services including **Attio for CRM** (primary data source), Sanity for content management, Slack for notifications, OpenPhone for messaging, and Google for reviews. It employs Next.js cache revalidation strategies to ensure content is fresh while maintaining performance.

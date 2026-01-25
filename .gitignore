@@ -39,3 +39,7 @@ package-lock.json
 data/salesforce/*.csv
 data/cleaned/
 docs/migration/*.md
+
+# semgrep output files
+semgrep-results.json
+semgrep-results.sarif
