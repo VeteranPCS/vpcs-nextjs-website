@@ -6,6 +6,7 @@ Use this skill when working with the Attio CRM API in this codebase. It covers c
 
 - Writing Attio API queries
 - Creating or updating records
+- Creating objects, attributes, or pipelines
 - Building webhook handlers
 - Writing migration scripts
 - Debugging Attio API errors
@@ -91,6 +92,78 @@ await attio.assertRecord('states', 'state_code', {
 { target_object: 'agents', target_record_id: 'uuid' }
 ```
 
+#### 6. Select Options Must Be Created Separately
+```typescript
+// Creating a select attribute does NOT create its options inline
+// You must create each option with a separate API call:
+
+await attio.createSelectOption('objects', 'interns', 'military_service', 'Air Force');
+await attio.createSelectOption('objects', 'interns', 'military_service', 'Army');
+await attio.createSelectOption('objects', 'interns', 'military_service', 'Navy');
+
+// Helper methods in lib/attio.ts:
+// - createSelectOption(target, objectSlug, attrSlug, title)
+// - getSelectOptions(target, objectSlug, attrSlug)
+```
+
+#### 7. Pipeline/List Entry Stage Syntax
+```typescript
+// WRONG - status_title is silently ignored
+body.data.status_title = 'New Application';
+
+// WRONG - 'title' key not recognized
+entry_values.stage = { title: 'New Application' };
+
+// CORRECT - use 'status' key with stage title as string
+const entryValues = {
+  notes: 'Initial application',
+  stage: { status: 'New Application' }  // <-- This is the key!
+};
+
+await attio.createListEntry('intern_placements', 'interns', internId, entryValues, 'New Application');
+```
+
+#### 8. List Entry Requires `parent_object`
+```typescript
+// WRONG - missing parent_object
+await attio.createListEntry('customer_deals', customerId, dealData);
+
+// CORRECT - include parent_object
+await attio.createListEntry('customer_deals', 'customers', customerId, dealData);
+```
+
+#### 9. Custom Objects Need `name` Attribute for Display
+```typescript
+// Without a 'name' attribute, records display as UUIDs in Attio UI:
+// "d6b6f9a3-3b49-458e-9c12-abc123..."
+
+// Always include a 'name' attribute and populate it:
+const internData = {
+  name: `${firstName} ${lastName}`,  // <-- Required for readable display
+  first_name: firstName,
+  last_name: lastName,
+  // ...
+};
+```
+
+#### 10. Cannot DELETE Attributes - Only Archive
+```typescript
+// WRONG - returns 404
+await fetch(`/objects/${obj}/attributes/${attr}`, { method: 'DELETE' });
+
+// CORRECT - archive instead
+await fetch(`/objects/${obj}/attributes/${attr}`, {
+  method: 'PATCH',
+  body: JSON.stringify({ data: { is_archived: true } })
+});
+
+// WARNING: Archived attributes still occupy their slug!
+// To "replace" an attribute with a different type:
+// 1. Archive old attribute (e.g., 'agent_commission')
+// 2. Create new attribute with NEW slug (e.g., 'commission_percent')
+// 3. Update all code to use new slug
+```
+
 ### Webhook Implementation
 
 ```typescript
@@ -138,6 +211,47 @@ async function main() {
 }
 ```
 
+### Schema Creation Sequence
+
+When creating a new object with attributes and a pipeline:
+
+```typescript
+// 1. Create the object
+await attio.createObject({
+  api_slug: 'interns',
+  singular_noun: 'Intern',
+  plural_noun: 'Interns'
+});
+
+// 2. Create attributes (one at a time)
+for (const attr of attributes) {
+  await attio.createAttribute('interns', attr);
+}
+
+// 3. Create select options (separate call per option!)
+for (const option of militaryServiceOptions) {
+  await attio.createSelectOption('objects', 'interns', 'military_service', option);
+}
+
+// 4. Create the pipeline (list)
+await attio.createList({
+  api_slug: 'intern_placements',
+  name: 'Intern Placements',
+  parent_object: 'interns',
+  workspace_access: 'full-access'
+});
+
+// 5. Create pipeline attributes
+for (const attr of pipelineAttributes) {
+  await attio.createListAttribute('intern_placements', attr);
+}
+
+// 6. Create pipeline stages (statuses)
+for (const stage of stages) {
+  await attio.createListStatus('intern_placements', stage);
+}
+```
+
 ### Bidirectional References
 
 For efficient reverse lookups, maintain references in both directions:
@@ -159,10 +273,14 @@ For efficient reverse lookups, maintain references in both directions:
 | `Invalid operator "$contains"` | Using $contains on record-ref | Use bidirectional reference |
 | `missing_sort_field` | Wrong filter syntax for record-ref | Use `{ field: { target_record_id: { $eq: id } } }` |
 | `API Key invalid...wrong length` | dotenv not loaded before import | Use dynamic import |
+| `Cannot find select option with title "X"` | Select option not created | Call `createSelectOption()` first |
+| `Cannot find attribute with slug/ID "X"` | Attribute doesn't exist | Check schema, may need to create |
 
 ## Related Files
 
 - `lib/attio.ts` - Attio client with all methods
 - `lib/attio-schema.ts` - Schema type definitions  
 - `app/api/webhooks/attio/route.ts` - Webhook handler
-- `CLAUDE.md` - Full API documentation (learnings #1-22)
+- `scripts/setup-attio-schema.ts` - Main schema creation script
+- `scripts/setup-intern-schema.ts` - Example of creating new object + pipeline
+- `CLAUDE.md` - Full API documentation (learnings #1-24)
