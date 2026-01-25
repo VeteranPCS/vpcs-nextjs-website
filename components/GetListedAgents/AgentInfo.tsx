@@ -1,25 +1,25 @@
 "use client";
-import { useState, FormEvent, useCallback, useEffect } from 'react';
-import stateService from '@/services/stateService';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { useState, FormEvent, useCallback, useEffect } from "react";
+import stateService from "@/services/stateService";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export type HowDidYouHearOptions =
-  | 'Google'
-  | 'Facebook'
-  | 'Instagram'
-  | 'Linkedin'
-  | 'Tiktok'
-  | 'Base Event'
-  | 'Transition Brief'
-  | 'Agent Referral'
-  | 'Friend Referral'
-  | 'Skillbridge'
-  | 'Youtube'
-  | 'Other'
-  | ''
+  | "Google"
+  | "Facebook"
+  | "Instagram"
+  | "Linkedin"
+  | "Tiktok"
+  | "Base Event"
+  | "Transition Brief"
+  | "Agent Referral"
+  | "Friend Referral"
+  | "Skillbridge"
+  | "Youtube"
+  | "Other"
+  | "";
 interface ContactFormProps {
   onSubmit: (data: any) => void;
   onBack: () => void;
@@ -27,19 +27,19 @@ interface ContactFormProps {
 }
 
 const howDidYouHearOptions: HowDidYouHearOptions[] = [
-  'Google',
-  'Facebook',
-  'Instagram',
-  'Linkedin',
-  'Tiktok',
-  'Base Event',
-  'Transition Brief',
-  'Agent Referral',
-  'Friend Referral',
-  'Skillbridge',
-  'Youtube',
-  'Other',
-  ''
+  "Google",
+  "Facebook",
+  "Instagram",
+  "Linkedin",
+  "Tiktok",
+  "Base Event",
+  "Transition Brief",
+  "Agent Referral",
+  "Friend Referral",
+  "Skillbridge",
+  "Youtube",
+  "Other",
+  "",
 ];
 
 const schema = yup.object().shape({
@@ -47,7 +47,9 @@ const schema = yup.object().shape({
   otherStates: yup.array().of(yup.string()),
   licenseNumber: yup.string().required("License number is required."),
   brokerageName: yup.string().required("Brokerage name is required."),
-  managingBrokerName: yup.string().required("Managing broker name is required."),
+  managingBrokerName: yup
+    .string()
+    .required("Managing broker name is required."),
   managingBrokerPhone: yup
     .string()
     .required("Managing broker phone is required.")
@@ -62,15 +64,15 @@ const schema = yup.object().shape({
   leadAcceptance: yup.string(),
   howDidYouHear: yup
     .string()
-    .required('Please select an option')
-    .oneOf(howDidYouHearOptions, 'Invalid option selected'),
-  tellusMore: yup.string().when('howDidYouHear', {
-    is: 'Other',
+    .required("Please select an option")
+    .oneOf(howDidYouHearOptions, "Invalid option selected"),
+  tellusMore: yup.string().when("howDidYouHear", {
+    is: "Other",
     then: (schema) => schema,
     otherwise: (schema) => schema.nullable(),
   }),
-  captchaToken: yup.string().required('Please complete the reCAPTCHA'),
-  captcha_settings: yup.string().required('Please complete the reCAPTCHA'),
+  captchaToken: yup.string().required("Please complete the reCAPTCHA"),
+  captcha_settings: yup.string().required("Please complete the reCAPTCHA"),
 });
 
 const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
@@ -85,8 +87,8 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
     setValue,
   } = useForm({
     defaultValues: {
-      captchaToken: '',
-      captcha_settings: '',
+      captchaToken: "",
+      captcha_settings: "",
     },
     resolver: yupResolver(schema),
   });
@@ -103,16 +105,18 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
 
   const onCaptchaChange = (token: string | null) => {
     if (token) {
-      const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
+      const captchaSettingsElem = document.getElementById(
+        "captcha_settings",
+      ) as HTMLInputElement | null;
       if (captchaSettingsElem) {
         const captchaSettings = JSON.parse(captchaSettingsElem.value);
         captchaSettings.ts = JSON.stringify(new Date().getTime());
         captchaSettingsElem.value = JSON.stringify(captchaSettings);
-        setValue('captcha_settings', captchaSettingsElem.value, {
-          shouldValidate: false // This triggers validation after setting the value
+        setValue("captcha_settings", captchaSettingsElem.value, {
+          shouldValidate: false, // This triggers validation after setting the value
         });
-        setValue('captchaToken', token, {
-          shouldValidate: true // This triggers validation after setting the value
+        setValue("captchaToken", token, {
+          shouldValidate: true, // This triggers validation after setting the value
         });
       }
     }
@@ -133,7 +137,12 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form onSubmit={handleSubmit(onSubmitHandler)}>
-          <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
+          <input
+            className="hidden"
+            id="captcha_settings"
+            value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}'
+            readOnly
+          />
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
@@ -156,14 +165,18 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   <option value="" disabled selected>
                     Select State
                   </option>
-                  {stateList.sort((a, b) => a.short_name < b.short_name ? -1 : 1).map((state) => (
-                    <option key={state.short_name} value={state.short_name}>
-                      {state.short_name}
-                    </option>
-                  ))}
+                  {stateList
+                    .sort((a, b) => (a.short_name < b.short_name ? -1 : 1))
+                    .map((state) => (
+                      <option key={state.short_name} value={state.short_name}>
+                        {state.short_name}
+                      </option>
+                    ))}
                 </select>
                 {errors.primaryState && (
-                  <span className="text-error">{errors.primaryState.message}</span>
+                  <span className="text-error">
+                    {errors.primaryState.message}
+                  </span>
                 )}
               </div>
               <div className="mb-8 flex flex-col">
@@ -179,15 +192,21 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   className="border-b border-[#E2E4E5] px-2 py-1 h-32"
                   multiple
                 >
-                  {stateList.sort((a, b) => a.short_name < b.short_name ? -1 : 1).map((state) => (
-                    <option key={state.short_name} value={state.short_name}>
-                      {state.short_name}
-                    </option>
-                  ))}
+                  {stateList
+                    .sort((a, b) => (a.short_name < b.short_name ? -1 : 1))
+                    .map((state) => (
+                      <option key={state.short_name} value={state.short_name}>
+                        {state.short_name}
+                      </option>
+                    ))}
                 </select>
-                <span className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple states</span>
+                <span className="text-xs text-gray-500 mt-1">
+                  Hold Ctrl/Cmd to select multiple states
+                </span>
                 {errors.otherStates && (
-                  <span className="text-error">{errors.otherStates.message}</span>
+                  <span className="text-error">
+                    {errors.otherStates.message}
+                  </span>
                 )}
               </div>
               <div className="mb-8 flex flex-col">
@@ -205,7 +224,9 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   placeholder="License Number(s)"
                 />
                 {errors.licenseNumber && (
-                  <span className="text-error">{errors.licenseNumber.message}</span>
+                  <span className="text-error">
+                    {errors.licenseNumber.message}
+                  </span>
                 )}
               </div>
               <div className="mb-8 flex flex-col">
@@ -223,7 +244,9 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   placeholder="Brokerage Name"
                 />
                 {errors.brokerageName && (
-                  <span className="text-error">{errors.brokerageName.message}</span>
+                  <span className="text-error">
+                    {errors.brokerageName.message}
+                  </span>
                 )}
               </div>
               <div className="mb-8 flex flex-col">
@@ -241,7 +264,9 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   placeholder="Managing Broker Name"
                 />
                 {errors.managingBrokerName && (
-                  <span className="text-error">{errors.managingBrokerName.message}</span>
+                  <span className="text-error">
+                    {errors.managingBrokerName.message}
+                  </span>
                 )}
               </div>
               <div className="mb-8 flex flex-col">
@@ -259,7 +284,9 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   placeholder="Managing Broker Phone"
                 />
                 {errors.managingBrokerPhone && (
-                  <span className="text-error">{errors.managingBrokerPhone.message}</span>
+                  <span className="text-error">
+                    {errors.managingBrokerPhone.message}
+                  </span>
                 )}
               </div>
               <div className="mb-8 flex flex-col">
@@ -277,7 +304,9 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   placeholder="Managing Broker Email"
                 />
                 {errors.managingBrokerEmail && (
-                  <span className="text-error">{errors.managingBrokerEmail.message}</span>
+                  <span className="text-error">
+                    {errors.managingBrokerEmail.message}
+                  </span>
                 )}
               </div>
               <div className="mb-8 flex flex-col">
@@ -295,7 +324,9 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   placeholder="Cities Serviced"
                 />
                 {errors.citiesServiced && (
-                  <span className="text-error">{errors.citiesServiced.message}</span>
+                  <span className="text-error">
+                    {errors.citiesServiced.message}
+                  </span>
                 )}
               </div>
               <div className="mb-8 flex flex-col">
@@ -313,7 +344,9 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   placeholder="Bases Serviced"
                 />
                 {errors.basesServiced && (
-                  <span className="text-error">{errors.basesServiced.message}</span>
+                  <span className="text-error">
+                    {errors.basesServiced.message}
+                  </span>
                 )}
               </div>
               <div className="mb-8 flex flex-col">
@@ -335,7 +368,9 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   <option value="No">No</option>
                 </select>
                 {errors.personallyPCS && (
-                  <span className="text-error">{errors.personallyPCS.message}</span>
+                  <span className="text-error">
+                    {errors.personallyPCS.message}
+                  </span>
                 )}
               </div>
               <div className="flex flex-col">
@@ -343,7 +378,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   htmlFor="leadAcceptance"
                   className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
-                  Are you able to receive leads for a 25% fee?
+                  Are you able to receive leads for a 30% fee?
                 </label>
                 <select
                   id="leadAcceptance"
@@ -357,12 +392,14 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   <option value="No">No</option>
                 </select>
                 {errors.leadAcceptance && (
-                  <span className="text-error">{errors.leadAcceptance.message}</span>
+                  <span className="text-error">
+                    {errors.leadAcceptance.message}
+                  </span>
                 )}
               </div>
             </div>
 
-            <div className='border rounded-lg border-[#E2E4E5] p-8'>
+            <div className="border rounded-lg border-[#E2E4E5] p-8">
               <div className="mb-8 flex flex-col">
                 <label
                   htmlFor="howDidYouHear"
@@ -371,7 +408,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   How did you hear about us?*
                 </label>
                 <select
-                  {...register('howDidYouHear')}
+                  {...register("howDidYouHear")}
                   className="border-b border-[#E2E4E5] px-2 py-1"
                   id="howDidYouHear"
                 >
@@ -390,11 +427,13 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   <option value="Other">Other</option>
                 </select>
                 {errors.howDidYouHear && (
-                  <span className="text-error">{errors.howDidYouHear.message}</span>
+                  <span className="text-error">
+                    {errors.howDidYouHear.message}
+                  </span>
                 )}
               </div>
 
-              {howDidYouHearValue === 'Other' && (
+              {howDidYouHearValue === "Other" && (
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="tellusMore"
@@ -404,24 +443,28 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   </label>
                   <input
                     type="text"
-                    {...register('tellusMore')}
+                    {...register("tellusMore")}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     id="tellusMore"
                     placeholder="Tell us more..."
                   />
                   {errors.tellusMore && (
-                    <span className="text-error">{errors.tellusMore.message}</span>
+                    <span className="text-error">
+                      {errors.tellusMore.message}
+                    </span>
                   )}
                 </div>
               )}
 
               <div className="mt-8 flex flex-col">
                 <ReCAPTCHA
-                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
                   onChange={onCaptchaChange}
                 />
                 {errors.captchaToken && (
-                  <span className="text-error">{errors.captchaToken.message}</span>
+                  <span className="text-error">
+                    {errors.captchaToken.message}
+                  </span>
                 )}
               </div>
             </div>
@@ -432,9 +475,9 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
+                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[#292F6C]"} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Now'}
+                {isSubmitting ? "Submitting..." : "Submit Now"}
                 {!isSubmitting && (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
