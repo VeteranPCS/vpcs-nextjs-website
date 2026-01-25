@@ -784,56 +784,117 @@ export async function internshipFormSubmission(formData: any) {
   logInfo("Processing internship form submission", { submissionId });
 
   try {
-    // Create agent record in agents object (internship status)
-    const agentData: Record<string, any> = {
+    // Map form internship type to Attio select value
+    // Form sends "Intern - Agent" or "Intern - Lender"
+    const internshipTypeRaw = formData["00N4x00000QPK7L"] || "";
+    let internshipType: string | null = null;
+    if (internshipTypeRaw.includes("Agent")) {
+      internshipType = "Real Estate Agent";
+    } else if (internshipTypeRaw.includes("Lender")) {
+      internshipType = "Mortgage Lender";
+    }
+
+    // Map military status from form to Attio select value
+    // Form uses: Active, National Guard, Reserves, Retired, Spouse, Veteran
+    // Attio uses: Active Duty, National Guard, Reserves, Retired, Spouse, Veteran
+    const militaryStatusRaw = formData["00N4x00000LsnP2"] || "";
+    let militaryStatus: string | null = null;
+    if (militaryStatusRaw === "Active") {
+      militaryStatus = "Active Duty";
+    } else if (militaryStatusRaw) {
+      militaryStatus = militaryStatusRaw;
+    }
+
+    // Map military service from form to Attio select value
+    // Form uses: Air Force, Army, Coast Guard, Navy, Marine Corps, Space Force
+    // Attio uses: Air Force, Army, Coast Guard, Navy, Marines, Space Force
+    const militaryServiceRaw = formData["00N4x00000LsnOx"] || "";
+    let militaryService: string | null = null;
+    if (militaryServiceRaw === "Marine Corps") {
+      militaryService = "Marines";
+    } else if (militaryServiceRaw) {
+      militaryService = militaryServiceRaw;
+    }
+
+    // Create intern record in interns object with ALL form fields
+    const internData: Record<string, any> = {
+      // Identity
       name: `${formData.first_name} ${formData.last_name}`,
       first_name: formData.first_name || "",
       last_name: formData.last_name || "",
       email: formData.email || "",
-      military_status: formData["00N4x00000LsnP2"] || null,
-      military_service: formData["00N4x00000LsnOx"] || null,
-      city: formData.city || null,
-      active_on_website: false, // Interns not active on website
+
+      // Military Information
+      military_service: militaryService,
+      military_status: militaryStatus,
+      discharge_status: formData["00N4x00000QQ0Vz"] || null,
+
+      // Current Location
+      current_state: formData.state_code || null,
+      current_city: formData.city || null,
+      current_base: formData.base || null,
+
+      // Internship Details
+      internship_type: internshipType,
+      desired_state: formData["00N4x00000LspV2"] || null,
+      desired_city: formData["00N4x00000LspUi"] || null,
+      preferred_start_date: formData["00N4x00000QPLQY"] || null,
+      licensed: formData["00N4x00000QPLQd"] || null,
+
+      // Marketing Attribution
+      how_did_you_hear: formData["00N4x00000QPksj"] || null,
+      how_did_you_hear_other: formData["00N4x00000QPS7V"] || null,
+
+      // Tracking
+      application_date: new Date().toISOString().split("T")[0], // Today's date
     };
 
+    // Normalize phone number
     if (formData.mobile) {
       const normalized = normalizePhone(formData.mobile);
-      if (normalized) agentData.phone = normalized;
+      if (normalized) internData.phone = normalized;
     }
 
-    const agentResult = await attio.createRecord("agents", agentData);
-    const agentId = agentResult.data.id.record_id;
+    const internResult = await attio.createRecord("interns", internData);
+    const internId = internResult.data.id.record_id;
 
-    logDebug("Internship agent record created", { submissionId, agentId });
+    logDebug("Intern record created", { submissionId, internId });
 
-    // Create entry in agent_onboarding pipeline with Internship stage
-    const onboardingData: Record<string, any> = {
-      primary_state: formData["00N4x00000LspV2"] || formData.state_code || null,
-      how_did_you_hear: formData["00N4x00000QPksj"] || null,
-      tell_us_more: formData["00N4x00000QPS7V"] || null,
-      // Internship-specific fields
-      base: formData.base || null,
-      current_duty_station: formData["00N4x00000QPK7L"] || null,
+    // Create entry in intern_placements pipeline at "New Application" stage
+    const placementData: Record<string, any> = {
+      notes: null, // Admin will add notes during review
     };
 
     await attio.createListEntry(
-      "agent_onboarding",
-      "agents",
-      agentId,
-      onboardingData,
-      "Internship", // Internship stage
+      "intern_placements",
+      "interns",
+      internId,
+      placementData,
+      "New Application",
     );
 
-    logInfo("Internship onboarding entry created", { submissionId, agentId });
+    logInfo("Intern placement entry created", { submissionId, internId });
 
-    // Send Slack notification
+    // Send Slack notification (max 10 fields for Slack section blocks)
     slack
-      .sendAlert("New Internship Submission", {
+      .sendAlert("New Internship Application", {
         Name: `${formData.first_name} ${formData.last_name}`,
         Email: formData.email || "",
-        Phone: formData.mobile || "",
-        State: formData.state_code || "",
-        Base: formData.base || "",
+        Phone: formData.mobile || "N/A",
+        "Current Location":
+          `${formData.city || ""}, ${formData.state_code || ""}`.replace(
+            /^, |, $/g,
+            "",
+          ) || "N/A",
+        "Internship Type": internshipType || "Not specified",
+        "Desired Location":
+          `${formData["00N4x00000LspUi"] || ""}, ${formData["00N4x00000LspV2"] || ""}`.replace(
+            /^, |, $/g,
+            "",
+          ) || "N/A",
+        "Preferred Start": formData["00N4x00000QPLQY"] || "Not specified",
+        Licensed: formData["00N4x00000QPLQd"] || "Not specified",
+        "Military Branch": militaryService || "Not specified",
       })
       .catch((error) => {
         logError(
@@ -846,10 +907,13 @@ export async function internshipFormSubmission(formData: any) {
     await updateSubmissionStatus(
       submissionId,
       FormSubmissionStatus.SUCCESS,
-      null,
+      internId, // Pass the Attio record ID
     );
 
-    logInfo("Internship form submitted successfully", { submissionId });
+    logInfo("Internship form submitted successfully", {
+      submissionId,
+      internId,
+    });
     return {
       message: "Form submitted successfully!",
       redirectUrl: THANK_YOU_URL,

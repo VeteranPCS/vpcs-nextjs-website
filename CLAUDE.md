@@ -67,8 +67,8 @@ Before we continue, please confirm:
 
 ### Current Migration Status
 
-**Last Updated:** 2026-01-23
-**Current Phase:** POST-CUTOVER FIXES ✅
+**Last Updated:** 2026-01-25
+**Current Phase:** INTERN SCHEMA COMPLETE ✅
 **Branch:** attio-migration
 
 **✅ Completed:**
@@ -87,6 +87,8 @@ Before we continue, please confirm:
 - Cutover Prep: vercel.json created, docs/CUTOVER-PLAN.md written
 - **Contact Form Fix Phase 1:** Removed `lead_source`, added deal tracking fields
 - **Contact Form Fix Phase 2:** Fixed agent/lender reference lookup (15 vs 18 char Salesforce ID issue)
+- **Intern Schema:** New `interns` object (21 attributes) + `intern_placements` pipeline (8 stages)
+- **Intern Form Handler:** Updated to create intern records (not agents), persists all 17 form fields
 
 **📋 Next Steps (ENHANCEMENT PHASE):**
 1. [ ] **Phase 3 Enhancement:** Multi-step contact form with Buying/Selling/Both selection
@@ -552,6 +554,79 @@ Or run sync scripts periodically:
 
 ---
 
+## Intern Object & Placement Pipeline
+
+**Purpose:** Track transitioning service members seeking placement with network agents/lenders for mentorship. Interns are NOT becoming VeteranPCS agents - they're being connected with independent agents/lenders in the network.
+
+### Intern Object Attributes
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `name` | text | Full name (computed: first + last) |
+| `first_name` | text | Required |
+| `last_name` | text | Required |
+| `email` | text | Required, unique |
+| `phone` | phone-number | E.164 format |
+| `military_service` | select | Army, Navy, Air Force, Marines, Coast Guard, Space Force |
+| `military_status` | select | Active Duty, Veteran, Retired, Reserves, National Guard, Spouse |
+| `discharge_status` | select | Honorable Discharge, Retired, Medical Retirement, Currently Serving |
+| `current_state` | text | 2-letter state code |
+| `current_city` | text | Current city |
+| `current_base` | text | Military base (optional) |
+| `internship_type` | select | Real Estate Agent, Mortgage Lender |
+| `desired_state` | text | 2-letter code where they want to work |
+| `desired_city` | text | City where they want to work |
+| `preferred_start_date` | date | When they can begin |
+| `licensed` | select | Yes, No, In Progress |
+| `how_did_you_hear` | select | Marketing attribution |
+| `how_did_you_hear_other` | text | Free text for "Other" |
+| `mentor_agent` | record-reference | Network agent mentoring this intern |
+| `mentor_lender` | record-reference | Network lender mentoring this intern |
+| `application_date` | date | When application was submitted |
+
+### Intern Placements Pipeline Stages
+
+| Stage | Status | Description |
+|-------|--------|-------------|
+| New Application | Active | Just submitted, awaiting review |
+| Under Review | Active | Admin reviewing application details |
+| Contacted | Active | Admin confirmed details with applicant |
+| Matching | Active | Looking for suitable mentor |
+| Matched | Active | Mentor identified, introduction pending |
+| Placement Complete | Closed (won) | Intern successfully placed with mentor |
+| Withdrawn | Closed | Applicant withdrew |
+| Unable to Place | Closed | Could not find suitable mentor |
+
+### Form Field Mapping
+
+The internship form uses Salesforce field IDs. Here's the mapping:
+
+| Form Field ID | Attio Attribute |
+|---------------|-----------------|
+| `first_name` | `first_name` |
+| `last_name` | `last_name` |
+| `email` | `email` |
+| `mobile` | `phone` |
+| `00N4x00000LsnOx` | `military_service` |
+| `00N4x00000LsnP2` | `military_status` |
+| `00N4x00000QQ0Vz` | `discharge_status` |
+| `state_code` | `current_state` |
+| `city` | `current_city` |
+| `base` | `current_base` |
+| `00N4x00000QPK7L` | `internship_type` |
+| `00N4x00000LspV2` | `desired_state` |
+| `00N4x00000LspUi` | `desired_city` |
+| `00N4x00000QPLQY` | `preferred_start_date` |
+| `00N4x00000QPLQd` | `licensed` |
+| `00N4x00000QPksj` | `how_did_you_hear` |
+| `00N4x00000QPS7V` | `how_did_you_hear_other` |
+
+### Setup Script
+
+Run `npx tsx scripts/setup-intern-schema.ts` to create the intern object and pipeline in Attio.
+
+---
+
 ## Phase 5 Architecture: Website Data Layer
 
 **Critical:** The website currently reads from Salesforce. Phase 5B refactors to read from Attio.
@@ -849,14 +924,17 @@ You MUST join Account records with Contact records to get email addresses.
 | Lender | Mortgage lenders with `states` reverse-ref (141 records) |
 | Area Assignment | Links **Agents only** to Areas with AA_Score (511 records) |
 | Customer | Veterans seeking to buy/sell/get mortgage (983 records) |
+| Intern | Transitioning service members seeking placement with network agents/lenders |
 | Customer Deal Pipeline | Home buying/selling transactions (1,021 records) |
-| Agent Onboarding Pipeline | Agent recruitment with Internship stage (947 records, 113 internships) |
-| Lender Onboarding Pipeline | Lender recruitment with Internship stage (160 records, 4 internships) |
+| Agent Onboarding Pipeline | Agent recruitment (947 records) |
+| Lender Onboarding Pipeline | Lender recruitment (160 records) |
+| Intern Placements Pipeline | Intern application review and mentor matching workflow |
 
 **Key Design Decisions:**
 - Lenders are assigned at the **State level** via `State.lenders` multi-select (not Area Assignments)
 - **Bidirectional reference:** `Lender.states` mirrors `State.lenders` for efficient reverse lookups
 - Area Assignments are **agent-only**
+- **Interns are separate from Agents/Lenders** - they're applicants seeking placement, not network members
 
 ## API Routes to Implement
 

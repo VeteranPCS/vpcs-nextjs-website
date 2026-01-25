@@ -8,16 +8,70 @@
 
 ## Quick Status
 
-**Current Phase:** POST-CUTOVER FIXES COMPLETE ✅
+**Current Phase:** INTERN SCHEMA COMPLETE ✅
 **Next Phase:** ENHANCEMENT - Multi-step contact form with Buying/Selling/Both
-**Blocked On:** None - ready to plan Phase 3 enhancement
-**Last Session:** 2026-01-23 - Fix Contact Form Agent/Lender References
+**Blocked On:** None
+**Last Session:** 2026-01-25 - Intern Object & Placement Pipeline
 
 ---
 
 ## Session Log
 
-### 2026-01-23 - Fix Contact Form Agent/Lender References (Latest Session)
+### 2026-01-25 - Intern Object & Placement Pipeline (Latest Session)
+
+**Platform:** Claude Code CLI
+**Status:** ✅ Complete
+
+**Context:**
+VeteranPCS's internship program is a **placement/matching service** for transitioning service members seeking to become real estate agents or mortgage lenders. Interns are NOT becoming VeteranPCS agents - they're being connected with independent agents/lenders in the network who can mentor and sponsor them.
+
+Previously, intern applications created Agent records in `agent_onboarding` pipeline, which was semantically incorrect and lost 6 of 17 form fields.
+
+**What Was Built:**
+
+**1. New `interns` Object (21 attributes):**
+- Identity: name, first_name, last_name, email, phone
+- Military: military_service, military_status, discharge_status
+- Current Location: current_state, current_city, current_base
+- Internship: internship_type, desired_state, desired_city, preferred_start_date, licensed
+- Marketing: how_did_you_hear, how_did_you_hear_other
+- Placement: mentor_agent, mentor_lender, application_date
+
+**2. New `intern_placements` Pipeline (8 stages):**
+- New Application → Under Review → Contacted → Matching → Matched → Placement Complete
+- Closed stages: Withdrawn, Unable to Place
+- Attributes: notes, matched_date, placement_date
+
+**3. Updated Form Handler:**
+- `internshipFormSubmission()` now creates records in `interns` object (not `agents`)
+- All 17 form fields now persisted (previously only ~10)
+- Creates pipeline entry at "New Application" stage
+- Slack notification with key application details
+
+**Files Created:**
+- `scripts/setup-intern-schema.ts` - Creates object, attributes, pipeline, stages, select options
+- `scripts/add-intern-select-options.ts` - Utility to add select options separately
+
+**Files Modified:**
+- `lib/attio-schema.ts` - Added intern definitions, select option constants
+- `services/salesForcePostFormsService.tsx` - Updated `internshipFormSubmission()`
+- `services/formTrackingService.ts` - Fixed field name mapping, cleaned up logging
+- `CLAUDE.md` - Documented intern schema
+
+**Key Learnings:**
+1. Attio select options must be created separately via `POST /objects/{obj}/attributes/{attr}/options`
+2. Slack section blocks have max 10 fields (reduced notification from 11 to 9)
+3. Form tracking service needed to handle both camelCase and snake_case field names
+
+**Verification:**
+- ✅ Schema created in Attio UI
+- ✅ Form submission creates intern record with all fields
+- ✅ Pipeline entry created at "New Application" stage
+- ✅ Slack notification works
+
+---
+
+### 2026-01-23 - Fix Contact Form Agent/Lender References
 
 **Platform:** Claude Code CLI
 **Status:** ✅ Complete

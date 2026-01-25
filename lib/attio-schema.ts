@@ -125,6 +125,43 @@ export const HOW_DID_YOU_HEAR_OPTIONS: SelectOption[] = [
   { title: "Other" },
 ];
 
+// How did you hear options specific to internship form (includes ILE Brief)
+export const INTERN_HOW_DID_YOU_HEAR_OPTIONS: SelectOption[] = [
+  { title: "Google" },
+  { title: "Facebook" },
+  { title: "Instagram" },
+  { title: "LinkedIn" },
+  { title: "TikTok" },
+  { title: "Base Event" },
+  { title: "Transition Brief" },
+  { title: "Agent Referral" },
+  { title: "Friend Referral" },
+  { title: "Skillbridge" },
+  { title: "ILE Brief" },
+  { title: "Other" },
+];
+
+// Discharge status options for interns
+export const DISCHARGE_STATUS_OPTIONS: SelectOption[] = [
+  { title: "Honorable Discharge" },
+  { title: "Retired" },
+  { title: "Medical Retirement" },
+  { title: "Currently Serving" },
+];
+
+// Internship type options
+export const INTERNSHIP_TYPE_OPTIONS: SelectOption[] = [
+  { title: "Real Estate Agent" },
+  { title: "Mortgage Lender" },
+];
+
+// Licensed status options for interns
+export const LICENSED_STATUS_OPTIONS: SelectOption[] = [
+  { title: "Yes" },
+  { title: "No" },
+  { title: "In Progress" },
+];
+
 // US States for select options
 export const US_STATE_OPTIONS: SelectOption[] = [
   { title: "Alabama" },
@@ -200,6 +237,7 @@ export const OBJECTS: ObjectDefinition[] = [
     singular_noun: "Area Assignment",
     plural_noun: "Area Assignments",
   },
+  { api_slug: "interns", singular_noun: "Intern", plural_noun: "Interns" },
 ];
 
 // =============================================================================
@@ -461,6 +499,142 @@ export const AREA_ASSIGNMENT_ATTRIBUTES: AttributeDefinition[] = [
   },
 ];
 
+// =============================================================================
+// INTERN OBJECT ATTRIBUTES
+// =============================================================================
+// Interns are transitioning service members seeking placement with network
+// agents/lenders for mentorship. NOT the same as agents/lenders.
+
+export const INTERN_ATTRIBUTES: AttributeDefinition[] = [
+  // Identity
+  { title: "Name", api_slug: "name", type: "text", is_required: true },
+  {
+    title: "First Name",
+    api_slug: "first_name",
+    type: "text",
+    is_required: true,
+  },
+  {
+    title: "Last Name",
+    api_slug: "last_name",
+    type: "text",
+    is_required: true,
+  },
+  {
+    title: "Email",
+    api_slug: "email",
+    type: "text",
+    is_required: true,
+    is_unique: true,
+  },
+  { title: "Phone", api_slug: "phone", type: "phone-number" },
+
+  // Military Information
+  {
+    title: "Military Service",
+    api_slug: "military_service",
+    type: "select",
+    config: { select: { options: MILITARY_SERVICE_OPTIONS } },
+  },
+  {
+    title: "Military Status",
+    api_slug: "military_status",
+    type: "select",
+    config: { select: { options: MILITARY_STATUS_OPTIONS } },
+  },
+  {
+    title: "Discharge Status",
+    api_slug: "discharge_status",
+    type: "select",
+    config: { select: { options: DISCHARGE_STATUS_OPTIONS } },
+  },
+
+  // Current Location
+  {
+    title: "Current State",
+    api_slug: "current_state",
+    type: "text",
+    description: "2-letter state code where applicant currently resides",
+  },
+  { title: "Current City", api_slug: "current_city", type: "text" },
+  {
+    title: "Current Base",
+    api_slug: "current_base",
+    type: "text",
+    description: "Military base name (optional)",
+  },
+
+  // Internship Details
+  {
+    title: "Internship Type",
+    api_slug: "internship_type",
+    type: "select",
+    description: "Career path: Real Estate Agent or Mortgage Lender",
+    config: { select: { options: INTERNSHIP_TYPE_OPTIONS } },
+  },
+  {
+    title: "Desired State",
+    api_slug: "desired_state",
+    type: "text",
+    description: "2-letter state code where applicant wants to work",
+  },
+  {
+    title: "Desired City",
+    api_slug: "desired_city",
+    type: "text",
+    description: "City where applicant wants to work after internship",
+  },
+  {
+    title: "Preferred Start Date",
+    api_slug: "preferred_start_date",
+    type: "date",
+    description: "When applicant can begin internship",
+  },
+  {
+    title: "Licensed",
+    api_slug: "licensed",
+    type: "select",
+    description: "Current licensing status for real estate or mortgage",
+    config: { select: { options: LICENSED_STATUS_OPTIONS } },
+  },
+
+  // Marketing Attribution
+  {
+    title: "How Did You Hear",
+    api_slug: "how_did_you_hear",
+    type: "select",
+    config: { select: { options: INTERN_HOW_DID_YOU_HEAR_OPTIONS } },
+  },
+  {
+    title: "How Did You Hear Other",
+    api_slug: "how_did_you_hear_other",
+    type: "text",
+    description: "Free text when 'Other' is selected",
+  },
+
+  // Placement Tracking
+  {
+    title: "Mentor Agent",
+    api_slug: "mentor_agent",
+    type: "record-reference",
+    description: "Network agent mentoring this intern",
+    config: { record_reference: { allowed_objects: ["agents"] } },
+  },
+  {
+    title: "Mentor Lender",
+    api_slug: "mentor_lender",
+    type: "record-reference",
+    description: "Network lender mentoring this intern",
+    config: { record_reference: { allowed_objects: ["lenders"] } },
+  },
+  {
+    title: "Application Date",
+    api_slug: "application_date",
+    type: "date",
+    description: "Date the internship application was submitted",
+  },
+];
+
 // Map object slugs to their attributes
 export const OBJECT_ATTRIBUTES: Record<string, AttributeDefinition[]> = {
   agents: AGENT_ATTRIBUTES,
@@ -469,6 +643,7 @@ export const OBJECT_ATTRIBUTES: Record<string, AttributeDefinition[]> = {
   states: STATE_ATTRIBUTES,
   areas: AREA_ATTRIBUTES,
   area_assignments: AREA_ASSIGNMENT_ATTRIBUTES,
+  interns: INTERN_ATTRIBUTES,
 };
 
 // =============================================================================
@@ -490,6 +665,11 @@ export const PIPELINES: ListDefinition[] = [
     name: "Customer Deals",
     api_slug: "customer_deals",
     parent_object: "customers",
+  },
+  {
+    name: "Intern Placements",
+    api_slug: "intern_placements",
+    parent_object: "interns",
   },
 ];
 
@@ -702,10 +882,33 @@ export const CUSTOMER_DEALS_ATTRIBUTES: AttributeDefinition[] = [
   },
 ];
 
+// Intern placement pipeline attributes (minimal - most data on intern record)
+export const INTERN_PLACEMENT_ATTRIBUTES: AttributeDefinition[] = [
+  {
+    title: "Notes",
+    api_slug: "notes",
+    type: "text",
+    description: "Admin notes on application review and matching process",
+  },
+  {
+    title: "Matched Date",
+    api_slug: "matched_date",
+    type: "date",
+    description: "Date when a mentor was identified for this intern",
+  },
+  {
+    title: "Placement Date",
+    api_slug: "placement_date",
+    type: "date",
+    description: "Date when intern was officially placed with mentor",
+  },
+];
+
 export const PIPELINE_ATTRIBUTES: Record<string, AttributeDefinition[]> = {
   agent_onboarding: AGENT_ONBOARDING_ATTRIBUTES,
   lender_onboarding: LENDER_ONBOARDING_ATTRIBUTES,
   customer_deals: CUSTOMER_DEALS_ATTRIBUTES,
+  intern_placements: INTERN_PLACEMENT_ATTRIBUTES,
 };
 
 // =============================================================================
@@ -735,8 +938,21 @@ export const CUSTOMER_DEALS_STAGES: StatusDefinition[] = [
   { title: "Closed Lost", is_active: false },
 ];
 
+// Intern placement pipeline stages
+export const INTERN_PLACEMENT_STAGES: StatusDefinition[] = [
+  { title: "New Application", is_active: true },
+  { title: "Under Review", is_active: true },
+  { title: "Contacted", is_active: true },
+  { title: "Matching", is_active: true },
+  { title: "Matched", is_active: true },
+  { title: "Placement Complete", is_active: false, celebration_enabled: true },
+  { title: "Withdrawn", is_active: false },
+  { title: "Unable to Place", is_active: false },
+];
+
 export const PIPELINE_STAGES: Record<string, StatusDefinition[]> = {
   agent_onboarding: ONBOARDING_STAGES,
   lender_onboarding: ONBOARDING_STAGES,
   customer_deals: CUSTOMER_DEALS_STAGES,
+  intern_placements: INTERN_PLACEMENT_STAGES,
 };
