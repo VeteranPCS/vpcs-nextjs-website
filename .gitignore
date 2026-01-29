@@ -43,3 +43,5 @@ docs/migration/*.md
 # semgrep output files
 semgrep-results.json
 semgrep-results.sarif
+
+emails
