@@ -8,14 +8,19 @@ This project is the VeteranPCS website, powered by Attio CRM.
 
 **Status:** MIGRATION COMPLETE ✅
 **Branch:** attio-migration (ready for merge to main)
-**Last Updated:** 2026-01-29
+**Last Updated:** 2026-01-31
 
 The Salesforce → Attio migration is complete. All data is now in Attio, and the website reads/writes to Attio.
+
+**Recently Completed:**
+- ✅ Email automation documentation (5 workflows, 14 sequences, 18 templates)
+- ✅ Slack notification specifications
+- ✅ Revised architecture: Workflows enroll in Sequences (workflows cannot send emails directly)
 
 **Next Steps (Enhancement Phase):**
 1. Multi-step contact form with Buying/Selling/Both selection
 2. Area-based agent routing for unselected agents
-3. Configure Attio Workflows for stale lead/deal automation
+3. Configure Attio Workflows in UI (see `docs/attio-workflows.md`)
 
 ---
 
@@ -372,9 +377,64 @@ Agent becomes "Active on Website" when ALL true:
 
 ---
 
-## Attio Workflows (Configure in Attio UI)
+## Email Automation Architecture
 
-These automations should be configured in Attio's workflow builder:
+**Critical:** Attio Workflows **CANNOT** send emails directly. Workflows enroll/exit people from **Sequences**, which send emails via synced Gmail/Microsoft accounts.
+
+### Workflows (5 total)
+
+Workflows handle business logic and control sequence enrollment:
+
+| # | Workflow | Trigger | Actions |
+|---|----------|---------|---------|
+| 1 | New Customer Deal Created | Deal created | Enroll in C1/C2/C3 + A1/L1 sequences, Slack |
+| 2 | Customer Deal Stage Changed | Stage updated | Enroll in C4/C5 sequences, Slack |
+| 3 | Agent Onboarding Lifecycle | Entry created OR stage changed | Enroll/exit sequences, Slack |
+| 4 | Lender Onboarding Lifecycle | Entry created OR stage changed | Enroll/exit sequences, Slack |
+| 5 | Intern Placement Lifecycle | Entry created OR stage changed | Enroll/exit sequences, Slack |
+
+### Sequences (14 total)
+
+Sequences are the email sending mechanism:
+
+| Category | Sequences |
+|----------|-----------|
+| Customer | Welcome-Unassigned (C1), Welcome-Agent (C2), Welcome-Lender (C3), Under Contract (C4), Closed (C5) |
+| Agent | Lead Alert (A1), Onboarding (A2→A3), Contract Ready (A4), Live (A5) |
+| Lender | Lead Alert (L1), Onboarding (L2→L3), Contract Ready (L4), Live (L5) |
+| Intern | Onboarding (I1→I2) |
+
+### Email Templates (18 total)
+
+| Category | Templates |
+|----------|-----------|
+| Customer | C1-C6 (confirmations, milestones) |
+| Agent | A1-A5 (leads, onboarding) |
+| Lender | L1-L5 (leads, onboarding) |
+| Intern | I1-I2 (welcome, follow-up) |
+| Referral | R1 (thank you) |
+
+### Slack Channels
+
+| Channel | Purpose |
+|---------|---------|
+| `#new-leads` | Assigned leads |
+| `#leads-unassigned` | Unassigned leads (Beth monitors) |
+| `#agent-applications` | Agent onboarding |
+| `#lender-applications` | Lender onboarding |
+| `#intern-applications` | Intern applications |
+| `#deals` | Under contract, won, lost |
+
+**Full Documentation:**
+- `docs/attio-workflows.md` - 5 workflows with sequence enrollment logic
+- `docs/attio-sequences.md` - 14 sequences with email content
+- `docs/attio-email-templates.md` - 18 email templates ready to copy/paste
+
+---
+
+## Attio Workflows - Stale Lead/Deal Automation
+
+These scheduled automations should be configured in Attio's workflow builder:
 
 ### 1. Stale Lead Re-routing
 **Trigger:** Recurring Schedule (hourly or every 6 hours)
@@ -427,7 +487,12 @@ npm run security:ci       # Fails if findings (for CI)
 
 ## Documentation
 
-Migration documentation in `docs/migration/`:
+**Email Automation** in `docs/`:
+- **attio-workflows.md** - 5 workflows with sequence enrollment logic
+- **attio-sequences.md** - 14 sequences (the actual email senders)
+- **attio-email-templates.md** - 18 email templates ready to copy/paste
+
+**Migration documentation** in `docs/migration/`:
 - **PRD.md** - Business requirements
 - **HLD.md** - Architecture, data model
 - **LLD.md** - Implementation details
