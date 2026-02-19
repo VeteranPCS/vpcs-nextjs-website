@@ -317,7 +317,8 @@ const stateService = {
               photoUrl = await agentService.getAgentImage(sfId15);
             } catch (error) {
               console.error(
-                `Error fetching photo for agent ${agent.salesforce_id}:`,
+                "Error fetching photo for agent %s:",
+                agent.salesforce_id,
                 error,
               );
             }
@@ -441,7 +442,8 @@ const stateService = {
               photoUrl = await agentService.getAgentImage(sfId15);
             } catch (error) {
               console.error(
-                `Error fetching photo for lender ${lender.salesforce_id}:`,
+                "Error fetching photo for lender %s:",
+                lender.salesforce_id,
                 error,
               );
             }

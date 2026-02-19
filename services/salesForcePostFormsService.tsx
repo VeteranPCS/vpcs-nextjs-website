@@ -182,7 +182,15 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
     const dealId = dealResult.data.id.entry_id;
     logInfo("Deal created in Attio", { submissionId, dealId, dealType });
 
-    // 4. Send notifications (fire and forget)
+    // 4. Update customer record with buying agent reference
+    if (agentId) {
+      await attio.updateRecord("customers", customerId, {
+        buying_agent: { target_object: "agents", target_record_id: agentId },
+      });
+      logDebug("Customer buying_agent updated", { submissionId, customerId, agentId });
+    }
+
+    // 5. Send notifications (fire and forget)
     const notificationPromises: Promise<any>[] = [];
 
     // Slack notification
@@ -602,7 +610,15 @@ export async function contactLenderPostForm(
     const dealId = dealResult.data.id.entry_id;
     logInfo("Lender deal created in Attio", { submissionId, dealId });
 
-    // 4. Send notifications (fire and forget)
+    // 4. Update customer record with lender reference
+    if (lenderId) {
+      await attio.updateRecord("customers", customerId, {
+        lender: { target_object: "lenders", target_record_id: lenderId },
+      });
+      logDebug("Customer lender updated", { submissionId, customerId, lenderId });
+    }
+
+    // 5. Send notifications (fire and forget)
     const notificationPromises: Promise<any>[] = [];
 
     // Slack notification
