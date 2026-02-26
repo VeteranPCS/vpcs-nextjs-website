@@ -8,7 +8,7 @@ This document contains all 18 email templates ready to copy/paste into Attio Seq
 
 **All emails are sent via Sequences, not Workflows.** Workflows enroll people in sequences, and sequences send the emails through synced Gmail/Microsoft accounts.
 
-See `attio-sequences.md` for the full list of 14 sequences and `attio-workflows.md` for the 5 workflows that enroll people.
+See `attio-sequences.md` for the full list of 14 sequences and `attio-workflows.md` for the 8 workflows that enroll/exit people.
 
 ---
 
@@ -63,7 +63,7 @@ Attio uses double curly braces for merge fields. Map these to your Attio attribu
 ### C1: Contact Form Confirmation (Unassigned Lead)
 
 **Trigger:** Customer submits contact form without selecting specific agent/lender
-**Sent via:** Workflow 1 (neither assigned branch)
+**Sent via:** WF1 → Customer Welcome - Unassigned sequence
 
 **Subject:**
 ```
@@ -99,7 +99,7 @@ Website: https://veteranpcs.com
 ### C2: Lead Confirmation with Assigned Agent
 
 **Trigger:** Customer submits form with specific agent selected
-**Sent via:** Workflow 1 (agent assigned branch)
+**Sent via:** WF1 → Customer Welcome - Agent sequence
 
 **Subject:**
 ```
@@ -159,7 +159,7 @@ Website: https://veteranpcs.com
 ### C3: Lead Confirmation with Assigned Lender
 
 **Trigger:** Customer submits form with specific lender selected
-**Sent via:** Workflow 1 (lender assigned branch)
+**Sent via:** WF1 → Customer Welcome - Lender sequence
 
 **Subject:**
 ```
@@ -228,7 +228,7 @@ Website: https://veteranpcs.com
 ### C4: Under Contract Congratulations
 
 **Trigger:** Customer Deal moves to "Under Contract" stage
-**Sent via:** Workflow 8
+**Sent via:** WF2 → Customer Under Contract sequence
 
 **Subject:**
 ```
@@ -285,7 +285,7 @@ Website: https://veteranpcs.com
 ### C5: Transaction Closed - Congratulations & Review Request
 
 **Trigger:** Customer Deal moves to "Paid Complete" stage
-**Sent via:** Workflow 8
+**Sent via:** WF2 → Customer Closed sequence
 
 **Subject:**
 ```
@@ -413,7 +413,7 @@ Website: https://veteranpcs.com
 ### A1: New Lead Alert to Agent
 
 **Trigger:** Customer submits form with this agent selected
-**Sent via:** Workflow 1 (agent assigned branch)
+**Sent via:** WF1 → Agent Lead Alert sequence
 
 **Subject:**
 ```
@@ -599,7 +599,7 @@ Email: info@veteranpcs.com
 ### A4: Agent Contract Ready for Signature
 
 **Trigger:** Agent Onboarding moves to "Contract Sent" stage
-**Sent via:** Workflow 3
+**Sent via:** WF3b → Agent Contract Ready sequence
 
 **Subject:**
 ```
@@ -665,7 +665,7 @@ Email: info@veteranpcs.com
 ### A5: Agent Onboarding Complete - Welcome to the Network!
 
 **Trigger:** Agent Onboarding moves to "Live on Website" stage
-**Sent via:** Workflow 3
+**Sent via:** WF3b → Agent Live sequence
 
 **Subject:**
 ```
@@ -740,7 +740,7 @@ Email: info@veteranpcs.com
 ### L1: New Lead Alert to Lender
 
 **Trigger:** Customer submits form with this lender selected
-**Sent via:** Workflow 1 (lender assigned branch)
+**Sent via:** WF1 → Lender Lead Alert sequence
 
 **Subject:**
 ```
@@ -926,7 +926,7 @@ Email: info@veteranpcs.com
 ### L4: Lender Contract Ready for Signature
 
 **Trigger:** Lender Onboarding moves to "Contract Sent" stage
-**Sent via:** Workflow 5
+**Sent via:** WF4b → Lender Contract Ready sequence
 
 **Subject:**
 ```
@@ -992,7 +992,7 @@ Email: info@veteranpcs.com
 ### L5: Lender Onboarding Complete - Welcome to the Network!
 
 **Trigger:** Lender Onboarding moves to "Live on Website" stage
-**Sent via:** Workflow 5
+**Sent via:** WF4b → Lender Live sequence
 
 **Subject:**
 ```
@@ -1061,7 +1061,7 @@ Email: info@veteranpcs.com
 ### I1: Intern Application Welcome
 
 **Trigger:** Intern submits application
-**Sent via:** Intern Welcome Sequence (immediate)
+**Sent via:** WF5a → Intern Onboarding sequence (immediate)
 
 **Subject:**
 ```
@@ -1128,7 +1128,7 @@ Email: info@veteranpcs.com
 ### I2: Intern Application Follow-Up (7-Day Reminder)
 
 **Trigger:** 7 days after I1, if still in "New Application" stage
-**Sent via:** Intern Welcome Sequence (7-day delay)
+**Sent via:** Intern Onboarding sequence (7-day delay)
 
 **Subject:**
 ```
@@ -1250,17 +1250,13 @@ Email: info@veteranpcs.com
 
 ### Setting Up Email Templates in Attio
 
-1. **Workflow Emails:**
-   - Go to the workflow builder
-   - Add "Send email" action
-   - Copy/paste subject and body from this document
-   - Map merge fields to your Attio attributes
+All emails are sent via **Sequences** (workflows cannot send emails directly):
 
-2. **Sequence Emails:**
-   - Create sequence in Automations → Sequences
-   - Add email step with delay
-   - Copy/paste subject and body
-   - Map merge fields
+1. Create sequence in Automations → Sequences
+2. Add email step(s) with appropriate delays
+3. Copy/paste subject and body from this document
+4. Map merge fields to your Attio attributes
+5. Set up the corresponding workflow to enroll people in the sequence
 
 ### Merge Field Mapping
 

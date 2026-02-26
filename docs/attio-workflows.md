@@ -2,6 +2,8 @@
 
 This document contains complete specifications for all Attio Workflows that power email automation and Slack notifications.
 
+**Last Updated:** 2026-02-25 (reflects what was actually built in Attio)
+
 ---
 
 ## Critical Architecture Note
@@ -30,28 +32,64 @@ Workflows are responsible for:
 
 ---
 
-## Workflow Summary (5 Total)
+## Attio Platform Constraints (Confirmed)
 
-| # | Workflow | Trigger | Pipeline |
-|---|----------|---------|----------|
-| 1 | New Customer Deal Created | Entry created | `customer_deals` |
-| 2 | Customer Deal Stage Changed | Stage updated | `customer_deals` |
-| 3 | Agent Onboarding Lifecycle | Entry created OR stage changed | `agent_onboarding` |
-| 4 | Lender Onboarding Lifecycle | Entry created OR stage changed | `lender_onboarding` |
-| 5 | Intern Placement Lifecycle | Entry created OR stage changed | `intern_placements` |
+These limitations were discovered during implementation and shaped the final architecture:
 
-**Note:** We consolidated from 8 workflows to 5 by combining "Created" and "Stage Changed" triggers for onboarding pipelines.
+1. **No OR triggers** — A workflow can only have ONE trigger type. Cannot combine "Record added to list" and "List entry updated" in a single workflow. This is why the original 5 workflows became 8 (each onboarding pipeline needs separate Created and Stage Changed workflows).
+
+2. **Two trigger types for pipelines:**
+   - **"Record added to list"** — Fires when a new entry is created in a pipeline
+   - **"List entry updated"** — Fires when an existing entry is modified (use with Stage attribute filter to only fire on stage changes)
+
+3. **"Exit from sequence" block exists** — Confirmed available in the block picker (search "exit"). Allows workflows to remove people from active sequences.
+
+4. **Nested IF/ELSE for multiple conditions** — Attio doesn't have switch/case. For checking multiple stage values, nest an IF/ELSE inside the "Is false" branch of another IF/ELSE.
+
+5. **Grant access dialogs** — Appear when a workflow first references a new list or sequence. Must click "Yes" to grant access.
+
+6. **Auto-generated descriptions** — Attio generates workflow descriptions automatically when you publish.
+
+### Trigger → Sender/Recipient Mapping
+
+Each trigger type determines the available variable paths:
+
+| Trigger Type | Sender | Recipient |
+|-------------|--------|-----------|
+| Record added to list | **Added by** | **Created entry > Parent Record** |
+| List entry updated | **Updated by** | **Updated entry > Parent Record** |
 
 ---
 
-## Workflow 1: New Customer Deal Created
+## Workflow Summary (8 Total, All Live)
+
+| # | Workflow | Trigger | Pipeline | Key Actions |
+|---|----------|---------|----------|-------------|
+| WF1 | New Customer Deal Created | Record added to list | `customer_deals` | Enroll C1/C2/C3 + A1/L1, Slack |
+| WF2 | Customer Deal Stage Changed | List entry updated | `customer_deals` | Enroll C4/C5, Slack |
+| WF3a | Agent Onboarding Created | Record added to list | `agent_onboarding` | Enroll Agent Onboarding, Slack |
+| WF3b | Agent Onboarding Stage Changed | List entry updated | `agent_onboarding` | Exit Onboarding, Enroll Contract Ready/Live, Slack |
+| WF4a | Lender Onboarding Created | Record added to list | `lender_onboarding` | Enroll Lender Onboarding, Slack |
+| WF4b | Lender Onboarding Stage Changed | List entry updated | `lender_onboarding` | Exit Onboarding, Enroll Contract Ready/Live, Slack |
+| WF5a | Intern Placement Created | Record added to list | `intern_placements` | Enroll Intern Onboarding, Slack |
+| WF5b | Intern Placement Stage Changed | List entry updated | `intern_placements` | Exit Intern Onboarding |
+
+### Slack Channel Note
+
+All workflows currently post to **`#general`** — the only channel available in the VeteranPCS Slack workspace. The planned dedicated channels (`#new-leads`, `#deals`, `#agent-applications`, etc.) listed in the per-workflow specs below should be created when the team is ready, then the workflow Slack blocks updated.
+
+---
+
+## WF1: New Customer Deal Created
 
 ### Purpose
 Route new customer leads to appropriate email sequences and Slack notifications based on agent/lender assignment.
 
 ### Trigger
-- **Event:** Record added to `customer_deals` pipeline
-- **Object:** `customers` (parent record)
+- **Type:** Record added to list
+- **List:** `customer_deals`
+- **Recipient:** Created entry > Parent Record (customer)
+- **Sender:** Added by
 
 ### Logic Flow
 
@@ -87,37 +125,43 @@ Route new customer leads to appropriate email sequences and Slack notifications 
            ▼                ▼                ▼
     ┌─────────────┐  ┌─────────────┐  ┌──────────────┐
     │Slack:       │  │Slack:       │  │Slack:        │
-    │#new-leads   │  │#new-leads   │  │#leads-       │
-    └─────────────┘  └─────────────┘  │unassigned    │
-                                      └──────────────┘
+    │#general     │  │#general     │  │#general      │
+    └─────────────┘  └─────────────┘  └──────────────┘
 ```
 
 ### Attio Configuration
 
-**Step 1: Create Workflow**
-1. Go to **Automations** → **Workflows** → **Create workflow**
-2. Name: `New Customer Deal Created`
-3. Description: `Routes new customer leads to appropriate sequences and Slack`
+**Step 1: Trigger**
+1. Trigger: **Record added to list**
+2. List: `customer_deals`
 
-**Step 2: Set Trigger**
-1. Select trigger: **Record added to list**
-2. List: `customer_deals` (pipeline)
-3. Object: `customers`
+**Step 2: IF/ELSE — Check Agent Assignment**
+1. Condition: `deal.agent` **is not empty**
 
-**Step 3: Add Branch - Check Agent Assignment**
-1. Add action: **Branch (IF/ELSE)**
-2. Condition: `deal.agent` **is not empty**
+**Step 3a: Is true — Agent Assigned**
+1. **Enroll in sequence:** `Customer Welcome - Agent` (sends C2)
+   - Recipient: Created entry > Parent Record
+   - Sender: Added by
+2. **Enroll in sequence:** `Agent Lead Alert` (sends A1)
+   - Recipient: Created entry > Parent Record > Agent
+   - Sender: Added by
+3. **Slack:** Post to `#general`
 
-**Step 4a: Agent Branch Actions**
-1. **Add to sequence** - Enroll customer in "Customer Welcome - Agent" sequence
-   - Sequence: `Customer Welcome - Agent` (sends C2 immediately)
+**Step 3b: Is false — Nested IF/ELSE — Check Lender**
+1. Condition: `deal.lender` **is not empty**
 
-2. **Add to sequence** - Enroll agent in "Agent Lead Alert" sequence
-   - Sequence: `Agent Lead Alert` (sends A1 immediately)
+**Step 4a: Is true — Lender Assigned**
+1. **Enroll in sequence:** `Customer Welcome - Lender` (sends C3)
+2. **Enroll in sequence:** `Lender Lead Alert` (sends L1)
+3. **Slack:** Post to `#general`
 
-3. **Send Slack message**
-   - Channel: `#new-leads`
-   - Message:
+**Step 4b: Is false — Neither Assigned**
+1. **Enroll in sequence:** `Customer Welcome - Unassigned` (sends C1)
+2. **Slack:** Post to `#general`
+
+### Planned Slack Messages (for when dedicated channels exist)
+
+**Assigned lead (`#new-leads`):**
 ```
 :house: New Lead Assigned
 
@@ -132,28 +176,7 @@ Route new customer leads to appropriate email sequences and Slack notifications 
 <{{attio_record_url}}|View in Attio>
 ```
 
-**Step 4b: No Agent Branch - Check Lender Assignment**
-1. Add nested **Branch (IF/ELSE)**
-2. Condition: `deal.lender` **is not empty**
-
-**Step 5a: Lender Branch Actions**
-1. **Add to sequence** - Enroll customer in "Customer Welcome - Lender" sequence
-   - Sequence: `Customer Welcome - Lender` (sends C3 immediately)
-
-2. **Add to sequence** - Enroll lender in "Lender Lead Alert" sequence
-   - Sequence: `Lender Lead Alert` (sends L1 immediately)
-
-3. **Send Slack message**
-   - Channel: `#new-leads`
-   - Message: (same format as agent, but with lender info)
-
-**Step 5b: Neither Assigned Branch Actions**
-1. **Add to sequence** - Enroll customer in "Customer Welcome - Unassigned" sequence
-   - Sequence: `Customer Welcome - Unassigned` (sends C1 immediately)
-
-2. **Send Slack message**
-   - Channel: `#leads-unassigned`
-   - Message:
+**Unassigned lead (`#leads-unassigned`):**
 ```
 :warning: Unassigned Lead
 
@@ -170,20 +193,23 @@ No agent or lender selected. Beth, please assign!
 
 ---
 
-## Workflow 2: Customer Deal Stage Changed
+## WF2: Customer Deal Stage Changed
 
 ### Purpose
 Enroll customers in milestone sequences and send Slack notifications when deals progress.
 
 ### Trigger
-- **Event:** Stage changes on `customer_deals` pipeline
-- **Object:** `customers`
+- **Type:** List entry updated
+- **List:** `customer_deals`
+- **Attribute filter:** Stage
+- **Recipient:** Updated entry > Parent Record (customer)
+- **Sender:** Updated by
 
 ### Logic Flow
 
 ```
 ┌────────────────────────────────────────────────────────┐
-│          TRIGGER: Customer Deal Stage Changed          │
+│          TRIGGER: Customer Deal Stage Changed            │
 └────────────────────────┬───────────────────────────────┘
                          │
          ┌───────────────┼───────────────┬───────────────┐
@@ -196,40 +222,45 @@ Enroll customers in milestone sequences and send Slack notifications when deals 
    │"Customer    │ │"Customer    │ │             │      │
    │Under        │ │Closed"      │ │             │      │
    │Contract"    │ │sequence     │ │             │      │
-   │sequence     │ │             │ │             │      │
    └──────┬──────┘ └──────┬──────┘ └──────┬──────┘      │
           │               │               │              │
           ▼               ▼               ▼              │
    ┌─────────────┐ ┌─────────────┐ ┌─────────────┐      │
    │Slack:       │ │Slack:       │ │Slack:       │      │
-   │#deals       │ │#deals       │ │#deals       │      │
-   │(Under       │ │(Won!)       │ │(Lost)       │      │
-   │Contract)    │ │             │ │             │      │
+   │#general     │ │#general     │ │#general     │      │
    └─────────────┘ └─────────────┘ └─────────────┘      │
 ```
 
 ### Attio Configuration
 
-**Step 1: Create Workflow**
-1. Name: `Customer Deal Stage Changed`
-2. Description: `Enrolls customers in milestone sequences and sends Slack notifications`
-
-**Step 2: Set Trigger**
-1. Trigger: **Stage changed**
+**Step 1: Trigger**
+1. Trigger: **List entry updated**
 2. List: `customer_deals`
-3. Object: `customers`
+3. Attribute filter: **Stage**
 
-**Step 3: Branch - Under Contract**
-1. Add **Branch (IF/ELSE)**
-2. Condition: `Current stage` **equals** `Under Contract`
+**Step 2: IF/ELSE — Under Contract**
+1. Condition: **New value** is **Under Contract**
 
-**Step 3a: Under Contract Actions**
-1. **Add to sequence** - Enroll customer in "Customer Under Contract" sequence
-   - Sequence: `Customer Under Contract` (sends C4 immediately)
+**Step 2a: Is true**
+1. **Enroll in sequence:** `Customer Under Contract` (sends C4)
+2. **Slack:** Post to `#general`
 
-2. **Send Slack message**
-   - Channel: `#deals`
-   - Message:
+**Step 2b: Is false — Nested IF/ELSE — Paid Complete**
+1. Condition: **New value** is **Paid Complete**
+
+**Step 3a: Is true**
+1. **Enroll in sequence:** `Customer Closed` (sends C5)
+2. **Slack:** Post to `#general`
+
+**Step 3b: Is false — Nested IF/ELSE — Closed Lost**
+1. Condition: **New value** is **Closed Lost**
+
+**Step 4a: Is true**
+1. **Slack:** Post to `#general` (no sequence — no customer email for lost deals)
+
+### Planned Slack Messages (for when dedicated channels exist)
+
+**Under Contract (`#deals`):**
 ```
 :memo: Deal Under Contract
 
@@ -241,17 +272,7 @@ Enroll customers in milestone sequences and send Slack notifications when deals 
 <{{attio_record_url}}|View in Attio>
 ```
 
-**Step 4: Branch - Paid Complete**
-1. Add **Branch (IF/ELSE)** (parallel)
-2. Condition: `Current stage` **equals** `Paid Complete`
-
-**Step 4a: Paid Complete Actions**
-1. **Add to sequence** - Enroll customer in "Customer Closed" sequence
-   - Sequence: `Customer Closed` (sends C5 immediately)
-
-2. **Send Slack message**
-   - Channel: `#deals`
-   - Message:
+**Paid Complete (`#deals`):**
 ```
 :tada: Deal Closed - WON!
 
@@ -266,14 +287,7 @@ Congratulations! :champagne:
 <{{attio_record_url}}|View in Attio>
 ```
 
-**Step 5: Branch - Closed Lost**
-1. Add **Branch (IF/ELSE)** (parallel)
-2. Condition: `Current stage` **equals** `Closed Lost`
-
-**Step 5a: Closed Lost Actions** (Slack only, no customer email)
-1. **Send Slack message**
-   - Channel: `#deals`
-   - Message:
+**Closed Lost (`#deals`):**
 ```
 :x: Deal Closed - Lost
 
@@ -286,86 +300,25 @@ Congratulations! :champagne:
 
 ---
 
-## Workflow 3: Agent Onboarding Lifecycle
+## WF3a: Agent Onboarding Created
 
 ### Purpose
-Consolidated workflow that handles both new agent applications AND stage changes:
-- Welcome new agent applicants and enroll them in the onboarding sequence
-- Exit agents from onboarding sequence when they progress
-- Enroll in milestone sequences (A4, A5) at key stages
-- Celebrate when agents go live
+Welcome new agent applicants — enroll them in the onboarding sequence and send a Slack notification.
 
 ### Trigger
-- **Event:** Record added to list OR Stage changed on `agent_onboarding` pipeline
-- **Object:** `agents`
+- **Type:** Record added to list
+- **List:** `agent_onboarding`
+- **Recipient:** Created entry > Parent Record (agent)
+- **Sender:** Added by
 
-**Note:** Attio may require two separate workflows if it doesn't support OR triggers. If so, create "Agent Onboarding Created" and "Agent Onboarding Stage Changed" as separate workflows.
+### Actions (sequential)
 
-### Logic Flow
+1. **Enroll in sequence:** `Agent Onboarding` (sends A2 immediately, A3 after 7 days)
+   - Recipient: Created entry > Parent Record
+   - Sender: Added by
+2. **Slack:** Post `New Agent Application` to `#general`
 
-```
-┌────────────────────────────────────────────────────────────┐
-│     TRIGGER: Agent Onboarding Entry Created OR Changed     │
-└────────────────────────┬───────────────────────────────────┘
-                         │
-         ┌───────────────┴───────────────┐
-         │                               │
-    Entry Created?                  Stage Changed?
-         │                               │
-         ▼                               │
-┌─────────────────────┐     ┌───────────┴───────────┐
-│ Enroll in Sequence: │     │                       │
-│ "Agent Onboarding"  │     │                       │
-│ (sends A2 immediate,│  Left "New App"?    Stage = "Contract Sent"?
-│  A3 after 7 days)   │     │                       │
-└──────────┬──────────┘     ▼                       ▼
-           │         ┌─────────────┐         ┌─────────────┐
-           │         │ Exit from   │         │ Enroll in   │
-           │         │ "Agent      │         │ "Agent      │
-           │         │ Onboarding" │         │ Contract    │
-           │         │ sequence    │         │ Ready" seq  │
-           │         └─────────────┘         └─────────────┘
-           │                                        │
-           │                          Stage = "Live on Website"?
-           │                                        │
-           ▼                                        ▼
-┌─────────────────────┐                  ┌─────────────────────┐
-│ Slack:              │                  │ Enroll in "Agent    │
-│ #agent-applications │                  │ Live" sequence      │
-│ (New Application)   │                  └──────────┬──────────┘
-└─────────────────────┘                             │
-                                                    ▼
-                                         ┌─────────────────────┐
-                                         │ Slack:              │
-                                         │ #agent-applications │
-                                         │ (Celebration!)      │
-                                         └─────────────────────┘
-```
-
-### Attio Configuration
-
-**Step 1: Create Workflow**
-1. Name: `Agent Onboarding Lifecycle`
-2. Description: `Handles agent onboarding from application to going live`
-
-**Step 2: Set Trigger**
-1. Trigger: **Record added to list** (for entry created)
-   - List: `agent_onboarding`
-   - Object: `agents`
-
-**Note:** You may need a second workflow for stage changes. Check if Attio supports multiple triggers.
-
-**Step 3: Entry Created Branch**
-1. Add **Branch (IF/ELSE)**
-2. Condition: Trigger type = "Record added" (or skip if using separate workflows)
-
-**Step 3a: Entry Created Actions**
-1. **Add to sequence** - Enroll in "Agent Onboarding" sequence
-   - Sequence: `Agent Onboarding` (sends A2 immediately, A3 after 7 days)
-
-2. **Send Slack message**
-   - Channel: `#agent-applications`
-   - Message:
+### Planned Slack Message (for `#agent-applications`)
 ```
 :house: New Agent Application
 
@@ -378,74 +331,83 @@ Consolidated workflow that handles both new agent applications AND stage changes
 <{{attio_record_url}}|View in Attio>
 ```
 
-**Step 4: Branch - Stage Left "New Application"**
-1. Add **Branch (IF/ELSE)** (parallel)
-2. Condition: `Previous stage` **equals** `New Application` AND `Current stage` **does not equal** `New Application`
+---
 
-**Step 4a: Exit Sequence**
-1. **Remove from sequence** - Exit from "Agent Onboarding" sequence
-   - This prevents A3 from sending if agent has progressed
+## WF3b: Agent Onboarding Stage Changed
 
-**Step 5: Branch - Contract Sent**
-1. Add **Branch (IF/ELSE)** (parallel)
-2. Condition: `Current stage` **equals** `Contract Sent`
+### Purpose
+Enroll agents in milestone sequences when their onboarding stage progresses to key stages.
 
-**Step 5a: Enroll in Contract Ready Sequence**
-1. **Add to sequence** - Enroll in "Agent Contract Ready" sequence
-   - Sequence: `Agent Contract Ready` (sends A4 immediately)
+### Trigger
+- **Type:** List entry updated
+- **List:** `agent_onboarding`
+- **Attribute filter:** Stage
+- **Recipient:** Updated entry > Parent Record (agent)
+- **Sender:** Updated by
 
-**Step 6: Branch - Live on Website**
-1. Add **Branch (IF/ELSE)** (parallel)
-2. Condition: `Current stage` **equals** `Live on Website`
+### What Was Built
 
-**Step 6a: Live Actions**
-1. **Add to sequence** - Enroll in "Agent Live" sequence
-   - Sequence: `Agent Live` (sends A5 immediately)
-
-2. **Send Slack message**
-   - Channel: `#agent-applications`
-   - Message:
 ```
-:tada: Agent Now Live on Website!
-
-*Agent:* {{agent.first_name}} {{agent.last_name}}
-*Location:* {{agent.city}}, {{agent.state}}
-*Brokerage:* {{agent.brokerage_name}}
-
-They're ready to receive leads! :champagne:
-
-<{{attio_record_url}}|View in Attio>
+┌─────────────────────────────────────────────────────────┐
+│    TRIGGER: Agent Onboarding Stage Changed (any stage)   │
+└────────────────────────┬────────────────────────────────┘
+                         │
+              ┌──────────┴──────────┐
+              │ Exit from sequence: │
+              │ "Agent Onboarding"  │
+              └──────────┬──────────┘
+                         │
+              ┌──────────┴──────────┐
+              │ IF: Stage =         │
+              │ "Contract Sent"     │
+              └──────────┬──────────┘
+                    ┌────┴────┐
+                 True       False
+                    │         │
+                    ▼         ▼
+         ┌──────────────┐  ┌──────────────────┐
+         │ Enroll in    │  │ IF: Stage =      │
+         │ "Agent       │  │ "Live on Website"│
+         │ Contract     │  └────────┬─────────┘
+         │ Ready" seq   │     ┌─────┴─────┐
+         └──────────────┘   True        False
+                              │           │
+                              ▼           ▼
+                   ┌──────────────┐   (nothing)
+                   │ Enroll in    │
+                   │ "Agent Live" │
+                   │ sequence     │
+                   ├──────────────┤
+                   │ Slack:       │
+                   │ #general     │
+                   └──────────────┘
 ```
+
+### Exit from Agent Onboarding ✅
+
+The Exit block fires first on every stage change, removing the agent from the "Agent Onboarding" sequence before the IF/ELSE branching. This prevents the 7-day follow-up A3 from firing after the agent progresses past "New Application."
 
 ---
 
-## Workflow 4: Lender Onboarding Lifecycle
+## WF4a: Lender Onboarding Created
 
 ### Purpose
-Consolidated workflow for lender onboarding (mirrors Agent Onboarding Lifecycle).
+Welcome new lender applicants — enroll them in the onboarding sequence and send a Slack notification.
 
 ### Trigger
-- **Event:** Record added to list OR Stage changed on `lender_onboarding` pipeline
-- **Object:** `lenders`
+- **Type:** Record added to list
+- **List:** `lender_onboarding`
+- **Recipient:** Created entry > Parent Record (lender)
+- **Sender:** Added by
 
-### Attio Configuration
+### Actions (sequential)
 
-**Step 1: Create Workflow**
-1. Name: `Lender Onboarding Lifecycle`
-2. Description: `Handles lender onboarding from application to going live`
+1. **Enroll in sequence:** `Lender Onboarding` (sends L2 immediately, L3 after 7 days)
+   - Recipient: Created entry > Parent Record
+   - Sender: Added by
+2. **Slack:** Post `New Lender Application` to `#general`
 
-**Step 2: Set Trigger**
-1. Trigger: **Record added to list**
-2. List: `lender_onboarding`
-3. Object: `lenders`
-
-**Step 3: Entry Created Actions**
-1. **Add to sequence** - Enroll in "Lender Onboarding" sequence
-   - Sequence: `Lender Onboarding` (sends L2 immediately, L3 after 7 days)
-
-2. **Send Slack message**
-   - Channel: `#lender-applications`
-   - Message:
+### Planned Slack Message (for `#lender-applications`)
 ```
 :bank: New Lender Application
 
@@ -459,60 +421,85 @@ Consolidated workflow for lender onboarding (mirrors Agent Onboarding Lifecycle)
 <{{attio_record_url}}|View in Attio>
 ```
 
-**Step 4: Branch - Stage Left "New Application"**
-1. Condition: Previous stage = "New Application" AND Current stage ≠ "New Application"
-2. Action: **Remove from sequence** `Lender Onboarding`
+---
 
-**Step 5: Branch - Contract Sent**
-1. Condition: Current stage = "Contract Sent"
-2. Action: **Add to sequence** `Lender Contract Ready` (sends L4)
+## WF4b: Lender Onboarding Stage Changed
 
-**Step 6: Branch - Live on Website**
-1. Condition: Current stage = "Live on Website"
-2. Actions:
-   - **Add to sequence** `Lender Live` (sends L5)
-   - **Send Slack message** to `#lender-applications`:
+### Purpose
+Enroll lenders in milestone sequences when their onboarding stage progresses to key stages.
+
+### Trigger
+- **Type:** List entry updated
+- **List:** `lender_onboarding`
+- **Attribute filter:** Stage
+- **Recipient:** Updated entry > Parent Record (lender)
+- **Sender:** Updated by
+
+### What Was Built
+
 ```
-:tada: Lender Now Live on Website!
-
-*Lender:* {{lender.first_name}} {{lender.last_name}}
-*Company:* {{lender.company_name}}
-*States:* {{lender.states}}
-
-They're ready to receive leads! :champagne:
-
-<{{attio_record_url}}|View in Attio>
+┌─────────────────────────────────────────────────────────┐
+│   TRIGGER: Lender Onboarding Stage Changed (any stage)   │
+└────────────────────────┬────────────────────────────────┘
+                         │
+              ┌──────────┴──────────┐
+              │ Exit from sequence: │
+              │ "Lender Onboarding" │
+              └──────────┬──────────┘
+                         │
+              ┌──────────┴──────────┐
+              │ IF: Stage =         │
+              │ "Contract Sent"     │
+              └──────────┬──────────┘
+                    ┌────┴────┐
+                 True       False
+                    │         │
+                    ▼         ▼
+         ┌──────────────┐  ┌──────────────────┐
+         │ Enroll in    │  │ IF: Stage =      │
+         │ "Lender      │  │ "Live on Website"│
+         │ Contract     │  └────────┬─────────┘
+         │ Ready" seq   │     ┌─────┴─────┐
+         └──────────────┘   True        False
+                              │           │
+                              ▼           ▼
+                   ┌──────────────┐   (nothing)
+                   │ Enroll in    │
+                   │ "Lender Live"│
+                   │ sequence     │
+                   ├──────────────┤
+                   │ Slack:       │
+                   │ "Lender Live │
+                   │ on Website"  │
+                   │ to #general  │
+                   └──────────────┘
 ```
+
+### Exit from Lender Onboarding ✅
+
+The Exit block fires first on every stage change, removing the lender from the "Lender Onboarding" sequence before the IF/ELSE branching. This prevents the 7-day follow-up L3 from firing after the lender progresses past "New Application."
 
 ---
 
-## Workflow 5: Intern Placement Lifecycle
+## WF5a: Intern Placement Created
 
 ### Purpose
-Consolidated workflow for intern placements (simpler than agent/lender - no Contract/Live stages).
+Welcome new intern applicants — enroll them in the onboarding sequence and send a Slack notification.
 
 ### Trigger
-- **Event:** Record added to list OR Stage changed on `intern_placements` pipeline
-- **Object:** `interns`
+- **Type:** Record added to list
+- **List:** `intern_placements`
+- **Recipient:** Created entry > Parent Record (intern)
+- **Sender:** Added by
 
-### Attio Configuration
+### Actions (sequential)
 
-**Step 1: Create Workflow**
-1. Name: `Intern Placement Lifecycle`
-2. Description: `Handles intern applications and placement process`
+1. **Enroll in sequence:** `Intern Onboarding` (sends I1 immediately, I2 after 7 days)
+   - Recipient: Created entry > Parent Record
+   - Sender: Added by
+2. **Slack:** Post `New Intern Application` to `#general`
 
-**Step 2: Set Trigger**
-1. Trigger: **Record added to list**
-2. List: `intern_placements`
-3. Object: `interns`
-
-**Step 3: Entry Created Actions**
-1. **Add to sequence** - Enroll in "Intern Onboarding" sequence
-   - Sequence: `Intern Onboarding` (sends I1 immediately, I2 after 7 days)
-
-2. **Send Slack message**
-   - Channel: `#intern-applications`
-   - Message:
+### Planned Slack Message (for `#intern-applications`)
 ```
 :mortar_board: New Intern Application
 
@@ -527,47 +514,88 @@ Consolidated workflow for intern placements (simpler than agent/lender - no Cont
 <{{attio_record_url}}|View in Attio>
 ```
 
-**Step 4: Branch - Stage Left "New Application"**
-1. Condition: Previous stage = "New Application" AND Current stage ≠ "New Application"
-2. Action: **Remove from sequence** `Intern Onboarding`
+---
 
-**Future Enhancement:** Add sequences for "Matched" and "Placement Complete" stages as needed.
+## WF5b: Intern Placement Stage Changed
+
+### Purpose
+Exit interns from the onboarding sequence when their placement stage changes (preventing the 7-day follow-up from firing after progression).
+
+### Trigger
+- **Type:** List entry updated
+- **List:** `intern_placements`
+- **Attribute filter:** Stage
+- **Recipient:** Updated entry > Parent Record (intern)
+- **Sender:** Updated by
+
+### What Was Built
+
+```
+┌─────────────────────────────────────────────────────────┐
+│   TRIGGER: Intern Placement Stage Changed (any stage)    │
+└────────────────────────┬────────────────────────────────┘
+                         │
+                         ▼
+              ┌──────────────────────┐
+              │ Exit from sequence:  │
+              │ "Intern Onboarding"  │
+              └──────────────────────┘
+```
+
+This is the simplest workflow — any stage change exits the intern from the onboarding sequence. No branching needed since interns don't have Contract/Live milestone stages.
+
+**Future Enhancement:** Add IF/ELSE branches to enroll in "Matched" or "Placement Complete" sequences if/when those are created.
 
 ---
 
 ## Slack Channel Summary
 
-| Channel | Workflow | Notification Type |
-|---------|----------|-------------------|
-| `#new-leads` | WF1 | New assigned leads |
+### Current State (all using `#general`)
+
+| Workflow | Message |
+|----------|---------|
+| WF1 | New lead notifications |
+| WF2 | Deal stage change notifications |
+| WF3a | `New Agent Application` |
+| WF3b | `Agent Live on Website` (only on Live stage) |
+| WF4a | `New Lender Application` |
+| WF4b | `Lender Live on Website` (only on Live stage) |
+| WF5a | `New Intern Application` |
+| WF5b | (no Slack message) |
+
+### Planned Channels (create when ready)
+
+| Channel | Workflows | Notification Type |
+|---------|-----------|-------------------|
+| `#new-leads` | WF1 | Assigned leads |
 | `#leads-unassigned` | WF1 | Unassigned leads (Beth monitors) |
-| `#agent-applications` | WF3 | New apps, contract sent, going live |
-| `#lender-applications` | WF4 | New apps, contract sent, going live |
-| `#intern-applications` | WF5 | New applications |
+| `#agent-applications` | WF3a, WF3b | New apps, going live |
+| `#lender-applications` | WF4a, WF4b | New apps, going live |
+| `#intern-applications` | WF5a | New applications |
 | `#deals` | WF2 | Under contract, won, lost |
 
 ---
 
 ## Sequence Reference
 
-Workflows enroll people in these sequences (see `attio-sequences.md` for full details):
+Workflows enroll/exit people from these sequences (see `attio-sequences.md` for full details):
 
-| Sequence | Emails | Enrolled By |
-|----------|--------|-------------|
-| Customer Welcome - Unassigned | C1 | WF1 |
-| Customer Welcome - Agent | C2 | WF1 |
-| Customer Welcome - Lender | C3 | WF1 |
-| Customer Under Contract | C4 | WF2 |
-| Customer Closed | C5 | WF2 |
-| Agent Lead Alert | A1 | WF1 |
-| Agent Onboarding | A2 → A3 | WF3 |
-| Agent Contract Ready | A4 | WF3 |
-| Agent Live | A5 | WF3 |
-| Lender Lead Alert | L1 | WF1 |
-| Lender Onboarding | L2 → L3 | WF4 |
-| Lender Contract Ready | L4 | WF4 |
-| Lender Live | L5 | WF4 |
-| Intern Onboarding | I1 → I2 | WF5 |
+| Sequence | Emails | Enrolled By | Exited By |
+|----------|--------|-------------|-----------|
+| Customer Welcome - Unassigned | C1 | WF1 | — |
+| Customer Welcome - Agent | C2 | WF1 | — |
+| Customer Welcome - Lender | C3 | WF1 | — |
+| Customer Under Contract | C4 | WF2 | — |
+| Customer Closed | C5 | WF2 | — |
+| Agent Lead Alert | A1 | WF1 | — |
+| Agent Onboarding | A2 → A3 | WF3a | WF3b ✅ |
+| Agent Contract Ready | A4 | WF3b | — |
+| Agent Live | A5 | WF3b | — |
+| Lender Lead Alert | L1 | WF1 | — |
+| Lender Onboarding | L2 → L3 | WF4a | WF4b ✅ |
+| Lender Contract Ready | L4 | WF4b | — |
+| Lender Live | L5 | WF4b | — |
+| Intern Onboarding | I1 → I2 | WF5a | WF5b ✅ |
 
 ---
 
@@ -582,39 +610,48 @@ Before implementing workflows:
 
 ---
 
-## Credit Optimization
-
-Attio charges per workflow run. To minimize costs:
-
-1. **Consolidate branches** - Use one workflow with branches vs. multiple workflows
-2. **Use native Slack integration** - Cheaper than HTTP webhooks
-3. **Exit sequences early** - Don't send unnecessary follow-ups
-4. **Avoid redundant workflows** - One workflow per trigger type
-
----
-
 ## Testing Checklist
 
 Before going live, test each workflow:
 
-- [ ] **WF1:** Create deal with agent → verify customer enrolled in "Customer Welcome - Agent" sequence, agent enrolled in "Agent Lead Alert" sequence, Slack #new-leads
-- [ ] **WF1:** Create deal with lender → verify customer enrolled in "Customer Welcome - Lender" sequence, lender enrolled in "Lender Lead Alert" sequence, Slack #new-leads
-- [ ] **WF1:** Create deal with neither → verify customer enrolled in "Customer Welcome - Unassigned" sequence, Slack #leads-unassigned
-- [ ] **WF2:** Move deal to Under Contract → verify customer enrolled in "Customer Under Contract" sequence, Slack
-- [ ] **WF2:** Move deal to Paid Complete → verify customer enrolled in "Customer Closed" sequence, Slack
-- [ ] **WF2:** Move deal to Closed Lost → verify Slack only (no sequence enrollment)
-- [ ] **WF3:** Create agent onboarding → verify agent enrolled in "Agent Onboarding" sequence, Slack
-- [ ] **WF3:** Move agent from New Application to Interviewing → verify agent exited from "Agent Onboarding" sequence
-- [ ] **WF3:** Move agent to Contract Sent → verify agent enrolled in "Agent Contract Ready" sequence
-- [ ] **WF3:** Move agent to Live on Website → verify agent enrolled in "Agent Live" sequence, Slack celebration
-- [ ] **WF4:** Same tests for lenders
-- [ ] **WF5:** Same tests for interns
+**WF1 — New Customer Deal Created:**
+- [ ] Create deal with agent → verify customer enrolled in "Customer Welcome - Agent", agent enrolled in "Agent Lead Alert", Slack #general
+- [ ] Create deal with lender → verify customer enrolled in "Customer Welcome - Lender", lender enrolled in "Lender Lead Alert", Slack #general
+- [ ] Create deal with neither → verify customer enrolled in "Customer Welcome - Unassigned", Slack #general
+
+**WF2 — Customer Deal Stage Changed:**
+- [ ] Move deal to Under Contract → verify enrolled in "Customer Under Contract", Slack
+- [ ] Move deal to Paid Complete → verify enrolled in "Customer Closed", Slack
+- [ ] Move deal to Closed Lost → verify Slack only (no sequence enrollment)
+
+**WF3a — Agent Onboarding Created:**
+- [ ] Create agent onboarding entry → verify enrolled in "Agent Onboarding", Slack "New Agent Application"
+
+**WF3b — Agent Onboarding Stage Changed:**
+- [ ] Move agent to Contract Sent → verify enrolled in "Agent Contract Ready"
+- [ ] Move agent to Live on Website → verify enrolled in "Agent Live", Slack
+- [ ] Move agent from New Application to Interviewing within 7 days → verify A3 is NOT sent (Exit block prevents this)
+
+**WF4a — Lender Onboarding Created:**
+- [ ] Create lender onboarding entry → verify enrolled in "Lender Onboarding", Slack "New Lender Application"
+
+**WF4b — Lender Onboarding Stage Changed:**
+- [ ] Move lender to Contract Sent → verify enrolled in "Lender Contract Ready"
+- [ ] Move lender to Live on Website → verify enrolled in "Lender Live", Slack "Lender Live on Website"
+- [ ] Move lender from New Application within 7 days → verify L3 is NOT sent (Exit block prevents this)
+
+**WF5a — Intern Placement Created:**
+- [ ] Create intern placement entry → verify enrolled in "Intern Onboarding", Slack "New Intern Application"
+
+**WF5b — Intern Placement Stage Changed:**
+- [ ] Move intern from New Application to Under Review → verify exited from "Intern Onboarding", I2 NOT sent ✅
 
 ---
 
 ## Maintenance Notes
 
 - **Stage name changes:** If you rename pipeline stages in Attio, update workflow conditions
-- **New stages:** Add branches for any new milestone stages
+- **New stages:** Add IF/ELSE branches for any new milestone stages
 - **Sequence changes:** Update sequence names in workflow actions if renamed
-- **Slack channel changes:** Update channel selections in workflow actions
+- **Slack channel migration:** When dedicated channels are created, update channel selections in each workflow's Slack block
+- **Exit from sequence:** WF3b, WF4b, and WF5b all exit from onboarding sequences on stage change ✅

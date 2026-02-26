@@ -15,6 +15,59 @@
 
 ## Recent Sessions
 
+### 2026-02-25 - Fix WF3b & WF4b Exit-from-Sequence Blocks
+
+**Status:** ✅ Complete
+
+**Completed:**
+- Fixed WF3b (Agent Onboarding Stage Changed): Added "Exit from sequence" block between trigger and IF/ELSE to exit agents from Agent Onboarding sequence on any stage change
+- Fixed WF4b (Lender Onboarding Stage Changed): Same pattern — added "Exit from sequence" block for Lender Onboarding sequence
+- Both workflows re-published and Live
+- Updated `docs/attio-workflows.md`: removed Known Gaps section, replaced all ⚠️ warnings with ✅, updated flow diagrams to show Exit blocks, added Exit action to WF3b/WF4b summary rows
+- Updated `docs/attio-sequences.md`: replaced all 7 ⚠️ warnings with ✅, standardized workflow naming (Workflow N → WFN)
+- Updated `docs/attio-email-templates.md`: fixed 9 stale "Sent via" references from original 5-workflow plan to current 8-workflow naming, fixed incorrect "Send email" in implementation notes, standardized sequence names
+- Full cross-reference review: all 8 workflows, 14 sequences, and 18 templates verified consistent
+
+**Key Technique (Attio workflow editor):**
+- To insert a block between two connected blocks: Select upstream block → click "Disconnect" in right panel → click green "+" to add new block → drag from new block's output connector to reconnect downstream block
+
+**Files Modified:**
+- `docs/attio-workflows.md`
+- `docs/attio-sequences.md`
+- `docs/attio-email-templates.md`
+
+---
+
+### 2026-02-25 - Attio Workflows Complete (8/8 Live)
+
+**Status:** ✅ Complete
+
+**Completed:**
+- Published WF4b: Lender Onboarding Stage Changed (IF Contract Sent → Enroll Lender Contract Ready; ELSE IF Live on Website → Enroll Lender Live + Slack)
+- Published WF5a: Intern Placement Created (Enroll in Intern Onboarding + Slack "New Intern Application")
+- Published WF5b: Intern Placement Stage Changed (Exit from Intern Onboarding sequence on any stage change)
+- All 8 Attio workflows now Live
+
+**Final Workflow Inventory (8 Live):**
+| # | Workflow | Trigger | Key Actions |
+|---|---------|---------|-------------|
+| WF1 | New Customer Deal Created | Record added to customer_deals | Enroll C1/C2/C3 + A1/L1, Slack |
+| WF2 | Customer Deal Stage Changed | List entry updated on customer_deals | Enroll C4/C5, Slack |
+| WF3a | Agent Onboarding Created | Record added to agent_onboarding | Enroll Agent Onboarding, Slack |
+| WF3b | Agent Onboarding Stage Changed | List entry updated on agent_onboarding | Enroll Contract Ready/Live, Slack |
+| WF4a | Lender Onboarding Created | Record added to lender_onboarding | Enroll Lender Onboarding, Slack |
+| WF4b | Lender Onboarding Stage Changed | List entry updated on lender_onboarding | Enroll Contract Ready/Live, Slack |
+| WF5a | Intern Placement Created | Record added to intern_placements | Enroll Intern Onboarding, Slack |
+| WF5b | Intern Placement Stage Changed | List entry updated on intern_placements | Exit Intern Onboarding |
+
+**Key Findings:**
+- Attio DOES have an "Exit from sequence" block (plan was uncertain about this)
+- All trigger/sender/recipient patterns confirmed: "Record added to list" → Added by / Created entry > Parent Record; "List entry updated" → Updated by / Updated entry > Parent Record
+- Grant access dialogs appear for each new list/sequence used by a workflow
+- Attio auto-generates workflow descriptions on publish
+
+---
+
 ### 2026-01-29 - Documentation Cleanup
 
 **Status:** ✅ Complete

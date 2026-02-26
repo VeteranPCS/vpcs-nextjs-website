@@ -381,17 +381,20 @@ Agent becomes "Active on Website" when ALL true:
 
 **Critical:** Attio Workflows **CANNOT** send emails directly. Workflows enroll/exit people from **Sequences**, which send emails via synced Gmail/Microsoft accounts.
 
-### Workflows (5 total)
+### Workflows (8 total, all Live)
 
-Workflows handle business logic and control sequence enrollment:
+Workflows handle business logic and control sequence enrollment. Attio doesn't support OR triggers, so each onboarding pipeline has separate "Created" and "Stage Changed" workflows:
 
 | # | Workflow | Trigger | Actions |
 |---|----------|---------|---------|
-| 1 | New Customer Deal Created | Deal created | Enroll in C1/C2/C3 + A1/L1 sequences, Slack |
-| 2 | Customer Deal Stage Changed | Stage updated | Enroll in C4/C5 sequences, Slack |
-| 3 | Agent Onboarding Lifecycle | Entry created OR stage changed | Enroll/exit sequences, Slack |
-| 4 | Lender Onboarding Lifecycle | Entry created OR stage changed | Enroll/exit sequences, Slack |
-| 5 | Intern Placement Lifecycle | Entry created OR stage changed | Enroll/exit sequences, Slack |
+| WF1 | New Customer Deal Created | Record added to list | Enroll in C1/C2/C3 + A1/L1 sequences, Slack |
+| WF2 | Customer Deal Stage Changed | List entry updated | Enroll in C4/C5 sequences, Slack |
+| WF3a | Agent Onboarding Created | Record added to list | Enroll Agent Onboarding, Slack |
+| WF3b | Agent Onboarding Stage Changed | List entry updated | Enroll Contract Ready/Live, Slack |
+| WF4a | Lender Onboarding Created | Record added to list | Enroll Lender Onboarding, Slack |
+| WF4b | Lender Onboarding Stage Changed | List entry updated | Enroll Contract Ready/Live, Slack |
+| WF5a | Intern Placement Created | Record added to list | Enroll Intern Onboarding, Slack |
+| WF5b | Intern Placement Stage Changed | List entry updated | Exit Intern Onboarding |
 
 ### Sequences (14 total)
 
@@ -426,7 +429,7 @@ Sequences are the email sending mechanism:
 | `#deals` | Under contract, won, lost |
 
 **Full Documentation:**
-- `docs/attio-workflows.md` - 5 workflows with sequence enrollment logic
+- `docs/attio-workflows.md` - 8 workflows (all Live) with sequence enrollment logic
 - `docs/attio-sequences.md` - 14 sequences with email content
 - `docs/attio-email-templates.md` - 18 email templates ready to copy/paste
 
@@ -488,7 +491,7 @@ npm run security:ci       # Fails if findings (for CI)
 ## Documentation
 
 **Email Automation** in `docs/`:
-- **attio-workflows.md** - 5 workflows with sequence enrollment logic
+- **attio-workflows.md** - 8 workflows (all Live) with sequence enrollment logic
 - **attio-sequences.md** - 14 sequences (the actual email senders)
 - **attio-email-templates.md** - 18 email templates ready to copy/paste
 

@@ -38,16 +38,16 @@ This document contains complete specifications for all Attio Sequences (email ca
 | 5 | Customer Closed | 1 (immediate) | Reply | WF2 |
 | **Agent Sequences** |||||
 | 6 | Agent Lead Alert | 1 (immediate) | Reply | WF1 |
-| 7 | Agent Onboarding | 2 (immediate + 7 days) | Reply + WF3 exit | WF3 |
-| 8 | Agent Contract Ready | 1 (immediate) | Reply | WF3 |
-| 9 | Agent Live | 1 (immediate) | Reply | WF3 |
+| 7 | Agent Onboarding | 2 (immediate + 7 days) | Reply + WF3b exit ✅ | WF3a |
+| 8 | Agent Contract Ready | 1 (immediate) | Reply | WF3b |
+| 9 | Agent Live | 1 (immediate) | Reply | WF3b |
 | **Lender Sequences** |||||
 | 10 | Lender Lead Alert | 1 (immediate) | Reply | WF1 |
-| 11 | Lender Onboarding | 2 (immediate + 7 days) | Reply + WF4 exit | WF4 |
-| 12 | Lender Contract Ready | 1 (immediate) | Reply | WF4 |
-| 13 | Lender Live | 1 (immediate) | Reply | WF4 |
+| 11 | Lender Onboarding | 2 (immediate + 7 days) | Reply + WF4b exit ✅ | WF4a |
+| 12 | Lender Contract Ready | 1 (immediate) | Reply | WF4b |
+| 13 | Lender Live | 1 (immediate) | Reply | WF4b |
 | **Intern Sequences** |||||
-| 14 | Intern Onboarding | 2 (immediate + 7 days) | Reply + WF5 exit | WF5 |
+| 14 | Intern Onboarding | 2 (immediate + 7 days) | Reply + WF5b exit ✅ | WF5a |
 
 ---
 
@@ -57,7 +57,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Welcome customers who submitted a contact form without selecting a specific agent or lender.
 
-**Enrollment:** Workflow 1 (when neither agent nor lender is assigned)
+**Enrollment:** WF1 (when neither agent nor lender is assigned)
 
 **Steps:**
 
@@ -77,7 +77,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Welcome customers who selected a specific agent, introducing them to their assigned agent.
 
-**Enrollment:** Workflow 1 (when agent is assigned)
+**Enrollment:** WF1 (when agent is assigned)
 
 **Steps:**
 
@@ -97,7 +97,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Welcome customers who selected a specific lender, introducing them to their assigned lender.
 
-**Enrollment:** Workflow 1 (when lender is assigned)
+**Enrollment:** WF1 (when lender is assigned)
 
 **Steps:**
 
@@ -117,7 +117,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Congratulate customers when their deal goes under contract.
 
-**Enrollment:** Workflow 2 (when deal stage changes to "Under Contract")
+**Enrollment:** WF2 (when deal stage changes to "Under Contract")
 
 **Steps:**
 
@@ -137,7 +137,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Celebrate with customers when their deal closes, share bonus details, and request reviews.
 
-**Enrollment:** Workflow 2 (when deal stage changes to "Paid Complete")
+**Enrollment:** WF2 (when deal stage changes to "Paid Complete")
 
 **Steps:**
 
@@ -159,7 +159,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Notify agents immediately when they receive a new lead from VeteranPCS.
 
-**Enrollment:** Workflow 1 (when deal is assigned to an agent)
+**Enrollment:** WF1 (when deal is assigned to an agent)
 
 **Steps:**
 
@@ -179,8 +179,8 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Welcome new agent applicants and follow up if no response after 7 days.
 
-**Enrollment:** Workflow 3 (when agent onboarding entry is created)
-**Exit:** Workflow 3 (when stage leaves "New Application")
+**Enrollment:** WF3a (when agent onboarding entry is created)
+**Exit:** WF3b exits agent from this sequence on any stage change ✅
 
 **Steps:**
 
@@ -228,7 +228,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 **Attio Configuration:**
 1. Name: `Agent Onboarding`
 2. Object: `agents`
-3. Exit conditions: Reply received, OR exited by Workflow 3
+3. Exit conditions: Reply received, OR exited by WF3b ✅
 4. Step 1: Immediate, send A2 template
 5. Step 2: 7 days after Step 1, send A3 template
 
@@ -238,7 +238,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Notify agents that their partnership agreement is ready to sign.
 
-**Enrollment:** Workflow 3 (when stage changes to "Contract Sent")
+**Enrollment:** WF3b (when stage changes to "Contract Sent")
 
 **Steps:**
 
@@ -258,7 +258,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Welcome agents to the network when they go live on the website.
 
-**Enrollment:** Workflow 3 (when stage changes to "Live on Website")
+**Enrollment:** WF3b (when stage changes to "Live on Website")
 
 **Steps:**
 
@@ -280,7 +280,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Notify lenders immediately when they receive a new lead from VeteranPCS.
 
-**Enrollment:** Workflow 1 (when deal is assigned to a lender)
+**Enrollment:** WF1 (when deal is assigned to a lender)
 
 **Steps:**
 
@@ -300,8 +300,8 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Welcome new lender applicants and follow up if no response after 7 days.
 
-**Enrollment:** Workflow 4 (when lender onboarding entry is created)
-**Exit:** Workflow 4 (when stage leaves "New Application")
+**Enrollment:** WF4a (when lender onboarding entry is created)
+**Exit:** WF4b exits lender from this sequence on any stage change ✅
 
 **Steps:**
 
@@ -313,7 +313,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 **Attio Configuration:**
 1. Name: `Lender Onboarding`
 2. Object: `lenders`
-3. Exit conditions: Reply received, OR exited by Workflow 4
+3. Exit conditions: Reply received, OR exited by WF4b ✅
 4. Step 1: Immediate, send L2 template
 5. Step 2: 7 days after Step 1, send L3 template
 
@@ -323,7 +323,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Notify lenders that their partnership agreement is ready to sign.
 
-**Enrollment:** Workflow 4 (when stage changes to "Contract Sent")
+**Enrollment:** WF4b (when stage changes to "Contract Sent")
 
 **Steps:**
 
@@ -343,7 +343,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Welcome lenders to the network when they go live on the website.
 
-**Enrollment:** Workflow 4 (when stage changes to "Live on Website")
+**Enrollment:** WF4b (when stage changes to "Live on Website")
 
 **Steps:**
 
@@ -365,8 +365,8 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Purpose:** Welcome new intern applicants and follow up if no response after 7 days.
 
-**Enrollment:** Workflow 5 (when intern placement entry is created)
-**Exit:** Workflow 5 (when stage leaves "New Application")
+**Enrollment:** WF5a (when intern placement entry is created)
+**Exit:** WF5b (exits on any stage change) ✅
 
 **Steps:**
 
@@ -378,7 +378,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 **Attio Configuration:**
 1. Name: `Intern Onboarding`
 2. Object: `interns`
-3. Exit conditions: Reply received, OR exited by Workflow 5
+3. Exit conditions: Reply received, OR exited by WF5b ✅
 4. Step 1: Immediate, send I1 template
 5. Step 2: 7 days after Step 1, send I2 template
 
@@ -394,15 +394,13 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 ```
 Day 0: Agent applies
-  → WF3 enrolls agent in "Agent Onboarding" sequence
+  → WF3a enrolls agent in "Agent Onboarding" sequence
   → Sequence sends A2 (immediate)
   → 7-day timer starts
 
 Day 3: Admin interviews agent, moves to "Interviewing"
-  → WF3 triggers (stage changed)
-  → WF3 condition: "stage left New Application" = TRUE
-  → WF3 action: Remove from "Agent Onboarding" sequence
-  → Agent exits sequence before Day 7
+  → WF3b triggers (stage changed)
+  → WF3b exits agent from "Agent Onboarding" sequence ✅
 
 Day 7: Timer would fire, but agent is no longer enrolled
   → A3 is NOT sent (correct behavior!)
@@ -520,10 +518,13 @@ Attio sequences = **1 credit per enrollment** (regardless of number of steps).
 |--------|---------------------|-------------------|
 | Sequences | 4 | 14 |
 | Workflows "send emails" | 8 workflows sending directly | 0 (impossible) |
-| Workflows enroll in sequences | Some | All 5 workflows |
+| Workflows enroll in sequences | Some | All 8 workflows |
+| Total workflows | 5 (consolidated) | 8 (Attio doesn't support OR triggers) |
 | Email templates | 18 | 18 (same) |
 
 **Why more sequences?** Every email must be in a sequence since workflows cannot send emails directly. Each "immediate" email needs its own sequence.
+
+**Why 8 workflows instead of 5?** Attio doesn't support OR triggers. Each onboarding pipeline needs separate "Created" and "Stage Changed" workflows, so WF3/4/5 each became two workflows (a/b).
 
 ---
 
