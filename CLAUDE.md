@@ -13,14 +13,20 @@ This project is the VeteranPCS website, powered by Attio CRM.
 The Salesforce → Attio migration is complete. All data is now in Attio, and the website reads/writes to Attio.
 
 **Recently Completed:**
-- ✅ Email automation documentation (5 workflows, 14 sequences, 18 templates)
-- ✅ Slack notification specifications
-- ✅ Revised architecture: Workflows enroll in Sequences (workflows cannot send emails directly)
+- ✅ All 8 Attio Workflows built and Live (including exit-from-sequence blocks)
+- ✅ Email automation documentation (8 workflows, 14 sequences, 18 templates)
+- ✅ Full cross-reference review of all workflow/sequence/template docs
 
-**Next Steps (Enhancement Phase):**
+**Next Steps:**
+1. **Verify email sync** — Gmail or Microsoft account must be synced in Attio for sequences to send emails
+2. **Create 14 sequences** in Attio UI (see `docs/attio-sequences.md`)
+3. **Paste 18 email templates** into sequences (see `docs/attio-email-templates.md`)
+4. **Test workflows end-to-end** using checklists in `docs/attio-workflows.md` and `docs/attio-sequences.md`
+5. **Create dedicated Slack channels** — workflows currently post to `#general` (see planned channels in `docs/attio-workflows.md`)
+
+**Enhancement Phase (after automation is tested):**
 1. Multi-step contact form with Buying/Selling/Both selection
 2. Area-based agent routing for unselected agents
-3. Configure Attio Workflows in UI (see `docs/attio-workflows.md`)
 
 ---
 

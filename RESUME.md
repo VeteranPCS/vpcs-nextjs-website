@@ -1,9 +1,9 @@
 # VeteranPCS - Quick Resume Guide
 
-**Last Updated:** 2026-01-29
+**Last Updated:** 2026-02-25
 **Project:** VeteranPCS CRM (Attio-powered)
-**Branch:** attio-migration (ready for merge to main)
-**Status:** MIGRATION COMPLETE - Enhancement Phase
+**Branch:** attio-migration
+**Status:** MIGRATION COMPLETE — Automation setup in progress
 
 ---
 
@@ -13,13 +13,20 @@ The Salesforce → Attio migration is **complete**. The website now:
 - Reads all agent/lender data from Attio
 - Creates customers and deals in Attio via contact forms
 - Uses Attio UUIDs for agent/lender references in URLs
+- All 8 Attio Workflows are **built and Live** in the Attio UI
 
 ### What's Next
 
-**Enhancement Phase (Optional):**
+**Automation Setup (in order):**
+1. Verify email sync — Gmail or Microsoft account synced in Attio
+2. Create 14 sequences in Attio UI → `docs/attio-sequences.md`
+3. Paste 18 email templates into sequences → `docs/attio-email-templates.md`
+4. Test workflows end-to-end → checklists in `docs/attio-workflows.md` and `docs/attio-sequences.md`
+5. Create dedicated Slack channels (currently all posting to #general)
+
+**Enhancement Phase (after automation is tested):**
 1. Multi-step contact form with Buying/Selling/Both selection
 2. Area-based agent routing for unselected agents
-3. Configure Attio Workflows for stale lead/deal automation
 
 ---
 

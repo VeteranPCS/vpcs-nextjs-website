@@ -7,9 +7,17 @@
 
 ## Current Status
 
-**Phase:** MIGRATION COMPLETE ✅
-**Next:** Enhancement Phase (multi-step contact form)
-**Blocked On:** None
+**Phase:** MIGRATION COMPLETE ✅ — Automation setup in progress
+**Next:** Create sequences, paste email templates, test end-to-end
+**Blocked On:** Email sync (Gmail/Microsoft must be synced in Attio for sequences to send)
+
+### Next Steps (in order)
+1. **Verify email sync** — Gmail or Microsoft account synced in Attio
+2. **Create 14 sequences** in Attio UI → `docs/attio-sequences.md`
+3. **Paste 18 email templates** into sequences → `docs/attio-email-templates.md`
+4. **Test workflows end-to-end** → checklists in `docs/attio-workflows.md` lines 605-639 and `docs/attio-sequences.md` lines 498-511
+5. **Create dedicated Slack channels** → planned channels in `docs/attio-workflows.md` lines 558-567
+6. **Enhancement Phase:** Multi-step contact form, area-based agent routing
 
 ---
 
