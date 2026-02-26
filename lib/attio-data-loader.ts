@@ -44,6 +44,7 @@ export interface AttioAgent {
   military_service: string;
   brokerage_name: string;
   city: string;
+  headshot_url: string;
   active_on_website: boolean;
 }
 
@@ -63,6 +64,7 @@ export interface AttioLender {
   city: string;
   individual_nmls: string;
   company_nmls: string;
+  headshot_url: string;
   active_on_website: boolean;
 }
 
@@ -180,6 +182,7 @@ async function fetchAllData(): Promise<AttioDataCache> {
       military_service: a.military_service || '',
       brokerage_name: a.brokerage_name || '',
       city: a.city || '',
+      headshot_url: a.headshot_url || '',
       active_on_website: a.active_on_website === true,
     };
     agents[a.id] = agent;
@@ -205,6 +208,7 @@ async function fetchAllData(): Promise<AttioDataCache> {
       brokerage_name: l.brokerage_name || '',
       company_name: l.company_name || '',
       city: l.city || '',
+      headshot_url: l.headshot_url || '',
       individual_nmls: l.individual_nmls || '',
       company_nmls: l.company_nmls || '',
       active_on_website: l.active_on_website === true,

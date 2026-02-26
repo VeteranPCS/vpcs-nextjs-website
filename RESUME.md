@@ -1,6 +1,6 @@
 # VeteranPCS - Quick Resume Guide
 
-**Last Updated:** 2026-02-25
+**Last Updated:** 2026-02-26
 **Project:** VeteranPCS CRM (Attio-powered)
 **Branch:** attio-migration
 **Status:** MIGRATION COMPLETE — Automation setup in progress
@@ -21,8 +21,10 @@ The Salesforce → Attio migration is **complete**. The website now:
 1. Verify email sync — Gmail or Microsoft account synced in Attio
 2. Create 14 sequences in Attio UI → `docs/attio-sequences.md`
 3. Paste 18 email templates into sequences → `docs/attio-email-templates.md`
-4. Test workflows end-to-end → checklists in `docs/attio-workflows.md` and `docs/attio-sequences.md`
-5. Create dedicated Slack channels (currently all posting to #general)
+4. Run `npx tsx scripts/test-setup.ts` to create test records in Colorado
+5. Test workflows end-to-end → `docs/e2e-test-plan.md`
+6. Run `npx tsx scripts/test-teardown.ts` to clean up test records
+7. Create dedicated Slack channels (currently all posting to #general)
 
 **Enhancement Phase (after automation is tested):**
 1. Multi-step contact form with Buying/Selling/Both selection
@@ -40,6 +42,9 @@ The Salesforce → Attio migration is **complete**. The website now:
 | `lib/attio-data-loader.ts` | Cached data loader for website |
 | `services/stateService.tsx` | Fetches agents/lenders for state pages |
 | `services/salesForcePostFormsService.tsx` | Contact form submissions (creates Attio records) |
+| `docs/e2e-test-plan.md` | Manual test checklist for all 8 workflows |
+| `scripts/test-setup.ts` | Creates test agent/lender in Colorado |
+| `scripts/test-teardown.ts` | Removes all test records |
 | `docs/migration/` | PRD, HLD, LLD documentation |
 
 ---

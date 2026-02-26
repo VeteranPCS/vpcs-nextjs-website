@@ -40,6 +40,9 @@ data/salesforce/*.csv
 data/cleaned/
 docs/migration/*.md
 
+# test data
+scripts/test-ids.json
+
 # semgrep output files
 semgrep-results.json
 semgrep-results.sarif

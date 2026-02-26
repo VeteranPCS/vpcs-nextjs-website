@@ -403,6 +403,15 @@ class AttioClient {
     });
   }
 
+  /**
+   * Delete a record by object slug and record ID
+   */
+  async deleteRecord(objectSlug: string, recordId: string) {
+    return this.request(`/objects/${objectSlug}/records/${recordId}`, {
+      method: 'DELETE',
+    });
+  }
+
   // ==========================================================================
   // RECORD MANAGEMENT METHODS
   // ==========================================================================

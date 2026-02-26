@@ -7,21 +7,53 @@
 
 ## Current Status
 
-**Phase:** MIGRATION COMPLETE ✅ — Automation setup in progress
-**Next:** Create sequences, paste email templates, test end-to-end
+**Phase:** MIGRATION COMPLETE ✅ — E2E test harness ready
+**Next:** Create sequences in Attio UI, run test-setup, execute e2e test plan
 **Blocked On:** Email sync (Gmail/Microsoft must be synced in Attio for sequences to send)
 
 ### Next Steps (in order)
 1. **Verify email sync** — Gmail or Microsoft account synced in Attio
 2. **Create 14 sequences** in Attio UI → `docs/attio-sequences.md`
 3. **Paste 18 email templates** into sequences → `docs/attio-email-templates.md`
-4. **Test workflows end-to-end** → checklists in `docs/attio-workflows.md` lines 605-639 and `docs/attio-sequences.md` lines 498-511
-5. **Create dedicated Slack channels** → planned channels in `docs/attio-workflows.md` lines 558-567
-6. **Enhancement Phase:** Multi-step contact form, area-based agent routing
+4. **Run test setup** → `npx tsx scripts/test-setup.ts`
+5. **Execute e2e test plan** → `docs/e2e-test-plan.md`
+6. **Run test teardown** → `npx tsx scripts/test-teardown.ts`
+7. **Create dedicated Slack channels** → planned channels in `docs/attio-workflows.md` lines 558-567
+8. **Enhancement Phase:** Multi-step contact form, area-based agent routing
 
 ---
 
 ## Recent Sessions
+
+### 2026-02-26 - E2E Test Harness & Headshot Fallback
+
+**Status:** ✅ Complete
+
+**Completed:**
+- Added `headshot_url` field to `AttioAgent` and `AttioLender` interfaces in data loader
+- Added headshot_url fallback in stateService photo lookup (agents + lenders) — test records without Sanity photos now display via Attio's `headshot_url` field
+- Added `placehold.co` to Next.js image remote patterns
+- Added `deleteRecord()` method to Attio client
+- Created `scripts/test-setup.ts` — creates test agent, lender, area assignment in Colorado with placeholder photos
+- Created `scripts/test-teardown.ts` — removes all test records in correct dependency order
+- Created `docs/e2e-test-plan.md` — comprehensive manual test checklist for all 8 workflows, 14 sequences
+- Added `scripts/test-ids.json` to `.gitignore`
+
+**Files Created:**
+- `scripts/test-setup.ts`
+- `scripts/test-teardown.ts`
+- `docs/e2e-test-plan.md`
+
+**Files Modified:**
+- `lib/attio-data-loader.ts` (headshot_url in interfaces + mapping)
+- `services/stateService.tsx` (photo fallback logic)
+- `next.config.mjs` (placehold.co domain)
+- `lib/attio.ts` (deleteRecord method)
+- `.gitignore` (test-ids.json)
+- `RESUME.md` (updated next steps + key files)
+- `SESSION-NOTES.md` (this entry)
+
+---
 
 ### 2026-02-25 - Fix WF3b & WF4b Exit-from-Sequence Blocks
 

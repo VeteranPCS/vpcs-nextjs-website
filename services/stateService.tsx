@@ -324,6 +324,11 @@ const stateService = {
             }
           }
 
+          // Fallback to Attio headshot_url if no Sanity photo found
+          if (!photoUrl && agent.headshot_url) {
+            photoUrl = agent.headshot_url;
+          }
+
           // Get this agent's area assignments for this state
           // Note: State__c needs to be lowercase state name (e.g., "texas") to match page component comparison
           const stateNameLower =
@@ -447,6 +452,11 @@ const stateService = {
                 error,
               );
             }
+          }
+
+          // Fallback to Attio headshot_url if no Sanity photo found
+          if (!photoUrl && lender.headshot_url) {
+            photoUrl = lender.headshot_url;
           }
 
           // Map to legacy Lenders interface
