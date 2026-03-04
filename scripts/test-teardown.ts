@@ -230,7 +230,7 @@ async function main() {
       // Try to find any customer records with test email patterns
       const pattern = `${suffix}@`;
       // Note: Attio doesn't support LIKE/contains queries, so we try exact matches
-      const testEmail = `harper${suffix}@gmail.com`;
+      const testEmail = `harper.e.foley${suffix}@gmail.com`;
       const customers = await queryRecords('customers', {
         filter: { email: { $eq: testEmail } },
         limit: 10,
@@ -261,7 +261,7 @@ async function main() {
   console.log('5. Checking for test intern records...');
   try {
     const interns = await queryRecords('interns', {
-      filter: { email: { $eq: `harper+testintern@gmail.com` } },
+      filter: { email: { $eq: `harper.e.foley+testintern@gmail.com` } },
       limit: 10,
     });
     for (const intern of interns) {
