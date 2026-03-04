@@ -24,6 +24,10 @@ The Salesforce → Attio migration is complete. All data is now in Attio, and th
 4. **Test workflows end-to-end** using checklists in `docs/attio-workflows.md` and `docs/attio-sequences.md`
 5. **Create dedicated Slack channels** — workflows currently post to `#general` (see planned channels in `docs/attio-workflows.md`)
 
+**Pre-Launch (before merging to main):**
+1. **Attio workflows for general forms** — General Contact, Keep In Touch, and VA Loan/Homebuyer Guide downloads currently only send Slack via legacy webhook. Need Attio workflows or sequences for these.
+2. **Retire `#salesforce-alerts` channel** — Update `SLACK_WEBHOOK_URL` to point to appropriate channel, or remove once all forms have Attio workflow coverage.
+
 **Enhancement Phase (after automation is tested):**
 1. Multi-step contact form with Buying/Selling/Both selection
 2. Area-based agent routing for unselected agents

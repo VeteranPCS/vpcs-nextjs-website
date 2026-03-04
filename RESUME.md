@@ -26,6 +26,10 @@ The Salesforce → Attio migration is **complete**. The website now:
 6. Run `npx tsx scripts/test-teardown.ts` to clean up test records
 7. Create dedicated Slack channels (currently all posting to #general)
 
+**Pre-Launch:**
+1. Attio workflows for general forms (Contact, Keep In Touch, VA Loan/Homebuyer Guide downloads)
+2. Retire `#salesforce-alerts` Slack channel and legacy webhook
+
 **Enhancement Phase (after automation is tested):**
 1. Multi-step contact form with Buying/Selling/Both selection
 2. Area-based agent routing for unselected agents

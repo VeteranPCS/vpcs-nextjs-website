@@ -195,44 +195,21 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
       logDebug("Customer buying_agent updated", { submissionId, customerId, agentId });
     }
 
-    // 5. Send notifications (fire and forget)
-    const notificationPromises: Promise<any>[] = [];
-
-    // Slack notification
-    notificationPromises.push(
-      slack
-        .sendNewLead({
-          customerName: `${formData.firstName} ${formData.lastName}`,
-          customerEmail: formData.email || "",
-          customerPhone: formData.phone,
-          agentName: agentInfo?.name || "Unknown Agent",
-          dealType,
-          area: formData.destinationBase || formData.city,
-        })
-        .catch((error) => {
-          logError("Slack notification failed", { submissionId }, error);
-        }),
-    );
-
-    // SMS notification to agent if we have their phone
+    // 5. Send SMS notification to agent (Slack handled by Attio WF1)
     if (agentId && agentInfo?.phone) {
       const magicLink = generateMagicLink(agentId, dealId, "agent");
-      notificationPromises.push(
-        openphone
-          .sendNewLeadNotification({
-            to: agentInfo.phone,
-            agentName: agentInfo.first_name || agentInfo.name || "Agent",
-            customerName: `${formData.firstName} ${formData.lastName}`,
-            dealType,
-            magicLink,
-          })
-          .catch((error) => {
-            logError("SMS notification failed", { submissionId }, error);
-          }),
-      );
+      openphone
+        .sendNewLeadNotification({
+          to: agentInfo.phone,
+          agentName: agentInfo.first_name || agentInfo.name || "Agent",
+          customerName: `${formData.firstName} ${formData.lastName}`,
+          dealType,
+          magicLink,
+        })
+        .catch((error) => {
+          logError("SMS notification failed", { submissionId }, error);
+        });
     }
-
-    await Promise.allSettled(notificationPromises);
 
     // Track success
     await updateSubmissionStatus(
@@ -323,22 +300,7 @@ export async function GetListedAgentsPostForm(formData: any) {
 
     logInfo("Agent onboarding entry created", { submissionId, agentId });
 
-    // Send Slack notification
-    slack
-      .sendAlert("New Agent Listing Request", {
-        Name: `${formData.firstName} ${formData.lastName}`,
-        Email: formData.email || "",
-        Phone: formData.phone || "",
-        State: formData.primaryState || "",
-        Brokerage: formData.brokerageName || "",
-      })
-      .catch((error) => {
-        logError(
-          "Error sending agent listing notifications",
-          { submissionId },
-          error,
-        );
-      });
+    // Slack notification handled by Attio WF3a
 
     await updateSubmissionStatus(
       submissionId,
@@ -421,23 +383,7 @@ export async function GetListedLendersPostForm(formData: any) {
 
     logInfo("Lender onboarding entry created", { submissionId, lenderId });
 
-    // Send Slack notification
-    slack
-      .sendAlert("New Lender Listing Request", {
-        Name: `${formData.firstName} ${formData.lastName}`,
-        Email: formData.email || "",
-        Phone: formData.phone || "",
-        State: formData.primaryState || "",
-        Company: formData.name || "",
-        "NMLS ID": formData.nmlsId || "",
-      })
-      .catch((error) => {
-        logError(
-          "Error sending lender listing notifications",
-          { submissionId },
-          error,
-        );
-      });
+    // Slack notification handled by Attio WF4a
 
     await updateSubmissionStatus(
       submissionId,
@@ -623,43 +569,21 @@ export async function contactLenderPostForm(
       logDebug("Customer lender updated", { submissionId, customerId, lenderId });
     }
 
-    // 5. Send notifications (fire and forget)
-    const notificationPromises: Promise<any>[] = [];
-
-    // Slack notification
-    notificationPromises.push(
-      slack
-        .sendNewLead({
-          customerName: `${formData.firstName} ${formData.lastName}`,
-          customerEmail: formData.email || "",
-          customerPhone: formData.phone,
-          agentName: lenderInfo?.name || "Unknown Lender",
-          dealType: "Lender",
-        })
-        .catch((error) => {
-          logError("Slack notification failed", { submissionId }, error);
-        }),
-    );
-
-    // SMS notification to lender if we have their phone
+    // 5. Send SMS notification to lender (Slack handled by Attio WF1)
     if (lenderId && lenderInfo?.phone) {
       const magicLink = generateMagicLink(lenderId, dealId, "lender");
-      notificationPromises.push(
-        openphone
-          .sendNewLeadNotification({
-            to: lenderInfo.phone,
-            agentName: lenderInfo.first_name || lenderInfo.name || "Lender",
-            customerName: `${formData.firstName} ${formData.lastName}`,
-            dealType: "Lender",
-            magicLink,
-          })
-          .catch((error) => {
-            logError("SMS notification failed", { submissionId }, error);
-          }),
-      );
+      openphone
+        .sendNewLeadNotification({
+          to: lenderInfo.phone,
+          agentName: lenderInfo.first_name || lenderInfo.name || "Lender",
+          customerName: `${formData.firstName} ${formData.lastName}`,
+          dealType: "Lender",
+          magicLink,
+        })
+        .catch((error) => {
+          logError("SMS notification failed", { submissionId }, error);
+        });
     }
-
-    await Promise.allSettled(notificationPromises);
 
     // Track success
     await updateSubmissionStatus(
@@ -896,34 +820,7 @@ export async function internshipFormSubmission(formData: any) {
 
     logInfo("Intern placement entry created", { submissionId, internId });
 
-    // Send Slack notification (max 10 fields for Slack section blocks)
-    slack
-      .sendAlert("New Internship Application", {
-        Name: `${formData.first_name} ${formData.last_name}`,
-        Email: formData.email || "",
-        Phone: formData.mobile || "N/A",
-        "Current Location":
-          `${formData.city || ""}, ${formData.state_code || ""}`.replace(
-            /^, |, $/g,
-            "",
-          ) || "N/A",
-        "Internship Type": internshipType || "Not specified",
-        "Desired Location":
-          `${formData["00N4x00000LspUi"] || ""}, ${formData["00N4x00000LspV2"] || ""}`.replace(
-            /^, |, $/g,
-            "",
-          ) || "N/A",
-        "Preferred Start": formData["00N4x00000QPLQY"] || "Not specified",
-        Licensed: formData["00N4x00000QPLQd"] || "Not specified",
-        "Military Branch": militaryService || "Not specified",
-      })
-      .catch((error) => {
-        logError(
-          "Error sending internship notifications",
-          { submissionId },
-          error,
-        );
-      });
+    // Slack notification handled by Attio WF5a
 
     await updateSubmissionStatus(
       submissionId,
