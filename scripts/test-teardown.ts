@@ -53,6 +53,10 @@ function parseRecord(record: any) {
         arr.length > 1
           ? arr.map((v: any) => v.target_record_id)
           : arr[0].target_record_id;
+    } else if (arr[0].original_phone_number) {
+      parsed[key] = arr[0].original_phone_number;
+    } else if (arr[0].email_address) {
+      parsed[key] = arr[0].email_address;
     } else if (arr[0].value !== undefined) {
       parsed[key] = arr[0].value;
     } else {
