@@ -311,6 +311,13 @@ export const AGENT_ATTRIBUTES: AttributeDefinition[] = [
     type: "checkbox",
   },
   {
+    title: "Person",
+    api_slug: "person",
+    type: "record-reference",
+    description: "Linked People record for sequence enrollment",
+    config: { record_reference: { allowed_objects: ["people"] } },
+  },
+  {
     title: "Contract Signed Date",
     api_slug: "contract_signed_date",
     type: "date",
@@ -407,6 +414,13 @@ export const CUSTOMER_ATTRIBUTES: AttributeDefinition[] = [
     api_slug: "lender",
     type: "record-reference",
     config: { record_reference: { allowed_objects: ["lenders"] } },
+  },
+  {
+    title: "Person",
+    api_slug: "person",
+    type: "record-reference",
+    description: "Linked People record for sequence enrollment",
+    config: { record_reference: { allowed_objects: ["people"] } },
   },
 ];
 
@@ -632,6 +646,13 @@ export const INTERN_ATTRIBUTES: AttributeDefinition[] = [
     api_slug: "application_date",
     type: "date",
     description: "Date the internship application was submitted",
+  },
+  {
+    title: "Person",
+    api_slug: "person",
+    type: "record-reference",
+    description: "Linked People record for sequence enrollment",
+    config: { record_reference: { allowed_objects: ["people"] } },
   },
 ];
 

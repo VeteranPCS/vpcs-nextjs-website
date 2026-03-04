@@ -25,6 +25,36 @@
 
 ## Recent Sessions
 
+### 2026-03-03 - People Record Integration for Sequence Enrollment
+
+**Status:** ✅ Complete
+
+**Problem:** Attio sequences can only enroll built-in objects (People, Companies). Custom objects (customers, agents, lenders, interns) cannot be enrolled directly. WF1 was failing with "Customer records cannot be enrolled into a sequence."
+
+**Solution:** Create linked People records for every custom object record, deduped by email.
+
+**Files Created:**
+- `lib/attio-people.ts` — `findOrCreatePerson()` helper (upserts People record by email)
+- `scripts/add-person-attribute.ts` — Schema migration: adds `person` field to 4 custom objects
+- `scripts/backfill-people-records.ts` — Links ~2,100 existing records to People records
+
+**Files Modified:**
+- `lib/attio-schema.ts` — Added `person` attribute to AGENT, CUSTOMER, INTERN attribute arrays
+- `services/salesForcePostFormsService.tsx` — Added `findOrCreatePerson()` calls to all 4 form functions
+- `scripts/test-setup.ts` — Creates People records for test agent/lender
+- `scripts/test-teardown.ts` — Cleans up People records
+- `docs/attio-workflows.md` — Updated enrollment paths to traverse `person` field
+- `docs/attio-sequences.md` — Updated Object field to `people`
+- `CLAUDE.md` — Added rule #15 (People records), key file, data model section
+
+**Next Steps:**
+1. Run `npx tsx scripts/add-person-attribute.ts` — Add `person` field to Attio objects
+2. Run `npx tsx scripts/backfill-people-records.ts` — Backfill ~2,100 existing records
+3. Update all 8 workflows in Attio UI — Change enrollment recipient to traverse `person` field
+4. Re-test WF1 — Verify sequence enrollment succeeds
+
+---
+
 ### 2026-02-26 - E2E Test Harness & Headshot Fallback
 
 **Status:** ✅ Complete

@@ -14,6 +14,12 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Workflows CANNOT send emails directly.** Every email, even "immediate" ones, must be wrapped in a Sequence.
 
+### People Record Requirement
+
+**Sequences can only enroll built-in objects (People, Companies)** — not custom objects like customers, agents, lenders, or interns. Each custom object has a `person` record-reference field linking to a People record. Workflows must enroll the **People record** (via `Custom Record > person`) into sequences.
+
+People records are deduped by email — if the same person is both a customer and an agent, they share one People record.
+
 ---
 
 ## Architecture Overview
@@ -67,7 +73,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Customer Welcome - Unassigned`
-2. Object: `customers`
+2. Object: `people` (enrolled via customer's `person` field)
 3. Exit conditions: Reply received
 4. Step 1: Immediate, send C1 template
 
@@ -87,7 +93,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Customer Welcome - Agent`
-2. Object: `customers`
+2. Object: `people` (enrolled via customer's `person` field)
 3. Exit conditions: Reply received
 4. Step 1: Immediate, send C2 template
 
@@ -107,7 +113,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Customer Welcome - Lender`
-2. Object: `customers`
+2. Object: `people` (enrolled via customer's `person` field)
 3. Exit conditions: Reply received
 4. Step 1: Immediate, send C3 template
 
@@ -127,7 +133,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Customer Under Contract`
-2. Object: `customers`
+2. Object: `people` (enrolled via customer's `person` field)
 3. Exit conditions: Reply received
 4. Step 1: Immediate, send C4 template
 
@@ -147,7 +153,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Customer Closed`
-2. Object: `customers`
+2. Object: `people` (enrolled via customer's `person` field)
 3. Exit conditions: Reply received
 4. Step 1: Immediate, send C5 template
 
@@ -169,7 +175,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Agent Lead Alert`
-2. Object: `agents`
+2. Object: `people` (enrolled via agent's `person` field)
 3. Exit conditions: Reply received (confirms lead receipt)
 4. Step 1: Immediate, send A1 template
 
@@ -227,7 +233,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Agent Onboarding`
-2. Object: `agents`
+2. Object: `people` (enrolled via agent's `person` field)
 3. Exit conditions: Reply received, OR exited by WF3b ✅
 4. Step 1: Immediate, send A2 template
 5. Step 2: 7 days after Step 1, send A3 template
@@ -248,7 +254,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Agent Contract Ready`
-2. Object: `agents`
+2. Object: `people` (enrolled via agent's `person` field)
 3. Exit conditions: Reply received
 4. Step 1: Immediate, send A4 template
 
@@ -268,7 +274,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Agent Live`
-2. Object: `agents`
+2. Object: `people` (enrolled via agent's `person` field)
 3. Exit conditions: Reply received
 4. Step 1: Immediate, send A5 template
 
@@ -290,7 +296,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Lender Lead Alert`
-2. Object: `lenders`
+2. Object: `people` (enrolled via lender's `person` field)
 3. Exit conditions: Reply received (confirms lead receipt)
 4. Step 1: Immediate, send L1 template
 
@@ -312,7 +318,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Lender Onboarding`
-2. Object: `lenders`
+2. Object: `people` (enrolled via lender's `person` field)
 3. Exit conditions: Reply received, OR exited by WF4b ✅
 4. Step 1: Immediate, send L2 template
 5. Step 2: 7 days after Step 1, send L3 template
@@ -333,7 +339,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Lender Contract Ready`
-2. Object: `lenders`
+2. Object: `people` (enrolled via lender's `person` field)
 3. Exit conditions: Reply received
 4. Step 1: Immediate, send L4 template
 
@@ -353,7 +359,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Lender Live`
-2. Object: `lenders`
+2. Object: `people` (enrolled via lender's `person` field)
 3. Exit conditions: Reply received
 4. Step 1: Immediate, send L5 template
 
@@ -377,7 +383,7 @@ This document contains complete specifications for all Attio Sequences (email ca
 
 **Attio Configuration:**
 1. Name: `Intern Onboarding`
-2. Object: `interns`
+2. Object: `people` (enrolled via intern's `person` field)
 3. Exit conditions: Reply received, OR exited by WF5b ✅
 4. Step 1: Immediate, send I1 template
 5. Step 2: 7 days after Step 1, send I2 template

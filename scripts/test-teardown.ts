@@ -129,7 +129,9 @@ async function main() {
   console.log('Loaded test IDs from:', idsPath);
   console.log(`  Agent: ${ids.test_agent_id}`);
   console.log(`  Lender: ${ids.test_lender_id}`);
-  console.log(`  Area Assignment: ${ids.area_assignment_id}\n`);
+  console.log(`  Area Assignment: ${ids.area_assignment_id}`);
+  console.log(`  Agent Person: ${ids.test_agent_person_id || '(none)'}`);
+  console.log(`  Lender Person: ${ids.test_lender_person_id || '(none)'}\n`);
 
   // 1. Delete area assignment
   console.log('1. Deleting area assignment...');
@@ -284,6 +286,33 @@ async function main() {
   console.log('7. Deleting test lender...');
   await deleteRecord('lenders', ids.test_lender_id);
   console.log('   Done');
+
+  // 8. Delete People records (from test-setup and form submissions)
+  console.log('8. Deleting People records...');
+  if (ids.test_agent_person_id) {
+    await deleteRecord('people', ids.test_agent_person_id);
+    console.log(`   Deleted agent Person: ${ids.test_agent_person_id}`);
+  }
+  if (ids.test_lender_person_id) {
+    await deleteRecord('people', ids.test_lender_person_id);
+    console.log(`   Deleted lender Person: ${ids.test_lender_person_id}`);
+  }
+
+  // Also clean up People records created by form submissions during testing
+  const testEmailSuffixes = ['+testagent', '+testlender', '+testcustomer', '+testintern'];
+  for (const suffix of testEmailSuffixes) {
+    const testEmail = `harper.e.foley${suffix}@gmail.com`;
+    try {
+      const people = await queryRecords('people', {
+        filter: { email_addresses: { $eq: testEmail } },
+        limit: 10,
+      });
+      for (const p of people) {
+        await deleteRecord('people', p.id);
+        console.log(`   Deleted People record: ${p.id} (${testEmail})`);
+      }
+    } catch {}
+  }
 
   // Clean up test-ids.json
   fs.unlinkSync(idsPath);

@@ -16,6 +16,7 @@ The Salesforce → Attio migration is complete. All data is now in Attio, and th
 - ✅ All 8 Attio Workflows built and Live (including exit-from-sequence blocks)
 - ✅ Email automation documentation (8 workflows, 14 sequences, 18 templates)
 - ✅ Full cross-reference review of all workflow/sequence/template docs
+- ✅ People record integration for sequence enrollment (all forms + backfill)
 
 **Next Steps:**
 1. **Verify email sync** — Gmail or Microsoft account must be synced in Attio for sequences to send emails
@@ -206,7 +207,38 @@ const objectInfo = await attio.getObject(event.id.object_id);
 const objectSlug = objectInfo.api_slug;
 ```
 
-### 15. Scripts must use dynamic imports for env vars
+### 15. Sequences require People records (not custom objects)
+```typescript
+// Attio sequences can ONLY enroll built-in objects (People, Companies).
+// Custom objects (customers, agents, lenders, interns) cannot be enrolled directly.
+
+// SOLUTION: Each custom record has a `person` field → People record
+// Created via findOrCreatePerson() in lib/attio-people.ts
+
+import { findOrCreatePerson } from "@/lib/attio-people";
+
+// Upserts by email — same email = same People record across object types
+const personId = await findOrCreatePerson({
+  firstName: "John",
+  lastName: "Doe",
+  email: "john@example.com",
+  phone: "+15551234567",
+});
+
+// Link to custom object
+const customerData = {
+  ...otherFields,
+  person: { target_object: "people", target_record_id: personId },
+};
+
+// ⚠️ People built-in object uses DIFFERENT field formats:
+// - name: [{ first_name, last_name, full_name }]  (personal-name type)
+// - email_addresses: [{ email_address: "x@y.com" }]
+// - phone_numbers: [{ original_phone_number: "+1..." }]
+// Do NOT use separate first_name/last_name fields — they don't exist on People!
+```
+
+### 16. Scripts must use dynamic imports for env vars
 ```typescript
 // WRONG - attio instantiated before dotenv runs
 import dotenv from 'dotenv';
@@ -245,6 +277,19 @@ Attio doesn't support reverse queries on multi-ref fields. Create bidirectional 
 const lender = await attio.getRecord('lenders', lenderId);
 const assignedStateIds = lender.states;
 ```
+
+### People Record Linkage
+
+Every custom object record that needs sequence enrollment has a `person` field linking to a built-in People record:
+
+| Custom Object | `person` field | Purpose |
+|---------------|---------------|---------|
+| Customer | → People | Customer welcome/milestone sequences |
+| Agent | → People | Lead alerts, onboarding sequences |
+| Lender | → People | Lead alerts, onboarding sequences |
+| Intern | → People | Onboarding sequences |
+
+People records are deduped by email — same email across object types = same People record.
 
 ### Key Entities
 
@@ -333,6 +378,7 @@ app/(site)/[state]/page.tsx
 | File | Purpose |
 |------|---------|
 | `lib/attio.ts` | Attio API client (CRUD, query, assertRecord) |
+| `lib/attio-people.ts` | People record upsert for sequence enrollment |
 | `lib/attio-data-loader.ts` | Cached data loader for website |
 | `lib/attio-schema.ts` | Schema definitions and constants |
 | `services/stateService.tsx` | Fetches agents/lenders for state pages |

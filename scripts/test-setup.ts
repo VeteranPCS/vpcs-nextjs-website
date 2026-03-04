@@ -103,6 +103,25 @@ async function updateRecord(objectSlug: string, recordId: string, data: Record<s
   return parseRecord(res.data);
 }
 
+async function assertPerson(data: { firstName: string; lastName: string; email: string; phone?: string }) {
+  const values: Record<string, any> = {
+    email_addresses: [{ email_address: data.email }],
+    name: [{
+      first_name: data.firstName,
+      last_name: data.lastName,
+      full_name: `${data.firstName} ${data.lastName}`.trim(),
+    }],
+  };
+  if (data.phone) {
+    values.phone_numbers = [{ original_phone_number: data.phone }];
+  }
+  const res = await request('/objects/people/records?matching_attribute=email_addresses', {
+    method: 'PUT',
+    body: JSON.stringify({ data: { values } }),
+  });
+  return res.data.id.record_id;
+}
+
 async function getRecord(objectSlug: string, recordId: string) {
   const res = await request(`/objects/${objectSlug}/records/${recordId}`);
   return parseRecord(res.data);
@@ -163,6 +182,19 @@ async function main() {
   });
   console.log(`   Created agent: ${testAgent.id}`);
 
+  // 3b. Create People record for test agent and link it
+  console.log('   Creating People record for test agent...');
+  const agentPersonId = await assertPerson({
+    firstName: 'Harper',
+    lastName: 'Foley (TEST AGENT)',
+    email: `${TEST_EMAIL_PREFIX}+testagent@${TEST_EMAIL_DOMAIN}`,
+    phone: TEST_PHONE,
+  });
+  await updateRecord('agents', testAgent.id, {
+    person: { target_object: 'people', target_record_id: agentPersonId },
+  });
+  console.log(`   Linked People record: ${agentPersonId}`);
+
   // 4. Create test lender
   console.log('4. Creating test lender...');
   const testLender = await createRecord('lenders', {
@@ -180,6 +212,19 @@ async function main() {
     active_on_website: true,
   });
   console.log(`   Created lender: ${testLender.id}`);
+
+  // 4b. Create People record for test lender and link it
+  console.log('   Creating People record for test lender...');
+  const lenderPersonId = await assertPerson({
+    firstName: 'Harper',
+    lastName: 'Foley (TEST LENDER)',
+    email: `${TEST_EMAIL_PREFIX}+testlender@${TEST_EMAIL_DOMAIN}`,
+    phone: TEST_PHONE,
+  });
+  await updateRecord('lenders', testLender.id, {
+    person: { target_object: 'people', target_record_id: lenderPersonId },
+  });
+  console.log(`   Linked People record: ${lenderPersonId}`);
 
   // 5. Create area assignment linking test agent to Colorado area
   console.log('5. Creating area assignment...');
@@ -213,8 +258,10 @@ async function main() {
     colorado_area_name: coArea.name,
     test_agent_id: testAgent.id,
     test_agent_email: `${TEST_EMAIL_PREFIX}+testagent@${TEST_EMAIL_DOMAIN}`,
+    test_agent_person_id: agentPersonId,
     test_lender_id: testLender.id,
     test_lender_email: `${TEST_EMAIL_PREFIX}+testlender@${TEST_EMAIL_DOMAIN}`,
+    test_lender_person_id: lenderPersonId,
     area_assignment_id: areaAssignment.id,
   };
 

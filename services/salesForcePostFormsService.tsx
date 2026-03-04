@@ -4,6 +4,7 @@ import { slack } from "@/lib/slack";
 import { openphone } from "@/lib/openphone";
 import { generateMagicLink } from "@/lib/magic-link";
 import { normalizePhone } from "@/lib/normalize-phone";
+import { findOrCreatePerson } from "@/lib/attio-people";
 import { logDebug, logError, logInfo } from "./loggingService";
 import {
   FormSubmissionStatus,
@@ -29,6 +30,14 @@ async function findOrCreateCustomer(data: {
   militaryStatus?: string;
   militaryService?: string;
 }): Promise<string> {
+  // Create/find linked People record for sequence enrollment
+  const personId = await findOrCreatePerson({
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    phone: data.phone,
+  });
+
   // Try to find existing customer by email
   const existing = await attio.queryRecords("customers", {
     filter: { email: { $eq: data.email } },
@@ -49,6 +58,14 @@ async function findOrCreateCustomer(data: {
     if (data.militaryStatus) updates.military_status = data.militaryStatus;
     if (data.militaryService) updates.military_service = data.militaryService;
 
+    // Backfill person link if missing
+    if (!existing[0].person) {
+      updates.person = {
+        target_object: "people",
+        target_record_id: personId,
+      };
+    }
+
     if (Object.keys(updates).length > 0) {
       await attio.updateRecord("customers", customerId, updates);
     }
@@ -62,6 +79,7 @@ async function findOrCreateCustomer(data: {
     first_name: data.firstName,
     last_name: data.lastName,
     email: data.email,
+    person: { target_object: "people", target_record_id: personId },
   };
 
   if (data.phone) {
@@ -250,6 +268,14 @@ export async function GetListedAgentsPostForm(formData: any) {
   logInfo("Processing agent listing form submission", { submissionId });
 
   try {
+    // Create/find linked People record for sequence enrollment
+    const personId = await findOrCreatePerson({
+      firstName: formData.firstName || "",
+      lastName: formData.lastName || "",
+      email: formData.email || "",
+      phone: formData.phone,
+    });
+
     // Create agent record in agents object (pending status)
     const agentData: Record<string, any> = {
       name: `${formData.firstName} ${formData.lastName}`,
@@ -262,6 +288,7 @@ export async function GetListedAgentsPostForm(formData: any) {
       brokerage_license: formData.licenseNumber || null,
       managing_broker_name: formData.managingBrokerName || null,
       active_on_website: false, // Not active until approved
+      person: { target_object: "people", target_record_id: personId },
     };
 
     if (formData.phone) {
@@ -336,6 +363,14 @@ export async function GetListedLendersPostForm(formData: any) {
   logInfo("Processing lender listing form submission", { submissionId });
 
   try {
+    // Create/find linked People record for sequence enrollment
+    const personId = await findOrCreatePerson({
+      firstName: formData.firstName || "",
+      lastName: formData.lastName || "",
+      email: formData.email || "",
+      phone: formData.phone,
+    });
+
     // Create lender record in lenders object (pending status)
     const lenderData: Record<string, any> = {
       name: `${formData.firstName} ${formData.lastName}`,
@@ -348,6 +383,7 @@ export async function GetListedLendersPostForm(formData: any) {
       individual_nmls: formData.nmlsId || null,
       company_nmls: formData.companyNMLSId || null,
       active_on_website: false, // Not active until approved
+      person: { target_object: "people", target_record_id: personId },
     };
 
     if (formData.phone) {
@@ -761,6 +797,14 @@ export async function internshipFormSubmission(formData: any) {
       militaryService = militaryServiceRaw;
     }
 
+    // Create/find linked People record for sequence enrollment
+    const personId = await findOrCreatePerson({
+      firstName: formData.first_name || "",
+      lastName: formData.last_name || "",
+      email: formData.email || "",
+      phone: formData.mobile,
+    });
+
     // Create intern record in interns object with ALL form fields
     const internData: Record<string, any> = {
       // Identity
@@ -792,6 +836,9 @@ export async function internshipFormSubmission(formData: any) {
 
       // Tracking
       application_date: new Date().toISOString().split("T")[0], // Today's date
+
+      // Linked People record for sequence enrollment
+      person: { target_object: "people", target_record_id: personId },
     };
 
     // Normalize phone number

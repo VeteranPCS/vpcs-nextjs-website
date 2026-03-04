@@ -16,6 +16,12 @@ This document contains complete specifications for all Attio Workflows that powe
 
 **Attio Sequences ARE the email sending mechanism.** Each email (even "immediate" ones) must be wrapped in a Sequence. See `attio-sequences.md` for the full list of 14 sequences.
 
+### People Record Requirement
+
+**Sequences can only enroll built-in objects (People, Companies)** — not custom objects. Each custom object record (customer, agent, lender, intern) has a `person` record-reference field pointing to a linked People record. Workflows must traverse `Custom Record → person → People` to enroll the correct People record into sequences.
+
+The `person` link is created automatically during form submissions (`findOrCreatePerson()` in `lib/attio-people.ts`). Existing records were backfilled via `scripts/backfill-people-records.ts`.
+
 ---
 
 ## Architecture Overview
@@ -58,6 +64,8 @@ Each trigger type determines the available variable paths:
 |-------------|--------|-----------|
 | Record added to list | **Added by** | **Created entry > Parent Record** |
 | List entry updated | **Updated by** | **Updated entry > Parent Record** |
+
+**Important:** For sequence enrollment, the recipient must be a **People** record. Use the `person` field on custom objects to traverse: `Parent Record > Person`.
 
 ---
 
@@ -140,10 +148,10 @@ Route new customer leads to appropriate email sequences and Slack notifications 
 
 **Step 3a: Is true — Agent Assigned**
 1. **Enroll in sequence:** `Customer Welcome - Agent` (sends C2)
-   - Recipient: Created entry > Parent Record
+   - Recipient: Created entry > Parent Record > **Person** (People record)
    - Sender: Added by
 2. **Enroll in sequence:** `Agent Lead Alert` (sends A1)
-   - Recipient: Created entry > Parent Record > Agent
+   - Recipient: Created entry > Parent Record > Agent > **Person** (People record)
    - Sender: Added by
 3. **Slack:** Post to `#general`
 
@@ -152,11 +160,14 @@ Route new customer leads to appropriate email sequences and Slack notifications 
 
 **Step 4a: Is true — Lender Assigned**
 1. **Enroll in sequence:** `Customer Welcome - Lender` (sends C3)
+   - Recipient: Created entry > Parent Record > **Person**
 2. **Enroll in sequence:** `Lender Lead Alert` (sends L1)
+   - Recipient: Created entry > Parent Record > Lender > **Person**
 3. **Slack:** Post to `#general`
 
 **Step 4b: Is false — Neither Assigned**
 1. **Enroll in sequence:** `Customer Welcome - Unassigned` (sends C1)
+   - Recipient: Created entry > Parent Record > **Person**
 2. **Slack:** Post to `#general`
 
 ### Planned Slack Messages (for when dedicated channels exist)
@@ -243,6 +254,7 @@ Enroll customers in milestone sequences and send Slack notifications when deals 
 
 **Step 2a: Is true**
 1. **Enroll in sequence:** `Customer Under Contract` (sends C4)
+   - Recipient: Updated entry > Parent Record > **Person**
 2. **Slack:** Post to `#general`
 
 **Step 2b: Is false — Nested IF/ELSE — Paid Complete**
@@ -250,6 +262,7 @@ Enroll customers in milestone sequences and send Slack notifications when deals 
 
 **Step 3a: Is true**
 1. **Enroll in sequence:** `Customer Closed` (sends C5)
+   - Recipient: Updated entry > Parent Record > **Person**
 2. **Slack:** Post to `#general`
 
 **Step 3b: Is false — Nested IF/ELSE — Closed Lost**
@@ -314,7 +327,7 @@ Welcome new agent applicants — enroll them in the onboarding sequence and send
 ### Actions (sequential)
 
 1. **Enroll in sequence:** `Agent Onboarding` (sends A2 immediately, A3 after 7 days)
-   - Recipient: Created entry > Parent Record
+   - Recipient: Created entry > Parent Record > **Person** (People record)
    - Sender: Added by
 2. **Slack:** Post `New Agent Application` to `#general`
 
@@ -403,7 +416,7 @@ Welcome new lender applicants — enroll them in the onboarding sequence and sen
 ### Actions (sequential)
 
 1. **Enroll in sequence:** `Lender Onboarding` (sends L2 immediately, L3 after 7 days)
-   - Recipient: Created entry > Parent Record
+   - Recipient: Created entry > Parent Record > **Person** (People record)
    - Sender: Added by
 2. **Slack:** Post `New Lender Application` to `#general`
 
@@ -495,7 +508,7 @@ Welcome new intern applicants — enroll them in the onboarding sequence and sen
 ### Actions (sequential)
 
 1. **Enroll in sequence:** `Intern Onboarding` (sends I1 immediately, I2 after 7 days)
-   - Recipient: Created entry > Parent Record
+   - Recipient: Created entry > Parent Record > **Person** (People record)
    - Sender: Added by
 2. **Slack:** Post `New Intern Application` to `#general`
 
@@ -577,6 +590,8 @@ This is the simplest workflow — any stage change exits the intern from the onb
 ---
 
 ## Sequence Reference
+
+**All sequence enrollments target People records** via the `person` field on custom objects. Workflows traverse `Custom Record > Person` to enroll.
 
 Workflows enroll/exit people from these sequences (see `attio-sequences.md` for full details):
 
