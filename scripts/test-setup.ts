@@ -108,6 +108,7 @@ async function getRecord(objectSlug: string, recordId: string) {
 
 const TEST_EMAIL_PREFIX = 'harper.e.foley'; // Change to your email prefix
 const TEST_EMAIL_DOMAIN = 'gmail.com'; // Change to your email domain
+const TEST_PHONE = '+18302795914';
 const PLACEHOLDER_PHOTO = 'https://placehold.co/400x400/2563eb/white?text=TEST';
 
 async function main() {
@@ -148,6 +149,7 @@ async function main() {
     first_name: 'Harper',
     last_name: 'Foley (TEST AGENT)',
     email: `${TEST_EMAIL_PREFIX}+testagent@${TEST_EMAIL_DOMAIN}`,
+    phone: TEST_PHONE,
     bio: 'Test agent created for end-to-end workflow verification. This record should be deleted after testing.',
     military_service: 'Army',
     military_status: 'Veteran',
@@ -164,6 +166,7 @@ async function main() {
     first_name: 'Harper',
     last_name: 'Foley (TEST LENDER)',
     email: `${TEST_EMAIL_PREFIX}+testlender@${TEST_EMAIL_DOMAIN}`,
+    phone: TEST_PHONE,
     bio: 'Test lender created for end-to-end workflow verification. This record should be deleted after testing.',
     military_service: 'Navy',
     military_status: 'Veteran',
