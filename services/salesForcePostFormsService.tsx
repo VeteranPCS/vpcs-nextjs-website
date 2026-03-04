@@ -25,6 +25,7 @@ async function findOrCreateCustomer(data: {
   email: string;
   phone?: string;
   currentLocation?: string;
+  destinationCity?: string;
   militaryStatus?: string;
   militaryService?: string;
 }): Promise<string> {
@@ -44,6 +45,7 @@ async function findOrCreateCustomer(data: {
       if (normalized) updates.phone = normalized;
     }
     if (data.currentLocation) updates.current_location = data.currentLocation;
+    if (data.destinationCity) updates.destination_city = data.destinationCity;
     if (data.militaryStatus) updates.military_status = data.militaryStatus;
     if (data.militaryService) updates.military_service = data.militaryService;
 
@@ -68,6 +70,8 @@ async function findOrCreateCustomer(data: {
   }
   if (data.currentLocation)
     customerData.current_location = data.currentLocation;
+  if (data.destinationCity)
+    customerData.destination_city = data.destinationCity;
   if (data.militaryStatus) customerData.military_status = data.militaryStatus;
   if (data.militaryService)
     customerData.military_service = data.militaryService;
@@ -131,6 +135,7 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
       email: formData.email || "",
       phone: formData.phone,
       currentLocation: formData.currentBase,
+      destinationCity: formData.destinationBase,
       militaryStatus: formData.status_select,
       militaryService: formData.branch_select,
     });
@@ -380,7 +385,6 @@ export async function GetListedLendersPostForm(formData: any) {
       company_name: formData.name || null, // Company name field
       individual_nmls: formData.nmlsId || null,
       company_nmls: formData.companyNMLSId || null,
-      city: formData.city || null,
       active_on_website: false, // Not active until approved
     };
 
@@ -559,6 +563,7 @@ export async function contactLenderPostForm(
       email: formData.email || "",
       phone: formData.phone,
       currentLocation: formData.currentBase,
+      destinationCity: formData.destinationBase,
     });
 
     logDebug("Customer record created/updated", { submissionId, customerId });
