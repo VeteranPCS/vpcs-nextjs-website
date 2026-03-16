@@ -85,28 +85,14 @@ export async function GET(
       );
     }
 
-    // 4. Fetch deal (list entry) from customer_deals pipeline
-    let dealInfo;
+    // 4. Fetch deal (list entry) using getListEntry (parsed)
+    let dealInfo: Record<string, any> | null = null;
     try {
-      const dealEntries = await attio.queryListEntries("customer_deals", {
-        filter: {
-          entry_id: { $eq: validation.deal_id },
-        },
-        limit: 1,
-      });
-
-      if (!dealEntries.length) {
-        // Try to get entry directly
-        // queryListEntries might not support entry_id filter, try alternative approach
-        console.warn("Deal not found via query, attempting direct lookup");
-      } else {
-        dealInfo = dealEntries[0];
-      }
+      dealInfo = await attio.getListEntry("customer_deals", validation.deal_id);
     } catch (error) {
       console.error("Error fetching deal from Attio:", error);
     }
 
-    // If we couldn't find the deal, return an error
     if (!dealInfo) {
       return NextResponse.json(
         {
@@ -119,30 +105,16 @@ export async function GET(
     }
 
     // 5. Fetch customer info for display
-    const parentRecordId =
-      dealInfo.parent_record_id || dealInfo.parent?.record_id;
     let customerInfo = null;
-    if (parentRecordId) {
+    if (dealInfo.parent_record_id) {
       try {
-        customerInfo = await attio.getRecord("customers", parentRecordId);
+        customerInfo = await attio.getRecord("customers", dealInfo.parent_record_id);
       } catch (error) {
         console.error("Error fetching customer from Attio:", error);
       }
     }
 
-    // 6. Extract stage from deal entry values
-    let dealStage = "Unknown";
-    if (dealInfo.entry_values?.stage) {
-      const stageValue = dealInfo.entry_values.stage;
-      if (Array.isArray(stageValue) && stageValue.length > 0) {
-        dealStage =
-          stageValue[0]?.status?.title || stageValue[0]?.status || "Unknown";
-      } else if (typeof stageValue === "object") {
-        dealStage = stageValue.status?.title || stageValue.status || "Unknown";
-      }
-    }
-
-    // 7. Return combined data
+    // 6. Return combined data (dealInfo is already parsed by getListEntry)
     return NextResponse.json({
       success: true,
       valid: true,
@@ -156,29 +128,17 @@ export async function GET(
       },
       deal: {
         id: validation.deal_id,
-        type:
-          dealInfo.entry_values?.deal_type?.[0]?.value ||
-          dealInfo.entry_values?.deal_type ||
-          "Unknown",
-        stage: dealStage,
+        type: dealInfo.deal_type || "Unknown",
+        stage: dealInfo.stage || "Unknown",
         customer_name:
           customerInfo?.name ||
           `${customerInfo?.first_name || ""} ${customerInfo?.last_name || ""}`.trim() ||
           "Unknown",
         customer_phone: customerInfo?.phone || null,
         customer_email: customerInfo?.email || null,
-        property_address:
-          dealInfo.entry_values?.property_address?.[0]?.value ||
-          dealInfo.entry_values?.property_address ||
-          null,
-        notes:
-          dealInfo.entry_values?.notes?.[0]?.value ||
-          dealInfo.entry_values?.notes ||
-          null,
-        contact_confirmed:
-          dealInfo.entry_values?.contact_confirmed?.[0]?.value ??
-          dealInfo.entry_values?.contact_confirmed ??
-          false,
+        property_address: dealInfo.property_address || null,
+        notes: dealInfo.notes || null,
+        contact_confirmed: dealInfo.contact_confirmed ?? false,
         created_at: dealInfo.created_at || null,
       },
     });

@@ -4,7 +4,9 @@
 import * as jwt from 'jsonwebtoken';
 
 const MAGIC_LINK_SECRET = process.env.MAGIC_LINK_SECRET!;
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://veteranpcs.com';
+// External-facing URL for links sent via SMS/email (must be accessible from phones)
+// Falls back to NEXT_PUBLIC_API_BASE_URL, then veteranpcs.com
+const BASE_URL = process.env.MAGIC_LINK_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || 'https://veteranpcs.com';
 
 // Token expires in 48 hours
 const TOKEN_EXPIRY = '48h';

@@ -131,7 +131,8 @@ async function getRecord(objectSlug: string, recordId: string) {
 
 const TEST_EMAIL_PREFIX = 'harper.e.foley'; // Change to your email prefix
 const TEST_EMAIL_DOMAIN = 'gmail.com'; // Change to your email domain
-const TEST_PHONE = '+18302795914';
+const TEST_AGENT_LENDER_PHONE = '+18302795914'; // Agent/lender phone
+// Test customer phone for form submissions: +14252246148
 const PLACEHOLDER_PHOTO = 'https://placehold.co/400x400/2563eb/white?text=TEST';
 
 async function main() {
@@ -172,7 +173,7 @@ async function main() {
     first_name: 'Harper',
     last_name: 'Foley (TEST AGENT)',
     email: `${TEST_EMAIL_PREFIX}+testagent@${TEST_EMAIL_DOMAIN}`,
-    phone: TEST_PHONE,
+    phone: TEST_AGENT_LENDER_PHONE,
     bio: 'Test agent created for end-to-end workflow verification. This record should be deleted after testing.',
     military_service: 'Army',
     military_status: 'Veteran',
@@ -188,12 +189,18 @@ async function main() {
     firstName: 'Harper',
     lastName: 'Foley (TEST AGENT)',
     email: `${TEST_EMAIL_PREFIX}+testagent@${TEST_EMAIL_DOMAIN}`,
-    phone: TEST_PHONE,
+    phone: TEST_AGENT_LENDER_PHONE,
   });
   await updateRecord('agents', testAgent.id, {
     person: { target_object: 'people', target_record_id: agentPersonId },
   });
-  console.log(`   Linked People record: ${agentPersonId}`);
+  // Tag People record with person_type (PATCH appends to multi-select)
+  // Multi-select attributes require an array value
+  await request(`/objects/people/records/${agentPersonId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ data: { values: { person_type: ['Agent'] } } }),
+  });
+  console.log(`   Linked People record: ${agentPersonId} (tagged as Agent)`);
 
   // 4. Create test lender
   console.log('4. Creating test lender...');
@@ -202,7 +209,7 @@ async function main() {
     first_name: 'Harper',
     last_name: 'Foley (TEST LENDER)',
     email: `${TEST_EMAIL_PREFIX}+testlender@${TEST_EMAIL_DOMAIN}`,
-    phone: TEST_PHONE,
+    phone: TEST_AGENT_LENDER_PHONE,
     bio: 'Test lender created for end-to-end workflow verification. This record should be deleted after testing.',
     military_service: 'Navy',
     military_status: 'Veteran',
@@ -219,12 +226,18 @@ async function main() {
     firstName: 'Harper',
     lastName: 'Foley (TEST LENDER)',
     email: `${TEST_EMAIL_PREFIX}+testlender@${TEST_EMAIL_DOMAIN}`,
-    phone: TEST_PHONE,
+    phone: TEST_AGENT_LENDER_PHONE,
   });
   await updateRecord('lenders', testLender.id, {
     person: { target_object: 'people', target_record_id: lenderPersonId },
   });
-  console.log(`   Linked People record: ${lenderPersonId}`);
+  // Tag People record with person_type (PATCH appends to multi-select)
+  // Multi-select attributes require an array value
+  await request(`/objects/people/records/${lenderPersonId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ data: { values: { person_type: ['Lender'] } } }),
+  });
+  console.log(`   Linked People record: ${lenderPersonId} (tagged as Lender)`);
 
   // 5. Create area assignment linking test agent to Colorado area
   console.log('5. Creating area assignment...');

@@ -25,7 +25,6 @@ interface DealData {
 
 type PageState = "loading" | "error" | "deal" | "confirmed" | "already_confirmed";
 
-/** Reusable row for displaying a label/value pair */
 function InfoRow({
   label,
   value,
@@ -38,19 +37,17 @@ function InfoRow({
   if (!value) return null;
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-0">
-      <span className="text-xs font-medium text-gray-400 uppercase tracking-wide sm:w-24 sm:flex-shrink-0 sm:pt-0.5">
-        {label}
-      </span>
+    <div className="flex justify-between items-start py-3 border-b border-gray-100 last:border-b-0">
+      <span className="text-sm text-gray-500 font-medium">{label}</span>
       {href ? (
         <a
           href={href}
-          className="text-accent-blue hover:underline text-sm font-medium break-all"
+          className="text-[#2563eb] hover:underline text-sm font-medium text-right break-all ml-4"
         >
           {value}
         </a>
       ) : (
-        <span className="text-gray-900 text-sm">{value}</span>
+        <span className="text-gray-900 text-sm font-medium text-right ml-4">{value}</span>
       )}
     </div>
   );
@@ -164,8 +161,8 @@ function PortalContent() {
       {/* Loading State */}
       {pageState === "loading" && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
-          <div className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="text-gray-600">Loading lead details...</p>
+          <div className="inline-block w-8 h-8 border-4 border-[#292F6C] border-t-transparent rounded-full animate-spin mb-4" />
+          <p className="text-gray-500 text-sm">Loading lead details...</p>
         </div>
       )}
 
@@ -174,7 +171,7 @@ function PortalContent() {
         <div className="bg-white rounded-xl shadow-sm border border-red-200 p-8 text-center">
           <div className="w-14 h-14 mx-auto mb-4 bg-red-50 rounded-full flex items-center justify-center">
             <svg
-              className="w-7 h-7 text-accent-red"
+              className="w-7 h-7 text-[#C5203E]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -199,70 +196,61 @@ function PortalContent() {
 
       {/* Deal Summary */}
       {pageState === "deal" && deal && agent && (
-        <div className="space-y-4">
-          {/* Welcome card */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <p className="text-gray-600 text-sm">
+        <div className="space-y-5">
+          {/* Welcome message */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <p className="text-gray-700 text-sm leading-relaxed">
               Hi{" "}
-              <span className="font-semibold text-gray-900">{agent.name}</span>,
+              <span className="font-bold text-gray-900">{agent.name}</span>,
               you have a new lead from VeteranPCS.
             </p>
           </div>
 
           {/* Customer info card */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="bg-primary px-6 py-3">
-              <h2 className="text-white font-semibold text-sm tracking-wide uppercase">
+            <div className="bg-[#292F6C] px-5 py-3">
+              <h2 className="text-white font-semibold text-sm tracking-wide">
                 Customer Details
               </h2>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="px-5 py-2">
               <InfoRow label="Name" value={deal.customer_name} />
-              {deal.customer_phone && (
-                <InfoRow
-                  label="Phone"
-                  value={formatPhone(deal.customer_phone)}
-                  href={`tel:${deal.customer_phone}`}
-                />
-              )}
-              {deal.customer_email && (
-                <InfoRow
-                  label="Email"
-                  value={deal.customer_email}
-                  href={`mailto:${deal.customer_email}`}
-                />
-              )}
+              <InfoRow
+                label="Phone"
+                value={formatPhone(deal.customer_phone)}
+                href={deal.customer_phone ? `tel:${deal.customer_phone}` : undefined}
+              />
+              <InfoRow
+                label="Email"
+                value={deal.customer_email}
+                href={deal.customer_email ? `mailto:${deal.customer_email}` : undefined}
+              />
             </div>
           </div>
 
-          {/* Deal info card */}
+          {/* Lead info card */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="bg-primary px-6 py-3">
-              <h2 className="text-white font-semibold text-sm tracking-wide uppercase">
+            <div className="bg-[#292F6C] px-5 py-3">
+              <h2 className="text-white font-semibold text-sm tracking-wide">
                 Lead Details
               </h2>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="px-5 py-2">
               <InfoRow label="Type" value={deal.type} />
               <InfoRow label="Stage" value={deal.stage} />
               {deal.property_address && (
                 <InfoRow label="Address" value={deal.property_address} />
               )}
               {deal.notes && <InfoRow label="Notes" value={deal.notes} />}
-              {deal.created_at && (
-                <InfoRow
-                  label="Submitted"
-                  value={formatDate(deal.created_at)}
-                />
-              )}
+              <InfoRow label="Submitted" value={formatDate(deal.created_at)} />
             </div>
           </div>
 
-          {/* Confirm button */}
+          {/* Confirm button — red accent color for clear CTA */}
           <button
             onClick={handleConfirm}
             disabled={confirming}
-            className="w-full bg-primary hover:bg-primary-hover disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-colors duration-200 text-base shadow-sm"
+            className="w-full bg-[#C5203E] hover:bg-[#a91b35] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-xl transition-colors duration-200 text-base shadow-md"
           >
             {confirming ? (
               <span className="flex items-center justify-center gap-2">
@@ -270,7 +258,7 @@ function PortalContent() {
                 Confirming...
               </span>
             ) : (
-              "Confirm \u2014 I'll reach out to this customer"
+              "Confirm — I'll reach out to this customer"
             )}
           </button>
 
@@ -302,13 +290,13 @@ function PortalContent() {
             </div>
             <h2 className="text-lg font-semibold text-gray-900 mb-2">
               {pageState === "confirmed"
-                ? "Contact Confirmed"
+                ? "Contact Confirmed!"
                 : "Already Confirmed"}
             </h2>
             <p className="text-gray-600 text-sm mb-6">
               {pageState === "confirmed"
-                ? `Thank you for confirming. Please reach out to ${deal.customer_name} as soon as possible.`
-                : `You have already confirmed contact for this lead (${deal.customer_name}).`}
+                ? `Thank you! Please reach out to ${deal.customer_name} as soon as possible.`
+                : `You already confirmed contact for this lead (${deal.customer_name}).`}
             </p>
 
             {/* Quick contact actions */}
@@ -317,7 +305,7 @@ function PortalContent() {
                 {deal.customer_phone && (
                   <a
                     href={`tel:${deal.customer_phone}`}
-                    className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-medium py-3 px-5 rounded-lg transition-colors duration-200 text-sm"
+                    className="inline-flex items-center justify-center gap-2 bg-[#292F6C] hover:bg-[#1e2354] text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 text-sm"
                   >
                     <svg
                       className="w-4 h-4"
@@ -338,7 +326,7 @@ function PortalContent() {
                 {deal.customer_email && (
                   <a
                     href={`mailto:${deal.customer_email}`}
-                    className="inline-flex items-center justify-center gap-2 bg-white border border-primary text-primary hover:bg-gray-50 font-medium py-3 px-5 rounded-lg transition-colors duration-200 text-sm"
+                    className="inline-flex items-center justify-center gap-2 bg-white border-2 border-[#292F6C] text-[#292F6C] hover:bg-gray-50 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 text-sm"
                   >
                     <svg
                       className="w-4 h-4"
@@ -364,26 +352,25 @@ function PortalContent() {
   );
 }
 
-/** Loading fallback shown while Suspense resolves useSearchParams */
 function PortalLoading() {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
-      <div className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-      <p className="text-gray-600">Loading...</p>
+      <div className="inline-block w-8 h-8 border-4 border-[#292F6C] border-t-transparent rounded-full animate-spin mb-4" />
+      <p className="text-gray-500 text-sm">Loading...</p>
     </div>
   );
 }
 
 export default function PortalPage() {
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-lg mx-auto px-4 py-12 md:py-20">
+    <main className="min-h-[60vh] bg-gray-50 pt-24 pb-8 md:pt-28 md:pb-16">
+      <div className="max-w-md mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-primary">
-            Lead Portal
+        <div className="text-center mb-6">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+            New Lead
           </h1>
-          <p className="text-gray-500 mt-1 text-sm">VeteranPCS</p>
+          <p className="text-gray-400 mt-1 text-xs uppercase tracking-wider">VeteranPCS Agent Portal</p>
         </div>
 
         <Suspense fallback={<PortalLoading />}>

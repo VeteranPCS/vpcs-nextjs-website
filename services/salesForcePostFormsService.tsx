@@ -6,6 +6,14 @@ import { generateMagicLink } from "@/lib/magic-link";
 import { normalizePhone } from "@/lib/normalize-phone";
 import { findOrCreatePerson } from "@/lib/attio-people";
 import { sendEmail } from "@/lib/email";
+import WelcomeAgent from "@/emails/templates/customer/WelcomeAgent";
+import WelcomeLender from "@/emails/templates/customer/WelcomeLender";
+import ContactConfirmation from "@/emails/templates/customer/ContactConfirmation";
+import AgentLeadAlert from "@/emails/templates/agent/LeadAlert";
+import LenderLeadAlert from "@/emails/templates/lender/LeadAlert";
+import AgentOnboardingWelcome from "@/emails/templates/agent/OnboardingWelcome";
+import LenderOnboardingWelcome from "@/emails/templates/lender/OnboardingWelcome";
+import InternOnboardingWelcome from "@/emails/templates/intern/OnboardingWelcome";
 import { logDebug, logError, logInfo } from "./loggingService";
 import {
   FormSubmissionStatus,
@@ -215,11 +223,11 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
       logDebug("Customer buying_agent updated", { submissionId, customerId, agentId });
     }
 
-    // 5. Send emails via Resend (fire-and-forget)
+    // 5. Send emails via Resend
     if (agentInfo) {
       // C2: Customer welcome with agent info
-      import('@/emails/templates/customer/WelcomeAgent').then(({ default: WelcomeAgent }) => {
-        sendEmail({
+      try {
+        await sendEmail({
           to: formData.email,
           subject: `Your VeteranPCS Agent: ${agentInfo.first_name} ${agentInfo.last_name}`,
           react: WelcomeAgent({
@@ -235,14 +243,17 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
             recordId: customerId,
             emailLabel: 'C2: Customer Welcome with Agent',
           },
-        }).catch(err => logError('C2 email failed', { submissionId }, err));
-      }).catch(err => logError('C2 template import failed', { submissionId }, err));
+        });
+        logInfo('C2 email sent', { submissionId });
+      } catch (err) {
+        logError('C2 email failed', { submissionId }, err);
+      }
 
       // A1: Lead alert to agent
       if (agentInfo.email) {
-        import('@/emails/templates/agent/LeadAlert').then(({ default: AgentLeadAlert }) => {
+        try {
           const magicLink = generateMagicLink(agentId!, dealId, "agent");
-          sendEmail({
+          await sendEmail({
             to: agentInfo.email,
             subject: 'New Lead from VeteranPCS - Please Reply When Received',
             react: AgentLeadAlert({
@@ -263,8 +274,11 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
               recordId: agentId!,
               emailLabel: 'A1: Lead Alert',
             },
-          }).catch(err => logError('A1 email failed', { submissionId }, err));
-        }).catch(err => logError('A1 template import failed', { submissionId }, err));
+          });
+          logInfo('A1 email sent', { submissionId });
+        } catch (err) {
+          logError('A1 email failed', { submissionId }, err);
+        }
       }
     }
 
@@ -385,11 +399,11 @@ export async function GetListedAgentsPostForm(formData: any) {
 
     // Send A2: Agent onboarding welcome email
     if (formData.email) {
-      import('@/emails/templates/agent/OnboardingWelcome').then(({ default: OnboardingWelcome }) => {
-        sendEmail({
+      try {
+        await sendEmail({
           to: formData.email,
           subject: 'Welcome to VeteranPCS - Thank You for Your Application',
-          react: OnboardingWelcome({
+          react: AgentOnboardingWelcome({
             firstName: formData.firstName || '',
           }),
           attioNote: {
@@ -397,8 +411,11 @@ export async function GetListedAgentsPostForm(formData: any) {
             recordId: agentId,
             emailLabel: 'A2: Agent Onboarding Welcome',
           },
-        }).catch(err => logError('A2 email failed', { submissionId }, err));
-      }).catch(err => logError('A2 template import failed', { submissionId }, err));
+        });
+        logInfo('A2 email sent', { submissionId });
+      } catch (err) {
+        logError('A2 email failed', { submissionId }, err);
+      }
     }
 
     // Slack notification handled by Attio WF3a
@@ -496,11 +513,11 @@ export async function GetListedLendersPostForm(formData: any) {
 
     // Send L2: Lender onboarding welcome email
     if (formData.email) {
-      import('@/emails/templates/lender/OnboardingWelcome').then(({ default: OnboardingWelcome }) => {
-        sendEmail({
+      try {
+        await sendEmail({
           to: formData.email,
           subject: 'Welcome to VeteranPCS - Thank You for Your Application',
-          react: OnboardingWelcome({
+          react: LenderOnboardingWelcome({
             firstName: formData.firstName || '',
           }),
           attioNote: {
@@ -508,8 +525,11 @@ export async function GetListedLendersPostForm(formData: any) {
             recordId: lenderId,
             emailLabel: 'L2: Lender Onboarding Welcome',
           },
-        }).catch(err => logError('L2 email failed', { submissionId }, err));
-      }).catch(err => logError('L2 template import failed', { submissionId }, err));
+        });
+        logInfo('L2 email sent', { submissionId });
+      } catch (err) {
+        logError('L2 email failed', { submissionId }, err);
+      }
     }
 
     // Slack notification handled by Attio WF4a
@@ -698,11 +718,11 @@ export async function contactLenderPostForm(
       logDebug("Customer lender updated", { submissionId, customerId, lenderId });
     }
 
-    // 5. Send emails via Resend (fire-and-forget)
+    // 5. Send emails via Resend
     if (lenderInfo) {
       // C3: Customer welcome with lender info
-      import('@/emails/templates/customer/WelcomeLender').then(({ default: WelcomeLender }) => {
-        sendEmail({
+      try {
+        await sendEmail({
           to: formData.email,
           subject: `Your VeteranPCS Lender: ${lenderInfo.first_name} ${lenderInfo.last_name}`,
           react: WelcomeLender({
@@ -719,14 +739,17 @@ export async function contactLenderPostForm(
             recordId: customerId,
             emailLabel: 'C3: Customer Welcome with Lender',
           },
-        }).catch(err => logError('C3 email failed', { submissionId }, err));
-      }).catch(err => logError('C3 template import failed', { submissionId }, err));
+        });
+        logInfo('C3 email sent', { submissionId });
+      } catch (err) {
+        logError('C3 email failed', { submissionId }, err);
+      }
 
       // L1: Lead alert to lender
       if (lenderInfo.email) {
-        import('@/emails/templates/lender/LeadAlert').then(({ default: LenderLeadAlert }) => {
+        try {
           const magicLink = generateMagicLink(lenderId!, dealId, "lender");
-          sendEmail({
+          await sendEmail({
             to: lenderInfo.email,
             subject: 'New Lead from VeteranPCS - Please Reply When Received',
             react: LenderLeadAlert({
@@ -746,8 +769,11 @@ export async function contactLenderPostForm(
               recordId: lenderId!,
               emailLabel: 'L1: Lead Alert',
             },
-          }).catch(err => logError('L1 email failed', { submissionId }, err));
-        }).catch(err => logError('L1 template import failed', { submissionId }, err));
+          });
+          logInfo('L1 email sent', { submissionId });
+        } catch (err) {
+          logError('L1 email failed', { submissionId }, err);
+        }
       }
     }
 
@@ -815,8 +841,8 @@ export async function contactPostForm(formData: any) {
 
     // Send C1: Unassigned customer welcome email
     if (formData.email) {
-      import('@/emails/templates/customer/ContactConfirmation').then(({ default: ContactConfirmation }) => {
-        sendEmail({
+      try {
+        await sendEmail({
           to: formData.email,
           subject: 'Thank You for Contacting VeteranPCS',
           react: ContactConfirmation({
@@ -827,8 +853,11 @@ export async function contactPostForm(formData: any) {
             recordId: customerId,
             emailLabel: 'C1: Contact Form Confirmation',
           },
-        }).catch(err => logError('C1 email failed', { submissionId }, err));
-      }).catch(err => logError('C1 template import failed', { submissionId }, err));
+        });
+        logInfo('C1 email sent', { submissionId });
+      } catch (err) {
+        logError('C1 email failed', { submissionId }, err);
+      }
     }
 
     // Send Slack notification
@@ -1034,8 +1063,8 @@ export async function internshipFormSubmission(formData: any) {
 
     // Send I1: Intern onboarding welcome email
     if (formData.email) {
-      import('@/emails/templates/intern/OnboardingWelcome').then(({ default: InternOnboardingWelcome }) => {
-        sendEmail({
+      try {
+        await sendEmail({
           to: formData.email,
           subject: 'VeteranPCS Internship - Thank You for Your Application',
           react: InternOnboardingWelcome({
@@ -1050,8 +1079,11 @@ export async function internshipFormSubmission(formData: any) {
             recordId: internId,
             emailLabel: 'I1: Intern Onboarding Welcome',
           },
-        }).catch(err => logError('I1 email failed', { submissionId }, err));
-      }).catch(err => logError('I1 template import failed', { submissionId }, err));
+        });
+        logInfo('I1 email sent', { submissionId });
+      } catch (err) {
+        logError('I1 email failed', { submissionId }, err);
+      }
     }
 
     // Slack notification handled by Attio WF5a
