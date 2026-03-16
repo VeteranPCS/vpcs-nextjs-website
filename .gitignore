@@ -6,6 +6,9 @@
 .pnp.js
 .yarn/install-state.gz
 
+# ngrok (contains auth token)
+ngrok.yml
+
 # testing
 /coverage
 
@@ -47,4 +50,6 @@ scripts/test-ids.json
 semgrep-results.json
 semgrep-results.sarif
 
-emails
+# Legacy Salesforce email HTML (screenshots, exports)
+emails/agent-alert-emails
+# Keep emails/templates/ (React Email components) tracked

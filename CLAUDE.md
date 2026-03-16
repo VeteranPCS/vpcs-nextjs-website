@@ -6,30 +6,32 @@ This project is the VeteranPCS website, powered by Attio CRM.
 
 ## Project Status
 
-**Status:** MIGRATION COMPLETE ✅
-**Branch:** attio-migration (ready for merge to main)
-**Last Updated:** 2026-01-31
+**Status:** HYBRID EMAIL ARCHITECTURE IMPLEMENTED
+**Branch:** attio-migration
+**Last Updated:** 2026-03-15
 
-The Salesforce → Attio migration is complete. All data is now in Attio, and the website reads/writes to Attio.
+The Salesforce → Attio migration is complete. Email sending uses Resend (not Attio sequences).
+
+**Architecture Decision:** Attio sequences cannot access cross-entity data (agent brokerage, deal bonus amounts, etc.), so all emails are sent from application code via Resend, where we have full access to every Attio object through the API. Attio keeps its role as CRM (data, pipelines, admin UI, Slack notifications).
 
 **Recently Completed:**
-- ✅ All 8 Attio Workflows built and Live (including exit-from-sequence blocks)
-- ✅ Email automation documentation (8 workflows, 14 sequences, 18 templates)
-- ✅ Full cross-reference review of all workflow/sequence/template docs
-- ✅ People record integration for sequence enrollment (all forms + backfill)
+- ✅ Resend integration with Attio note logging (`lib/email.ts`)
+- ✅ 19 React Email templates (`emails/templates/`)
+- ✅ Form handlers send emails via Resend (C1-C3, A1-A2, L1-L2, I1)
+- ✅ Webhook handler sends stage-change emails (C4-C5, A4-A5, L4-L5)
+- ✅ Stale lead re-routing cron (`/api/cron/stale-leads`)
+- ✅ Onboarding follow-up drips cron (`/api/cron/follow-up-emails`)
+- ✅ Agent portal page (`/portal`) for magic link confirmation
+- ✅ Attio Workflows simplified to Slack-only (sequence enrollment removed)
+- ✅ People record denormalization rolled back (no longer needed)
 
 **Next Steps:**
-1. **Verify email sync** — Gmail or Microsoft account must be synced in Attio for sequences to send emails
-2. **Create 14 sequences** in Attio UI (see `docs/attio-sequences.md`)
-3. **Paste 18 email templates** into sequences (see `docs/attio-email-templates.md`)
-4. **Test workflows end-to-end** using checklists in `docs/attio-workflows.md` and `docs/attio-sequences.md`
-5. **Create dedicated Slack channels** — workflows currently post to `#general` (see planned channels in `docs/attio-workflows.md`)
+1. **Simplify Attio workflows** — Remove sequence enrollment/exit blocks from all 8 workflows in Attio UI (keep Slack blocks)
+2. **Test email delivery** — Submit test forms and verify Resend emails arrive
+3. **Create dedicated Slack channels** — workflows currently post to `#general`
+4. **Retire `#salesforce-alerts` channel**
 
-**Pre-Launch (before merging to main):**
-1. **Attio workflows for general forms** — General Contact, Keep In Touch, and VA Loan/Homebuyer Guide downloads currently only send Slack via legacy webhook. Need Attio workflows or sequences for these.
-2. **Retire `#salesforce-alerts` channel** — Update `SLACK_WEBHOOK_URL` to point to appropriate channel, or remove once all forms have Attio workflow coverage.
-
-**Enhancement Phase (after automation is tested):**
+**Enhancement Phase:**
 1. Multi-step contact form with Buying/Selling/Both selection
 2. Area-based agent routing for unselected agents
 
@@ -207,13 +209,11 @@ const objectInfo = await attio.getObject(event.id.object_id);
 const objectSlug = objectInfo.api_slug;
 ```
 
-### 15. Sequences require People records (not custom objects)
+### 15. People records for CRM contact management
 ```typescript
-// Attio sequences can ONLY enroll built-in objects (People, Companies).
-// Custom objects (customers, agents, lenders, interns) cannot be enrolled directly.
-
-// SOLUTION: Each custom record has a `person` field → People record
-// Created via findOrCreatePerson() in lib/attio-people.ts
+// Each custom record has a `person` field → People record for CRM dedup.
+// (Originally added for Attio sequence enrollment, which was replaced by Resend.)
+// Kept because People records are useful for Attio's contact management features.
 
 import { findOrCreatePerson } from "@/lib/attio-people";
 
@@ -238,7 +238,20 @@ const customerData = {
 // Do NOT use separate first_name/last_name fields — they don't exist on People!
 ```
 
-### 16. Scripts must use dynamic imports for env vars
+### 16. Multi-select attributes require array values
+```typescript
+// WRONG - single string rejected for multi-select
+await attio.updateRecord("people", id, { person_type: "Agent" });
+// Error: "Multi-select attribute expects an array but received a single value"
+
+// CORRECT - wrap in array
+await attio.updateRecord("people", id, { person_type: ["Agent"] });
+
+// PATCH appends to multi-select (existing values preserved)
+// PUT replaces entire multi-select (existing values lost)
+```
+
+### 17. Scripts must use dynamic imports for env vars
 ```typescript
 // WRONG - attio instantiated before dotenv runs
 import dotenv from 'dotenv';
@@ -280,16 +293,18 @@ const assignedStateIds = lender.states;
 
 ### People Record Linkage
 
-Every custom object record that needs sequence enrollment has a `person` field linking to a built-in People record:
+Every custom object record has a `person` field linking to a built-in People record for CRM contact management:
 
 | Custom Object | `person` field | Purpose |
 |---------------|---------------|---------|
-| Customer | → People | Customer welcome/milestone sequences |
-| Agent | → People | Lead alerts, onboarding sequences |
-| Lender | → People | Lead alerts, onboarding sequences |
-| Intern | → People | Onboarding sequences |
+| Customer | → People | CRM contact dedup |
+| Agent | → People | CRM contact dedup |
+| Lender | → People | CRM contact dedup |
+| Intern | → People | CRM contact dedup |
 
 People records are deduped by email — same email across object types = same People record.
+
+Each People record has a `person_type` multi-select field (Agent, Lender, Customer, Intern) set automatically by `findOrCreatePerson()`. Dual-role people accumulate multiple tags (e.g., `[Agent, Customer]`).
 
 ### Key Entities
 
@@ -377,12 +392,18 @@ app/(site)/[state]/page.tsx
 
 | File | Purpose |
 |------|---------|
-| `lib/attio.ts` | Attio API client (CRUD, query, assertRecord) |
-| `lib/attio-people.ts` | People record upsert for sequence enrollment |
+| `lib/attio.ts` | Attio API client (CRUD, query, assertRecord, createNote) |
+| `lib/attio-people.ts` | People record upsert for CRM contact management |
 | `lib/attio-data-loader.ts` | Cached data loader for website |
 | `lib/attio-schema.ts` | Schema definitions and constants |
+| `lib/email.ts` | Resend email client with Attio note logging |
+| `emails/templates/` | React Email templates (19 total) |
 | `services/stateService.tsx` | Fetches agents/lenders for state pages |
-| `services/salesForcePostFormsService.tsx` | Contact form submissions |
+| `services/salesForcePostFormsService.tsx` | Contact form submissions + email sends |
+| `app/api/webhooks/attio/route.ts` | Attio webhook: cache revalidation + stage-change emails |
+| `app/api/cron/stale-leads/route.ts` | Stale lead re-routing (every 2hrs) |
+| `app/api/cron/follow-up-emails/route.ts` | Onboarding follow-up drips (daily) |
+| `app/(site)/portal/page.tsx` | Agent portal for magic link confirmation |
 | `lib/magic-link.ts` | JWT token generation/validation |
 | `lib/slack.ts` | Slack webhook notifications |
 | `lib/openphone.ts` | SMS via OpenPhone API |
@@ -395,7 +416,10 @@ app/(site)/[state]/page.tsx
 |-------|---------|
 | `GET /api/magic-link/validate` | Validate agent portal token |
 | `POST /api/magic-link/update` | Update deal from portal |
-| `POST /api/webhooks/attio` | Handle Attio events, revalidate cache |
+| `GET /api/portal/deal` | Fetch deal data for portal display |
+| `POST /api/webhooks/attio` | Handle Attio events, revalidate cache, send stage-change emails |
+| `GET /api/cron/stale-leads` | Stale lead re-routing (Vercel cron) |
+| `GET /api/cron/follow-up-emails` | Onboarding follow-up drips (Vercel cron) |
 
 ---
 
@@ -435,43 +459,47 @@ Agent becomes "Active on Website" when ALL true:
 
 ## Email Automation Architecture
 
-**Critical:** Attio Workflows **CANNOT** send emails directly. Workflows enroll/exit people from **Sequences**, which send emails via synced Gmail/Microsoft accounts.
+**Architecture:** Hybrid approach — Attio handles CRM data + Slack notifications, Resend handles all email delivery, React Email provides typed templates.
 
-### Workflows (8 total, all Live)
+### How Emails Are Sent
 
-Workflows handle business logic and control sequence enrollment. Attio doesn't support OR triggers, so each onboarding pipeline has separate "Created" and "Stage Changed" workflows:
+```
+Form Submission → Create Attio Records → Send Email via Resend (code has all data)
+Stage Change → Attio Webhook → Our Handler → Query Data → Send Email via Resend
+Follow-ups → Vercel Cron → Query Attio → Send Email via Resend
+```
+
+**Key files:**
+- `lib/email.ts` — Resend client wrapper with Attio note logging
+- `emails/templates/` — 19 React Email templates (typed props, no merge field limitations)
+- `services/salesForcePostFormsService.tsx` — Form handlers send immediate emails
+- `app/api/webhooks/attio/route.ts` — Stage-change emails
+- `app/api/cron/stale-leads/route.ts` — Stale lead re-routing (every 2hrs)
+- `app/api/cron/follow-up-emails/route.ts` — Onboarding follow-up drips (daily)
+
+### Attio Workflows (8 total, Slack-only)
+
+Workflows handle Slack notifications. Email sending was removed from workflows (handled by application code instead).
 
 | # | Workflow | Trigger | Actions |
 |---|----------|---------|---------|
-| WF1 | New Customer Deal Created | Record added to list | Enroll in C1/C2/C3 + A1/L1 sequences, Slack |
-| WF2 | Customer Deal Stage Changed | List entry updated | Enroll in C4/C5 sequences, Slack |
-| WF3a | Agent Onboarding Created | Record added to list | Enroll Agent Onboarding, Slack |
-| WF3b | Agent Onboarding Stage Changed | List entry updated | Enroll Contract Ready/Live, Slack |
-| WF4a | Lender Onboarding Created | Record added to list | Enroll Lender Onboarding, Slack |
-| WF4b | Lender Onboarding Stage Changed | List entry updated | Enroll Contract Ready/Live, Slack |
-| WF5a | Intern Placement Created | Record added to list | Enroll Intern Onboarding, Slack |
-| WF5b | Intern Placement Stage Changed | List entry updated | Exit Intern Onboarding |
+| WF1 | New Customer Deal Created | Record added to list | Slack notification |
+| WF2 | Customer Deal Stage Changed | List entry updated | Slack notification |
+| WF3a | Agent Onboarding Created | Record added to list | Slack notification |
+| WF3b | Agent Onboarding Stage Changed | List entry updated | Slack notification |
+| WF4a | Lender Onboarding Created | Record added to list | Slack notification |
+| WF4b | Lender Onboarding Stage Changed | List entry updated | Slack notification |
+| WF5a | Intern Placement Created | Record added to list | Slack notification |
+| WF5b | Intern Placement Stage Changed | List entry updated | (no action needed) |
 
-### Sequences (14 total)
+### Email Templates (19 total, React Email)
 
-Sequences are the email sending mechanism:
-
-| Category | Sequences |
-|----------|-----------|
-| Customer | Welcome-Unassigned (C1), Welcome-Agent (C2), Welcome-Lender (C3), Under Contract (C4), Closed (C5) |
-| Agent | Lead Alert (A1), Onboarding (A2→A3), Contract Ready (A4), Live (A5) |
-| Lender | Lead Alert (L1), Onboarding (L2→L3), Contract Ready (L4), Live (L5) |
-| Intern | Onboarding (I1→I2) |
-
-### Email Templates (18 total)
-
-| Category | Templates |
-|----------|-----------|
-| Customer | C1-C6 (confirmations, milestones) |
-| Agent | A1-A5 (leads, onboarding) |
-| Lender | L1-L5 (leads, onboarding) |
-| Intern | I1-I2 (welcome, follow-up) |
-| Referral | R1 (thank you) |
+| Category | Templates | Sent By |
+|----------|-----------|---------|
+| Customer | C1-C5 + C2b (confirmations, milestones, reassignment) | Form handlers + webhook |
+| Agent | A1-A5 (leads, onboarding) | Form handlers + webhook + cron |
+| Lender | L1-L5 (leads, onboarding) | Form handlers + webhook + cron |
+| Intern | I1-I2 (welcome, follow-up) | Form handler + cron |
 
 ### Slack Channels
 
@@ -484,32 +512,25 @@ Sequences are the email sending mechanism:
 | `#intern-applications` | Intern applications |
 | `#deals` | Under contract, won, lost |
 
-**Full Documentation:**
-- `docs/attio-workflows.md` - 8 workflows (all Live) with sequence enrollment logic
-- `docs/attio-sequences.md` - 14 sequences with email content
-- `docs/attio-email-templates.md` - 18 email templates ready to copy/paste
+**Documentation:**
+- `docs/attio-workflows.md` - 8 workflows (Slack-only)
+- `docs/attio-email-templates.md` - Email content reference (templates implemented in `emails/templates/`)
 
 ---
 
-## Attio Workflows - Stale Lead/Deal Automation
+## Stale Lead/Deal Automation (Vercel Cron)
 
-These scheduled automations should be configured in Attio's workflow builder:
+Handled by application cron jobs, not Attio workflows.
 
-### 1. Stale Lead Re-routing
-**Trigger:** Recurring Schedule (hourly or every 6 hours)
-**Logic:** Filter deals where `stage = "New Lead"` AND `contact_confirmed = false` AND `created_at < 12 hours ago` → re-route to next agent
+### `/api/cron/stale-leads` (every 2 hours)
+1. **12-hour re-route** — Deals in "New Lead" where `contact_confirmed = false` AND created > 12h ago → re-route to next AA_Score agent
+2. **7-day reminder** — Deals in open stages where `last_updated < 7 days ago` → SMS reminder to agent
+3. **14-day alert** — Deals where `last_updated < 14 days ago` → Slack alert to admin
+4. **45-day auto-close** — Deals where `last_stage_change < 45 days ago` → move to "Closed Lost"
 
-### 2. Stale Deal Reminders (7-day)
-**Trigger:** Daily at 8am
-**Logic:** Filter deals in open stages where `last_updated < 7 days ago` → send reminder
-
-### 3. Stale Deal Admin Alert (14-day)
-**Trigger:** Daily at 8am
-**Logic:** Filter deals where `last_updated < 14 days ago` → Slack alert
-
-### 4. Auto-Close Stale Deals (45-day)
-**Trigger:** Daily at 6am
-**Logic:** Filter deals where `last_stage_change < 45 days ago` → move to "Closed Lost"
+### `/api/cron/follow-up-emails` (daily at 2pm UTC)
+- Query onboarding entries in "New Application" stage
+- Send follow-up emails (A3/L3/I2) at 7-day intervals, up to 4 times
 
 ---
 
@@ -531,6 +552,9 @@ Required in `.env.local`:
 - `SLACK_WEBHOOK_URL`
 - `MAGIC_LINK_SECRET`
 - `NEXT_PUBLIC_BASE_URL`
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL` (default: `VeteranPCS <tech@veteranpcs.com>`)
+- `CRON_SECRET` (Vercel sets this for cron job auth)
 
 ---
 

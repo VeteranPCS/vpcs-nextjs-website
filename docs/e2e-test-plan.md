@@ -1,18 +1,25 @@
-# End-to-End Workflow & Sequence Test Plan
+# End-to-End Test Plan
 
-**Date:** 2026-02-26
+**Date:** 2026-03-15
 **Branch:** attio-migration
-**Purpose:** Verify all 8 Attio Workflows, 14 Sequences, and 18 Email Templates work correctly before merging to production.
+**Purpose:** Verify email delivery via Resend, Attio record creation, webhook handling, and cron job automation.
 
 ---
 
 ## Prerequisites
 
-Before starting, complete these setup steps:
+### A. Environment Setup
 
-- [ ] **Email sync**: Gmail or Microsoft account synced in Attio (Settings > Email sync). Sequences cannot send without this.
-- [ ] **14 sequences created** in Attio UI (see `docs/attio-sequences.md`)
-- [ ] **18 email templates pasted** into sequences (see `docs/attio-email-templates.md`)
+- [ ] **Resend API key** configured in `.env.local` (`RESEND_API_KEY`)
+- [ ] **Domain verified** in Resend (`veteranpcs.com` — SPF, DKIM, DMARC)
+- [ ] **Attio webhook** registered for list-entry events (in addition to record events)
+
+### B. Attio Workflow Simplification
+
+Remove sequence enrollment/exit blocks from all 8 workflows in Attio UI. Keep Slack notification blocks only.
+
+### C. Test Environment
+
 - [ ] **Test records created**: Run `npx tsx scripts/test-setup.ts` and save the output IDs
 - [ ] **Dev server running**: `npm run dev` (or use preview deployment)
 - [ ] **Verify test records**: Visit `/colorado` and confirm:
@@ -38,14 +45,20 @@ Before starting, complete these setup steps:
    - Select the test agent
 3. Submit the form
 
-**Expected:**
+**Expected — Records:**
 - [ ] Customer record created in Attio
 - [ ] Customer deal created in Customer Deals pipeline (stage: "New Lead")
-- [ ] Customer enrolled in **C2 (Welcome-Agent)** sequence
-- [ ] Agent enrolled in **A1 (Lead Alert)** sequence
-- [ ] Slack notification in `#new-leads` (currently `#general`)
+- [ ] **People record** exists for `harper+testcustomer@gmail.com` (Attio > People, search by email)
+- [ ] People record has `person_type` = `[Customer]`
+- [ ] Customer record's `person` field links to this People record
+
+**Expected — Automation:**
+- [ ] C2 email sent via Resend to `harper+testcustomer@gmail.com` (check Resend dashboard)
+- [ ] A1 lead alert email sent via Resend to test agent's email
+- [ ] Attio note logged on customer record: "Email sent: C2"
+- [ ] Attio note logged on agent record: "Email sent: A1"
+- [ ] Slack notification in `#general`
 - [ ] SMS sent to test agent via OpenPhone
-- [ ] Email received at `harper+testcustomer@gmail.com` (C2 welcome email)
 
 #### 1b: Customer deal with assigned lender
 1. Go to `/contact-lender` page (or click "Contact Now" on test lender)
@@ -55,16 +68,17 @@ Before starting, complete these setup steps:
 3. Submit
 
 **Expected:**
-- [ ] Customer enrolled in **C3 (Welcome-Lender)** sequence
-- [ ] Lender enrolled in **L1 (Lead Alert)** sequence
-- [ ] Slack notification in `#new-leads`
+- [ ] People record exists for `harper+testcustomer2@gmail.com` with `person_type` = `[Customer]`
+- [ ] C3 email sent via Resend to customer
+- [ ] L1 lead alert email sent via Resend to lender
+- [ ] Slack notification in `#general`
 
 #### 1c: Customer deal with no agent or lender
 1. Create a customer deal via Attio UI (or API) with no agent/lender assigned
 
 **Expected:**
-- [ ] Customer enrolled in **C1 (Welcome-Unassigned)** sequence
-- [ ] Slack notification in `#leads-unassigned`
+- [ ] C1 email sent via Resend to customer
+- [ ] Slack notification in `#general`
 
 ---
 
@@ -77,22 +91,22 @@ Before starting, complete these setup steps:
 2. Change stage to "Under Contract"
 
 **Expected:**
-- [ ] Customer enrolled in **C4 (Under Contract)** sequence
-- [ ] Slack notification in `#deals`
+- [ ] C4 email sent via Resend to customer (triggered by webhook handler)
+- [ ] Slack notification in `#general`
 
 #### 2b: Move deal to "Paid Complete"
 1. Change stage to "Paid Complete"
 
 **Expected:**
-- [ ] Customer enrolled in **C5 (Closed)** sequence
-- [ ] Slack notification in `#deals`
+- [ ] C5 email sent via Resend to customer with bonus amounts (triggered by webhook handler)
+- [ ] Slack notification in `#general`
 
 #### 2c: Move deal to "Closed Lost"
 1. Change stage to "Closed Lost"
 
 **Expected:**
-- [ ] Slack notification in `#deals`
-- [ ] **No sequence enrollment** (closed lost customers don't get follow-up emails)
+- [ ] Slack notification in `#general`
+- [ ] **No email sent** (closed lost customers don't get follow-up emails)
 
 ---
 
@@ -107,11 +121,16 @@ Before starting, complete these setup steps:
    - Military Service: Army
 3. Submit
 
-**Expected:**
-- [ ] Agent record created (or matched) in Attio
+**Expected — Records:**
+- [ ] Agent record created in Attio
 - [ ] Agent added to Agent Onboarding pipeline (stage: "New Application")
-- [ ] Agent enrolled in **A2 (Onboarding Welcome)** sequence
-- [ ] Slack notification in `#agent-applications`
+- [ ] **People record** exists for `harper+testagent2@gmail.com` with `person_type` = `[Agent]`
+- [ ] Agent record's `person` field links to this People record
+
+**Expected — Automation:**
+- [ ] A2 email sent via Resend to agent
+- [ ] Attio note logged on agent record: "Email sent: A2"
+- [ ] Slack notification in `#general`
 
 ---
 
@@ -123,22 +142,21 @@ Before starting, complete these setup steps:
 1. In Attio UI, change test agent's onboarding stage to "Interviewing"
 
 **Expected:**
-- [ ] Agent **EXITED** from Agent Onboarding sequence (A3 follow-up should NOT send at day 7)
-- [ ] Verify: Attio > Automations > Sequences > Agent Onboarding > check agent is in "Exited" tab, not "Active"
+- [ ] No immediate email sent (follow-up emails handled by daily cron, not stage changes)
 
 #### 3c: Move to "Contract Sent"
 1. Change stage to "Contract Sent"
 
 **Expected:**
-- [ ] Agent enrolled in **A4 (Contract Ready)** sequence
-- [ ] Slack notification
+- [ ] A4 email sent via Resend to agent (triggered by webhook handler)
+- [ ] Slack notification in `#general`
 
 #### 3d: Move to "Live on Website"
 1. Change stage to "Live on Website"
 
 **Expected:**
-- [ ] Agent enrolled in **A5 (Live)** sequence
-- [ ] Slack notification in `#agent-applications`
+- [ ] A5 email sent via Resend to agent (triggered by webhook handler)
+- [ ] Slack notification in `#general`
 
 ---
 
@@ -152,11 +170,16 @@ Before starting, complete these setup steps:
    - Email: `harper+testlender2@gmail.com`
 3. Submit
 
-**Expected:**
+**Expected — Records:**
 - [ ] Lender record created in Attio
 - [ ] Lender added to Lender Onboarding pipeline (stage: "New Application")
-- [ ] Lender enrolled in **L2 (Onboarding Welcome)** sequence
-- [ ] Slack notification in `#lender-applications`
+- [ ] **People record** exists for `harper+testlender2@gmail.com` with `person_type` = `[Lender]`
+- [ ] Lender record's `person` field links to this People record
+
+**Expected — Automation:**
+- [ ] L2 email sent via Resend to lender
+- [ ] Attio note logged on lender record: "Email sent: L2"
+- [ ] Slack notification in `#general`
 
 ---
 
@@ -168,20 +191,20 @@ Before starting, complete these setup steps:
 1. In Attio UI, change test lender's onboarding stage past "New Application"
 
 **Expected:**
-- [ ] Lender **EXITED** from Lender Onboarding sequence
+- [ ] No immediate email sent (follow-up emails handled by daily cron)
 
 #### 4c: Move to "Contract Sent"
 1. Change stage to "Contract Sent"
 
 **Expected:**
-- [ ] Lender enrolled in **L4 (Contract Ready)** sequence
+- [ ] L4 email sent via Resend to lender (triggered by webhook handler)
 
 #### 4d: Move to "Live on Website"
 1. Change stage to "Live on Website"
 
 **Expected:**
-- [ ] Lender enrolled in **L5 (Live)** sequence
-- [ ] Slack notification in `#lender-applications`
+- [ ] L5 email sent via Resend to lender (triggered by webhook handler)
+- [ ] Slack notification in `#general`
 
 ---
 
@@ -197,11 +220,16 @@ Before starting, complete these setup steps:
    - Internship Type: Real Estate Agent
 3. Submit
 
-**Expected:**
+**Expected — Records:**
 - [ ] Intern record created in Attio
 - [ ] Intern added to Intern Placements pipeline (stage: "New Application")
-- [ ] Intern enrolled in **I1 (Onboarding Welcome)** sequence
-- [ ] Slack notification in `#intern-applications`
+- [ ] **People record** exists for `harper+testintern@gmail.com` with `person_type` = `[Intern]`
+- [ ] Intern record's `person` field links to this People record
+
+**Expected — Automation:**
+- [ ] I1 email sent via Resend to intern
+- [ ] Attio note logged on intern record: "Email sent: I1"
+- [ ] Slack notification in `#general`
 
 ---
 
@@ -213,26 +241,46 @@ Before starting, complete these setup steps:
 1. In Attio UI, change test intern's stage to "Under Review"
 
 **Expected:**
-- [ ] Intern **EXITED** from Intern Onboarding sequence (I2 follow-up should NOT send)
+- [ ] No immediate email sent (follow-up emails handled by daily cron)
+
+---
+
+### Bonus: Dual-Role person_type Accumulation
+
+**Purpose:** Verify that a person with multiple roles accumulates all types on one People record.
+
+#### 6a: Submit agent form then customer form with same email
+1. Submit the get-listed-agents form with email `harper+testdual@gmail.com`
+2. Then submit a contact-agent form with the **same email** `harper+testdual@gmail.com`
+
+**Expected:**
+- [ ] Single People record exists for `harper+testdual@gmail.com`
+- [ ] `person_type` = `[Agent, Customer]` (both tags accumulated, not just the latest)
+- [ ] Agent record's `person` field → same People record as Customer record's `person` field
 
 ---
 
 ## Verification Methods
 
-### Check sequence enrollment
-1. Attio > Automations > Sequences
-2. Click the relevant sequence
-3. Check tabs:
-   - **Active** = currently enrolled and receiving emails
-   - **Paused** = enrolled but paused
-   - **Completed** = finished all steps
-   - **Exited** = removed by workflow exit block
+### Check People record & person_type
+1. Attio > People (built-in object)
+2. Search by email address
+3. Verify:
+   - Record exists with correct name
+   - `person_type` field shows expected tag(s) — e.g., `[Customer]` or `[Agent, Customer]`
+   - The custom object record (Customer, Agent, etc.) has a `person` field linking to this People record
 
-### Check email delivery
-1. Check your real inbox (e.g., `harper+testcustomer@gmail.com`)
-2. Check spam/junk folder
-3. Allow up to 5 minutes for delivery
-4. If no email: verify email sync is active in Attio Settings
+### Check Resend email delivery
+1. Check Resend dashboard (resend.com/emails) for sent emails
+2. Check your real inbox (e.g., `harper+testcustomer@gmail.com`)
+3. Check spam/junk folder
+4. Allow up to 1 minute for delivery
+5. If no email: check `RESEND_API_KEY` in `.env.local` and server logs for errors
+
+### Check Attio note logging
+1. Open the relevant record in Attio
+2. Check the record's timeline/activity tab
+3. Verify note appears: "Email sent: {template label}"
 
 ### Check Slack notifications
 1. Check `#general` channel (workflows currently post there)
@@ -266,13 +314,17 @@ This will:
 
 | Issue | Cause | Fix |
 |-------|-------|-----|
-| No emails sent | Email not synced in Attio | Settings > Email sync > Connect Gmail/Microsoft |
-| Sequence shows 0 enrolled | Workflow didn't fire | Check Attio > Automations > Workflows > run history |
+| No emails sent | Resend API key missing or invalid | Check `RESEND_API_KEY` in `.env.local` |
+| Email sends but not received | Domain not verified in Resend | Verify SPF/DKIM/DMARC on veteranpcs.com in Resend dashboard |
+| Email in spam folder | Domain reputation or content triggers | Check Resend dashboard for bounce/complaint metrics |
+| No Attio note logged | `note:read-write` scope missing on API key | Check Attio API key permissions |
+| Stage-change email not sent | Webhook not registered for list-entry events | Add list-entry.updated subscription in Attio webhook settings |
+| Duplicate emails on stage change | `stage_email_sent` field not checked | Verify webhook handler checks field before sending |
 | Agent/lender not on `/colorado` | Cache not refreshed | Wait 1 hour or restart dev server |
-| Placeholder photo not loading | placehold.co not in image domains | Check `next.config.mjs` remotePatterns |
 | Form submission error | API route issue | Check browser console and server logs |
 | Slack not posting | Webhook URL incorrect | Check `SLACK_WEBHOOK_URL` in `.env.local` |
 | SMS not sending | OpenPhone API issue | Check `OPENPHONE_API_KEY` and phone format |
+| Cron job not running | CRON_SECRET not set | Set `CRON_SECRET` in Vercel project settings |
 
 ---
 
@@ -296,3 +348,4 @@ This will:
 | WF4d (Live) | | | | |
 | WF5a (Intern onboard) | | | | |
 | WF5b (Intern exit seq) | | | | |
+| Dual-role person_type | | | | |

@@ -1,7 +1,6 @@
 // lib/attio-people.ts
-// Helper to create/find People records for sequence enrollment.
-// Attio sequences can only enroll built-in objects (People, Companies),
-// so each custom object record needs a linked People record.
+// Helper to create/find People records for Attio contact management.
+// Each custom object record has a linked People record for CRM dedup.
 
 import { attio } from "./attio";
 import { normalizePhone } from "./normalize-phone";
@@ -20,6 +19,7 @@ export async function findOrCreatePerson(data: {
   lastName: string;
   email: string;
   phone?: string | null;
+  personType?: 'Agent' | 'Lender' | 'Customer' | 'Intern';
 }): Promise<string> {
   const values: Record<string, any> = {
     email_addresses: [{ email_address: data.email }],
@@ -44,5 +44,16 @@ export async function findOrCreatePerson(data: {
     values,
   );
 
-  return result.data.id.record_id;
+  const recordId = result.data.id.record_id;
+
+  // Append person_type via PATCH (not PUT) to preserve existing types.
+  // A person who is both an Agent and Customer accumulates [Agent, Customer].
+  // Multi-select attributes require an array value, even for a single option.
+  if (data.personType) {
+    await attio.updateRecord("people", recordId, {
+      person_type: [data.personType],
+    });
+  }
+
+  return recordId;
 }

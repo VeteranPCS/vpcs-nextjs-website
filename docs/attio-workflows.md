@@ -6,35 +6,20 @@ This document contains complete specifications for all Attio Workflows that powe
 
 ---
 
-## Critical Architecture Note
+## Architecture Note
 
-**Attio Workflows CANNOT send emails directly.** Based on [Attio's workflow block library](https://attio.com/help/reference/automations/workflows/workflows-block-library), workflows can only:
-- Enroll/exit people from Sequences
-- Send Slack messages
-- Integrate with external ESPs (Mailchimp, Outreach, Mixmax)
-- Update records, create tasks, use HTTP requests
+**Email sending is handled by application code via Resend**, not by Attio workflows or sequences. Workflows are now Slack-only.
 
-**Attio Sequences ARE the email sending mechanism.** Each email (even "immediate" ones) must be wrapped in a Sequence. See `attio-sequences.md` for the full list of 14 sequences.
-
-### People Record Requirement
-
-**Sequences can only enroll built-in objects (People, Companies)** — not custom objects. Each custom object record (customer, agent, lender, intern) has a `person` record-reference field pointing to a linked People record. Workflows must traverse `Custom Record → person → People` to enroll the correct People record into sequences.
-
-The `person` link is created automatically during form submissions (`findOrCreatePerson()` in `lib/attio-people.ts`). Existing records were backfilled via `scripts/backfill-people-records.ts`.
+See `emails/templates/` for React Email templates and `services/salesForcePostFormsService.tsx` for email send integration.
 
 ---
 
 ## Architecture Overview
 
-**Core Principle:** Workflows handle business logic and control enrollment/exit from Sequences. Sequences send the actual emails.
+**Core Principle:** Workflows handle Slack notifications. Email sending is handled by application code (Resend).
 
-- **Workflows** = Event-driven automation triggered by record/stage changes
-- **Sequences** = Email campaigns sent via synced Gmail/Microsoft accounts (see `attio-sequences.md`)
-
-Workflows are responsible for:
-1. **Enrolling** records into sequences (which send the emails)
-2. **Exiting** records from sequences when business logic requires
-3. Sending Slack notifications
+- **Workflows** = Event-driven automation triggered by record/stage changes → Slack notifications
+- **Emails** = Sent by application code via Resend (form handlers, webhook handler, cron jobs)
 
 ---
 
@@ -73,14 +58,14 @@ Each trigger type determines the available variable paths:
 
 | # | Workflow | Trigger | Pipeline | Key Actions |
 |---|----------|---------|----------|-------------|
-| WF1 | New Customer Deal Created | Record added to list | `customer_deals` | Enroll C1/C2/C3 + A1/L1, Slack |
-| WF2 | Customer Deal Stage Changed | List entry updated | `customer_deals` | Enroll C4/C5, Slack |
-| WF3a | Agent Onboarding Created | Record added to list | `agent_onboarding` | Enroll Agent Onboarding, Slack |
-| WF3b | Agent Onboarding Stage Changed | List entry updated | `agent_onboarding` | Exit Onboarding, Enroll Contract Ready/Live, Slack |
-| WF4a | Lender Onboarding Created | Record added to list | `lender_onboarding` | Enroll Lender Onboarding, Slack |
-| WF4b | Lender Onboarding Stage Changed | List entry updated | `lender_onboarding` | Exit Onboarding, Enroll Contract Ready/Live, Slack |
-| WF5a | Intern Placement Created | Record added to list | `intern_placements` | Enroll Intern Onboarding, Slack |
-| WF5b | Intern Placement Stage Changed | List entry updated | `intern_placements` | Exit Intern Onboarding |
+| WF1 | New Customer Deal Created | Record added to list | `customer_deals` | Slack notification |
+| WF2 | Customer Deal Stage Changed | List entry updated | `customer_deals` | Slack notification |
+| WF3a | Agent Onboarding Created | Record added to list | `agent_onboarding` | Slack notification |
+| WF3b | Agent Onboarding Stage Changed | List entry updated | `agent_onboarding` | Slack notification |
+| WF4a | Lender Onboarding Created | Record added to list | `lender_onboarding` | Slack notification |
+| WF4b | Lender Onboarding Stage Changed | List entry updated | `lender_onboarding` | Slack notification |
+| WF5a | Intern Placement Created | Record added to list | `intern_placements` | Slack notification |
+| WF5b | Intern Placement Stage Changed | List entry updated | `intern_placements` | (no action needed) |
 
 ### Slack Channel Note
 

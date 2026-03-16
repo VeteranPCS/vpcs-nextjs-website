@@ -7,51 +7,93 @@
 
 ## Current Status
 
-**Phase:** MIGRATION COMPLETE ✅ — E2E test harness ready
-**Next:** Create sequences in Attio UI, run test-setup, execute e2e test plan
-**Blocked On:** Email sync (Gmail/Microsoft must be synced in Attio for sequences to send)
+**Phase:** HYBRID EMAIL ARCHITECTURE IMPLEMENTED
+**Next:** Simplify Attio workflows (remove sequence blocks), test email delivery
+**No longer blocked:** Emails sent via Resend, not Attio sequences
 
 ### Next Steps (in order)
-1. **Verify email sync** — Gmail or Microsoft account synced in Attio
-2. **Create 14 sequences** in Attio UI → `docs/attio-sequences.md`
-3. **Paste 18 email templates** into sequences → `docs/attio-email-templates.md`
-4. **Run test setup** → `npx tsx scripts/test-setup.ts`
-5. **Execute e2e test plan** → `docs/e2e-test-plan.md`
-6. **Run test teardown** → `npx tsx scripts/test-teardown.ts`
-7. **Create dedicated Slack channels** → planned channels in `docs/attio-workflows.md` lines 558-567
-8. **Enhancement Phase:** Multi-step contact form, area-based agent routing
+1. **Simplify Attio workflows** — Remove sequence enrollment/exit blocks in Attio UI (keep Slack)
+2. **Register webhook** for list-entry events in Attio (for stage-change emails)
+3. **Test email delivery** — Submit test forms, verify Resend dashboard
+4. **Create dedicated Slack channels** → planned channels in `docs/attio-workflows.md`
+5. **Enhancement Phase:** Multi-step contact form, area-based agent routing
 
 ---
 
 ## Recent Sessions
 
-### 2026-03-03 - People Record Integration for Sequence Enrollment
+### 2026-03-15 - Hybrid Email Architecture (Attio + Resend)
 
 **Status:** ✅ Complete
 
-**Problem:** Attio sequences can only enroll built-in objects (People, Companies). Custom objects (customers, agents, lenders, interns) cannot be enrolled directly. WF1 was failing with "Customer records cannot be enrolled into a sequence."
+**Problem:** Attio sequences can't access cross-entity data (agent brokerage, deal bonus amounts, etc.). Impossible to build personalized emails with cross-entity data.
 
-**Solution:** Create linked People records for every custom object record, deduped by email.
+**Solution:** Replaced Attio sequences with Resend for all email delivery. Attio keeps its CRM role + Slack notifications.
+
+**What Changed:**
+- **New:** `lib/email.ts` — Resend client wrapper with Attio note logging
+- **New:** `emails/templates/` — 19 React Email templates (typed props, no merge field limitations)
+- **New:** `app/(site)/portal/page.tsx` — Agent portal for magic link confirmation
+- **New:** `app/api/cron/stale-leads/route.ts` — Stale lead re-routing (every 2hrs)
+- **New:** `app/api/cron/follow-up-emails/route.ts` — Onboarding follow-up drips (daily)
+- **New:** `vercel.json` — Cron schedules
+- **Modified:** `services/salesForcePostFormsService.tsx` — Added email sends via Resend
+- **Modified:** `app/api/webhooks/attio/route.ts` — Added list-entry event handling for stage-change emails
+- **Modified:** `lib/attio.ts` — Added `createNote()`, `getListEntry()`, `parseListEntry()`
+- **Rolled back:** `updatePeopleAssignment()` and `PEOPLE_RELATIONSHIP_ATTRIBUTES` (no longer needed)
+- **Updated:** `CLAUDE.md`, `RESUME.md`, all docs, memory files
+
+**Key Architecture:**
+```
+Form → Attio Record + Send Email via Resend
+Stage Change → Attio Webhook → Our Handler → Query Data → Send Email via Resend
+Follow-ups → Vercel Cron → Query Attio → Send Email via Resend
+```
+
+**Dependencies Added:** `resend`, `@react-email/components`
+
+---
+
+### 2026-03-03 - person_type Multi-Select on People Object
+
+**Status:** ✅ Complete
+
+**Problem:** No way to distinguish People records by role in Attio CRM UI. Needed filtered views like "All Agent People."
+
+**Solution:** Added `person_type` multi-select field (Agent, Lender, Customer, Intern) to People object. Multi-select because People records are deduped by email — a person who is both an Agent and Customer shares one record.
+
+**Key Learning:** Attio multi-select fields require array values (`['Agent']`), unlike single-select which accepts strings (`'Veteran'`). PATCH appends to multi-select and deduplicates automatically.
+
+**Executed:**
+- `npx tsx scripts/add-person-type-attribute.ts` — Created attribute + 4 options
+- `npx tsx scripts/backfill-person-type.ts` — Tagged all 2,111 People records (0 errors)
+- Verified: Agent, Customer, Lender tags confirmed; append + dedup behavior confirmed
 
 **Files Created:**
-- `lib/attio-people.ts` — `findOrCreatePerson()` helper (upserts People record by email)
-- `scripts/add-person-attribute.ts` — Schema migration: adds `person` field to 4 custom objects
-- `scripts/backfill-people-records.ts` — Links ~2,100 existing records to People records
+- `scripts/add-person-type-attribute.ts` — Schema: attribute + options on People
+- `scripts/backfill-person-type.ts` — Backfill: tags existing People records
 
 **Files Modified:**
-- `lib/attio-schema.ts` — Added `person` attribute to AGENT, CUSTOMER, INTERN attribute arrays
-- `services/salesForcePostFormsService.tsx` — Added `findOrCreatePerson()` calls to all 4 form functions
-- `scripts/test-setup.ts` — Creates People records for test agent/lender
-- `scripts/test-teardown.ts` — Cleans up People records
-- `docs/attio-workflows.md` — Updated enrollment paths to traverse `person` field
-- `docs/attio-sequences.md` — Updated Object field to `people`
-- `CLAUDE.md` — Added rule #15 (People records), key file, data model section
+- `lib/attio-schema.ts` — Added `PERSON_TYPE_OPTIONS` constant
+- `lib/attio-people.ts` — Added optional `personType` param to `findOrCreatePerson()`
+- `services/salesForcePostFormsService.tsx` — Added `personType` to all 4 form call sites
+- `scripts/test-setup.ts` — Tags test agent/lender People records
 
-**Next Steps:**
-1. Run `npx tsx scripts/add-person-attribute.ts` — Add `person` field to Attio objects
-2. Run `npx tsx scripts/backfill-people-records.ts` — Backfill ~2,100 existing records
-3. Update all 8 workflows in Attio UI — Change enrollment recipient to traverse `person` field
-4. Re-test WF1 — Verify sequence enrollment succeeds
+---
+
+### 2026-03-03 - People Record Integration for Sequence Enrollment
+
+**Status:** ✅ Complete (scripts executed, all records linked)
+
+**Solution:** Created linked People records for every custom object record, deduped by email. All ~2,100 records backfilled.
+
+**Files Created:**
+- `lib/attio-people.ts` — `findOrCreatePerson()` helper
+- `scripts/add-person-attribute.ts` — Adds `person` field to 4 custom objects
+- `scripts/backfill-people-records.ts` — Links existing records to People records
+
+**Files Modified:**
+- `lib/attio-schema.ts`, `services/salesForcePostFormsService.tsx`, `scripts/test-setup.ts`, `scripts/test-teardown.ts`, `docs/attio-workflows.md`, `docs/attio-sequences.md`, `CLAUDE.md`
 
 ---
 
@@ -196,59 +238,9 @@ VeteranPCS's internship program is a **placement/matching service** for transiti
 
 ---
 
-## Migration History Summary
+## Migration History
 
-The Salesforce → Attio migration was completed across multiple phases from December 2024 to January 2026:
-
-### Phase 1-2: Planning & Documentation
-- Data exploration and analysis
-- Updated PRD, HLD, LLD documentation
-- Discovered critical data patterns (Contact.csv has real data, not Account.csv)
-
-### Phase 3: Schema & Scripts
-- Created 6 custom objects, 3 pipelines via Attio API
-- Built 10 migration scripts
-- Discovered Attio API patterns (24 learnings documented in CLAUDE.md)
-
-### Phase 4: Data Migration
-| Object | Migrated | Notes |
-|--------|----------|-------|
-| States | 52 | All US states + DC + PR |
-| Agents | ~1,027 | From cleaned data |
-| Lenders | ~138 | From cleaned data |
-| Areas | 271 | Excludes state-level placeholders |
-| Area Assignments | 503 | Agent-only (lenders at state level) |
-| Customers | ~944 | From cleaned data |
-| Customer Deals | ~925 | Pipeline entries |
-| Agent Onboarding | ~902 | Pipeline entries |
-| Lender Onboarding | ~138 | Pipeline entries |
-
-### Phase 5: Website Integration
-- Refactored stateService for Attio
-- Refactored contact forms for Attio
-- Created utility libraries (magic-link, slack, openphone)
-- Implemented webhook handler and cron jobs
-
-### Post-Migration Fixes
-- Fixed stale lender references (multi-ref PATCH vs PUT)
-- Fixed state page data loading (unstable_cache for POST requests)
-- Fixed agent commission attribute type (currency → number)
-- Fixed lender brokerage name display
-
----
-
-## Key Learnings
-
-**Critical Attio API patterns (see CLAUDE.md for full details):**
-
-1. Record references require `target_object` + `target_record_id`
-2. Select options must be created separately via dedicated endpoint
-3. List entry stages must be set inside `entry_values`, not top-level
-4. Multi-ref fields: PATCH appends, PUT (assertRecord) replaces
-5. POST requests bypass Next.js cache - use `unstable_cache`
-6. Can't query by internal `id` field - use parallel getRecord calls
-7. Record-reference queries need nested `target_record_id` syntax
-8. Bidirectional references needed for reverse lookups
+Migration completed Dec 2024 – Jan 2026. Full details in CLAUDE.md (Migration Results, API Notes).
 
 ---
 

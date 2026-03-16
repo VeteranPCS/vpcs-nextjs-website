@@ -1,36 +1,30 @@
 # VeteranPCS - Quick Resume Guide
 
-**Last Updated:** 2026-02-26
+**Last Updated:** 2026-03-15
 **Project:** VeteranPCS CRM (Attio-powered)
 **Branch:** attio-migration
-**Status:** MIGRATION COMPLETE — Automation setup in progress
+**Status:** HYBRID EMAIL ARCHITECTURE IMPLEMENTED
 
 ---
 
 ## Current State
 
-The Salesforce → Attio migration is **complete**. The website now:
-- Reads all agent/lender data from Attio
-- Creates customers and deals in Attio via contact forms
-- Uses Attio UUIDs for agent/lender references in URLs
-- All 8 Attio Workflows are **built and Live** in the Attio UI
+The Salesforce → Attio migration is **complete**. Email automation uses **Resend** (not Attio sequences):
+- All agent/lender/customer data in Attio
+- 19 React Email templates in `emails/templates/`
+- Form handlers send emails via Resend with full cross-entity data
+- Webhook handler sends stage-change emails (C4/C5/A4/A5/L4/L5)
+- Cron jobs handle stale leads and follow-up drips
+- Agent portal page at `/portal` for magic link confirmation
 
 ### What's Next
 
-**Automation Setup (in order):**
-1. Verify email sync — Gmail or Microsoft account synced in Attio
-2. Create 14 sequences in Attio UI → `docs/attio-sequences.md`
-3. Paste 18 email templates into sequences → `docs/attio-email-templates.md`
-4. Run `npx tsx scripts/test-setup.ts` to create test records in Colorado
-5. Test workflows end-to-end → `docs/e2e-test-plan.md`
-6. Run `npx tsx scripts/test-teardown.ts` to clean up test records
-7. Create dedicated Slack channels (currently all posting to #general)
+1. **Simplify Attio workflows** — Remove sequence enrollment/exit blocks in Attio UI (keep Slack)
+2. **Test email delivery** — Submit test forms, verify Resend emails
+3. **Create dedicated Slack channels** — currently posting to `#general`
+4. **Retire `#salesforce-alerts`** Slack channel
 
-**Pre-Launch:**
-1. Attio workflows for general forms (Contact, Keep In Touch, VA Loan/Homebuyer Guide downloads)
-2. Retire `#salesforce-alerts` Slack channel and legacy webhook
-
-**Enhancement Phase (after automation is tested):**
+**Enhancement Phase:**
 1. Multi-step contact form with Buying/Selling/Both selection
 2. Area-based agent routing for unselected agents
 
@@ -42,14 +36,19 @@ The Salesforce → Attio migration is **complete**. The website now:
 |------|---------|
 | `CLAUDE.md` | Project instructions, Attio API learnings, architecture |
 | `SESSION-NOTES.md` | Session history and context |
-| `lib/attio.ts` | Attio API client |
+| `lib/attio.ts` | Attio API client (incl. createNote, getListEntry) |
+| `lib/email.ts` | Resend email client with Attio note logging |
+| `emails/templates/` | 19 React Email templates |
 | `lib/attio-data-loader.ts` | Cached data loader for website |
 | `services/stateService.tsx` | Fetches agents/lenders for state pages |
-| `services/salesForcePostFormsService.tsx` | Contact form submissions (creates Attio records) |
-| `docs/e2e-test-plan.md` | Manual test checklist for all 8 workflows |
+| `lib/attio-people.ts` | People record upsert + person_type tagging |
+| `services/salesForcePostFormsService.tsx` | Contact form submissions + email sends |
+| `app/api/webhooks/attio/route.ts` | Webhook: cache revalidation + stage-change emails |
+| `app/api/cron/stale-leads/route.ts` | Stale lead re-routing cron |
+| `app/api/cron/follow-up-emails/route.ts` | Follow-up drip emails cron |
+| `app/(site)/portal/page.tsx` | Agent portal (magic link destination) |
 | `scripts/test-setup.ts` | Creates test agent/lender in Colorado |
 | `scripts/test-teardown.ts` | Removes all test records |
-| `docs/migration/` | PRD, HLD, LLD documentation |
 
 ---
 
@@ -82,6 +81,9 @@ Required in `.env.local`:
 - `SLACK_WEBHOOK_URL` - Admin notifications
 - `MAGIC_LINK_SECRET` - Agent portal JWT signing
 - `NEXT_PUBLIC_BASE_URL` - Site URL for magic links
+- `RESEND_API_KEY` - Resend email delivery
+- `RESEND_FROM_EMAIL` - Sender address (default: `VeteranPCS <tech@veteranpcs.com>`)
+- `CRON_SECRET` - Vercel cron job auth
 
 ---
 

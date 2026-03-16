@@ -155,6 +155,14 @@ export const INTERNSHIP_TYPE_OPTIONS: SelectOption[] = [
   { title: "Mortgage Lender" },
 ];
 
+// Person type options (multi-select on built-in People object)
+export const PERSON_TYPE_OPTIONS: SelectOption[] = [
+  { title: "Agent" },
+  { title: "Lender" },
+  { title: "Customer" },
+  { title: "Intern" },
+];
+
 // Licensed status options for interns
 export const LICENSED_STATUS_OPTIONS: SelectOption[] = [
   { title: "Yes" },

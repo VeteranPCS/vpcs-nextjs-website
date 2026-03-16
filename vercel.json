@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/stale-leads",
+      "schedule": "0 */2 * * *"
+    },
+    {
+      "path": "/api/cron/follow-up-emails",
+      "schedule": "0 14 * * *"
+    }
+  ]
+}

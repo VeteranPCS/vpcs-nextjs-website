@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { attio } from "@/lib/attio";
+import { sendEmail } from "@/lib/email";
+import { calculateBonus } from "@/lib/bonus-calculator";
 import crypto from "crypto";
+import React from "react";
 
 const ATTIO_WEBHOOK_SECRET = process.env.ATTIO_WEBHOOK_SECRET;
 
@@ -33,11 +36,18 @@ const ALLOWED_OBJECT_SLUGS = new Set([
 ]);
 
 interface AttioWebhookEvent {
-  event_type: "record.created" | "record.updated" | "record.deleted";
+  event_type:
+    | "record.created"
+    | "record.updated"
+    | "record.deleted"
+    | "list-entry.created"
+    | "list-entry.updated";
   id: {
     workspace_id: string;
     object_id: string;
     record_id: string;
+    list_id?: string;
+    entry_id?: string;
     attribute_id?: string;
   };
   actor: {
@@ -56,6 +66,56 @@ interface AttioWebhookPayload {
 const OBJECT_ID_TO_SLUG: Record<string, string> = {
   // TODO: Add your object IDs here after first successful webhook
   // Format: "object-uuid": "object-slug"
+};
+
+// Map Attio list UUIDs to their slugs (populated dynamically on first webhook)
+const LIST_ID_TO_SLUG: Record<string, string> = {};
+
+// Stage-change email configuration: which list + stage combos trigger emails
+interface StageEmailConfig {
+  emailLabel: string;
+  subject: (name: string) => string;
+  parentObject: string;
+}
+
+const STAGE_EMAIL_MAP: Record<string, Record<string, StageEmailConfig>> = {
+  customer_deals: {
+    "Under Contract": {
+      emailLabel: "C4: Under Contract",
+      subject: (name) => `Congratulations ${name} - You're Under Contract!`,
+      parentObject: "customers",
+    },
+    "Paid Complete": {
+      emailLabel: "C5: Transaction Closed / Paid Complete",
+      subject: (name) =>
+        `Welcome Home, ${name}! Your VeteranPCS Move-In Bonus Details`,
+      parentObject: "customers",
+    },
+  },
+  agent_onboarding: {
+    "Contract Sent": {
+      emailLabel: "A4: Agent Contract Ready",
+      subject: (name) => `Your VeteranPCS Contract is Ready, ${name}`,
+      parentObject: "agents",
+    },
+    "Live on Website": {
+      emailLabel: "A5: Agent Live on Website",
+      subject: (name) => `You're Live on VeteranPCS, ${name}!`,
+      parentObject: "agents",
+    },
+  },
+  lender_onboarding: {
+    "Contract Sent": {
+      emailLabel: "L4: Lender Contract Ready",
+      subject: (name) => `Your VeteranPCS Contract is Ready, ${name}`,
+      parentObject: "lenders",
+    },
+    "Live on Website": {
+      emailLabel: "L5: Lender Live on Website",
+      subject: (name) => `You're Live on VeteranPCS, ${name}!`,
+      parentObject: "lenders",
+    },
+  },
 };
 
 interface WebhookResponse {
@@ -222,9 +282,17 @@ async function handleWebhookPayload(
       continue;
     }
 
-    // Only handle record events
+    // Handle list-entry events (stage-change emails)
+    if (event_type.startsWith("list-entry.")) {
+      handleListEntryEvent(event).catch((err) => {
+        debugLog("Error handling list entry event (non-fatal)", { err });
+      });
+      continue;
+    }
+
+    // Only handle record events for cache revalidation
     if (!event_type.startsWith("record.")) {
-      debugLog("Skipping event: not a record event");
+      debugLog("Skipping event: not a record or list-entry event");
       continue;
     }
 
@@ -486,4 +554,302 @@ async function getStatePathForArea(areaId: string): Promise<string | null> {
     debugLog("Error in getStatePathForArea", { error });
     return null;
   }
+}
+
+// ==========================================================================
+// LIST ENTRY EVENT HANDLING (stage-change emails via Resend)
+// ==========================================================================
+
+/**
+ * Resolve a list UUID to its slug, using cache or Attio API.
+ */
+async function resolveListSlug(listId: string): Promise<string | null> {
+  if (LIST_ID_TO_SLUG[listId]) {
+    return LIST_ID_TO_SLUG[listId];
+  }
+
+  try {
+    const listInfo = await attio.getList(listId);
+    if (listInfo?.api_slug) {
+      LIST_ID_TO_SLUG[listId] = listInfo.api_slug;
+      return listInfo.api_slug;
+    }
+  } catch (error) {
+    debugLog("Failed to fetch list info", { listId, error });
+  }
+
+  return null;
+}
+
+/**
+ * Handle list-entry.created and list-entry.updated events.
+ * Fetches the entry, checks the current stage, and sends the appropriate
+ * stage-change email via Resend if it hasn't already been sent.
+ */
+async function handleListEntryEvent(event: AttioWebhookEvent): Promise<void> {
+  const { event_type, id } = event;
+  const { list_id, entry_id, workspace_id } = id;
+
+  debugLog("handleListEntryEvent", { event_type, list_id, entry_id });
+
+  // Validate workspace
+  if (ALLOWED_WORKSPACE_ID && workspace_id !== ALLOWED_WORKSPACE_ID) {
+    debugLog("Skipping list entry event: workspace mismatch");
+    return;
+  }
+
+  if (!list_id || !entry_id) {
+    debugLog("Skipping list entry event: missing list_id or entry_id");
+    return;
+  }
+
+  // 1. Resolve list slug
+  const listSlug = await resolveListSlug(list_id);
+  if (!listSlug) {
+    debugLog("Skipping list entry event: could not resolve list slug", {
+      list_id,
+    });
+    return;
+  }
+
+  debugLog("Resolved list slug", { listSlug });
+
+  // 2. Check if this list has any email-triggering stages
+  const stageMap = STAGE_EMAIL_MAP[listSlug];
+  if (!stageMap) {
+    debugLog("Skipping list entry event: no email config for list", {
+      listSlug,
+    });
+    return;
+  }
+
+  // 3. Fetch the list entry to get current stage
+  let entry: Record<string, any>;
+  try {
+    entry = await attio.getListEntry(listSlug, entry_id);
+  } catch (error) {
+    debugLog("Failed to fetch list entry", { listSlug, entry_id, error });
+    return;
+  }
+
+  debugLog("Fetched list entry", {
+    entry_id: entry.entry_id,
+    parent_record_id: entry.parent_record_id,
+    stage: entry.stage,
+  });
+
+  // 4. Get current stage
+  const currentStage = entry.stage;
+  if (!currentStage || typeof currentStage !== "string") {
+    debugLog("Skipping: no stage on entry");
+    return;
+  }
+
+  // 5. Check if this stage triggers an email
+  const emailConfig = stageMap[currentStage];
+  if (!emailConfig) {
+    debugLog("No email configured for this stage", { listSlug, currentStage });
+    return;
+  }
+
+  // 6. Check stage_email_sent to prevent duplicate emails
+  const stageEmailSent: string = entry.stage_email_sent || "";
+  if (stageEmailSent.includes(currentStage)) {
+    debugLog("Email already sent for this stage, skipping", {
+      currentStage,
+      stageEmailSent,
+    });
+    return;
+  }
+
+  // 7. Fetch parent record to get recipient details
+  const parentRecordId = entry.parent_record_id;
+  if (!parentRecordId) {
+    debugLog("Skipping: no parent_record_id on entry");
+    return;
+  }
+
+  let parentRecord: Record<string, any>;
+  try {
+    parentRecord = await attio.getRecord(
+      emailConfig.parentObject,
+      parentRecordId,
+    );
+  } catch (error) {
+    debugLog("Failed to fetch parent record", {
+      objectSlug: emailConfig.parentObject,
+      parentRecordId,
+      error,
+    });
+    return;
+  }
+
+  const recipientEmail = parentRecord.email;
+  const firstName = parentRecord.first_name || "there";
+  const lastName = parentRecord.last_name || "";
+
+  if (!recipientEmail) {
+    debugLog("Skipping: no email on parent record", { parentRecordId });
+    return;
+  }
+
+  debugLog("Sending stage email", {
+    to: recipientEmail,
+    label: emailConfig.emailLabel,
+    stage: currentStage,
+  });
+
+  // 8. Build and send the email
+  try {
+    const emailElement = await buildStageEmail(
+      listSlug,
+      currentStage,
+      entry,
+      parentRecord,
+    );
+    if (!emailElement) {
+      debugLog("No email template returned for stage", {
+        listSlug,
+        currentStage,
+      });
+      return;
+    }
+
+    await sendEmail({
+      to: recipientEmail,
+      subject: emailConfig.subject(firstName),
+      react: emailElement,
+      attioNote: {
+        objectSlug: emailConfig.parentObject,
+        recordId: parentRecordId,
+        emailLabel: emailConfig.emailLabel,
+      },
+    });
+
+    debugLog("Stage email sent successfully", {
+      label: emailConfig.emailLabel,
+      to: recipientEmail,
+    });
+
+    // 9. Mark stage as email-sent to prevent duplicates
+    const updatedSent = stageEmailSent
+      ? `${stageEmailSent},${currentStage}`
+      : currentStage;
+
+    attio
+      .updateListEntry(listSlug, entry_id, {
+        stage_email_sent: updatedSent,
+      })
+      .catch((err: unknown) => {
+        debugLog("Failed to update stage_email_sent (non-fatal)", { err });
+      });
+  } catch (error) {
+    debugLog("Failed to send stage email", {
+      label: emailConfig.emailLabel,
+      error,
+    });
+  }
+}
+
+/**
+ * Build the React email element for a given list + stage combination.
+ * Uses dynamic imports to keep the handler lean.
+ */
+async function buildStageEmail(
+  listSlug: string,
+  stage: string,
+  entry: Record<string, any>,
+  parentRecord: Record<string, any>,
+): Promise<React.ReactElement | null> {
+  const firstName = parentRecord.first_name || "there";
+  const lastName = parentRecord.last_name || "";
+
+  switch (listSlug) {
+    case "customer_deals": {
+      if (stage === "Under Contract") {
+        // Fetch agent info if available on the deal entry
+        let agentFirstName: string | undefined;
+        let agentLastName: string | undefined;
+        if (entry.agent) {
+          try {
+            const agent = await attio.getRecord("agents", entry.agent);
+            agentFirstName = agent?.first_name;
+            agentLastName = agent?.last_name;
+          } catch {
+            debugLog("Could not fetch deal agent for Under Contract email");
+          }
+        }
+
+        const { default: UnderContract } = await import(
+          "@/emails/templates/customer/UnderContract"
+        );
+        return React.createElement(UnderContract, {
+          customerFirstName: firstName,
+          agentFirstName: agentFirstName || "Your Agent",
+          agentLastName: agentLastName || "",
+        });
+      }
+
+      if (stage === "Paid Complete") {
+        // Calculate bonus from sale price
+        const salePrice =
+          typeof entry.sale_price === "number" ? entry.sale_price : 0;
+        const { bonus, charity } = calculateBonus(salePrice);
+
+        const { default: TransactionClosed } = await import(
+          "@/emails/templates/customer/TransactionClosed"
+        );
+        return React.createElement(TransactionClosed, {
+          customerFirstName: firstName,
+          moveInBonus: bonus.toLocaleString(),
+          charityAmount: charity.toLocaleString(),
+        });
+      }
+      break;
+    }
+
+    case "agent_onboarding": {
+      if (stage === "Contract Sent") {
+        const { default: ContractReady } = await import(
+          "@/emails/templates/agent/ContractReady"
+        );
+        return React.createElement(ContractReady, {
+          firstName,
+        });
+      }
+
+      if (stage === "Live on Website") {
+        const { default: LiveOnWebsite } = await import(
+          "@/emails/templates/agent/LiveOnWebsite"
+        );
+        return React.createElement(LiveOnWebsite, {
+          firstName,
+        });
+      }
+      break;
+    }
+
+    case "lender_onboarding": {
+      if (stage === "Contract Sent") {
+        const { default: ContractReady } = await import(
+          "@/emails/templates/lender/ContractReady"
+        );
+        return React.createElement(ContractReady, {
+          firstName,
+        });
+      }
+
+      if (stage === "Live on Website") {
+        const { default: LiveOnWebsite } = await import(
+          "@/emails/templates/lender/LiveOnWebsite"
+        );
+        return React.createElement(LiveOnWebsite, {
+          firstName,
+        });
+      }
+      break;
+    }
+  }
+
+  return null;
 }

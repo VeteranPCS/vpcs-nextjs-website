@@ -380,6 +380,14 @@ class AttioClient {
   }
 
   /**
+   * Get a single list entry by ID
+   */
+  async getListEntry(listSlug: string, entryId: string) {
+    const res = await this.request(`/lists/${listSlug}/entries/${entryId}`);
+    return this.parseListEntry(res.data);
+  }
+
+  /**
    * Query list entries
    */
   async queryListEntries(listSlug: string, query: {
@@ -409,6 +417,34 @@ class AttioClient {
   async deleteRecord(objectSlug: string, recordId: string) {
     return this.request(`/objects/${objectSlug}/records/${recordId}`, {
       method: 'DELETE',
+    });
+  }
+
+  // ==========================================================================
+  // NOTES
+  // ==========================================================================
+
+  /**
+   * Create a note on an Attio record (appears on the record's timeline).
+   * Requires `note:read-write` scope on the API key.
+   */
+  async createNote(
+    parentObject: string,
+    parentRecordId: string,
+    title: string,
+    content: string,
+  ): Promise<any> {
+    return this.request('/notes', {
+      method: 'POST',
+      body: JSON.stringify({
+        data: {
+          parent_object: parentObject,
+          parent_record_id: parentRecordId,
+          title,
+          content,
+          format: 'plaintext',
+        },
+      }),
     });
   }
 
@@ -464,6 +500,38 @@ class AttioClient {
       body: JSON.stringify(query),
     });
     return res.data.map(this.parseRecord);
+  }
+
+  private parseListEntry(entry: any) {
+    const parsed: Record<string, any> = {
+      entry_id: entry.id?.entry_id,
+      parent_record_id: entry.parent_record_id,
+    };
+    if (entry.entry_values) {
+      for (const [key, valueArray] of Object.entries(entry.entry_values)) {
+        const arr = valueArray as any[];
+        if (!arr || arr.length === 0) {
+          parsed[key] = null;
+        } else if (arr[0]?.status) {
+          parsed[key] = arr[0].status.title || arr[0].status;
+        } else if (arr[0]?.option) {
+          parsed[key] = arr[0].option.title;
+        } else if (arr[0]?.target_record_id) {
+          parsed[key] = arr.length > 1
+            ? arr.map((v: any) => v.target_record_id)
+            : arr[0].target_record_id;
+        } else if (arr[0]?.original_phone_number) {
+          parsed[key] = arr[0].original_phone_number;
+        } else if (arr[0]?.email_address) {
+          parsed[key] = arr[0].email_address;
+        } else if (arr[0]?.value !== undefined) {
+          parsed[key] = arr[0].value;
+        } else {
+          parsed[key] = arr[0];
+        }
+      }
+    }
+    return parsed;
   }
 
   private formatValues(data: Record<string, any>) {

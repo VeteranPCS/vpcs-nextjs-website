@@ -4,11 +4,9 @@ This document contains all 18 email templates ready to copy/paste into Attio Seq
 
 ---
 
-## Critical Architecture Note
+## Architecture Note
 
-**All emails are sent via Sequences, not Workflows.** Workflows enroll people in sequences, and sequences send the emails through synced Gmail/Microsoft accounts.
-
-See `attio-sequences.md` for the full list of 14 sequences and `attio-workflows.md` for the 8 workflows that enroll/exit people.
+**All emails are sent via Resend from application code** (not Attio sequences). Templates are implemented as React Email components in `emails/templates/`. This document contains the email content reference.
 
 ---
 
@@ -43,18 +41,9 @@ See `attio-sequences.md` for the full list of 14 sequences and `attio-workflows.
 
 ---
 
-## Merge Field Syntax
+## Template Props
 
-Attio uses double curly braces for merge fields. Map these to your Attio attributes:
-
-```
-{{first_name}}        → Record's first_name attribute
-{{customer.email}}    → Related customer's email
-{{agent.first_name}}  → Related agent's first_name
-{{deal.sale_price}}   → List entry's sale_price attribute
-```
-
-**Note:** Exact syntax may vary based on your Attio configuration. Test merge fields before going live.
+Templates receive data as typed React props — no merge field limitations. Each template component is in `emails/templates/` and receives exactly the data it needs.
 
 ---
 
@@ -1248,37 +1237,24 @@ Email: info@veteranpcs.com
 
 ## Implementation Notes
 
-### Setting Up Email Templates in Attio
+### React Email Templates
 
-All emails are sent via **Sequences** (workflows cannot send emails directly):
+All emails are implemented as React Email components in `emails/templates/`:
 
-1. Create sequence in Automations → Sequences
-2. Add email step(s) with appropriate delays
-3. Copy/paste subject and body from this document
-4. Map merge fields to your Attio attributes
-5. Set up the corresponding workflow to enroll people in the sequence
+```
+emails/templates/
+├── components/   # Shared Layout, Footer
+├── customer/     # C1-C5 + C2b
+├── agent/        # A1-A5
+├── lender/       # L1-L5
+└── intern/       # I1-I2
+```
 
-### Merge Field Mapping
-
-Test merge fields before going live. Common mappings:
-
-| Template Field | Attio Field |
-|----------------|-------------|
-| `{{customer.first_name}}` | `customers.first_name` |
-| `{{customer.email}}` | `customers.email` |
-| `{{agent.first_name}}` | `agents.first_name` |
-| `{{agent.email}}` | `agents.email` |
-| `{{agent.brokerage_name}}` | `agents.brokerage_name` |
-| `{{lender.first_name}}` | `lenders.first_name` |
-| `{{lender.company_name}}` | `lenders.company_name` |
-| `{{lender.individual_nmls}}` | `lenders.individual_nmls` |
-| `{{deal.destination_city}}` | `customer_deals.destination_city` |
-| `{{deal.move_in_bonus}}` | `customer_deals.move_in_bonus` |
+Each template receives typed props with all necessary data — no merge field limitations.
 
 ### Testing Checklist
 
-- [ ] Send test email for each template
-- [ ] Verify merge fields populate correctly
+- [ ] Submit test forms and verify email delivery via Resend dashboard
 - [ ] Check email renders properly on mobile
+- [ ] Verify Attio notes are logged on records
 - [ ] Verify links work
-- [ ] Confirm reply-to address is correct

@@ -5,6 +5,7 @@ import { openphone } from "@/lib/openphone";
 import { generateMagicLink } from "@/lib/magic-link";
 import { normalizePhone } from "@/lib/normalize-phone";
 import { findOrCreatePerson } from "@/lib/attio-people";
+import { sendEmail } from "@/lib/email";
 import { logDebug, logError, logInfo } from "./loggingService";
 import {
   FormSubmissionStatus,
@@ -36,6 +37,7 @@ async function findOrCreateCustomer(data: {
     lastName: data.lastName,
     email: data.email,
     phone: data.phone,
+    personType: 'Customer',
   });
 
   // Try to find existing customer by email
@@ -213,7 +215,60 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
       logDebug("Customer buying_agent updated", { submissionId, customerId, agentId });
     }
 
-    // 5. Send SMS notification to agent (Slack handled by Attio WF1)
+    // 5. Send emails via Resend (fire-and-forget)
+    if (agentInfo) {
+      // C2: Customer welcome with agent info
+      import('@/emails/templates/customer/WelcomeAgent').then(({ default: WelcomeAgent }) => {
+        sendEmail({
+          to: formData.email,
+          subject: `Your VeteranPCS Agent: ${agentInfo.first_name} ${agentInfo.last_name}`,
+          react: WelcomeAgent({
+            customerFirstName: formData.firstName || '',
+            agentFirstName: agentInfo.first_name || '',
+            agentLastName: agentInfo.last_name || '',
+            agentPhone: agentInfo.phone || '',
+            agentEmail: agentInfo.email || '',
+            brokerageName: agentInfo.brokerage_name || '',
+          }),
+          attioNote: {
+            objectSlug: 'customers',
+            recordId: customerId,
+            emailLabel: 'C2: Customer Welcome with Agent',
+          },
+        }).catch(err => logError('C2 email failed', { submissionId }, err));
+      }).catch(err => logError('C2 template import failed', { submissionId }, err));
+
+      // A1: Lead alert to agent
+      if (agentInfo.email) {
+        import('@/emails/templates/agent/LeadAlert').then(({ default: AgentLeadAlert }) => {
+          const magicLink = generateMagicLink(agentId!, dealId, "agent");
+          sendEmail({
+            to: agentInfo.email,
+            subject: 'New Lead from VeteranPCS - Please Reply When Received',
+            react: AgentLeadAlert({
+              agentFirstName: agentInfo.first_name || '',
+              customerFirstName: formData.firstName || '',
+              customerLastName: formData.lastName || '',
+              customerPhone: formData.phone || '',
+              customerEmail: formData.email || '',
+              destinationCity: formData.destinationBase || '',
+              destinationState: stateCode || '',
+              dealType,
+              militaryStatus: formData.status_select || '',
+              notes: formData.additionalComments || null,
+              magicLink,
+            }),
+            attioNote: {
+              objectSlug: 'agents',
+              recordId: agentId!,
+              emailLabel: 'A1: Lead Alert',
+            },
+          }).catch(err => logError('A1 email failed', { submissionId }, err));
+        }).catch(err => logError('A1 template import failed', { submissionId }, err));
+      }
+    }
+
+    // 6. Send SMS notification to agent (Slack handled by Attio WF1)
     if (agentId && agentInfo?.phone) {
       const magicLink = generateMagicLink(agentId, dealId, "agent");
       openphone
@@ -274,6 +329,7 @@ export async function GetListedAgentsPostForm(formData: any) {
       lastName: formData.lastName || "",
       email: formData.email || "",
       phone: formData.phone,
+      personType: 'Agent',
     });
 
     // Create agent record in agents object (pending status)
@@ -327,6 +383,24 @@ export async function GetListedAgentsPostForm(formData: any) {
 
     logInfo("Agent onboarding entry created", { submissionId, agentId });
 
+    // Send A2: Agent onboarding welcome email
+    if (formData.email) {
+      import('@/emails/templates/agent/OnboardingWelcome').then(({ default: OnboardingWelcome }) => {
+        sendEmail({
+          to: formData.email,
+          subject: 'Welcome to VeteranPCS - Thank You for Your Application',
+          react: OnboardingWelcome({
+            firstName: formData.firstName || '',
+          }),
+          attioNote: {
+            objectSlug: 'agents',
+            recordId: agentId,
+            emailLabel: 'A2: Agent Onboarding Welcome',
+          },
+        }).catch(err => logError('A2 email failed', { submissionId }, err));
+      }).catch(err => logError('A2 template import failed', { submissionId }, err));
+    }
+
     // Slack notification handled by Attio WF3a
 
     await updateSubmissionStatus(
@@ -369,6 +443,7 @@ export async function GetListedLendersPostForm(formData: any) {
       lastName: formData.lastName || "",
       email: formData.email || "",
       phone: formData.phone,
+      personType: 'Lender',
     });
 
     // Create lender record in lenders object (pending status)
@@ -418,6 +493,24 @@ export async function GetListedLendersPostForm(formData: any) {
     );
 
     logInfo("Lender onboarding entry created", { submissionId, lenderId });
+
+    // Send L2: Lender onboarding welcome email
+    if (formData.email) {
+      import('@/emails/templates/lender/OnboardingWelcome').then(({ default: OnboardingWelcome }) => {
+        sendEmail({
+          to: formData.email,
+          subject: 'Welcome to VeteranPCS - Thank You for Your Application',
+          react: OnboardingWelcome({
+            firstName: formData.firstName || '',
+          }),
+          attioNote: {
+            objectSlug: 'lenders',
+            recordId: lenderId,
+            emailLabel: 'L2: Lender Onboarding Welcome',
+          },
+        }).catch(err => logError('L2 email failed', { submissionId }, err));
+      }).catch(err => logError('L2 template import failed', { submissionId }, err));
+    }
 
     // Slack notification handled by Attio WF4a
 
@@ -605,7 +698,60 @@ export async function contactLenderPostForm(
       logDebug("Customer lender updated", { submissionId, customerId, lenderId });
     }
 
-    // 5. Send SMS notification to lender (Slack handled by Attio WF1)
+    // 5. Send emails via Resend (fire-and-forget)
+    if (lenderInfo) {
+      // C3: Customer welcome with lender info
+      import('@/emails/templates/customer/WelcomeLender').then(({ default: WelcomeLender }) => {
+        sendEmail({
+          to: formData.email,
+          subject: `Your VeteranPCS Lender: ${lenderInfo.first_name} ${lenderInfo.last_name}`,
+          react: WelcomeLender({
+            customerFirstName: formData.firstName || '',
+            lenderFirstName: lenderInfo.first_name || '',
+            lenderLastName: lenderInfo.last_name || '',
+            lenderPhone: lenderInfo.phone || '',
+            lenderEmail: lenderInfo.email || '',
+            companyName: lenderInfo.company_name || '',
+            nmlsId: lenderInfo.individual_nmls || '',
+          }),
+          attioNote: {
+            objectSlug: 'customers',
+            recordId: customerId,
+            emailLabel: 'C3: Customer Welcome with Lender',
+          },
+        }).catch(err => logError('C3 email failed', { submissionId }, err));
+      }).catch(err => logError('C3 template import failed', { submissionId }, err));
+
+      // L1: Lead alert to lender
+      if (lenderInfo.email) {
+        import('@/emails/templates/lender/LeadAlert').then(({ default: LenderLeadAlert }) => {
+          const magicLink = generateMagicLink(lenderId!, dealId, "lender");
+          sendEmail({
+            to: lenderInfo.email,
+            subject: 'New Lead from VeteranPCS - Please Reply When Received',
+            react: LenderLeadAlert({
+              lenderFirstName: lenderInfo.first_name || '',
+              customerFirstName: formData.firstName || '',
+              customerLastName: formData.lastName || '',
+              customerPhone: formData.phone || '',
+              customerEmail: formData.email || '',
+              destinationCity: formData.destinationBase || '',
+              destinationState: stateCode || '',
+              militaryStatus: formData.status_select || '',
+              notes: formData.additionalComments || null,
+              magicLink,
+            }),
+            attioNote: {
+              objectSlug: 'lenders',
+              recordId: lenderId!,
+              emailLabel: 'L1: Lead Alert',
+            },
+          }).catch(err => logError('L1 email failed', { submissionId }, err));
+        }).catch(err => logError('L1 template import failed', { submissionId }, err));
+      }
+    }
+
+    // 6. Send SMS notification to lender (Slack handled by Attio WF1)
     if (lenderId && lenderInfo?.phone) {
       const magicLink = generateMagicLink(lenderId, dealId, "lender");
       openphone
@@ -661,11 +807,29 @@ export async function contactPostForm(formData: any) {
 
   try {
     // Create simple customer record
-    await findOrCreateCustomer({
+    const customerId = await findOrCreateCustomer({
       firstName: formData.firstName || "",
       lastName: formData.lastName || "",
       email: formData.email || "",
     });
+
+    // Send C1: Unassigned customer welcome email
+    if (formData.email) {
+      import('@/emails/templates/customer/ContactConfirmation').then(({ default: ContactConfirmation }) => {
+        sendEmail({
+          to: formData.email,
+          subject: 'Thank You for Contacting VeteranPCS',
+          react: ContactConfirmation({
+            customerFirstName: formData.firstName || '',
+          }),
+          attioNote: {
+            objectSlug: 'customers',
+            recordId: customerId,
+            emailLabel: 'C1: Contact Form Confirmation',
+          },
+        }).catch(err => logError('C1 email failed', { submissionId }, err));
+      }).catch(err => logError('C1 template import failed', { submissionId }, err));
+    }
 
     // Send Slack notification
     slack
@@ -803,6 +967,7 @@ export async function internshipFormSubmission(formData: any) {
       lastName: formData.last_name || "",
       email: formData.email || "",
       phone: formData.mobile,
+      personType: 'Intern',
     });
 
     // Create intern record in interns object with ALL form fields
@@ -866,6 +1031,28 @@ export async function internshipFormSubmission(formData: any) {
     );
 
     logInfo("Intern placement entry created", { submissionId, internId });
+
+    // Send I1: Intern onboarding welcome email
+    if (formData.email) {
+      import('@/emails/templates/intern/OnboardingWelcome').then(({ default: InternOnboardingWelcome }) => {
+        sendEmail({
+          to: formData.email,
+          subject: 'VeteranPCS Internship - Thank You for Your Application',
+          react: InternOnboardingWelcome({
+            firstName: formData.first_name || '',
+            internshipType: internshipType || '',
+            desiredCity: formData["00N4x00000LspUi"] || '',
+            desiredState: formData["00N4x00000LspV2"] || '',
+            preferredStartDate: formData["00N4x00000QPLQY"] || '',
+          }),
+          attioNote: {
+            objectSlug: 'interns',
+            recordId: internId,
+            emailLabel: 'I1: Intern Onboarding Welcome',
+          },
+        }).catch(err => logError('I1 email failed', { submissionId }, err));
+      }).catch(err => logError('I1 template import failed', { submissionId }, err));
+    }
 
     // Slack notification handled by Attio WF5a
 
