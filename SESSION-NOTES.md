@@ -22,6 +22,39 @@
 
 ## Recent Sessions
 
+### 2026-03-16 - E2E Testing Session 1
+
+**Status:** 🟡 In Progress (2 of 14 tests passed)
+
+**Completed:**
+- Test 1 PASS: Contact agent form → C2 + A1 emails delivered via Resend
+- Test 2 PASS: Agent portal → deal summary renders, confirm sets contact_confirmed=true
+
+**Bugs Found & Fixed:**
+1. `render is not a function` — Missing `@react-email/render` peer dependency (installed)
+2. Emails not sending — Dynamic `import().then()` dropped by Next.js server actions. Fixed: switched to static imports + `await sendEmail()`
+3. Phone validation — Attio rejects 555 test numbers. Use real numbers (4252246148)
+4. Portal "Objects not valid as React child" — `/api/magic-link/validate` returning raw Attio objects. Fixed: use `getListEntry()` (parsed)
+5. Portal hidden behind nav bar — Added `pt-24 md:pt-28` to clear fixed nav
+6. Thank-you page 404 on ngrok — Separated `MAGIC_LINK_BASE_URL` (ngrok) from `NEXT_PUBLIC_API_BASE_URL` (localhost)
+7. Portal confirm button same color as headers — Changed to red (`#C5203E`)
+
+**Remaining Tests (12):**
+- Contact lender form (C3 + L1)
+- General contact form (C1)
+- Agent/Lender/Intern onboarding forms (A2, L2, I1)
+- Webhook stage-change emails (C4, C5, A4, A5, L4, L5)
+- Cron follow-up drips
+- Cron stale lead re-routing
+- Dual-role person_type
+
+**Notes:**
+- reCAPTCHA requires manual solving for each form test
+- ngrok free tier shows interstitial "Visit Site" page — cosmetic, works after clicking through
+- Phone validation on frontend should be improved (users won't type +1 prefix)
+
+---
+
 ### 2026-03-15 - Hybrid Email Architecture (Attio + Resend)
 
 **Status:** ✅ Complete

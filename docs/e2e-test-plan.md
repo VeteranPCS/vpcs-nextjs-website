@@ -1,8 +1,10 @@
-# End-to-End Test Plan
+# End-to-End Test Plan — Hybrid Email Architecture (Resend + Attio)
 
-**Date:** 2026-03-15
+**Date:** 2026-03-16
 **Branch:** attio-migration
-**Purpose:** Verify email delivery via Resend, Attio record creation, webhook handling, and cron job automation.
+**Purpose:** Verify all form submissions, email delivery via Resend, webhook-triggered stage-change emails, cron job automation, and agent portal functionality.
+
+**Architecture:** Emails are sent by application code via Resend. Attio handles CRM data, pipelines, and Slack notifications. React Email templates provide typed, personalized emails with full cross-entity data access.
 
 ---
 
@@ -10,285 +12,362 @@
 
 ### A. Environment Setup
 
-- [ ] **Resend API key** configured in `.env.local` (`RESEND_API_KEY`)
-- [ ] **Domain verified** in Resend (`veteranpcs.com` — SPF, DKIM, DMARC)
-- [ ] **Attio webhook** registered for list-entry events (in addition to record events)
+- [x] **Resend API key** configured in `.env.local` (`RESEND_API_KEY`)
+- [x] **Domain verified** in Resend (`veteranpcs.com` — SPF, DKIM, DMARC)
+- [x] **`@react-email/render`** installed (required peer dependency for Resend)
+- [x] **Attio webhook** registered for `record.created`, `record.updated`, `record.deleted`, `list-entry.created`, `list-entry.updated`
+- [x] **`stage_email_sent`** text attribute created on `customer_deals`, `agent_onboarding`, `lender_onboarding` lists
+- [x] **ngrok static domain** configured: `nonlevel-domenic-unorchestrated.ngrok-free.dev`
+- [x] **`MAGIC_LINK_BASE_URL`** set in `.env.local` (ngrok URL for dev, veteranpcs.com for prod)
+- [x] **`NEXT_PUBLIC_API_BASE_URL`** set to `http://127.0.0.1:3000` (localhost for form redirects)
 
-### B. Attio Workflow Simplification
+### B. Attio Workflow Status
 
-Remove sequence enrollment/exit blocks from all 8 workflows in Attio UI. Keep Slack notification blocks only.
+- [x] All 8 workflows are Live in Attio UI
+- [x] Sequence enrollment/exit blocks removed from all workflows
+- [x] All sequences deleted
+- [x] Four People denormalization attributes archived (`assigned_buying_agent`, `assigned_selling_agent`, `assigned_lender`, `brokerage_name`)
+- [x] Workflows now Slack-only
 
 ### C. Test Environment
 
-- [ ] **Test records created**: Run `npx tsx scripts/test-setup.ts` and save the output IDs
-- [ ] **Dev server running**: `npm run dev` (or use preview deployment)
-- [ ] **Verify test records**: Visit `/colorado` and confirm:
-  - [ ] Test agent "Harper Foley (TEST AGENT)" appears with blue placeholder photo
-  - [ ] Test lender "Harper Foley (TEST LENDER)" appears with blue placeholder photo
-  - [ ] Clicking "Contact Now" on the test agent goes to the contact form with correct `id` parameter
+- [ ] **Dev server running**: `npm run dev` in Terminal 1
+- [ ] **ngrok tunnel running**: `npm run dev:tunnel` in Terminal 2
+- [ ] **Test records exist**: Run `npx tsx scripts/test-setup.ts` if needed
+  - Test Agent ID: `ffdd39c6-9cb5-4e63-a41f-189c23562f2e` (Harper Foley TEST AGENT, Colorado)
+  - Test Lender ID: `b53482ba-a5ca-4ff6-9fba-4c62b3d98d94` (Harper Foley TEST LENDER, Colorado)
+- [ ] **Verify test records**: Visit `http://127.0.0.1:3000/colorado` and confirm test agent/lender appear
+
+### D. Test Data
+
+| Field | Value |
+|-------|-------|
+| Test customer email | `harper.e.foley+testcustomer@gmail.com` |
+| Test customer phone | `4252246148` (normalizes to `+14252246148`) |
+| Test agent email | `harper.e.foley+testagent@gmail.com` |
+| Test lender email | `harper.e.foley+testlender@gmail.com` |
+| Agent form URL | `http://127.0.0.1:3000/contact-agent?form=agent&fn=Harper&id=ffdd39c6-9cb5-4e63-a41f-189c23562f2e&state=colorado` |
+| Lender form URL | `http://127.0.0.1:3000/contact-lender?form=lender&fn=Harper&id=b53482ba-a5ca-4ff6-9fba-4c62b3d98d94&state=colorado` |
+
+**Important:** Phone numbers must be real (not 555 numbers). Attio rejects fake phone numbers on People records.
 
 ---
 
-## Test Cases
+## Test 1: Contact Agent Form → C2 + A1 Emails
 
-### WF1: New Customer Deal Created
+**Form:** `/contact-agent` with test agent selected
+**Emails sent by:** Form handler code (`services/salesForcePostFormsService.tsx`)
 
-**Trigger:** Record added to Customer Deals pipeline
+### Steps
+1. Navigate to Agent form URL (see Test Data above)
+2. Fill out form: First=Test, Last=Customer, Email=test customer email, Phone=4252246148, Current Base=Fort Hood, Destination=Colorado Springs, How=Google, Comments=E2E test
+3. Solve reCAPTCHA
+4. Click Submit
+5. Verify redirect to `http://127.0.0.1:3000/thank-you`
 
-#### 1a: Customer deal with assigned agent
-1. Go to `/contact-agent` page (or click "Contact Now" on test agent)
-2. Fill out form:
-   - First Name: `Test`
-   - Last Name: `Customer`
-   - Email: `harper+testcustomer@gmail.com`
-   - Phone: `555-555-0103`
-   - Select the test agent
-3. Submit the form
+### Verify — Attio Records
+- [ ] Customer record created with correct fields
+- [ ] Customer Deal created in pipeline (stage: "New Lead", deal_type: "Buying")
+- [ ] Customer `buying_agent` field links to test agent
+- [ ] People record created/updated for customer email with `person_type` = `[Customer]`
 
-**Expected — Records:**
-- [ ] Customer record created in Attio
-- [ ] Customer deal created in Customer Deals pipeline (stage: "New Lead")
-- [ ] **People record** exists for `harper+testcustomer@gmail.com` (Attio > People, search by email)
-- [ ] People record has `person_type` = `[Customer]`
-- [ ] Customer record's `person` field links to this People record
+### Verify — Emails (check all three locations)
+- [ ] **Resend dashboard** (resend.com/emails): C2 email sent to customer, A1 email sent to agent
+- [ ] **Gmail inbox** at `harper.e.foley+testcustomer@gmail.com`: C2 welcome email with agent name, phone, brokerage
+- [ ] **Gmail inbox** at `harper.e.foley+testagent@gmail.com`: A1 lead alert with customer name, phone, email, destination, deal type, magic link
+- [ ] **Server logs**: "C2 email sent" and "A1 email sent" messages
 
-**Expected — Automation:**
-- [ ] C2 email sent via Resend to `harper+testcustomer@gmail.com` (check Resend dashboard)
-- [ ] A1 lead alert email sent via Resend to test agent's email
-- [ ] Attio note logged on customer record: "Email sent: C2"
-- [ ] Attio note logged on agent record: "Email sent: A1"
-- [ ] Slack notification in `#general`
-- [ ] SMS sent to test agent via OpenPhone
+### Verify — Attio Notes
+- [ ] Customer record timeline shows note: "Email sent: C2: Customer Welcome with Agent"
+- [ ] Agent record timeline shows note: "Email sent: A1: Lead Alert"
 
-#### 1b: Customer deal with assigned lender
-1. Go to `/contact-lender` page (or click "Contact Now" on test lender)
-2. Fill out form with:
-   - Email: `harper+testcustomer2@gmail.com`
-   - Select the test lender
+### Verify — SMS
+- [ ] SMS received on agent's phone with magic link URL using ngrok domain
+
+### Verify — Slack
+- [ ] Notification posted to `#general` channel
+
+---
+
+## Test 2: Agent Portal (Magic Link Confirmation)
+
+**Page:** `/portal?token=<from SMS>`
+**API:** `GET /api/magic-link/validate` + `POST /api/magic-link/update`
+
+### Steps
+1. Copy the magic link URL from the SMS (or from server logs)
+2. Open in browser at localhost (replace ngrok domain with `127.0.0.1:3000` for local testing)
+3. Verify deal summary displays correctly
+4. Click "Confirm — I'll reach out to this customer"
+5. Verify success screen appears
+
+### Verify — Portal UI
+- [ ] "New Lead" heading visible below nav bar
+- [ ] Customer name, phone (clickable tel: link), email (clickable mailto: link) displayed
+- [ ] Lead details: Type, Stage, Notes, Submitted date displayed
+- [ ] Red confirm button visible and distinct from navy section headers
+- [ ] After confirm: green checkmark, "Contact Confirmed!" message, Call + Email buttons
+
+### Verify — Attio
+- [ ] Deal's `contact_confirmed` field is `true` (blue checkmark in Attio)
+
+### Verify — Revisit
+- [ ] Visiting the same portal link again shows "Already Confirmed" instead of confirm button
+
+---
+
+## Test 3: Contact Lender Form → C3 + L1 Emails
+
+**Form:** `/contact-lender` with test lender selected
+**Emails sent by:** Form handler code
+
+### Steps
+1. Navigate to Lender form URL
+2. Fill out form with different test customer email (e.g., `harper.e.foley+testcustomer2@gmail.com`)
+3. Solve reCAPTCHA, submit
+
+### Verify
+- [ ] Customer record created, deal created (deal_type: "Lender")
+- [ ] **Resend**: C3 email sent to customer with lender name, company, NMLS#
+- [ ] **Resend**: L1 lead alert sent to lender with customer details + magic link
+- [ ] **Attio notes**: C3 on customer, L1 on lender
+- [ ] **SMS**: Sent to lender's phone
+
+---
+
+## Test 4: General Contact Form → C1 Email
+
+**Form:** `/contact`
+**Emails sent by:** Form handler code
+
+### Steps
+1. Navigate to `http://127.0.0.1:3000/contact`
+2. Fill out form with test data (no agent/lender selection)
 3. Submit
 
-**Expected:**
-- [ ] People record exists for `harper+testcustomer2@gmail.com` with `person_type` = `[Customer]`
-- [ ] C3 email sent via Resend to customer
-- [ ] L1 lead alert email sent via Resend to lender
-- [ ] Slack notification in `#general`
-
-#### 1c: Customer deal with no agent or lender
-1. Create a customer deal via Attio UI (or API) with no agent/lender assigned
-
-**Expected:**
-- [ ] C1 email sent via Resend to customer
-- [ ] Slack notification in `#general`
+### Verify
+- [ ] Customer record created
+- [ ] **Resend**: C1 unassigned welcome email sent to customer
+- [ ] **Attio note**: C1 on customer record
+- [ ] **Slack**: Notification posted
 
 ---
 
-### WF2: Customer Deal Stage Changed
+## Test 5: Agent Onboarding Form → A2 Email
 
-**Trigger:** List entry updated on Customer Deals
+**Form:** `/get-listed-agents`
+**Emails sent by:** Form handler code
 
-#### 2a: Move deal to "Under Contract"
-1. In Attio UI, find the test customer's deal
-2. Change stage to "Under Contract"
-
-**Expected:**
-- [ ] C4 email sent via Resend to customer (triggered by webhook handler)
-- [ ] Slack notification in `#general`
-
-#### 2b: Move deal to "Paid Complete"
-1. Change stage to "Paid Complete"
-
-**Expected:**
-- [ ] C5 email sent via Resend to customer with bonus amounts (triggered by webhook handler)
-- [ ] Slack notification in `#general`
-
-#### 2c: Move deal to "Closed Lost"
-1. Change stage to "Closed Lost"
-
-**Expected:**
-- [ ] Slack notification in `#general`
-- [ ] **No email sent** (closed lost customers don't get follow-up emails)
-
----
-
-### WF3a: Agent Onboarding Created
-
-**Trigger:** Record added to Agent Onboarding pipeline
-
-#### 3a: Submit get-listed-agents form
-1. Go to `/get-listed` agents form
-2. Fill out with test agent data:
-   - Email: `harper+testagent2@gmail.com`
-   - Military Service: Army
+### Steps
+1. Navigate to `http://127.0.0.1:3000/get-listed-agents`
+2. Fill out form with test data (email: `harper.e.foley+testagent2@gmail.com`)
 3. Submit
 
-**Expected — Records:**
+### Verify
 - [ ] Agent record created in Attio
 - [ ] Agent added to Agent Onboarding pipeline (stage: "New Application")
-- [ ] **People record** exists for `harper+testagent2@gmail.com` with `person_type` = `[Agent]`
-- [ ] Agent record's `person` field links to this People record
-
-**Expected — Automation:**
-- [ ] A2 email sent via Resend to agent
-- [ ] Attio note logged on agent record: "Email sent: A2"
-- [ ] Slack notification in `#general`
+- [ ] People record created with `person_type` = `[Agent]`
+- [ ] **Resend**: A2 onboarding welcome email sent
+- [ ] **Attio note**: A2 on agent record
+- [ ] **Slack**: "New Agent Application" notification
 
 ---
 
-### WF3b: Agent Onboarding Stage Changed
+## Test 6: Lender Onboarding Form → L2 Email
 
-**Trigger:** List entry updated on Agent Onboarding
+**Form:** `/get-listed-lenders`
+**Emails sent by:** Form handler code
 
-#### 3b: Move to "Interviewing" (test sequence exit)
-1. In Attio UI, change test agent's onboarding stage to "Interviewing"
-
-**Expected:**
-- [ ] No immediate email sent (follow-up emails handled by daily cron, not stage changes)
-
-#### 3c: Move to "Contract Sent"
-1. Change stage to "Contract Sent"
-
-**Expected:**
-- [ ] A4 email sent via Resend to agent (triggered by webhook handler)
-- [ ] Slack notification in `#general`
-
-#### 3d: Move to "Live on Website"
-1. Change stage to "Live on Website"
-
-**Expected:**
-- [ ] A5 email sent via Resend to agent (triggered by webhook handler)
-- [ ] Slack notification in `#general`
-
----
-
-### WF4a: Lender Onboarding Created
-
-**Trigger:** Record added to Lender Onboarding pipeline
-
-#### 4a: Submit get-listed-lenders form
-1. Go to `/get-listed` lenders form
-2. Fill out with test lender data:
-   - Email: `harper+testlender2@gmail.com`
+### Steps
+1. Navigate to `http://127.0.0.1:3000/get-listed-lenders`
+2. Fill out form with test data (email: `harper.e.foley+testlender2@gmail.com`)
 3. Submit
 
-**Expected — Records:**
-- [ ] Lender record created in Attio
-- [ ] Lender added to Lender Onboarding pipeline (stage: "New Application")
-- [ ] **People record** exists for `harper+testlender2@gmail.com` with `person_type` = `[Lender]`
-- [ ] Lender record's `person` field links to this People record
-
-**Expected — Automation:**
-- [ ] L2 email sent via Resend to lender
-- [ ] Attio note logged on lender record: "Email sent: L2"
-- [ ] Slack notification in `#general`
+### Verify
+- [ ] Lender record created, added to Lender Onboarding pipeline
+- [ ] **Resend**: L2 onboarding welcome email sent
+- [ ] **Attio note**: L2 on lender record
+- [ ] **Slack**: "New Lender Application" notification
 
 ---
 
-### WF4b: Lender Onboarding Stage Changed
+## Test 7: Internship Form → I1 Email
 
-**Trigger:** List entry updated on Lender Onboarding
+**Form:** `/internship`
+**Emails sent by:** Form handler code
 
-#### 4b: Move to next stage (test sequence exit)
-1. In Attio UI, change test lender's onboarding stage past "New Application"
-
-**Expected:**
-- [ ] No immediate email sent (follow-up emails handled by daily cron)
-
-#### 4c: Move to "Contract Sent"
-1. Change stage to "Contract Sent"
-
-**Expected:**
-- [ ] L4 email sent via Resend to lender (triggered by webhook handler)
-
-#### 4d: Move to "Live on Website"
-1. Change stage to "Live on Website"
-
-**Expected:**
-- [ ] L5 email sent via Resend to lender (triggered by webhook handler)
-- [ ] Slack notification in `#general`
-
----
-
-### WF5a: Intern Placement Created
-
-**Trigger:** Record added to Intern Placements pipeline
-
-#### 5a: Submit internship form
-1. Go to `/internship` form
-2. Fill out with:
-   - Email: `harper+testintern@gmail.com`
-   - Military Service: Marines
-   - Internship Type: Real Estate Agent
+### Steps
+1. Navigate to `http://127.0.0.1:3000/internship`
+2. Fill out form with test data (email: `harper.e.foley+testintern@gmail.com`)
 3. Submit
 
-**Expected — Records:**
-- [ ] Intern record created in Attio
+### Verify
+- [ ] Intern record created with all form fields
 - [ ] Intern added to Intern Placements pipeline (stage: "New Application")
-- [ ] **People record** exists for `harper+testintern@gmail.com` with `person_type` = `[Intern]`
-- [ ] Intern record's `person` field links to this People record
-
-**Expected — Automation:**
-- [ ] I1 email sent via Resend to intern
-- [ ] Attio note logged on intern record: "Email sent: I1"
-- [ ] Slack notification in `#general`
+- [ ] People record created with `person_type` = `[Intern]`
+- [ ] **Resend**: I1 onboarding welcome email with internship type, desired location, start date
+- [ ] **Attio note**: I1 on intern record
+- [ ] **Slack**: "New Intern Application" notification
 
 ---
 
-### WF5b: Intern Placement Stage Changed
+## Test 8: Stage-Change Webhook → C4 Email (Under Contract)
 
-**Trigger:** List entry updated on Intern Placements
+**Trigger:** Move customer deal to "Under Contract" in Attio UI
+**Emails sent by:** Webhook handler (`app/api/webhooks/attio/route.ts`)
 
-#### 5b: Move to "Under Review"
-1. In Attio UI, change test intern's stage to "Under Review"
+### Steps
+1. In Attio UI, find the test customer's deal (from Test 1)
+2. Change stage to "Under Contract"
+3. Wait for webhook to fire (check server logs for `[attio-webhook]` messages)
 
-**Expected:**
-- [ ] No immediate email sent (follow-up emails handled by daily cron)
-
----
-
-### Bonus: Dual-Role person_type Accumulation
-
-**Purpose:** Verify that a person with multiple roles accumulates all types on one People record.
-
-#### 6a: Submit agent form then customer form with same email
-1. Submit the get-listed-agents form with email `harper+testdual@gmail.com`
-2. Then submit a contact-agent form with the **same email** `harper+testdual@gmail.com`
-
-**Expected:**
-- [ ] Single People record exists for `harper+testdual@gmail.com`
-- [ ] `person_type` = `[Agent, Customer]` (both tags accumulated, not just the latest)
-- [ ] Agent record's `person` field → same People record as Customer record's `person` field
+### Verify
+- [ ] **Server logs**: Webhook received, list-entry event processed
+- [ ] **Resend**: C4 "Under Contract" email sent to customer with agent name
+- [ ] **Attio**: `stage_email_sent` field on deal contains "Under Contract"
+- [ ] **Slack**: Deal stage change notification
+- [ ] **Duplicate prevention**: Moving to "Under Contract" again should NOT send another C4
 
 ---
 
-## Verification Methods
+## Test 9: Stage-Change Webhook → C5 Email (Paid Complete + Bonus)
 
-### Check People record & person_type
-1. Attio > People (built-in object)
-2. Search by email address
-3. Verify:
-   - Record exists with correct name
-   - `person_type` field shows expected tag(s) — e.g., `[Customer]` or `[Agent, Customer]`
-   - The custom object record (Customer, Agent, etc.) has a `person` field linking to this People record
+**Trigger:** Move customer deal to "Paid Complete" in Attio UI
+**Emails sent by:** Webhook handler
 
-### Check Resend email delivery
-1. Check Resend dashboard (resend.com/emails) for sent emails
-2. Check your real inbox (e.g., `harper+testcustomer@gmail.com`)
-3. Check spam/junk folder
-4. Allow up to 1 minute for delivery
-5. If no email: check `RESEND_API_KEY` in `.env.local` and server logs for errors
+### Steps
+1. First, set `sale_price` on the deal (e.g., $350,000) in Attio UI
+2. Change stage to "Paid Complete"
 
-### Check Attio note logging
-1. Open the relevant record in Attio
-2. Check the record's timeline/activity tab
-3. Verify note appears: "Email sent: {template label}"
+### Verify
+- [ ] **Resend**: C5 "Transaction Closed" email sent with correct bonus amounts ($1,000 bonus, $100 charity for $350K)
+- [ ] **Attio**: `stage_email_sent` field contains "Under Contract,Paid Complete"
+- [ ] **Slack**: Deal closed notification
 
-### Check Slack notifications
-1. Check `#general` channel (workflows currently post there)
-2. After creating dedicated channels, check the appropriate channel
+---
 
-### Check SMS (OpenPhone)
-1. Check the phone number used in test forms
-2. If using a test number (`+15555550103`), check OpenPhone dashboard for outbound SMS logs
+## Test 10: Stage-Change Webhook → A4/A5 Emails (Agent Onboarding)
+
+**Trigger:** Move agent onboarding entry through stages in Attio UI
+**Emails sent by:** Webhook handler
+
+### Steps
+1. Find the test agent's onboarding entry (from Test 5)
+2. Move to "Contract Sent" → verify A4 email
+3. Move to "Live on Website" → verify A5 email
+
+### Verify
+- [ ] **Resend**: A4 "Contract Ready" email sent to agent
+- [ ] **Resend**: A5 "Live on Website" email sent to agent
+- [ ] **Attio**: `stage_email_sent` tracks both stages
+
+---
+
+## Test 11: Stage-Change Webhook → L4/L5 Emails (Lender Onboarding)
+
+**Trigger:** Move lender onboarding entry through stages in Attio UI
+**Emails sent by:** Webhook handler
+
+### Steps
+1. Find the test lender's onboarding entry (from Test 6)
+2. Move to "Contract Sent" → verify L4 email
+3. Move to "Live on Website" → verify L5 email
+
+### Verify
+- [ ] **Resend**: L4 and L5 emails sent to lender
+- [ ] **Attio**: `stage_email_sent` tracks both stages
+
+---
+
+## Test 12: Cron — Follow-Up Drip Emails
+
+**Endpoint:** `GET /api/cron/follow-up-emails`
+**Emails sent by:** Cron handler
+
+### Steps
+1. Create a test agent onboarding entry dated 7+ days ago (via Attio API or UI)
+2. Ensure it's still in "New Application" stage
+3. Hit `http://127.0.0.1:3000/api/cron/follow-up-emails` directly in browser (will fail auth without CRON_SECRET — use curl with header instead):
+   ```bash
+   curl -H "Authorization: Bearer YOUR_CRON_SECRET" http://127.0.0.1:3000/api/cron/follow-up-emails
+   ```
+
+### Verify
+- [ ] **Server logs**: Cron processed entries, sent follow-up emails
+- [ ] **Resend**: A3 follow-up email sent to agent (or L3/I2 for lender/intern)
+- [ ] **JSON response**: Processing stats returned
+
+---
+
+## Test 13: Cron — Stale Lead Re-routing
+
+**Endpoint:** `GET /api/cron/stale-leads`
+**Emails sent by:** Cron handler
+
+### Steps
+1. Create a test deal with `contact_confirmed = false` and `created_at` > 12 hours ago
+2. Hit the endpoint:
+   ```bash
+   curl -H "Authorization: Bearer YOUR_CRON_SECRET" http://127.0.0.1:3000/api/cron/stale-leads
+   ```
+
+### Verify
+- [ ] Deal's `agent` field updated to next-highest AA_Score agent in area
+- [ ] `reroute_count` incremented to 1
+- [ ] **Resend**: A1 lead alert sent to new agent
+- [ ] **SMS**: Sent to new agent
+- [ ] **Slack**: Re-routing notification (if no agent available)
+
+---
+
+## Test 14: Dual-Role person_type Accumulation
+
+### Steps
+1. Submit get-listed-agents form with email `harper.e.foley+testdual@gmail.com`
+2. Then submit contact-agent form with the **same email**
+
+### Verify
+- [ ] Single People record exists for that email
+- [ ] `person_type` = `[Agent, Customer]` (both accumulated)
+
+---
+
+## Verification Quick Reference
+
+| What to Check | Where to Check |
+|---------------|----------------|
+| Email sent | Resend dashboard (resend.com/emails) |
+| Email received | Gmail inbox (check spam) |
+| Email content correct | Open email, verify personalization (names, phone, brokerage, bonus amounts) |
+| Attio record created | Attio UI → search by name or email |
+| Attio note logged | Attio record → timeline/activity tab |
+| Deal fields correct | Attio → Customer Deals pipeline → open entry |
+| `contact_confirmed` set | Attio → deal entry → contact_confirmed checkbox |
+| `stage_email_sent` set | Attio → deal/onboarding entry → stage_email_sent text field |
+| Slack notification | `#general` channel in Slack |
+| SMS delivered | Check phone, or OpenPhone dashboard |
+| Server logs | Dev server terminal (`npm run dev`) |
+| Webhook received | Server logs — look for `[attio-webhook]` prefix |
+
+---
+
+## Troubleshooting
+
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| No emails sent (no Resend log) | Static imports failed or `sendEmail` not awaited | Check server logs for error details |
+| `render is not a function` | `@react-email/render` not installed | `npm install @react-email/render` |
+| Attio phone validation error | Fake phone number (555) | Use real phone format (e.g., `4252246148`) |
+| Form 500 error, no detail in browser | Server-side error | Check dev server terminal for full stack trace |
+| Email sends but not received | Domain not verified in Resend | Check Resend dashboard → Domains |
+| Portal shows "Objects are not valid as React child" | Validate endpoint returning raw Attio objects | Ensure `/api/magic-link/validate` uses `getListEntry()` (parsed) |
+| Portal hidden behind nav bar | Fixed nav overlapping content | Ensure `pt-24 md:pt-28` on portal main element |
+| Thank-you page 404 on ngrok | `NEXT_PUBLIC_API_BASE_URL` pointing to ngrok | Set to `http://127.0.0.1:3000`, use `MAGIC_LINK_BASE_URL` for SMS links |
+| Magic link 404 on phone | ngrok interstitial page | Tap "Visit Site" on ngrok free tier warning |
+| Stage-change email not sent | Webhook not subscribed to list-entry events | Check Attio webhook subscription settings |
+| Duplicate stage emails | `stage_email_sent` field not created on list | Run `npx tsx scripts/add-stage-email-sent.ts` |
+| Cron 401 error | Missing CRON_SECRET | Pass `Authorization: Bearer <secret>` header |
+| SMS shows localhost URL | `MAGIC_LINK_BASE_URL` not set | Set to ngrok URL in `.env.local` |
 
 ---
 
@@ -300,52 +379,30 @@ When all tests are complete:
 npx tsx scripts/test-teardown.ts
 ```
 
-This will:
-1. Delete the area assignment
-2. Remove test lender from Colorado's State.lenders
-3. Delete any pipeline entries (deals, onboarding) created during testing
-4. Delete any test customer/intern records
-5. Delete the test agent and lender records
-6. Remove `scripts/test-ids.json`
+This removes all test records (agent, lender, area assignment, customer, deals, etc.) and deletes `scripts/test-ids.json`.
 
----
-
-## Troubleshooting
-
-| Issue | Cause | Fix |
-|-------|-------|-----|
-| No emails sent | Resend API key missing or invalid | Check `RESEND_API_KEY` in `.env.local` |
-| Email sends but not received | Domain not verified in Resend | Verify SPF/DKIM/DMARC on veteranpcs.com in Resend dashboard |
-| Email in spam folder | Domain reputation or content triggers | Check Resend dashboard for bounce/complaint metrics |
-| No Attio note logged | `note:read-write` scope missing on API key | Check Attio API key permissions |
-| Stage-change email not sent | Webhook not registered for list-entry events | Add list-entry.updated subscription in Attio webhook settings |
-| Duplicate emails on stage change | `stage_email_sent` field not checked | Verify webhook handler checks field before sending |
-| Agent/lender not on `/colorado` | Cache not refreshed | Wait 1 hour or restart dev server |
-| Form submission error | API route issue | Check browser console and server logs |
-| Slack not posting | Webhook URL incorrect | Check `SLACK_WEBHOOK_URL` in `.env.local` |
-| SMS not sending | OpenPhone API issue | Check `OPENPHONE_API_KEY` and phone format |
-| Cron job not running | CRON_SECRET not set | Set `CRON_SECRET` in Vercel project settings |
+**Also clean up manually in Attio:**
+- Delete any test customer records created during form submissions
+- Delete any test People records created during testing
+- Delete any test onboarding entries
 
 ---
 
 ## Sign-Off
 
-| Test | Pass/Fail | Tester | Date | Notes |
-|------|-----------|--------|------|-------|
-| WF1a (Agent lead) | | | | |
-| WF1b (Lender lead) | | | | |
-| WF1c (Unassigned) | | | | |
-| WF2a (Under Contract) | | | | |
-| WF2b (Paid Complete) | | | | |
-| WF2c (Closed Lost) | | | | |
-| WF3a (Agent onboard) | | | | |
-| WF3b (Agent exit seq) | | | | |
-| WF3c (Contract Sent) | | | | |
-| WF3d (Live) | | | | |
-| WF4a (Lender onboard) | | | | |
-| WF4b (Lender exit seq) | | | | |
-| WF4c (Contract Sent) | | | | |
-| WF4d (Live) | | | | |
-| WF5a (Intern onboard) | | | | |
-| WF5b (Intern exit seq) | | | | |
-| Dual-role person_type | | | | |
+| # | Test | Status | Date | Notes |
+|---|------|--------|------|-------|
+| 1 | Contact Agent → C2 + A1 | **PASS** | 2026-03-16 | Emails delivered, records created, SMS sent |
+| 2 | Agent Portal confirm | **PASS** | 2026-03-16 | Deal summary renders, confirm sets contact_confirmed=true |
+| 3 | Contact Lender → C3 + L1 | | | |
+| 4 | General Contact → C1 | | | |
+| 5 | Agent Onboarding → A2 | | | |
+| 6 | Lender Onboarding → L2 | | | |
+| 7 | Internship → I1 | | | |
+| 8 | Webhook: Under Contract → C4 | | | |
+| 9 | Webhook: Paid Complete → C5 | | | |
+| 10 | Webhook: Agent A4 + A5 | | | |
+| 11 | Webhook: Lender L4 + L5 | | | |
+| 12 | Cron: Follow-up drips | | | |
+| 13 | Cron: Stale lead re-routing | | | |
+| 14 | Dual-role person_type | | | |
