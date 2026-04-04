@@ -81,8 +81,8 @@ export interface BaseFormData {
  */
 export interface BaseContactFormData extends BaseFormData {
   additionalComments?: string;
-  captchaToken?: string;
-  captcha_settings?: string;
+  captchaToken: string;
+  captcha_settings: string;
 }
 
 /**
