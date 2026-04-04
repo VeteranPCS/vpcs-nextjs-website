@@ -37,7 +37,8 @@ Email Flow:
   Stage Change → Attio Webhook → Our Handler → Query Data → Send via Resend
   Follow-ups → Vercel Cron → Query Attio → Send via Resend
 
-Attio Workflows (8 total): Slack notifications only. All email via Resend.
+Attio Workflows (9 total): Slack notifications only. All email via Resend.
+  WF6: New Inquiry → Slack #leads-unassigned (general contact form)
 ```
 
 ### Key Files
@@ -91,7 +92,7 @@ Required in `.env.local`: `ATTIO_API_KEY`, `ATTIO_WEBHOOK_SECRET`, `OPENPHONE_AP
 | `docs/migration/PRD.md` | Business requirements |
 | `docs/migration/HLD.md` | Architecture, data model |
 | `docs/migration/LLD.md` | Implementation details |
-| `docs/attio-workflows.md` | 8 Attio workflows (Slack-only) |
+| `docs/attio-workflows.md` | 9 Attio workflows (Slack-only, incl. WF6 Inquiries) |
 | `docs/attio-email-templates.md` | Email content reference |
 
 ---

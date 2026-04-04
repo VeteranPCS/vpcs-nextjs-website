@@ -7,51 +7,74 @@
 
 ## Current Status
 
-**Phase:** HYBRID EMAIL ARCHITECTURE IMPLEMENTED
-**Next:** Simplify Attio workflows (remove sequence blocks), test email delivery
-**No longer blocked:** Emails sent via Resend, not Attio sequences
+**Phase:** E2E TESTING — 11 of 14 tests passed, 2 partial, 1 remaining
+**Next:** Complete Test 14 (dual-role person_type), then cleanup test records and deploy
 
 ### Next Steps (in order)
-1. **Simplify Attio workflows** — Remove sequence enrollment/exit blocks in Attio UI (keep Slack)
-2. **Register webhook** for list-entry events in Attio (for stage-change emails)
-3. **Test email delivery** — Submit test forms, verify Resend dashboard
-4. **Create dedicated Slack channels** → planned channels in `docs/attio-workflows.md`
-5. **Enhancement Phase:** Multi-step contact form, area-based agent routing
+1. **Test 14** — Dual-role person_type accumulation
+2. **Cleanup test records** — Run `npx tsx scripts/test-teardown.ts` + manual Attio cleanup
+3. **Deploy** — Push to production
+4. **Enhancement Phase:** Multi-step contact form, area-based agent routing
 
 ---
 
 ## Recent Sessions
 
-### 2026-03-16 - E2E Testing Session 1
+### 2026-04-03 - E2E Testing Session 2
 
-**Status:** 🟡 In Progress (2 of 14 tests passed)
+**Status:** 🟡 In Progress (11 PASS, 2 PARTIAL, 1 remaining)
 
-**Completed:**
-- Test 1 PASS: Contact agent form → C2 + A1 emails delivered via Resend
-- Test 2 PASS: Agent portal → deal summary renders, confirm sets contact_confirmed=true
+**Tests Passed:**
+- Test 1 PASS: Contact agent form → C2 + A1 emails (session 1)
+- Test 2 PASS: Agent portal confirm (session 1)
+- Test 3 PASS: Contact lender form → C3 + L1 emails + portal confirm
+- Test 4 PASS: General contact form → Inquiries pipeline + C1 email + WF6 Slack
+- Test 5 PASS: Agent onboarding → A2 email + pipeline entry
+- Test 6 PASS: Lender onboarding → L2 email + pipeline entry
+- Test 7 PASS: Internship form → I1 email + pipeline entry
+- Test 8 PASS: Webhook Under Contract → C4 email
+- Test 9 PASS: Webhook Paid Complete → C5 email with correct bonus amounts
+- Test 10 PASS: Webhook agent A4 + A5 emails
+- Test 11 PASS: Webhook lender L4 + L5 emails
+- Test 12 PARTIAL: Cron follow-up drips — endpoint works, no aged records to test
+- Test 13 PARTIAL: Cron stale leads — endpoint works, no stale records to test
 
 **Bugs Found & Fixed:**
-1. `render is not a function` — Missing `@react-email/render` peer dependency (installed)
-2. Emails not sending — Dynamic `import().then()` dropped by Next.js server actions. Fixed: switched to static imports + `await sendEmail()`
-3. Phone validation — Attio rejects 555 test numbers. Use real numbers (4252246148)
-4. Portal "Objects not valid as React child" — `/api/magic-link/validate` returning raw Attio objects. Fixed: use `getListEntry()` (parsed)
-5. Portal hidden behind nav bar — Added `pt-24 md:pt-28` to clear fixed nav
-6. Thank-you page 404 on ngrok — Separated `MAGIC_LINK_BASE_URL` (ngrok) from `NEXT_PUBLIC_API_BASE_URL` (localhost)
-7. Portal confirm button same color as headers — Changed to red (`#C5203E`)
+1. **"Active" → "Active Duty" mismatch** — Form sent "Active" but Attio expects "Active Duty". Fixed: updated form dropdowns + types to match Attio values ("Active Duty", "Marines")
+2. **`primary_state` attribute not found** — Agent/lender onboarding handlers tried to set non-existent fields on pipeline entries. Fixed: store form data as Attio notes instead
+3. **Slack fire-and-forget dropped** — `contactPostForm` didn't `await` Slack call. Fixed with try/await/catch
+4. **Agent form submit button stuck** — `AgentInfo` component had independent `isSubmitting` state that never reset on error. Fixed: pass `isSubmitting` from page as prop
+5. **Currency field parsing** — `sale_price` returned as `{currency_value, currency_code}` object, not number. Fixed: added currency handling in `parseListEntry`
+6. **Orphaned agent records** — Failed form submissions created partial records causing uniqueness conflicts on retry. Fixed: deleted via API
+7. **General contact form created false customers** — Redesigned: Inquiries pipeline on People object replaces customer record creation
 
-**Remaining Tests (12):**
-- Contact lender form (C3 + L1)
-- General contact form (C1)
-- Agent/Lender/Intern onboarding forms (A2, L2, I1)
-- Webhook stage-change emails (C4, C5, A4, A5, L4, L5)
-- Cron follow-up drips
-- Cron stale lead re-routing
-- Dual-role person_type
+**Architecture Changes:**
+- **New: Inquiries pipeline** on People object (stages: New → Responded → Resolved)
+- **New: WF6** Attio workflow — New Inquiry → Slack `#leads-unassigned`
+- **New: `SLACK_UNASSIGNED_LEADS_WEBHOOK_URL`** env var (though contact form Slack now via WF6)
+- **Removed:** Direct Slack call from `contactPostForm` (now via Attio WF6)
+- **Removed:** Customer record creation from general contact form
 
-**Notes:**
-- reCAPTCHA requires manual solving for each form test
-- ngrok free tier shows interstitial "Visit Site" page — cosmetic, works after clicking through
-- Phone validation on frontend should be improved (users won't type +1 prefix)
+**Files Created:**
+- `scripts/setup-inquiries-pipeline.ts` — Creates Inquiries pipeline on People
+
+**Files Modified:**
+- `lib/attio-schema.ts` — Added INQUIRY_ATTRIBUTES, INQUIRY_STAGES, INQUIRY_SOURCE_OPTIONS
+- `lib/attio.ts` — Added currency field parsing in parseListEntry
+- `lib/slack.ts` — Cleaned up channel routing (removed, Slack via Attio WF6)
+- `services/salesForcePostFormsService.tsx` — Fixed military status mapping, onboarding entry fields, contact form → Inquiries pipeline, agent form error handling
+- `components/GetListedAgents/AgentInfo.tsx` — Fixed isSubmitting prop from parent
+- `components/GetListedLenders/GetListedLendersProfileInfo.tsx` — Updated dropdown options to match Attio
+- `types/common.ts` — Updated MilitaryStatusOptions and MilitaryBranchOptions
+- `app/(site)/get-listed-agents/page.tsx` — Pass isSubmitting to AgentInfo
+- `app/api/webhooks/attio/route.ts` — Fixed currency parsing for bonus calculation
+- `docs/e2e-test-plan.md` — Updated sign-off table
+
+---
+
+### 2026-03-16 - E2E Testing Session 1
+
+**Status:** ✅ Merged into Session 2 (tests 1-2 passed, bugs fixed)
 
 ---
 

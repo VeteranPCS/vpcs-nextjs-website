@@ -371,29 +371,31 @@ export async function GetListedAgentsPostForm(formData: any) {
 
     logDebug("Agent record created", { submissionId, agentId });
 
-    // Create entry in agent_onboarding pipeline
-    const onboardingData: Record<string, any> = {
-      primary_state: formData.primaryState || null,
-      other_states: formData.otherStates
-        ? Array.isArray(formData.otherStates)
-          ? formData.otherStates.join(", ")
-          : formData.otherStates
-        : null,
-      cities_serviced: formData.citiesServiced || null,
-      bases_serviced: formData.basesServiced || null,
-      personally_pcs: formData.personallyPCS || null,
-      lead_acceptance: formData.leadAcceptance || null,
-      how_did_you_hear: formData.howDidYouHear || null,
-      tell_us_more: formData.tellusMore || null,
-    };
-
+    // Create entry in agent_onboarding pipeline (no custom attributes — form data stored as note)
     await attio.createListEntry(
       "agent_onboarding",
       "agents",
       agentId,
-      onboardingData,
+      {},
       "New Application", // Initial stage
     );
+
+    // Store form location/preference data as a note on the agent record
+    const noteLines: string[] = [];
+    if (formData.primaryState) noteLines.push(`Primary State: ${formData.primaryState}`);
+    if (formData.otherStates) {
+      const states = Array.isArray(formData.otherStates) ? formData.otherStates.join(", ") : formData.otherStates;
+      noteLines.push(`Other States: ${states}`);
+    }
+    if (formData.citiesServiced) noteLines.push(`Cities Serviced: ${formData.citiesServiced}`);
+    if (formData.basesServiced) noteLines.push(`Bases Serviced: ${formData.basesServiced}`);
+    if (formData.personallyPCS) noteLines.push(`Personally PCS'd: ${formData.personallyPCS}`);
+    if (formData.leadAcceptance) noteLines.push(`Lead Acceptance: ${formData.leadAcceptance}`);
+    if (formData.howDidYouHear) noteLines.push(`How Did You Hear: ${formData.howDidYouHear}`);
+    if (formData.tellusMore) noteLines.push(`Additional Info: ${formData.tellusMore}`);
+    if (noteLines.length > 0) {
+      await attio.createNote("agents", agentId, "Agent Application Details", noteLines.join("\n"));
+    }
 
     logInfo("Agent onboarding entry created", { submissionId, agentId });
 
@@ -488,26 +490,28 @@ export async function GetListedLendersPostForm(formData: any) {
 
     logDebug("Lender record created", { submissionId, lenderId });
 
-    // Create entry in lender_onboarding pipeline
-    const onboardingData: Record<string, any> = {
-      primary_state: formData.primaryState || null,
-      other_states: formData.otherStates
-        ? Array.isArray(formData.otherStates)
-          ? formData.otherStates.join(", ")
-          : formData.otherStates
-        : null,
-      local_cities: formData.localCities || null,
-      how_did_you_hear: formData.howDidYouHear || null,
-      tell_us_more: formData.tellusMore || null,
-    };
-
+    // Create entry in lender_onboarding pipeline (no custom attributes — form data stored as note)
     await attio.createListEntry(
       "lender_onboarding",
       "lenders",
       lenderId,
-      onboardingData,
+      {},
       "New Application", // Initial stage
     );
+
+    // Store form location/preference data as a note on the lender record
+    const lenderNoteLines: string[] = [];
+    if (formData.primaryState) lenderNoteLines.push(`Primary State: ${formData.primaryState}`);
+    if (formData.otherStates) {
+      const states = Array.isArray(formData.otherStates) ? formData.otherStates.join(", ") : formData.otherStates;
+      lenderNoteLines.push(`Other States: ${states}`);
+    }
+    if (formData.localCities) lenderNoteLines.push(`Local Cities: ${formData.localCities}`);
+    if (formData.howDidYouHear) lenderNoteLines.push(`How Did You Hear: ${formData.howDidYouHear}`);
+    if (formData.tellusMore) lenderNoteLines.push(`Additional Info: ${formData.tellusMore}`);
+    if (lenderNoteLines.length > 0) {
+      await attio.createNote("lenders", lenderId, "Lender Application Details", lenderNoteLines.join("\n"));
+    }
 
     logInfo("Lender onboarding entry created", { submissionId, lenderId });
 
@@ -832,14 +836,28 @@ export async function contactPostForm(formData: any) {
   logInfo("Processing contact form submission", { submissionId });
 
   try {
-    // Create simple customer record
-    const customerId = await findOrCreateCustomer({
+    // Create/find People record (no customer record — inquiries are not necessarily customers)
+    const personId = await findOrCreatePerson({
       firstName: formData.firstName || "",
       lastName: formData.lastName || "",
       email: formData.email || "",
     });
 
-    // Send C1: Unassigned customer welcome email
+    // Create inquiry entry in Inquiries pipeline on People
+    await attio.createListEntry(
+      "inquiries",
+      "people",
+      personId,
+      {
+        message: formData.additionalComments || "",
+        source: "Contact Form",
+      },
+      "New",
+    );
+
+    logInfo("Inquiry entry created", { submissionId, personId });
+
+    // Send C1: Contact form confirmation email
     if (formData.email) {
       try {
         await sendEmail({
@@ -849,8 +867,8 @@ export async function contactPostForm(formData: any) {
             customerFirstName: formData.firstName || '',
           }),
           attioNote: {
-            objectSlug: 'customers',
-            recordId: customerId,
+            objectSlug: 'people',
+            recordId: personId,
             emailLabel: 'C1: Contact Form Confirmation',
           },
         });
@@ -860,20 +878,7 @@ export async function contactPostForm(formData: any) {
       }
     }
 
-    // Send Slack notification
-    slack
-      .sendAlert("New Contact Form Submission", {
-        Name: `${formData.firstName} ${formData.lastName}`,
-        Email: formData.email || "",
-        Message: formData.additionalComments || "No message",
-      })
-      .catch((error) => {
-        logError(
-          "Error sending contact form notifications",
-          { submissionId },
-          error,
-        );
-      });
+    // Slack notification handled by Attio WF6
 
     await updateSubmissionStatus(
       submissionId,

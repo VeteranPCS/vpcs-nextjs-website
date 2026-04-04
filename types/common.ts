@@ -37,7 +37,7 @@ export type HowDidYouHearOptions =
  * Military status options
  */
 export type MilitaryStatusOptions =
-  | 'Active'
+  | 'Active Duty'
   | 'National Guard'
   | 'Retired'
   | 'Spouse'
@@ -45,13 +45,13 @@ export type MilitaryStatusOptions =
   | '';
 
 /**
- * Military branch options
+ * Military branch options — matches Attio select values
  */
 export type MilitaryBranchOptions =
   | 'Air Force'
   | 'Coast Guard'
   | 'Navy'
-  | 'Marine Corps'
+  | 'Marines'
   | 'Space Force'
   | 'Army'
   | '';

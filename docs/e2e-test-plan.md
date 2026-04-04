@@ -394,15 +394,15 @@ This removes all test records (agent, lender, area assignment, customer, deals, 
 |---|------|--------|------|-------|
 | 1 | Contact Agent → C2 + A1 | **PASS** | 2026-03-16 | Emails delivered, records created, SMS sent |
 | 2 | Agent Portal confirm | **PASS** | 2026-03-16 | Deal summary renders, confirm sets contact_confirmed=true |
-| 3 | Contact Lender → C3 + L1 | | | |
-| 4 | General Contact → C1 | | | |
-| 5 | Agent Onboarding → A2 | | | |
-| 6 | Lender Onboarding → L2 | | | |
-| 7 | Internship → I1 | | | |
-| 8 | Webhook: Under Contract → C4 | | | |
-| 9 | Webhook: Paid Complete → C5 | | | |
-| 10 | Webhook: Agent A4 + A5 | | | |
-| 11 | Webhook: Lender L4 + L5 | | | |
-| 12 | Cron: Follow-up drips | | | |
-| 13 | Cron: Stale lead re-routing | | | |
+| 3 | Contact Lender → C3 + L1 | **PASS** | 2026-04-03 | C3+L1 emails delivered, SMS sent, portal confirm works, contact_confirmed=true |
+| 4 | General Contact → C1 | **PASS** | 2026-04-03 | Inquiry pipeline entry created, C1 email sent, WF6 Slack to #leads-unassigned |
+| 5 | Agent Onboarding → A2 | **PASS** | 2026-04-03 | Agent record created, onboarding pipeline entry, A2 email delivered, People record with person_type=[Agent] |
+| 6 | Lender Onboarding → L2 | **PASS** | 2026-04-03 | Lender record created, onboarding pipeline entry, L2 email delivered, Slack notification, People record with person_type=[Lender] |
+| 7 | Internship → I1 | **PASS** | 2026-04-03 | Intern record created, placement pipeline entry, I1 email delivered, People record with person_type=[Intern] |
+| 8 | Webhook: Under Contract → C4 | **PASS** | 2026-04-03 | C4 Under Contract email delivered to customer |
+| 9 | Webhook: Paid Complete → C5 | **PASS** | 2026-04-03 | C5 email with correct bonus amounts, currency parsing fixed |
+| 10 | Webhook: Agent A4 + A5 | **PASS** | 2026-04-03 | A4 Contract Ready + A5 Live on Website emails sent, stage_email_sent tracks both |
+| 11 | Webhook: Lender L4 + L5 | **PASS** | 2026-04-03 | L4 Contract Ready + L5 Live on Website emails sent, stage_email_sent tracks both |
+| 12 | Cron: Follow-up drips | **PARTIAL** | 2026-04-03 | Endpoint runs, authenticates, returns stats. No aged records to trigger emails. |
+| 13 | Cron: Stale lead re-routing | **PARTIAL** | 2026-04-03 | Endpoint runs, authenticates, compiles. No stale leads to re-route. |
 | 14 | Dual-role person_type | | | |

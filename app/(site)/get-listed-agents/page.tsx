@@ -142,6 +142,7 @@ export default function GetListedAgentsPage() {
             onBack={handleBack}
             onSubmit={handleSubmit}
             shouldSubmit={shouldSubmit}
+            isSubmitting={isSubmitting}
           />
         )}
       </div>

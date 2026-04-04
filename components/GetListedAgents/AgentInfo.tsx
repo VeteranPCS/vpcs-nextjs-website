@@ -1,5 +1,5 @@
 "use client";
-import { useState, FormEvent, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import stateService from "@/services/stateService";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -24,6 +24,7 @@ interface ContactFormProps {
   onSubmit: (data: any) => void;
   onBack: () => void;
   shouldSubmit: () => void;
+  isSubmitting?: boolean;
 }
 
 const howDidYouHearOptions: HowDidYouHearOptions[] = [
@@ -75,9 +76,9 @@ const schema = yup.object().shape({
   captcha_settings: yup.string().required("Please complete the reCAPTCHA"),
 });
 
-const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const AgentInfo = ({ onSubmit, onBack, shouldSubmit, isSubmitting: parentIsSubmitting }: ContactFormProps) => {
   const [stateList, setStateList] = useState<any[]>([]);
+  const isSubmitting = parentIsSubmitting ?? false;
 
   const {
     register,
@@ -128,7 +129,6 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
 
   const onSubmitHandler: SubmitHandler<any> = (data) => {
     if (isSubmitting) return;
-    setIsSubmitting(true);
     onSubmit(data);
     shouldSubmit();
   };

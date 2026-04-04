@@ -1,9 +1,9 @@
 # VeteranPCS - Quick Resume Guide
 
-**Last Updated:** 2026-03-15
+**Last Updated:** 2026-04-03
 **Project:** VeteranPCS CRM (Attio-powered)
 **Branch:** attio-migration
-**Status:** HYBRID EMAIL ARCHITECTURE IMPLEMENTED
+**Status:** E2E TESTING — 11/14 PASS, 2 PARTIAL, 1 REMAINING
 
 ---
 
@@ -19,14 +19,18 @@ The Salesforce → Attio migration is **complete**. Email automation uses **Rese
 
 ### What's Next
 
-1. **Simplify Attio workflows** — Remove sequence enrollment/exit blocks in Attio UI (keep Slack)
-2. **Test email delivery** — Submit test forms, verify Resend emails
-3. **Create dedicated Slack channels** — currently posting to `#general`
-4. **Retire `#salesforce-alerts`** Slack channel
+1. **Complete Test 14** — Dual-role person_type accumulation test
+2. **Cleanup test records** — `npx tsx scripts/test-teardown.ts` + manual Attio cleanup
+3. **Deploy to production**
+4. **Enhancement Phase:** Multi-step contact form, area-based agent routing
 
-**Enhancement Phase:**
-1. Multi-step contact form with Buying/Selling/Both selection
-2. Area-based agent routing for unselected agents
+### Recent Changes (2026-04-03)
+- **Inquiries pipeline** on People object replaces customer record creation from general contact form
+- **WF6** Attio workflow: New Inquiry → Slack `#leads-unassigned`
+- **9 Attio workflows** total (was 8): added WF6 for inquiries
+- Form dropdowns now match Attio select values directly (Active Duty, Marines)
+- Currency field parsing fixed in `parseListEntry`
+- Agent form error handling fixed (submit button no longer gets stuck)
 
 ---
 

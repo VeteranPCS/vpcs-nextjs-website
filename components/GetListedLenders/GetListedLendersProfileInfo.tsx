@@ -13,7 +13,7 @@ interface ContactFormProps {
 }
 
 const StatusOptions: MilitaryStatusOptions[] = [
-  'Active',
+  'Active Duty',
   'National Guard',
   'Retired',
   'Spouse',
@@ -24,7 +24,7 @@ const BranchOptions: MilitaryBranchOptions[] = [
   'Air Force',
   'Coast Guard',
   'Navy',
-  'Marine Corps',
+  'Marines',
   'Space Force',
   'Army',
 ];

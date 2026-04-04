@@ -791,9 +791,12 @@ async function buildStageEmail(
       }
 
       if (stage === "Paid Complete") {
-        // Calculate bonus from sale price
+        // Calculate bonus from sale price (handle number or currency object)
+        const rawPrice = entry.sale_price;
         const salePrice =
-          typeof entry.sale_price === "number" ? entry.sale_price : 0;
+          typeof rawPrice === "number" ? rawPrice
+          : typeof rawPrice?.currency_value === "number" ? rawPrice.currency_value
+          : 0;
         const { bonus, charity } = calculateBonus(salePrice);
 
         const { default: TransactionClosed } = await import(

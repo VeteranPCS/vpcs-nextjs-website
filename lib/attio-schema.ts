@@ -700,6 +700,11 @@ export const PIPELINES: ListDefinition[] = [
     api_slug: "intern_placements",
     parent_object: "interns",
   },
+  {
+    name: "Inquiries",
+    api_slug: "inquiries",
+    parent_object: "people",
+  },
 ];
 
 // Pipeline entry attributes
@@ -933,11 +938,32 @@ export const INTERN_PLACEMENT_ATTRIBUTES: AttributeDefinition[] = [
   },
 ];
 
+// Inquiry pipeline attributes (on People object)
+export const INQUIRY_ATTRIBUTES: AttributeDefinition[] = [
+  {
+    title: "Message",
+    api_slug: "message",
+    type: "text",
+    description: "The inquiry message from the contact form",
+  },
+  {
+    title: "Source",
+    api_slug: "source",
+    type: "select",
+    description: "Where this inquiry originated",
+  },
+];
+
+export const INQUIRY_SOURCE_OPTIONS = [
+  { title: "Contact Form" },
+];
+
 export const PIPELINE_ATTRIBUTES: Record<string, AttributeDefinition[]> = {
   agent_onboarding: AGENT_ONBOARDING_ATTRIBUTES,
   lender_onboarding: LENDER_ONBOARDING_ATTRIBUTES,
   customer_deals: CUSTOMER_DEALS_ATTRIBUTES,
   intern_placements: INTERN_PLACEMENT_ATTRIBUTES,
+  inquiries: INQUIRY_ATTRIBUTES,
 };
 
 // =============================================================================
@@ -979,9 +1005,16 @@ export const INTERN_PLACEMENT_STAGES: StatusDefinition[] = [
   { title: "Unable to Place", is_active: false },
 ];
 
+export const INQUIRY_STAGES: StatusDefinition[] = [
+  { title: "New", is_active: true },
+  { title: "Responded", is_active: true },
+  { title: "Resolved", is_active: false },
+];
+
 export const PIPELINE_STAGES: Record<string, StatusDefinition[]> = {
   agent_onboarding: ONBOARDING_STAGES,
   lender_onboarding: ONBOARDING_STAGES,
   customer_deals: CUSTOMER_DEALS_STAGES,
   intern_placements: INTERN_PLACEMENT_STAGES,
+  inquiries: INQUIRY_STAGES,
 };

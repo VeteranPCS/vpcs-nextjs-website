@@ -524,6 +524,8 @@ class AttioClient {
           parsed[key] = arr[0].original_phone_number;
         } else if (arr[0]?.email_address) {
           parsed[key] = arr[0].email_address;
+        } else if (arr[0]?.currency_value !== undefined) {
+          parsed[key] = arr[0].currency_value;
         } else if (arr[0]?.value !== undefined) {
           parsed[key] = arr[0].value;
         } else {
