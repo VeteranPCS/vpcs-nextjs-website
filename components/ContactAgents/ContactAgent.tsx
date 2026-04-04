@@ -29,6 +29,8 @@ const contactFormSchema = yup.object().shape({
     otherwise: (schema) => schema.nullable(),
   }),
   additionalComments: yup.string().optional(),
+  captchaToken: yup.string().required('Please complete the reCAPTCHA'),
+  captcha_settings: yup.string().required('Please complete the reCAPTCHA'),
 });
 
 const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {

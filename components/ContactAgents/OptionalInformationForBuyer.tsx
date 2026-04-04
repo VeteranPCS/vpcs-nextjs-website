@@ -31,7 +31,7 @@ const validationSchema = Yup.object({
 const OptionalInformationForBuyer = ({ onSubmit, shouldSubmit }: ContactFormProps) => {
   // Set up react-hook-form with Yup validation
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
-    // resolver: yupResolver(validationSchema),
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       typeOfHome: null,
       bedrooms: '',

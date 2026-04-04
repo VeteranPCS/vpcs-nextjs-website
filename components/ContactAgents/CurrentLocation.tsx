@@ -12,7 +12,6 @@ interface FormData {
   destination: string;
   buyingSelling: string;
   timeframe: string;
-  captchaToken: string;
 }
 
 interface ContactFormProps {
@@ -27,7 +26,6 @@ const validationSchema = yup.object({
   destination: yup.string().required('Destination is required'),
   buyingSelling: yup.string().required('Please select if you are buying or selling'),
   timeframe: yup.string().required('Please select a timeframe'),
-  captchaToken: yup.string().required('Captcha verification is required'),
 });
 
 const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
