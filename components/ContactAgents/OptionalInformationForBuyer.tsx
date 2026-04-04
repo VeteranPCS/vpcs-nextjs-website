@@ -9,13 +9,13 @@ interface ContactFormProps {
 }
 
 export interface FormData {
-  typeOfHome: string;
+  typeOfHome: string | null;
   bedrooms: string;
   bathrooms: string;
   maxPrice: string;
-  preApproval: string;
+  preApproval: string | null;
   captchaToken: string;
-  captcha_settings: string;
+  captcha_settings: string | null;
 }
 
 // Define validation schema using Yup
@@ -31,13 +31,13 @@ const validationSchema = Yup.object({
 const OptionalInformationForBuyer = ({ onSubmit, shouldSubmit }: ContactFormProps) => {
   // Set up react-hook-form with Yup validation
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
-    resolver: yupResolver(validationSchema),
+    // resolver: yupResolver(validationSchema),
     defaultValues: {
-      typeOfHome: '',
+      typeOfHome: null,
       bedrooms: '',
       bathrooms: '',
       maxPrice: '',
-      preApproval: '',
+      preApproval: null,
       captchaToken: '',
       captcha_settings: '',
     }
