@@ -7,18 +7,40 @@
 
 ## Current Status
 
-**Phase:** E2E TESTING — 11 of 14 tests passed, 2 partial, 1 remaining
-**Next:** Complete Test 14 (dual-role person_type), then cleanup test records and deploy
+**Phase:** E2E TESTING — 11 of 14 tests passed (Test 3 re-verified), 2 partial, 1 remaining
+**Next:** Continue re-verification of remaining tests, complete Test 14, then cleanup and deploy
 
 ### Next Steps (in order)
-1. **Test 14** — Dual-role person_type accumulation
-2. **Cleanup test records** — Run `npx tsx scripts/test-teardown.ts` + manual Attio cleanup
+1. **Continue E2E re-verification** — Tests 4+ if needed
+2. **Test 14** — Dual-role person_type accumulation
+3. **Cleanup test records** — Run `npx tsx scripts/test-teardown.ts` + manual Attio cleanup
 3. **Deploy** — Push to production
 4. **Enhancement Phase:** Multi-step contact form, area-based agent routing
 
 ---
 
 ## Recent Sessions
+
+### 2026-04-11 - E2E Testing Session 3 (Re-verification)
+
+**Status:** 🟡 In Progress
+
+**Completed:**
+- Re-verified Test 3 (Contact Lender → C3 + L1): PASS
+  - Form submitted via browser automation (reCAPTCHA v3 invisible — no manual solve needed)
+  - Customer record created in Attio (ID: ce292631-e767-4d21-86a0-3843e1ccdb0f)
+  - Lender deal created (ID: 1bbdd5a9-3dc7-4e8b-b002-2cea36a82da8)
+  - C3 email delivered to customer with lender name, company, phone, email
+  - L1 email delivered to lender with customer name, phone, email, destination
+  - SMS received by lender
+  - Slack notification received
+  - Attio record confirmed by user
+
+**Notes:**
+- `captchaToken: undefined` in dev — reCAPTCHA v3 doesn't block in local dev
+- Form auto-submitted without visible CAPTCHA challenge
+
+---
 
 ### 2026-04-03 - E2E Testing Session 2
 

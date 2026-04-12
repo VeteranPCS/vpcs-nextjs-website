@@ -394,7 +394,7 @@ This removes all test records (agent, lender, area assignment, customer, deals, 
 |---|------|--------|------|-------|
 | 1 | Contact Agent → C2 + A1 | **PASS** | 2026-03-16 | Emails delivered, records created, SMS sent |
 | 2 | Agent Portal confirm | **PASS** | 2026-03-16 | Deal summary renders, confirm sets contact_confirmed=true |
-| 3 | Contact Lender → C3 + L1 | **PASS** | 2026-04-03 | C3+L1 emails delivered, SMS sent, portal confirm works, contact_confirmed=true |
+| 3 | Contact Lender → C3 + L1 | **PASS** | 2026-04-11 | Re-verified: C3+L1 emails delivered (Resend confirmed), SMS sent, Slack received, Attio record created |
 | 4 | General Contact → C1 | **PASS** | 2026-04-03 | Inquiry pipeline entry created, C1 email sent, WF6 Slack to #leads-unassigned |
 | 5 | Agent Onboarding → A2 | **PASS** | 2026-04-03 | Agent record created, onboarding pipeline entry, A2 email delivered, People record with person_type=[Agent] |
 | 6 | Lender Onboarding → L2 | **PASS** | 2026-04-03 | Lender record created, onboarding pipeline entry, L2 email delivered, Slack notification, People record with person_type=[Lender] |
