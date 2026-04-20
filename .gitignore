@@ -36,3 +36,16 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 package-lock.json
+
+# secrets / local tooling
+ngrok.yml
+
+# test/debug artifacts
+.playwright-mcp/
+
+# migration data (contains customer PII — never commit)
+data/
+
+# legacy Salesforce email template exports (reference only)
+docs/legacy-email-templates/
+docs/migration
