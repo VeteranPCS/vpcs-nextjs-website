@@ -18,7 +18,7 @@ const META_TITLE = "Agentes Inmobiliarios para Militares - Bono de $4,000";
 const META_DESCRIPTION = "¿Órdenes de PCS? Conecte con agentes hispanos con experiencia militar que entienden préstamos VA, asignaciones de vivienda militar, y requisitos de bases. Gane hasta $4,000 en bonos de mudanza mientras apoya organizaciones de veteranos—sin costo para usted."
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL || ""),
+  metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,

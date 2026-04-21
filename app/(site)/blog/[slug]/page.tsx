@@ -33,7 +33,8 @@ export async function generateStaticParams() {
     }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+    const params = await props.params;
     const blog = await blogService.fetchBlog(params.slug);
 
     const openGraphImageURL = `${process.env.BASE_URL}/blog/${params.slug}/opengraph-image`;
@@ -69,8 +70,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     };
 }
 
-export default async function Home({ params }: { params: { slug: string } }) {
-    const { slug } = await params;
+export default async function Home(props: { params: Promise<{ slug: string }> }) {
+    const { slug } = await props.params;
     let blog: Record<string, any> | null = null;
 
     try {
@@ -87,11 +88,11 @@ export default async function Home({ params }: { params: { slug: string } }) {
     const jsonLd: WithContext<BlogPosting> = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
-        "@id": `${BASE_URL}/blog/${params.slug}`,
+        "@id": `${BASE_URL}/blog/${slug}`,
         abstract: blog.meta_description,
         mainEntityOfPage: {
             "@type": "WebPage",
-            "@id": `${BASE_URL}/blog/${params.slug}`,
+            "@id": `${BASE_URL}/blog/${slug}`,
         },
         headline: blog.title,
         image: `${blog.mainImage ? urlForImage(blog.mainImage) : BASE_URL + 'blogctabgimage.png'}`,
@@ -126,7 +127,7 @@ export default async function Home({ params }: { params: { slug: string } }) {
     return (
         <>
             <Script
-                id={`json-ld-blog-${params.slug}`}
+                id={`json-ld-blog-${slug}`}
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />

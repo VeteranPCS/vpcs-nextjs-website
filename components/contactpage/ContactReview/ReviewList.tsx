@@ -13,7 +13,8 @@ export default async function ReviewList() {
 
   try {
     reviewsData = await fetchGoogleReviews();
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.digest) throw error;
     console.error('Failed to fetch Reviews:', error);
     return <p>Failed to load Reviews.</p>;
   }

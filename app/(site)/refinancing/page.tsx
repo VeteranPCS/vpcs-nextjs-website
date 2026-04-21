@@ -12,7 +12,7 @@ const META_TITLE = "VA Loan Refinancing: IRRRL, Cash-Out & Lower Your Rate | Vet
 const META_DESCRIPTION = "Lower your mortgage rate with VA Streamline IRRRL refinancing. No income verification, no appraisal, and closing costs rolled into your loan. Connect with VA loan experts who understand military families.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL || ""),
+  metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,

@@ -20,7 +20,7 @@ const META_TITLE = "Free VA Loan & First-Time Homebuyer Guides";
 const META_DESCRIPTION = "Download our free guides to help you navigate PCS moves, VA loans, and first-time homebuying. Our veteran and military spouse agents are here to support you every step of the way.";
 
 export const metadata: Metadata = {
-    metadataBase: new URL(BASE_URL || ""),
+    metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
     title: {
         template: "%s | VeteranPCS",
         default: META_TITLE,

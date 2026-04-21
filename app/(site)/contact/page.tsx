@@ -12,7 +12,7 @@ const META_TITLE = "Connect with Military-Experienced Real Estate Agents | PCS w
 const META_DESCRIPTION = "Facing a short-notice PCS or first-time VA loan? Our veteran and military spouse agents understand your unique timeline, BAH considerations, and base requirements. Free consultation with no obligation—we're here to serve you.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL || ""),
+  metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,

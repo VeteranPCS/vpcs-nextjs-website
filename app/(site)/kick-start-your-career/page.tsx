@@ -6,7 +6,7 @@ const META_TITLE = "Real Estate Internships for Veterans & Military Spouses - La
 const META_DESCRIPTION = "Kickstart your real estate career with VeteranPCS's tailored internships for veterans and military spouses. Gain hands-on experience, receive a 40% discount on pre-licensing courses, and connect with trusted agents nationwide. Apply now to start your journey in the real estate industry.";
 
 export const metadata: Metadata = {
-    metadataBase: new URL(BASE_URL || ""),
+    metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
     title: {
         template: "%s | VeteranPCS",
         default: META_TITLE,

@@ -10,7 +10,8 @@ export const size = {
 export const contentType = 'image/png'
 export const runtime = "edge"
 
-export default async function Image({ params }: { params: { slug: string } }) {
+export default async function Image(props: { params: Promise<{ slug: string }> }) {
+    const params = await props.params;
 
     const blog = await blogService.fetchBlog(params.slug)
     const title = blog.short_title || 'Default Title'
@@ -63,7 +64,6 @@ export default async function Image({ params }: { params: { slug: string } }) {
                         height: '71px',
                     }}
                 >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={logo_url} alt={title || ""} height={71} width={304} />
                 </div>
             </div>

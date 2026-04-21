@@ -26,7 +26,7 @@ const META_TITLE = "VA Loan Guidance & Resources";
 const META_DESCRIPTION = "Don’t overpay using your VA loan, make the VA Loan work for you! Download our free VA Loan guide to learn more about the VA loan and how it can work for you.";
 
 export const metadata: Metadata = {
-    metadataBase: new URL(BASE_URL || ""),
+    metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
     title: {
         template: "%s | VeteranPCS",
         default: META_TITLE,

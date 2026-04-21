@@ -16,7 +16,7 @@ const META_TITLE = "Veteran Charities We Support: Military-Focused Nonprofits & 
 const META_DESCRIPTION = "VeteranPCS supports military-focused charities, donating $25,000+ to organizations like Freedom Service Dogs. See how your closing helps fellow service members and strengthens the veteran community.";
 
 export const metadata: Metadata = {
-    metadataBase: new URL(BASE_URL || ""),
+    metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
     title: {
         template: "%s | VeteranPCS",
         default: META_TITLE,

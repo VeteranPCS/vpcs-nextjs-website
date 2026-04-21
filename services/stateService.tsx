@@ -108,7 +108,12 @@ const stateService = {
     try {
       const response = await client.fetch(`*[_type == "state_list"]{ state_slug, short_name }`)
       if (response) {
-        return response as StateList[];
+        const seen = new Set<string>();
+        return (response as StateList[]).filter((state) => {
+          if (seen.has(state.short_name)) return false;
+          seen.add(state.short_name);
+          return true;
+        });
       } else {
         throw new Error('Failed to fetch State List');
       }

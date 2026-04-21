@@ -1,5 +1,14 @@
+import { EventEmitter } from "node:events";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { SALESFORCETOKEN, getSalesforceToken } from "@/services/salesForceTokenService";
+
+// Next spawns fresh worker processes for static generation — globals set in
+// next.config.mjs don't reach them. Raise the listener ceiling here so the
+// 57 state pages' concurrent Salesforce fan-out doesn't trip Node's default
+// 10-listener cap on pooled TLS sockets.
+if (EventEmitter.defaultMaxListeners < 20) {
+    EventEmitter.defaultMaxListeners = 20;
+}
 
 // ***** start - import from files *****
 import { BASE_API_URL } from "@/constants/api";

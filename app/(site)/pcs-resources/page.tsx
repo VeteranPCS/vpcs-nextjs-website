@@ -26,7 +26,7 @@ const META_TITLE = "Military PCS Toolkit: Moving Guides, BAH Calculators & VA Lo
 const META_DESCRIPTION = "Complete PCS preparation headquarters: download customizable PCS checklists, calculate BAH for your next duty station, access VA loan eligibility guides, and connect with military-friendly businesses near your new base—all designed by veterans who've navigated multiple PCS moves.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL || ""),
+  metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,
