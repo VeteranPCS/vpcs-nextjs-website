@@ -1,3 +1,12 @@
+import { EventEmitter } from 'node:events';
+
+// During static generation, ~57 state pages each fan out to multiple Salesforce
+// HTTPS requests (agent list + lender list + per-agent image). Node's default
+// 10-listener ceiling on pooled TLS sockets fires spurious leak warnings under
+// that fan-out. Raise the default so legitimate high-concurrency build work
+// doesn't produce MaxListenersExceededWarning noise in Vercel build logs.
+EventEmitter.defaultMaxListeners = 20;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async headers() {
