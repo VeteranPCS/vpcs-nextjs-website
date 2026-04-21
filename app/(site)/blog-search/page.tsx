@@ -2,7 +2,8 @@ import SearchBlog from "@/components/SearchBlog/SearchBlog";
 import blogService from "@/services/blogService";
 import { BlogDetails } from "@/components/SearchBlog/SearchBlog";
 
-export default async function BlogSearchPage({ searchParams }: { searchParams: { query: string } }) {
+export default async function BlogSearchPage(props: { searchParams: Promise<{ query: string }> }) {
+  const searchParams = await props.searchParams;
   const query = searchParams?.query || '';
 
   let searchedBlog: BlogDetails[] | null = [];

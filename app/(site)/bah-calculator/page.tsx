@@ -1,5 +1,6 @@
 import BAHCalculator from '@/components/BAHCalculator';
 import type { Metadata } from "next";
+import type { JSX } from "react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 

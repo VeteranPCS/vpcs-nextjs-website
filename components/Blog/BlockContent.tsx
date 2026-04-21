@@ -150,8 +150,8 @@ const BlockContent: React.FC<BlockContentProps> = ({ blocks }) => {
   };
 
   const renderBlocks = () => {
-    const result: JSX.Element[] = [];
-    let currentList: JSX.Element[] = [];
+    const result: React.JSX.Element[] = [];
+    let currentList: React.JSX.Element[] = [];
     let isInsideList = false;
 
     blocks.forEach((block) => {

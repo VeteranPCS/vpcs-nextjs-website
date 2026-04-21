@@ -85,7 +85,8 @@ export async function generateStaticParams() {
   }
 }
 
-export async function generateMetadata({ params }: { params: { state: string } }) {
+export async function generateMetadata(props: { params: Promise<{ state: string }> }) {
+  const params = await props.params;
   const stateName = params.state
     .replace(/-/g, " ") // Replace hyphens with spaces
     .toLowerCase()      // Convert to lowercase
@@ -126,8 +127,8 @@ export async function generateMetadata({ params }: { params: { state: string } }
 }
 
 
-export default async function StatePage({ params }: { params: { state: string } }) {
-  const { state } = await params;
+export default async function StatePage(props: { params: Promise<{ state: string }> }) {
+  const { state } = await props.params;
   let state_data: StateList | null = null;
   let agents_data: AgentsData | [] = [];
   let lenders_data: LendersData | [] = [];
@@ -218,11 +219,11 @@ export default async function StatePage({ params }: { params: { state: string } 
       <StatePageHeroSecondSection
         stateName={state_data?.state_name || 'Unknown'}
       />
-      <StatePageVaLoan cityName={state_data?.state_name || 'Unknown'} lendersData={lenders_data} state={params.state} />
+      <StatePageVaLoan cityName={state_data?.state_name || 'Unknown'} lendersData={lenders_data} state={state} />
       <StatePageCTA cityName={state_data?.state_name || 'Unknown'} />
 
       {Object.entries(formatted_data).sort().map(([cityName, agents]: [string, any[]]) => (
-        <StatePageCityAgents key={cityName} city={cityName} agent_data={agents} state={params.state} />
+        <StatePageCityAgents key={cityName} city={cityName} agent_data={agents} state={state} />
       ))}
 
       <StatePageLetFindAgent />

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 
 // Example of base-specific redirects
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const url = request.nextUrl.clone()
 
     // Map of common base search terms to appropriate state pages
