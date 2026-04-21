@@ -16,7 +16,7 @@ const META_TITLE = "Military PCS Success Stories: From Orders to New Home Keys";
 const META_DESCRIPTION = "Real military families share their PCS journey experiences, from short-notice orders to finding the perfect home near base. Read how fellow service members navigated VA loans, negotiated BAH-optimized purchases, and earned Move-In Bonuses while supporting fellow veterans.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL || ""),
+  metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,

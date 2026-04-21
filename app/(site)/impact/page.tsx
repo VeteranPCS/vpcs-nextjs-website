@@ -21,7 +21,7 @@ const META_TITLE = "Our Mission Impact: Supporting Military Families & Veteran C
 const META_DESCRIPTION = "The VeteranPCS difference: $300,000+ in service member savings, $25,000+ donated to veteran charities, and 2,000+ successful military moves. See how your transaction helps fellow service members and strengthens the veteran community.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL || ""),
+  metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,

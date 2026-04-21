@@ -99,7 +99,7 @@ export async function generateMetadata(props: { params: Promise<{ state: string 
   const ogImage = await stateService.fetchStateImage(params.state);
 
   return {
-    metadataBase: new URL(BASE_URL || ""),
+    metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
     title: ogTitle,
     description: ogDescription,
     alternates: {

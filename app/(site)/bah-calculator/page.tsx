@@ -8,7 +8,7 @@ const META_TITLE = "2025 BAH Calculator - Military Housing Allowance Calculator"
 const META_DESCRIPTION = "Calculate your 2025 Basic Allowance for Housing (BAH) rates instantly. Enter your paygrade, dependent status, and duty station to see monthly and annual BAH amounts. Free military housing calculator for all ranks and locations.";
 
 export const metadata: Metadata = {
-    metadataBase: new URL(BASE_URL || ""),
+    metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
     title: {
         template: "%s | VeteranPCS",
         default: META_TITLE,

@@ -49,7 +49,7 @@ const META_DESCRIPTION = "Expert resources for military homebuyers and sellers. 
 
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL || ""),
+  metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,

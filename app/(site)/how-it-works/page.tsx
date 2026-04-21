@@ -11,7 +11,7 @@ const META_TITLE = "The VeteranPCS Process: PCS Support, VA Loan Expertise & $4,
 const META_DESCRIPTION = "Your military move, simplified. From PCS orders to closing, we connect you with agents who understand military timelines and VA requirements. Receive personalized support, expert guidance, and up to $4,000 in Move-In Bonuses—all while supporting veteran charities.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL || ""),
+  metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,

@@ -22,7 +22,7 @@ const META_TITLE = "Military Spouse Careers in Real Estate | PCS-Proof Employmen
 const META_DESCRIPTION = "Military spouses: Build a portable career that moves with you. Our network of spouse agents shares PCS-proof business strategies, licensing reciprocity guidance, and military-specific training. Plus, connect with spouse-friendly employers and moving resources for your next PCS.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL || ""),
+  metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,
