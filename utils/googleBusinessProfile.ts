@@ -7,6 +7,23 @@ const ACCOUNT_ID = process.env.GOOGLE_REVIEWS_ACCOUNT_ID;
 const SUBJECT = process.env.GOOGLE_SERVICE_ACCOUNT_SUBJECT;
 const CREDENTIALS = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS;
 
+let cachedJWT: JWT | null = null;
+
+function getAuthClient(): JWT {
+    if (!cachedJWT) {
+        const serviceAccountJson = JSON.parse(
+            Buffer.from(CREDENTIALS as string, 'base64').toString('utf-8')
+        );
+        cachedJWT = new JWT({
+            email: serviceAccountJson.client_email,
+            key: serviceAccountJson.private_key,
+            scopes: ['https://www.googleapis.com/auth/business.manage'],
+            subject: SUBJECT,
+        });
+    }
+    return cachedJWT;
+}
+
 // First, let's create an interface for the API response
 interface GoogleReviewsResponse {
     reviews: Review[];
@@ -53,18 +70,7 @@ export async function fetchGoogleReviews(): Promise<ReviewsData> {
     }
 
     try {
-        const serviceAccountJson = JSON.parse(
-            Buffer.from(CREDENTIALS as string, 'base64').toString('utf-8')
-        );
-
-        // Use JWT authentication with service account (correct for server-side/build-time)
-        const auth = new JWT({
-            email: serviceAccountJson.client_email,
-            key: serviceAccountJson.private_key,
-            scopes: ['https://www.googleapis.com/auth/business.manage'],
-            subject: SUBJECT,
-        });
-
+        const auth = getAuthClient();
         await auth.authorize();
 
         // Use the Google My Business API v4 for reviews
@@ -111,12 +117,17 @@ export async function fetchGoogleReviews(): Promise<ReviewsData> {
             averageRating: data.averageRating || fallBackReviews.averageRating,
             totalReviewCount: data.totalReviewCount || fallBackReviews.totalReviewCount
         };
-    } catch (error) {
+    } catch (error: any) {
+        // Re-throw Next.js control-flow errors (DYNAMIC_SERVER_USAGE, NEXT_REDIRECT,
+        // NEXT_NOT_FOUND) so the framework can mark the route dynamic. Swallowing
+        // them forces fallback data into a dynamic route and floods build logs.
+        if (error?.digest) {
+            throw error;
+        }
         console.error('Error fetching Google Reviews:', error);
         if (error instanceof Error) {
             console.error('Error details:', error.message);
         }
-        // Always return fallback on error
         return fallBackReviews as ReviewsData;
     }
 }

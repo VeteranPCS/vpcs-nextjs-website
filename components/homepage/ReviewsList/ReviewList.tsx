@@ -16,7 +16,8 @@ export default async function ReviewsList() {
 
     try {
         reviewsData = await fetchGoogleReviews();
-    } catch (error) {
+    } catch (error: any) {
+        if (error?.digest) throw error;
         console.error("Error fetching reviews", error);
     }
 
