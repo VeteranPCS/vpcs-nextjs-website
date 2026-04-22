@@ -260,6 +260,105 @@ async function main() {
         'Destination_Base__c',
     ];
 
+    // ─── Account / Person Account recon ───
+    // The portal pulls customer-side data via Opportunity.AccountId → Account.
+    // Since main already queries Person Accounts (isAgent__pc), we need to know
+    // what __pc fields exist, how many are Person Accounts vs. business, and
+    // whether a customer-role flag exists (analogous to isAgent__pc / isLender__pc).
+    let accountFields = new Set();
+    let accountFieldsByType = {};
+    let accountPcFields = [];
+    let accountRoleFlagFields = [];
+    let accountMilitaryFields = [];
+    let accountLocationFields = [];
+    let accountRecordTypes = [];
+    let accountIsPersonAccountPresent = false;
+    let accountCountTotal = null;
+    let accountCountPerson = null;
+    let accountCountAgent = null;
+    let accountCountLender = null;
+
+    console.log('7. Describing Account...');
+    const accountDescribe = await sfGet(token, instanceUrl, '/sobjects/Account/describe');
+    if (!accountDescribe.ok) {
+        console.error(`   FAIL (${accountDescribe.status}): ${accountDescribe.body}`);
+    } else {
+        writeRaw('account-describe.json', accountDescribe.body);
+        const fields = accountDescribe.body.fields;
+        accountFields = new Set(fields.map((f) => f.name));
+        accountFieldsByType = fields.reduce((acc, f) => {
+            acc[f.type] = (acc[f.type] || 0) + 1;
+            return acc;
+        }, {});
+        accountIsPersonAccountPresent = accountFields.has('IsPersonAccount');
+        accountPcFields = fields
+            .filter((f) => f.name.endsWith('__pc'))
+            .map((f) => ({ name: f.name, type: f.type, label: f.label }));
+        accountRoleFlagFields = accountPcFields
+            .filter((f) => /^is[A-Z]/.test(f.name) && f.type === 'boolean')
+            .map((f) => f.name);
+        accountMilitaryFields = accountPcFields
+            .filter((f) =>
+                /military|branch|discharge|veteran|service|rank|pcs|spouse|dependent/i.test(
+                    `${f.name} ${f.label}`,
+                ),
+            )
+            .map((f) => f.name);
+        accountLocationFields = accountPcFields
+            .filter((f) =>
+                /base|location|destination|current|city|state|installation/i.test(
+                    `${f.name} ${f.label}`,
+                ),
+            )
+            .map((f) => f.name);
+        accountRecordTypes = (accountDescribe.body.recordTypeInfos || []).map((rt) => ({
+            id: rt.recordTypeId,
+            name: rt.name,
+            developerName: rt.developerName,
+            available: rt.available,
+            defaultRecordType: rt.defaultRecordTypeMapping,
+        }));
+        console.log(`   Fields: ${accountFields.size} (of which ${accountPcFields.length} are __pc)`);
+        console.log(`   IsPersonAccount field present: ${check(accountIsPersonAccountPresent)}`);
+        console.log(`   Role-flag-like __pc booleans: ${accountRoleFlagFields.join(', ') || '(none)'}`);
+        console.log(`   Military/service __pc fields: ${accountMilitaryFields.length}`);
+        console.log(`   Location/base __pc fields: ${accountLocationFields.length}`);
+        console.log(`   RecordTypes: ${accountRecordTypes.length}\n`);
+    }
+
+    if (accountIsPersonAccountPresent) {
+        console.log('8. Counting Accounts...');
+        const runCount = async (soql) => {
+            const r = await sfGet(token, instanceUrl, `/query?q=${encodeURIComponent(soql)}`);
+            if (!r.ok) {
+                console.log(`   Query failed (${r.status}): ${soql}`);
+                return null;
+            }
+            return r.body.records?.[0]?.c ?? null;
+        };
+        accountCountTotal = await runCount('SELECT COUNT(Id) c FROM Account');
+        accountCountPerson = await runCount('SELECT COUNT(Id) c FROM Account WHERE IsPersonAccount = true');
+        if (accountRoleFlagFields.includes('isAgent__pc')) {
+            accountCountAgent = await runCount(
+                'SELECT COUNT(Id) c FROM Account WHERE IsPersonAccount = true AND isAgent__pc = true',
+            );
+        }
+        if (accountRoleFlagFields.includes('isLender__pc')) {
+            accountCountLender = await runCount(
+                'SELECT COUNT(Id) c FROM Account WHERE IsPersonAccount = true AND isLender__pc = true',
+            );
+        }
+        console.log(`   Total Accounts: ${accountCountTotal}`);
+        console.log(`   Person Accounts: ${accountCountPerson}`);
+        if (accountCountAgent !== null) console.log(`   Agent Person Accounts (isAgent__pc=true): ${accountCountAgent}`);
+        if (accountCountLender !== null) console.log(`   Lender Person Accounts (isLender__pc=true): ${accountCountLender}`);
+        if (accountCountPerson !== null && accountCountAgent !== null && accountCountLender !== null) {
+            const customerLike = accountCountPerson - accountCountAgent - accountCountLender;
+            console.log(`   Person Accounts that are neither agent nor lender (customer candidates): ${customerLike}`);
+        }
+        console.log();
+    }
+
     console.log('═══ Reconciliation vs. REVERSION-PLAN.md ═══\n');
 
     console.log('Assumed fields on Opportunity:');
@@ -381,6 +480,45 @@ async function main() {
         verdictLines.push(
             `Customer SObject has no direct Opportunity lookup; relates via Account (${customerRefsToAccount.map((r) => r.name).join(', ')}). Portal traversal: Opportunity.AccountId → Account → Customer.`,
         );
+    }
+
+    // ─── Account reconciliation ───
+    console.log('Account / Person Account:');
+    console.log(`   ${check(accountIsPersonAccountPresent)} IsPersonAccount field present`);
+    console.log(`   __pc fields: ${accountPcFields.length}`);
+    console.log(`   Role flags found: ${accountRoleFlagFields.join(', ') || '(none)'}`);
+    if (accountMilitaryFields.length > 0) {
+        console.log(`   Military/service fields (${accountMilitaryFields.length}):`);
+        for (const f of accountMilitaryFields) console.log(`     - ${f}`);
+    }
+    if (accountLocationFields.length > 0) {
+        console.log(`   Location/base fields (${accountLocationFields.length}):`);
+        for (const f of accountLocationFields) console.log(`     - ${f}`);
+    }
+    console.log();
+
+    if (!accountIsPersonAccountPresent) {
+        verdictLines.push(
+            'Account has no IsPersonAccount field — org is NOT on Person Account model. Portal data model assumptions need revisiting.',
+        );
+    } else {
+        verdictLines.push(
+            `Account uses Person Accounts (${accountPcFields.length} __pc fields). Customer-side portal data flows Opportunity.AccountId → Account (Person Account).`,
+        );
+        const hasCustomerFlag =
+            accountRoleFlagFields.includes('isCustomer__pc') ||
+            accountRoleFlagFields.includes('isClient__pc');
+        if (!hasCustomerFlag && accountRoleFlagFields.includes('isAgent__pc')) {
+            verdictLines.push(
+                "No explicit customer-role flag (isCustomer__pc / isClient__pc). Customer identification for portal queries must be inferred: Person Account AND NOT isAgent__pc AND NOT isLender__pc, OR simpler: reach Account via Opportunity (RecordType=Customer).AccountId.",
+            );
+        }
+        if (accountCountPerson !== null && accountCountAgent !== null && accountCountLender !== null) {
+            const customerLike = accountCountPerson - accountCountAgent - accountCountLender;
+            verdictLines.push(
+                `Person Account counts: ${accountCountPerson} total (${accountCountAgent} agents, ${accountCountLender} lenders, ~${customerLike} customer-like).`,
+            );
+        }
     }
 
     console.log('═══ Verdict ═══');
@@ -519,9 +657,87 @@ async function main() {
 
     writeFileSync('docs/salesforce-schema/customer-reconciliation.md', customerMd.join('\n'));
 
+    // ─── Account reconciliation markdown ───
+    const accountMd = [
+        '# Salesforce Account / Person Account Recon',
+        '',
+        `Generated by \`scripts/recon-salesforce.mjs\` on ${new Date().toISOString()}.`,
+        '',
+        '## Summary',
+        '',
+        `- IsPersonAccount field present: ${accountIsPersonAccountPresent ? 'YES' : 'NO'}`,
+        `- Total fields: ${accountFields.size}`,
+        `- \`__pc\` fields: ${accountPcFields.length}`,
+        `- RecordTypes: ${accountRecordTypes.length}`,
+        '',
+    ];
+    if (accountCountTotal !== null) {
+        accountMd.push('## Record Counts', '');
+        accountMd.push(`- Total Accounts: ${accountCountTotal}`);
+        if (accountCountPerson !== null) accountMd.push(`- Person Accounts: ${accountCountPerson}`);
+        if (accountCountAgent !== null) accountMd.push(`- Agent Person Accounts (\`isAgent__pc=true\`): ${accountCountAgent}`);
+        if (accountCountLender !== null) accountMd.push(`- Lender Person Accounts (\`isLender__pc=true\`): ${accountCountLender}`);
+        if (
+            accountCountPerson !== null &&
+            accountCountAgent !== null &&
+            accountCountLender !== null
+        ) {
+            accountMd.push(
+                `- Customer-like Person Accounts (Person - Agent - Lender): ~${accountCountPerson - accountCountAgent - accountCountLender}`,
+            );
+        }
+        accountMd.push('');
+    }
+
+    accountMd.push('## Role Flag Fields (`__pc` booleans starting with `is`)', '');
+    if (accountRoleFlagFields.length === 0) {
+        accountMd.push('- None found.', '');
+    } else {
+        for (const f of accountRoleFlagFields) accountMd.push(`- \`${f}\``);
+        accountMd.push('');
+    }
+
+    accountMd.push('## Military / Service `__pc` Fields', '');
+    if (accountMilitaryFields.length === 0) {
+        accountMd.push('- None detected.', '');
+    } else {
+        for (const f of accountMilitaryFields) accountMd.push(`- \`${f}\``);
+        accountMd.push('');
+    }
+
+    accountMd.push('## Location / Base `__pc` Fields', '');
+    if (accountLocationFields.length === 0) {
+        accountMd.push('- None detected.', '');
+    } else {
+        for (const f of accountLocationFields) accountMd.push(`- \`${f}\``);
+        accountMd.push('');
+    }
+
+    if (accountRecordTypes.length > 0) {
+        accountMd.push('## RecordTypes', '');
+        accountMd.push('| Id | Name | Developer Name | Default | Available |');
+        accountMd.push('|----|------|----------------|---------|-----------|');
+        for (const rt of accountRecordTypes) {
+            accountMd.push(
+                `| \`${rt.id}\` | ${rt.name} | ${rt.developerName} | ${rt.defaultRecordType} | ${rt.available} |`,
+            );
+        }
+        accountMd.push('');
+    }
+
+    accountMd.push('## All `__pc` Field Names', '');
+    accountMd.push('<details>', '<summary>Click to expand</summary>', '', '```');
+    for (const f of [...accountPcFields].sort((a, b) => a.name.localeCompare(b.name))) {
+        accountMd.push(`${f.name.padEnd(50)} ${f.type.padEnd(12)} ${f.label}`);
+    }
+    accountMd.push('```', '</details>', '');
+
+    writeFileSync('docs/salesforce-schema/account-reconciliation.md', accountMd.join('\n'));
+
     console.log('Wrote:');
     console.log('  - docs/salesforce-schema/opportunity-reconciliation.md (summary, commit)');
     console.log('  - docs/salesforce-schema/customer-reconciliation.md (summary, commit)');
+    console.log('  - docs/salesforce-schema/account-reconciliation.md (summary, commit)');
     console.log(`  - ${RAW_DIR}/*.json (raw dumps, gitignored)`);
 }
 
