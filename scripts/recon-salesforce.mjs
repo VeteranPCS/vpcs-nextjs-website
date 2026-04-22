@@ -185,6 +185,81 @@ async function main() {
         console.log('3-4. Opportunity not present — skipping describe/count.\n');
     }
 
+    // ─── Customer SObject recon ───
+    // Separate from the Opportunity "Customer" RecordType. The sobjects listing
+    // surfaced this as a standalone object — we need to know if customer-side
+    // data (destination city, current base) lives here or on Account.
+    const customerPresent = allNames.includes('Customer');
+    let customerFields = new Set();
+    let customerRefsToOpportunity = [];
+    let customerRefsToAccount = [];
+    let customerRecordTypes = [];
+    let customerCount = null;
+    let customerDescribeBody = null;
+
+    if (customerPresent) {
+        console.log('5. Describing Customer SObject...');
+        const customerDescribe = await sfGet(token, instanceUrl, '/sobjects/Customer/describe');
+        if (!customerDescribe.ok) {
+            console.error(`   FAIL (${customerDescribe.status}): ${customerDescribe.body}`);
+        } else {
+            customerDescribeBody = customerDescribe.body;
+            writeRaw('customer-describe.json', customerDescribe.body);
+            customerFields = new Set(customerDescribe.body.fields.map((f) => f.name));
+            customerRecordTypes = (customerDescribe.body.recordTypeInfos || []).map((rt) => ({
+                id: rt.recordTypeId,
+                name: rt.name,
+                developerName: rt.developerName,
+                available: rt.available,
+                defaultRecordType: rt.defaultRecordTypeMapping,
+            }));
+            for (const f of customerDescribe.body.fields) {
+                if (f.type === 'reference' && Array.isArray(f.referenceTo)) {
+                    if (f.referenceTo.includes('Opportunity')) {
+                        customerRefsToOpportunity.push({ name: f.name, referenceTo: f.referenceTo });
+                    }
+                    if (f.referenceTo.includes('Account')) {
+                        customerRefsToAccount.push({ name: f.name, referenceTo: f.referenceTo });
+                    }
+                }
+            }
+            console.log(`   Fields: ${customerFields.size}`);
+            console.log(`   RecordTypes: ${customerRecordTypes.length}`);
+            console.log(`   References to Opportunity: ${customerRefsToOpportunity.length}`);
+            console.log(`   References to Account: ${customerRefsToAccount.length}\n`);
+        }
+
+        console.log('6. Counting Customer records...');
+        const count = await sfGet(
+            token,
+            instanceUrl,
+            `/query?q=${encodeURIComponent('SELECT COUNT(Id) c FROM Customer')}`,
+        );
+        if (count.ok) {
+            customerCount = count.body.records?.[0]?.c ?? null;
+            console.log(`   Total Customer records: ${customerCount}\n`);
+        } else {
+            console.log(`   Query failed (${count.status}): ${count.body}\n`);
+        }
+    } else {
+        console.log('5-6. Customer SObject not present — skipping.\n');
+    }
+
+    // Fields to probe for on Customer (from memory: Attio had destination_city;
+    // forms map destinationBase→destination_city, currentBase→current_location).
+    const CUSTOMER_PROBE_FIELDS = [
+        'destination_city',
+        'Destination_City__c',
+        'destination_state',
+        'Destination_State__c',
+        'current_location',
+        'Current_Location__c',
+        'current_base',
+        'Current_Base__c',
+        'destination_base',
+        'Destination_Base__c',
+    ];
+
     console.log('═══ Reconciliation vs. REVERSION-PLAN.md ═══\n');
 
     console.log('Assumed fields on Opportunity:');
@@ -253,6 +328,61 @@ async function main() {
         }
     }
 
+    // ─── Customer SObject reconciliation ───
+    console.log('Customer SObject:');
+    if (!customerPresent) {
+        console.log('   ✗ not accessible (not in sobjects listing)');
+    } else {
+        console.log(`   ${check(customerFields.size > 0)} describe accessible (${customerFields.size} fields, ${customerCount ?? '?'} records)`);
+        console.log('   Probing memory-hinted field names:');
+        for (const f of CUSTOMER_PROBE_FIELDS) {
+            console.log(`     ${check(customerFields.has(f))} ${f}`);
+        }
+        if (customerRefsToOpportunity.length > 0) {
+            console.log('   Reference fields → Opportunity:');
+            for (const r of customerRefsToOpportunity) {
+                console.log(`     - ${r.name} (refs: ${r.referenceTo.join(', ')})`);
+            }
+        } else {
+            console.log('   No reference fields point to Opportunity.');
+        }
+        if (customerRefsToAccount.length > 0) {
+            console.log('   Reference fields → Account:');
+            for (const r of customerRefsToAccount) {
+                console.log(`     - ${r.name} (refs: ${r.referenceTo.join(', ')})`);
+            }
+        }
+    }
+    console.log();
+
+    if (!customerPresent) {
+        verdictLines.push(
+            'Customer SObject not accessible — portal design should source customer-side data from Account (Person Account) or Opportunity directly.',
+        );
+    } else if (
+        customerDescribeBody &&
+        customerDescribeBody.custom === false &&
+        customerCount === 0 &&
+        customerRefsToOpportunity.length === 0 &&
+        customerRefsToAccount.length === 0
+    ) {
+        verdictLines.push(
+            'Customer SObject is a standard Salesforce object (likely B2C/Commerce Cloud) with 0 records and no graph edges — VPCS does not use it. Portal design can ignore it and target Opportunity + Account (Person Account) directly.',
+        );
+    } else if (customerRefsToOpportunity.length === 0 && customerRefsToAccount.length === 0) {
+        verdictLines.push(
+            'Customer SObject has no reference fields to Opportunity or Account. If it carries portal data, the join key is not a standard lookup — needs manual investigation in customer-describe.json.',
+        );
+    } else if (customerRefsToOpportunity.length > 0) {
+        verdictLines.push(
+            `Customer SObject has ${customerRefsToOpportunity.length} reference(s) to Opportunity (${customerRefsToOpportunity.map((r) => r.name).join(', ')}) — portal can join Customer data by this key.`,
+        );
+    } else {
+        verdictLines.push(
+            `Customer SObject has no direct Opportunity lookup; relates via Account (${customerRefsToAccount.map((r) => r.name).join(', ')}). Portal traversal: Opportunity.AccountId → Account → Customer.`,
+        );
+    }
+
     console.log('═══ Verdict ═══');
     for (const line of verdictLines) {
         console.log(`  • ${line}`);
@@ -319,8 +449,79 @@ async function main() {
 
     writeFileSync('docs/salesforce-schema/opportunity-reconciliation.md', mdLines.join('\n'));
 
+    // ─── Customer reconciliation markdown ───
+    const customerMd = [
+        '# Salesforce Customer SObject Recon',
+        '',
+        `Generated by \`scripts/recon-salesforce.mjs\` on ${new Date().toISOString()}.`,
+        '',
+        '## Presence',
+        '',
+        `- Accessible: ${customerPresent ? 'YES' : 'NO'}`,
+    ];
+    if (customerPresent) {
+        customerMd.push(
+            `- Custom vs. standard: ${customerDescribeBody?.custom ? 'custom' : 'standard'}`,
+            `- Label: ${customerDescribeBody?.label ?? 'n/a'}`,
+            `- Total fields: ${customerFields.size}`,
+            `- Total records: ${customerCount ?? 'n/a'}`,
+            `- RecordTypes: ${customerRecordTypes.length}`,
+            '',
+            '## Memory-hinted field probe',
+            '',
+            '| Field | Present |',
+            '|-------|---------|',
+            ...CUSTOMER_PROBE_FIELDS.map((f) => `| \`${f}\` | ${customerFields.has(f) ? 'YES' : 'NO'} |`),
+            '',
+        );
+        if (customerRefsToOpportunity.length > 0 || customerRefsToAccount.length > 0) {
+            customerMd.push('## Relationships', '');
+            if (customerRefsToOpportunity.length > 0) {
+                customerMd.push('### References to Opportunity', '');
+                customerMd.push('| Field | References |');
+                customerMd.push('|-------|------------|');
+                for (const r of customerRefsToOpportunity) {
+                    customerMd.push(`| \`${r.name}\` | ${r.referenceTo.map((t) => `\`${t}\``).join(', ')} |`);
+                }
+                customerMd.push('');
+            }
+            if (customerRefsToAccount.length > 0) {
+                customerMd.push('### References to Account', '');
+                customerMd.push('| Field | References |');
+                customerMd.push('|-------|------------|');
+                for (const r of customerRefsToAccount) {
+                    customerMd.push(`| \`${r.name}\` | ${r.referenceTo.map((t) => `\`${t}\``).join(', ')} |`);
+                }
+                customerMd.push('');
+            }
+        } else {
+            customerMd.push('## Relationships', '', '- No reference fields to Opportunity or Account.', '');
+        }
+        if (customerRecordTypes.length > 0) {
+            customerMd.push('## RecordTypes', '');
+            customerMd.push('| Id | Name | Developer Name | Default | Available |');
+            customerMd.push('|----|------|----------------|---------|-----------|');
+            for (const rt of customerRecordTypes) {
+                customerMd.push(
+                    `| \`${rt.id}\` | ${rt.name} | ${rt.developerName} | ${rt.defaultRecordType} | ${rt.available} |`,
+                );
+            }
+            customerMd.push('');
+        }
+
+        customerMd.push('## All Field Names', '');
+        customerMd.push('<details>', '<summary>Click to expand</summary>', '');
+        customerMd.push('```');
+        for (const f of [...customerFields].sort()) customerMd.push(f);
+        customerMd.push('```');
+        customerMd.push('</details>', '');
+    }
+
+    writeFileSync('docs/salesforce-schema/customer-reconciliation.md', customerMd.join('\n'));
+
     console.log('Wrote:');
     console.log('  - docs/salesforce-schema/opportunity-reconciliation.md (summary, commit)');
+    console.log('  - docs/salesforce-schema/customer-reconciliation.md (summary, commit)');
     console.log(`  - ${RAW_DIR}/*.json (raw dumps, gitignored)`);
 }
 
