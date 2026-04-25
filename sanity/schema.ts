@@ -26,7 +26,6 @@ import moveInBonus from '@/sanity/schemas/moveInBonus'
 import stateList from '@/sanity/schemas/stateList'
 import videoSuccessStories from '@/sanity/schemas/videoSuccessStories'
 import veterenceImage from './schemas/veterenceImage'
-import agent from './schemas/agent'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -57,6 +56,5 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     stateList,
     videoSuccessStories,
     veterenceImage,
-    agent
   ],
 }

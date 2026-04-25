@@ -1,7 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
-import agentService from "@/services/agentService";
 
 type RevalidatePathMap = {
   [key: string]: string[];
@@ -18,11 +17,6 @@ export async function POST(req: NextRequest) {
       state_slug?: {
         _type: "slug";
         current: string;
-      };
-      salesforceID?: string;
-      author?: {
-        _type: "reference";
-        _ref: string;
       };
       _id: string;
     }>(req, process.env.SANITY_REVALIDATE_KEY);
@@ -72,14 +66,7 @@ export async function POST(req: NextRequest) {
       veterence_logo: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"],
     };
 
-    let paths;
-    switch (body._type) {
-      case "agent":
-        paths = await agentService.getAgentState(body.salesforceID!);
-        break;
-      default:
-        paths = revalidatePathMap[body._type];
-    }
+    const paths = revalidatePathMap[body._type];
 
     if (!paths) {
       return new Response(JSON.stringify({ message: "Invalid Type" }), {
