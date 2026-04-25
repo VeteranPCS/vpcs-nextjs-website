@@ -49,3 +49,6 @@ data/
 # legacy Salesforce email template exports (reference only)
 docs/legacy-email-templates/
 docs/migration
+
+# blog migration raw dumps (recon)
+/docs/blog-migration/raw

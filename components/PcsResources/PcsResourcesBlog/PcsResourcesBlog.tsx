@@ -1,52 +1,16 @@
 import "@/app/globals.css";
 import Link from "next/link";
 import classes from "./PcsResourcesBlog.module.css";
-import { urlForImage } from "@/sanity/lib/image";
-import { BlogDetails } from "@/app/(site)/blog/page";
 import { formatDate } from "@/utils/helper";
+import { excerpt } from "@/lib/blog/mdx";
+import type { BlogPost } from "@/lib/blog/types";
 
-// Define types for the props
-interface Category {
-  _id: string;
-  title: string;
-}
-
-interface Author {
-  image: string;
-  name: string;
-  military_status: string;
-}
-
-interface PcsResourcesBlogProps {
-  blogList: BlogDetails[];
+type Props = {
+  blogList: BlogPost[];
   component: string;
-}
+};
 
-interface BlockChild {
-  _type: string;
-  text: string;
-}
-
-interface Block {
-  _type: string;
-  children: BlockChild[];
-}
-
-const PcsResourcesBlog: React.FC<PcsResourcesBlogProps> = async ({ blogList, component }) => {
-  // Function to extract plain text from the content
-  const getPlainText = (content: Block[]): string => {
-    if (!content) return '';
-
-    return content
-      .map((block) => {
-        if (block._type !== 'block' || !block.children) return '';
-        return block.children
-          .map((child) => child.text)
-          .join('');
-      })
-      .join('\n\n');
-  };
-
+export default function PcsResourcesBlog({ blogList, component }: Props) {
   return (
     <div className="py-6 px-5" id={component}>
       <div className="container mx-auto">
@@ -65,37 +29,41 @@ const PcsResourcesBlog: React.FC<PcsResourcesBlogProps> = async ({ blogList, com
               : "lg:grid-cols-3"
             } md:grid-cols-2 sm:grid-cols-1 grid-cols-1 gap-6 mt-10`}
         >
-
-          {blogList.map((blog) => (
-            <Link href={blog?.slug?.current ? `/blog/${blog?.slug?.current}` : `/blog`} key={blog._id} className={classes.blogimageone} style={{ backgroundImage: `url("${urlForImage(blog.mainImage)}")` }}>
-              <div className="flex items-center absolute top-4 right-4 gap-2">
-                {blog?.categories?.map((category) => (
-                  <div
-                    key={category._id}
-                    className="rounded-lg bg-white/15 px-4 py-2 text-white roboto text-xs font-bold"
-                  >
-                    {category?.title}
-                  </div>
-                ))}
-              </div>
-
-              <div className="absolute bottom-4 left-2 px-6 py-1">
-                <p className="text-[#E5E5E5] lg:text-[14px] md:text-[14px] sm:text-[12px] text-[12px] font-normal leading-normal">
-                  {formatDate(blog?.publishedAt)}
-                </p>
-                <h3 className="text-white tahoma lg:text-[21px] md:text-[21px] sm:text-[15px] text-[15px] font-bold my-3">
-                  {blog?.title}
-                </h3>
-                <p className="text-[#E5E5E5] roboto lg:text-[14px] md:text-[14px] sm:text-[12px] text-[12px] font-normal lg:w-[370px] line-clamp-3">
-                  {getPlainText(blog?.content)}
-                </p>
-              </div>
-            </Link>
-          ))}
+          {blogList.map((blog) => {
+            const bg = blog.mainImage?.src ?? "/assets/blogctabgimage.png";
+            return (
+              <Link
+                href={blog.slug ? `/blog/${blog.slug}` : "/blog"}
+                key={blog.slug}
+                className={classes.blogimageone}
+                style={{ backgroundImage: `url("${bg}")` }}
+              >
+                <div className="flex items-center absolute top-4 right-4 gap-2">
+                  {blog.categories?.map((category) => (
+                    <div
+                      key={category}
+                      className="rounded-lg bg-white/15 px-4 py-2 text-white roboto text-xs font-bold"
+                    >
+                      {category}
+                    </div>
+                  ))}
+                </div>
+                <div className="absolute bottom-4 left-2 px-6 py-1">
+                  <p className="text-[#E5E5E5] lg:text-[14px] md:text-[14px] sm:text-[12px] text-[12px] font-normal leading-normal">
+                    {formatDate(blog.publishedAt)}
+                  </p>
+                  <h3 className="text-white tahoma lg:text-[21px] md:text-[21px] sm:text-[15px] text-[15px] font-bold my-3">
+                    {blog.title}
+                  </h3>
+                  <p className="text-[#E5E5E5] roboto lg:text-[14px] md:text-[14px] sm:text-[12px] text-[12px] font-normal lg:w-[370px] line-clamp-3">
+                    {excerpt(blog.content, 250)}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>
   );
-};
-
-export default PcsResourcesBlog;
+}

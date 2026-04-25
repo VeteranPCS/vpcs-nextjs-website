@@ -1,3 +1,6 @@
+import { notFound } from "next/navigation";
+import Script from "next/script";
+import { BlogPosting, WithContext } from "schema-dts";
 import BlogDetailsHeroSection from "@/components/BlogDetails/BlogDetailsHeroSection/BlogDetailsHeroSection";
 import BlogBeginingPostAgent from "@/components/BlogDetails/BlogBeginingBlogPostAgent/BlogBeginingBlogPostAgent";
 import Testimonials from "@/components/Testimonials/TestimonialPage";
@@ -5,101 +8,76 @@ import BlogDetailsCta from "@/components/BlogDetails/BlogDetailsCta/BlogDetailsC
 import EndBlogPostDetails from "@/components/BlogDetails/EndBlogPostDetails/EndBlogPostDetails";
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import blogService from "@/services/blogService";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
-import { urlForImage } from "@/sanity/lib/image";
-import Script from "next/script";
-import { BlogPosting, WithContext } from "schema-dts";
+import { getBlogBySlug, getBlogSlugs } from "@/lib/blog/mdx";
+import { splitMdxAtMidpoint } from "@/lib/blog/splitMdxAtMidpoint";
 import { formatDate } from "@/utils/helper";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-interface BlogProps {
-    blog: Record<string, any> | null; // Allow blog to be null
-}
-
-
 export async function generateStaticParams() {
-    try {
-        const blogSlugs = await blogService.fetchBlogSlugs();
-
-        return blogSlugs.map((slug) => ({
-            slug: slug.slug,
-        }));
-
-    } catch (error) {
-        console.error("Error generating static params:", error);
-        return []; // Return an empty array to avoid breaking the build
-    }
+    const slugs = await getBlogSlugs();
+    return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
     const params = await props.params;
-    const blog = await blogService.fetchBlog(params.slug);
+    const blog = await getBlogBySlug(params.slug);
 
-    const openGraphImageURL = `${process.env.BASE_URL}/blog/${params.slug}/opengraph-image`;
-    const twitterImageURL = `${process.env.BASE_URL}/blog/${params.slug}/twitter-image`;
+    if (!blog) {
+        return { title: "Blog not found" };
+    }
 
     return {
-        title: blog.meta_title,
-        description: blog.meta_description,
+        title: blog.metaTitle,
+        description: blog.metaDescription,
         alternates: {
             canonical: `${BASE_URL}/blog/${params.slug}`,
         },
         openGraph: {
-            title: blog.meta_title,
-            description: blog.meta_description,
+            title: blog.metaTitle,
+            description: blog.metaDescription,
             url: `${BASE_URL}/blog/${params.slug}`,
             type: "article",
-            authors: [blog.author.name],
-            images: [
-                {
-                    url: openGraphImageURL,
-                    width: 1200,
-                    height: 630,
-                    alt: "VeteranPCS Blog",
-                },
-            ],
+            authors: blog.author?.name ? [blog.author.name] : undefined,
         },
         twitter: {
             card: "summary_large_image",
-            title: blog.meta_title,
-            description: blog.meta_description,
-            images: [twitterImageURL]
+            title: blog.metaTitle,
+            description: blog.metaDescription,
         },
     };
 }
 
 export default async function Home(props: { params: Promise<{ slug: string }> }) {
     const { slug } = await props.params;
-    let blog: Record<string, any> | null = null;
+    const blog = await getBlogBySlug(slug);
 
-    try {
-        blog = await blogService.fetchBlog(slug); // fetch data on the server side
-    } catch (error) {
-        console.error("Error fetching blog", error);
-    }
-
-    // Check if blog is null and render error page
     if (!blog) {
-        return <p>Failed to load the blog.</p>;
+        notFound();
     }
+
+    const { first: bodyFirstHalf, second: bodySecondHalf } = splitMdxAtMidpoint(blog.content);
+
+    const heroImageUrl = blog.mainImage?.src
+        ? `${BASE_URL}${blog.mainImage.src}`
+        : `${BASE_URL}/assets/blogctabgimage.png`;
 
     const jsonLd: WithContext<BlogPosting> = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "@id": `${BASE_URL}/blog/${slug}`,
-        abstract: blog.meta_description,
+        abstract: blog.metaDescription,
         mainEntityOfPage: {
             "@type": "WebPage",
             "@id": `${BASE_URL}/blog/${slug}`,
         },
         headline: blog.title,
-        image: `${blog.mainImage ? urlForImage(blog.mainImage) : BASE_URL + 'blogctabgimage.png'}`,
-        datePublished: formatDate(blog._createdAt),
+        image: heroImageUrl,
+        datePublished: formatDate(blog.publishedAt),
         author: {
             "@type": "Person",
-            name: blog.author.name,
+            name: blog.author?.name ?? "VeteranPCS",
         },
         publisher: {
             "@type": "Organization",
@@ -132,10 +110,10 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <BlogDetailsHeroSection blog={blog} />
-            <BlogBeginingPostAgent blog={blog} />
+            <BlogBeginingPostAgent blog={blog} bodyFirstHalf={bodyFirstHalf} />
             <Testimonials />
             <BlogDetailsCta />
-            <EndBlogPostDetails blog={blog} />
+            <EndBlogPostDetails bodySecondHalf={bodySecondHalf} />
             <CommonBlog component={blog.component || ""} />
             <FrequentlyAskedQuestion />
             <KeepInTouch />

@@ -2,7 +2,6 @@ import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
 import agentService from "@/services/agentService";
-import blogService from "@/services/blogService";
 
 type RevalidatePathMap = {
   [key: string]: string[];
@@ -48,9 +47,6 @@ export async function POST(req: NextRequest) {
       aboutUsPage: ["/about", "/spanish"],
       additionalSuccessStories: ["/stories"],
       approved_company_list: ["/military-spouse"],
-      author: ["/pcs-resources", "/thank-you", "/blog"],
-      blog: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"],
-      category: ["/blog", `/blog/${slug}`, "/pcs-resources", "/thank-you"],
       state_list: ["/contact-agent", "/get-listed-agents", "/get-listed-lenders", `/${state_slug}`],
       frequently_asked_questions: [`/${state_slug}`, "/about", `/blog/${slug}`, "/impact", "/internship", "/military-spouse", "/pcs-resources", "/stories"],
       how_veterence_pcs_works: ["/how-it-works"],
@@ -80,10 +76,6 @@ export async function POST(req: NextRequest) {
     switch (body._type) {
       case "agent":
         paths = await agentService.getAgentState(body.salesforceID!);
-        break;
-      case "author":
-        const blogs = await blogService.fetchBlogsByAuthor(body._id);
-        paths = blogs.map((blog: any) => `/blog/${blog.slug}`);
         break;
       default:
         paths = revalidatePathMap[body._type];

@@ -1,34 +1,19 @@
-import React from "react";
 import "@/app/globals.css";
 import BlogMovingPcsingPost from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPostSection/BlogMovingPcsingPost";
 import BlogCategory from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPostSection/BlogCategory";
+import type { BlogPost } from "@/lib/blog/types";
 
-export interface Author {
-  name: string;
-  image: string;
-  military_status: string;
-}
+type Props = {
+  blogList: BlogPost[];
+  component: string;
+  categories_list: Set<string>;
+};
 
-export interface Category {
-  _id: string;
-  title: string;
-}
-
-export interface BlogDetails {
-  _id: string;
-  title: string;
-  content: any[];
-  _createdAt: string;
-  slug: { current: string };
-  mainImage: { image_url: string; alt: string };
-  categories: Category[];
-  author: Author;
-  short_title: string,
-  logo: string,
-  publishedAt: string
-}
-
-const BlogMovingPcsingBlogPostSection = async ({ blogList, component, categories_list }: { blogList: BlogDetails[], component: string, categories_list: any }) => {
+export default async function BlogMovingPcsingBlogPostSection({
+  blogList,
+  component,
+  categories_list,
+}: Props) {
   return (
     <div className="relative py-12 md:px-0 px-5" id={component}>
       <div className="container mx-auto">
@@ -86,15 +71,12 @@ const BlogMovingPcsingBlogPostSection = async ({ blogList, component, categories
               </button>
             </form>
             <div className="sm:flex justify-end mt-5 hidden">
-              {/* <button className="text-[#292F6C] robot text-sm font-bold ">
-                View All
-              </button> */}
             </div>
           </div>
         </div>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-1 grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 ">
           {blogList?.map((blog) => (
-            <BlogMovingPcsingPost key={blog._id} blogDetails={blog} />
+            <BlogMovingPcsingPost key={blog.slug} blogDetails={blog} />
           ))}
         </div>
         <div className="flex justify-end mt-5 sm:hidden ">
@@ -105,6 +87,4 @@ const BlogMovingPcsingBlogPostSection = async ({ blogList, component, categories
       </div>
     </div>
   );
-};
-
-export default BlogMovingPcsingBlogPostSection;
+}
