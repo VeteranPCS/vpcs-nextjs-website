@@ -2,21 +2,6 @@ import { SanityDocument } from '@sanity/client';
 import { SanityImage, BaseFormData, BaseContactFormData, MilitaryServiceInfo } from './common';
 
 /**
- * Represents an agent document in Sanity CMS
- */
-export interface AgentDocument extends SanityDocument {
-  name: string;
-  firstName: string;
-  lastName: string;
-  salesforceID: string;
-  image: SanityImage;
-  mainImage?: SanityImage;
-  _id: string;
-  _rev: string;
-  _type: 'agent';
-}
-
-/**
  * Represents a real estate agent document in Sanity CMS
  */
 export interface RealEstateAgentDocument extends SanityDocument {

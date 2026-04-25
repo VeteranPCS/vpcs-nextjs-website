@@ -1,10 +1,7 @@
 import { type SchemaTypeDefinition } from 'sanity'
 import blockContent from '@/sanity/schemas/blockContent'
-import category from '@/sanity/schemas/category'
-import author from '@/sanity/schemas/author'
 import userImage from '@/sanity/schemas/userImage'
 import realStateAgents from '@/sanity/schemas/realStateAgents'
-import blog from '@/sanity/schemas/blog'
 import mediaAccounts from '@/sanity/schemas/mediaAccounts'
 import memberInfo from '@/sanity/schemas/memberInfo'
 import frequentlyAskedQuestions from '@/sanity/schemas/frequentlyAskedQuestions'
@@ -29,16 +26,12 @@ import moveInBonus from '@/sanity/schemas/moveInBonus'
 import stateList from '@/sanity/schemas/stateList'
 import videoSuccessStories from '@/sanity/schemas/videoSuccessStories'
 import veterenceImage from './schemas/veterenceImage'
-import agent from './schemas/agent'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
-    author,
-    category,
     blockContent,
     userImage,
     realStateAgents,
-    blog,
     mediaAccounts,
     memberInfo,
     frequentlyAskedQuestions,
@@ -63,6 +56,5 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     stateList,
     videoSuccessStories,
     veterenceImage,
-    agent
   ],
 }

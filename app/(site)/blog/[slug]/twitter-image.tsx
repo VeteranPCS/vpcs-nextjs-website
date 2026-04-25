@@ -1,27 +1,29 @@
 import { ImageResponse } from 'next/og'
-import blogService from '@/services/blogService'
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
+import { getBlogBySlug } from '@/lib/blog/mdx'
 
-export const alt = 'VeteraPCS Blog'
+export const alt = 'VeteranPCS Blog'
 
 export const size = {
     width: 1200,
     height: 630,
 }
 export const contentType = 'image/png'
-export const runtime = "edge"
 
 export default async function Image(props: { params: Promise<{ slug: string }> }) {
     const params = await props.params;
+    const blog = await getBlogBySlug(params.slug);
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 
-    const blog = await blogService.fetchBlog(params.slug)
-    const title = blog.short_title || 'Default Title'
-    const image_url = blog?.mainImage.image_url || '/assets/blogctabgimage.png'
-    const logo_url = blog?.logo || '/assets/blogctabgimage.png'
+    const title = blog?.shortTitle || blog?.title || 'VeteranPCS';
+    const heroPath = blog?.mainImage?.src || '/assets/blogctabgimage.png';
+    const image_url = `${baseUrl}${heroPath}`;
+    const logo_url = `${baseUrl}/icon/VeteranPCSlogo.svg`;
 
-    // Font
-    const loraBold = fetch(
-        new URL('@/styles/lora-font/Lora-Bold.ttf', import.meta.url)
-    ).then((res) => res.arrayBuffer())
+    const loraBold = readFile(
+        path.join(process.cwd(), 'styles/lora-font/Lora-Bold.ttf')
+    );
 
     return new ImageResponse(
         (
@@ -39,7 +41,6 @@ export default async function Image(props: { params: Promise<{ slug: string }> }
                     padding: '40px',
                 }}
             >
-                {/* Main Title */}
                 <div
                     style={{
                         color: 'white',
@@ -53,8 +54,6 @@ export default async function Image(props: { params: Promise<{ slug: string }> }
                 >
                     {title}
                 </div>
-
-                {/* VeteranPCS Logo */}
                 <div
                     style={{
                         display: 'flex',
@@ -64,7 +63,7 @@ export default async function Image(props: { params: Promise<{ slug: string }> }
                         height: '71px',
                     }}
                 >
-                    <img src={logo_url} alt={title || ""} height={71} width={304} />
+                    <img src={logo_url} alt={title} height={71} width={304} />
                 </div>
             </div>
         ),
