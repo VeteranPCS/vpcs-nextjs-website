@@ -9,13 +9,15 @@ import { STATE_ABBR_TO_SLUG as stateAbbreviations } from '@/lib/states';
 const HEADSHOT_EXTS = ['jpg', 'jpeg', 'png', 'webp'] as const;
 const HEADSHOT_FOLDERS = ['agents', 'lenders'] as const;
 
-// Hide node:fs / node:path from the static import graph so Turbopack does not
-// try to bundle them when this module is transitively pulled into a client
-// component (via stateService). The lookup only ever runs server-side.
-function resolveLocalHeadshot(salesforceID: string): string | null {
-    const req = (0, eval)('require') as NodeJS.Require;
-    const fs = req('node:fs') as typeof import('node:fs');
-    const path = req('node:path') as typeof import('node:path');
+// Resolve node:fs / node:path via dynamic import so Turbopack does not pull
+// them into client chunks that transitively import stateService → agentService.
+// The lookup only ever runs server-side (called from server components and
+// API routes that hit Salesforce first).
+async function resolveLocalHeadshot(salesforceID: string): Promise<string | null> {
+    const [{ default: fs }, { default: path }] = await Promise.all([
+        import('node:fs'),
+        import('node:path'),
+    ]);
     for (const folder of HEADSHOT_FOLDERS) {
         for (const ext of HEADSHOT_EXTS) {
             const rel = `/images/${folder}/${salesforceID}.${ext}`;
@@ -54,7 +56,7 @@ const agentService = {
         return logos;
     },
     getAgentImage: async (salesforceID: string): Promise<string> => {
-        const local = resolveLocalHeadshot(salesforceID);
+        const local = await resolveLocalHeadshot(salesforceID);
         if (!local) {
             throw new Error(`No local headshot found for Salesforce ID ${salesforceID}`);
         }
