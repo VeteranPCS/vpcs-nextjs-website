@@ -1,9 +1,10 @@
 "use client";
-import { useState, FormEvent, useCallback, useEffect } from 'react';
-import { useForm, Controller, Resolver } from 'react-hook-form';
-import stateService from '@/services/stateService';
+import { FormEvent } from 'react';
+import { Controller, useForm, Resolver } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { US_STATE_CODES } from '@/constants/usStates';
+import StateSelect from '@/components/common/StateSelect';
 
 interface ContactFormProps {
   onSubmit: (formData: LenderInfoProps) => void;
@@ -17,41 +18,19 @@ interface LenderInfoProps {
   nmlsId: string;
 }
 
-interface State {
-  short_name: string;
-}
+const schema = yup.object({
+  primaryState: yup
+    .string()
+    .required('Primary State is required')
+    .oneOf([...US_STATE_CODES], 'Invalid state selected'),
+  otherStates: yup
+    .array()
+    .of(yup.string()),
+  localCities: yup.string(),
+  nmlsId: yup.string(),
+});
 
 const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactFormProps) => {
-  const [stateList, setStateList] = useState<State[]>([]);
-
-  // Fetch state list
-  const getStateList = useCallback(async () => {
-    try {
-      const response = await stateService.fetchStateList();
-      setStateList(response);
-    } catch (error) {
-      console.error('Error fetching states:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    getStateList();
-  }, [getStateList]);
-
-  // Validation schema using yup
-  const schema = yup.object({
-    primaryState: yup
-      .string()
-      .required('Primary State is required')
-      .oneOf(stateList.map((state) => state.short_name), 'Invalid state selected'),
-    otherStates: yup
-      .array()
-      .of(yup.string()),
-    localCities: yup.string(),
-    nmlsId: yup.string(),
-  });
-
-  // Use form hook with validation
   const { register, handleSubmit, control, formState: { errors } } = useForm<LenderInfoProps>({
     resolver: yupResolver(schema) as Resolver<LenderInfoProps>,
     defaultValues: {
@@ -93,20 +72,18 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
                   >
                     Primary State to be Listed:
                   </label>
-                  <select
-                    id="primaryState"
-                    {...register('primaryState')}
-                    className="border-b border-[#E2E4E5] px-2 py-1"
-                  >
-                    <option value="" disabled>
-                      Select State
-                    </option>
-                    {stateList.sort((a, b) => a.short_name < b.short_name ? -1 : 1).map((state) => (
-                      <option key={state.short_name} value={state.short_name}>
-                        {state.short_name}
-                      </option>
-                    ))}
-                  </select>
+                  <Controller
+                    name="primaryState"
+                    control={control}
+                    render={({ field }) => (
+                      <StateSelect
+                        id="primaryState"
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                      />
+                    )}
+                  />
                   {errors.primaryState && (
                     <span className="text-red-500 text-sm">{errors.primaryState.message}</span>
                   )}
@@ -126,9 +103,9 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
                     multiple
                     className="border-b border-[#E2E4E5] px-2 py-1"
                   >
-                    {stateList.sort((a, b) => a.short_name < b.short_name ? -1 : 1).map((state) => (
-                      <option key={state.short_name} value={state.short_name}>
-                        {state.short_name}
+                    {US_STATE_CODES.map((code) => (
+                      <option key={code} value={code}>
+                        {code}
                       </option>
                     ))}
                   </select>

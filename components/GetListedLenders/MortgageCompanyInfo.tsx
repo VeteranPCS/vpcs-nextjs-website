@@ -1,10 +1,11 @@
 "use client";
-import { useState, FormEvent, useCallback, useEffect } from 'react';
-import initService from '@/services/initService';
+import { useState, FormEvent } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { useForm, Resolver } from 'react-hook-form';
+import { useForm, Controller, Resolver } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { US_STATE_CODES } from '@/constants/usStates';
+import StateSelect from '@/components/common/StateSelect';
 
 export type HowDidYouHearOptions =
   | 'Google'
@@ -62,7 +63,9 @@ const schema = yup.object({
   companyNMLSId: yup.string(),
   street: yup.string().required('Street is required'),
   city: yup.string(),
-  state: yup.string(),
+  state: yup
+    .string()
+    .oneOf(['', ...US_STATE_CODES], 'Invalid state selected'),
   zip: yup.string(),
   howDidYouHear: yup
     .string()
@@ -79,24 +82,8 @@ const schema = yup.object({
 
 const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [stateList, setStateList] = useState<any[]>([]);
 
-  // Fetch state list
-  const getStateList = useCallback(async () => {
-    try {
-      const response = await initService.getStateListFetch();
-      setStateList(response);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    getStateList();
-  }, [getStateList]);
-
-  // React Hook Form setup with validation
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: yupResolver(schema) as Resolver<FormData>,
     defaultValues: {
       name: '',
@@ -220,20 +207,18 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
                 <label htmlFor="state" className="text-[#242426] tahoma text-sm font-normal mb-1">
                   State/Province
                 </label>
-                <select
-                  {...register('state')}
-                  id="state"
-                  className="border-b border-[#E2E4E5] px-2 py-1"
-                >
-                  <option value="" disabled>
-                    Select State
-                  </option>
-                  {stateList.sort((a, b) => a.short_name < b.short_name ? -1 : 1).map((state) => (
-                    <option key={state.short_name} value={state.short_name}>
-                      {state.short_name}
-                    </option>
-                  ))}
-                </select>
+                <Controller
+                  name="state"
+                  control={control}
+                  render={({ field }) => (
+                    <StateSelect
+                      id="state"
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                    />
+                  )}
+                />
                 {errors.state && <span className="text-red-500 text-sm">{errors.state.message}</span>}
               </div>
 

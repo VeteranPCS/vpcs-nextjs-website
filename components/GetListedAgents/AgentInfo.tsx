@@ -1,10 +1,11 @@
 "use client";
-import { useState, FormEvent, useCallback, useEffect } from "react";
-import stateService from "@/services/stateService";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useState, FormEvent } from "react";
+import { Controller, useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import ReCAPTCHA from "react-google-recaptcha";
+import { US_STATE_CODES } from "@/constants/usStates";
+import StateSelect from "@/components/common/StateSelect";
 
 export type HowDidYouHearOptions =
   | "Google"
@@ -77,11 +78,11 @@ const schema = yup.object().shape({
 
 const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [stateList, setStateList] = useState<any[]>([]);
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     watch,
     setValue,
@@ -94,14 +95,6 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
   });
 
   const howDidYouHearValue = watch("howDidYouHear");
-  const getStateList = useCallback(async () => {
-    try {
-      const response = await stateService.fetchStateList();
-      setStateList(response);
-    } catch (error) {
-      console.error("Error fetching state list:", error);
-    }
-  }, []);
 
   const onCaptchaChange = (token: string | null) => {
     if (token) {
@@ -121,10 +114,6 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
       }
     }
   };
-
-  useEffect(() => {
-    getStateList();
-  }, [getStateList]);
 
   const onSubmitHandler: SubmitHandler<any> = (data) => {
     if (isSubmitting) return;
@@ -157,22 +146,18 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                 >
                   Primary State to be Listed:
                 </label>
-                <select
-                  id="primaryState"
-                  className="border-b border-[#E2E4E5] px-2 py-1"
-                  {...register("primaryState")}
-                >
-                  <option value="" disabled selected>
-                    Select State
-                  </option>
-                  {stateList
-                    .sort((a, b) => (a.short_name < b.short_name ? -1 : 1))
-                    .map((state) => (
-                      <option key={state.short_name} value={state.short_name}>
-                        {state.short_name}
-                      </option>
-                    ))}
-                </select>
+                <Controller
+                  name="primaryState"
+                  control={control}
+                  render={({ field }) => (
+                    <StateSelect
+                      id="primaryState"
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                    />
+                  )}
+                />
                 {errors.primaryState && (
                   <span className="text-error">
                     {errors.primaryState.message}
@@ -192,13 +177,11 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   className="border-b border-[#E2E4E5] px-2 py-1 h-32"
                   multiple
                 >
-                  {stateList
-                    .sort((a, b) => (a.short_name < b.short_name ? -1 : 1))
-                    .map((state) => (
-                      <option key={state.short_name} value={state.short_name}>
-                        {state.short_name}
-                      </option>
-                    ))}
+                  {US_STATE_CODES.map((code) => (
+                    <option key={code} value={code}>
+                      {code}
+                    </option>
+                  ))}
                 </select>
                 <span className="text-xs text-gray-500 mt-1">
                   Hold Ctrl/Cmd to select multiple states

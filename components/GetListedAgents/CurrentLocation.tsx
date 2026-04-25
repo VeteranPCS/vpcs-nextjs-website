@@ -1,9 +1,8 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import stateService from "@/services/stateService";
+import StateSelect from "@/components/common/StateSelect";
 
 interface FormData {
   state: string;
@@ -25,11 +24,10 @@ const contactFormSchema = yup.object().shape({
 });
 
 const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
-  const [stateList, setStateList] = useState<any[]>([]);
-
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(contactFormSchema),
@@ -38,19 +36,6 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
       city: "",
     },
   });
-
-  const getStateList = useCallback(async () => {
-    try {
-      const response = await stateService.fetchStateList();
-      setStateList(response);
-    } catch (error) {
-      console.error("Error fetching state list:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    getStateList();
-  }, [getStateList]);
 
   const onFormSubmit = (data: FormData) => {
     onSubmit(data);
@@ -76,20 +61,18 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
                   >
                     State*
                   </label>
-                  <select
-                    id="state"
-                    className="border-b border-[#E2E4E5] px-2 py-1"
-                    {...register("state")}
-                  >
-                    <option value="" disabled>
-                      Select State
-                    </option>
-                    {stateList.sort((a, b) => a.short_name < b.short_name ? -1 : 1).map((state) => (
-                      <option key={state.short_name} value={state.short_name}>
-                        {state.short_name}
-                      </option>
-                    ))}
-                  </select>
+                  <Controller
+                    name="state"
+                    control={control}
+                    render={({ field }) => (
+                      <StateSelect
+                        id="state"
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                      />
+                    )}
+                  />
                   {errors.state && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.state.message}

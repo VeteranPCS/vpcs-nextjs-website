@@ -1,9 +1,9 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import initService from "@/services/initService";
+import { US_STATE_CODES } from '@/constants/usStates';
+import StateSelect from '@/components/common/StateSelect';
 
 // Define the shape of the form data
 interface FormData {
@@ -22,7 +22,10 @@ interface ContactFormProps {
 
 // Validation schema with Yup
 const validationSchema = yup.object({
-  state: yup.string().required('State is required'),
+  state: yup
+    .string()
+    .required('State is required')
+    .oneOf([...US_STATE_CODES], 'Invalid state selected'),
   city: yup.string().required('City is required'),
   destination: yup.string().required('Destination is required'),
   buyingSelling: yup.string().required('Please select if you are buying or selling'),
@@ -31,28 +34,11 @@ const validationSchema = yup.object({
 });
 
 const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
-  const [stateList, setStateList] = useState<any[]>([]);
-
-  const getStateList = useCallback(async () => {
-    try {
-      const response = await initService.getStateListFetch();
-      console.log('Fetched state list:', response);
-      setStateList(response);
-    } catch (error) {
-      console.error('Error fetching states:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    getStateList();
-  }, [getStateList]);
-
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
-    setValue,
-    watch,
   } = useForm<FormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -97,20 +83,18 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
                     >
                       State*
                     </label>
-                    <select
-                      id="state"
-                      {...register('state')}
-                      className="border-b border-[#E2E4E5] px-2 py-1"
-                    >
-                      <option value="" disabled>
-                        Select State
-                      </option>
-                      {stateList.sort((a, b) => a.short_name < b.short_name ? -1 : 1).map((state) => (
-                        <option key={state.short_name} value={state.short_name}>
-                          {state.short_name}
-                        </option>
-                      ))}
-                    </select>
+                    <Controller
+                      name="state"
+                      control={control}
+                      render={({ field }) => (
+                        <StateSelect
+                          id="state"
+                          value={field.value}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                        />
+                      )}
+                    />
                     {renderError('state')}
                   </div>
 
