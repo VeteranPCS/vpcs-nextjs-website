@@ -19,6 +19,19 @@
 
 ---
 
+## Schema Reconciliation (Validated 2026-04-22)
+
+Before cherry-picking, the live Salesforce schema was probed with `scripts/recon-salesforce.mjs`. Full evidence in `docs/salesforce-schema/{opportunity,customer,account}-reconciliation.md`. Summary:
+
+- **Opportunity pipeline is shared across RecordTypes** — Agent (`0124x000000Z7FyAAK`, default), Customer (`0124x000000Z7G3AAK`), Lender (`0124x000000ZGHrAAO`). **Every customer-side SOQL query MUST filter `WHERE RecordTypeId = '0124x000000Z7G3AAK'`** or it will leak agent/lender rows. 2,313 total Opportunity records across all pipelines.
+- **All 16 plan-assumed Opportunity fields exist** (`Agent__c`, `Lender__c`, `Sale_Price__c`, `Property_Address__c`, `Expected_Close_Date__c`, `Actual_Close_Date__c`, `Buying_andor_Selling__c`, `Payout_Amount__c`, `Charity_Amount__c`, `Closing_Commission__c`, `Destination_State__c`, etc.).
+- **Stage picklist has 17 values, not 4.** Plan listed `Under Contract`, `Transaction Closed`, `Paid - Complete`, `Closed - Lost`. Live picklist also includes `Closed Won` as a terminal stage — it must be added to the stale-leads exclusion list.
+- **Customer SObject is a red herring** — it's a dormant standard Salesforce B2C/Commerce Cloud object with 0 records and no references to Opportunity or Account. The Attio-era memory hint ("destination_city on Customer") does not apply on Salesforce. Customer-side portal data lives on **Person Account via `Opportunity.AccountId`**.
+- **Account uses Person Accounts** (53 `__pc` fields, 2,353 Person Accounts total). Role flags: `isAgent__pc` (1,095), `isLender__pc` (149), `isCustomer__pc` (~1,109). Person Account Customer RecordType: `0124x000000Z83FAAS`.
+- **Portal-critical Person Account fields confirmed**: `Current_location__pc` (customer's current base), `City_and_or_Base_you_are_moving_to__pc` (destination), `Military_Status__pc`, `Military_Service__pc`, `Discharge_Status__pc`, `Have_you_personally_PCS_d__pc`. Avoid the legacy `x`-prefixed duplicates (`xMilitary_Service__pc`, `xCities_Bases_you_service__pc`) — those are deprecated admin placeholders.
+
+---
+
 ## What to Cherry-Pick
 
 ### 1. Magic Link Portal (NEW FEATURE)
@@ -33,13 +46,13 @@ These files don't exist on main. They need to be added and rewired to query Sale
 | `app/api/portal/deal/route.ts` | Fetch deal data for portal display | Replace Attio query with SOQL |
 | `lib/magic-link.ts` | JWT sign/verify logic | **No changes needed** — CRM-independent |
 
-**Salesforce mapping:** Attio "customer_deals" pipeline entries = Salesforce Opportunities with RecordTypeId `0124x000000Z7G3` (Customer). The stage names may differ — verify Salesforce StageName values match what the portal UI expects.
+**Salesforce mapping:** Attio "customer_deals" pipeline entries = Salesforce Opportunities with RecordTypeId `0124x000000Z7G3AAK` (Customer). Stage names verified — see Schema Reconciliation above.
 
 ### 2. Stale Leads Cron (NEW FEATURE)
 
 | File | What It Does | Rewire Needed |
 |------|-------------|---------------|
-| `app/api/cron/stale-leads/route.ts` | Every 2hrs: find stale deals, re-route or send SMS reminder | Replace Attio queries with SOQL. Query Opportunities by LastModifiedDate and StageName |
+| `app/api/cron/stale-leads/route.ts` | Every 2hrs: find stale deals, re-route or send SMS reminder | Replace Attio queries with SOQL. Query Opportunities by LastModifiedDate + StageName, filtered to `RecordTypeId = '0124x000000Z7G3AAK'`, excluding terminal stages (`Transaction Closed`, `Paid - Complete`, `Closed - Lost`, `Closed Won`) |
 | `vercel.json` | Cron schedule definitions | Keep the cron entries for stale-leads |
 
 ### 3. OpenPhone SMS Improvements
@@ -199,8 +212,18 @@ AND RecordTypeId = '0124x000000Z7G3AAK'
 SELECT Id, Name, StageName, AccountId, Agent__c, LastModifiedDate
 FROM Opportunity
 WHERE RecordTypeId = '0124x000000Z7G3AAK'
-AND StageName NOT IN ('Transaction Closed', 'Paid - Complete', 'Closed - Lost')
+AND StageName NOT IN ('Transaction Closed', 'Paid - Complete', 'Closed - Lost', 'Closed Won')
 AND LastModifiedDate < :sevenDaysAgo
+
+-- Find a customer Person Account (portal auth / dashboard)
+SELECT Id, FirstName, LastName, PersonEmail, PersonMobilePhone,
+       Current_location__pc, City_and_or_Base_you_are_moving_to__pc,
+       Military_Status__pc, Military_Service__pc, Discharge_Status__pc,
+       Have_you_personally_PCS_d__pc
+FROM Account
+WHERE IsPersonAccount = true
+AND isCustomer__pc = true
+AND PersonEmail = :customerEmail
 
 -- Update deal stage (portal update)
 UPDATE Opportunity SET StageName = :newStage WHERE Id = :opportunityId
