@@ -75,6 +75,7 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
         headline: blog.title,
         image: heroImageUrl,
         datePublished: formatDate(blog.publishedAt),
+        dateModified: formatDate(blog.updatedAt ?? blog.publishedAt),
         author: {
             "@type": "Person",
             name: blog.author?.name ?? "VeteranPCS",
