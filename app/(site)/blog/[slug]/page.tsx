@@ -9,7 +9,9 @@ import EndBlogPostDetails from "@/components/BlogDetails/EndBlogPostDetails/EndB
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
+import FindAgentInState from "@/components/Blog/FindAgentInState";
 import { getBlogBySlug, getBlogSlugs } from "@/lib/blog/mdx";
+import { getStateForBlog } from "@/lib/blog/getStateForBlog";
 import { splitMdxAtMidpoint } from "@/lib/blog/splitMdxAtMidpoint";
 import { formatDate } from "@/utils/helper";
 
@@ -58,6 +60,7 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
     }
 
     const { first: bodyFirstHalf, second: bodySecondHalf } = splitMdxAtMidpoint(blog.content);
+    const bridgeState = getStateForBlog(slug);
 
     const heroImageUrl = blog.mainImage?.src
         ? `${BASE_URL}${blog.mainImage.src}`
@@ -112,9 +115,15 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
             />
             <BlogDetailsHeroSection blog={blog} />
             <BlogBeginingPostAgent blog={blog} bodyFirstHalf={bodyFirstHalf} />
+            {bridgeState && (
+                <FindAgentInState state={bridgeState} blogSlug={slug} position="top" />
+            )}
             <Testimonials />
             <BlogDetailsCta />
             <EndBlogPostDetails bodySecondHalf={bodySecondHalf} />
+            {bridgeState && (
+                <FindAgentInState state={bridgeState} blogSlug={slug} position="bottom" />
+            )}
             <CommonBlog component={blog.component || ""} />
             <FrequentlyAskedQuestion />
             <KeepInTouch />
