@@ -35,7 +35,7 @@ export default function BlogPageHeroSection({ blog }: Props) {
                 </div>
                 <div>
                   <p className="text-white text-center lora text-sm font-normal lg:w-[510px] w-full mx-auto mt-10 leading-6 line-clamp-2">
-                    {excerpt(blog.content, 250)}
+                    {blog.description ?? excerpt(blog.content, 250)}
                   </p>
                 </div>
                 {blog.author?.name ? (

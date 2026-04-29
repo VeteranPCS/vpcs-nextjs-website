@@ -49,7 +49,7 @@ export default function BlogMovingPcsingPost({ blogDetails }: Props) {
               {blogDetails.title}
             </h3>
             <p className="text-[#6C757D] roboto text-sm font-normal line-clamp-3">
-              {excerpt(blogDetails.content, 250)}
+              {blogDetails.description ?? excerpt(blogDetails.content, 250)}
             </p>
             <p className="bg-[#E5E5E5] p-[1px] w-full mt-5"></p>
             <div className="mt-5">

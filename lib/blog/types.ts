@@ -11,11 +11,20 @@ export type BlogFrontmatter = {
   slug: string;
   publishedAt: string;
   component: string;
-  componentSlug?: string;
   categories: string[];
   mainImage: { src: string; alt: string };
   author: FrontmatterAuthor;
   sanityId?: string;
+
+  // Plain-language summary used on cards/heroes; metaDescription is for SERP only.
+  description?: string;
+  // ISO date the post was last meaningfully edited; emitted as JSON-LD dateModified.
+  updatedAt?: string;
+  // ISO date the freshness pipeline should re-evaluate this post.
+  reviewBy?: string;
+  // GSC join key for SEO-performance reports.
+  primaryKeyword?: string;
+  secondaryKeywords?: string[];
 };
 
 export type BlogPost = BlogFrontmatter & {

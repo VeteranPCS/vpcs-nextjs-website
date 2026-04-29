@@ -1,0 +1,42 @@
+name: GA4 bi-weekly ingest
+
+on:
+  schedule:
+    - cron: '30 10 1,15 * *' # 1st and 15th of each month, 10:30 UTC (offset 30m from GSC ingest)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - name: Run GA4 ingest
+        env:
+          GA4_PROPERTY_ID: ${{ secrets.GA4_PROPERTY_ID }}
+          GA4_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GA4_SERVICE_ACCOUNT_CREDENTIALS }}
+          GSC_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GSC_SERVICE_ACCOUNT_CREDENTIALS }}
+        run: node scripts/ingest-ga4-performance.mjs
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: 'chore(ga4): bi-weekly conversion attribution ingest'
+          branch: ga4/biweekly-ingest
+          title: 'GA4 conversion attribution ingest'
+          body: |
+            Automated bi-weekly GA4 ingest. Review the dated digest under `docs/blog-migration/`
+            and the regenerated registry at `content/_registry/ga4-performance.json` before
+            merging. The digest joins GA4 landing pages against the GSC registry so query
+            attribution and branded/non-branded splits surface in the same report. The
+            gitignored raw API dump under `docs/blog-migration/raw/` is not committed —
+            pull the GHA run logs if you need to inspect raw rows.
+          add-paths: |
+            content/_registry/ga4-performance.json
+            docs/blog-migration/ga4-performance-*.md
