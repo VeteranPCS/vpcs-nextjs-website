@@ -1,0 +1,304 @@
+# Blog Editorial Audit
+Generated: 2026-05-02T22:43:32.199Z
+
+## Summary
+- Posts scanned: 138
+- Posts with findings: 122
+- Total findings: 224 (high: 0, medium: 76, low: 148)
+
+## Per-post findings (grouped by kind)
+
+### author-unresolvable (1)
+- **best-neighborhoods-near-nas-jrb-fort-worth** - author.name="Julie & Alan Cash" has no salesforceId and won't match the First-Last SOQL lookup; will render bare-name byline without headshot
+
+### emoji (22)
+- **alabama-military-bases** - 10 lines contain emoji (use /public/icon SVGs instead)
+    - L15: `📍 **Location:** Anniston, AL`
+    - L16: `🎯 **Mission:** Vehicle storage, maintenance, and chemical weapons disposal`
+    - L30: `📍 **Location:** Dale County, AL`
+- **best-places-to-live-near-eglin-air-force-base-veteranpcs** - 8 lines contain emoji (use /public/icon SVGs instead)
+    - L11: `📍 **Best for:** Eglin AFB personnel`
+    - L32: `📍 **Best for:** Duke Field, 7th Special Forces Group, and Eglin AFB personnel`
+    - L53: `📍 **Best for:** Air Force Special Operations personnel`
+- **best-places-to-live-near-fort-benning** - 1 line contain emoji (use /public/icon SVGs instead)
+    - L108: `📩 **Contact us today** to schedule a consultation with one of our **military-fr`
+- **best-places-to-live-near-ft-gordon-augusta-georgia** - 4 lines contain emoji (use /public/icon SVGs instead)
+    - L207: `📩 **Contact Our Veteran-Friendly Real Estate Agents Today!**`
+    - L213: `✔️ **Military-friendly realtors**`
+    - L214: `✔️ **VA Loan assistance**`
+- **does-the-va-loan-always-have-the-best-rate** - 20 lines contain emoji (use /public/icon SVGs instead)
+    - L15: `✔ **No down payment required**`
+    - L16: `✔ **No private mortgage insurance (PMI)**`
+    - L17: `✔ **Competitive interest rates**`
+- **how-to-become-a-real-estate-agent-after-the-military** - 7 lines contain emoji (use /public/icon SVGs instead)
+    - L13: `💡 **Learn more about the VeteranPCS Internship Program here:** [VeteranPCS.com/`
+    - L21: `✅ **Done 100% online** (in most states)`
+    - L22: `✅ **Completed at your own pace** (within days or weeks)`
+- **new-home-builders-offering-4-99-4-5-or-even-4-rates-heres-the-clarity-you-need-to-know** - 2 lines contain emoji (use /public/icon SVGs instead)
+    - L61: `✅ **Good Deal If:**`
+    - L67: `⚠️ **Proceed with Caution If:**`
+- **pcs-to-fort-eisenhower** - 1 line contain emoji (use /public/icon SVGs instead)
+    - L3: `Ineisha Wiley, a local REALTOR® who works with military families in the Augusta `
+- **pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts** - 5 lines contain emoji (use /public/icon SVGs instead)
+    - L66: `✔ **Veteran real estate agents** with PCS experience`
+    - L67: `✔ **Expert knowledge** of VA loans and military housing benefits`
+    - L68: `✔ **A network of trusted lenders** specializing in VA loans`
+- **the-ultimate-pcs-binder-guide-get-organized-for-your-move** - 9 lines contain emoji (use /public/icon SVGs instead)
+    - L12: `✔ Quickly access orders, IDs, and financial documents`
+    - L13: `✔ Keep track of moving expenses for reimbursement`
+    - L14: `✔ Maintain organized medical, housing, and education records`
+- **understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work** - 26 lines contain emoji (use /public/icon SVGs instead)
+    - L11: `✔ **No down payment** required for eligible borrowers`
+    - L12: `✔ **Competitive interest rates**`
+    - L13: `✔ **Flexible borrowing limits**`
+- **va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan** - 6 lines contain emoji (use /public/icon SVGs instead)
+    - L104: `📩 **Contact a Preferred VA Lender to get started!**`
+    - L112: `✔ **Verify that you meet the service requirements**`
+    - L113: `✔ **Obtain your Certificate of Eligibility (COE)**`
+- **va-vs-fha** - 17 lines contain emoji (use /public/icon SVGs instead)
+    - L5: `💡 **Pro Tip:** When in doubt, always have an **open and honest conversation** w`
+    - L11: `🔹 **You’re still responsible for your monthly payments.**`
+    - L12: `🔹 **The biggest differences** between these loans come down to **down payments `
+- **what-military-bases-are-in-alaska** - 16 lines contain emoji (use /public/icon SVGs instead)
+    - L18: `📍 **Location:** Fairbanks, AK`
+    - L19: `🎯 **Mission:** Fighter jet operations and Arctic air defense`
+    - L32: `📍 **Location:** Anchorage, AK`
+- **what-military-bases-are-in-arizona** - 14 lines contain emoji (use /public/icon SVGs instead)
+    - L17: `📍 **Location:** Southwestern Arizona`
+    - L18: `🎯 **Mission:** Military training range for air-to-air and air-to-ground combat`
+    - L30: `📍 **Location:** Bellemont, AZ (near Flagstaff)`
+- **what-military-bases-are-in-arkansas** - 10 lines contain emoji (use /public/icon SVGs instead)
+    - L15: `📍 **Location:** North Little Rock, AR`
+    - L16: `🎯 **Mission:** National Guard training and infantry operations`
+    - L34: `📍 **Location:** Fort Smith, AR`
+- **what-military-bases-are-in-california** - 20 lines contain emoji (use /public/icon SVGs instead)
+    - L70: `📍 **Location:** Sacramento, CA`
+    - L71: `🎯 **Mission:** Medium-range patrols & search-and-rescue`
+    - L81: `📍 **Location:** Marysville, CA`
+- **what-military-bases-are-in-colorado** - 50 lines contain emoji (use /public/icon SVGs instead)
+    - L17: `📍 **Location:** Colorado Springs, CO`
+    - L18: `📅 **Established:** April 1954`
+    - L19: `🎯 **Mission:** Train over 4,000 cadets to become **officers in the U.S. Air For`
+- **what-military-bases-are-in-connecticut** - 8 lines contain emoji (use /public/icon SVGs instead)
+    - L14: `📍 **Location:** New London, CT`
+    - L15: `🎯 **Mission:** Primary **submarine base on the East Coast**`
+    - L30: `📍 **Location:** New Haven, CT`
+- **what-military-bases-are-in-delaware** - 1 line contain emoji (use /public/icon SVGs instead)
+    - L68: `📩 **Contact us today to connect with a military-friendly real estate expert!**`
+- **what-military-bases-are-in-new-mexico** - 8 lines contain emoji (use /public/icon SVGs instead)
+    - L14: `📍 **Location:** Clovis, NM`
+    - L15: `🎯 **Mission:** Special operations and combat aircrew training`
+    - L28: `📍 **Location:** Alamogordo, NM`
+- **what-military-bases-are-in-north-carolina** - 20 lines contain emoji (use /public/icon SVGs instead)
+    - L20: `📍 **Location:** Elizabeth City, NC`
+    - L21: `🎯 **Mission:** Aviation logistics support for the Coast Guard and other federal`
+    - L29: `📍 **Location:** Elizabeth City, NC`
+
+### meta-description-length (75)
+- **10-essential-questions-for-first-time-military-home-buyers** - 147 chars (target 150-160)
+- **12-tips-for-a-successful-pcs-move-or-home-relocation** - 357 chars (target 150-160)
+- **7-best-family-friendly-activities-near-kirtland-afb** - 233 chars (target 150-160)
+- **a-decade-of-growth-the-appreciation-of-home-prices-in-castle-rock** - 232 chars (target 150-160)
+- **best-places-to-live-near-eglin-air-force-base-veteranpcs** - 149 chars (target 150-160)
+- **best-places-to-live-near-fort-hood** - 140 chars (target 150-160)
+- **best-places-to-live-near-ft-gordon-augusta-georgia** - 149 chars (target 150-160)
+- **best-places-to-live-near-philadelphia-military-bases** - 140 chars (target 150-160)
+- **buying-a-home-near-joint-base-san-antonio-top-5-things-to-know** - 183 chars (target 150-160)
+- **can-you-use-the-va-loan-more-than-once** - 165 chars (target 150-160)
+- **castle-rock-a-community-of-distinction-and-luxury** - 245 chars (target 150-160)
+- **choosing-the-best-relocation-method-for-your-pcs** - 147 chars (target 150-160)
+- **complete-fort-campbell-pcs-guide** - 210 chars (target 150-160)
+- **complete-guide-to-buying-your-first-home-with-a-va-loan** - 142 chars (target 150-160)
+- **cost-of-living-in-st-louis-for-military-families** - 147 chars (target 150-160)
+- **crystal-valleys-commercial-boom-how-major-retail-anchors-are-elevating-castle-rock-s-luxury** - 165 chars (target 150-160)
+- **dawson-trails-development-transforming-castle-rock-co** - 245 chars (target 150-160)
+- **discover-the-best-places-to-live-near-hill-air-force-base-utah** - 177 chars (target 150-160)
+- **discovering-military-friendly-living-in-panama-city-florida** - 182 chars (target 150-160)
+- **does-the-va-loan-always-have-the-best-rate** - 144 chars (target 150-160)
+- **excellence-in-education-castle-rock-s-premier-school-system** - 447 chars (target 150-160)
+- **fun-family-and-date-night-activities-near-tinker-afb** - 130 chars (target 150-160)
+- **greater-phoenix-valley-a-guide-for-military-veterans** - 128 chars (target 150-160)
+- **how-expensive-is-castle-rock** - 239 chars (target 150-160)
+- **how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado** - 189 chars (target 150-160)
+- **how-to-choose-the-right-real-estate-agent-for-your-military-pcs-move** - 137 chars (target 150-160)
+- **how-to-leverage-seller-concessions-to-lower-your-closing-costs** - 147 chars (target 150-160)
+- **how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain** - 142 chars (target 150-160)
+- **how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down** - 140 chars (target 150-160)
+- **managing-a-pcs-move-with-children-strategies-for-military-families** - 149 chars (target 150-160)
+- **navigating-your-pcs-move-with-pets-a-comprehensive-guide** - 143 chars (target 150-160)
+- **new-costco-and-dawson-trails-development-coming-to-castle-rock-co** - 187 chars (target 150-160)
+- **new-semi-custom-luxury-homes-in-castle-rock-with-breathtaking-views-signature-crystal-valley** - 241 chars (target 150-160)
+- **offutt-afb-pcs-guide-2025** - 181 chars (target 150-160)
+- **oklahoma-property-tax-exemption-for-100-disabled-veterans** - 142 chars (target 150-160)
+- **pcs-to-florida-a-military-familys-guide-to-polk-county** - 187 chars (target 150-160)
+- **pcs-to-fort-eisenhower** - 129 chars (target 150-160)
+- **pcs-to-fort-leavenworth-complete-guide-for-military-families** - 165 chars (target 150-160)
+- **pcs-to-hawaii-with-pets** - 180 chars (target 150-160)
+- **pcs-to-luke-afb-military-guide-to-phoenix** - 175 chars (target 150-160)
+- **pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases** - 143 chars (target 150-160)
+- **pcsing-to-camp-lejeune-2026-onslow-county-guide** - 149 chars (target 150-160)
+- **preparing-for-an-overseas-pcs-a-guide-for-military-families** - 330 chars (target 150-160)
+- **preparing-to-pcs-what-you-need-to-know** - 135 chars (target 150-160)
+- **settling-down-pcsing-to-birmingham-alabama-with-the-military** - 235 chars (target 150-160)
+- **should-active-duty-military-buy-a-home-in-hawaii** - 182 chars (target 150-160)
+- **should-you-buy-now-and-refinance-later** - 148 chars (target 150-160)
+- **should-you-put-money-down-on-a-va-loan-in-oklahoma-city** - 129 chars (target 150-160)
+- **strategic-refinancing-for-luxury-homeowners-in-castle-rock-co** - 149 chars (target 150-160)
+- **the-complete-guide-to-luxury-new-home-builders-in-castle-rock-colorado** - 161 chars (target 150-160)
+- **the-importance-of-working-with-a-real-estate-broker-when-buying-a-new-construction-home** - 238 chars (target 150-160)
+- **the-ultimate-pcs-binder-guide-get-organized-for-your-move** - 146 chars (target 150-160)
+- **the-unmatched-appeal-of-living-in-castle-rock-colorado-for-luxury-home-buyers** - 231 chars (target 150-160)
+- **things-to-do-near-fort-riley-a-local-guide** - 128 chars (target 150-160)
+- **tinker-air-force-base-pcs-guide** - 119 chars (target 150-160)
+- **top-10-things-to-love-about-living-in-spokane** - 216 chars (target 150-160)
+- **top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families** - 139 chars (target 150-160)
+- **top-communities-for-military-families-near-naval-base-kitsap** - 251 chars (target 150-160)
+- **top-things-to-do-near-san-diego-military-bases** - 171 chars (target 150-160)
+- **understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work** - 134 chars (target 150-160)
+- **understanding-the-va-funding-fee-a-complete-guide-for-military-families** - 142 chars (target 150-160)
+- **unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach** - 149 chars (target 150-160)
+- **va-loan-assumption-guide-how-military-families-can-save-thousands-on-their-next-home-purchase** - 147 chars (target 150-160)
+- **va-loan-assumptions-the-hidden-entitlement-rule-that-trips-up-military-homebuyers** - 173 chars (target 150-160)
+- **va-loan-assumptions-what-military-families-must-know** - 129 chars (target 150-160)
+- **va-loan-home-buying-team-who-you-need-to-know** - 124 chars (target 150-160)
+- **va-loan-refinance-pro-tip-how-to-lock-in-a-lower-rate-before-it-s-too-late** - 132 chars (target 150-160)
+- **va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of** - 146 chars (target 150-160)
+- **va-vs-fha** - 140 chars (target 150-160)
+- **veteran-and-military-real-estate-expert-in-castle-rock-colorado** - 168 chars (target 150-160)
+- **what-are-the-benefits-of-a-va-loan** - 164 chars (target 150-160)
+- **why-military-members-should-choose-a-veteran-friendly-realtor** - 388 chars (target 150-160)
+- **wilmingtons-emerging-tech-scene-a-goldmine-for-veteran-property-investors** - 246 chars (target 150-160)
+- **your-complete-guide-to-mcas-yuma** - 148 chars (target 150-160)
+- **your-first-home-in-florida-a-complete-guide-for-veterans-and-military-families** - 133 chars (target 150-160)
+
+### meta-title-length (68)
+- **10-essential-questions-for-first-time-military-home-buyers** - 66 chars (target 50-60)
+- **7-best-family-friendly-activities-near-kirtland-afb** - 83 chars (target 50-60)
+- **a-decade-of-growth-the-appreciation-of-home-prices-in-castle-rock** - 66 chars (target 50-60)
+- **benefits-of-working-with-veteran-real-estate-agents-for-military-veterans** - 77 chars (target 50-60)
+- **best-neighborhoods-near-nas-jrb-fort-worth** - 64 chars (target 50-60)
+- **best-places-to-live-near-eglin-air-force-base-veteranpcs** - 45 chars (target 50-60)
+- **best-places-to-live-near-fort-benning** - 90 chars (target 50-60)
+- **best-places-to-live-near-fort-hood** - 34 chars (target 50-60)
+- **buying-a-home-near-joint-base-san-antonio-top-5-things-to-know** - 63 chars (target 50-60)
+- **can-you-use-the-va-loan-more-than-once** - 71 chars (target 50-60)
+- **choosing-the-best-relocation-method-for-your-pcs** - 48 chars (target 50-60)
+- **complete-fort-campbell-pcs-guide** - 97 chars (target 50-60)
+- **cost-of-living-in-st-louis-for-military-families** - 49 chars (target 50-60)
+- **crystal-valleys-commercial-boom-how-major-retail-anchors-are-elevating-castle-rock-s-luxury** - 65 chars (target 50-60)
+- **dawson-trails-development-transforming-castle-rock-co** - 67 chars (target 50-60)
+- **discover-the-best-places-to-live-near-hill-air-force-base-utah** - 63 chars (target 50-60)
+- **does-the-va-loan-always-have-the-best-rate** - 43 chars (target 50-60)
+- **how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado** - 70 chars (target 50-60)
+- **how-to-choose-the-right-real-estate-agent-for-your-military-pcs-move** - 86 chars (target 50-60)
+- **how-to-leverage-seller-concessions-to-lower-your-closing-costs** - 62 chars (target 50-60)
+- **how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain** - 71 chars (target 50-60)
+- **how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down** - 69 chars (target 50-60)
+- **interest-rates-are-falling-heres-what-homebuyers-need-to-know** - 67 chars (target 50-60)
+- **managing-a-pcs-move-with-children-strategies-for-military-families** - 67 chars (target 50-60)
+- **new-costco-and-dawson-trails-development-coming-to-castle-rock-co** - 66 chars (target 50-60)
+- **new-home-builders-offering-4-99-4-5-or-even-4-rates-heres-the-clarity-you-need-to-know** - 93 chars (target 50-60)
+- **offutt-afb-pcs-guide-2025** - 76 chars (target 50-60)
+- **pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona** - 90 chars (target 50-60)
+- **pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston** - 73 chars (target 50-60)
+- **pcs-to-florida-a-military-familys-guide-to-polk-county** - 63 chars (target 50-60)
+- **pcs-to-fort-leavenworth-complete-guide-for-military-families** - 61 chars (target 50-60)
+- **pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home** - 80 chars (target 50-60)
+- **pcs-to-hawaii-with-pets** - 70 chars (target 50-60)
+- **pcs-to-luke-afb-military-guide-to-phoenix** - 70 chars (target 50-60)
+- **pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases** - 79 chars (target 50-60)
+- **pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb** - 75 chars (target 50-60)
+- **pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know** - 72 chars (target 50-60)
+- **pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts** - 93 chars (target 50-60)
+- **pcsing-to-camp-lejeune-2026-onslow-county-guide** - 48 chars (target 50-60)
+- **prepare-to-pcs-how-do-i-prepare-for-movers** - 44 chars (target 50-60)
+- **preparing-to-pcs-what-you-need-to-know** - 39 chars (target 50-60)
+- **settling-down-pcsing-to-birmingham-alabama-with-the-military** - 62 chars (target 50-60)
+- **should-active-duty-military-buy-a-home-in-hawaii** - 71 chars (target 50-60)
+- **should-you-buy-now-and-refinance-later** - 79 chars (target 50-60)
+- **strategic-refinancing-for-luxury-homeowners-in-castle-rock-co** - 62 chars (target 50-60)
+- **the-complete-guide-to-luxury-new-home-builders-in-castle-rock-colorado** - 65 chars (target 50-60)
+- **the-importance-of-working-with-a-real-estate-broker-when-buying-a-new-construction-home** - 70 chars (target 50-60)
+- **the-unmatched-appeal-of-living-in-castle-rock-colorado-for-luxury-home-buyers** - 68 chars (target 50-60)
+- **things-to-do-near-fort-riley-a-local-guide** - 43 chars (target 50-60)
+- **tinker-air-force-base-pcs-guide** - 41 chars (target 50-60)
+- **top-10-things-to-love-about-living-in-spokane** - 45 chars (target 50-60)
+- **top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families** - 61 chars (target 50-60)
+- **top-communities-for-military-families-near-naval-base-kitsap** - 80 chars (target 50-60)
+- **top-things-to-do-near-san-diego-military-bases** - 63 chars (target 50-60)
+- **understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work** - 65 chars (target 50-60)
+- **understanding-the-va-funding-fee-a-complete-guide-for-military-families** - 72 chars (target 50-60)
+- **unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach** - 82 chars (target 50-60)
+- **va-loan-assumptions-a-hidden-strategy-for-military-homebuyers** - 62 chars (target 50-60)
+- **va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan** - 74 chars (target 50-60)
+- **va-loan-home-buying-team-who-you-need-to-know** - 46 chars (target 50-60)
+- **va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of** - 63 chars (target 50-60)
+- **va-vs-fha** - 37 chars (target 50-60)
+- **veterans-skip-the-hustle-unlock-homeownership-how-assuming-a-va-loan-can-save-you-time-and-money** - 42 chars (target 50-60)
+- **what-are-the-benefits-of-a-va-loan** - 35 chars (target 50-60)
+- **why-dallas-fort-worth-is-the-ideal-destination-for-military-members-and-veterans** - 80 chars (target 50-60)
+- **why-military-members-should-choose-a-veteran-friendly-realtor** - 61 chars (target 50-60)
+- **wilmingtons-emerging-tech-scene-a-goldmine-for-veteran-property-investors** - 75 chars (target 50-60)
+- **your-complete-guide-to-mcas-yuma** - 66 chars (target 50-60)
+
+### word-count-high (4)
+- **choosing-the-best-relocation-method-for-your-pcs** - 2533 words (consider splitting; pillar threshold 2500)
+- **pcs-to-fort-eisenhower** - 2567 words (consider splitting; pillar threshold 2500)
+- **percheron-colorado-springs-master-planned-community-near-colorado-military-bases** - 2525 words (consider splitting; pillar threshold 2500)
+- **veteran-and-military-real-estate-expert-in-castle-rock-colorado** - 3804 words (consider splitting; pillar threshold 2500)
+
+### word-count-low (54)
+- **12-tips-for-a-successful-pcs-move-or-home-relocation** - 698 words (target >= 800)
+- **9-things-to-do-near-ft-bragg** - 663 words (target >= 800)
+- **alabama-military-bases** - 590 words (target >= 800)
+- **best-places-to-live-near-eglin-air-force-base-veteranpcs** - 439 words (target >= 800)
+- **best-places-to-live-near-fort-benning** - 598 words (target >= 800)
+- **best-places-to-live-near-fort-hood** - 708 words (target >= 800)
+- **castle-rock-a-community-of-distinction-and-luxury** - 573 words (target >= 800)
+- **dawson-trails-development-transforming-castle-rock-co** - 723 words (target >= 800)
+- **discovering-military-friendly-living-in-panama-city-florida** - 656 words (target >= 800)
+- **does-the-va-loan-always-have-the-best-rate** - 755 words (target >= 800)
+- **excellence-in-education-castle-rock-s-premier-school-system** - 606 words (target >= 800)
+- **greater-phoenix-valley-a-guide-for-military-veterans** - 753 words (target >= 800)
+- **how-does-a-0-down-va-loan-work** - 705 words (target >= 800)
+- **how-to-become-a-real-estate-agent-after-the-military** - 562 words (target >= 800)
+- **how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain** - 649 words (target >= 800)
+- **how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down** - 680 words (target >= 800)
+- **military-quick-guide-q-a** - 489 words (target >= 800)
+- **navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know** - 671 words (target >= 800)
+- **new-costco-and-dawson-trails-development-coming-to-castle-rock-co** - 459 words (target >= 800)
+- **new-home-builders-offering-low-rates-here-is-the-clarity-you-need-to-know** - 534 words (target >= 800)
+- **new-semi-custom-luxury-homes-in-castle-rock-with-breathtaking-views-signature-crystal-valley** - 643 words (target >= 800)
+- **pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona** - 547 words (target >= 800)
+- **pcs-to-florida-a-military-familys-guide-to-polk-county** - 718 words (target >= 800)
+- **settling-down-pcsing-to-birmingham-alabama-with-the-military** - 512 words (target >= 800)
+- **the-unmatched-appeal-of-living-in-castle-rock-colorado-for-luxury-home-buyers** - 690 words (target >= 800)
+- **things-to-do-near-fort-riley-a-local-guide** - 773 words (target >= 800)
+- **top-10-things-to-love-about-living-in-spokane** - 724 words (target >= 800)
+- **unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach** - 666 words (target >= 800)
+- **unlocking-opportunities-a-recap-of-the-jhu-veteranpcs-event** - 467 words (target >= 800)
+- **va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan** - 738 words (target >= 800)
+- **va-vs-fha** - 778 words (target >= 800)
+- **veterans-skip-the-hustle-unlock-homeownership-how-assuming-a-va-loan-can-save-you-time-and-money** - 658 words (target >= 800)
+- **what-military-bases-are-in-alaska** - 735 words (target >= 800)
+- **what-military-bases-are-in-arizona** - 646 words (target >= 800)
+- **what-military-bases-are-in-arkansas** - 573 words (target >= 800)
+- **what-military-bases-are-in-california** - 740 words (target >= 800)
+- **what-military-bases-are-in-connecticut** - 575 words (target >= 800)
+- **what-military-bases-are-in-delaware** - 429 words (target >= 800)
+- **what-military-bases-are-in-idaho** - 640 words (target >= 800)
+- **what-military-bases-are-in-illinois** - 745 words (target >= 800)
+- **what-military-bases-are-in-iowa** - 614 words (target >= 800)
+- **what-military-bases-are-in-kentucky** - 710 words (target >= 800)
+- **what-military-bases-are-in-maine** - 504 words (target >= 800)
+- **what-military-bases-are-in-minnesota** - 561 words (target >= 800)
+- **what-military-bases-are-in-montana** - 590 words (target >= 800)
+- **what-military-bases-are-in-nebraska** - 578 words (target >= 800)
+- **what-military-bases-are-in-new-mexico** - 492 words (target >= 800)
+- **what-military-bases-are-in-new-york** - 755 words (target >= 800)
+- **what-military-bases-are-in-north-carolina** - 778 words (target >= 800)
+- **what-military-bases-are-in-north-dakota** - 598 words (target >= 800)
+- **what-military-bases-are-in-west-virginia** - 616 words (target >= 800)
+- **what-military-bases-are-in-wisconsin** - 569 words (target >= 800)
+- **what-military-bases-are-in-wyoming** - 541 words (target >= 800)
+- **why-military-members-should-choose-a-veteran-friendly-realtor** - 562 words (target >= 800)

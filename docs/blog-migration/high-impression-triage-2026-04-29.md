@@ -61,52 +61,52 @@ Title cells show new value; char counts in parens for old → new. Description c
 
 | Slug | New metaTitle | Title (old → new) | Desc (old → new) | GSC Top Query | Sessions | Conv |
 |---|---|---:|---:|---|---:|---:|
-| `what-military-bases-are-in-california` | California Air Force Bases & Active Military Posts | 47 → 50 | 159 → ~155 | california air force bases | 17,646 | 6 |
-| `what-military-bases-are-in-georgia` | Military Forts in Georgia: Active Bases & PCS Guide | 43 → 51 | 195 → ~155 | military forts in georgia | 24,725 | 8 |
-| `what-military-bases-are-in-north-carolina` | Active Military Bases in North Carolina: A Veteran PCS Guide | 48 → 60 | 198 → ~155 | military bases in north carolina | 14,766 | 2 |
-| `what-military-bases-are-in-florida` | Active Military Bases in Florida: A Veteran PCS Guide | 47 → 53 | 201 → ~155 | military bases in florida | 11,629 | 4 |
-| `what-military-bases-are-in-hawaii` | All 11 Active Military Bases in Hawaii: A PCS Guide | 47 → 51 | 213 → ~155 | what are the 11 military bases in hawaii | 4,250 | 6 |
-| `what-military-bases-are-in-new-york` | Active Military Bases in New York: A Veteran PCS Guide | 47 → 54 | 197 → ~155 | military bases in new york | 6,166 | 2 |
-| `what-military-bases-are-in-arizona` | Military Bases in Arizona (AZ): A Veteran PCS Guide | 47 → 51 | 199 → ~155 | military bases in az | 6,186 | 0 |
-| `what-military-bases-are-in-colorado` | Air Force Bases in Colorado: Active Posts & PCS Guide | 47 → 53 | 171 → ~155 | air force bases in colorado | 3,595 | 0 |
-| `what-military-bases-are-in-alaska` | Active Military Bases in Alaska: A Veteran PCS Guide | 47 → 52 | 201 → ~155 | alaska military bases | 5,735 | 0 |
-| `alabama-military-bases` | Army Forts in Alabama: Active Military Bases Guide | 47 → 50 | 199 → ~155 | army forts in alabama | 12,926 | 6 |
-| `what-military-bases-are-in-kansas` | Active Military Bases in Kansas: A Veteran PCS Guide | 47 → 52 | 201 → ~155 | military bases in kansas | 5,473 | 0 |
-| `what-military-bases-are-in-kentucky` | Army Bases in Kentucky: Fort Knox, Campbell & More | 47 → 50 | 199 → ~155 | army base in kentucky | 3,099 | 6 |
-| `tennessee-military-bases-...` | Tennessee Military Bases: A Veteran's PCS Move Guide | 107 → 52 | 229 → ~155 | tennessee military bases | 1,294 | 2 |
-| `what-military-bases-are-in-louisiana` | Active Military Bases in Louisiana: A Veteran PCS Guide | 47 → 55 | 203 → ~155 | louisiana military bases | 6,258 | 4 |
-| `what-military-bases-are-in-new-mexico` | Active Military Bases in New Mexico: A Veteran PCS Guide | 47 → 56 | 201 → ~155 | new mexico military bases | 10,288 | 2 |
-| `what-military-bases-are-in-indiana` | Active Military Bases in Indiana: A Veteran PCS Guide | 47 → 53 | 200 → ~155 | military bases in indiana | 13,855 | 16 |
-| `what-military-bases-are-in-illinois` | Chicago Military Bases: Active Illinois Posts & Forts | 47 → 53 | 201 → ~155 | chicago military base | 2,404 | 4 |
-| `what-military-bases-are-in-montana` | Active Military Bases in Montana: A Veteran PCS Guide | 47 → 53 | 197 → ~155 | montana military bases | 3,065 | 0 |
-| `what-military-bases-are-in-wisconsin` | Active Military Bases in Wisconsin: A Veteran PCS Guide | 47 → 55 | 203 → ~155 | military bases in wisconsin | 1,583 | 0 |
-| `what-military-bases-are-in-wyoming` | Active Military Bases in Wyoming: A Veteran PCS Guide | 47 → 53 | 201 → ~155 | military bases in wyoming | 843 | 0 |
-| `what-military-bases-are-in-arkansas` | Arkansas Army Base: Little Rock AFB & Active Posts | 47 → 50 | 199 → ~155 | arkansas army base | 2,520 | **34** |
-| `what-military-bases-are-in-minnesota` | Army Base in Minnesota: Camp Ripley & PCS Move Guide | 47 → 52 | 197 → ~155 | army base minnesota | 3,029 | 2 |
-| `what-military-bases-are-in-idaho` | Idaho Air Force Base Locations: PCS to Mountain Home | 47 → 52 | 200 → ~155 | idaho air force base locations | 1,893 | 0 |
-| `what-military-bases-are-in-maine` | Active Military Bases in Maine: A Veteran PCS Guide | 47 → 51 | 201 → ~155 | military bases in maine | 3,185 | 0 |
-| `what-military-bases-are-in-nebraska` | Active Military Bases in Nebraska: A Veteran PCS Guide | 47 → 54 | 199 → ~155 | military bases in nebraska | 1,683 | 0 |
-| `what-military-bases-are-in-connecticut` | Active Military Bases in Connecticut: A Veteran PCS Guide | 47 → 57 | 203 → ~155 | military bases connecticut | 2,318 | 2 |
-| `what-military-bases-are-in-west-virginia` | Army Bases in West Virginia: Active Forts & PCS Guide | 47 → 53 | 201 → ~155 | army bases in west virginia | 1,953 | 0 |
-| `what-military-bases-are-in-iowa` | Active Military Bases in Iowa: A Veteran PCS Guide | 47 → 50 | 201 → ~155 | military bases in iowa | 872 | 2 |
-| `what-military-bases-are-in-north-dakota` | Active Military Bases in North Dakota: A Veteran PCS Guide | 47 → 58 | 201 → ~155 | north dakota military bases | 2,473 | 0 |
-| `what-military-bases-are-in-delaware` | Active Military Bases in Delaware: A Veteran PCS Guide | 47 → 54 | 201 → ~155 | military bases in delaware | 3,143 | 0 |
+| `what-military-bases-are-in-california` | California Air Force Bases & Active Military Posts | 47 → 50 | 159 → 150 | california air force bases | 17,646 | 6 |
+| `what-military-bases-are-in-georgia` | Military Forts in Georgia: Active Bases & PCS Guide | 43 → 51 | 195 → 156 | military forts in georgia | 24,725 | 8 |
+| `what-military-bases-are-in-north-carolina` | Active Military Bases in North Carolina: A Veteran PCS Guide | 48 → 60 | 198 → 153 | military bases in north carolina | 14,766 | 2 |
+| `what-military-bases-are-in-florida` | Active Military Bases in Florida: A Veteran PCS Guide | 47 → 53 | 201 → 156 | military bases in florida | 11,629 | 4 |
+| `what-military-bases-are-in-hawaii` | All 11 Active Military Bases in Hawaii: A PCS Guide | 47 → 51 | 213 → 156 | what are the 11 military bases in hawaii | 4,250 | 6 |
+| `what-military-bases-are-in-new-york` | Active Military Bases in New York: A Veteran PCS Guide | 47 → 54 | 197 → 152 | military bases in new york | 6,166 | 2 |
+| `what-military-bases-are-in-arizona` | Military Bases in Arizona (AZ): A Veteran PCS Guide | 47 → 51 | 199 → 158 | military bases in az | 6,186 | 0 |
+| `what-military-bases-are-in-colorado` | Air Force Bases in Colorado: Active Posts & PCS Guide | 47 → 53 | 171 → 152 | air force bases in colorado | 3,595 | 0 |
+| `what-military-bases-are-in-alaska` | Active Military Bases in Alaska: A Veteran PCS Guide | 47 → 52 | 201 → 151 | alaska military bases | 5,735 | 0 |
+| `alabama-military-bases` | Army Forts in Alabama: Active Military Bases Guide | 47 → 50 | 199 → 157 | army forts in alabama | 12,926 | 6 |
+| `what-military-bases-are-in-kansas` | Active Military Bases in Kansas: A Veteran PCS Guide | 47 → 52 | 201 → 152 | military bases in kansas | 5,473 | 0 |
+| `what-military-bases-are-in-kentucky` | Army Bases in Kentucky: Fort Knox, Campbell & More | 47 → 50 | 199 → 160 | army base in kentucky | 3,099 | 6 |
+| `tennessee-military-bases-...` | Tennessee Military Bases: A Veteran's PCS Move Guide | 107 → 52 | 229 → 155 | tennessee military bases | 1,294 | 2 |
+| `what-military-bases-are-in-louisiana` | Active Military Bases in Louisiana: A Veteran PCS Guide | 47 → 55 | 203 → 157 | louisiana military bases | 6,258 | 4 |
+| `what-military-bases-are-in-new-mexico` | Active Military Bases in New Mexico: A Veteran PCS Guide | 47 → 56 | 201 → 152 | new mexico military bases | 10,288 | 2 |
+| `what-military-bases-are-in-indiana` | Active Military Bases in Indiana: A Veteran PCS Guide | 47 → 53 | 200 → 156 | military bases in indiana | 13,855 | 16 |
+| `what-military-bases-are-in-illinois` | Chicago Military Bases: Active Illinois Posts & Forts | 47 → 53 | 201 → 153 | chicago military base | 2,404 | 4 |
+| `what-military-bases-are-in-montana` | Active Military Bases in Montana: A Veteran PCS Guide | 47 → 53 | 197 → 155 | montana military bases | 3,065 | 0 |
+| `what-military-bases-are-in-wisconsin` | Active Military Bases in Wisconsin: A Veteran PCS Guide | 47 → 55 | 203 → 153 | military bases in wisconsin | 1,583 | 0 |
+| `what-military-bases-are-in-wyoming` | Active Military Bases in Wyoming: A Veteran PCS Guide | 47 → 53 | 201 → 158 | military bases in wyoming | 843 | 0 |
+| `what-military-bases-are-in-arkansas` | Arkansas Army Base: Little Rock AFB & Active Posts | 47 → 50 | 199 → 158 | arkansas army base | 2,520 | **34** |
+| `what-military-bases-are-in-minnesota` | Army Base in Minnesota: Camp Ripley & PCS Move Guide | 47 → 52 | 197 → 159 | army base minnesota | 3,029 | 2 |
+| `what-military-bases-are-in-idaho` | Idaho Air Force Base Locations: PCS to Mountain Home | 47 → 52 | 200 → 156 | idaho air force base locations | 1,893 | 0 |
+| `what-military-bases-are-in-maine` | Active Military Bases in Maine: A Veteran PCS Guide | 47 → 51 | 201 → 154 | military bases in maine | 3,185 | 0 |
+| `what-military-bases-are-in-nebraska` | Active Military Bases in Nebraska: A Veteran PCS Guide | 47 → 54 | 199 → 153 | military bases in nebraska | 1,683 | 0 |
+| `what-military-bases-are-in-connecticut` | Active Military Bases in Connecticut: A Veteran PCS Guide | 47 → 57 | 203 → 154 | military bases connecticut | 2,318 | 2 |
+| `what-military-bases-are-in-west-virginia` | Army Bases in West Virginia: Active Forts & PCS Guide | 47 → 53 | 201 → 152 | army bases in west virginia | 1,953 | 0 |
+| `what-military-bases-are-in-iowa` | Active Military Bases in Iowa: A Veteran PCS Guide | 47 → 50 | 201 → 157 | military bases in iowa | 872 | 2 |
+| `what-military-bases-are-in-north-dakota` | Active Military Bases in North Dakota: A Veteran PCS Guide | 47 → 58 | 201 → 157 | north dakota military bases | 2,473 | 0 |
+| `what-military-bases-are-in-delaware` | Active Military Bases in Delaware: A Veteran PCS Guide | 47 → 54 | 201 → 155 | military bases in delaware | 3,143 | 0 |
 
 ### Cohort B — Bespoke (11)
 
 | Slug | New metaTitle | Title (old → new) | Desc (old → new) | GSC Top Query | Sessions | Conv |
 |---|---|---:|---:|---|---:|---:|
-| `how-does-a-0-down-va-loan-work` | How a 0% Down VA Home Loan Works: Veteran Buyer Guide | 47 → 52 | 201 → ~155 | va home loan 0 down | 880 | 0 |
-| `new-home-builders-offering-...` | Builders Offering Low Interest Rates: A Veteran's Guide | 108 → 54 | 242 → ~155 | builders offering low interest rates | 5,865 | **14** |
-| `the-ultimate-pcs-checklist-...` | Ultimate PCS Checklist: 8-Week Timeline for Service Members | 95 → 58 | 240 → ~155 | pcs checklist | 3,671 | 2 |
-| `9-things-to-do-near-ft-bragg` | 9 Things to Do Near Fort Bragg NC: PCS Family Guide | 39 → 51 | 213 → ~155 | things to do near fort bragg nc | 1,311 | 0 |
-| `prepare-to-pcs-...` | PCS Benefits & Entitlements: A Veteran's PCS Move Guide | 94 → 54 | 240 → ~155 | pcs benefits | 1,217 | 2 |
-| `the-military-members-complete-guide-...credit` | Does Military Star Card Build Credit? A Service Member Guide | 99 → 60 | 243 → ~155 | does military star card build credit | 100 | **8** |
-| `va-loan-calculator-mistakes` | Are VA Mortgage Calculators Accurate? 7 Mistakes to Avoid | 91 → 56 | 229 → ~155 | how accurate are va mortgage calculators? | 69 | 0 |
-| `navigating-temporary-housing-...` | Temporary Military Housing: A PCS Move Survival Guide | 100 → 52 | 320 → ~155 | temporary military housing | 1,707 | 0 |
-| `military-quick-guide-q-a` | CONUS vs OCONUS PCS: Differences Military Movers Should Know | 39 → 60 | 223 → ~155 | differences between conus and oconus pcs military | 360 | 2 |
-| `pcsing-to-san-diego-...` | Military-Friendly Apartments & Neighborhoods in San Diego | 99 → 56 | 208 → ~155 | military friendly apartments san diego | 1,001 | 0 |
-| `pcsing-oconus-...` | OCONUS Meaning in the Military: PCS Home-Decision Guide | 57 → 54 | 320 → ~155 | oconus meaning military | 747 | **12** |
+| `how-does-a-0-down-va-loan-work` | How a 0% Down VA Home Loan Works: Veteran Buyer Guide | 47 → 53 | 201 → 151 | va home loan 0 down | 880 | 0 |
+| `new-home-builders-offering-...` | Builders Offering Low Interest Rates: A Veteran's Guide | 108 → 55 | 242 → 155 | builders offering low interest rates | 5,865 | **14** |
+| `the-ultimate-pcs-checklist-...` | Ultimate PCS Checklist: 8-Week Timeline for Service Members | 95 → 59 | 240 → 152 | pcs checklist | 3,671 | 2 |
+| `9-things-to-do-near-ft-bragg` | 9 Things to Do Near Fort Bragg NC: PCS Family Guide | 39 → 51 | 213 → 150 | things to do near fort bragg nc | 1,311 | 0 |
+| `prepare-to-pcs-...` | PCS Benefits & Entitlements: A Veteran's PCS Move Guide | 94 → 55 | 240 → 154 | pcs benefits | 1,217 | 2 |
+| `the-military-members-complete-guide-...credit` | Does Military Star Card Build Credit? A Service Member Guide | 99 → 60 | 243 → 156 | does military star card build credit | 100 | **8** |
+| `va-loan-calculator-mistakes` | Are VA Mortgage Calculators Accurate? 7 Mistakes to Avoid | 91 → 57 | 229 → 152 | how accurate are va mortgage calculators? | 69 | 0 |
+| `navigating-temporary-housing-...` | Temporary Military Housing: A PCS Move Survival Guide | 100 → 53 | 320 → 151 | temporary military housing | 1,707 | 0 |
+| `military-quick-guide-q-a` | CONUS vs OCONUS PCS: Differences Military Movers Should Know | 39 → 60 | 223 → 150 | differences between conus and oconus pcs military | 360 | 2 |
+| `pcsing-to-san-diego-...` | Military-Friendly Apartments & Neighborhoods in San Diego | 99 → 57 | 208 → 151 | military friendly apartments san diego | 1,001 | 0 |
+| `pcsing-oconus-...` | OCONUS Meaning in the Military: PCS Home-Decision Guide | 57 → 55 | 320 → 152 | oconus meaning military | 747 | **12** |
 
 **Bolded conversion counts** = preservation outliers (above-average CR within the cohort). Rewrites only touch SERP surface, not body — these conversion paths stay intact.
 
@@ -124,8 +124,8 @@ Per-post CTR deltas land in the next ingest's report. Flat URLs after one ingest
 
 ## Final audit deltas
 
-(Populated after PR finalization in Task 5.4.)
-
 - **Baseline (2026-04-29):** high:0, medium:76, low:207
-- **After this PR:** _TBD_
-- **Expected:** high:0 (unchanged), medium:76 (unchanged — body word counts and other findings untouched), low ≈ 125 (drops by ~80 from `meta-title-length` and `meta-description-length` clearing across 41 posts)
+- **After this PR (2026-05-02):** high:0, medium:76, low:148
+- **Delta:** low − 59 (cohort A dropped low 207 → 165 = 42; cohort B dropped low 165 → 148 = 17). High and medium unchanged as planned — no body content, no new structural findings.
+
+Both `meta-title-length` and `meta-description-length` finding categories are now zero across all 41 cohort URLs (verified via grep on `docs/blog-migration/editorial-audit-2026-05-02.md`).
