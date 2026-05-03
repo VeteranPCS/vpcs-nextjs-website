@@ -3,8 +3,21 @@ import { RequestType, salesForceAPI, salesForceImageAPI } from '@/services/api';
 import { getSalesforceToken } from '@/services/salesForceTokenService';
 import { client } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
-import agentService from './agentService';
 import { Image } from 'sanity';
+
+// Dynamic node:fs import keeps these calls out of client bundles that
+// transitively import this module. Only ever runs server-side.
+async function resolveHeadshot(
+  role: 'agents' | 'lenders',
+  salesforceID: string,
+): Promise<string | null> {
+  const [{ default: fs }, { default: path }] = await Promise.all([
+    import('node:fs'),
+    import('node:path'),
+  ]);
+  const rel = `/images/${role}/${salesforceID}.webp`;
+  return fs.existsSync(path.join(process.cwd(), 'public', rel)) ? rel : null;
+}
 
 interface StateMap extends Image {
   _type: 'image';
@@ -148,7 +161,7 @@ const stateService = {
   fetchAgentsListByState: async (state: string): Promise<AgentsData> => {
     try {
       const query = `
-        SELECT Name, PhotoUrl, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc,
+        SELECT Name, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc,
               Military_Service__pc, Brokerage_Name__pc, BillingAddress,
               (SELECT Id, Name, AA_Score__c, Area__r.Name, Area__r.State__c FROM Area_Assignments__r ORDER BY AA_Score__c DESC)
         FROM Account
@@ -164,25 +177,15 @@ const stateService = {
       });
 
       if (response?.status === 200) {
-
-        const recordsWithUpdatedPhotoUrl = await Promise.all(
+        const resolved = await Promise.all(
           response.data.records.map(async (agent: Agent) => {
-            if (agent.PhotoUrl) {
-              try {
-                const photoResponse = await agentService.getAgentImage(agent.AccountId_15__c);
-                agent.PhotoUrl = photoResponse;
-              } catch (error) {
-                console.error(`Error fetching photo URL for agent ${agent.AccountId_15__c}:`, error);
-                agent.PhotoUrl = undefined;
-              }
-            }
-            return agent;
-          })
+            const PhotoUrl = await resolveHeadshot('agents', agent.AccountId_15__c);
+            return PhotoUrl ? { ...agent, PhotoUrl } : null;
+          }),
         );
+        const records = resolved.filter((agent): agent is Agent => agent !== null);
 
-        const filterAgentsWithOutPhotos = recordsWithUpdatedPhotoUrl.filter((agent: Agent) => agent.PhotoUrl !== undefined);
-
-        return { ...response.data, records: filterAgentsWithOutPhotos } as AgentsData;
+        return { ...response.data, records } as AgentsData;
       } else if (response?.status === 401) {
         // Token expired: Refresh and retry
         try {
@@ -203,7 +206,7 @@ const stateService = {
   fetchLendersListByState: async (state: string): Promise<LendersData> => {
     try {
       const query = `
-      SELECT Name, PhotoUrl, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, Individual_NMLS_ID__pc, Company_NMLS_ID__pc,
+      SELECT Name, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, Individual_NMLS_ID__pc, Company_NMLS_ID__pc,
       (SELECT Id, Name, AA_Score__c, Area__r.Name, Area__r.State__c FROM Area_Assignments__r ORDER BY AA_Score__c DESC)
       FROM Account
       WHERE isLender__pc = true
@@ -217,25 +220,15 @@ const stateService = {
         type: RequestType.GET,
       });
       if (response?.status === 200) {
-        const recordsWithUpdatedPhotoUrl = await Promise.all(
-          response.data.records.map(async (agent: Agent) => {
-            if (agent.PhotoUrl) {
-              try {
-                const photoResponse = await agentService.getAgentImage(agent.AccountId_15__c);
-                agent.PhotoUrl = photoResponse;
-                // agent.PhotoUrl = photoResponse?.data; // Ensure fallback to original URL
-              } catch (error) {
-                console.error(`Error fetching photo URL for agent ${agent.AccountId_15__c}:`, error);
-                agent.PhotoUrl = undefined;
-              }
-            }
-            return agent;
-          })
+        const resolved = await Promise.all(
+          response.data.records.map(async (lender: Lenders) => {
+            const PhotoUrl = await resolveHeadshot('lenders', lender.AccountId_15__c);
+            return PhotoUrl ? { ...lender, PhotoUrl } : null;
+          }),
         );
+        const records = resolved.filter((lender): lender is Lenders => lender !== null);
 
-        const filterAgentsWithOutPhotos = recordsWithUpdatedPhotoUrl.filter((agent: Agent) => agent.PhotoUrl !== undefined);
-
-        return { ...response.data, records: filterAgentsWithOutPhotos } as LendersData;
+        return { ...response.data, records } as LendersData;
 
       } else if (response?.status === 401) {
         try {
