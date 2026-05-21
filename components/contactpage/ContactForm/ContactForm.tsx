@@ -13,6 +13,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { contactPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from "next/navigation";
 import { sendGTMEvent } from "@next/third-parties/google";
+import { useConcierge } from "@/components/Concierge";
 
 interface MediaAccountProps {
   _id: string;
@@ -46,6 +47,14 @@ const ContactForm = () => {
   const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { open: openConcierge } = useConcierge();
+
+  const handleConciergeCta = () => {
+    openConcierge({
+      topic: 'general',
+      openingMessage: 'I have a question.',
+    });
+  };
   const {
     register,
     handleSubmit,
@@ -274,18 +283,25 @@ const ContactForm = () => {
                   />
                   {renderError('captchaToken')}
                 </div>
-                <div className="flex justify-end lg:py-8 md:py-8 sm:py-2 py-2">
+                <div className="flex flex-col items-end lg:py-8 md:py-8 sm:py-2 py-2 gap-3">
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     className={`items-center ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#A81F23]'} w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px] px-[20px] xl:py-[15px] lg:py-[15px] sm:py-[14px] py-[14px] rounded-[16px] text-center tracking-[1px] hover:tracking-[5px] duration-500 transition-all`}
                   >
                     <span
-                      className="xl:text-[18px] lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal leading-6 bg-cover 
+                      className="xl:text-[18px] lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal leading-6 bg-cover
                         text-white text-nowrap tahoma"
                     >
                       {isSubmitting ? 'Sending...' : 'Send Message'}
                     </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConciergeCta}
+                    className="text-sm text-primary hover:underline focus:outline-none focus-visible:underline min-h-[44px]"
+                  >
+                    Or chat with our concierge instead.
                   </button>
                 </div>
               </div>

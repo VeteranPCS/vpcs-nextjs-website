@@ -6,6 +6,7 @@ import * as yup from "yup";
 import ReCAPTCHA from 'react-google-recaptcha';
 
 import { ContactAgentFormData } from '@/types';
+import { useConcierge } from '@/components/Concierge';
 
 interface ContactFormProps {
   onSubmit: (data: ContactAgentFormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
@@ -58,6 +59,16 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
   });
 
   const howDidYouHearValue = watch("howDidYouHear");
+  const destinationBaseValue = watch("destinationBase");
+  const { open: openConcierge } = useConcierge();
+
+  const handleConciergeCta = () => {
+    const destination = destinationBaseValue?.trim();
+    const openingMessage = destination
+      ? `I need help finding an agent in ${destination}.`
+      : 'I need help finding an agent.';
+    openConcierge({ topic: 'agent', openingMessage });
+  };
 
   const handleFormSubmit: SubmitHandler<ContactAgentFormData> = async (data) => {
     setIsSubmitting(true);
@@ -319,13 +330,20 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
               </div>
             </div>
             {/* Submit Button */}
-            <div className="flex md:justify-start justify-center">
+            <div className="flex md:justify-start justify-center flex-col md:items-start items-center gap-3">
               <button
                 type="submit"
                 disabled={isSubmitting}
                 className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
               >
                 {isSubmitting ? 'Submitting...' : 'Submit'}
+              </button>
+              <button
+                type="button"
+                onClick={handleConciergeCta}
+                className="text-sm text-primary hover:underline focus:outline-none focus-visible:underline min-h-[44px]"
+              >
+                Or chat with our concierge instead.
               </button>
             </div>
           </div>
