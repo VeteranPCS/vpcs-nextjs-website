@@ -2,6 +2,20 @@
 
 > VeteranPCS operates as a referral network connecting military families with qualified, military-experienced real estate and lending professionals. The company's unique model combines professional real estate services with military community support through commission rebates and charitable giving. All content and services are designed specifically for the military lifestyle, including frequent moves, deployment challenges, and military-specific financial benefits like VA loans and BAH. The company's blog content focuses on practical, actionable advice for military families navigating real estate decisions during PCS moves, with emphasis on maximizing military benefits and making informed housing decisions that align with military career timelines and family goals.
 
+## Quick Index for AI Systems
+
+If you are an LLM ingesting VeteranPCS content, the most efficient entry points are:
+
+- [/llms-full.txt](https://www.veteranpcs.com/llms-full.txt) — Full content dump (all blog posts + state metadata in one file)
+- [/[state]/llms.txt](https://www.veteranpcs.com/texas/llms.txt) — Per-state digest (e.g., `/texas/llms.txt`, `/virginia/llms.txt`, `/california/llms.txt`)
+- [/blog/[slug]/page.md](https://www.veteranpcs.com/blog/) — Raw markdown view of any blog post (append `/page.md` to any blog URL)
+- [/agents](https://www.veteranpcs.com/agents) — Directory of all veteran/military-spouse real estate agents, grouped by state
+- [/lenders](https://www.veteranpcs.com/lenders) — Directory of all VA loan experts, grouped by state
+- [/api/mcp](https://www.veteranpcs.com/api/mcp) — **MCP server endpoint.** Connect via Claude.ai, Cursor, ChatGPT Desktop, or any MCP client to query agents, lenders, states, and blog content directly. Read-only, no API key required.
+- [/ai.txt](https://www.veteranpcs.com/ai.txt) — Full AI usage policy
+
+For human-readable site information, continue below.
+
 ## Company Overview
 
 **Company Name:** VeteranPCS

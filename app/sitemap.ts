@@ -8,6 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const routes = [
         "",
         "/about",
+        "/agents",
         "/bah-calculator",
         "/blog",
         "/contact",
@@ -17,6 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         "/get-listed-lenders",
         "/impact",
         "/how-it-works",
+        "/lenders",
         "/military-spouse",
         "/pcs-resources",
         "/privacy-policy",
@@ -28,6 +30,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         "/charity",
         "/va-loan-help",
         "/va-loan-calculator",
+        "/llms.txt",
+        "/llms-full.txt",
+        "/ai.txt",
     ]
 
     const stateRoutes = await stateService.fetchStateList();
@@ -38,18 +43,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: new Date(),
     }));
 
-    const mappedStateRoutes = stateRoutes.map((route) => {
+    const mappedStateRoutes = stateRoutes.flatMap((route) => {
         const path = route.state_slug.current;
-        return {
-            url: `${baseUrl}/${path}`,
-            lastModified: new Date(),
-        };
+        return [
+            { url: `${baseUrl}/${path}`, lastModified: new Date() },
+            { url: `${baseUrl}/${path}/llms.txt`, lastModified: new Date() },
+        ];
     });
 
-    const mappedBlogRoutes = blogSlugs.map((slug) => ({
-        url: `${baseUrl}/blog/${slug}`,
-        lastModified: new Date(),
-    }));
+    const mappedBlogRoutes = blogSlugs.flatMap((slug) => [
+        { url: `${baseUrl}/blog/${slug}`, lastModified: new Date() },
+        { url: `${baseUrl}/blog/${slug}/page.md`, lastModified: new Date() },
+    ]);
 
     const allRoutes = [...staticRoutes, ...mappedStateRoutes, ...mappedBlogRoutes];
 
