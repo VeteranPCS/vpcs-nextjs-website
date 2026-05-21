@@ -14,6 +14,7 @@ import { getBlogBySlug, getBlogSlugs } from "@/lib/blog/mdx";
 import { getStateForBlog } from "@/lib/blog/getStateForBlog";
 import { splitMdxAtMidpoint } from "@/lib/blog/splitMdxAtMidpoint";
 import { formatDate } from "@/utils/helper";
+import { buildBreadcrumbList } from "@/lib/structured-data";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -106,12 +107,23 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
         },
     };
 
+    const breadcrumbJsonLd = buildBreadcrumbList([
+        { name: "Home", url: `${BASE_URL}/` },
+        { name: "Blog", url: `${BASE_URL}/blog` },
+        { name: blog.title, url: `${BASE_URL}/blog/${slug}` },
+    ]);
+
     return (
         <>
             <Script
                 id={`json-ld-blog-${slug}`}
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <Script
+                id={`json-ld-blog-breadcrumb-${slug}`}
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
             />
             <BlogDetailsHeroSection blog={blog} />
             <BlogBeginingPostAgent blog={blog} bodyFirstHalf={bodyFirstHalf} />

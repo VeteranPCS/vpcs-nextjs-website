@@ -1,3 +1,4 @@
+import Script from "next/script";
 import StatePageHeroSection from "@/components/StatePage/StatePaheHeroSection/StatePageHeroSection";
 import StatePageHeroSecondSection from "@/components/StatePage/StatePageHeroSecondSection/StatePageHeroSecondSection";
 import StatePageVaLoan from "@/components/StatePage/StatePageVaLoan/StatePageVaLoan";
@@ -10,6 +11,11 @@ import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import stateService, { StateList as StateList, AgentsData, LendersData, Lenders } from "@/services/stateService";
 import { AgentData } from '@/components/StatePage/StatePageCityAgents/StatePageCityAgents'
 import { Agent } from "@/services/stateService";
+import {
+  buildStateLocalBusiness,
+  buildAgentItemList,
+  buildBreadcrumbList,
+} from "@/lib/structured-data";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -209,8 +215,48 @@ export default async function StatePage(props: { params: Promise<{ state: string
     return <p>Failed to load data for the state.</p>;
   }
 
+  const stateName = state_data?.state_name || 'Unknown';
+  const agentCount = (agents_data as AgentsData).records?.length ?? 0;
+  const lenderCount = (lenders_data as LendersData).records?.length ?? 0;
+
+  const localBusinessJsonLd = buildStateLocalBusiness({
+    stateName,
+    stateSlug: state,
+    agentCount,
+    lenderCount,
+  });
+
+  const agentItemListJsonLd = buildAgentItemList(
+    state,
+    ((agents_data as AgentsData).records ?? []).map((agent) => ({
+      name: agent.Name,
+      brokerage: agent.Brokerage_Name__pc,
+      bio: agent.Agent_Bio__pc,
+      stateSlug: state,
+      imageUrl: agent.PhotoUrl,
+      salesforceId: agent.AccountId_15__c,
+    })),
+  );
+
+  const breadcrumbJsonLd = buildBreadcrumbList([
+    { name: "Home", url: `${BASE_URL}/` },
+    { name: stateName, url: `${BASE_URL}/${state}` },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        id={`json-ld-state-${state}-business`}
+      >{JSON.stringify(localBusinessJsonLd)}</script>
+      <script
+        type="application/ld+json"
+        id={`json-ld-state-${state}-agents`}
+      >{JSON.stringify(agentItemListJsonLd)}</script>
+      <script
+        type="application/ld+json"
+        id={`json-ld-state-${state}-breadcrumb`}
+      >{JSON.stringify(breadcrumbJsonLd)}</script>
       <StatePageHeroSection
         stateName={state_data?.state_name || 'Unknown'}
         stateImage={state_data?.state_map}
