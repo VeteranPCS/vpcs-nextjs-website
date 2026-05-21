@@ -11,6 +11,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@ai-sdk/react": "^3.0.190",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@google-cloud/local-auth": "^3.0.1",
@@ -20,10 +21,14 @@
     "@next/third-parties": "16.2.4",
     "@sanity/image-url": "^1.0.2",
     "@sanity/vision": "^3.62.0",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
     "@vercel/og": "^0.6.4",
     "@vercel/speed-insights": "^1.2.0",
+    "ai": "^6.0.188",
     "aos": "^2.3.4",
     "axios": "^1.15.1",
+    "botid": "^1.5.11",
     "chart.js": "^4.4.8",
     "cheerio": "^1.1.0",
     "gray-matter": "^4.0.3",
