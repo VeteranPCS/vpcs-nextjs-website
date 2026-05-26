@@ -170,7 +170,15 @@ const getAgentsForStateTool = tool({
       if (!matched) {
         return { ok: false, error: `Could not find a state matching "${state}".` };
       }
-      const data = await stateService.fetchAgentsListByState(matched.state_name);
+      if (!matched.short_name) {
+        logError('Concierge tool: getAgentsForState matched state missing short_name', {
+          slug: matched.state_slug?.current,
+          input: state,
+        });
+      }
+      const data = await stateService.fetchAgentsListByState(matched.short_name, {
+        requireHeadshot: false,
+      });
       const agents = (data.records || [])
         .map(trimAgent)
         .filter((a) => a.id)
@@ -210,7 +218,15 @@ const getLendersForStateTool = tool({
       if (!matched) {
         return { ok: false, error: `Could not find a state matching "${state}".` };
       }
-      const data = await stateService.fetchLendersListByState(matched.state_name);
+      if (!matched.short_name) {
+        logError('Concierge tool: getLendersForState matched state missing short_name', {
+          slug: matched.state_slug?.current,
+          input: state,
+        });
+      }
+      const data = await stateService.fetchLendersListByState(matched.short_name, {
+        requireHeadshot: false,
+      });
       const lenders = (data.records || [])
         .map(trimLender)
         .filter((l) => l.id)

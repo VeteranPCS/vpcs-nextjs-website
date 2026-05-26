@@ -63,16 +63,24 @@ export async function POST(req: Request) {
     convertToModelMessages(messages),
   ]);
 
-  const result = streamText({
-    model: MODELS.chat,
-    system: buildSystemPrompt(pageContext),
-    messages: modelMessages,
-    tools: buildTools(),
-    stopWhen: stepCountIs(12),
-    experimental_telemetry: { isEnabled: false },
-  });
+  try {
+    const result = streamText({
+      model: MODELS.chat,
+      system: buildSystemPrompt(pageContext),
+      messages: modelMessages,
+      tools: buildTools(),
+      stopWhen: stepCountIs(12),
+      experimental_telemetry: { isEnabled: false },
+    });
 
-  return result.toUIMessageStreamResponse({
-    headers: { 'X-Session-Id': sessionId },
-  });
+    return result.toUIMessageStreamResponse({
+      headers: { 'X-Session-Id': sessionId },
+    });
+  } catch (error) {
+    logError('Concierge: streamText failed', { sessionId }, error);
+    return new Response(
+      JSON.stringify({ error: 'Concierge is temporarily unavailable.' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } },
+    );
+  }
 }

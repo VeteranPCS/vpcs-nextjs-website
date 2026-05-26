@@ -22,6 +22,8 @@ const RANK_NAME_TO_ID: Record<string, string> = (() => {
   // Common alias: the BAH source labels the highest officer bucket "O-7/O-7+";
   // accept plain "O7" as a synonym so the model doesn't need to know that.
   out['O7'] = out['O7'] ?? out['O7/O7+'];
+  // DTMO caps officer rates at O-7+; route O-8/O-9/O-10 to the same bucket.
+  out['O8'] = out['O9'] = out['O10'] = out['O7'];
   return out;
 })();
 
