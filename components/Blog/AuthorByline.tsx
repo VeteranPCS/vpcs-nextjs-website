@@ -62,6 +62,11 @@ export default async function AuthorByline({
           <br />
           <b className="text-[#495057]">{VPCS_FALLBACK.brokerage}</b>
         </p>
+        <div className="w-full flex justify-center mt-4">
+          <Link href="/contact-agent">
+            <Button buttonText="Get in Touch" />
+          </Link>
+        </div>
       </div>
     );
   }
