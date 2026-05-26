@@ -69,6 +69,31 @@ export const mdxComponents: MDXComponents = {
       />
     ),
     hr: () => <hr className="my-8 border-[#E5E5E5]" />,
+    table: (props) => (
+      <div className="my-6 overflow-x-auto">
+        <table
+          className="roboto w-full border-collapse text-left text-sm md:text-base"
+          {...props}
+        />
+      </div>
+    ),
+    thead: (props) => <thead className="bg-[#003486] text-white" {...props} />,
+    tbody: (props) => (
+      <tbody
+        className="text-[#495057] [&_tr:nth-child(even)]:bg-[#F8F9FA]"
+        {...props}
+      />
+    ),
+    tr: (props) => <tr className="border-b border-[#E5E5E5]" {...props} />,
+    th: (props) => (
+      <th
+        className="px-4 py-3 font-bold text-white text-left align-top"
+        {...props}
+      />
+    ),
+    td: (props) => (
+      <td className="px-4 py-3 align-top leading-6" {...props} />
+    ),
     a: ({ href, children, ...rest }) => {
       const target = href ?? '#';
       if (isExternal(target)) {

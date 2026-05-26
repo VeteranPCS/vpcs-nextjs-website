@@ -3,6 +3,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import AuthorByline from "@/components/Blog/AuthorByline";
 import { formatDate } from "@/utils/helper";
 import { mdxComponents } from "@/mdx-components";
+import { mdxOptions } from "@/lib/blog/mdx-options";
 import type { BlogPost } from "@/lib/blog/types";
 
 type Props = {
@@ -25,7 +26,7 @@ export default function BlogBeginningBlogPostAgent({ blog, bodyFirstHalf }: Prop
             <AuthorByline frontmatterAuthor={blog.author} variant="card" />
           </div>
           <article className="w-full lg:w-4/5 lg:pl-10">
-            <MDXRemote source={bodyFirstHalf} components={mdxComponents} />
+            <MDXRemote source={bodyFirstHalf} components={mdxComponents} options={mdxOptions} />
           </article>
         </div>
       </div>
