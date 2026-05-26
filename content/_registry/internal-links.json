@@ -1,12 +1,13 @@
 {
-  "generatedAt": "2026-04-26T04:08:26.402Z",
-  "totalPosts": 138,
+  "generatedAt": "2026-05-26T02:17:30.357Z",
+  "totalPosts": 146,
   "byComponent": {
     "PCS Help": [
       "10-essential-questions-for-first-time-military-home-buyers",
       "12-tips-for-a-successful-pcs-move-or-home-relocation",
       "a-decade-of-growth-the-appreciation-of-home-prices-in-castle-rock",
       "arizona-pcs-guide",
+      "best-neighborhoods-nas-jacksonville-military-families",
       "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-philadelphia-military-bases",
       "castle-rock-a-community-of-distinction-and-luxury",
@@ -17,10 +18,12 @@
       "dawson-trails-development-transforming-castle-rock-co",
       "discovering-military-friendly-living-in-panama-city-florida",
       "excellence-in-education-castle-rock-s-premier-school-system",
+      "florida-schools-military-children-guide",
       "greater-phoenix-valley-a-guide-for-military-veterans",
       "how-expensive-is-castle-rock",
       "how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado",
       "how-to-choose-the-right-real-estate-agent-for-your-military-pcs-move",
+      "hurricane-prep-military-families-florida",
       "military-quick-guide-q-a",
       "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "new-costco-and-dawson-trails-development-coming-to-castle-rock-co",
@@ -37,7 +40,10 @@
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "pcsing-oconus-what-do-i-do-with-my-home",
       "pcsing-to-camp-lejeune-2026-onslow-county-guide",
+      "pcsing-to-eglin-hurlburt-field-northwest-florida-guide",
+      "pcsing-to-florida-military-bases-2026-guide",
       "pcsing-to-san-diego-top-military-friendly-neighborhoods-and-resources",
+      "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "percheron-colorado-springs-master-planned-community-near-colorado-military-bases",
       "prepare-to-pcs-how-do-i-prepare-for-movers",
       "prepare-to-pcs-understanding-your-pcs-entitlements-and-benefits",
@@ -129,6 +135,7 @@
       "can-you-use-the-va-loan-more-than-once",
       "complete-guide-to-buying-your-first-home-with-a-va-loan",
       "does-the-va-loan-always-have-the-best-rate",
+      "florida-va-loan-benefits-hidden-savings",
       "how-does-a-0-down-va-loan-work",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
@@ -150,6 +157,7 @@
       "what-are-the-benefits-of-a-va-loan"
     ],
     "Financial Guidance": [
+      "florida-cost-of-living-military-bases-bah",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit"
@@ -164,8 +172,14 @@
       "description": "Buying your first home during a Permanent Change of Station (PCS) move brings unique opportunities and challenges that civilian buyers rarely face. While the process might seem overwhelming, military families have access to exceptional b...",
       "publishedAt": "2025-06-06T11:53:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "first-time military home buyers",
+      "secondaryKeywords": [
+        "va loan pre-approval",
+        "military home buying guide",
+        "bah housing budget",
+        "pcs home buying",
+        "va loan benefits"
+      ],
       "h2Outline": [
         "1. What Are My VA Loan Benefits and How Do I Get Pre-Approved?",
         "2. How Should I Align My Home Budget with My Basic Allowance for Housing (BAH)?",
@@ -188,8 +202,14 @@
       "description": "Relocation is consistently ranked as one of life’s most stressful events—it even ranks up there with divorce, job loss, and major illnesses. But unlike other big life moments, the average American will move nearly a dozen times over the ...",
       "publishedAt": "2024-11-12T11:44:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "tips for a successful pcs move",
+      "secondaryKeywords": [
+        "pcs move checklist",
+        "military move tips",
+        "home relocation tips",
+        "pcs moving guide",
+        "military family moving advice"
+      ],
       "h2Outline": [
         "1. Purge, purge, and purge again",
         "3. Start collecting moving supplies early",
@@ -206,8 +226,14 @@
       "description": "Receiving PCS orders to Kirtland Air Force Base brings your military family to one of the Southwest's most vibrant and culturally rich cities. As a veteran real estate agent who's helped countless military families settle into Albuquerqu...",
       "publishedAt": "2025-03-01T01:19:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "things to do near kirtland afb",
+      "secondaryKeywords": [
+        "family activities albuquerque",
+        "kirtland air force base family guide",
+        "albuquerque attractions for military families",
+        "sandia peak tramway",
+        "old town albuquerque"
+      ],
       "h2Outline": [
         "1. Old Town Albuquerque: Step Back in Time",
         "2. Explora Science Center: Hands-On Learning Adventures",
@@ -227,9 +253,15 @@
       "component": "Things to Do Near You",
       "description": "Whether you're looking to spend a day on the beach, explore military history, or enjoy outdoor adventures, there’s plenty to do near Fort Liberty (formerly Fort Bragg). Here are nine great activities to check out for your next weekend ou...",
       "publishedAt": "2022-10-13T13:47:03.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "things to do near fort bragg nc",
+      "secondaryKeywords": [
+        "things to do near fort liberty nc",
+        "things to do at fort bragg nc",
+        "things to do near fort bragg",
+        "fayetteville nc activities",
+        "fort liberty attractions"
+      ],
       "h2Outline": [
         "1. Try Different Brews and Bites at Downtown Fayetteville’s Food Truck Park",
         "2. Visit the Airborne & Special Operations Museum",
@@ -251,8 +283,14 @@
       "description": "Castle Rock, Colorado, has emerged as one of the most desirable places to live in the Denver metropolitan area over the past decade. With its picturesque landscapes, strong community vibe, and proximity to both the mountains and the city...",
       "publishedAt": "2024-09-20T10:12:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "castle rock home prices",
+      "secondaryKeywords": [
+        "castle rock colorado real estate",
+        "castle rock housing market",
+        "home price appreciation castle rock",
+        "denver metro housing trends",
+        "castle rock median home price"
+      ],
       "h2Outline": [
         "A Brief Overview of Castle Rock",
         "Home Price Appreciation: A 10-Year Snapshot",
@@ -266,9 +304,15 @@
       "component": "U.S. Military Bases",
       "description": "Alabama is home to over 100,000 active-duty military personnel and their families. The military community in Alabama is diverse and close-knit, bringing together service members from across the country and around the world.",
       "publishedAt": "2023-09-19T03:34:43.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "army forts in alabama",
+      "secondaryKeywords": [
+        "military bases in alabama",
+        "alabama army base",
+        "air force base alabama",
+        "military base alabama",
+        "fort rucker alabama"
+      ],
       "h2Outline": [
         "List of Military Bases in Alabama",
         "1. Anniston Army Depot",
@@ -287,8 +331,14 @@
       "description": "Received orders for Arizona? Congratulations! The Grand Canyon State offers military families an exceptional combination of year-round sunshine, growing job markets, and strong military communities. Whether you're heading to Luke Air For...",
       "publishedAt": "2025-06-30T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "arizona pcs guide",
+      "secondaryKeywords": [
+        "military bases in arizona",
+        "luke air force base housing",
+        "davis-monthan afb pcs",
+        "va loan arizona",
+        "moving to arizona military"
+      ],
       "h2Outline": [
         "Arizona's Military Installations: Where You Might Be Headed",
         "Why Arizona Makes Sense for Military Families",
@@ -311,9 +361,42 @@
       "description": "When it comes to finding a home, veterans have unique needs and considerations that may be best understood by those who have shared similar experiences. This is where the importance of working with a veteran real estate agent becomes app...",
       "publishedAt": "2024-01-03T04:25:21.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "veteran real estate agent",
+      "secondaryKeywords": [
+        "va realtors near me",
+        "military friendly real estate agents va loan pcs",
+        "veterans in real estate",
+        "veterans real estate",
+        "military real estate agent"
+      ],
       "h2Outline": []
+    },
+    {
+      "slug": "best-neighborhoods-nas-jacksonville-military-families",
+      "title": "Best Military-Friendly Neighborhoods Near NAS Jacksonville",
+      "url": "/blog/best-neighborhoods-nas-jacksonville-military-families",
+      "component": "PCS Help",
+      "description": "A military family guide to the best neighborhoods near NAS Jacksonville with 2026 BAH rates, school grades, commute times, and real median home prices.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "best neighborhoods nas jacksonville",
+      "secondaryKeywords": [
+        "nas jacksonville housing",
+        "orange park military families",
+        "mandarin nas jax commute",
+        "st johns county schools military",
+        "nas jax bah 2026"
+      ],
+      "h2Outline": [
+        "Know Your 2026 Jacksonville BAH Before You Tour a Single House",
+        "How NAS Jacksonville and NS Mayport Shape the Map",
+        "Neighborhood Comparison at a Glance",
+        "Neighborhood-by-Neighborhood Breakdown",
+        "Use Your VA Loan and PCS Bonus to Move the Math",
+        "Flood Zones, Insurance, and Other Florida Realities",
+        "A 30-60 Day NAS Jacksonville Housing Plan",
+        "Ready to Pick Your Jacksonville Neighborhood?"
+      ]
     },
     {
       "slug": "best-neighborhoods-near-nas-jrb-fort-worth",
@@ -323,8 +406,14 @@
       "description": "Getting PCS orders to Naval Air Station Joint Reserve Base (NAS JRB) Fort Worth? You're heading to one of Texas's most family-friendly military communities. Located in the heart of the Dallas-Fort Worth metroplex, this base offers milita...",
       "publishedAt": "2025-08-28T11:46:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "best neighborhoods near nas jrb fort worth",
+      "secondaryKeywords": [
+        "fort worth military housing",
+        "nas jrb fort worth housing",
+        "dallas fort worth military families",
+        "naval air station fort worth pcs",
+        "fort worth military neighborhoods"
+      ],
       "h2Outline": [
         "Why Location Matters for Military Families",
         "Top 5 Neighborhoods for NAS JRB Fort Worth Military Families",
@@ -341,8 +430,14 @@
       "description": "Looking to Buy or Sell a Home Near Eglin AFB?",
       "publishedAt": "2023-10-25T15:31:42.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "cities near eglin afb",
+      "secondaryKeywords": [
+        "housing near eglin afb",
+        "apartments near eglin air force base",
+        "best places to live near eglin afb",
+        "niceville fl military",
+        "northwest florida military communities"
+      ],
       "h2Outline": [
         "Looking to Buy or Sell a Home Near Eglin AFB?",
         "Top Places to Live Near Eglin AFB",
@@ -359,8 +454,14 @@
       "description": "If you're preparing for a Permanent Change of Station (PCS) to Fort Benning, Georgia, home to the United States Army Infantry School and the Maneuver Center of Excellence, finding the right place to live is crucial.",
       "publishedAt": "2023-11-14T06:02:14.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "best places to live near fort benning ga",
+      "secondaryKeywords": [
+        "housing near ft benning",
+        "what city is fort benning in",
+        "fort moore reviews",
+        "columbus georgia military housing",
+        "fort benning neighborhoods"
+      ],
       "h2Outline": [
         "Best Places to Live Near Fort Benning",
         "Factors to Consider When Choosing a Place to Live",
@@ -375,8 +476,14 @@
       "description": "Fort Hood is one of the largest military installations in the world, home to over 45,000 active-duty soldiers and their families. If you are moving to Fort Hood, finding the right place to live is an important decision. This guide explor...",
       "publishedAt": "2023-11-03T16:32:24.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "housing around fort hood",
+      "secondaryKeywords": [
+        "cities near fort hood texas",
+        "housing near ft hood",
+        "fort hood army base housing",
+        "fort hood single soldier housing",
+        "best places to live near fort hood"
+      ],
       "h2Outline": [
         "Why Live Near Fort Hood?",
         "Best Places to Live Near Fort Hood",
@@ -393,8 +500,13 @@
       "description": "Looking to Buy or Sell a Home Near Fort Gordon?",
       "publishedAt": "2023-10-25T16:23:03.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "fort gordon housing",
+      "secondaryKeywords": [
+        "apartments in augusta ga near fort gordon",
+        "cities near fort gordon",
+        "homes near fort gordon",
+        "what county is fort gordon ga in"
+      ],
       "h2Outline": [
         "Looking to Buy or Sell a Home Near Fort Gordon?",
         "Top Areas to Consider Near Fort Gordon",
@@ -410,8 +522,14 @@
       "description": "If you are PCSing to Southeast Pennsylvania or transitioning out of the military, the Philadelphia and Delaware County area deserves a serious look. The region offers a strong mix of urban energy, suburban comfort, and walkable communiti...",
       "publishedAt": "2026-02-02T15:14:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "best places to live near philadelphia military bases",
+      "secondaryKeywords": [
+        "naval support activity philadelphia housing",
+        "joint base mcguire dix lakehurst housing",
+        "delaware county military neighborhoods",
+        "philadelphia navy yard pcs",
+        "best suburbs near philadelphia for military families"
+      ],
       "h2Outline": [
         "Delaware County: Affordable Suburbs With Easy Commutes",
         "Swarthmore and Wallingford: Commuter-Friendly and Family-Oriented",
@@ -427,8 +545,14 @@
       "description": "Marines stationed at Camp Lejeune for 24+ months typically benefit financially from buying with a VA loan, while shorter assignments favor renting. Current Jacksonville market conditions and VA loan advantages make homeownership particul...",
       "publishedAt": "2025-06-02T11:45:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "buy vs rent near camp lejeune",
+      "secondaryKeywords": [
+        "camp lejeune housing",
+        "va loan camp lejeune",
+        "jacksonville nc military housing",
+        "mcas new river housing",
+        "buying a home near camp lejeune"
+      ],
       "h2Outline": [
         "Current Camp Lejeune Area Housing Market Analysis",
         "VA Loan Advantages for Camp Lejeune Military Families",
@@ -449,8 +573,13 @@
       "description": "Relocating to Joint Base San Antonio (JBSA) for a Permanent Change of Station (PCS) is a significant transition, especially when purchasing a home in a new city. Finding the right home while balancing military timelines, VA loan benefits...",
       "publishedAt": "2024-05-09T19:01:09.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "how to buy a home during a pcs move to san antonio",
+      "secondaryKeywords": [
+        "best neighborhoods near jbsa for military families buying a home",
+        "best realtor for remote home buying during pcs to san antonio",
+        "best realtor for active duty military buying first home near jbsa",
+        "buying a home near joint base san antonio"
+      ],
       "h2Outline": [
         "1. Work with a Military-Friendly Real Estate Agent",
         "2. Take Advantage of VA Loan Benefits",
@@ -469,8 +598,14 @@
       "description": "For many military service members, veterans, and military families, the VA loan is one of the most powerful tools for achieving homeownership. But one of the most common—and costly—misconceptions about the VA loan is this:",
       "publishedAt": "2025-04-15T23:30:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "can you use the va loan more than once",
+      "secondaryKeywords": [
+        "va loan entitlement",
+        "second va loan",
+        "va loan multiple times",
+        "using va loan after pcs",
+        "two va loans at the same time"
+      ],
       "h2Outline": [
         "What Is the VA Loan Entitlement?",
         "Can You Use the VA Loan More Than Once?",
@@ -490,8 +625,14 @@
       "description": "Castle Rock, Colorado, stands as a beacon of community success, recognized nationally for its excellence in living standards, safety, and overall quality of life. For luxury home buyers seeking an escape from the hustle and bustle of Den...",
       "publishedAt": "2024-02-28T01:37:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "castle rock colorado luxury homes",
+      "secondaryKeywords": [
+        "best places to live near denver",
+        "castle rock co community",
+        "moving to castle rock colorado",
+        "castle rock quality of life",
+        "luxury real estate castle rock"
+      ],
       "h2Outline": [
         "Introduction",
         "Key Highlights of Castle Rock",
@@ -506,8 +647,14 @@
       "description": "Moving to a new duty station can be an exciting yet stressful experience—one that comes with a lot of big decisions. According to Military OneSource, nearly 700,000 service members undergo PCS moves annually, making relocation choices a ...",
       "publishedAt": "2025-09-26T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "best pcs relocation method",
+      "secondaryKeywords": [
+        "personally procured move ppm",
+        "military movers vs ppm",
+        "hybrid pcs move",
+        "pcs move options",
+        "pcs moving guide"
+      ],
       "h2Outline": [
         "1. Full PPM Option #1: Rental Equipment",
         "2. Full PPM Option #2: Portable Containers & Freight Services",
@@ -525,8 +672,14 @@
       "description": "Moving to a new duty station can feel overwhelming, especially when you have children who are active in sports and activities. As a military veteran and local real estate expert, I've helped countless families transition to the Fort Camp...",
       "publishedAt": "2025-01-16T16:57:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "fort campbell pcs guide",
+      "secondaryKeywords": [
+        "clarksville tn military families",
+        "moving to fort campbell",
+        "fort campbell youth sports",
+        "things to do near fort campbell",
+        "fort campbell housing"
+      ],
       "h2Outline": [
         "Youth Sports Programs: Keeping Kids Active and Engaged",
         "Family-Friendly Activities: Making the Most of Your Time in Clarksville",
@@ -544,8 +697,14 @@
       "description": "Buying your first home as a service member or veteran represents more than a financial milestone—it's a chance to build stability for your family, regardless of future PCS moves. The VA Loan program offers unmatched benefits that can sav...",
       "publishedAt": "2025-06-20T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "buying your first home with a va loan",
+      "secondaryKeywords": [
+        "va loan first time home buyer",
+        "va loan home buying guide",
+        "va loan benefits",
+        "va loan process",
+        "zero down va loan"
+      ],
       "h2Outline": [
         "Understanding Your VA Loan Advantages",
         "Step 1: Secure Your Certificate of Eligibility (COE)",
@@ -569,8 +728,14 @@
       "description": "If you just received PCS orders to Scott Air Force Base or you are transitioning out of the military and looking for an affordable place to put down roots, St. Louis deserves a serious look. While housing costs across much of the country...",
       "publishedAt": "2026-03-26T22:59:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "cost of living in st louis for military families",
+      "secondaryKeywords": [
+        "scott air force base housing",
+        "st louis bah",
+        "moving to st louis military",
+        "affordable cities for military families",
+        "st louis military pcs"
+      ],
       "h2Outline": []
     },
     {
@@ -581,8 +746,14 @@
       "description": "The landscape of Castle Rock's luxury real estate market is experiencing a transformative moment. With the highly anticipated Costco warehouse store breaking ground in the Crystal Valley development near the new I-25 interchange, sophist...",
       "publishedAt": "2025-07-18T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "crystal valley castle rock costco",
+      "secondaryKeywords": [
+        "castle rock luxury real estate",
+        "crystal valley development",
+        "costco castle rock co",
+        "castle rock home values",
+        "i-25 interchange castle rock"
+      ],
       "h2Outline": [
         "The Anchor Store Phenomenon: Understanding Real Estate Value Drivers",
         "Crystal Valley Development: A Comprehensive Market Analysis",
@@ -603,8 +774,13 @@
       "description": "Castle Rock, Colorado, is on the brink of a significant transformation with the introduction of the Dawson Trails development. This major project promises to enhance the town's appeal, particularly for those seeking luxury homes. Here's ...",
       "publishedAt": "2024-05-20T16:46:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "dawson trails castle rock",
+      "secondaryKeywords": [
+        "dawson trails development castle rock",
+        "dawson trails",
+        "castle rock co new development",
+        "castle rock luxury homes"
+      ],
       "h2Outline": [
         "The Dawson Trails Development",
         "Benefits of Living in Castle Rock",
@@ -621,8 +797,14 @@
       "description": "For military families and civilian employees relocating to Hill Air Force Base (HAFB), finding the right community to call home is an essential part of the transition. Located in Davis County, Utah, Hill AFB is surrounded by a mix of vib...",
       "publishedAt": "2024-05-10T02:21:27.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "hill afb housing",
+      "secondaryKeywords": [
+        "hill afb utah",
+        "military housing utah",
+        "apartments near hill afb utah",
+        "best places to live near hill afb",
+        "davis county utah military"
+      ],
       "h2Outline": [
         "Hill Air Force Base: A Strong Military Community",
         "Top 4 Cities Near Hill AFB for Military Families",
@@ -639,8 +821,13 @@
       "description": "Welcome to a Community That Honors Service",
       "publishedAt": "2024-01-10T01:51:10.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "military-friendly communities in panama city florida",
+      "secondaryKeywords": [
+        "panama city florida military relocation",
+        "best neighborhoods for military families panama city",
+        "moving to panama city fl military",
+        "panama city fl pcs"
+      ],
       "h2Outline": []
     },
     {
@@ -651,8 +838,13 @@
       "description": "The VA Loan, backed by the U.S. Department of Veterans Affairs, is a mortgage option available to veterans, active-duty service members, and eligible surviving spouses. With competitive interest rates, flexible qualification criteria, an...",
       "publishedAt": "2024-01-02T14:55:50.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "are va loans good",
+      "secondaryKeywords": [
+        "average va loan interest rate",
+        "are va loan rates competitive",
+        "are va loans fixed rates",
+        "va loan vs conventional rates"
+      ],
       "h2Outline": [
         "Understanding the VA Loan and Its Benefits",
         "How VA Loan Rates Compare to Other Mortgage Options",
@@ -671,13 +863,110 @@
       "description": "Castle Rock, Colorado, not only boasts a serene and picturesque setting but also an exceptional education system that stands as a cornerstone of the community. For affluent home buyers considering a move from the bustling tech center of ...",
       "publishedAt": "2024-02-29T01:40:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "castle rock co schools",
+      "secondaryKeywords": [
+        "douglas county school district",
+        "best schools castle rock colorado",
+        "castle rock private schools",
+        "moving from denver to castle rock"
+      ],
       "h2Outline": [
         "Introduction",
         "Key Features of Castle Rock's School System",
         "Why Castle Rock Appeals to Affluent Families",
         "Conclusion"
+      ]
+    },
+    {
+      "slug": "florida-cost-of-living-military-bases-bah",
+      "title": "Florida Cost of Living by Military Base: How Far Does Your BAH Stretch?",
+      "url": "/blog/florida-cost-of-living-military-bases-bah",
+      "component": "Financial Guidance",
+      "description": "Real 2026 BAH rates compared to real rents and home prices at every major Florida base, plus the tax math that puts more in your pocket.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "florida military bah cost of living",
+      "secondaryKeywords": [
+        "macdill afb bah 2026",
+        "nas jacksonville bah",
+        "eglin afb cost of living",
+        "florida military housing affordability",
+        "pensacola military bah"
+      ],
+      "h2Outline": [
+        "Why Florida Works Financially for Military Families",
+        "Look Up Your Exact 2026 BAH First",
+        "Florida BAH vs Rent at the Major Bases (2026, E-5 with Dependents)",
+        "MacDill AFB (Tampa)",
+        "Eglin AFB and Hurlburt Field (Niceville / Fort Walton Beach)",
+        "NAS Jacksonville and NS Mayport",
+        "NAS Pensacola",
+        "Patrick SFB (Cocoa Beach / Melbourne)",
+        "NAS Key West",
+        "What Florida's Tax Picture Means for Your Paycheck",
+        "Rent vs Buy: How to Decide",
+        "Other Florida Bases Worth Mentioning",
+        "Hidden Costs Most Newcomers Underestimate",
+        "Your Next Three Steps"
+      ]
+    },
+    {
+      "slug": "florida-schools-military-children-guide",
+      "title": "Florida's Best Schools for Military Children: A Base-by-Base Guide",
+      "url": "/blog/florida-schools-military-children-guide",
+      "component": "PCS Help",
+      "description": "A PCS parent's guide to the best-rated Florida public schools near MacDill, Eglin/Hurlburt, NAS Jacksonville, NAS Pensacola, and Patrick SFB.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "florida schools military children",
+      "secondaryKeywords": [
+        "schools near macdill afb",
+        "schools near nas jacksonville",
+        "schools near eglin afb",
+        "interstate compact military children",
+        "florida military families schools"
+      ],
+      "h2Outline": [
+        "How Florida Grades Its Schools",
+        "The Interstate Compact: Your Built-In Safety Net",
+        "DoDEA in Florida",
+        "Base-by-Base: Where Military Families Actually Send Their Kids",
+        "Special Education, IEPs, and Gifted Programs",
+        "School Choice: Charters, Virtual, and Scholarships",
+        "Where Your Real Estate Agent Comes In",
+        "Your Pre-PCS School Checklist"
+      ]
+    },
+    {
+      "slug": "florida-va-loan-benefits-hidden-savings",
+      "title": "Florida VA Loan Benefits: Hidden Savings Most Veterans Miss",
+      "url": "/blog/florida-va-loan-benefits-hidden-savings",
+      "component": "VA Loan Help",
+      "description": "Most veterans know the VA loan benefit, but Florida layers homestead, disabled veteran, and Save Our Homes tax savings on top. Often worth thousands a year.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "florida va loan benefits",
+      "secondaryKeywords": [
+        "florida homestead exemption veterans",
+        "florida disabled veteran property tax exemption",
+        "va loan florida funding fee",
+        "save our homes amendment",
+        "florida veteran homebuyer"
+      ],
+      "h2Outline": [
+        "The VA Loan Basics, in Plain English",
+        "Florida Benefit #1: The Homestead Exemption",
+        "Florida Benefit #2: Save Our Homes 3 Percent Cap",
+        "Florida Benefit #3: Portability",
+        "Florida Benefit #4: Disabled Veteran Property Tax Exemptions",
+        "Florida Benefit #5: No State Income Tax",
+        "Federal Benefit That Pairs With Florida: Funding Fee Waiver",
+        "How the Florida Benefits Stack",
+        "A Real Stack: How One Family Layered It",
+        "Florida Closing Costs to Watch",
+        "Filing Order: When to Do What",
+        "How Florida Compares to Other Veteran-Friendly States",
+        "Key Takeaways"
       ]
     },
     {
@@ -688,8 +977,13 @@
       "description": "From the VeteranPCS Team",
       "publishedAt": "2026-03-14T03:19:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "things to do near tinker afb",
+      "secondaryKeywords": [
+        "family activities oklahoma city",
+        "date night ideas oklahoma city",
+        "tinker afb pcs",
+        "weekend trips from oklahoma city"
+      ],
       "h2Outline": [
         "Family-Friendly Fun in Oklahoma City",
         "Date Night and Couples Activities Near Tinker AFB",
@@ -706,8 +1000,14 @@
       "description": "The Greater Phoenix Valley continues to attract military veterans and active-duty service members at every career stage. From those currently stationed at Luke Air Force Base to highly skilled veterans transitioning into civilian leaders...",
       "publishedAt": "2026-03-02T15:40:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "military veterans phoenix valley",
+      "secondaryKeywords": [
+        "luke afb pcs",
+        "moving to phoenix military",
+        "phoenix military movers",
+        "veteran tax benefits arizona",
+        "best phoenix suburbs for veterans"
+      ],
       "h2Outline": [
         "Tax Advantages That Benefit Military Households",
         "A Strong Job Market for Experienced Veterans",
@@ -722,9 +1022,15 @@
       "component": "VA Loan Help",
       "description": "The VA loan program offers one of the most beneficial home financing options for eligible service members, veterans, and surviving spouses. With no down payment requirement, competitive interest rates, and no private mortgage insurance (...",
       "publishedAt": "2024-01-02T15:44:22.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "va home loan 0 down",
+      "secondaryKeywords": [
+        "va loan 0% down requirements",
+        "va loan no down payment",
+        "minimum down payment for a va loan",
+        "va loan funding fee",
+        "zero down va loan"
+      ],
       "h2Outline": []
     },
     {
@@ -735,8 +1041,13 @@
       "description": "Castle Rock has grown significantly in popularity over the years. And with growing popularity comes a natural increase in cost of living, especially home prices. But what does that cost of living look like for those considering moving to...",
       "publishedAt": "2024-10-23T00:21:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "how expensive is castle rock co",
+      "secondaryKeywords": [
+        "castle rock co home prices",
+        "cost of living castle rock colorado",
+        "castle rock real estate market",
+        "new construction homes castle rock"
+      ],
       "h2Outline": []
     },
     {
@@ -747,8 +1058,14 @@
       "description": "The luxury real estate landscape in Castle Rock, Colorado is experiencing a transformative moment. With the highly anticipated opening of Costco at the new Crystal Valley interchange on I-25, discerning homeowners and investors are witne...",
       "publishedAt": "2025-08-04T17:42:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "castle rock luxury homes",
+      "secondaryKeywords": [
+        "crystal valley castle rock",
+        "castle rock colorado real estate",
+        "castle rock home values",
+        "new costco castle rock",
+        "colorado luxury real estate market"
+      ],
       "h2Outline": [
         "The Crystal Valley Development: A Game-Changer for Castle Rock Real Estate",
         "Castle Rock's Luxury Market Dynamics: Current Trends and Opportunities",
@@ -766,8 +1083,14 @@
       "description": "How to Become a Real Estate Agent After the Military",
       "publishedAt": "2022-06-22T03:36:02.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "how to become a real estate agent after the military",
+      "secondaryKeywords": [
+        "veterans in real estate",
+        "real estate career for military veterans",
+        "veteran real estate internship",
+        "military transition to real estate",
+        "real estate license after military"
+      ],
       "h2Outline": [
         "How to Become a Real Estate Agent After the Military"
       ]
@@ -780,8 +1103,14 @@
       "description": "Permanent Change of Station (PCS) moves are among the most challenging aspects of military life. Whether you're relocating CONUS or preparing for an OCONUS assignment, finding the right home quickly and efficiently can make or break your...",
       "publishedAt": "2025-06-09T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "military pcs real estate agent",
+      "secondaryKeywords": [
+        "how to choose a real estate agent",
+        "military relocation specialist",
+        "pcs move real estate",
+        "va loan agent",
+        "military friendly realtor"
+      ],
       "h2Outline": [
         "Why Military Families Need Specialized Real Estate Agents",
         "Essential Qualities to Look for in Your Military Real Estate Agent",
@@ -800,8 +1129,14 @@
       "description": "Understanding Seller Concessions and Their Benefits",
       "publishedAt": "2024-01-18T16:14:45.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "negotiating seller to pay closing costs",
+      "secondaryKeywords": [
+        "va loan seller concessions",
+        "conventional loan seller concessions",
+        "how to negotiate closing costs",
+        "seller concessions limits",
+        "lower closing costs"
+      ],
       "h2Outline": []
     },
     {
@@ -812,8 +1147,14 @@
       "description": "Understanding the Current Real Estate Market",
       "publishedAt": "2024-01-19T15:31:09.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "how to navigate the real estate market",
+      "secondaryKeywords": [
+        "finding a real estate bargain",
+        "real estate tips for veterans",
+        "homebuying strategies for military families",
+        "working with a real estate agent",
+        "va loan home shopping"
+      ],
       "h2Outline": []
     },
     {
@@ -824,9 +1165,42 @@
       "description": "How Veterans Can Save on Their Home with a 2-1 Interest Rate Buy Down",
       "publishedAt": "2024-01-18T15:29:09.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "2-1 interest rate buy down",
+      "secondaryKeywords": [
+        "can you buy down a va loan rate",
+        "2-1 buydown va loan",
+        "mortgage rate buydown for veterans",
+        "va loan interest rate",
+        "how does a 2-1 buydown work"
+      ],
       "h2Outline": []
+    },
+    {
+      "slug": "hurricane-prep-military-families-florida",
+      "title": "Hurricane Season Prep for Military Families in Florida: A New Resident Guide",
+      "url": "/blog/hurricane-prep-military-families-florida",
+      "component": "PCS Help",
+      "description": "A calm, plain-language hurricane season guide for military families new to Florida: insurance, evacuation, base HURCONs, and a real prep checklist.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "florida hurricane prep military",
+      "secondaryKeywords": [
+        "hurricane insurance military families",
+        "hurcon conditions",
+        "florida evacuation military",
+        "flood insurance military",
+        "florida pcs hurricane season"
+      ],
+      "h2Outline": [
+        "When Hurricane Season Actually Runs",
+        "How Florida Bases Talk About Storms: HURCON Levels",
+        "Windstorm Insurance: Not Always Included",
+        "Flood Insurance Is a Separate Policy. Always.",
+        "Evacuation Orders, TLE, and What the Military Pays For",
+        "A Real Prep Checklist You Can Actually Use",
+        "What If You Are PCSing Mid-Season?",
+        "The Bottom Line"
+      ]
     },
     {
       "slug": "interest-rates-are-falling-heres-what-homebuyers-need-to-know",
@@ -836,8 +1210,14 @@
       "description": "What Happens When Interest Rates Drop?",
       "publishedAt": "2024-01-18T16:27:52.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "falling interest rates for homebuyers",
+      "secondaryKeywords": [
+        "mortgage rates dropping",
+        "homebuyer purchasing power",
+        "refinancing when rates fall",
+        "housing demand and interest rates",
+        "2024 mortgage rate forecast"
+      ],
       "h2Outline": []
     },
     {
@@ -848,8 +1228,14 @@
       "description": "A Permanent Change of Station (PCS) move brings unique challenges for military families, especially when children are involved. Moving to a new home, adjusting to different schools, and making new friends can be overwhelming for kids. Ho...",
       "publishedAt": "2024-04-23T18:02:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs move with children",
+      "secondaryKeywords": [
+        "military families moving with kids",
+        "school selection tips for pcs",
+        "helping military kids adjust to a move",
+        "pcs transition for children",
+        "mistakes to avoid pcs with kids"
+      ],
       "h2Outline": [
         "Talking to Your Children About the PCS Move",
         "Helping Children Adjust to Their New Environment",
@@ -866,9 +1252,15 @@
       "component": "PCS Help",
       "description": "When Uncle Sam makes the call, it's time to move. Every year, over 400,000 service members undergo a Permanent Change of Station (PCS) move, relocating to a new duty station.",
       "publishedAt": "2022-09-20T14:38:39.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "differences between conus and oconus pcs military",
+      "secondaryKeywords": [
+        "pcs move meaning",
+        "difference between conus and oconus pcs",
+        "permanent change of station",
+        "choosing a duty station",
+        "military pcs guide"
+      ],
       "h2Outline": [
         "What Is a Military PCS Move?",
         "When Is Military PCS Season?",
@@ -884,9 +1276,15 @@
       "component": "PCS Help",
       "description": "Introduction",
       "publishedAt": "2024-04-23T13:39:00.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "temporary military housing",
+      "secondaryKeywords": [
+        "temporary housing for military families",
+        "ahrn temporary lodging during pcs",
+        "tlf meaning military",
+        "temporary housing during pcs move",
+        "on-base lodging pcs"
+      ],
       "h2Outline": [
         "Introduction",
         "Temporary Housing Options",
@@ -903,8 +1301,14 @@
       "description": "For military families, pets are more than just animals—they are cherished members of the household. When it comes to a Permanent Change of Station (PCS) move, ensuring their safety and well-being requires careful planning and an understa...",
       "publishedAt": "2024-04-23T18:14:55.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs move with pets",
+      "secondaryKeywords": [
+        "military pet transport options",
+        "pcs pet requirements vet records",
+        "moving pets during military relocation",
+        "pet safety during pcs",
+        "international pcs with pets"
+      ],
       "h2Outline": [
         "Key Considerations for PCSing with Pets",
         "Choosing the Best Travel Option for Your Pet",
@@ -922,8 +1326,14 @@
       "description": "Douglas County has officially approved a massive development project, Dawson Trails, which includes nearly 6,000 residential homes, restaurants, parks, trails, a medical campus, and the highly anticipated addition of a Costco.",
       "publishedAt": "2024-12-04T01:22:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "dawson trails castle rock",
+      "secondaryKeywords": [
+        "new costco castle rock co",
+        "castle rock co development",
+        "castle rock home values",
+        "douglas county dawson trails",
+        "crystal valley castle rock"
+      ],
       "h2Outline": [
         "How Costco Impacts Castle Rock's Home Values",
         "Dawson Trails: A Master-Planned Community",
@@ -940,8 +1350,14 @@
       "description": "Understanding Builder-Advertised Low Interest Rates: What Military Homebuyers Need to Know",
       "publishedAt": "2024-12-10T18:12:34.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "is 4.99 a good mortgage rate",
+      "secondaryKeywords": [
+        "home builders offering low interest rates",
+        "4.5 mortgage rate",
+        "builder rate buy down",
+        "va loan low interest rate",
+        "new home builder financing"
+      ],
       "h2Outline": []
     },
     {
@@ -951,9 +1367,15 @@
       "component": "PCS Help",
       "description": "I often get questions about how new home builders advertise low interest rates like 4.99%, 4.5%, or even 4%.",
       "publishedAt": "2025-01-19T00:06:00.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "builders offering low interest rates",
+      "secondaryKeywords": [
+        "mortgage rate buy down",
+        "builder financing incentives",
+        "new construction interest rates",
+        "home builder rate promotions",
+        "forward commitment mortgage"
+      ],
       "h2Outline": []
     },
     {
@@ -964,8 +1386,14 @@
       "description": "Looking for a luxury, custom-built home with impeccable views in Castle Rock, Colorado? Look no further. Signature - Crystal Valley is a small and rare opportunity with views that will take your breath away.",
       "publishedAt": "2025-01-18T23:49:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "semi custom homes castle rock co",
+      "secondaryKeywords": [
+        "signature crystal valley castle rock",
+        "luxury homes castle rock colorado",
+        "workshop colorado homes",
+        "new construction castle rock",
+        "crystal valley community homes"
+      ],
       "h2Outline": []
     },
     {
@@ -976,8 +1404,14 @@
       "description": "From the VeteranPCS Team\nUpdated May 2025",
       "publishedAt": "2025-05-03T03:07:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "offutt afb pcs guide",
+      "secondaryKeywords": [
+        "is offutt afb a good base",
+        "pcs to omaha nebraska",
+        "offutt air force base housing",
+        "moving to offutt afb",
+        "offutt afb schools"
+      ],
       "h2Outline": [
         "TL;DR: Offutt AFB offers a lower cost of living than many military installations, strong schools, and a welcoming community in the Omaha area. The base is experiencing growth with the recent activation of the 95th Wing and continued flood recovery improvements. This guide covers housing, schools, healthcare, recreation, and insider tips to make your PCS transition smoother.",
         "What's New at Offutt in 2025",
@@ -1002,8 +1436,14 @@
       "description": "From the VeteranPCS Team",
       "publishedAt": "2026-03-10T03:13:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "oklahoma property tax exemption for disabled veterans",
+      "secondaryKeywords": [
+        "100 percent disabled veteran oklahoma",
+        "oklahoma homestead exemption veterans",
+        "form 998 oklahoma",
+        "oklahoma department of veterans affairs",
+        "service-connected disability property tax"
+      ],
       "h2Outline": [
         "Who Qualifies for the Oklahoma Property Tax Exemption",
         "Step 1: Register with the Oklahoma Department of Veterans Affairs",
@@ -1023,8 +1463,14 @@
       "description": "Arizona is a prime destination for active-duty military personnel and veterans. With its many military bases, tax-free military pay, outdoor recreation opportunities, and military-friendly communities, Arizona provides a welcoming enviro...",
       "publishedAt": "2023-11-14T05:22:06.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs to arizona",
+      "secondaryKeywords": [
+        "military bases in arizona",
+        "arizona military-friendly communities",
+        "moving to arizona active duty",
+        "arizona va loan",
+        "arizona cost of living military"
+      ],
       "h2Outline": [
         "Military Bases in Arizona",
         "Tax-Free Military Pay in Arizona",
@@ -1043,8 +1489,14 @@
       "description": "Receiving orders to Charleston, South Carolina? You're in for a treat! This comprehensive guide helps military families navigate their Permanent Change of Station (PCS) to Joint Base Charleston or Naval Weapons Station Charleston. From h...",
       "publishedAt": "2025-05-23T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs to charleston sc",
+      "secondaryKeywords": [
+        "military bases near charleston sc",
+        "joint base charleston housing",
+        "naval weapons station charleston",
+        "charleston military family guide",
+        "charleston neighborhoods for military"
+      ],
       "h2Outline": [
         "What Makes Charleston Special for Military Families",
         "Military Installations in Charleston",
@@ -1064,8 +1516,14 @@
       "description": "Receiving PCS orders to Central Florida? Polk County might be the perfect home base for your military family. Strategically positioned between major installations and offering substantial housing value, this growing region provides an id...",
       "publishedAt": "2025-05-27T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs to polk county florida",
+      "secondaryKeywords": [
+        "polk county military families",
+        "macdill afb housing",
+        "central florida military bases",
+        "polk county homes for military",
+        "pcs to central florida"
+      ],
       "h2Outline": [
         "Strategic Location for Military Commuters",
         "Maximizing Your BAH and VA Loan Benefits",
@@ -1084,8 +1542,14 @@
       "description": "If you just received orders to Fort Eisenhower (formerly Fort Gordon), welcome to the Augusta area. PCS moves can feel overwhelming, especially when you are relocating to a new state and trying to figure out where to live, what the area ...",
       "publishedAt": "2026-04-15T03:23:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs to fort eisenhower",
+      "secondaryKeywords": [
+        "fort gordon to fort eisenhower",
+        "fort eisenhower housing",
+        "augusta georgia military families",
+        "fort eisenhower va loan",
+        "buying a home before pcs to fort eisenhower"
+      ],
       "h2Outline": [
         "What Is Fort Eisenhower and Why Are You Going There?",
         "You Do Not Have to Live Right Outside the Gate",
@@ -1108,8 +1572,14 @@
       "description": "Receiving orders to Fort Leavenworth means you're headed to what's known as the \"Intellectual Center of the Army\" - a historic installation with a strong sense of community and tradition. Whether this is your first Permanent Change of St...",
       "publishedAt": "2025-05-30T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs to fort leavenworth",
+      "secondaryKeywords": [
+        "fort leavenworth housing",
+        "fort leavenworth military families",
+        "kansas city military bases",
+        "fort leavenworth schools",
+        "moving to leavenworth kansas"
+      ],
       "h2Outline": [
         "Understanding Fort Leavenworth: Location and Mission",
         "Housing Options: On-Post vs. Off-Post Living",
@@ -1130,8 +1600,14 @@
       "description": "Relocating to Hawaii during a Permanent Change of Station (PCS) is both exciting and challenging. The idea of living in paradise is appealing, but navigating Hawaii’s real estate market requires careful planning. Property values are high...",
       "publishedAt": "2024-07-15T20:59:07.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "buying a home pcs hawaii",
+      "secondaryKeywords": [
+        "pcs to hawaii real estate",
+        "hawaii va loan",
+        "pcs oahu real estate",
+        "schofield barracks housing",
+        "hawaii real estate market military"
+      ],
       "h2Outline": []
     },
     {
@@ -1142,8 +1618,14 @@
       "description": "Updated May 2025",
       "publishedAt": "2025-05-08T22:37:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs to hawaii with pets",
+      "secondaryKeywords": [
+        "hawaii pet quarantine military",
+        "moving pets to hawaii military",
+        "hawaii direct release program pets",
+        "hawaii pet import requirements",
+        "pcs hawaii with dogs and cats"
+      ],
       "h2Outline": [
         "Understanding Hawaii's Strict Quarantine Laws: Why They Exist",
         "Step-by-Step Timeline for PCS Pet Relocation to Hawaii",
@@ -1163,8 +1645,14 @@
       "description": "Receiving PCS orders to Luke Air Force Base or planning to retire in the Phoenix area? The West Valley offers a perfect blend of desert sunshine, family-friendly neighborhoods, and a strong military community. This guide provides essenti...",
       "publishedAt": "2025-05-01T22:59:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs to luke afb",
+      "secondaryKeywords": [
+        "luke afb housing",
+        "phoenix west valley neighborhoods",
+        "luke air force base glendale",
+        "air force base near surprise arizona",
+        "luke afb military community"
+      ],
       "h2Outline": [
         "Luke Air Force Base: Your New Duty Station",
         "Top West Valley Neighborhoods for Military Families",
@@ -1185,8 +1673,14 @@
       "description": "Facing a Permanent Change of Station (PCS) to one of San Antonio's military installations? New Braunfels, Texas might be your ideal off-base community. Located between San Antonio and Austin, this charming town offers military families t...",
       "publishedAt": "2025-05-19T16:45:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs to new braunfels",
+      "secondaryKeywords": [
+        "joint base san antonio housing",
+        "new braunfels texas military",
+        "san antonio military bases",
+        "new braunfels homes for veterans",
+        "moving to new braunfels military"
+      ],
       "h2Outline": [
         "Strategic Location for Military Families",
         "Small-Town Living with Big Amenities",
@@ -1207,8 +1701,14 @@
       "description": "Receiving PCS orders to Wichita Falls, Texas brings exciting opportunities for military families stationed at Sheppard Air Force Base. Beyond finding the right home, understanding the robust support systems and community resources can tr...",
       "publishedAt": "2025-05-16T00:10:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs to wichita falls",
+      "secondaryKeywords": [
+        "sheppard air force base housing",
+        "sheppard afb military families",
+        "wichita falls texas military community",
+        "moving to wichita falls",
+        "sheppard afb schools"
+      ],
       "h2Outline": [
         "Understanding Sheppard AFB: Your New Military Community",
         "Finding Your Ideal Home in Wichita Falls",
@@ -1228,8 +1728,14 @@
       "description": "PCS season can be stressful—but when you're moving with kids, that stress can multiply fast. From emotional goodbyes to disrupted routines, a military move can feel chaotic for the whole family. But with proper planning and the right sup...",
       "publishedAt": "2025-05-20T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs with kids",
+      "secondaryKeywords": [
+        "military move with children",
+        "pcs season with kids",
+        "moving with kids military family",
+        "pcs tips for military kids",
+        "helping kids cope with pcs move"
+      ],
       "h2Outline": [
         "1. Create a \"Move Day Bag\" for Each Child",
         "2. Let Each Child Decorate Their Own Moving Box",
@@ -1251,9 +1757,15 @@
       "component": "PCS Help",
       "description": "When it comes to Permanent Change of Station (PCS) moves, relocating overseas presents a unique set of challenges for military personnel and their families. One of the key considerations is what to do with your home while you are station...",
       "publishedAt": "2024-12-18T13:53:00.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "oconus meaning military",
+      "secondaryKeywords": [
+        "renting out home while stationed overseas",
+        "property management",
+        "oconus",
+        "selling home before pcs",
+        "landlord"
+      ],
       "h2Outline": [
         "Understanding the challenges of PCSing OCONUS",
         "Renting vs. Selling: Exploring the options for your home",
@@ -1269,8 +1781,14 @@
       "description": "Navigating a PCS Move with Confidence",
       "publishedAt": "2024-04-23T17:13:16.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcsing to another state",
+      "secondaryKeywords": [
+        "veteran real estate agents",
+        "va loan",
+        "pcs move",
+        "home sale",
+        "military relocation"
+      ],
       "h2Outline": []
     },
     {
@@ -1281,8 +1799,14 @@
       "description": "If you are PCSing to Camp Lejeune or MCAS New River, you are headed into the heart of Onslow County, one of the most military-connected communities in the country. Jacksonville, North Carolina, is the primary support city for both instal...",
       "publishedAt": "2026-04-17T15:20:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcsing to camp lejeune",
+      "secondaryKeywords": [
+        "onslow county",
+        "mcas new river",
+        "jacksonville nc",
+        "camp lejeune bah",
+        "north carolina va loan"
+      ],
       "h2Outline": [
         "What You Are Walking Into: Camp Lejeune and MCAS New River",
         "Where to Live: You Have More Options Than You Think",
@@ -1297,15 +1821,74 @@
       ]
     },
     {
+      "slug": "pcsing-to-eglin-hurlburt-field-northwest-florida-guide",
+      "title": "PCSing to Eglin or Hurlburt Field: The Northwest Florida Military Guide",
+      "url": "/blog/pcsing-to-eglin-hurlburt-field-northwest-florida-guide",
+      "component": "PCS Help",
+      "description": "Your friendly guide to PCSing to Eglin AFB or Hurlburt Field. Real 2026 BAH, neighborhood breakdowns, schools, and what life is like on the Emerald Coast.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "pcs eglin afb",
+      "secondaryKeywords": [
+        "hurlburt field housing",
+        "eglin afb bah 2026",
+        "niceville fl military",
+        "destin military families",
+        "fort walton beach pcs"
+      ],
+      "h2Outline": [
+        "The Two Bases at a Glance",
+        "Your 2026 BAH in the Fort Walton Beach MHA",
+        "Where Military Families Live",
+        "Schools: Two Counties, Both Strong",
+        "The VA Loan in a Florida Coastal Market",
+        "Lifestyle on the Emerald Coast",
+        "A Realistic PCS Timeline",
+        "Why VeteranPCS for Eglin or Hurlburt",
+        "The Bottom Line"
+      ]
+    },
+    {
+      "slug": "pcsing-to-florida-military-bases-2026-guide",
+      "title": "PCSing to Florida in 2026: The Military Family Decision Guide",
+      "url": "/blog/pcsing-to-florida-military-bases-2026-guide",
+      "component": "PCS Help",
+      "description": "How to choose the right Florida military installation for your family in 2026 — region, BAH, schools, hurricane prep, and homestead tax benefits.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "pcs to florida military",
+      "secondaryKeywords": [
+        "florida military bases 2026",
+        "florida pcs guide",
+        "macdill afb pcs",
+        "eglin afb pcs",
+        "florida bah 2026"
+      ],
+      "h2Outline": [
+        "First, Pick a Region — Not a Base",
+        "What Makes Florida Different — and Why It Matters for Your Wallet",
+        "2026 BAH at a Glance: Major Florida Installations",
+        "Should You Rent or Buy in Florida?",
+        "Your First 60 Days: A Florida-Specific PCS Plan",
+        "The Bottom Line"
+      ]
+    },
+    {
       "slug": "pcsing-to-san-diego-top-military-friendly-neighborhoods-and-resources",
       "title": "PCSing to San Diego: Top Military-Friendly Neighborhoods & Resources",
       "url": "/blog/pcsing-to-san-diego-top-military-friendly-neighborhoods-and-resources",
       "component": "PCS Help",
       "description": "Receiving orders to San Diego brings a mix of excitement and questions for military families. With year-round sunshine, diverse neighborhoods, and one of the nation's largest military communities, America's Finest City offers an exceptio...",
       "publishedAt": "2025-05-13T23:42:00.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military friendly apartments san diego",
+      "secondaryKeywords": [
+        "pcsing to san diego",
+        "military friendly neighborhoods san diego",
+        "coronado",
+        "camp pendleton",
+        "san diego bah"
+      ],
       "h2Outline": [
         "Why San Diego Ranks Among the Top Military PCS Destinations",
         "Top 5 Military-Friendly Neighborhoods in San Diego",
@@ -1318,6 +1901,32 @@
       ]
     },
     {
+      "slug": "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
+      "title": "PCSing to Tinker AFB? Avoid These Costly Housing Mistakes",
+      "url": "/blog/pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
+      "component": "PCS Help",
+      "description": "2026 BAH rates, neighborhood guides, VA Loan strategy, and a smart PCS housing plan and timeline for military families headed to Tinker AFB and the OKC metro.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "pcsing to tinker afb",
+      "secondaryKeywords": [
+        "tinker afb housing",
+        "tinker afb bah 2026",
+        "oklahoma city va loan",
+        "midwest city neighborhoods",
+        "tinker afb pcs guide"
+      ],
+      "h2Outline": [
+        "Know Your 2026 BAH Before You Touch Zillow",
+        "Neighborhoods Near Tinker AFB: Where Military Families Actually Live",
+        "On-Base Housing: The Waiting Game You Need to Plan For",
+        "Why the VA Loan Is Even More Powerful at Tinker AFB",
+        "Oklahoma-Specific Financial Advantages for Military Families",
+        "Buying Smart: Your PCS Exit Strategy",
+        "Your 30–60 Day Pre-Arrival Action Plan"
+      ]
+    },
+    {
       "slug": "percheron-colorado-springs-master-planned-community-near-colorado-military-bases",
       "title": "Percheron Master-Planned Community: Your Guide to Colorado Springs' Newest Neighborhood Near Peterson SFB and Fort Carson",
       "url": "/blog/percheron-colorado-springs-master-planned-community-near-colorado-military-bases",
@@ -1325,8 +1934,14 @@
       "description": "Military families stationed at Peterson Space Force Base or Fort Carson face a common challenge: finding a home that balances community amenities, quality schools, and reasonable commute times. Colorado Springs' newest master-planned com...",
       "publishedAt": "2025-10-19T16:14:20.089Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "percheron colorado springs",
+      "secondaryKeywords": [
+        "master-planned community colorado springs",
+        "peterson space force base housing",
+        "fort carson neighborhoods",
+        "new homes near peterson sfb",
+        "colorado springs military housing"
+      ],
       "h2Outline": [
         "What Makes Percheron Different?",
         "Community Amenities: Built for Active Military Families",
@@ -1349,8 +1964,14 @@
       "description": "Moving to a new duty station is a significant transition for military personnel and their families. A Permanent Change of Station (PCS) move requires careful planning to ensure a smooth relocation. One of the most critical steps in this ...",
       "publishedAt": "2024-02-27T17:56:48.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "how to prepare for military movers",
+      "secondaryKeywords": [
+        "pcs moving",
+        "packing for pcs",
+        "military movers",
+        "pcs move checklist",
+        "household goods"
+      ],
       "h2Outline": []
     },
     {
@@ -1360,9 +1981,15 @@
       "component": "PCS Help",
       "description": "What is a PCS?",
       "publishedAt": "2024-02-27T17:25:51.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "pcs benefits",
+      "secondaryKeywords": [
+        "pcs entitlements",
+        "pcs move reimbursement",
+        "dislocation allowance",
+        "per diem",
+        "temporary lodging expense"
+      ],
       "h2Outline": [
         "Eligibility and Application Process for PCS Entitlements",
         "Types of PCS Entitlements and Benefits",
@@ -1380,8 +2007,14 @@
       "description": "Understanding the Importance of Proper Packing for a PCS Move",
       "publishedAt": "2024-02-27T17:39:20.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "what military movers won't pack",
+      "secondaryKeywords": [
+        "pcs prohibited list",
+        "restricted items pcs move",
+        "hazardous materials pcs",
+        "firearms pcs move",
+        "military movers"
+      ],
       "h2Outline": []
     },
     {
@@ -1392,8 +2025,14 @@
       "description": "Moving is often a challenging endeavor, and when it comes to military families, the process of Permanent Change of Station (PCS) takes on a whole new level of complexity. PCS overseas can be particularly daunting, as it involves relocati...",
       "publishedAt": "2024-02-27T13:41:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "overseas pcs",
+      "secondaryKeywords": [
+        "pcsing overseas",
+        "oconus move",
+        "military families moving abroad",
+        "passport and visa",
+        "overseas housing"
+      ],
       "h2Outline": [
         "Understanding the PCS Overseas Process",
         "Researching and Planning for the Move",
@@ -1412,8 +2051,14 @@
       "description": "If you have received Permanent Change of Station (PCS) orders, you are not alone. Every year, nearly 700,000 service members and their families undergo a PCS move. While the term \"permanent\" might be misleading, as moves are often tempor...",
       "publishedAt": "2024-02-27T16:52:30.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "preparing to pcs",
+      "secondaryKeywords": [
+        "out-of-pocket pcs expenses",
+        "pcs orders",
+        "va loan",
+        "temporary housing",
+        "homeowners insurance"
+      ],
       "h2Outline": []
     },
     {
@@ -1424,8 +2069,14 @@
       "description": "As military families, we’re accustomed to the transient nature of our lifestyle. Permanent Change of Station (PCS) orders are part and parcel of our reality, presenting both challenges and opportunities. One such opportunity led me to Bi...",
       "publishedAt": "2024-06-13T11:49:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcsing to birmingham alabama",
+      "secondaryKeywords": [
+        "birmingham military families",
+        "cost of living birmingham",
+        "military spouse employment",
+        "birmingham neighborhoods",
+        "alabama va loan"
+      ],
       "h2Outline": []
     },
     {
@@ -1436,8 +2087,14 @@
       "description": "You've just received orders to paradise—Hawaii. As you picture yourself enjoying breathtaking sunsets and pristine beaches, an important question arises: Should you buy a home during your assignment to the islands?",
       "publishedAt": "2025-05-12T22:32:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "buying a home in hawaii military",
+      "secondaryKeywords": [
+        "hawaii va loan",
+        "hawaii housing market",
+        "active duty homeownership",
+        "oahu military housing",
+        "hawaii bah"
+      ],
       "h2Outline": [
         "The Current Hawaii Housing Market (2025)",
         "The Financial Advantage: BAH and VA Loans in 2025",
@@ -1457,8 +2114,14 @@
       "description": "Understanding the Buy Now, Refinance Later Strategy",
       "publishedAt": "2024-02-06T18:34:53.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "buy now refinance later",
+      "secondaryKeywords": [
+        "refinancing pros and cons",
+        "mortgage refinance closing costs",
+        "refinancing strategy",
+        "mortgage rates",
+        "housing market interest rates"
+      ],
       "h2Outline": []
     },
     {
@@ -1469,8 +2132,14 @@
       "description": "From the VeteranPCS Team",
       "publishedAt": "2026-03-12T03:15:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va loan down payment oklahoma city",
+      "secondaryKeywords": [
+        "zero down payment va loan",
+        "va funding fee",
+        "tinker air force base",
+        "military homebuyers",
+        "oklahoma city home prices"
+      ],
       "h2Outline": [
         "The Zero Down Payment Advantage",
         "When Putting Money Down Could Make Sense",
@@ -1487,8 +2156,14 @@
       "description": "The Luxury Homeowner's Refinancing Dilemma",
       "publishedAt": "2025-08-05T18:03:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "luxury home refinancing castle rock",
+      "secondaryKeywords": [
+        "jumbo loan refinance",
+        "cash out refinance luxury home",
+        "castle rock mortgage rates",
+        "refinance high value home",
+        "luxury homeowner mortgage strategy"
+      ],
       "h2Outline": [
         "The Luxury Homeowner's Refinancing Dilemma",
         "The Art of Strategic Mortgage Management",
@@ -1510,9 +2185,15 @@
       "component": "PCS Help",
       "description": "Receiving orders to Tennessee? You're in for a treat. As a military-friendly state with diverse landscapes, vibrant cities, and significant tax advantages, Tennessee offers an exceptional quality of life for active duty service members, ...",
       "publishedAt": "2025-01-28T00:07:00.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "tennessee military bases",
+      "secondaryKeywords": [
+        "tennessee military bases",
+        "fort campbell",
+        "arnold air force base",
+        "nsa mid-south",
+        "pcs to tennessee"
+      ],
       "h2Outline": [
         "Tennessee's Military Installations: What You Need to Know",
         "Financial Benefits for Military in Tennessee",
@@ -1533,8 +2214,14 @@
       "description": "Introduction: Navigating Castle Rock's Premium New Home Market",
       "publishedAt": "2025-07-16T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "luxury home builders castle rock colorado",
+      "secondaryKeywords": [
+        "new construction homes castle rock",
+        "toll brothers castle rock",
+        "shea homes castle rock",
+        "montaine castle rock",
+        "the canyons castle pines"
+      ],
       "h2Outline": [
         "Introduction: Navigating Castle Rock's Premium New Home Market",
         "Understanding Castle Rock's New Construction Landscape",
@@ -1554,8 +2241,14 @@
       "description": "When it comes to purchasing a new construction home in Castle Rock, CO, some homebuyers might think they can navigate the process on their own. This article is designed to challenge that thought. With numerous risks to navigate throughou...",
       "publishedAt": "2024-07-26T20:46:43.730Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "real estate broker for new construction home",
+      "secondaryKeywords": [
+        "buying a new construction home",
+        "castle rock new construction",
+        "negotiate with the builder",
+        "real estate agent commission",
+        "real estate broker castle rock"
+      ],
       "h2Outline": []
     },
     {
@@ -1565,9 +2258,15 @@
       "component": "Financial Guidance",
       "description": "Military service presents unique financial challenges that can impact your credit score. From frequent PCS moves to deployments overseas, these aspects of military life can make building and maintaining good credit more difficult than it...",
       "publishedAt": "2025-03-31T14:35:00.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "does military star card build credit",
+      "secondaryKeywords": [
+        "military credit building",
+        "va loan credit score",
+        "building credit while deployed",
+        "military credit score",
+        "credit for veterans"
+      ],
       "h2Outline": [
         "Why Military Members Face Unique Credit Challenges",
         "Building Your Credit Foundation While Serving",
@@ -1588,8 +2287,14 @@
       "description": "A Permanent Change of Station (PCS) move can feel overwhelming, especially when faced with the logistics of organizing documents, coordinating transportation, and managing finances—all while ensuring your family’s transition is as smooth...",
       "publishedAt": "2024-04-23T17:22:27.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcs binder",
+      "secondaryKeywords": [
+        "pcs organization",
+        "pcs move documents",
+        "pcs orders",
+        "important documents pcs",
+        "permanent change of station"
+      ],
       "h2Outline": [
         "Why You Need a PCS Binder",
         "What You Need to Create a PCS Binder",
@@ -1605,9 +2310,15 @@
       "component": "U.S. Military Bases",
       "description": "A Permanent Change of Station (PCS) move is one of the most significant transitions for active duty military personnel and their families. Whether you are relocating within the United States or moving overseas, planning ahead is essentia...",
       "publishedAt": "2024-05-09T18:45:35.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "pcs checklist",
+      "secondaryKeywords": [
+        "pcs timeline",
+        "pcs move checklist",
+        "military pcs checklist",
+        "active duty pcs move",
+        "permanent change of station"
+      ],
       "h2Outline": [
         "Pre-Move Checklist (8-12 Weeks Before Move)",
         "1-2 Weeks Before Move",
@@ -1626,8 +2337,14 @@
       "description": "Nestled in the heart of Colorado, Castle Rock embodies the pinnacle of luxury living against the majestic backdrop of the Rocky Mountains. This charming town has emerged as a beacon for affluent homebuyers seeking an exclusive lifestyle ...",
       "publishedAt": "2024-03-01T01:34:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "living in castle rock colorado",
+      "secondaryKeywords": [
+        "castle rock luxury homes",
+        "castle rock real estate",
+        "luxury home buyers castle rock",
+        "castle rock colorado lifestyle",
+        "castle rock luxury living"
+      ],
       "h2Outline": [
         "Key Takeaways",
         "The Luxury Real Estate Market in Castle Rock",
@@ -1645,8 +2362,14 @@
       "description": "Living near Fort Riley offers a surprising mix of history, local charm, and weekend-worthy adventures. Whether you just received PCS orders to the area or have lived in the Flint Hills for years, there are countless nearby destinations t...",
       "publishedAt": "2026-03-03T15:47:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "things to do near fort riley",
+      "secondaryKeywords": [
+        "fort riley kansas",
+        "abilene kansas",
+        "milford lake",
+        "flint hills",
+        "junction city kansas"
+      ],
       "h2Outline": [
         "Abilene: History, Trains, and Comfort Food",
         "Council Grove: Classic Kansas Dining",
@@ -1663,8 +2386,14 @@
       "description": "If you just received orders to Tinker Air Force Base, welcome to Oklahoma. PCSing can feel overwhelming, but with the right information, your transition to the Oklahoma City metro area can be smooth and strategic. From neighborhoods and ...",
       "publishedAt": "2026-02-09T15:25:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "pcsing to tinker afb",
+      "secondaryKeywords": [
+        "tinker air force base",
+        "oklahoma city metro area",
+        "midwest city",
+        "va loan benefits",
+        "tinker afb neighborhoods"
+      ],
       "h2Outline": [
         "Understanding the Area Around Tinker AFB",
         "What the Housing Market Looks Like",
@@ -1680,8 +2409,14 @@
       "description": "If you’re a military member or veteran moving to Spokane, WA, you’re in for a treat. Located in the heart of Eastern Washington, Spokane is home to Fairchild Air Force Base and offers a unique mix of affordability, outdoor adventure, and...",
       "publishedAt": "2024-12-16 18:08:26",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "living in spokane",
+      "secondaryKeywords": [
+        "fairchild air force base",
+        "spokane wa",
+        "military families",
+        "outdoor adventure",
+        "affordable housing"
+      ],
       "h2Outline": [
         "Why Military Families Love Spokane",
         "Top Activities for Military Families in Spokane",
@@ -1697,8 +2432,14 @@
       "description": "Getting PCS orders to Camp Lejeune brings excitement and questions for military families. Located in eastern North Carolina, Marine Corps Base Camp Lejeune serves as home to the largest Marine Corps base on the East Coast. Beyond duty re...",
       "publishedAt": "2025-06-25T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "outdoor activities near camp lejeune",
+      "secondaryKeywords": [
+        "camp lejeune",
+        "military families",
+        "family-friendly",
+        "pcs orders",
+        "hammocks beach state park"
+      ],
       "h2Outline": [
         "Why Outdoor Activities Matter for Military Families",
         "1. Hammocks Beach State Park: Secluded Beach Paradise",
@@ -1720,8 +2461,15 @@
       "description": "Receiving PCS orders to Naval Base Kitsap means finding the perfect community for your military family in the beautiful Pacific Northwest. As a military veteran real estate agent serving the Kitsap Peninsula, I've helped countless servic...",
       "publishedAt": "2025-02-04T01:06:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "communities near naval base kitsap",
+      "secondaryKeywords": [
+        "naval base kitsap",
+        "silverdale",
+        "poulsbo",
+        "bremerton",
+        "military families",
+        "kitsap peninsula"
+      ],
       "h2Outline": [
         "Silverdale: Family-Friendly Convenience",
         "Poulsbo: Scandinavian Charm with Family Appeal",
@@ -1740,8 +2488,14 @@
       "description": "Receiving PCS orders to San Diego is often considered a dream assignment for military families. With year-round perfect weather, 70 miles of pristine beaches, and a deeply military-friendly community, America's Finest City offers an exce...",
       "publishedAt": "2025-05-15T00:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "things to do near san diego military bases",
+      "secondaryKeywords": [
+        "san diego military bases",
+        "naval base san diego",
+        "camp pendleton",
+        "military families",
+        "pcs orders"
+      ],
       "h2Outline": [
         "Naval Base San Diego (32nd Street Naval Station) – Located near Barrio Logan/South Bay",
         "Marine Corps Recruit Depot (MCRD San Diego) – Located near Point Loma and Old Town",
@@ -1761,8 +2515,14 @@
       "description": "Understanding VA loan entitlement and how it impacts your home buying process is essential for veterans and active-duty military personnel. Your Certificate of Eligibility (COE) states your entitlement amount, but what does this really m...",
       "publishedAt": "2023-11-29T16:17:45.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va loan entitlement",
+      "secondaryKeywords": [
+        "tier 2 entitlement",
+        "bonus entitlement",
+        "certificate of eligibility",
+        "basic entitlement",
+        "partial entitlement"
+      ],
       "h2Outline": [
         "What Is VA Loan Entitlement?",
         "Types of VA Loan Entitlement",
@@ -1785,8 +2545,14 @@
       "description": "Planning a PCS move and considering homeownership? The VA funding fee might seem like an unwelcome surprise when you're already juggling military life demands. But understanding this one-time payment can help you make smart financial dec...",
       "publishedAt": "2025-07-23T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va funding fee",
+      "secondaryKeywords": [
+        "va funding fee rates",
+        "funding fee exemptions",
+        "va loan",
+        "military families",
+        "service-connected disability"
+      ],
       "h2Outline": [
         "What is the VA Funding Fee and Why Does It Exist?",
         "Current VA Funding Fee Rates for 2025",
@@ -1810,8 +2576,14 @@
       "description": "AsJohns Hopkins University continues its commitment to excellence and social responsibility, we recognize the unparalleled value that military veterans bring to the dynamic world of commercial real estate. At our recent real estate event...",
       "publishedAt": "2023-12-18T15:15:49.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "veteran leadership in commercial real estate",
+      "secondaryKeywords": [
+        "military veterans",
+        "va loan",
+        "johns hopkins university",
+        "real estate careers",
+        "mission-driven"
+      ],
       "h2Outline": [
         "Take Care of Troops: A Shared Commitment to People",
         "Mission First, People Always: Translating Military Values to Real Estate Success",
@@ -1827,8 +2599,14 @@
       "description": "VeteranPCS recently had the honor of participating in a joint event with the prestigious Johns Hopkins University Carey Business School, dedicated to benefiting veterans and military spouses. The event focused on empowering veterans with...",
       "publishedAt": "2023-12-18T15:22:30.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va loan investment properties",
+      "secondaryKeywords": [
+        "va loan",
+        "johns hopkins university",
+        "va entitlement",
+        "veterans",
+        "military spouses"
+      ],
       "h2Outline": [
         "Exploring the VA Loan",
         "Johns Hopkins University's Perspective",
@@ -1845,8 +2623,14 @@
       "description": "PCS season is expensive enough without overpaying for a mortgage. If you're house hunting in today's high-interest environment, there's a powerful but underutilized strategy that could save your military family thousands: VA loan assumpt...",
       "publishedAt": "2025-06-02T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va loan assumption guide",
+      "secondaryKeywords": [
+        "va loan assumption",
+        "assumption process",
+        "military families",
+        "mortgage rates",
+        "pcs season"
+      ],
       "h2Outline": [
         "What Is a VA Loan Assumption?",
         "Key Benefits for Military Homebuyers",
@@ -1868,8 +2652,14 @@
       "description": "When PCS orders arrive and you're facing today's high mortgage rates, every dollar counts. While most military families focus on traditional VA Loan benefits, there's a lesser-known strategy that could save you thousands: assuming an exi...",
       "publishedAt": "2025-05-16T01:23:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va loan assumption closing costs",
+      "secondaryKeywords": [
+        "assuming a va loan",
+        "va loan assumption",
+        "va entitlement",
+        "military homebuyers",
+        "assumption process"
+      ],
       "h2Outline": [
         "What Is a VA Loan Assumption?",
         "Why Military Families Should Consider VA Loan Assumptions",
@@ -1890,8 +2680,14 @@
       "description": "Planning your next PCS move and considering a VA loan assumption? There's a critical entitlement rule that could make or break your homebuying strategy—and most military families don't know about it until it's too late.",
       "publishedAt": "2025-07-21T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va loan assumption entitlement requirements",
+      "secondaryKeywords": [
+        "va loan assumption",
+        "bonus entitlement",
+        "remaining entitlement",
+        "pcs move",
+        "military homebuyers"
+      ],
       "h2Outline": [
         "How VA Loan Assumptions Work",
         "The Critical Entitlement Rule Most People Miss",
@@ -1912,8 +2708,14 @@
       "description": "VA loan assumptions have become a hot topic in military real estate circles, and for good reason. With mortgage rates significantly higher than they were a few years ago, the idea of taking over someone else's low-interest VA loan sounds...",
       "publishedAt": "2026-02-23T15:36:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va loan assumption pros and cons",
+      "secondaryKeywords": [
+        "va loan assumption",
+        "va entitlement substitution",
+        "assumption timeline",
+        "va funding fee",
+        "military families"
+      ],
       "h2Outline": [
         "What Is a VA Loan Assumption?",
         "The \"Gap\" Replaces the Down Payment",
@@ -1930,9 +2732,14 @@
       "component": "VA Loan Help",
       "description": "Receiving PCS orders often triggers the search for a new home near your next duty station. As you scroll through listings on your phone, it's easy to fall in love with properties that seem perfectly affordable according to online mortgag...",
       "publishedAt": "2025-05-03T23:22:00.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "how accurate are va mortgage calculators",
+      "secondaryKeywords": [
+        "va loan calculator",
+        "online mortgage calculators",
+        "va loan estimate",
+        "va loan calculator mistakes"
+      ],
       "h2Outline": [
         "The Hidden Problem with Online Mortgage Calculators",
         "Breaking Down the Numbers: A Real-World Example",
@@ -1951,8 +2758,14 @@
       "description": "Homeownership is a significant milestone, and for military personnel and veterans, the VA loan program provides a unique opportunity to achieve this goal. With competitive interest rates, no down payment requirements, and a simplified ap...",
       "publishedAt": "2023-11-29T16:04:09.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "how to qualify for a va loan",
+      "secondaryKeywords": [
+        "va loan eligibility requirements",
+        "va loan reserve requirements",
+        "certificate of eligibility",
+        "va loan meaning",
+        "qualifying for a va loan"
+      ],
       "h2Outline": [
         "Eligibility Requirements for VA Home Loans",
         "Certificate of Eligibility (COE)",
@@ -1970,8 +2783,14 @@
       "description": "If you are preparing to buy a home, especially during a PCS move or while planning to use your VA loan, one of the most common questions is: who is actually involved in the process?",
       "publishedAt": "2026-02-16T15:29:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va loan home buying team",
+      "secondaryKeywords": [
+        "va loan mortgage lender",
+        "va loan real estate agent",
+        "va loan home inspector",
+        "va loan title company",
+        "va loan pre-approval"
+      ],
       "h2Outline": [
         "Mortgage Lender",
         "Home Inspector",
@@ -1989,8 +2808,14 @@
       "description": "If you're a veteran or active-duty service member with a VA loan and an interest rate hovering around 6%, 6.5%, or even 7%, you've probably been watching the mortgage market closely. Maybe you've heard that interest rates might drop soon...",
       "publishedAt": "2025-08-11T12:30:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va loan refinance",
+      "secondaryKeywords": [
+        "va irrrl",
+        "interest rate reduction refinance loan",
+        "lock in mortgage rate",
+        "refinance va loan",
+        "va streamline refinance"
+      ],
       "h2Outline": [
         "Why Veterans and Military Families Are Getting Ready to Refinance",
         "The Biggest Mistake VA Loan Holders Make When Rates Fall",
@@ -2009,8 +2834,14 @@
       "description": "CS moves to bases like Camp Lejeune or Camp Pendleton often present a frustrating reality: available homes are outdated, overpriced, or need significant repairs. Traditional VA loans can't finance properties that don't meet the VA's Mini...",
       "publishedAt": "2025-06-30T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va rehab loan",
+      "secondaryKeywords": [
+        "va renovation loan",
+        "va minimum property requirements",
+        "fixer upper va loan",
+        "after-repair value",
+        "va loan repairs"
+      ],
       "h2Outline": [
         "What Is a VA Renovation Loan?",
         "How VA Renovation Loans Work: A Real Example",
@@ -2031,8 +2862,14 @@
       "description": "If researching home loans doesn’t grab your attention like the last season of Ozark, I get it. But let’s be real—Marty Byrde would probably love digging into the fine print of mortgage rates and government-backed loan policies.",
       "publishedAt": "2022-06-22T03:42:37.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va loan vs fha loan",
+      "secondaryKeywords": [
+        "va loan down payment",
+        "fha loan down payment",
+        "first time home buyer va loan",
+        "va versus fha loan",
+        "mortgage insurance"
+      ],
       "h2Outline": [
         "Understanding Government-Backed Loans",
         "🏡 VA Loan: A Benefit You’ve Earned",
@@ -2049,8 +2886,14 @@
       "description": "When military families face the complex process of buying or selling a home during a PCS (Permanent Change of Station) or transition to civilian life, they need more than just a real estate agent—they need someone who understands the uni...",
       "publishedAt": "2025-10-13T20:56:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va loans in castle rock",
+      "secondaryKeywords": [
+        "parker co va loans",
+        "military-friendly real estate agents",
+        "castle rock military real estate",
+        "first-time home buyer in castle rock",
+        "veteran realtor castle rock"
+      ],
       "h2Outline": [
         "From Apache Pilot to Real Estate Leader: Experience That Matters",
         "Why Castle Rock and Parker Appeal to Military Families",
@@ -2073,8 +2916,14 @@
       "description": "Unlocking the Advantages of VA Loan Assumptions",
       "publishedAt": "2024-01-18T15:10:19.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "how to assume a va loan",
+      "secondaryKeywords": [
+        "can a va loan be assumed",
+        "benefits of assuming a va loan",
+        "can a non veteran assume a va loan",
+        "va loan assumption",
+        "va loan entitlement"
+      ],
       "h2Outline": []
     },
     {
@@ -2085,8 +2934,14 @@
       "description": "Planning your next PCS move or considering homeownership as a military family? The VA home loan program remains one of the most powerful financial tools available to service members, veterans, and their families in 2025. With updated loa...",
       "publishedAt": "2025-06-22T18:36:42.811Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "benefits of a va loan",
+      "secondaryKeywords": [
+        "va loan zero down payment",
+        "va loan no pmi",
+        "va loan limits 2025",
+        "va loan interest rates",
+        "va loan funding fee"
+      ],
       "h2Outline": [
         "What Makes VA Loans Game-Changers for Military Families",
         "1. Zero Down Payment Requirement",
@@ -2114,9 +2969,15 @@
       "component": "U.S. Military Bases",
       "description": "Alaska is home to over 30,000 active-duty service members and their families, playing a vital role in national defense and Arctic security. Due to its strategic location, the military presence in Alaska helps protect U.S. interests and a...",
       "publishedAt": "2023-09-26T12:00:00.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in alaska",
+      "secondaryKeywords": [
+        "army bases in alaska",
+        "alaska military bases",
+        "alaska army base",
+        "us bases in alaska",
+        "military installations alaska"
+      ],
       "h2Outline": [
         "List of Military Bases in Alaska",
         "1. Eielson Air Force Base",
@@ -2137,9 +2998,15 @@
       "component": "U.S. Military Bases",
       "description": "Arizona is home to a large and active military community, with over 100,000 active-duty service members, reservists, and National Guard members. The state's military installations play a crucial role in national defense, aviation trainin...",
       "publishedAt": "2023-07-19T14:40:58.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in az",
+      "secondaryKeywords": [
+        "air force bases in arizona",
+        "arizona army bases",
+        "arizona military bases",
+        "military bases in az",
+        "military installations arizona"
+      ],
       "h2Outline": [
         "List of Military Bases in Arizona",
         "1. Barry M. Goldwater Range",
@@ -2159,9 +3026,15 @@
       "component": "U.S. Military Bases",
       "description": "Arkansas is home to over 300,000 veterans, around 5,000 active-duty service members, and over 13,000 National Guard and reserve members. The state's military bases contribute significantly to the local economy, supporting over 20,000 job...",
       "publishedAt": "2023-10-02T21:14:24.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "arkansas army base",
+      "secondaryKeywords": [
+        "arkansas army base",
+        "army base arkansas",
+        "military base arkansas",
+        "arkansas military bases",
+        "military installations arkansas"
+      ],
       "h2Outline": [
         "List of Military Bases in Arkansas",
         "1. Camp Robinson",
@@ -2179,9 +3052,14 @@
       "component": "U.S. Military Bases",
       "description": "California has the largest military population in the United States, with over 157,000 active-duty personnel and more than 800,000 veterans. The military contributes over $90 billion annually to the state's economy and supports over 700,...",
       "publishedAt": "2023-10-14T01:19:32.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "california air force bases",
+      "secondaryKeywords": [
+        "army bases in california",
+        "military bases in california",
+        "air force bases in california map",
+        "air force bases in california"
+      ],
       "h2Outline": [
         "List of Military Bases in California",
         "Featured Military Bases in California",
@@ -2195,9 +3073,14 @@
       "component": "U.S. Military Bases",
       "description": "Colorado is home to several key military installations that support the U.S. Air Force, Space Force, Army, and national defense operations. Whether you're PCSing (Permanent Change of Station) to Colorado or just curious about the militar...",
       "publishedAt": "2022-09-20T14:35:24.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "air force bases in colorado",
+      "secondaryKeywords": [
+        "ranger base colorado",
+        "colorado air force bases",
+        "colorado military base",
+        "colorado military bases"
+      ],
       "h2Outline": [
         "1️⃣ United States Air Force Academy (USAFA)",
         "2️⃣ Buckley Space Force Base (SFB)",
@@ -2216,9 +3099,14 @@
       "component": "U.S. Military Bases",
       "description": "Connecticut has a rich military history, playing a key role in every major U.S. conflict from the American Revolution to today. The state is home to several military museums and historical sites, such as the Submarine Force Museum & Libr...",
       "publishedAt": "2023-10-17T00:50:04.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases connecticut",
+      "secondaryKeywords": [
+        "ct military bases",
+        "army bases in connecticut",
+        "military bases in connecticut",
+        "connecticut military bases"
+      ],
       "h2Outline": [
         "List of Military Bases in Connecticut",
         "1. Naval Submarine Base New London",
@@ -2235,9 +3123,14 @@
       "component": "U.S. Military Bases",
       "description": "Delaware has a long and distinguished military history, playing a crucial role in every major U.S. conflict from the American Revolution to today. The state was the site of key battles such as the Battle of Cooch’s Bridge and the Battle ...",
       "publishedAt": "2023-11-20T21:51:40.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in delaware",
+      "secondaryKeywords": [
+        "delaware military bases",
+        "delaware military base",
+        "delaware navy base",
+        "army base delaware"
+      ],
       "h2Outline": [
         "Active Military Bases in Delaware",
         "Moving to Delaware? We Can Help!"
@@ -2250,9 +3143,14 @@
       "component": "U.S. Military Bases",
       "description": "Florida has a long history of military involvement, from the American Revolution to modern defense operations. The state is home to twenty-four active military installations, supporting the Army, Navy, Air Force, Marine Corps, Space Forc...",
       "publishedAt": "2024-06-25T13:58:25.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in florida",
+      "secondaryKeywords": [
+        "air force bases in florida",
+        "army bases in florida",
+        "military base in florida",
+        "florida army base"
+      ],
       "h2Outline": [
         "Overview of Military Installations in Florida",
         "Air Force and Space Force Bases in Florida",
@@ -2269,9 +3167,14 @@
       "component": "U.S. Military Bases",
       "description": "Georgia has played a pivotal role in U.S. military history, from the American Revolution to modern-day defense operations. With thirteen active military installations, the state remains a key hub for national security, training, and logi...",
       "publishedAt": "2024-06-25T13:47:49.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military forts in georgia",
+      "secondaryKeywords": [
+        "army bases in georgia",
+        "how many military bases are in georgia",
+        "air force base georgia",
+        "army base in georgia"
+      ],
       "h2Outline": [
         "Overview of Georgia’s Military Bases",
         "Army Bases in Georgia",
@@ -2289,9 +3192,14 @@
       "component": "U.S. Military Bases",
       "description": "Hawaii has a rich military history and is home to eleven active military installations spread across multiple islands. With its strategic location in the Pacific, Hawaii has played a critical role in U.S. military operations for over a c...",
       "publishedAt": "2024-06-25T14:58:26.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "what are the 11 military bases in hawaii",
+      "secondaryKeywords": [
+        "military bases in hawaii",
+        "air force bases in hawaii",
+        "what military bases are in hawaii",
+        "military base in hawaii"
+      ],
       "h2Outline": [
         "Overview of Military Installations in Hawaii",
         "Army Bases in Hawaii",
@@ -2310,9 +3218,14 @@
       "component": "U.S. Military Bases",
       "description": "Idaho's military presence is centered around Mountain Home Air Force Base, the state's primary installation. Located in southwestern Idaho, this base plays a critical role in air combat training and operations, supporting the U.S. Air Fo...",
       "publishedAt": "2024-07-02T13:10:11.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "idaho air force base locations",
+      "secondaryKeywords": [
+        "army bases in idaho",
+        "idaho military base locations",
+        "are there any military bases in idaho",
+        "military bases in idaho"
+      ],
       "h2Outline": [
         "Mountain Home Air Force Base"
       ]
@@ -2324,9 +3237,14 @@
       "component": "U.S. Military Bases",
       "description": "Illinois is home to a strong military presence, with key installations that support training, logistics, and national defense operations. These bases play a crucial role in military readiness while also contributing to the state’s econom...",
       "publishedAt": "2024-06-25T15:06:54.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "chicago military base",
+      "secondaryKeywords": [
+        "military base illinois",
+        "air force base illinois",
+        "military bases in chicago",
+        "military base near me"
+      ],
       "h2Outline": [
         "Military Installations in Illinois",
         "Naval Station Great Lakes",
@@ -2343,9 +3261,14 @@
       "component": "U.S. Military Bases",
       "description": "Indiana has a deep-rooted military history dating back to the War of 1812 and has contributed to every major U.S. conflict since. Today, the state is home to three key military installations, each serving a distinct mission within the Ar...",
       "publishedAt": "2024-07-02T12:57:54.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in indiana",
+      "secondaryKeywords": [
+        "indiana military bases",
+        "army base indiana",
+        "air force bases in indiana",
+        "air force base in indiana"
+      ],
       "h2Outline": [
         "Military Installations in Indiana",
         "Camp Atterbury-Muscatatuck",
@@ -2362,9 +3285,14 @@
       "component": "U.S. Military Bases",
       "description": "Iowa has a long history of military service dating back to the early 1800s when local militias played a role in regional defense. The Iowa National Guard was officially formed in 1878, and since then, soldiers from the state have served ...",
       "publishedAt": "2024-07-02T13:25:38.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in iowa",
+      "secondaryKeywords": [
+        "fort dodge iowa military base",
+        "iowa military bases",
+        "military base in iowa",
+        "military base iowa"
+      ],
       "h2Outline": [
         "Camp Dodge",
         "Sioux City Air National Guard Base"
@@ -2377,9 +3305,14 @@
       "component": "U.S. Military Bases",
       "description": "Kansas has a deep military history dating back to the Louisiana Purchase in 1803. As settlers moved west along the Oregon Trail, the U.S. Army established a network of forts to provide security and logistical support. Two of these forts—...",
       "publishedAt": "2024-07-10T13:51:25.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in kansas",
+      "secondaryKeywords": [
+        "army bases in kansas",
+        "army base in kansas",
+        "kansas army base",
+        "military base in kansas"
+      ],
       "h2Outline": []
     },
     {
@@ -2389,9 +3322,14 @@
       "component": "U.S. Military Bases",
       "description": "Kentucky's strategic location along the Ohio River has made it a key military region throughout U.S. history. The state played a pivotal role in early conflicts, including the French and Indian War, and has remained a vital part of natio...",
       "publishedAt": "2024-07-02T13:40:24.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "army base in kentucky",
+      "secondaryKeywords": [
+        "military bases in kentucky",
+        "air force base in kentucky",
+        "kentucky army bases",
+        "army bases kentucky"
+      ],
       "h2Outline": []
     },
     {
@@ -2401,9 +3339,14 @@
       "component": "U.S. Military Bases",
       "description": "Louisiana has a rich military history dating back to the colonial era when European settlers formed militias to defend their territories. One of the most significant moments in the state's military past was the Battle of New Orleans duri...",
       "publishedAt": "2024-07-16T14:54:18.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "louisiana military bases",
+      "secondaryKeywords": [
+        "military bases in louisiana",
+        "army bases in louisiana",
+        "air force bases in louisiana",
+        "military base in louisiana"
+      ],
       "h2Outline": []
     },
     {
@@ -2413,9 +3356,14 @@
       "component": "U.S. Military Bases",
       "description": "Maine has a long and distinguished military history, dating back to the 1600s when its early settlers were involved in the French and Indian Wars. Since then, Maine’s citizens have played a role in every major U.S. conflict. Today, the s...",
       "publishedAt": "2024-07-02T13:33:13.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in maine",
+      "secondaryKeywords": [
+        "maine military bases",
+        "navy bases in maine",
+        "maine navy base",
+        "navy base maine"
+      ],
       "h2Outline": []
     },
     {
@@ -2425,9 +3373,14 @@
       "component": "U.S. Military Bases",
       "description": "Minnesota has a rich military history dating back to the 1820s, when Fort Snelling served as a key frontier outpost, protecting settlers and maintaining peace with Native American tribes. While Fort Snelling is no longer an active milita...",
       "publishedAt": "2024-07-10T14:16:12.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "army base minnesota",
+      "secondaryKeywords": [
+        "army base minnesota",
+        "military base in minnesota",
+        "minnesota army base",
+        "military base"
+      ],
       "h2Outline": []
     },
     {
@@ -2437,9 +3390,14 @@
       "component": "U.S. Military Bases",
       "description": "Montana has a deep military history, despite its limited active-duty military presence today. The state’s military community is built around the Army National Guard and Air National Guard, with approximately 14,000 soldiers and airmen se...",
       "publishedAt": "2024-07-10T14:34:57.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in montana",
+      "secondaryKeywords": [
+        "montana military bases",
+        "air force base in montana",
+        "montana air force base",
+        "montana air force bases"
+      ],
       "h2Outline": []
     },
     {
@@ -2449,9 +3407,14 @@
       "component": "U.S. Military Bases",
       "description": "Nebraska has a long military history, dating back to the establishment of early forts used to protect trade routes and interact with Native American tribes. The state has played a role in every major U.S. conflict, and in 1881, it formal...",
       "publishedAt": "2024-07-10T14:40:36.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in nebraska",
+      "secondaryKeywords": [
+        "navy base in nebraska",
+        "air force bases in nebraska",
+        "army bases in nebraska",
+        "army base in nebraska"
+      ],
       "h2Outline": []
     },
     {
@@ -2461,9 +3424,14 @@
       "component": "U.S. Military Bases",
       "description": "New Mexico has a long and rich military history, playing a crucial role in nuclear weapons development, aerospace testing, and special operations. The state was home to key facilities of the Manhattan Project, where the world's first ato...",
       "publishedAt": "2023-07-25T17:25:11.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "new mexico military bases",
+      "secondaryKeywords": [
+        "new mexico afb",
+        "air force base in new mexico",
+        "military bases in new mexico",
+        "military base in new mexico"
+      ],
       "h2Outline": [
         "List of Military Bases in New Mexico",
         "1. Cannon Air Force Base",
@@ -2480,9 +3448,14 @@
       "component": "U.S. Military Bases",
       "description": "New York has played a pivotal role in U.S. military history, dating back to the Revolutionary War. The state is home to West Point, the oldest continuously occupied military post in the United States, which served as a key stronghold for...",
       "publishedAt": "2024-07-10T14:45:55.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in new york",
+      "secondaryKeywords": [
+        "army base in new york",
+        "new york military bases",
+        "military base in new york",
+        "military base near me"
+      ],
       "h2Outline": []
     },
     {
@@ -2492,9 +3465,14 @@
       "component": "U.S. Military Bases",
       "description": "North Carolina has a rich and diverse military presence, with ten major military installations across the state. Each base plays a crucial role in supporting national defense, training, and logistics operations.",
       "publishedAt": "2022-10-18T02:18:27.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in north carolina",
+      "secondaryKeywords": [
+        "north carolina military bases",
+        "how many military bases in north carolina",
+        "how many military bases are in north carolina",
+        "military bases nc"
+      ],
       "h2Outline": [
         "List of Military Bases in North Carolina",
         "1. Coast Guard Aviation Logistics Center",
@@ -2517,9 +3495,14 @@
       "component": "U.S. Military Bases",
       "description": "North Dakota's military presence is deeply rooted in its strategic location on the Great Plains, making it a key part of national defense since the 1800s. Over the years, the state has hosted numerous forts and installations, supporting ...",
       "publishedAt": "2024-07-16T14:42:49.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "north dakota military bases",
+      "secondaryKeywords": [
+        "air force bases in north dakota",
+        "military base north dakota",
+        "north dakota military base",
+        "is there a military base in north dakota"
+      ],
       "h2Outline": []
     },
     {
@@ -2529,9 +3512,14 @@
       "component": "U.S. Military Bases",
       "description": "West Virginia has a long and proud military tradition dating back to the early 1730s, when some of the first militias were formed in the region. Over the years, the state has played a crucial role in national defense, providing both trai...",
       "publishedAt": "2024-07-16T15:15:32.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "army bases in west virginia",
+      "secondaryKeywords": [
+        "military installations in west virginia",
+        "military bases in west virginia",
+        "army base in west virginia",
+        "west virginia military base"
+      ],
       "h2Outline": []
     },
     {
@@ -2541,9 +3529,14 @@
       "component": "U.S. Military Bases",
       "description": "Wisconsin has a deep military history dating back to its early territorial days. Settlers formed militias to protect their communities, and in 1851, these militias formally became the Wisconsin National Guard. The state played a signific...",
       "publishedAt": "2024-07-16T15:09:03.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in wisconsin",
+      "secondaryKeywords": [
+        "army base in wisconsin",
+        "military base in wisconsin",
+        "military bases in wisconsin map",
+        "airforce base wisconsin"
+      ],
       "h2Outline": []
     },
     {
@@ -2553,9 +3546,15 @@
       "component": "U.S. Military Bases",
       "description": "Wyoming has a small but strong military community with a history that dates back to 1870, when the state first began forming its National Guard. While Wyoming does not have multiple active installations, it is home to one key military ba...",
       "publishedAt": "2024-07-16T15:00:39.000Z",
-      "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "primaryKeyword": "military bases in wyoming",
+      "secondaryKeywords": [
+        "wyoming air force base",
+        "cheyenne wyoming military base",
+        "cheyenne wyoming air force base",
+        "f.e. warren air force base",
+        "wyoming military"
+      ],
       "h2Outline": []
     },
     {
@@ -2566,8 +3565,14 @@
       "description": "Relocating after military service is a major transition. Finding the right place to settle down impacts your career, finances, and overall quality of life. For military families and veterans, Dallas-Fort Worth (DFW) offers an ideal combi...",
       "publishedAt": "2024-09-26T01:32:58.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "dfw military",
+      "secondaryKeywords": [
+        "military friendly cities in texas",
+        "veteran friendly city texas",
+        "dallas fort worth military",
+        "pcsing to texas",
+        "dfw veterans"
+      ],
       "h2Outline": []
     },
     {
@@ -2578,8 +3583,14 @@
       "description": "As a military member, buying or selling a home during a PCS move can feel like just another mission. The stress of relocating, the complexities of VA loans, and the need to act quickly all compound the challenge. But here’s the truth—cho...",
       "publishedAt": "2024-09-26T11:47:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "veteran-friendly realtor",
+      "secondaryKeywords": [
+        "va loan realtor",
+        "realtor for military families",
+        "realtor for pcs move",
+        "military spouse realtor",
+        "military experience realtor"
+      ],
       "h2Outline": [
         "1. Mastering VA Loans to Maximize Your Benefits",
         "2. Tailored Solutions for Frequent Relocations",
@@ -2595,8 +3606,14 @@
       "description": "Are you a veteran or active duty service member considering property investment in coastal North Carolina? While most people know Wilmington for its beautiful beaches and historic charm, this coastal gem is quietly transforming into a th...",
       "publishedAt": "2025-03-04T01:30:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "wilmington property investment",
+      "secondaryKeywords": [
+        "wilmington tech scene",
+        "veteran property investors",
+        "downtown wilmington real estate",
+        "va loan investment property",
+        "wilmington real estate market"
+      ],
       "h2Outline": [
         "Why Wilmington's Tech Boom Matters to Veteran Investors",
         "Top 3 Areas for Veteran Property Investment in Wilmington",
@@ -2613,8 +3630,14 @@
       "description": "Moving to Marine Corps Air Station Yuma presents military families with unique opportunities in Arizona's sunny desert landscape. MCAS Yuma serves as the Marine Corps' premier air-to-ground aviation training facility, supporting 80% of t...",
       "publishedAt": "2025-06-25T09:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "mcas yuma",
+      "secondaryKeywords": [
+        "marine corps air station yuma",
+        "mcas yuma housing",
+        "mcas yuma schools",
+        "pcs to yuma",
+        "military spouse employment yuma"
+      ],
       "h2Outline": [
         "Base Life at the Aviation Training Hub",
         "Housing Market Offers Opportunities and Challenges",
@@ -2633,8 +3656,14 @@
       "description": "Moving to Florida for your next assignment or transitioning out of the military? Whether you're PCSing to MacDill Air Force Base, Naval Air Station Pensacola, or settling in the Tampa Bay area after service, buying your first home as a v...",
       "publishedAt": "2025-07-18T12:00:00.000Z",
       "updatedAt": null,
-      "primaryKeyword": null,
-      "secondaryKeywords": [],
+      "primaryKeyword": "va loan florida",
+      "secondaryKeywords": [
+        "first home in florida for veterans",
+        "florida military families",
+        "pcsing to macdill air force base",
+        "florida home buying for veterans",
+        "buying your first home florida"
+      ],
       "h2Outline": [
         "Why Florida Appeals to Military Families",
         "Understanding the Five Essential Teams in Your Home Transaction",
