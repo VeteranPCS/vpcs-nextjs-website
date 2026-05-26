@@ -2,6 +2,8 @@ import type { MDXComponents } from 'mdx/types';
 import Image, { type ImageProps } from 'next/image';
 import Link from 'next/link';
 import * as BlogMdx from '@/components/Blog/mdx';
+import BAHCalculator from '@/components/BAHCalculator';
+import MovingBonusCalculator from '@/components/PcsResources/MovingBonusCalculator/MovingBonusCalculator';
 
 function isExternal(href: string): boolean {
   return /^https?:\/\//i.test(href);
@@ -132,6 +134,8 @@ export const mdxComponents: MDXComponents = {
       );
     },
     ...BlogMdx,
+    BAHCalculator,
+    MovingBonusCalculator,
 };
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {

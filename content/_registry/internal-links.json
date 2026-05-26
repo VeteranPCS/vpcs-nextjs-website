@@ -1,12 +1,13 @@
 {
-  "generatedAt": "2026-05-26T01:04:00.847Z",
-  "totalPosts": 139,
+  "generatedAt": "2026-05-26T02:17:30.357Z",
+  "totalPosts": 146,
   "byComponent": {
     "PCS Help": [
       "10-essential-questions-for-first-time-military-home-buyers",
       "12-tips-for-a-successful-pcs-move-or-home-relocation",
       "a-decade-of-growth-the-appreciation-of-home-prices-in-castle-rock",
       "arizona-pcs-guide",
+      "best-neighborhoods-nas-jacksonville-military-families",
       "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-philadelphia-military-bases",
       "castle-rock-a-community-of-distinction-and-luxury",
@@ -17,10 +18,12 @@
       "dawson-trails-development-transforming-castle-rock-co",
       "discovering-military-friendly-living-in-panama-city-florida",
       "excellence-in-education-castle-rock-s-premier-school-system",
+      "florida-schools-military-children-guide",
       "greater-phoenix-valley-a-guide-for-military-veterans",
       "how-expensive-is-castle-rock",
       "how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado",
       "how-to-choose-the-right-real-estate-agent-for-your-military-pcs-move",
+      "hurricane-prep-military-families-florida",
       "military-quick-guide-q-a",
       "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "new-costco-and-dawson-trails-development-coming-to-castle-rock-co",
@@ -37,6 +40,8 @@
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "pcsing-oconus-what-do-i-do-with-my-home",
       "pcsing-to-camp-lejeune-2026-onslow-county-guide",
+      "pcsing-to-eglin-hurlburt-field-northwest-florida-guide",
+      "pcsing-to-florida-military-bases-2026-guide",
       "pcsing-to-san-diego-top-military-friendly-neighborhoods-and-resources",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "percheron-colorado-springs-master-planned-community-near-colorado-military-bases",
@@ -130,6 +135,7 @@
       "can-you-use-the-va-loan-more-than-once",
       "complete-guide-to-buying-your-first-home-with-a-va-loan",
       "does-the-va-loan-always-have-the-best-rate",
+      "florida-va-loan-benefits-hidden-savings",
       "how-does-a-0-down-va-loan-work",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
@@ -151,6 +157,7 @@
       "what-are-the-benefits-of-a-va-loan"
     ],
     "Financial Guidance": [
+      "florida-cost-of-living-military-bases-bah",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit"
@@ -363,6 +370,33 @@
         "military real estate agent"
       ],
       "h2Outline": []
+    },
+    {
+      "slug": "best-neighborhoods-nas-jacksonville-military-families",
+      "title": "Best Military-Friendly Neighborhoods Near NAS Jacksonville",
+      "url": "/blog/best-neighborhoods-nas-jacksonville-military-families",
+      "component": "PCS Help",
+      "description": "A military family guide to the best neighborhoods near NAS Jacksonville with 2026 BAH rates, school grades, commute times, and real median home prices.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "best neighborhoods nas jacksonville",
+      "secondaryKeywords": [
+        "nas jacksonville housing",
+        "orange park military families",
+        "mandarin nas jax commute",
+        "st johns county schools military",
+        "nas jax bah 2026"
+      ],
+      "h2Outline": [
+        "Know Your 2026 Jacksonville BAH Before You Tour a Single House",
+        "How NAS Jacksonville and NS Mayport Shape the Map",
+        "Neighborhood Comparison at a Glance",
+        "Neighborhood-by-Neighborhood Breakdown",
+        "Use Your VA Loan and PCS Bonus to Move the Math",
+        "Flood Zones, Insurance, and Other Florida Realities",
+        "A 30-60 Day NAS Jacksonville Housing Plan",
+        "Ready to Pick Your Jacksonville Neighborhood?"
+      ]
     },
     {
       "slug": "best-neighborhoods-near-nas-jrb-fort-worth",
@@ -844,6 +878,98 @@
       ]
     },
     {
+      "slug": "florida-cost-of-living-military-bases-bah",
+      "title": "Florida Cost of Living by Military Base: How Far Does Your BAH Stretch?",
+      "url": "/blog/florida-cost-of-living-military-bases-bah",
+      "component": "Financial Guidance",
+      "description": "Real 2026 BAH rates compared to real rents and home prices at every major Florida base, plus the tax math that puts more in your pocket.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "florida military bah cost of living",
+      "secondaryKeywords": [
+        "macdill afb bah 2026",
+        "nas jacksonville bah",
+        "eglin afb cost of living",
+        "florida military housing affordability",
+        "pensacola military bah"
+      ],
+      "h2Outline": [
+        "Why Florida Works Financially for Military Families",
+        "Look Up Your Exact 2026 BAH First",
+        "Florida BAH vs Rent at the Major Bases (2026, E-5 with Dependents)",
+        "MacDill AFB (Tampa)",
+        "Eglin AFB and Hurlburt Field (Niceville / Fort Walton Beach)",
+        "NAS Jacksonville and NS Mayport",
+        "NAS Pensacola",
+        "Patrick SFB (Cocoa Beach / Melbourne)",
+        "NAS Key West",
+        "What Florida's Tax Picture Means for Your Paycheck",
+        "Rent vs Buy: How to Decide",
+        "Other Florida Bases Worth Mentioning",
+        "Hidden Costs Most Newcomers Underestimate",
+        "Your Next Three Steps"
+      ]
+    },
+    {
+      "slug": "florida-schools-military-children-guide",
+      "title": "Florida's Best Schools for Military Children: A Base-by-Base Guide",
+      "url": "/blog/florida-schools-military-children-guide",
+      "component": "PCS Help",
+      "description": "A PCS parent's guide to the best-rated Florida public schools near MacDill, Eglin/Hurlburt, NAS Jacksonville, NAS Pensacola, and Patrick SFB.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "florida schools military children",
+      "secondaryKeywords": [
+        "schools near macdill afb",
+        "schools near nas jacksonville",
+        "schools near eglin afb",
+        "interstate compact military children",
+        "florida military families schools"
+      ],
+      "h2Outline": [
+        "How Florida Grades Its Schools",
+        "The Interstate Compact: Your Built-In Safety Net",
+        "DoDEA in Florida",
+        "Base-by-Base: Where Military Families Actually Send Their Kids",
+        "Special Education, IEPs, and Gifted Programs",
+        "School Choice: Charters, Virtual, and Scholarships",
+        "Where Your Real Estate Agent Comes In",
+        "Your Pre-PCS School Checklist"
+      ]
+    },
+    {
+      "slug": "florida-va-loan-benefits-hidden-savings",
+      "title": "Florida VA Loan Benefits: Hidden Savings Most Veterans Miss",
+      "url": "/blog/florida-va-loan-benefits-hidden-savings",
+      "component": "VA Loan Help",
+      "description": "Most veterans know the VA loan benefit, but Florida layers homestead, disabled veteran, and Save Our Homes tax savings on top. Often worth thousands a year.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "florida va loan benefits",
+      "secondaryKeywords": [
+        "florida homestead exemption veterans",
+        "florida disabled veteran property tax exemption",
+        "va loan florida funding fee",
+        "save our homes amendment",
+        "florida veteran homebuyer"
+      ],
+      "h2Outline": [
+        "The VA Loan Basics, in Plain English",
+        "Florida Benefit #1: The Homestead Exemption",
+        "Florida Benefit #2: Save Our Homes 3 Percent Cap",
+        "Florida Benefit #3: Portability",
+        "Florida Benefit #4: Disabled Veteran Property Tax Exemptions",
+        "Florida Benefit #5: No State Income Tax",
+        "Federal Benefit That Pairs With Florida: Funding Fee Waiver",
+        "How the Florida Benefits Stack",
+        "A Real Stack: How One Family Layered It",
+        "Florida Closing Costs to Watch",
+        "Filing Order: When to Do What",
+        "How Florida Compares to Other Veteran-Friendly States",
+        "Key Takeaways"
+      ]
+    },
+    {
       "slug": "fun-family-and-date-night-activities-near-tinker-afb",
       "title": "Fun Family and Date Night Activities Near Tinker AFB",
       "url": "/blog/fun-family-and-date-night-activities-near-tinker-afb",
@@ -1048,6 +1174,33 @@
         "how does a 2-1 buydown work"
       ],
       "h2Outline": []
+    },
+    {
+      "slug": "hurricane-prep-military-families-florida",
+      "title": "Hurricane Season Prep for Military Families in Florida: A New Resident Guide",
+      "url": "/blog/hurricane-prep-military-families-florida",
+      "component": "PCS Help",
+      "description": "A calm, plain-language hurricane season guide for military families new to Florida: insurance, evacuation, base HURCONs, and a real prep checklist.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "florida hurricane prep military",
+      "secondaryKeywords": [
+        "hurricane insurance military families",
+        "hurcon conditions",
+        "florida evacuation military",
+        "flood insurance military",
+        "florida pcs hurricane season"
+      ],
+      "h2Outline": [
+        "When Hurricane Season Actually Runs",
+        "How Florida Bases Talk About Storms: HURCON Levels",
+        "Windstorm Insurance: Not Always Included",
+        "Flood Insurance Is a Separate Policy. Always.",
+        "Evacuation Orders, TLE, and What the Military Pays For",
+        "A Real Prep Checklist You Can Actually Use",
+        "What If You Are PCSing Mid-Season?",
+        "The Bottom Line"
+      ]
     },
     {
       "slug": "interest-rates-are-falling-heres-what-homebuyers-need-to-know",
@@ -1665,6 +1818,59 @@
         "Recreation and Quality of Life",
         "Your PCS Action Plan",
         "Final Thoughts"
+      ]
+    },
+    {
+      "slug": "pcsing-to-eglin-hurlburt-field-northwest-florida-guide",
+      "title": "PCSing to Eglin or Hurlburt Field: The Northwest Florida Military Guide",
+      "url": "/blog/pcsing-to-eglin-hurlburt-field-northwest-florida-guide",
+      "component": "PCS Help",
+      "description": "Your friendly guide to PCSing to Eglin AFB or Hurlburt Field. Real 2026 BAH, neighborhood breakdowns, schools, and what life is like on the Emerald Coast.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "pcs eglin afb",
+      "secondaryKeywords": [
+        "hurlburt field housing",
+        "eglin afb bah 2026",
+        "niceville fl military",
+        "destin military families",
+        "fort walton beach pcs"
+      ],
+      "h2Outline": [
+        "The Two Bases at a Glance",
+        "Your 2026 BAH in the Fort Walton Beach MHA",
+        "Where Military Families Live",
+        "Schools: Two Counties, Both Strong",
+        "The VA Loan in a Florida Coastal Market",
+        "Lifestyle on the Emerald Coast",
+        "A Realistic PCS Timeline",
+        "Why VeteranPCS for Eglin or Hurlburt",
+        "The Bottom Line"
+      ]
+    },
+    {
+      "slug": "pcsing-to-florida-military-bases-2026-guide",
+      "title": "PCSing to Florida in 2026: The Military Family Decision Guide",
+      "url": "/blog/pcsing-to-florida-military-bases-2026-guide",
+      "component": "PCS Help",
+      "description": "How to choose the right Florida military installation for your family in 2026 — region, BAH, schools, hurricane prep, and homestead tax benefits.",
+      "publishedAt": "2026-05-25T15:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "pcs to florida military",
+      "secondaryKeywords": [
+        "florida military bases 2026",
+        "florida pcs guide",
+        "macdill afb pcs",
+        "eglin afb pcs",
+        "florida bah 2026"
+      ],
+      "h2Outline": [
+        "First, Pick a Region — Not a Base",
+        "What Makes Florida Different — and Why It Matters for Your Wallet",
+        "2026 BAH at a Glance: Major Florida Installations",
+        "Should You Rent or Buy in Florida?",
+        "Your First 60 Days: A Florida-Specific PCS Plan",
+        "The Bottom Line"
       ]
     },
     {
