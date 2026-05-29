@@ -73,8 +73,12 @@
     "typescript": "^5",
     "vitest": "^3.2.4"
   },
+  "overridesComments": {
+    "glob@10": "Dependabot #8 / GHSA-5j98-mcp5-4vw2 (high). Sanity CLI + archiver + google-gax pin glob 10.3.x/10.4.x (<10.5.0). Version-scoped to 10.x so the unrelated glob@13 (rimraf@6 under @sanity/export/import) is left untouched. Remove once those parents ship glob>=10.5.0."
+  },
   "overrides": {
     "@types/react": "19.2.14",
-    "@types/react-dom": "19.2.3"
+    "@types/react-dom": "19.2.3",
+    "glob@10": "^10.5.0"
   }
 }
