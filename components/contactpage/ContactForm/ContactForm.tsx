@@ -14,6 +14,7 @@ import { contactPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from "next/navigation";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { useConcierge } from "@/components/Concierge";
+import { featureFlags } from "@/lib/feature-flags";
 
 interface MediaAccountProps {
   _id: string;
@@ -296,13 +297,15 @@ const ContactForm = () => {
                       {isSubmitting ? 'Sending...' : 'Send Message'}
                     </span>
                   </button>
-                  <button
-                    type="button"
-                    onClick={handleConciergeCta}
-                    className="text-sm text-primary hover:underline focus:outline-none focus-visible:underline min-h-[44px]"
-                  >
-                    Or chat with our concierge instead.
-                  </button>
+                  {featureFlags.conciergeEnabled && (
+                    <button
+                      type="button"
+                      onClick={handleConciergeCta}
+                      className="text-sm text-primary hover:underline focus:outline-none focus-visible:underline min-h-[44px]"
+                    >
+                      Or chat with our concierge instead.
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

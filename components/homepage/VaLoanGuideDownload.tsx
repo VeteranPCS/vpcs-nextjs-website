@@ -9,6 +9,7 @@ import { sendGTMEvent } from "@next/third-parties/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useConcierge } from "@/components/Concierge";
+import { featureFlags } from "@/lib/feature-flags";
 
 // Form input types
 interface FormInputs {
@@ -158,15 +159,17 @@ const VaLoanGuideDownload = () => {
                         />
                     </div>
 
-                    <div className="w-full flex justify-center mb-2">
-                        <button
-                            type="button"
-                            onClick={handleConciergeCta}
-                            className="text-sm text-primary hover:underline focus:outline-none focus-visible:underline min-h-[44px]"
-                        >
-                            Or chat with our concierge instead.
-                        </button>
-                    </div>
+                    {featureFlags.conciergeEnabled && (
+                        <div className="w-full flex justify-center mb-2">
+                            <button
+                                type="button"
+                                onClick={handleConciergeCta}
+                                className="text-sm text-primary hover:underline focus:outline-none focus-visible:underline min-h-[44px]"
+                            >
+                                Or chat with our concierge instead.
+                            </button>
+                        </div>
+                    )}
                 </form>
 
                 <div className="w-full flex justify-center">

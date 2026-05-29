@@ -7,6 +7,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 
 import { ContactAgentFormData } from '@/types';
 import { useConcierge } from '@/components/Concierge';
+import { featureFlags } from '@/lib/feature-flags';
 
 interface ContactFormProps {
   onSubmit: (data: ContactAgentFormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
@@ -338,13 +339,15 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
               >
                 {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
-              <button
-                type="button"
-                onClick={handleConciergeCta}
-                className="text-sm text-primary hover:underline focus:outline-none focus-visible:underline min-h-[44px]"
-              >
-                Or chat with our concierge instead.
-              </button>
+              {featureFlags.conciergeEnabled && (
+                <button
+                  type="button"
+                  onClick={handleConciergeCta}
+                  className="text-sm text-primary hover:underline focus:outline-none focus-visible:underline min-h-[44px]"
+                >
+                  Or chat with our concierge instead.
+                </button>
+              )}
             </div>
           </div>
         </form>

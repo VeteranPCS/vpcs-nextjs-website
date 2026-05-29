@@ -8,6 +8,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 
 import { ContactLenderFormData, HowDidYouHearOptions } from '@/types';
 import { useConcierge } from '@/components/Concierge';
+import { featureFlags } from '@/lib/feature-flags';
 
 // Props type for ContactForm component
 interface ContactFormProps {
@@ -297,13 +298,15 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
               >
                 {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
-              <button
-                type="button"
-                onClick={handleConciergeCta}
-                className="text-sm text-primary hover:underline focus:outline-none focus-visible:underline min-h-[44px]"
-              >
-                Or chat with our concierge instead.
-              </button>
+              {featureFlags.conciergeEnabled && (
+                <button
+                  type="button"
+                  onClick={handleConciergeCta}
+                  className="text-sm text-primary hover:underline focus:outline-none focus-visible:underline min-h-[44px]"
+                >
+                  Or chat with our concierge instead.
+                </button>
+              )}
             </div>
           </div>
         </form>
