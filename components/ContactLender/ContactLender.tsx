@@ -7,6 +7,8 @@ import * as yup from 'yup';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 import { ContactLenderFormData, HowDidYouHearOptions } from '@/types';
+import { useConcierge } from '@/components/Concierge';
+import { featureFlags } from '@/lib/feature-flags';
 
 // Props type for ContactForm component
 interface ContactFormProps {
@@ -59,6 +61,14 @@ const contactFormSchema = yup.object().shape({
 
 const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { open: openConcierge } = useConcierge();
+
+  const handleConciergeCta = () => {
+    openConcierge({
+      topic: 'lender',
+      openingMessage: 'I need help with a VA-friendly lender.',
+    });
+  };
 
   const {
     register,
@@ -280,7 +290,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
               </div>
             </div>
 
-            <div className="flex md:justify-start justify-center">
+            <div className="flex md:justify-start justify-center flex-col md:items-start items-center gap-3">
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -288,6 +298,15 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
               >
                 {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
+              {featureFlags.conciergeEnabled && (
+                <button
+                  type="button"
+                  onClick={handleConciergeCta}
+                  className="text-sm text-primary hover:underline focus:outline-none focus-visible:underline min-h-[44px]"
+                >
+                  Or chat with our concierge instead.
+                </button>
+              )}
             </div>
           </div>
         </form>

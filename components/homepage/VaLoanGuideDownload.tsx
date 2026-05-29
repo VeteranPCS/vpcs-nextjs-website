@@ -8,6 +8,8 @@ import { vaLoanGuideForm } from "@/services/salesForcePostFormsService";
 import { sendGTMEvent } from "@next/third-parties/google";
 import Image from "next/image";
 import Link from "next/link";
+import { useConcierge } from "@/components/Concierge";
+import { featureFlags } from "@/lib/feature-flags";
 
 // Form input types
 interface FormInputs {
@@ -22,6 +24,14 @@ const VaLoanGuideDownload = () => {
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const { open: openConcierge } = useConcierge();
+
+    const handleConciergeCta = () => {
+        openConcierge({
+            topic: 'va_loan_guide',
+            openingMessage: 'Can you walk me through the VA loan basics?',
+        });
+    };
 
     // Validation schema
     const validationSchema = Yup.object().shape({
@@ -148,6 +158,18 @@ const VaLoanGuideDownload = () => {
                             onChange={onCaptchaChange}
                         />
                     </div>
+
+                    {featureFlags.conciergeEnabled && (
+                        <div className="w-full flex justify-center mb-2">
+                            <button
+                                type="button"
+                                onClick={handleConciergeCta}
+                                className="text-sm text-primary hover:underline focus:outline-none focus-visible:underline min-h-[44px]"
+                            >
+                                Or chat with our concierge instead.
+                            </button>
+                        </div>
+                    )}
                 </form>
 
                 <div className="w-full flex justify-center">

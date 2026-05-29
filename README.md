@@ -513,3 +513,20 @@ All public API endpoints are versioned under `/api/v1/` to support future iterat
 - BAH calculator (`/api/v1/bah`)
 - Geographic areas lookup (`/api/v1/areas`)
 - Cache revalidation webhooks (`/api/v1/revalidate/salesforce`, `/api/v1/revalidate/sanity`)
+
+---
+
+## Utilities
+
+### Google Search Console — Blog Indexing
+
+After publishing new blog posts or updating existing ones, submit them to the Google Indexing API to prompt re-crawling:
+
+```bash
+cd ../Utilities/search-console-indexer
+node index-blog-posts.js
+```
+
+This reads all `.mdx` files from `content/blog/`, constructs their canonical URLs, and submits a `URL_UPDATED` notification for each one via the Google Indexing API. Google typically re-crawls within a few hours to two days. Verify status in Google Search Console under **URL Inspection**.
+
+> **Note:** `service-account-key.json` (required for auth) lives only in the local `Utilities/` directory and is never committed.

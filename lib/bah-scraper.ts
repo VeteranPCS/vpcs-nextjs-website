@@ -30,7 +30,8 @@ export const RANK_MAPPING: Record<string, string> = {
     '23': 'O-6', '24': 'O-7/O-7+'
 };
 
-// HTTPS request helper
+// HTTPS request helper. Exposed via `__testables` below so unit tests can stub
+// the network without monkey-patching node:https.
 function fetchPage(url: string, postData: PostData | null = null): Promise<string> {
     return new Promise((resolve, reject) => {
         const urlObj = new URL(url);
@@ -80,16 +81,23 @@ function fetchPage(url: string, postData: PostData | null = null): Promise<strin
     });
 }
 
+// DTMO expects a 2-digit year on the wire (e.g., "25"); the concierge tool sends
+// a 4-digit year (e.g., "2025") to keep the user-facing contract unambiguous.
+function toDtmoYear(year: string): string {
+    return year.length === 4 ? year.slice(-2) : year;
+}
+
+function toFourDigitYear(year: string): string {
+    return year.length === 2 ? `20${year}` : year;
+}
+
 // Data extraction from HTML document
 async function extractDataFromDocument(
-    $: cheerio.CheerioAPI, 
-    year: string, 
-    zipCode: string, 
-    rankId: string, 
-    rankName: string
+    $: cheerio.CheerioAPI,
+    rankName: string,
 ): Promise<BAHData> {
     const importDiv = $('#ImportDiv2');
-    
+
     if (importDiv.length === 0) {
         throw new Error('Could not find BAH data container');
     }
@@ -119,7 +127,7 @@ async function extractDataFromDocument(
     }
 
     const amountCells = table.find('td.trn-cola.text-center:contains("$")');
-    
+
     if (amountCells.length < 2) {
         throw new Error('Could not find BAH amount cells');
     }
@@ -137,7 +145,7 @@ async function extractDataFromDocument(
     }
 
     return {
-        year: extractedYear,
+        year: toFourDigitYear(extractedYear),
         zipCode: extractedZip,
         rank: rankName,
         mha,
@@ -151,25 +159,31 @@ async function extractDataFromDocument(
 // Main extraction function
 export async function extractBAHData(year: string, zipCode: string, rankId: string): Promise<BAHData> {
     const rankName = RANK_MAPPING[rankId];
-    
+
     if (!rankName) {
         throw new Error('Invalid rank ID');
     }
 
-    console.log(`Extracting BAH data: Year=${year}, ZIP=${zipCode}, Rank=${rankName} (ID=${rankId})`);
+    const dtmoYear = toDtmoYear(year);
+
+    console.log(`Extracting BAH data: Year=${year} (wire=${dtmoYear}), ZIP=${zipCode}, Rank=${rankName} (ID=${rankId})`);
 
     // CRITICAL: Direct POST data structure
     const postData: PostData = {
         report: 'bah',
-        YEAR: year,
+        YEAR: dtmoYear,
         Zipcode: zipCode,
         Rank: rankId.toString()
     };
 
     // CRITICAL: Direct POST URL
     const postUrl = 'https://www.defensetravel.dod.mil/neorates/report/index.php';
-    const html = await fetchPage(postUrl, postData);
+    const html = await __testables.fetchPage(postUrl, postData);
 
     const $ = cheerio.load(html);
-    return await extractDataFromDocument($, year, zipCode, rankId, rankName);
+    return await extractDataFromDocument($, rankName);
 }
+
+// Indirection object so tests can stub the network layer with vi.spyOn.
+// Not part of the public contract — do not import outside of tests.
+export const __testables = { fetchPage };

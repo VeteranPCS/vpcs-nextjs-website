@@ -45,6 +45,7 @@ const config: Config = {
       zIndex: {
         'nav': '9999',
         'loader': '1000',
+        'concierge': '8000',
       },
       transitionProperty: {
         'visibility': 'visibility, opacity',

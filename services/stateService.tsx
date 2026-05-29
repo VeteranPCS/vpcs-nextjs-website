@@ -119,7 +119,7 @@ export interface LendersData {
 const stateService = {
   fetchStateList: async (): Promise<StateList[]> => {
     try {
-      const response = await client.fetch(`*[_type == "state_list"]{ state_slug, short_name }`)
+      const response = await client.fetch(`*[_type == "state_list"]{ state_slug, short_name, state_name }`)
       if (response) {
         const seen = new Set<string>();
         return (response as StateList[]).filter((state) => {
@@ -158,7 +158,11 @@ const stateService = {
       throw error;
     }
   },
-  fetchAgentsListByState: async (state: string): Promise<AgentsData> => {
+  fetchAgentsListByState: async (
+    state: string,
+    options: { requireHeadshot?: boolean } = {},
+  ): Promise<AgentsData> => {
+    const { requireHeadshot = true } = options;
     try {
       const query = `
         SELECT Name, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc,
@@ -180,7 +184,8 @@ const stateService = {
         const resolved = await Promise.all(
           response.data.records.map(async (agent: Agent) => {
             const PhotoUrl = await resolveHeadshot('agents', agent.AccountId_15__c);
-            return PhotoUrl ? { ...agent, PhotoUrl } : null;
+            if (PhotoUrl) return { ...agent, PhotoUrl };
+            return requireHeadshot ? null : agent;
           }),
         );
         const records = resolved.filter((agent): agent is Agent => agent !== null);
@@ -190,7 +195,7 @@ const stateService = {
         // Token expired: Refresh and retry
         try {
           await getSalesforceToken(); // Refresh token
-          return await stateService.fetchAgentsListByState(state); // Retry the request
+          return await stateService.fetchAgentsListByState(state, options); // Retry the request
         } catch (tokenError) {
           console.error("Failed to refresh token:", tokenError);
           throw tokenError;
@@ -203,7 +208,11 @@ const stateService = {
       throw error;
     }
   },
-  fetchLendersListByState: async (state: string): Promise<LendersData> => {
+  fetchLendersListByState: async (
+    state: string,
+    options: { requireHeadshot?: boolean } = {},
+  ): Promise<LendersData> => {
+    const { requireHeadshot = true } = options;
     try {
       const query = `
       SELECT Name, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, Individual_NMLS_ID__pc, Company_NMLS_ID__pc,
@@ -223,7 +232,8 @@ const stateService = {
         const resolved = await Promise.all(
           response.data.records.map(async (lender: Lenders) => {
             const PhotoUrl = await resolveHeadshot('lenders', lender.AccountId_15__c);
-            return PhotoUrl ? { ...lender, PhotoUrl } : null;
+            if (PhotoUrl) return { ...lender, PhotoUrl };
+            return requireHeadshot ? null : lender;
           }),
         );
         const records = resolved.filter((lender): lender is Lenders => lender !== null);
@@ -233,7 +243,7 @@ const stateService = {
       } else if (response?.status === 401) {
         try {
           await getSalesforceToken();
-          return await stateService.fetchLendersListByState(state);
+          return await stateService.fetchLendersListByState(state, options);
         } catch (tokenError) {
           console.error('Failed to refresh token:', tokenError);
           throw tokenError;
