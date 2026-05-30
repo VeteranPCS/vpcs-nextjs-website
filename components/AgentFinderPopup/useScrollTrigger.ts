@@ -9,7 +9,7 @@ interface UseScrollTriggerOptions {
 }
 
 export const useScrollTrigger = ({
-    triggerElementId = 'state-map-component',
+    triggerElementId = 'state-map',
     offset = 100,
     cooldownDuration = 60000 // 1 minute default cooldown
 }: UseScrollTriggerOptions = {}) => {
