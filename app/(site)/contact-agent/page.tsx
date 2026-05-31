@@ -26,7 +26,6 @@ interface FormData {
   bathrooms?: string;
   maxPrice?: string;
   preApproval?: string | null;
-  captchaToken?: string;
 }
 
 export default function ContactAgentPage() {

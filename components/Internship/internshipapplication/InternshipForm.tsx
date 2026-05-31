@@ -2,7 +2,6 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import ReCAPTCHA from 'react-google-recaptcha';
 import { internshipFormSubmission } from "@/services/salesForcePostFormsService";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -25,8 +24,6 @@ export interface FormData {
     "00N4x00000QPLQd": string;
     "00N4x00000QPksj": string;
     "00N4x00000QPS7V"?: string;
-    "g-recaptcha-response": string;
-    captcha_settings?: string;
 }
 
 interface ApiSubmissionData extends Omit<FormData, '00N4x00000QQ0Vz'> {
@@ -78,7 +75,6 @@ const schema = yup.object().shape({
         then: (schema) => schema.required("Please tell us more"),
         otherwise: (schema) => schema.nullable(),
     }),
-    "g-recaptcha-response": yup.string().required("Please complete the CAPTCHA"),
 });
 
 const WebToLeadForm = () => {
@@ -109,8 +105,6 @@ const WebToLeadForm = () => {
             "00N4x00000QPLQd": "",
             "00N4x00000QPksj": "",
             "00N4x00000QPS7V": "",
-            "g-recaptcha-response": "",
-            captcha_settings: '{}',
         },
     });
 
@@ -147,19 +141,6 @@ const WebToLeadForm = () => {
         }
     };
 
-    const onCaptchaChange = (token: string | null) => {
-        if (token) {
-            const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
-            if (captchaSettingsElem) {
-                const captchaSettings = JSON.parse(captchaSettingsElem.value);
-                captchaSettings.ts = JSON.stringify(new Date().getTime());
-                captchaSettingsElem.value = JSON.stringify(captchaSettings);
-                setValue('captcha_settings', captchaSettingsElem.value);
-                setValue('g-recaptcha-response', token);
-            }
-        }
-    };
-
     const handleDateInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
         if (value.length > 8) value = value.slice(0, 8);
@@ -185,7 +166,6 @@ const WebToLeadForm = () => {
                         name="00N4x00000QQ1LB"
                         value={`${process.env.NEXT_PUBLIC_API_BASE_URL}/kick-start-your-career`}
                     />
-                    <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
 
                     <div className="flex flex-col gap-8">
                         <div className="md:text-left text-center">
@@ -678,19 +658,6 @@ const WebToLeadForm = () => {
                                     )}
                                 </div>
                             )}
-
-                            {/* reCAPTCHA */}
-                            <div className="mt-8 flex flex-col">
-                                <ReCAPTCHA
-                                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
-                                    onChange={onCaptchaChange}
-                                />
-                                {errors["g-recaptcha-response"] && (
-                                    <p className="text-red-500 text-xs mt-1">
-                                        {errors["g-recaptcha-response"].message}
-                                    </p>
-                                )}
-                            </div>
 
                             <p className="text-[#575F6E] roboto text-base mt-4">
                                 Be sure to check your spam/junk folder if you do not receive a confirmation

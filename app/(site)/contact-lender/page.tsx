@@ -15,8 +15,6 @@ export interface FormData {
   additionalComments?: string | null;
   howDidYouHear?: string;
   tellusMore?: string;
-  captchaToken?: string;
-  captcha_settings?: string;
 }
 
 export default function ContactLenderPage() {

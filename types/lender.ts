@@ -48,6 +48,4 @@ export interface ContactLenderFormData {
   additionalComments?: string | null;
   howDidYouHear?: string;
   tellusMore?: string;
-  captchaToken?: string;
-  captcha_settings?: string;
 }

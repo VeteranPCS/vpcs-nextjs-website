@@ -156,7 +156,6 @@ export default function RootLayout({
         <html lang="en" className={`${inter.variable} ${poppins.variable} ${roboto.variable} ${lora.variable}`}>
             <head>
                 <GoogleTagManager gtmId={GTM_ID} />
-                <Script defer src="https://www.google.com/recaptcha/api.js"></Script>
                 <Script id={`json-ld-real-estate-agent`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
             </head>
             <body className={inter.className}>

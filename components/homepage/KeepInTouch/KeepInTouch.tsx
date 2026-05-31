@@ -8,7 +8,6 @@ import mediaAccountService from "@/services/mediaAccountService";
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { KeepInTouchForm } from "@/services/salesForcePostFormsService";
 import { useRouter, usePathname } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
@@ -26,8 +25,6 @@ interface ContactFormData {
   firstName?: string;
   lastName?: string;
   email?: string;
-  captchaToken?: string;
-  captcha_settings?: string;
 }
 
 type FormErrors = Partial<Record<keyof ContactFormData, { message?: string }>>;
@@ -36,8 +33,6 @@ const contactFormSchema = yup.object().shape({
   firstName: yup.string().required('First name is required'),
   lastName: yup.string().required('Last name is required'),
   email: yup.string().email('Invalid email address').required('Email is required'),
-  captchaToken: yup.string().required('Please complete the reCAPTCHA'),
-  captcha_settings: yup.string().required('Please complete the reCAPTCHA'),
 });
 
 const KeepInTouch = () => {
@@ -48,7 +43,6 @@ const KeepInTouch = () => {
   const {
     register,
     handleSubmit,
-    setValue,
     reset,
     formState: { errors },
   } = useForm<ContactFormData>({
@@ -57,8 +51,6 @@ const KeepInTouch = () => {
       firstName: '',
       lastName: '',
       email: '',
-      captchaToken: '',
-      captcha_settings: '',
     },
   });
 
@@ -94,23 +86,6 @@ const KeepInTouch = () => {
       console.error("Error fetching posts:", error);
     }
   }, []);
-
-  const onCaptchaChange = (token: string | null) => {
-    if (token) {
-      const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
-      if (captchaSettingsElem) {
-        const captchaSettings = JSON.parse(captchaSettingsElem.value);
-        captchaSettings.ts = JSON.stringify(new Date().getTime());
-        captchaSettingsElem.value = JSON.stringify(captchaSettings);
-        setValue('captcha_settings', captchaSettingsElem.value, {
-          shouldValidate: false // This triggers validation after setting the value
-        });
-        setValue('captchaToken', token, {
-          shouldValidate: true // This triggers validation after setting the value
-        });
-      }
-    }
-  };
 
   useEffect(() => {
     fetchMediaAccounts();
@@ -164,7 +139,6 @@ const KeepInTouch = () => {
           <div className="mt-5 lg:mt-0 md:mt-0 sm:mt-5">
             <div className={classes.CustomResponsiveCenter}>
               <form onSubmit={handleSubmit(handleFormSubmission)}>
-                <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
                 <h2 className="lg:text-[36px] sm:text-[25px] text-[25px] poppins font-bold text-[#292F6C] lg:text-left md:text-left sm:text-center text-center">
                   Keep In Touch
                 </h2>
@@ -203,13 +177,6 @@ const KeepInTouch = () => {
                 </p>
                 <div className="flex items-center md:pl-0 sm:pl-3 pl-3 max-w-[390px] mx-auto sm:max-w-full">
                   <div className="w-[200px] flex md:flex-nowrap flex-wrap items-center gap-4">
-                    <div>
-                      <ReCAPTCHA
-                        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
-                        onChange={onCaptchaChange} // Handle reCAPTCHA value change
-                      />
-                      {renderError('captchaToken')}
-                    </div>
                     <div className="lg:py-8 md:py-8 sm:py-2 py-2">
                       <button
                         type="submit"

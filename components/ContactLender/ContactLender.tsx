@@ -4,7 +4,6 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import HowDidYouHearAboutUs from '@/components/GetListedLenders/HowDidYouHearAboutUs';
 import * as yup from 'yup';
-import ReCAPTCHA from 'react-google-recaptcha';
 
 import { ContactLenderFormData, HowDidYouHearOptions } from '@/types';
 import { useConcierge } from '@/components/Concierge';
@@ -55,8 +54,6 @@ const contactFormSchema = yup.object().shape({
     then: (schema) => schema,
     otherwise: (schema) => schema.nullable(),
   }),
-  captchaToken: yup.string().required('Please complete the reCAPTCHA'),
-  captcha_settings: yup.string().required('Please complete the reCAPTCHA'),
 });
 
 const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
@@ -74,7 +71,6 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors },
   } = useForm<ContactLenderFormData>({
     resolver: yupResolver<ContactLenderFormData>(contactFormSchema),
@@ -88,8 +84,6 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
       additionalComments: '',
       howDidYouHear: '',
       tellusMore: '',
-      captchaToken: '',
-      captcha_settings: '',
     },
   });
 
@@ -102,23 +96,6 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
       console.error('Error submitting form:', error);
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const onCaptchaChange = (token: string | null) => {
-    if (token) {
-      const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
-      if (captchaSettingsElem) {
-        const captchaSettings = JSON.parse(captchaSettingsElem.value);
-        captchaSettings.ts = JSON.stringify(new Date().getTime());
-        captchaSettingsElem.value = JSON.stringify(captchaSettings);
-        setValue('captcha_settings', captchaSettingsElem.value, {
-          shouldValidate: false // This triggers validation after setting the value
-        });
-        setValue('captchaToken', token, {
-          shouldValidate: true // This triggers validation after setting the value
-        });
-      }
     }
   };
 
@@ -142,7 +119,6 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
@@ -279,14 +255,6 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
                   watch={watch}
                   errors={errors}
                 />
-
-                <div className="mt-8 flex flex-col">
-                  <ReCAPTCHA
-                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
-                    onChange={onCaptchaChange} // Handle reCAPTCHA value change
-                  />
-                  {renderError('captchaToken')}
-                </div>
               </div>
             </div>
 
