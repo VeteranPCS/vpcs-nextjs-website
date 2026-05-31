@@ -7,7 +7,9 @@ interface AreaAssignment {
 }
 
 interface AreasResponse {
-    success: boolean;
+    // `success` is optional so the 400 "Invalid state code" guard can return a
+    // bare `{ error }` body; every other response still sets it explicitly.
+    success?: boolean;
     data?: AreaAssignment[];
     error?: string;
 }
@@ -23,6 +25,15 @@ export async function GET(request: NextRequest): Promise<NextResponse<AreasRespo
             return NextResponse.json({
                 success: false,
                 error: 'State parameter is required'
+            }, { status: 400 });
+        }
+
+        // Edge-layer defense (in addition to the service-layer validation in
+        // stateService): only a 2-letter state code is ever a valid input.
+        // Anything else is rejected before it can reach the SOQL builder.
+        if (!/^[A-Za-z]{2}$/.test(stateCode)) {
+            return NextResponse.json({
+                error: 'Invalid state code'
             }, { status: 400 });
         }
 

@@ -13,6 +13,7 @@ import {
   vaLoanGuideSchema,
   type ToolResult,
 } from '@/lib/ai/tools/types';
+import { INTERNAL_CALL_TOKEN } from '@/lib/internal-call-token';
 
 interface LeadSuccess {
   kind: 'agent' | 'lender' | 'general' | 'va_guide';
@@ -68,7 +69,7 @@ const submitAgentRequestTool = tool({
         destinationState: input.destinationState,
         hasMessage: Boolean(input.message),
       });
-      await contactAgentPostForm(formData, '');
+      await contactAgentPostForm(formData, '', { internalCallToken: INTERNAL_CALL_TOKEN });
       return {
         ok: true,
         data: { kind: 'agent', message: SUCCESS_MESSAGE },
@@ -110,7 +111,7 @@ const submitLenderRequestTool = tool({
         destinationState: input.destinationState,
         hasMessage: Boolean(input.message),
       });
-      await contactLenderPostForm(formData, '');
+      await contactLenderPostForm(formData, '', { internalCallToken: INTERNAL_CALL_TOKEN });
       return {
         ok: true,
         data: { kind: 'lender', message: SUCCESS_MESSAGE },
@@ -149,7 +150,7 @@ const submitGeneralInquiryTool = tool({
       logInfo('Concierge tool: submitGeneralInquiry', {
         hasSubject: Boolean(input.subject),
       });
-      await contactPostForm(formData);
+      await contactPostForm(formData, { internalCallToken: INTERNAL_CALL_TOKEN });
       return {
         ok: true,
         data: { kind: 'general', message: SUCCESS_MESSAGE },
@@ -184,7 +185,7 @@ const submitVALoanGuideRequestTool = tool({
       logInfo('Concierge tool: submitVALoanGuideRequest', {
         hasState: Boolean(input.destinationState),
       });
-      await vaLoanGuideForm(formData);
+      await vaLoanGuideForm(formData, { internalCallToken: INTERNAL_CALL_TOKEN });
       return {
         ok: true,
         data: { kind: 'va_guide', message: SUCCESS_MESSAGE },

@@ -6,6 +6,17 @@ import stateService from '@/services/stateService';
 import { logDebug, logError, logInfo } from './loggingService';
 import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
 import { getAdminPhoneNumberForState } from '@/services/stateRoutingService';
+import { verifyRecaptcha } from '@/actions/verifyRecaptcha';
+import {
+    parseLeadForm,
+    simpleLeadSchema,
+    contactAgentSchema,
+    contactLenderSchema,
+    getListedAgentsSchema,
+    getListedLendersSchema,
+    internshipSchema,
+} from '@/lib/validation/leadForms';
+import { isTrustedInternalCall, type InternalCallOptions } from '@/lib/internal-call-token';
 
 interface SalesforceSubmissionResult {
     success: boolean;
@@ -229,7 +240,7 @@ function validateSalesforceResponse(responseText: string, submissionId: string):
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const OPEN_PHONE_FROM_NUMBER = process.env.OPEN_PHONE_FROM_NUMBER || "";
 
-export async function contactAgentPostForm(formData: any, queryString: string) {
+export async function contactAgentPostForm(formData: any, queryString: string, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'contactAgent',
@@ -243,6 +254,26 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
     });
 
     try {
+        // Verify reCAPTCHA before any Salesforce/Slack/SMS work. Trusted server-internal
+        // callers (e.g. the AI concierge lead tools) hold a process-local token and bypass
+        // the browser-only captcha gate; they are gated instead by BotID + rate-limit +
+        // the tool's needsApproval human-in-the-loop confirmation.
+        if (!isTrustedInternalCall(options)) {
+            const captcha = await verifyRecaptcha(formData?.captchaToken);
+            if (!captcha.ok) {
+                logError('Captcha verification failed for contact agent form', { submissionId, reason: captcha.reason });
+                throw new Error('Captcha verification failed');
+            }
+        }
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(contactAgentSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for contact agent form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
         const paramsObj: { [key: string]: string } = {};
         new URLSearchParams(queryString).forEach((value, key) => {
             paramsObj[key] = value;
@@ -409,6 +440,21 @@ export async function GetListedAgentsPostForm(formData: any) {
     logInfo('Processing agent listing form submission', { submissionId });
 
     try {
+        // Verify reCAPTCHA before any Salesforce/Slack/SMS work.
+        const captcha = await verifyRecaptcha(formData?.captchaToken);
+        if (!captcha.ok) {
+            logError('Captcha verification failed for agent listing form', { submissionId, reason: captcha.reason });
+            throw new Error('Captcha verification failed');
+        }
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(getListedAgentsSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for agent listing form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
@@ -532,6 +578,21 @@ export async function GetListedLendersPostForm(formData: any) {
     logInfo('Processing lender listing form submission', { submissionId });
 
     try {
+        // Verify reCAPTCHA before any Salesforce/Slack/SMS work.
+        const captcha = await verifyRecaptcha(formData?.captchaToken);
+        if (!captcha.ok) {
+            logError('Captcha verification failed for lender listing form', { submissionId, reason: captcha.reason });
+            throw new Error('Captcha verification failed');
+        }
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(getListedLendersSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for lender listing form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
@@ -652,6 +713,21 @@ export async function KeepInTouchForm(formData: any) {
     logInfo('Processing keep in touch form submission', { submissionId });
 
     try {
+        // Verify reCAPTCHA before any Salesforce/Slack/SMS work.
+        const captcha = await verifyRecaptcha(formData?.captchaToken);
+        if (!captcha.ok) {
+            logError('Captcha verification failed for keep in touch form', { submissionId, reason: captcha.reason });
+            throw new Error('Captcha verification failed');
+        }
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(simpleLeadSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for keep in touch form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             recordType: "0124x000000Z5yD",
@@ -732,7 +808,7 @@ export async function KeepInTouchForm(formData: any) {
     }
 }
 
-export async function contactLenderPostForm(formData: any, fullQueryString: string) {
+export async function contactLenderPostForm(formData: any, fullQueryString: string, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'contactLender',
@@ -746,6 +822,26 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
     });
 
     try {
+        // Verify reCAPTCHA before any Salesforce/Slack/SMS work. Trusted server-internal
+        // callers (e.g. the AI concierge lead tools) hold a process-local token and bypass
+        // the browser-only captcha gate; they are gated instead by BotID + rate-limit +
+        // the tool's needsApproval human-in-the-loop confirmation.
+        if (!isTrustedInternalCall(options)) {
+            const captcha = await verifyRecaptcha(formData?.captchaToken);
+            if (!captcha.ok) {
+                logError('Captcha verification failed for contact lender form', { submissionId, reason: captcha.reason });
+                throw new Error('Captcha verification failed');
+            }
+        }
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(contactLenderSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for contact lender form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
         const paramsObj: { [key: string]: string } = {};
         new URLSearchParams(fullQueryString).forEach((value, key) => {
             paramsObj[key] = value;
@@ -887,7 +983,7 @@ ${formData.additionalComments ? `Additional Comments: ${formData.additionalComme
     }
 }
 
-export async function contactPostForm(formData: any) {
+export async function contactPostForm(formData: any, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'contact',
@@ -898,6 +994,26 @@ export async function contactPostForm(formData: any) {
     logInfo('Processing contact form submission', { submissionId });
 
     try {
+        // Verify reCAPTCHA before any Salesforce/Slack/SMS work. Trusted server-internal
+        // callers (e.g. the AI concierge lead tools) hold a process-local token and bypass
+        // the browser-only captcha gate; they are gated instead by BotID + rate-limit +
+        // the tool's needsApproval human-in-the-loop confirmation.
+        if (!isTrustedInternalCall(options)) {
+            const captcha = await verifyRecaptcha(formData?.captchaToken);
+            if (!captcha.ok) {
+                logError('Captcha verification failed for contact form', { submissionId, reason: captcha.reason });
+                throw new Error('Captcha verification failed');
+            }
+        }
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(simpleLeadSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for contact form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             recordType: "0124x000000Z5yD",
@@ -979,7 +1095,7 @@ export async function contactPostForm(formData: any) {
     }
 }
 
-export async function vaLoanGuideForm(formData: any) {
+export async function vaLoanGuideForm(formData: any, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'vaLoanGuide',
@@ -990,6 +1106,26 @@ export async function vaLoanGuideForm(formData: any) {
     logInfo('Processing VA loan guide form submission', { submissionId });
 
     try {
+        // Verify reCAPTCHA before any Salesforce/Slack/SMS work. Trusted server-internal
+        // callers (e.g. the AI concierge lead tools) hold a process-local token and bypass
+        // the browser-only captcha gate; they are gated instead by BotID + rate-limit +
+        // the tool's needsApproval human-in-the-loop confirmation.
+        if (!isTrustedInternalCall(options)) {
+            const captcha = await verifyRecaptcha(formData?.captchaToken);
+            if (!captcha.ok) {
+                logError('Captcha verification failed for VA loan guide form', { submissionId, reason: captcha.reason });
+                throw new Error('Captcha verification failed');
+            }
+        }
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(simpleLeadSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for VA loan guide form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             recordType: "0124x000000Z5yD",
@@ -1081,6 +1217,22 @@ export async function internshipFormSubmission(formData: any) {
     logInfo('Processing internship form submission', { submissionId });
 
     try {
+        // Verify reCAPTCHA before any Salesforce/Slack/SMS work.
+        // The internship form carries its token under the literal `g-recaptcha-response` key.
+        const captcha = await verifyRecaptcha(formData?.['g-recaptcha-response']);
+        if (!captcha.ok) {
+            logError('Captcha verification failed for internship form', { submissionId, reason: captcha.reason });
+            throw new Error('Captcha verification failed');
+        }
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(internshipSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for internship form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             recordType: "0124x000000ZGKv",
