@@ -7,6 +7,7 @@ import { vaLoanGuideForm } from "@/services/salesForcePostFormsService";
 import { sendGTMEvent } from "@next/third-parties/google";
 import Image from "next/image";
 import Link from "next/link";
+import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 
 // Form input types
 interface FormInputs {
@@ -62,6 +63,8 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
         },
     });
 
+    const { ref: honeypotRef, getSpamFields } = useHoneypot();
+
     // On submit
     const onSubmitHandler: SubmitHandler<FormInputs> = async (data) => {
         setSubmitting(true);
@@ -77,7 +80,7 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                 email: data.email,
             };
 
-            const server_response = await vaLoanGuideForm(payload);
+            const server_response = await vaLoanGuideForm({ ...payload, ...getSpamFields() });
             if (server_response?.success) {
                 setSuccess(true);
                 reset();
@@ -123,6 +126,7 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmitHandler)} className="mb-6">
+                    <HoneypotField ref={honeypotRef} />
                     <div className="flex flex-col md:flex-row gap-4 mb-4">
                         <input
                             className="flex-1 px-4 py-3 rounded border border-gray-300 text-sm"

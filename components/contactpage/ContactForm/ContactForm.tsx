@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { useConcierge } from "@/components/Concierge";
 import { featureFlags } from "@/lib/feature-flags";
+import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 
 interface MediaAccountProps {
   _id: string;
@@ -66,6 +67,8 @@ const ContactForm = () => {
     },
   });
 
+  const { ref: honeypotRef, getSpamFields } = useHoneypot();
+
   async function onSubmit(data: ContactFormData) {
     setIsSubmitting(true);
     try {
@@ -73,7 +76,7 @@ const ContactForm = () => {
         event: 'contact_form_submission',
       });
 
-      const server_response = await contactPostForm(data);
+      const server_response = await contactPostForm({ ...data, ...getSpamFields() });
       if (server_response?.success || server_response?.message) {
         reset();
         window.location.href = `${BASE_URL}/thank-you`;
@@ -243,6 +246,7 @@ const ContactForm = () => {
                   ></textarea>
                 </div>
 
+                <HoneypotField ref={honeypotRef} />
                 <div className="flex flex-col items-end lg:py-8 md:py-8 sm:py-2 py-2 gap-3">
                   <button
                     type="submit"

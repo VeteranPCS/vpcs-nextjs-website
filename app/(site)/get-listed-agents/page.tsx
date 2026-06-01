@@ -8,6 +8,7 @@ import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListed
 import { GetListedAgentsPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
+import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 
 export default function GetListedAgentsPage() {
   const router = useRouter()
@@ -15,6 +16,7 @@ export default function GetListedAgentsPage() {
   const [formData, setFormData] = useState({});
   const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const { ref: honeypotRef, getSpamFields } = useHoneypot();
 
   const shouldSubmit = () => {
     if (isSubmitting) return;
@@ -45,7 +47,7 @@ export default function GetListedAgentsPage() {
         sendGTMEvent({
           event: 'conversion_get_listed_agents',
         });
-        const server_response = await GetListedAgentsPostForm(formData);
+        const server_response = await GetListedAgentsPostForm({ ...formData, ...getSpamFields() });
         if (server_response?.redirectUrl) {
           router.push(server_response.redirectUrl);
         } else {
@@ -63,7 +65,7 @@ export default function GetListedAgentsPage() {
     if (shouldSubmitForm) {
       handleFormSubmission();
     }
-  }, [formData, shouldSubmitForm, router]);
+  }, [formData, shouldSubmitForm, router, getSpamFields]);
 
   const renderProgressBar = () => {
     return (
@@ -84,6 +86,7 @@ export default function GetListedAgentsPage() {
   return (
     <>
       <div className="container mx-auto w-full">
+        <HoneypotField ref={honeypotRef} />
         <div className="flex flex-wrap md:flex-nowrap justify-between items-center md:pt-[140px] pt-[80px] md:mx-0 mx-5">
           <div>
             <Image

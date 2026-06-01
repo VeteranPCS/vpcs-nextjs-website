@@ -7,6 +7,7 @@ import { logDebug, logError, logInfo } from './loggingService';
 import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
 import { getAdminPhoneNumberForState } from '@/services/stateRoutingService';
 import { evaluateLeadSpam, tagSpamSuspected } from '@/lib/spam-protection';
+import { HP_FIELD, TS_FIELD } from '@/lib/validation/spam-fields';
 import {
     parseLeadForm,
     simpleLeadSchema,
@@ -281,6 +282,8 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
         const spam = await evaluateLeadSpam({
             email: formData.email,
             freeText: formData.additionalComments,
+            honeypot: formData[HP_FIELD],
+            renderedAt: formData[TS_FIELD],
             options,
         });
         if (spam.quarantine) {
@@ -467,6 +470,8 @@ export async function GetListedAgentsPostForm(formData: any, options?: InternalC
         const spam = await evaluateLeadSpam({
             email: formData.email,
             freeText: formData.tellusMore,
+            honeypot: formData[HP_FIELD],
+            renderedAt: formData[TS_FIELD],
             options,
         });
         if (spam.quarantine) {
@@ -609,6 +614,8 @@ export async function GetListedLendersPostForm(formData: any, options?: Internal
         const spam = await evaluateLeadSpam({
             email: formData.email,
             freeText: formData.tellusMore,
+            honeypot: formData[HP_FIELD],
+            renderedAt: formData[TS_FIELD],
             options,
         });
         if (spam.quarantine) {
@@ -745,7 +752,12 @@ export async function KeepInTouchForm(formData: any, options?: InternalCallOptio
         formData = validation.data;
 
         // No free-text field on this form — the flagged Slack header below is the spam signal.
-        const spam = await evaluateLeadSpam({ email: formData.email, options });
+        const spam = await evaluateLeadSpam({
+            email: formData.email,
+            honeypot: formData[HP_FIELD],
+            renderedAt: formData[TS_FIELD],
+            options,
+        });
         if (spam.quarantine) {
             logError('Spam-suspected submission', { submissionId, form: 'keepInTouch', reasons: spam.reasons });
         }
@@ -857,6 +869,8 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
         const spam = await evaluateLeadSpam({
             email: formData.email,
             freeText: formData.additionalComments,
+            honeypot: formData[HP_FIELD],
+            renderedAt: formData[TS_FIELD],
             options,
         });
         if (spam.quarantine) {
@@ -1029,6 +1043,8 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
         const spam = await evaluateLeadSpam({
             email: formData.email,
             freeText: formData.additionalComments,
+            honeypot: formData[HP_FIELD],
+            renderedAt: formData[TS_FIELD],
             options,
         });
         if (spam.quarantine) {
@@ -1137,7 +1153,12 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
         formData = validation.data;
 
         // No free-text field on this form — the flagged Slack header below is the spam signal.
-        const spam = await evaluateLeadSpam({ email: formData.email, options });
+        const spam = await evaluateLeadSpam({
+            email: formData.email,
+            honeypot: formData[HP_FIELD],
+            renderedAt: formData[TS_FIELD],
+            options,
+        });
         if (spam.quarantine) {
             logError('Spam-suspected submission', { submissionId, form: 'vaLoanGuide', reasons: spam.reasons });
         }
@@ -1245,6 +1266,8 @@ export async function internshipFormSubmission(formData: any, options?: Internal
         const spam = await evaluateLeadSpam({
             email: formData.email,
             freeText: formData['00N4x00000QPS7V'],
+            honeypot: formData[HP_FIELD],
+            renderedAt: formData[TS_FIELD],
             options,
         });
         if (spam.quarantine) {
