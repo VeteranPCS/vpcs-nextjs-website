@@ -14,14 +14,12 @@ import {
   type ToolResult,
 } from '@/lib/ai/tools/types';
 import { INTERNAL_CALL_TOKEN } from '@/lib/internal-call-token';
+import { SUCCESS_MESSAGE } from '@/lib/ai/tools/messages';
 
 interface LeadSuccess {
   kind: 'agent' | 'lender' | 'general' | 'va_guide';
   message: string;
 }
-
-export const SUCCESS_MESSAGE =
-  "We've shared your details. A team member will reach out shortly.";
 
 const SUBMIT_REQUIRED =
   'Required: first name, last name, email, phone. The SDK-level approval gate handles confirmation — emit the call when the user has provided the required fields.';
