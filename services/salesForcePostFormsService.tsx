@@ -6,7 +6,7 @@ import stateService from '@/services/stateService';
 import { logDebug, logError, logInfo } from './loggingService';
 import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
 import { getAdminPhoneNumberForState } from '@/services/stateRoutingService';
-import { checkFormBot, tagBotSuspected } from '@/lib/bot-protection';
+import { evaluateLeadSpam, tagSpamSuspected } from '@/lib/spam-protection';
 import {
     parseLeadForm,
     simpleLeadSchema,
@@ -245,8 +245,9 @@ const OPEN_PHONE_FROM_NUMBER = process.env.OPEN_PHONE_FROM_NUMBER || "";
  *
  * We no longer trust the client for this field. The `fallback: 'true'` path is the exact
  * route the SF org already accepts for token-less leads, so server-generating it preserves
- * Web-to-Lead acceptance now that Google reCAPTCHA is gone and Vercel BotID is the sole
- * bot defense. `g-recaptcha-response` is always sent empty alongside it.
+ * Web-to-Lead acceptance now that Google reCAPTCHA is gone. Lead spam on these forms is
+ * guarded by `evaluateLeadSpam` (validity + abuse-rate gating); Vercel BotID now only guards
+ * the concierge chat route (`/api/chat`). `g-recaptcha-response` is always sent empty alongside it.
  */
 function buildCaptchaSettings(): string {
     return JSON.stringify({ keyname: 'vpcs_next_website', fallback: 'true', orgId: '00D4x000003yaV2', ts: String(Date.now()) });
@@ -266,24 +267,25 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
     });
 
     try {
-        // Classify the submission with Vercel BotID. Trusted server-internal callers
-        // (e.g. the AI concierge lead tools) bypass via their process-local token; the
-        // kill-switch env var and fail-open error handling live inside checkFormBot.
-        const bot = await checkFormBot(options);
-
-        // Validate and normalize the payload before processing.
+        // Validate and normalize the payload before processing. Invalid data (no usable
+        // email or phone, etc.) is a HARD reject below — never written to Salesforce.
         const validation = parseLeadForm(contactAgentSchema, formData);
         if (!validation.ok) {
-            logError('Validation failed for contact agent form', { submissionId, errors: validation.errors });
+            logError('Invalid contactAgent submission', { submissionId, errors: validation.errors });
             throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
         }
         formData = validation.data;
 
-        // Quarantine bot-suspected leads: still written to Salesforce, but tagged so the team
-        // can filter them and partner SMS is suppressed below. Never drop a real lead.
-        if (bot.botSuspected) {
-            logError('Bot-suspected submission', { submissionId, form: 'contactAgent' });
-            formData.additionalComments = tagBotSuspected(formData.additionalComments);
+        // Soft-quarantine spam-suspected leads: still written to Salesforce, but tagged so the
+        // team can filter them and partner SMS is suppressed below. Never drop a real lead.
+        const spam = await evaluateLeadSpam({
+            email: formData.email,
+            freeText: formData.additionalComments,
+            options,
+        });
+        if (spam.quarantine) {
+            logError('Spam-suspected submission', { submissionId, form: 'contactAgent', reasons: spam.reasons });
+            formData.additionalComments = tagSpamSuspected(formData.additionalComments);
         }
 
         const paramsObj: { [key: string]: string } = {};
@@ -379,7 +381,7 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
         // Fire and forget notifications - don't await them
         await Promise.all([
             sendToSlack({
-                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Agent Lead' : '🔔 New Agent Lead',
+                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Agent Lead' : '🔔 New Agent Lead',
                 name: `${formData.firstName} ${formData.lastName}` || "",
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -392,8 +394,8 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
                     state: paramsObj.state
                 } : undefined
             }),
-            // Suppress partner SMS for bot-suspected leads so bots can't trigger partner outreach.
-            ...(bot.botSuspected ? [] : [sendOpenPhoneMessage({
+            // Suppress partner SMS for spam-suspected leads so spammers can't trigger partner outreach.
+            ...(spam.quarantine ? [] : [sendOpenPhoneMessage({
                 content: `New Lead From VeteranPCS:
 ${formData.firstName} ${formData.lastName}
 Email: ${formData.email}
@@ -442,7 +444,7 @@ ${formData.additionalComments ? `Additional Comments: ${formData.additionalComme
     }
 }
 
-export async function GetListedAgentsPostForm(formData: any) {
+export async function GetListedAgentsPostForm(formData: any, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'getListedAgents',
@@ -453,21 +455,23 @@ export async function GetListedAgentsPostForm(formData: any) {
     logInfo('Processing agent listing form submission', { submissionId });
 
     try {
-        // Classify the submission with Vercel BotID (kill-switch + fail-open live in the helper).
-        const bot = await checkFormBot();
-
-        // Validate and normalize the payload before processing.
+        // Validate and normalize the payload before processing (HARD reject on invalid data).
         const validation = parseLeadForm(getListedAgentsSchema, formData);
         if (!validation.ok) {
-            logError('Validation failed for agent listing form', { submissionId, errors: validation.errors });
+            logError('Invalid getListedAgents submission', { submissionId, errors: validation.errors });
             throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
         }
         formData = validation.data;
 
-        // Quarantine bot-suspected leads: written to Salesforce but tagged on the free-text field.
-        if (bot.botSuspected) {
-            logError('Bot-suspected submission', { submissionId, form: 'getListedAgents' });
-            formData.tellusMore = tagBotSuspected(formData.tellusMore);
+        // Soft-quarantine spam-suspected leads: written to Salesforce but tagged on the free-text field.
+        const spam = await evaluateLeadSpam({
+            email: formData.email,
+            freeText: formData.tellusMore,
+            options,
+        });
+        if (spam.quarantine) {
+            logError('Spam-suspected submission', { submissionId, form: 'getListedAgents', reasons: spam.reasons });
+            formData.tellusMore = tagSpamSuspected(formData.tellusMore);
         }
 
         const formBody = new URLSearchParams({
@@ -540,7 +544,7 @@ export async function GetListedAgentsPostForm(formData: any) {
 
         Promise.all([
             sendToSlack({
-                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Agent Listing Request' : '🔔 New Agent Listing Request',
+                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Agent Listing Request' : '🔔 New Agent Listing Request',
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -582,7 +586,7 @@ export async function GetListedAgentsPostForm(formData: any) {
     }
 }
 
-export async function GetListedLendersPostForm(formData: any) {
+export async function GetListedLendersPostForm(formData: any, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'getListedLenders',
@@ -593,21 +597,23 @@ export async function GetListedLendersPostForm(formData: any) {
     logInfo('Processing lender listing form submission', { submissionId });
 
     try {
-        // Classify the submission with Vercel BotID (kill-switch + fail-open live in the helper).
-        const bot = await checkFormBot();
-
-        // Validate and normalize the payload before processing.
+        // Validate and normalize the payload before processing (HARD reject on invalid data).
         const validation = parseLeadForm(getListedLendersSchema, formData);
         if (!validation.ok) {
-            logError('Validation failed for lender listing form', { submissionId, errors: validation.errors });
+            logError('Invalid getListedLenders submission', { submissionId, errors: validation.errors });
             throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
         }
         formData = validation.data;
 
-        // Quarantine bot-suspected leads: written to Salesforce but tagged on the free-text field.
-        if (bot.botSuspected) {
-            logError('Bot-suspected submission', { submissionId, form: 'getListedLenders' });
-            formData.tellusMore = tagBotSuspected(formData.tellusMore);
+        // Soft-quarantine spam-suspected leads: written to Salesforce but tagged on the free-text field.
+        const spam = await evaluateLeadSpam({
+            email: formData.email,
+            freeText: formData.tellusMore,
+            options,
+        });
+        if (spam.quarantine) {
+            logError('Spam-suspected submission', { submissionId, form: 'getListedLenders', reasons: spam.reasons });
+            formData.tellusMore = tagSpamSuspected(formData.tellusMore);
         }
 
         const formBody = new URLSearchParams({
@@ -677,7 +683,7 @@ export async function GetListedLendersPostForm(formData: any) {
 
         Promise.all([
             sendToSlack({
-                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Lender Listing Request' : '🔔 New Lender Listing Request',
+                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Lender Listing Request' : '🔔 New Lender Listing Request',
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -719,7 +725,7 @@ export async function GetListedLendersPostForm(formData: any) {
     }
 }
 
-export async function KeepInTouchForm(formData: any) {
+export async function KeepInTouchForm(formData: any, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'keepInTouch',
@@ -730,20 +736,18 @@ export async function KeepInTouchForm(formData: any) {
     logInfo('Processing keep in touch form submission', { submissionId });
 
     try {
-        // Classify the submission with Vercel BotID (kill-switch + fail-open live in the helper).
-        const bot = await checkFormBot();
-
-        // Validate and normalize the payload before processing.
+        // Validate and normalize the payload before processing (HARD reject on invalid data).
         const validation = parseLeadForm(simpleLeadSchema, formData);
         if (!validation.ok) {
-            logError('Validation failed for keep in touch form', { submissionId, errors: validation.errors });
+            logError('Invalid keepInTouch submission', { submissionId, errors: validation.errors });
             throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
         }
         formData = validation.data;
 
-        // No free-text field on this form — the flagged Slack header below is the bot signal.
-        if (bot.botSuspected) {
-            logError('Bot-suspected submission', { submissionId, form: 'keepInTouch' });
+        // No free-text field on this form — the flagged Slack header below is the spam signal.
+        const spam = await evaluateLeadSpam({ email: formData.email, options });
+        if (spam.quarantine) {
+            logError('Spam-suspected submission', { submissionId, form: 'keepInTouch', reasons: spam.reasons });
         }
 
         const formBody = new URLSearchParams({
@@ -792,7 +796,7 @@ export async function KeepInTouchForm(formData: any) {
 
         Promise.all([
             sendToSlack({
-                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Keep In Touch Submission' : '🔔 New Keep In Touch Submission',
+                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Keep In Touch Submission' : '🔔 New Keep In Touch Submission',
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -840,23 +844,24 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
     });
 
     try {
-        // Classify the submission with Vercel BotID. Trusted server-internal callers
-        // (e.g. the AI concierge lead tools) bypass via their process-local token; the
-        // kill-switch env var and fail-open error handling live inside checkFormBot.
-        const bot = await checkFormBot(options);
-
-        // Validate and normalize the payload before processing.
+        // Validate and normalize the payload before processing. Invalid data (no usable
+        // email or phone, etc.) is a HARD reject below — never written to Salesforce.
         const validation = parseLeadForm(contactLenderSchema, formData);
         if (!validation.ok) {
-            logError('Validation failed for contact lender form', { submissionId, errors: validation.errors });
+            logError('Invalid contactLender submission', { submissionId, errors: validation.errors });
             throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
         }
         formData = validation.data;
 
-        // Quarantine bot-suspected leads: tagged in Salesforce, partner SMS suppressed below.
-        if (bot.botSuspected) {
-            logError('Bot-suspected submission', { submissionId, form: 'contactLender' });
-            formData.additionalComments = tagBotSuspected(formData.additionalComments);
+        // Soft-quarantine spam-suspected leads: tagged in Salesforce, partner SMS suppressed below.
+        const spam = await evaluateLeadSpam({
+            email: formData.email,
+            freeText: formData.additionalComments,
+            options,
+        });
+        if (spam.quarantine) {
+            logError('Spam-suspected submission', { submissionId, form: 'contactLender', reasons: spam.reasons });
+            formData.additionalComments = tagSpamSuspected(formData.additionalComments);
         }
 
         const paramsObj: { [key: string]: string } = {};
@@ -939,7 +944,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
         // Fire and forget notifications - don't await them
         await Promise.all([
             sendToSlack({
-                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Lender Lead' : '🔔 New Lender Lead',
+                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Lender Lead' : '🔔 New Lender Lead',
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -952,8 +957,8 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
                     state: paramsObj.state
                 } : undefined
             }),
-            // Suppress partner SMS for bot-suspected leads so bots can't trigger partner outreach.
-            ...(bot.botSuspected ? [] : [sendOpenPhoneMessage({
+            // Suppress partner SMS for spam-suspected leads so spammers can't trigger partner outreach.
+            ...(spam.quarantine ? [] : [sendOpenPhoneMessage({
                 content: `New Lead From VeteranPCS:
 ${formData.firstName} ${formData.lastName}
 Email: ${formData.email}
@@ -1012,23 +1017,23 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
     logInfo('Processing contact form submission', { submissionId });
 
     try {
-        // Classify the submission with Vercel BotID. Trusted server-internal callers
-        // (e.g. the AI concierge lead tools) bypass via their process-local token; the
-        // kill-switch env var and fail-open error handling live inside checkFormBot.
-        const bot = await checkFormBot(options);
-
-        // Validate and normalize the payload before processing.
+        // Validate and normalize the payload before processing (HARD reject on invalid data).
         const validation = parseLeadForm(simpleLeadSchema, formData);
         if (!validation.ok) {
-            logError('Validation failed for contact form', { submissionId, errors: validation.errors });
+            logError('Invalid contact submission', { submissionId, errors: validation.errors });
             throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
         }
         formData = validation.data;
 
-        // Quarantine bot-suspected leads: written to Salesforce but tagged on the free-text field.
-        if (bot.botSuspected) {
-            logError('Bot-suspected submission', { submissionId, form: 'contact' });
-            formData.additionalComments = tagBotSuspected(formData.additionalComments);
+        // Soft-quarantine spam-suspected leads: written to Salesforce but tagged on the free-text field.
+        const spam = await evaluateLeadSpam({
+            email: formData.email,
+            freeText: formData.additionalComments,
+            options,
+        });
+        if (spam.quarantine) {
+            logError('Spam-suspected submission', { submissionId, form: 'contact', reasons: spam.reasons });
+            formData.additionalComments = tagSpamSuspected(formData.additionalComments);
         }
 
         const formBody = new URLSearchParams({
@@ -1078,7 +1083,7 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
 
         Promise.all([
             sendToSlack({
-                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Contact Form Submission' : '🔔 New Contact Form Submission',
+                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Contact Form Submission' : '🔔 New Contact Form Submission',
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -1123,22 +1128,18 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
     logInfo('Processing VA loan guide form submission', { submissionId });
 
     try {
-        // Classify the submission with Vercel BotID. Trusted server-internal callers
-        // (e.g. the AI concierge lead tools) bypass via their process-local token; the
-        // kill-switch env var and fail-open error handling live inside checkFormBot.
-        const bot = await checkFormBot(options);
-
-        // Validate and normalize the payload before processing.
+        // Validate and normalize the payload before processing (HARD reject on invalid data).
         const validation = parseLeadForm(simpleLeadSchema, formData);
         if (!validation.ok) {
-            logError('Validation failed for VA loan guide form', { submissionId, errors: validation.errors });
+            logError('Invalid vaLoanGuide submission', { submissionId, errors: validation.errors });
             throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
         }
         formData = validation.data;
 
-        // No free-text field on this form — the flagged Slack header below is the bot signal.
-        if (bot.botSuspected) {
-            logError('Bot-suspected submission', { submissionId, form: 'vaLoanGuide' });
+        // No free-text field on this form — the flagged Slack header below is the spam signal.
+        const spam = await evaluateLeadSpam({ email: formData.email, options });
+        if (spam.quarantine) {
+            logError('Spam-suspected submission', { submissionId, form: 'vaLoanGuide', reasons: spam.reasons });
         }
 
         const formBody = new URLSearchParams({
@@ -1187,7 +1188,7 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
 
         Promise.all([
             sendToSlack({
-                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New VA Loan Guide Download' : '🔔 New VA Loan Guide Download',
+                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New VA Loan Guide Download' : '🔔 New VA Loan Guide Download',
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -1221,7 +1222,7 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
     }
 }
 
-export async function internshipFormSubmission(formData: any) {
+export async function internshipFormSubmission(formData: any, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'internship',
@@ -1232,21 +1233,23 @@ export async function internshipFormSubmission(formData: any) {
     logInfo('Processing internship form submission', { submissionId });
 
     try {
-        // Classify the submission with Vercel BotID (kill-switch + fail-open live in the helper).
-        const bot = await checkFormBot();
-
-        // Validate and normalize the payload before processing.
+        // Validate and normalize the payload before processing (HARD reject on invalid data).
         const validation = parseLeadForm(internshipSchema, formData);
         if (!validation.ok) {
-            logError('Validation failed for internship form', { submissionId, errors: validation.errors });
+            logError('Invalid internship submission', { submissionId, errors: validation.errors });
             throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
         }
         formData = validation.data;
 
-        // Quarantine bot-suspected leads: written to Salesforce but tagged on the free-text field.
-        if (bot.botSuspected) {
-            logError('Bot-suspected submission', { submissionId, form: 'internship' });
-            formData['00N4x00000QPS7V'] = tagBotSuspected(formData['00N4x00000QPS7V']);
+        // Soft-quarantine spam-suspected leads: written to Salesforce but tagged on the free-text field.
+        const spam = await evaluateLeadSpam({
+            email: formData.email,
+            freeText: formData['00N4x00000QPS7V'],
+            options,
+        });
+        if (spam.quarantine) {
+            logError('Spam-suspected submission', { submissionId, form: 'internship', reasons: spam.reasons });
+            formData['00N4x00000QPS7V'] = tagSpamSuspected(formData['00N4x00000QPS7V']);
         }
 
         const formBody = new URLSearchParams({
@@ -1313,7 +1316,7 @@ export async function internshipFormSubmission(formData: any) {
 
         Promise.all([
             sendToSlack({
-                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Internship Submission' : '🔔 New Internship Submission',
+                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Internship Submission' : '🔔 New Internship Submission',
                 name: `${formData.first_name} ${formData.last_name}`,
                 email: formData.email || "",
                 phoneNumber: formData.mobile || "",
