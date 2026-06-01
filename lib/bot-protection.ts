@@ -1,3 +1,4 @@
+import 'server-only';
 import { checkBotId } from 'botid/server';
 import { isTrustedInternalCall, type InternalCallOptions } from '@/lib/internal-call-token';
 import { logError } from '@/services/loggingService';

@@ -1,3 +1,4 @@
+import 'server-only';
 import { tool } from 'ai';
 import {
   contactAgentPostForm,
