@@ -45,13 +45,9 @@ export default function GetListedLendersPage() {
         });
         const server_response = await GetListedLendersPostForm(formData);
 
-        if (server_response?.redirectUrl) {
-          router.push(server_response.redirectUrl);
-        } else {
-          console.log("No redirect URL found");
-          setIsSubmitting(false);
-          setShouldSubmitForm(false);
-        }
+        // GetListedLendersPostForm throws on failure, so reaching here means the lead was accepted.
+        // Use Salesforce's redirect when present, otherwise fall back to our own /thank-you.
+        router.push(server_response?.redirectUrl || "/thank-you");
       } catch (error) {
         console.error('Error submitting form:', error);
         setIsSubmitting(false);

@@ -37,11 +37,11 @@ export default function ContactLenderPage() {
       // - Exponential backoff between retries
       // - Proper error handling and logging
       const server_response = await contactLenderPostForm(formData, fullQueryString);
-      if (server_response?.redirectUrl) {
-        router.push(server_response.redirectUrl);
-        return { success: true, redirectUrl: server_response.redirectUrl };
-      }
-      return { success: false };
+      // contactLenderPostForm throws on failure, so any return means the lead was accepted.
+      // Use Salesforce's redirect when present, otherwise fall back to our own /thank-you.
+      const destination = server_response?.redirectUrl || "/thank-you";
+      router.push(destination);
+      return { success: true, redirectUrl: destination };
     } catch (error) {
       console.error('Error submitting form:', error);
       return { success: false };
