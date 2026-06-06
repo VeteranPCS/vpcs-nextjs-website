@@ -55,74 +55,107 @@ const otherStatesField = z
     .union([z.array(z.string().trim().max(60)).max(60), z.string().trim().max(2000)])
     .optional();
 
+// ---- Spam detectors --------------------------------------------------------------------
+
+/** Returns true if `phone` contains between 10 and 15 digits (after stripping non-digits). */
+export function hasPlausiblePhone(phone: string | undefined): boolean {
+    const digits = (phone ?? '').replace(/\D/g, '');
+    return digits.length >= 10 && digits.length <= 15;
+}
+
+const LINK_RE = /\bhttps?:\/\/|\bwww\.|<a\s|\[url[=\]]/i;
+/** Returns true if `text` contains a hyperlink pattern. */
+export function containsLink(text: string | undefined): boolean {
+    return !!text && LINK_RE.test(text);
+}
+
+// ---- Contact-method refinement ---------------------------------------------------------
+
+/**
+ * HARD reject: at least one of a valid email or a plausible phone must be present.
+ * Applied only to consumer lead schemas (simpleLeadSchema, contactAgentSchema,
+ * contactLenderSchema). Agent/lender application and internship schemas are left unrefined.
+ */
+const requireContactMethod = <S extends z.ZodObject<any>>(schema: S) =>
+    schema.refine(
+        (d: any) => (typeof d.email === 'string' && d.email.trim() !== '') || hasPlausiblePhone(d.phone),
+        { message: 'A valid email or phone number is required.', path: ['email'] },
+    );
+
 // ---- Schemas ---------------------------------------------------------------------------
 
 /**
  * Base lead shape shared by simple lead/contact forms:
  * contactPostForm, KeepInTouchForm, vaLoanGuideForm.
  */
-export const simpleLeadSchema = z
-    .object({
-        firstName: nameField,
-        lastName: nameField,
-        email: emailField,
-        phone: phoneField,
-        additionalComments: longTextField,
-        captchaToken: captchaTokenField,
-        captcha_settings: shortTextField,
-    })
-    .passthrough();
+export const simpleLeadSchema = requireContactMethod(
+    z
+        .object({
+            firstName: nameField,
+            lastName: nameField,
+            email: emailField,
+            phone: phoneField,
+            additionalComments: longTextField,
+            captchaToken: captchaTokenField,
+            captcha_settings: shortTextField,
+        })
+        .passthrough(),
+);
 
 /**
  * Contact-an-agent lead. Superset of the simple lead with PCS/property fields.
  * Used by contactAgentPostForm.
  */
-export const contactAgentSchema = z
-    .object({
-        firstName: nameField,
-        lastName: nameField,
-        email: emailField,
-        phone: phoneField,
-        currentBase: shortTextField,
-        destinationBase: shortTextField,
-        howDidYouHear: shortTextField,
-        tellusMore: longTextField,
-        additionalComments: longTextField,
-        status_select: shortTextField,
-        branch_select: shortTextField,
-        discharge_status: shortTextField,
-        state: shortTextField,
-        city: shortTextField,
-        buyingSelling: shortTextField,
-        timeframe: shortTextField,
-        typeOfHome: shortTextField,
-        bedrooms: shortTextField,
-        bathrooms: shortTextField,
-        maxPrice: shortTextField,
-        preApproval: shortTextField,
-        captchaToken: captchaTokenField,
-        captcha_settings: shortTextField,
-    })
-    .passthrough();
+export const contactAgentSchema = requireContactMethod(
+    z
+        .object({
+            firstName: nameField,
+            lastName: nameField,
+            email: emailField,
+            phone: phoneField,
+            currentBase: shortTextField,
+            destinationBase: shortTextField,
+            howDidYouHear: shortTextField,
+            tellusMore: longTextField,
+            additionalComments: longTextField,
+            status_select: shortTextField,
+            branch_select: shortTextField,
+            discharge_status: shortTextField,
+            state: shortTextField,
+            city: shortTextField,
+            buyingSelling: shortTextField,
+            timeframe: shortTextField,
+            typeOfHome: shortTextField,
+            bedrooms: shortTextField,
+            bathrooms: shortTextField,
+            maxPrice: shortTextField,
+            preApproval: shortTextField,
+            captchaToken: captchaTokenField,
+            captcha_settings: shortTextField,
+        })
+        .passthrough(),
+);
 
 /**
  * Contact-a-lender lead. Used by contactLenderPostForm.
  */
-export const contactLenderSchema = z
-    .object({
-        firstName: nameField,
-        lastName: nameField,
-        email: emailField,
-        phone: phoneField,
-        currentBase: shortTextField,
-        destinationBase: shortTextField,
-        howDidYouHear: shortTextField,
-        tellusMore: longTextField,
-        additionalComments: longTextField,
-        captchaToken: captchaTokenField,
-        captcha_settings: shortTextField,
-    })
-    .passthrough();
+export const contactLenderSchema = requireContactMethod(
+    z
+        .object({
+            firstName: nameField,
+            lastName: nameField,
+            email: emailField,
+            phone: phoneField,
+            currentBase: shortTextField,
+            destinationBase: shortTextField,
+            howDidYouHear: shortTextField,
+            tellusMore: longTextField,
+            additionalComments: longTextField,
+            captchaToken: captchaTokenField,
+            captcha_settings: shortTextField,
+        })
+        .passthrough(),
+);
 
 /**
  * Agent "get listed" application. Used by GetListedAgentsPostForm.

@@ -14,9 +14,9 @@ export default function RootLayout({
   const conciergeEnabled = featureFlags.conciergeEnabled;
   return (
     <ConciergeProvider>
-      <BotIdClient
-        protect={[{ path: '/*', method: 'POST', advancedOptions: { checkLevel: 'deepAnalysis' } }]}
-      />
+      {conciergeEnabled && (
+        <BotIdClient protect={[{ path: '/api/chat', method: 'POST' }]} />
+      )}
       <Header />
       {children}
       <Footer />
