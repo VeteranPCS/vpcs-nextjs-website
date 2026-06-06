@@ -95,6 +95,7 @@ export default async function AuthorByline({
     firstName: author.firstName,
     salesforceId: author.salesforceId,
     stateSlug: author.stateSlug,
+    form: author.isLender ? 'lender' : 'agent',
   });
 
   return (

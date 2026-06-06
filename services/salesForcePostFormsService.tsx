@@ -172,87 +172,61 @@ async function submitToSalesforceWithRetry(
  * Validates that a Salesforce response indicates successful form submission
  */
 function validateSalesforceResponse(responseText: string, submissionId: string): { isValid: boolean; reason?: string } {
-    // Check for explicit error indicators in the response first
-    if (responseText && responseText.trim().length > 0) {
-        const errorIndicators = [
-            'error occurred',
-            'invalid',
-            'required field',
-            'unable to create',
-            'failed to submit',
-            'system error',
-            'temporarily unavailable',
-            'captcha',
-            'security'
-        ];
-
-        const lowerResponseText = responseText.toLowerCase();
-        for (const indicator of errorIndicators) {
-            if (lowerResponseText.includes(indicator)) {
-                logDebug('Found error indicator in response', {
-                    submissionId,
-                    indicator,
-                    responsePreview: responseText.substring(0, 200)
-                });
-                return { isValid: false, reason: `Error indicator found: ${indicator}` };
-            }
-        }
-
-        // Check for success indicators
-        const successIndicators = [
-            'window.location', // Redirect script indicates success
-            'thank', // Thank you pages
-            'success',
-            'submitted',
-            'received'
-        ];
-
-        for (const indicator of successIndicators) {
-            if (lowerResponseText.includes(indicator)) {
-                logDebug('Found success indicator in response', {
-                    submissionId,
-                    indicator
-                });
-                return { isValid: true };
-            }
-        }
-
-        // If response has content but no clear indicators, log and assume error for now
-        logDebug('Response has content but no clear success/error indicators', {
-            submissionId,
-            responseLength: responseText.length,
-            responsePreview: responseText.substring(0, 200)
-        });
-        return { isValid: false, reason: 'Unclear response content, no success indicators found' };
+    // 1. Positive signal FIRST. Salesforce emits a redirect script on acceptance
+    //    (window.location(...) / window.location.replace(...)). This is the
+    //    authoritative success signal. Checking it before any substring scan makes
+    //    the echoed retURL (which can contain words like "security") irrelevant.
+    if (responseText && /window\.location(?:\.replace)?\(['"]([^'"]+)['"]\)/.test(responseText)) {
+        logDebug('Found Salesforce success redirect in response', { submissionId });
+        return { isValid: true };
     }
 
-    // Empty response handling - this might actually be valid for some Salesforce endpoints
-    // Let's be more lenient for empty responses and consider them potentially valid
-    logDebug('Empty response from Salesforce - treating as potentially valid', {
-        submissionId,
-        responseLength: responseText ? responseText.length : 0
-    });
+    // 2. Empty/whitespace response → FAILURE (fail-closed). We must positively
+    //    confirm the lead was created; an empty response cannot do that.
+    if (!responseText || responseText.trim().length === 0) {
+        logDebug('Empty response from Salesforce - treating as failure', {
+            submissionId,
+            responseLength: responseText ? responseText.length : 0
+        });
+        return { isValid: false, reason: 'Empty response from Salesforce' };
+    }
 
-    // For now, let's accept empty responses as valid since they might indicate success
-    // We can monitor logs to see if this causes issues
-    return { isValid: true };
+    // 3. Has content but no redirect → scan for explicit error indicators.
+    const errorIndicators = [
+        'error occurred',
+        'invalid',
+        'required field',
+        'unable to create',
+        'failed to submit',
+        'system error',
+        'temporarily unavailable',
+        'captcha',
+        'security'
+    ];
+
+    const lowerResponseText = responseText.toLowerCase();
+    for (const indicator of errorIndicators) {
+        if (lowerResponseText.includes(indicator)) {
+            logDebug('Found error indicator in response', {
+                submissionId,
+                indicator,
+                responsePreview: responseText.substring(0, 200)
+            });
+            return { isValid: false, reason: `Error indicator found: ${indicator}` };
+        }
+    }
+
+    // 4. Has content, no redirect, no known error indicator → ambiguous, FAILURE.
+    logDebug('Response has content but no Salesforce success redirect', {
+        submissionId,
+        responseLength: responseText.length,
+        responsePreview: responseText.substring(0, 200)
+    });
+    return { isValid: false, reason: 'No Salesforce success redirect found in response' };
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const OPEN_PHONE_FROM_NUMBER = process.env.OPEN_PHONE_FROM_NUMBER || "";
-
-/**
- * Builds the Salesforce Web-to-Lead `captcha_settings` payload server-side.
- *
- * We no longer trust the client for this field. The `fallback: 'true'` path is the exact
- * route the SF org already accepts for token-less leads, so server-generating it preserves
- * Web-to-Lead acceptance now that Google reCAPTCHA is gone. Lead spam on these forms is
- * guarded by `evaluateLeadSpam` (validity + abuse-rate gating); Vercel BotID now only guards
- * the concierge chat route (`/api/chat`). `g-recaptcha-response` is always sent empty alongside it.
- */
-function buildCaptchaSettings(): string {
-    return JSON.stringify({ keyname: 'vpcs_next_website', fallback: 'true', orgId: '00D4x000003yaV2', ts: String(Date.now()) });
-}
 
 export async function contactAgentPostForm(formData: any, queryString: string, options?: InternalCallOptions) {
     // Start tracking the submission
@@ -344,7 +318,7 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
             "00N4x00000LsaCy": formData.maxPrice || "",
             "00N4x00000Lpbfw": formData.preApproval || "",
             "g-recaptcha-response": "",
-            "captcha_settings": buildCaptchaSettings(),
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending form data to Salesforce with retry logic', {
@@ -510,7 +484,7 @@ export async function GetListedAgentsPostForm(formData: any, options?: InternalC
             "00N4x00000QPksj": formData.howDidYouHear || "",
             "00N4x00000QPS7V": formData.tellusMore || "",
             "g-recaptcha-response": "",
-            "captcha_settings": buildCaptchaSettings(),
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending agent listing data to Salesforce with retry logic', {
@@ -651,7 +625,7 @@ export async function GetListedLendersPostForm(formData: any, options?: Internal
             "00N4x00000QPksj": formData.howDidYouHear || "",
             "00N4x00000QPS7V": formData.tellusMore || "",
             "g-recaptcha-response": "",
-            "captcha_settings": buildCaptchaSettings(),
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending lender listing data to Salesforce with retry logic', {
@@ -770,7 +744,7 @@ export async function KeepInTouchForm(formData: any, options?: InternalCallOptio
             last_name: formData.lastName || "",
             email: formData.email || "",
             "g-recaptcha-response": "",
-            "captcha_settings": buildCaptchaSettings(),
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending keep in touch data to Salesforce with retry logic', {
@@ -918,7 +892,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             "00N4x00000QPS7V": formData.tellusMore || "",
             "00N4x00000bfgFA": formData.additionalComments || "",
             "g-recaptcha-response": "",
-            "captcha_settings": buildCaptchaSettings(),
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending lender form data to Salesforce with retry logic', {
@@ -1061,7 +1035,7 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
             email: formData.email || "",
             "00N4x00000bfgFA": formData.additionalComments || "",
             "g-recaptcha-response": "",
-            "captcha_settings": buildCaptchaSettings(),
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending contact form data to Salesforce with retry logic', {
@@ -1171,7 +1145,7 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
             last_name: formData.lastName || "",
             email: formData.email || "",
             "g-recaptcha-response": "",
-            "captcha_settings": buildCaptchaSettings(),
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending VA loan guide data to Salesforce with retry logic', {
@@ -1300,7 +1274,7 @@ export async function internshipFormSubmission(formData: any, options?: Internal
             "00N4x00000QPksj": formData["00N4x00000QPksj"] || "",
             "00N4x00000QPS7V": formData["00N4x00000QPS7V"] || "",
             "g-recaptcha-response": "",
-            "captcha_settings": buildCaptchaSettings(),
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending internship form data to Salesforce with retry logic', {

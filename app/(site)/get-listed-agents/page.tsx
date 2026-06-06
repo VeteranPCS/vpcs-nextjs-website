@@ -48,10 +48,11 @@ export default function GetListedAgentsPage() {
           event: 'conversion_get_listed_agents',
         });
         const server_response = await GetListedAgentsPostForm({ ...formData, ...getSpamFields() });
+        // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
         if (server_response?.redirectUrl) {
           router.push(server_response.redirectUrl);
         } else {
-          console.log("No redirect URL found");
+          console.error('No redirect URL found');
           setIsSubmitting(false);
           setShouldSubmitForm(false);
         }
