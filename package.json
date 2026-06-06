@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "eval": "vitest run -c vitest.eval.config.ts",
     "prepare": "husky install"
   },
   "dependencies": {
