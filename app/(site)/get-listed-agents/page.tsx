@@ -46,9 +46,14 @@ export default function GetListedAgentsPage() {
           event: 'conversion_get_listed_agents',
         });
         const server_response = await GetListedAgentsPostForm(formData);
-        // GetListedAgentsPostForm throws on failure, so reaching here means the lead was accepted.
-        // Use Salesforce's redirect when present, otherwise fall back to our own /thank-you.
-        router.push(server_response?.redirectUrl || "/thank-you");
+        // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
+        if (server_response?.redirectUrl) {
+          router.push(server_response.redirectUrl);
+        } else {
+          console.error('No redirect URL found');
+          setIsSubmitting(false);
+          setShouldSubmitForm(false);
+        }
       } catch (error) {
         console.error('Error submitting form:', error);
         setIsSubmitting(false);
