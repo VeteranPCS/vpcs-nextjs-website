@@ -3,11 +3,15 @@ import {
   streamText,
 } from 'ai';
 import { checkBotId } from 'botid/server';
-import { buildConciergeConfig } from '@/lib/ai/run-concierge';
+import { buildConciergeConfig, extractLatestUserText } from '@/lib/ai/run-concierge';
 import { parseChatRequest } from '@/lib/ai/chat-validation';
 import { getOrCreateSessionId } from '@/lib/ai/session';
 import { featureFlags } from '@/lib/feature-flags';
 import { chatLimiter } from '@/lib/rate-limit';
+import { evaluateInput } from '@/lib/ai/guardrails';
+import { buildBlockedResponse } from '@/lib/ai/guardrails/responses';
+import { addSessionTokens } from '@/lib/ai/guardrails/budget';
+import { REFUSAL_MESSAGE } from '@/lib/ai/guardrails/config';
 import { logError } from '@/services/loggingService';
 
 export const runtime = 'nodejs';
@@ -61,12 +65,24 @@ export async function POST(req: Request) {
     convertToModelMessages(messages),
   ]);
 
+  // Guardrails: inspect the latest user input before spending model tokens.
+  // Intentionally outside the try-block: evaluateInput fails open at every leaf, so it
+  // never throws; a block must reach buildBlockedResponse, not the catch's 500 handler.
+  const decision = await evaluateInput(extractLatestUserText(messages), { sessionId });
+  if (decision.action === 'block') {
+    return buildBlockedResponse(REFUSAL_MESSAGE, sessionId);
+  }
+
   try {
     const config = buildConciergeConfig({ pageContext });
     const result = streamText({
       ...config,
       messages: modelMessages,
       experimental_telemetry: { isEnabled: false },
+      onFinish: async ({ usage, totalUsage }) => {
+        const tokens = totalUsage?.totalTokens ?? usage?.totalTokens ?? 0;
+        await addSessionTokens(sessionId, tokens);
+      },
     });
 
     return result.toUIMessageStreamResponse({
