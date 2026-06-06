@@ -9,6 +9,7 @@ import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { vaLoanGuideForm } from "@/services/salesForcePostFormsService";
 import { sendGTMEvent } from "@next/third-parties/google";
+import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 
 type FormInputs = {
   firstName: string;
@@ -34,6 +35,8 @@ const PcsResourcesVaLoanGuide = () => {
     },
   });
 
+  const { ref: honeypotRef, getSpamFields } = useHoneypot();
+
   const onSubmitHandler: SubmitHandler<FormInputs> = async (data) => {
     try {
       sendGTMEvent({
@@ -41,7 +44,7 @@ const PcsResourcesVaLoanGuide = () => {
         content: "VA Loan Guide",
       });
 
-      const server_response = await vaLoanGuideForm(data);
+      const server_response = await vaLoanGuideForm({ ...data, ...getSpamFields() });
       if (server_response?.success) {
         setValue('firstName', '');
         setValue('lastName', '');
@@ -67,6 +70,7 @@ const PcsResourcesVaLoanGuide = () => {
       <div className="container mx-auto px-5">
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-6">
           <form onSubmit={handleSubmit(onSubmitHandler)}>
+            <HoneypotField ref={honeypotRef} />
             <div className="lg:px-20 mg:px-20 sm:px-10 px-10 order-2 sm:order-1">
               <div className="text-center">
                 <h2 className="text-[#FFFFFF] text-center poppins lg:text-[36px] md:text-[36px] sm:text-[22px] text-[22px] font-bold">

@@ -5,6 +5,7 @@ import * as yup from "yup";
 import { internshipFormSubmission } from "@/services/salesForcePostFormsService";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 
 export interface FormData {
     first_name: string;
@@ -110,6 +111,8 @@ const WebToLeadForm = () => {
 
     const router = useRouter();
 
+    const { ref: honeypotRef, getSpamFields } = useHoneypot();
+
     const howDidYouHear = watch("00N4x00000QPksj");
     const militaryStatus = watch("00N4x00000LsnP2");
 
@@ -129,7 +132,7 @@ const WebToLeadForm = () => {
                 "00N4x00000QQ0Vz": [data["00N4x00000QQ0Vz"]]
             };
 
-            const response = await internshipFormSubmission(apiData);
+            const response = await internshipFormSubmission({ ...apiData, ...getSpamFields() });
             if (response.redirectUrl) {
                 router.push(response.redirectUrl);
             } else {
@@ -665,6 +668,7 @@ const WebToLeadForm = () => {
                             </p>
                         </div>
 
+                        <HoneypotField ref={honeypotRef} />
                         {/* Submit Button */}
                         <div className="flex md:justify-start justify-center">
                             <button

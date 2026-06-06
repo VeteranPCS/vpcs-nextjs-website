@@ -8,6 +8,7 @@ import Image from "next/image";
 import { GetListedLendersPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
+import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 
 export interface FormData {
   firstName: string;
@@ -26,6 +27,7 @@ export default function GetListedLendersPage() {
   const [formData, setFormData] = useState({});
   const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const { ref: honeypotRef, getSpamFields } = useHoneypot();
 
   const shouldSubmit = () => {
     if (isSubmitting) return;
@@ -43,7 +45,7 @@ export default function GetListedLendersPage() {
         sendGTMEvent({
           event: 'conversion_get_listed_lenders',
         });
-        const server_response = await GetListedLendersPostForm(formData);
+        const server_response = await GetListedLendersPostForm({ ...formData, ...getSpamFields() });
 
         // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
         if (server_response?.redirectUrl) {
@@ -62,7 +64,7 @@ export default function GetListedLendersPage() {
     if (shouldSubmitForm) {
       handleFormSubmission();
     }
-  }, [formData, shouldSubmitForm, router]);
+  }, [formData, shouldSubmitForm, router, getSpamFields]);
 
   const handleBack = () => {
     setCurrentStep(prev => Math.max(prev - 1, 1));
@@ -97,6 +99,7 @@ export default function GetListedLendersPage() {
   return (
     <>
       <div className="container mx-auto w-full">
+        <HoneypotField ref={honeypotRef} />
         <div className="flex flex-wrap md:flex-nowrap justify-between items-center md:pt-[140px] pt-[80px] md:mx-0 mx-5">
           <div>
             <Image

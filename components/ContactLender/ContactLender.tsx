@@ -8,6 +8,7 @@ import * as yup from 'yup';
 import { ContactLenderFormData, HowDidYouHearOptions } from '@/types';
 import { useConcierge } from '@/components/Concierge';
 import { featureFlags } from '@/lib/feature-flags';
+import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 
 // Props type for ContactForm component
 interface ContactFormProps {
@@ -87,11 +88,13 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     },
   });
 
+  const { ref: honeypotRef, getSpamFields } = useHoneypot();
+
   // Form submit handler
   const handleFormSubmit: SubmitHandler<ContactLenderFormData> = async (data) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(data);
+      await onSubmit({ ...data, ...getSpamFields() });
     } catch (error) {
       console.error('Error submitting form:', error);
     } finally {
@@ -119,6 +122,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <HoneypotField ref={honeypotRef} />
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">

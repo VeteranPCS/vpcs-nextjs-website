@@ -11,6 +11,7 @@ import * as yup from 'yup';
 import { KeepInTouchForm } from "@/services/salesForcePostFormsService";
 import { useRouter, usePathname } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
+import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export interface MediaAccountProps {
@@ -54,6 +55,8 @@ const KeepInTouch = () => {
     },
   });
 
+  const { ref: honeypotRef, getSpamFields } = useHoneypot();
+
   const [mediaAccount, SetMediaAccount] = useState<MediaAccountProps[]>([]);
 
   const handleFormSubmission = async (data: ContactFormData) => {
@@ -63,7 +66,7 @@ const KeepInTouch = () => {
         event: 'keep_in_touch_form_submission',
         page: pathname,
       });
-      const server_response = await KeepInTouchForm(data);
+      const server_response = await KeepInTouchForm({ ...data, ...getSpamFields() });
       if (server_response?.success) {
         reset();
         window.location.href = `${BASE_URL}/thank-you`;
@@ -175,6 +178,7 @@ const KeepInTouch = () => {
                 <p className="text-[#292F6C] roboto lg:text-[14px] max-w-[390px] sm:max-w-full mx-auto sm:text-[9px] text-[9px] font-medium mb-3 text-left md:pl-0 sm:pl-3 pl-3">
                   Fields marked with an asterisk (*) are required.
                 </p>
+                <HoneypotField ref={honeypotRef} />
                 <div className="flex items-center md:pl-0 sm:pl-3 pl-3 max-w-[390px] mx-auto sm:max-w-full">
                   <div className="w-[200px] flex md:flex-nowrap flex-wrap items-center gap-4">
                     <div className="lg:py-8 md:py-8 sm:py-2 py-2">

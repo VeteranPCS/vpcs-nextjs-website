@@ -214,22 +214,131 @@ describe('spam-protection', () => {
   });
 
   // -----------------------------------------------------------------------
-  // Phase 2 fields — accepted but unused
+  // Phase 2: honeypot
   // -----------------------------------------------------------------------
-  describe('phase 2 fields', () => {
-    it('accepts honeypot and renderedAt without error or acting on them', async () => {
+  describe('honeypot', () => {
+    it('quarantines when honeypot is non-empty', async () => {
       setupLimitSuccess();
       const { evaluateLeadSpam } = await import('@/lib/spam-protection');
 
-      // Should not affect the result at all in Phase 1
       const result = await evaluateLeadSpam({
         freeText: 'clean text',
-        honeypot: 'I am a bot',   // honeypot filled — but ignored in Phase 1
-        renderedAt: Date.now() - 100, // submitted very fast — but ignored in Phase 1
+        honeypot: 'http://bot.example',
       });
 
-      // Phase 1: these fields are ignored, so no quarantine from them
-      expect(result.quarantine).toBe(false);
+      expect(result.quarantine).toBe(true);
+      expect(result.reasons).toContain('honeypot');
+    });
+
+    it('does not add honeypot reason when honeypot is empty string', async () => {
+      setupLimitSuccess();
+      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
+
+      const result = await evaluateLeadSpam({
+        freeText: 'clean text',
+        honeypot: '',
+      });
+
+      expect(result.reasons).not.toContain('honeypot');
+    });
+
+    it('does not add honeypot reason when honeypot is whitespace-only', async () => {
+      setupLimitSuccess();
+      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
+
+      const result = await evaluateLeadSpam({
+        freeText: 'clean text',
+        honeypot: '   ',
+      });
+
+      expect(result.reasons).not.toContain('honeypot');
+    });
+
+    it('does not add honeypot reason when honeypot is undefined', async () => {
+      setupLimitSuccess();
+      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
+
+      const result = await evaluateLeadSpam({
+        freeText: 'clean text',
+      });
+
+      expect(result.reasons).not.toContain('honeypot');
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // Phase 2: submit timing
+  // -----------------------------------------------------------------------
+  describe('submit timing', () => {
+    const FIXED = 1_700_000_000_000;
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('quarantines when elapsed time is less than MIN_SUBMIT_MS (100 ms)', async () => {
+      vi.spyOn(Date, 'now').mockReturnValue(FIXED);
+      setupLimitSuccess();
+      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
+
+      const result = await evaluateLeadSpam({
+        freeText: 'clean text',
+        renderedAt: FIXED - 100,
+      });
+
+      expect(result.quarantine).toBe(true);
+      expect(result.reasons).toContain('too-fast');
+    });
+
+    it('does not add too-fast reason when elapsed time is >= MIN_SUBMIT_MS (5000 ms)', async () => {
+      vi.spyOn(Date, 'now').mockReturnValue(FIXED);
+      setupLimitSuccess();
+      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
+
+      const result = await evaluateLeadSpam({
+        freeText: 'clean text',
+        renderedAt: FIXED - 5000,
+      });
+
+      expect(result.reasons).not.toContain('too-fast');
+    });
+
+    it('does not add too-fast reason when renderedAt is in the future (negative elapsed / clock skew)', async () => {
+      vi.spyOn(Date, 'now').mockReturnValue(FIXED);
+      setupLimitSuccess();
+      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
+
+      const result = await evaluateLeadSpam({
+        freeText: 'clean text',
+        renderedAt: FIXED + 5000,
+      });
+
+      expect(result.reasons).not.toContain('too-fast');
+    });
+
+    it('does not add too-fast reason and does not throw when renderedAt is a non-numeric string', async () => {
+      vi.spyOn(Date, 'now').mockReturnValue(FIXED);
+      setupLimitSuccess();
+      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
+
+      const result = await evaluateLeadSpam({
+        freeText: 'clean text',
+        renderedAt: 'abc',
+      });
+
+      expect(result.reasons).not.toContain('too-fast');
+    });
+
+    it('does not add too-fast reason when renderedAt is omitted', async () => {
+      vi.spyOn(Date, 'now').mockReturnValue(FIXED);
+      setupLimitSuccess();
+      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
+
+      const result = await evaluateLeadSpam({
+        freeText: 'clean text',
+      });
+
+      expect(result.reasons).not.toContain('too-fast');
     });
   });
 });

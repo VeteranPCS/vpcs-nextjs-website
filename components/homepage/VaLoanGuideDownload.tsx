@@ -9,6 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useConcierge } from "@/components/Concierge";
 import { featureFlags } from "@/lib/feature-flags";
+import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 
 // Form input types
 interface FormInputs {
@@ -43,6 +44,8 @@ const VaLoanGuideDownload = () => {
         },
     });
 
+    const { ref: honeypotRef, getSpamFields } = useHoneypot();
+
     // On submit
     const onSubmitHandler: SubmitHandler<FormInputs> = async (data) => {
         setSubmitting(true);
@@ -57,7 +60,7 @@ const VaLoanGuideDownload = () => {
                 lastName,
                 email: data.email,
             };
-            const server_response = await vaLoanGuideForm(payload);
+            const server_response = await vaLoanGuideForm({ ...payload, ...getSpamFields() });
             if (server_response?.success) {
                 setSuccess(true);
                 reset();
@@ -94,6 +97,7 @@ const VaLoanGuideDownload = () => {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmitHandler)} className="mb-6">
+                    <HoneypotField ref={honeypotRef} />
                     <div className="flex flex-col md:flex-row gap-4 mb-4">
                         <input
                             className="flex-1 px-4 py-3 rounded border border-gray-300 text-sm"

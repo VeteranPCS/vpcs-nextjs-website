@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { isTrustedInternalCall, type InternalCallOptions } from '@/lib/internal-call-token';
 import { containsLink } from '@/lib/validation/leadForms';
 import { formLimiter } from '@/lib/rate-limit';
+import { MIN_SUBMIT_MS } from '@/lib/validation/spam-fields';
 import { logError } from '@/services/loggingService';
 
 export interface LeadSpamResult {
@@ -13,8 +14,8 @@ export interface LeadSpamResult {
 export interface EvaluateLeadSpamArgs {
   email?: string;
   freeText?: string;
-  honeypot?: string;            // Phase 2 (accept now, do NOT act on it yet)
-  renderedAt?: string | number; // Phase 2 (accept now, do NOT act on it yet)
+  honeypot?: string;            // hidden field a bot fills
+  renderedAt?: string | number; // form mount timestamp (epoch ms) for timing check
   options?: InternalCallOptions;
 }
 
@@ -35,7 +36,7 @@ async function callerIp(): Promise<string> {
  * Order of evaluation:
  *  1. Trusted server-internal callers (e.g. the AI concierge) bypass all checks immediately.
  *  2. Kill-switch: LEAD_SPAM_ENFORCED=0 disables all checks.
- *  3. Soft signals accumulated without early-return: link-in-freetext, rate-limit.
+ *  3. Soft signals accumulated without early-return: link-in-freetext, rate-limit, honeypot, too-fast.
  */
 export async function evaluateLeadSpam(args: EvaluateLeadSpamArgs): Promise<LeadSpamResult> {
   // 1. Internal bypass — MUST be first, before any headers() or formLimiter call.
@@ -74,7 +75,23 @@ export async function evaluateLeadSpam(args: EvaluateLeadSpamArgs): Promise<Lead
     // Intentionally push nothing; fail open.
   }
 
-  // Phase 2: honeypot + submit-timing checks added here.
+  // 3c. Honeypot — a non-empty hidden field means an automated filler set it.
+  if (args.honeypot && args.honeypot.trim() !== '') {
+    reasons.push('honeypot');
+  }
+
+  // 3d. Submit timing — a submission faster than a human can plausibly fill the
+  //     form is scripted. Guard `elapsed >= 0` so client clock skew (a render
+  //     timestamp slightly in the future) never quarantines a real lead.
+  if (args.renderedAt !== undefined && args.renderedAt !== '') {
+    const renderedAtMs = Number(args.renderedAt);
+    if (Number.isFinite(renderedAtMs)) {
+      const elapsed = Date.now() - renderedAtMs;
+      if (elapsed >= 0 && elapsed < MIN_SUBMIT_MS) {
+        reasons.push('too-fast');
+      }
+    }
+  }
 
   return { quarantine: reasons.length > 0, reasons };
 }

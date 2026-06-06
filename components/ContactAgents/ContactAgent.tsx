@@ -7,6 +7,7 @@ import * as yup from "yup";
 import { ContactAgentFormData } from '@/types';
 import { useConcierge } from '@/components/Concierge';
 import { featureFlags } from '@/lib/feature-flags';
+import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 
 interface ContactFormProps {
   onSubmit: (data: ContactAgentFormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
@@ -58,6 +59,7 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
   const howDidYouHearValue = watch("howDidYouHear");
   const destinationBaseValue = watch("destinationBase");
   const { open: openConcierge } = useConcierge();
+  const { ref: honeypotRef, getSpamFields } = useHoneypot();
 
   const handleConciergeCta = () => {
     const destination = destinationBaseValue?.trim();
@@ -70,7 +72,7 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
   const handleFormSubmit: SubmitHandler<ContactAgentFormData> = async (data) => {
     setIsSubmitting(true);
     try {
-      const response = await onSubmit(data);
+      const response = await onSubmit({ ...data, ...getSpamFields() });
       if (response?.success || response?.redirectUrl) {
         reset(); // Reset form after successful submission
         if (response?.redirectUrl) {
@@ -98,6 +100,7 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <HoneypotField ref={honeypotRef} />
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
               <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
