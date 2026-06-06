@@ -1,6 +1,8 @@
 import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
 import { RequestType, salesForceAPI, salesForceImageAPI } from '@/services/api';
 import { getSalesforceToken } from '@/services/salesForceTokenService';
+import { escapeSoqlLiteral, isStateCode } from '@/services/soql';
+import { logDebug, logError } from '@/services/loggingService';
 import { client } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
 import { Image } from 'sanity';
@@ -116,6 +118,81 @@ export interface LendersData {
   records: Lenders[];
 }
 
+// Empty-result sentinel shared by the agent/lender state queries. Callers
+// (SSR pages, the areas route, MCP + llms.txt endpoints, concierge tools)
+// access `.records` directly, so the "no matches" path must still be a
+// well-formed AgentsData/LendersData object — not a bare array.
+const EMPTY_RESULT = { totalSize: 0, done: true, records: [] };
+
+// Internal, single source of truth for the state-licensed Account query that
+// both fetchAgentsListByState and fetchLendersListByState run. Consolidating
+// here means the SOQL escaping for the user-derived `state` value lives in
+// exactly ONE place (defense in depth: the value is also validated below).
+async function runStateLicensedQuery<T extends { AccountId_15__c: string }>(
+  params: {
+    state: string;
+    selectClause: string;
+    roleFlag: 'isAgent__pc' | 'isLender__pc';
+    headshotRole: 'agents' | 'lenders';
+    requireHeadshot: boolean;
+    label: string;
+    // Re-run the public function after a token refresh (preserves its options).
+    retry: () => Promise<{ totalSize: number; done: boolean; records: T[] }>;
+  },
+): Promise<{ totalSize: number; done: boolean; records: T[] }> {
+  const { state, selectClause, roleFlag, headshotRole, requireHeadshot, label, retry } = params;
+
+  // Primary gate: only accept a 2-letter state code. Invalid input never
+  // reaches the query builder. SSR pages rely on the empty-list path, so we
+  // return an empty result rather than throwing.
+  if (!isStateCode(state)) {
+    logDebug(`Rejected non-state-code input for ${label}`, { state });
+    return { ...EMPTY_RESULT, records: [] as T[] };
+  }
+
+  // Backstop: escape the (already validated) value before interpolating it
+  // into the SOQL string literal.
+  const safeState = escapeSoqlLiteral(state);
+
+  const query = `
+    ${selectClause}
+    FROM Account
+    WHERE ${roleFlag} = true
+      AND Active_on_Website__pc = true
+      AND (State_s_Licensed_in__pc LIKE '%${safeState}%'
+          OR Other_States__pc INCLUDES ('${safeState}'))
+  `.replace(/\s+/g, ' ').trim();
+
+  const response = await salesForceAPI({
+    endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
+    type: RequestType.GET,
+  });
+
+  if (response?.status === 200) {
+    const resolved = await Promise.all(
+      response.data.records.map(async (record: T) => {
+        const PhotoUrl = await resolveHeadshot(headshotRole, record.AccountId_15__c);
+        if (PhotoUrl) return { ...record, PhotoUrl };
+        return requireHeadshot ? null : record;
+      }),
+    );
+    const records = resolved.filter((record): record is T => record !== null);
+
+    return { ...response.data, records };
+  } else if (response?.status === 401) {
+    // Token expired: Refresh and retry
+    try {
+      await getSalesforceToken(); // Refresh token
+      return await retry(); // Retry the request
+    } catch (tokenError) {
+      console.error('Failed to refresh token:', tokenError);
+      throw tokenError;
+    }
+  } else {
+    throw new Error('Failed to fetch State Based Agent List');
+  }
+}
+
 const stateService = {
   fetchStateList: async (): Promise<StateList[]> => {
     try {
@@ -164,47 +241,22 @@ const stateService = {
   ): Promise<AgentsData> => {
     const { requireHeadshot = true } = options;
     try {
-      const query = `
-        SELECT Name, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc,
-              Military_Service__pc, Brokerage_Name__pc, BillingAddress,
-              (SELECT Id, Name, AA_Score__c, Area__r.Name, Area__r.State__c FROM Area_Assignments__r ORDER BY AA_Score__c DESC)
-        FROM Account
-        WHERE isAgent__pc = true
-          AND Active_on_Website__pc = true
-          AND (State_s_Licensed_in__pc LIKE '%${state}%'
-              OR Other_States__pc INCLUDES ('${state}'))
-      `.replace(/\s+/g, ' ').trim();
-
-      const response = await salesForceAPI({
-        endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
-        type: RequestType.GET,
+      const result = await runStateLicensedQuery<Agent>({
+        state,
+        selectClause: `
+          SELECT Name, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc,
+                Military_Service__pc, Brokerage_Name__pc, BillingAddress,
+                (SELECT Id, Name, AA_Score__c, Area__r.Name, Area__r.State__c FROM Area_Assignments__r ORDER BY AA_Score__c DESC)
+        `,
+        roleFlag: 'isAgent__pc',
+        headshotRole: 'agents',
+        requireHeadshot,
+        label: 'fetchAgentsListByState',
+        retry: () => stateService.fetchAgentsListByState(state, options),
       });
-
-      if (response?.status === 200) {
-        const resolved = await Promise.all(
-          response.data.records.map(async (agent: Agent) => {
-            const PhotoUrl = await resolveHeadshot('agents', agent.AccountId_15__c);
-            if (PhotoUrl) return { ...agent, PhotoUrl };
-            return requireHeadshot ? null : agent;
-          }),
-        );
-        const records = resolved.filter((agent): agent is Agent => agent !== null);
-
-        return { ...response.data, records } as AgentsData;
-      } else if (response?.status === 401) {
-        // Token expired: Refresh and retry
-        try {
-          await getSalesforceToken(); // Refresh token
-          return await stateService.fetchAgentsListByState(state, options); // Retry the request
-        } catch (tokenError) {
-          console.error("Failed to refresh token:", tokenError);
-          throw tokenError;
-        }
-      } else {
-        throw new Error("Failed to fetch State Based Agent List");
-      }
+      return result as AgentsData;
     } catch (error: any) {
-      console.error("Error fetching State Based Agent List:", error);
+      logError('Error fetching State Based Agent List', { state }, error);
       throw error;
     }
   },
@@ -214,45 +266,21 @@ const stateService = {
   ): Promise<LendersData> => {
     const { requireHeadshot = true } = options;
     try {
-      const query = `
-      SELECT Name, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, Individual_NMLS_ID__pc, Company_NMLS_ID__pc,
-      (SELECT Id, Name, AA_Score__c, Area__r.Name, Area__r.State__c FROM Area_Assignments__r ORDER BY AA_Score__c DESC)
-      FROM Account
-      WHERE isLender__pc = true
-        AND Active_on_Website__pc = true
-        AND (State_s_Licensed_in__pc LIKE '%${state}%'
-            OR Other_States__pc INCLUDES ('${state}'))
-      `.replace(/\s+/g, ' ').trim();
-
-      const response = await salesForceAPI({
-        endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
-        type: RequestType.GET,
+      const result = await runStateLicensedQuery<Lenders>({
+        state,
+        selectClause: `
+          SELECT Name, AccountId_15__c, FirstName, Agent_Bio__pc, Military_Status__pc, Military_Service__pc, Brokerage_Name__pc, BillingCity, BillingState, Individual_NMLS_ID__pc, Company_NMLS_ID__pc,
+          (SELECT Id, Name, AA_Score__c, Area__r.Name, Area__r.State__c FROM Area_Assignments__r ORDER BY AA_Score__c DESC)
+        `,
+        roleFlag: 'isLender__pc',
+        headshotRole: 'lenders',
+        requireHeadshot,
+        label: 'fetchLendersListByState',
+        retry: () => stateService.fetchLendersListByState(state, options),
       });
-      if (response?.status === 200) {
-        const resolved = await Promise.all(
-          response.data.records.map(async (lender: Lenders) => {
-            const PhotoUrl = await resolveHeadshot('lenders', lender.AccountId_15__c);
-            if (PhotoUrl) return { ...lender, PhotoUrl };
-            return requireHeadshot ? null : lender;
-          }),
-        );
-        const records = resolved.filter((lender): lender is Lenders => lender !== null);
-
-        return { ...response.data, records } as LendersData;
-
-      } else if (response?.status === 401) {
-        try {
-          await getSalesforceToken();
-          return await stateService.fetchLendersListByState(state, options);
-        } catch (tokenError) {
-          console.error('Failed to refresh token:', tokenError);
-          throw tokenError;
-        }
-      } else {
-        throw new Error('Failed to fetch State Based Agent List');
-      }
+      return result as LendersData;
     } catch (error: any) {
-      console.error('Error fetching State Based Agent List:', error);
+      logError('Error fetching State Based Agent List', { state }, error);
       throw error;
     }
   },
@@ -270,10 +298,14 @@ const stateService = {
   },
   fetchAgentById: async (agentId: string): Promise<Agent | null> => {
     try {
+      // Escape the (user-derived) id before interpolating it into the SOQL
+      // string literal. Valid Salesforce ids are alphanumeric, so this is a
+      // no-op for legitimate input and a backstop against injection otherwise.
+      const safeAgentId = escapeSoqlLiteral(agentId);
       const query = `
         SELECT Name, Brokerage_Name__pc, PersonEmail, PersonMobilePhone
         FROM Account
-        WHERE Id = '${agentId}'
+        WHERE Id = '${safeAgentId}'
           AND Active_on_Website__pc = true
       `.replace(/\s+/g, ' ').trim();
 

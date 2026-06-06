@@ -9,7 +9,7 @@ import {
 import AgentCard, { AgentListItem } from './AgentCard';
 import StateCard from './StateCard';
 import BAHResult from './BAHResult';
-import { SUCCESS_MESSAGE } from '@/lib/ai/tools/lead-tools';
+import { SUCCESS_MESSAGE } from '@/lib/ai/tools/messages';
 
 interface Props {
   message: UIMessage;

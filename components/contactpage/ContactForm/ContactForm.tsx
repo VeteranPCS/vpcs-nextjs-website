@@ -9,7 +9,6 @@ import mediaAccountService from "@/services/mediaAccountService";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { contactPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from "next/navigation";
 import { sendGTMEvent } from "@next/third-parties/google";
@@ -28,8 +27,6 @@ export interface ContactFormData {
   firstName?: string;
   lastName?: string;
   email?: string;
-  captchaToken?: string;
-  captcha_settings?: string;
   additionalComments?: string;
 }
 
@@ -40,8 +37,6 @@ const contactFormSchema = yup.object().shape({
   lastName: yup.string().required('Last name is required'),
   email: yup.string().email('Invalid email address').required('Email is required'),
   additionalComments: yup.string(),
-  captchaToken: yup.string().required('Please complete the reCAPTCHA'),
-  captcha_settings: yup.string().required('Please complete the reCAPTCHA'),
 });
 
 const ContactForm = () => {
@@ -59,7 +54,6 @@ const ContactForm = () => {
   const {
     register,
     handleSubmit,
-    setValue,
     reset,
     formState: { errors },
   } = useForm<ContactFormData>({
@@ -69,8 +63,6 @@ const ContactForm = () => {
       lastName: '',
       email: '',
       additionalComments: '',
-      captchaToken: '',
-      captcha_settings: '',
     },
   });
 
@@ -80,14 +72,6 @@ const ContactForm = () => {
       sendGTMEvent({
         event: 'contact_form_submission',
       });
-
-      // Ensure captcha_settings is included from the hidden input
-      const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
-      if (captchaSettingsElem) {
-        data.captcha_settings = captchaSettingsElem.value;
-      }
-
-      console.log('Submitting contact form with data:', data); // Debug log
 
       const server_response = await contactPostForm(data);
       if (server_response?.success || server_response?.message) {
@@ -124,23 +108,6 @@ const ContactForm = () => {
     return error ? (
       <span className="text-error">{error.message}</span>
     ) : null;
-  };
-
-  const onCaptchaChange = (token: string | null) => {
-    if (token) {
-      const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
-      if (captchaSettingsElem) {
-        const captchaSettings = JSON.parse(captchaSettingsElem.value);
-        captchaSettings.ts = JSON.stringify(new Date().getTime());
-        captchaSettingsElem.value = JSON.stringify(captchaSettings);
-        setValue('captcha_settings', captchaSettingsElem.value, {
-          shouldValidate: false // This triggers validation after setting the value
-        });
-        setValue('captchaToken', token, {
-          shouldValidate: true // This triggers validation after setting the value
-        });
-      }
-    }
   };
 
   return (
@@ -214,7 +181,6 @@ const ContactForm = () => {
         <div className="md:w-2/3 sm:w-full w-full relative md:px-10 lg:px-20 mt-10 md:mt-0">
 
           <form onSubmit={handleSubmit(onSubmit)}>
-            <input className="hidden" id="captcha_settings" value='{"keyname":"vpcs_next_website","fallback":"true","orgId":"00D4x000003yaV2","ts":""}' readOnly />
             <div className={classes.FormContainer}>
               <div className="w-full">
                 <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1  gap-5 mb-10">
@@ -277,13 +243,6 @@ const ContactForm = () => {
                   ></textarea>
                 </div>
 
-                <div className={classes.FormGroup}>
-                  <ReCAPTCHA
-                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
-                    onChange={onCaptchaChange} // Handle reCAPTCHA value change
-                  />
-                  {renderError('captchaToken')}
-                </div>
                 <div className="flex flex-col items-end lg:py-8 md:py-8 sm:py-2 py-2 gap-3">
                   <button
                     type="submit"

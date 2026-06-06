@@ -15,8 +15,6 @@ export interface FormData {
   additionalComments?: string | null;
   howDidYouHear?: string;
   tellusMore?: string;
-  captchaToken?: string;
-  captcha_settings?: string;
 }
 
 export default function ContactLenderPage() {
@@ -39,6 +37,7 @@ export default function ContactLenderPage() {
       // - Exponential backoff between retries
       // - Proper error handling and logging
       const server_response = await contactLenderPostForm(formData, fullQueryString);
+      // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
       if (server_response?.redirectUrl) {
         router.push(server_response.redirectUrl);
         return { success: true, redirectUrl: server_response.redirectUrl };

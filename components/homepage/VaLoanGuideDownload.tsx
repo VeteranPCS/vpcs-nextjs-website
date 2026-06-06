@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { vaLoanGuideForm } from "@/services/salesForcePostFormsService";
 import { sendGTMEvent } from "@next/third-parties/google";
 import Image from "next/image";
@@ -15,12 +14,9 @@ import { featureFlags } from "@/lib/feature-flags";
 interface FormInputs {
     name: string;
     email: string;
-    captchaToken: string;
-    captcha_settings: string;
 }
 
 const VaLoanGuideDownload = () => {
-    const [recaptchaRef, setRecaptchaRef] = useState<ReCAPTCHA | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -37,33 +33,15 @@ const VaLoanGuideDownload = () => {
     const validationSchema = Yup.object().shape({
         name: Yup.string().required('Name is required'),
         email: Yup.string().email('Invalid email').required('Email is required'),
-        captchaToken: Yup.string().required('Captcha is required'),
-        captcha_settings: Yup.string().required('Captcha settings are required'),
     });
 
-    const { register, handleSubmit, setValue, formState: { errors }, reset } = useForm<FormInputs>({
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormInputs>({
         resolver: yupResolver(validationSchema),
         defaultValues: {
             name: '',
             email: '',
-            captchaToken: '',
-            captcha_settings: '',
         },
     });
-
-    // Handle reCAPTCHA
-    const onCaptchaChange = (token: string | null) => {
-        if (token) {
-            const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
-            if (captchaSettingsElem) {
-                const captchaSettings = JSON.parse(captchaSettingsElem.value);
-                captchaSettings.ts = JSON.stringify(new Date().getTime());
-                captchaSettingsElem.value = JSON.stringify(captchaSettings);
-                setValue('captcha_settings', captchaSettingsElem.value, { shouldValidate: false });
-                setValue('captchaToken', token, { shouldValidate: true });
-            }
-        }
-    };
 
     // On submit
     const onSubmitHandler: SubmitHandler<FormInputs> = async (data) => {
@@ -78,14 +56,11 @@ const VaLoanGuideDownload = () => {
                 firstName,
                 lastName,
                 email: data.email,
-                captchaToken: data.captchaToken,
-                captcha_settings: data.captcha_settings,
             };
             const server_response = await vaLoanGuideForm(payload);
             if (server_response?.success) {
                 setSuccess(true);
                 reset();
-                recaptchaRef?.reset();
                 // Download the PDF
                 const link = document.createElement('a');
                 link.href = '/downloads/VA-Loan-Guide.pdf';
@@ -146,17 +121,8 @@ const VaLoanGuideDownload = () => {
                     <div className="w-full flex flex-col items-center mb-2">
                         {errors.name && <span className="text-red-600 text-xs">{errors.name.message}</span>}
                         {errors.email && <span className="text-red-600 text-xs">{errors.email.message}</span>}
-                        {errors.captchaToken && <span className="text-red-600 text-xs">{errors.captchaToken.message}</span>}
                         {error && <span className="text-red-600 text-xs">{error}</span>}
                         {success && <span className="text-green-700 text-xs">Thank you! Your download will begin shortly.</span>}
-                    </div>
-
-                    <div className="w-full flex justify-center mb-4">
-                        <ReCAPTCHA
-                            ref={(r) => setRecaptchaRef(r)}
-                            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
-                            onChange={onCaptchaChange}
-                        />
                     </div>
 
                     {featureFlags.conciergeEnabled && (

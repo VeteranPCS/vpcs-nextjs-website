@@ -6,6 +6,17 @@ import stateService from '@/services/stateService';
 import { logDebug, logError, logInfo } from './loggingService';
 import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
 import { getAdminPhoneNumberForState } from '@/services/stateRoutingService';
+import { checkFormBot, tagBotSuspected } from '@/lib/bot-protection';
+import {
+    parseLeadForm,
+    simpleLeadSchema,
+    contactAgentSchema,
+    contactLenderSchema,
+    getListedAgentsSchema,
+    getListedLendersSchema,
+    internshipSchema,
+} from '@/lib/validation/leadForms';
+import { type InternalCallOptions } from '@/lib/internal-call-token';
 
 interface SalesforceSubmissionResult {
     success: boolean;
@@ -160,76 +171,63 @@ async function submitToSalesforceWithRetry(
  * Validates that a Salesforce response indicates successful form submission
  */
 function validateSalesforceResponse(responseText: string, submissionId: string): { isValid: boolean; reason?: string } {
-    // Check for explicit error indicators in the response first
-    if (responseText && responseText.trim().length > 0) {
-        const errorIndicators = [
-            'error occurred',
-            'invalid',
-            'required field',
-            'unable to create',
-            'failed to submit',
-            'system error',
-            'temporarily unavailable',
-            'captcha',
-            'security'
-        ];
-
-        const lowerResponseText = responseText.toLowerCase();
-        for (const indicator of errorIndicators) {
-            if (lowerResponseText.includes(indicator)) {
-                logDebug('Found error indicator in response', {
-                    submissionId,
-                    indicator,
-                    responsePreview: responseText.substring(0, 200)
-                });
-                return { isValid: false, reason: `Error indicator found: ${indicator}` };
-            }
-        }
-
-        // Check for success indicators
-        const successIndicators = [
-            'window.location', // Redirect script indicates success
-            'thank', // Thank you pages
-            'success',
-            'submitted',
-            'received'
-        ];
-
-        for (const indicator of successIndicators) {
-            if (lowerResponseText.includes(indicator)) {
-                logDebug('Found success indicator in response', {
-                    submissionId,
-                    indicator
-                });
-                return { isValid: true };
-            }
-        }
-
-        // If response has content but no clear indicators, log and assume error for now
-        logDebug('Response has content but no clear success/error indicators', {
-            submissionId,
-            responseLength: responseText.length,
-            responsePreview: responseText.substring(0, 200)
-        });
-        return { isValid: false, reason: 'Unclear response content, no success indicators found' };
+    // 1. Positive signal FIRST. Salesforce emits a redirect script on acceptance
+    //    (window.location(...) / window.location.replace(...)). This is the
+    //    authoritative success signal. Checking it before any substring scan makes
+    //    the echoed retURL (which can contain words like "security") irrelevant.
+    if (responseText && /window\.location(?:\.replace)?\(['"]([^'"]+)['"]\)/.test(responseText)) {
+        logDebug('Found Salesforce success redirect in response', { submissionId });
+        return { isValid: true };
     }
 
-    // Empty response handling - this might actually be valid for some Salesforce endpoints
-    // Let's be more lenient for empty responses and consider them potentially valid
-    logDebug('Empty response from Salesforce - treating as potentially valid', {
-        submissionId,
-        responseLength: responseText ? responseText.length : 0
-    });
+    // 2. Empty/whitespace response → FAILURE (fail-closed). We must positively
+    //    confirm the lead was created; an empty response cannot do that.
+    if (!responseText || responseText.trim().length === 0) {
+        logDebug('Empty response from Salesforce - treating as failure', {
+            submissionId,
+            responseLength: responseText ? responseText.length : 0
+        });
+        return { isValid: false, reason: 'Empty response from Salesforce' };
+    }
 
-    // For now, let's accept empty responses as valid since they might indicate success
-    // We can monitor logs to see if this causes issues
-    return { isValid: true };
+    // 3. Has content but no redirect → scan for explicit error indicators.
+    const errorIndicators = [
+        'error occurred',
+        'invalid',
+        'required field',
+        'unable to create',
+        'failed to submit',
+        'system error',
+        'temporarily unavailable',
+        'captcha',
+        'security'
+    ];
+
+    const lowerResponseText = responseText.toLowerCase();
+    for (const indicator of errorIndicators) {
+        if (lowerResponseText.includes(indicator)) {
+            logDebug('Found error indicator in response', {
+                submissionId,
+                indicator,
+                responsePreview: responseText.substring(0, 200)
+            });
+            return { isValid: false, reason: `Error indicator found: ${indicator}` };
+        }
+    }
+
+    // 4. Has content, no redirect, no known error indicator → ambiguous, FAILURE.
+    logDebug('Response has content but no Salesforce success redirect', {
+        submissionId,
+        responseLength: responseText.length,
+        responsePreview: responseText.substring(0, 200)
+    });
+    return { isValid: false, reason: 'No Salesforce success redirect found in response' };
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const OPEN_PHONE_FROM_NUMBER = process.env.OPEN_PHONE_FROM_NUMBER || "";
 
-export async function contactAgentPostForm(formData: any, queryString: string) {
+export async function contactAgentPostForm(formData: any, queryString: string, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'contactAgent',
@@ -243,6 +241,26 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
     });
 
     try {
+        // Classify the submission with Vercel BotID. Trusted server-internal callers
+        // (e.g. the AI concierge lead tools) bypass via their process-local token; the
+        // kill-switch env var and fail-open error handling live inside checkFormBot.
+        const bot = await checkFormBot(options);
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(contactAgentSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for contact agent form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
+        // Quarantine bot-suspected leads: still written to Salesforce, but tagged so the team
+        // can filter them and partner SMS is suppressed below. Never drop a real lead.
+        if (bot.botSuspected) {
+            logError('Bot-suspected submission', { submissionId, form: 'contactAgent' });
+            formData.additionalComments = tagBotSuspected(formData.additionalComments);
+        }
+
         const paramsObj: { [key: string]: string } = {};
         new URLSearchParams(queryString).forEach((value, key) => {
             paramsObj[key] = value;
@@ -295,8 +313,8 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
             "00N4x00000Lpb2Z": formData.bathrooms || "",
             "00N4x00000LsaCy": formData.maxPrice || "",
             "00N4x00000Lpbfw": formData.preApproval || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
+            "g-recaptcha-response": "",
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending form data to Salesforce with retry logic', {
@@ -336,7 +354,7 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
         // Fire and forget notifications - don't await them
         await Promise.all([
             sendToSlack({
-                headerText: '🔔 New Agent Lead',
+                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Agent Lead' : '🔔 New Agent Lead',
                 name: `${formData.firstName} ${formData.lastName}` || "",
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -349,7 +367,8 @@ export async function contactAgentPostForm(formData: any, queryString: string) {
                     state: paramsObj.state
                 } : undefined
             }),
-            sendOpenPhoneMessage({
+            // Suppress partner SMS for bot-suspected leads so bots can't trigger partner outreach.
+            ...(bot.botSuspected ? [] : [sendOpenPhoneMessage({
                 content: `New Lead From VeteranPCS:
 ${formData.firstName} ${formData.lastName}
 Email: ${formData.email}
@@ -359,7 +378,7 @@ ${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : '
 ${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
                 from: getAdminPhoneNumberForState(paramsObj.state),
                 to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
-            })
+            })]),
         ]).catch(error => {
             // Log any errors but don't block the main flow
             logError('Error sending notifications', { submissionId }, error);
@@ -409,6 +428,23 @@ export async function GetListedAgentsPostForm(formData: any) {
     logInfo('Processing agent listing form submission', { submissionId });
 
     try {
+        // Classify the submission with Vercel BotID (kill-switch + fail-open live in the helper).
+        const bot = await checkFormBot();
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(getListedAgentsSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for agent listing form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
+        // Quarantine bot-suspected leads: written to Salesforce but tagged on the free-text field.
+        if (bot.botSuspected) {
+            logError('Bot-suspected submission', { submissionId, form: 'getListedAgents' });
+            formData.tellusMore = tagBotSuspected(formData.tellusMore);
+        }
+
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
@@ -439,8 +475,8 @@ export async function GetListedAgentsPostForm(formData: any) {
             "00N4x00000LpcDV": formData.leadAcceptance || "",
             "00N4x00000QPksj": formData.howDidYouHear || "",
             "00N4x00000QPS7V": formData.tellusMore || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
+            "g-recaptcha-response": "",
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending agent listing data to Salesforce with retry logic', {
@@ -479,7 +515,7 @@ export async function GetListedAgentsPostForm(formData: any) {
 
         Promise.all([
             sendToSlack({
-                headerText: '🔔 New Agent Listing Request',
+                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Agent Listing Request' : '🔔 New Agent Listing Request',
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -532,6 +568,23 @@ export async function GetListedLendersPostForm(formData: any) {
     logInfo('Processing lender listing form submission', { submissionId });
 
     try {
+        // Classify the submission with Vercel BotID (kill-switch + fail-open live in the helper).
+        const bot = await checkFormBot();
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(getListedLendersSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for lender listing form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
+        // Quarantine bot-suspected leads: written to Salesforce but tagged on the free-text field.
+        if (bot.botSuspected) {
+            logError('Bot-suspected submission', { submissionId, form: 'getListedLenders' });
+            formData.tellusMore = tagBotSuspected(formData.tellusMore);
+        }
+
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
@@ -559,8 +612,8 @@ export async function GetListedLendersPostForm(formData: any) {
             "00N4x00000QPIOe": formData.companyNMLSId || "",
             "00N4x00000QPksj": formData.howDidYouHear || "",
             "00N4x00000QPS7V": formData.tellusMore || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
+            "g-recaptcha-response": "",
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending lender listing data to Salesforce with retry logic', {
@@ -599,7 +652,7 @@ export async function GetListedLendersPostForm(formData: any) {
 
         Promise.all([
             sendToSlack({
-                headerText: '🔔 New Lender Listing Request',
+                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Lender Listing Request' : '🔔 New Lender Listing Request',
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -652,6 +705,22 @@ export async function KeepInTouchForm(formData: any) {
     logInfo('Processing keep in touch form submission', { submissionId });
 
     try {
+        // Classify the submission with Vercel BotID (kill-switch + fail-open live in the helper).
+        const bot = await checkFormBot();
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(simpleLeadSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for keep in touch form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
+        // No free-text field on this form — the flagged Slack header below is the bot signal.
+        if (bot.botSuspected) {
+            logError('Bot-suspected submission', { submissionId, form: 'keepInTouch' });
+        }
+
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             recordType: "0124x000000Z5yD",
@@ -659,8 +728,8 @@ export async function KeepInTouchForm(formData: any) {
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
             email: formData.email || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
+            "g-recaptcha-response": "",
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending keep in touch data to Salesforce with retry logic', {
@@ -698,7 +767,7 @@ export async function KeepInTouchForm(formData: any) {
 
         Promise.all([
             sendToSlack({
-                headerText: '🔔 New Keep In Touch Submission',
+                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Keep In Touch Submission' : '🔔 New Keep In Touch Submission',
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -732,7 +801,7 @@ export async function KeepInTouchForm(formData: any) {
     }
 }
 
-export async function contactLenderPostForm(formData: any, fullQueryString: string) {
+export async function contactLenderPostForm(formData: any, fullQueryString: string, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'contactLender',
@@ -746,6 +815,25 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
     });
 
     try {
+        // Classify the submission with Vercel BotID. Trusted server-internal callers
+        // (e.g. the AI concierge lead tools) bypass via their process-local token; the
+        // kill-switch env var and fail-open error handling live inside checkFormBot.
+        const bot = await checkFormBot(options);
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(contactLenderSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for contact lender form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
+        // Quarantine bot-suspected leads: tagged in Salesforce, partner SMS suppressed below.
+        if (bot.botSuspected) {
+            logError('Bot-suspected submission', { submissionId, form: 'contactLender' });
+            formData.additionalComments = tagBotSuspected(formData.additionalComments);
+        }
+
         const paramsObj: { [key: string]: string } = {};
         new URLSearchParams(fullQueryString).forEach((value, key) => {
             paramsObj[key] = value;
@@ -785,8 +873,8 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             "00N4x00000QPksj": formData.howDidYouHear || "",
             "00N4x00000QPS7V": formData.tellusMore || "",
             "00N4x00000bfgFA": formData.additionalComments || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
+            "g-recaptcha-response": "",
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending lender form data to Salesforce with retry logic', {
@@ -826,7 +914,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
         // Fire and forget notifications - don't await them
         await Promise.all([
             sendToSlack({
-                headerText: '🔔 New Lender Lead',
+                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Lender Lead' : '🔔 New Lender Lead',
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -839,7 +927,8 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
                     state: paramsObj.state
                 } : undefined
             }),
-            sendOpenPhoneMessage({
+            // Suppress partner SMS for bot-suspected leads so bots can't trigger partner outreach.
+            ...(bot.botSuspected ? [] : [sendOpenPhoneMessage({
                 content: `New Lead From VeteranPCS:
 ${formData.firstName} ${formData.lastName}
 Email: ${formData.email}
@@ -849,7 +938,7 @@ ${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : '
 ${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
                 from: getAdminPhoneNumberForState(paramsObj.state),
                 to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
-            })
+            })]),
         ]).catch(error => {
             // Log any errors but don't block the main flow
             logError('Error sending lender notifications', { submissionId }, error);
@@ -887,7 +976,7 @@ ${formData.additionalComments ? `Additional Comments: ${formData.additionalComme
     }
 }
 
-export async function contactPostForm(formData: any) {
+export async function contactPostForm(formData: any, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'contact',
@@ -898,6 +987,25 @@ export async function contactPostForm(formData: any) {
     logInfo('Processing contact form submission', { submissionId });
 
     try {
+        // Classify the submission with Vercel BotID. Trusted server-internal callers
+        // (e.g. the AI concierge lead tools) bypass via their process-local token; the
+        // kill-switch env var and fail-open error handling live inside checkFormBot.
+        const bot = await checkFormBot(options);
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(simpleLeadSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for contact form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
+        // Quarantine bot-suspected leads: written to Salesforce but tagged on the free-text field.
+        if (bot.botSuspected) {
+            logError('Bot-suspected submission', { submissionId, form: 'contact' });
+            formData.additionalComments = tagBotSuspected(formData.additionalComments);
+        }
+
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             recordType: "0124x000000Z5yD",
@@ -906,8 +1014,8 @@ export async function contactPostForm(formData: any) {
             last_name: formData.lastName || "",
             email: formData.email || "",
             "00N4x00000bfgFA": formData.additionalComments || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
+            "g-recaptcha-response": "",
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending contact form data to Salesforce with retry logic', {
@@ -945,7 +1053,7 @@ export async function contactPostForm(formData: any) {
 
         Promise.all([
             sendToSlack({
-                headerText: '🔔 New Contact Form Submission',
+                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Contact Form Submission' : '🔔 New Contact Form Submission',
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -979,7 +1087,7 @@ export async function contactPostForm(formData: any) {
     }
 }
 
-export async function vaLoanGuideForm(formData: any) {
+export async function vaLoanGuideForm(formData: any, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
         'vaLoanGuide',
@@ -990,6 +1098,24 @@ export async function vaLoanGuideForm(formData: any) {
     logInfo('Processing VA loan guide form submission', { submissionId });
 
     try {
+        // Classify the submission with Vercel BotID. Trusted server-internal callers
+        // (e.g. the AI concierge lead tools) bypass via their process-local token; the
+        // kill-switch env var and fail-open error handling live inside checkFormBot.
+        const bot = await checkFormBot(options);
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(simpleLeadSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for VA loan guide form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
+        // No free-text field on this form — the flagged Slack header below is the bot signal.
+        if (bot.botSuspected) {
+            logError('Bot-suspected submission', { submissionId, form: 'vaLoanGuide' });
+        }
+
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             recordType: "0124x000000Z5yD",
@@ -997,8 +1123,8 @@ export async function vaLoanGuideForm(formData: any) {
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
             email: formData.email || "",
-            "g-recaptcha-response": formData.captchaToken || "",
-            "captcha_settings": formData.captcha_settings || "",
+            "g-recaptcha-response": "",
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending VA loan guide data to Salesforce with retry logic', {
@@ -1036,7 +1162,7 @@ export async function vaLoanGuideForm(formData: any) {
 
         Promise.all([
             sendToSlack({
-                headerText: '🔔 New VA Loan Guide Download',
+                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New VA Loan Guide Download' : '🔔 New VA Loan Guide Download',
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
@@ -1081,6 +1207,23 @@ export async function internshipFormSubmission(formData: any) {
     logInfo('Processing internship form submission', { submissionId });
 
     try {
+        // Classify the submission with Vercel BotID (kill-switch + fail-open live in the helper).
+        const bot = await checkFormBot();
+
+        // Validate and normalize the payload before processing.
+        const validation = parseLeadForm(internshipSchema, formData);
+        if (!validation.ok) {
+            logError('Validation failed for internship form', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
+        // Quarantine bot-suspected leads: written to Salesforce but tagged on the free-text field.
+        if (bot.botSuspected) {
+            logError('Bot-suspected submission', { submissionId, form: 'internship' });
+            formData['00N4x00000QPS7V'] = tagBotSuspected(formData['00N4x00000QPS7V']);
+        }
+
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             recordType: "0124x000000ZGKv",
@@ -1105,8 +1248,8 @@ export async function internshipFormSubmission(formData: any) {
             "00N4x00000QPLQd": formData["00N4x00000QPLQd"] || "",
             "00N4x00000QPksj": formData["00N4x00000QPksj"] || "",
             "00N4x00000QPS7V": formData["00N4x00000QPS7V"] || "",
-            "g-recaptcha-response": formData["g-recaptcha-response"] || "",
-            "captcha_settings": formData.captcha_settings || "",
+            "g-recaptcha-response": "",
+            "captcha_settings": "",
         }).toString();
 
         logDebug('Sending internship form data to Salesforce with retry logic', {
@@ -1145,7 +1288,7 @@ export async function internshipFormSubmission(formData: any) {
 
         Promise.all([
             sendToSlack({
-                headerText: '🔔 New Internship Submission',
+                headerText: bot.botSuspected ? '⚠️ BOT-SUSPECTED — 🔔 New Internship Submission' : '🔔 New Internship Submission',
                 name: `${formData.first_name} ${formData.last_name}`,
                 email: formData.email || "",
                 phoneNumber: formData.mobile || "",

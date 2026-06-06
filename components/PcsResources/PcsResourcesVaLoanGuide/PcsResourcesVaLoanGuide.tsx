@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import "@/app/globals.css";
 import Link from "next/link";
 import classes from "./PcsResourcesVaLoanGuide.module.css";
@@ -7,7 +7,6 @@ import Image from "next/image";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { vaLoanGuideForm } from "@/services/salesForcePostFormsService";
 import { sendGTMEvent } from "@next/third-parties/google";
 
@@ -15,21 +14,15 @@ type FormInputs = {
   firstName: string;
   lastName: string;
   email: string;
-  captchaToken: string;
-  captcha_settings: string;
 };
 
 type FormErrors = Partial<Record<keyof FormInputs, { message?: string }>>;
 
 const PcsResourcesVaLoanGuide = () => {
-  const [recaptchaRef, setRecaptchaRef] = useState<ReCAPTCHA | null>(null);
-
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required('First name is required'),
     lastName: Yup.string().required('Last name is required'),
     email: Yup.string().email('Invalid email').required('Email is required'),
-    captchaToken: Yup.string().required('Captcha token is required'),
-    captcha_settings: Yup.string().required('Captcha settings are required'),
   });
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormInputs>({
@@ -38,27 +31,8 @@ const PcsResourcesVaLoanGuide = () => {
       firstName: '',
       lastName: '',
       email: '',
-      captchaToken: '',
-      captcha_settings: '',
     },
   });
-
-  const onCaptchaChange = (token: string | null) => {
-    if (token) {
-      const captchaSettingsElem = document.getElementById('captcha_settings') as HTMLInputElement | null;
-      if (captchaSettingsElem) {
-        const captchaSettings = JSON.parse(captchaSettingsElem.value);
-        captchaSettings.ts = JSON.stringify(new Date().getTime());
-        captchaSettingsElem.value = JSON.stringify(captchaSettings);
-        setValue('captcha_settings', captchaSettingsElem.value, {
-          shouldValidate: false // This triggers validation after setting the value
-        });
-        setValue('captchaToken', token, {
-          shouldValidate: true // This triggers validation after setting the value
-        });
-      }
-    }
-  };
 
   const onSubmitHandler: SubmitHandler<FormInputs> = async (data) => {
     try {
@@ -72,9 +46,6 @@ const PcsResourcesVaLoanGuide = () => {
         setValue('firstName', '');
         setValue('lastName', '');
         setValue('email', '');
-        setValue('captchaToken', '');
-        setValue('captcha_settings', '');
-        recaptchaRef?.reset();
 
         const link = document.createElement('a');
         link.href = '/downloads/VA-Loan-Guide.pdf';  // Note: case-sensitive path
@@ -141,18 +112,6 @@ const PcsResourcesVaLoanGuide = () => {
                   />
                   {errors.email && (
                     <span className="text-red-500">{errors.email.message}</span>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center">
-                <div>
-                  <ReCAPTCHA
-                    ref={(r) => setRecaptchaRef(r)}
-                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
-                    onChange={onCaptchaChange} // Handle reCAPTCHA value change
-                  />
-                  {errors.captchaToken && (
-                    <span className="text-red-500">{errors.captchaToken.message}</span>
                   )}
                 </div>
               </div>

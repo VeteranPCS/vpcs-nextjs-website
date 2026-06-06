@@ -2,11 +2,11 @@ import {
   convertToModelMessages,
   streamText,
   stepCountIs,
-  type UIMessage,
 } from 'ai';
 import { checkBotId } from 'botid/server';
 import { buildTools } from '@/lib/ai/tools';
-import { buildSystemPrompt, type PageContext } from '@/lib/ai/system-prompt';
+import { buildSystemPrompt } from '@/lib/ai/system-prompt';
+import { parseChatRequest } from '@/lib/ai/chat-validation';
 import { MODELS } from '@/lib/ai/models';
 import { getOrCreateSessionId } from '@/lib/ai/session';
 import { featureFlags } from '@/lib/feature-flags';
@@ -15,11 +15,6 @@ import { logError } from '@/services/loggingService';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
-
-interface ChatRequestBody {
-  messages: UIMessage[];
-  pageContext?: PageContext;
-}
 
 function clientIp(req: Request): string {
   const fwd = req.headers.get('x-forwarded-for');
@@ -35,13 +30,20 @@ export async function POST(req: Request) {
     return new Response('Not found', { status: 404 });
   }
 
-  let body: ChatRequestBody;
+  let raw: unknown;
   try {
-    body = (await req.json()) as ChatRequestBody;
+    raw = await req.json();
   } catch (error) {
     logError('Concierge: failed to parse request body', undefined, error);
     return new Response('Invalid request', { status: 400 });
   }
+
+  const parsed = parseChatRequest(raw);
+  if (!parsed.ok) {
+    logError('Concierge: invalid request body', { reason: parsed.error });
+    return new Response('Invalid request', { status: 400 });
+  }
+  const { messages, pageContext } = parsed.data;
 
   const verification = await checkBotId();
   if (verification.isBot) {
@@ -57,7 +59,6 @@ export async function POST(req: Request) {
     });
   }
 
-  const { messages, pageContext } = body;
   const [{ sessionId }, modelMessages] = await Promise.all([
     getOrCreateSessionId(),
     convertToModelMessages(messages),
