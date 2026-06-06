@@ -1,13 +1,10 @@
 import {
   convertToModelMessages,
   streamText,
-  stepCountIs,
 } from 'ai';
 import { checkBotId } from 'botid/server';
-import { buildTools } from '@/lib/ai/tools';
-import { buildSystemPrompt } from '@/lib/ai/system-prompt';
+import { buildConciergeConfig } from '@/lib/ai/run-concierge';
 import { parseChatRequest } from '@/lib/ai/chat-validation';
-import { MODELS } from '@/lib/ai/models';
 import { getOrCreateSessionId } from '@/lib/ai/session';
 import { featureFlags } from '@/lib/feature-flags';
 import { chatLimiter } from '@/lib/rate-limit';
@@ -65,12 +62,10 @@ export async function POST(req: Request) {
   ]);
 
   try {
+    const config = buildConciergeConfig({ pageContext });
     const result = streamText({
-      model: MODELS.chat,
-      system: buildSystemPrompt(pageContext),
+      ...config,
       messages: modelMessages,
-      tools: buildTools(),
-      stopWhen: stepCountIs(12),
       experimental_telemetry: { isEnabled: false },
     });
 
