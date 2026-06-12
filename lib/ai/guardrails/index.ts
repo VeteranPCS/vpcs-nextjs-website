@@ -21,6 +21,8 @@ export async function evaluateInput(
   ctx: GuardrailContext,
 ): Promise<GuardrailDecision> {
   if (!guardrailsEnforced()) {
+    // Leave a trace so flipping the kill-switch in production is visible in logs.
+    logInfo('Guardrails disabled — GUARDRAILS_ENFORCED=0', { sessionId: ctx.sessionId });
     return { action: 'allow', category: 'clean', tier: 0, reason: 'guardrails-disabled' };
   }
 
@@ -35,15 +37,18 @@ export async function evaluateInput(
 }
 
 function log(decision: GuardrailDecision, ctx: GuardrailContext): GuardrailDecision {
-  // Logs the decision + signature/reason (never the raw message body — privacy rule).
-  // For Tier-0 injection this carries the matched signature name; for Tier 1 the
-  // classifier's short explanation. Neither echoes the user's input verbatim.
-  logInfo('Guardrail decision', {
+  // Log the decision metadata, never the raw message body (privacy rule). The
+  // `reason` is only safe for Tier 0, where it's a code-authored constant (matched
+  // signature name / size limit). Tier-1 reasons are free text from the Haiku
+  // classifier and frequently paraphrase or quote the user's input — so they're
+  // omitted to avoid leaking user content (incl. PII) into the log stream.
+  const payload: Record<string, unknown> = {
     action: decision.action,
     category: decision.category,
     tier: decision.tier,
-    reason: decision.reason,
     sessionId: ctx.sessionId,
-  });
+  };
+  if (decision.tier === 0) payload.reason = decision.reason;
+  logInfo('Guardrail decision', payload);
   return decision;
 }

@@ -48,11 +48,11 @@ export async function addSessionTokens(sessionId: string, tokens: number): Promi
   try {
     const key = keyFor(sessionId);
     const amount = Math.ceil(tokens);
-    const total = await redis.incrby(key, amount);
-    if (total === amount) {
-      // First write in this window — start the rolling-day expiry.
-      await redis.expire(key, DAY_SECONDS);
-    }
+    await redis.incrby(key, amount);
+    // Set the rolling-day TTL only when the key has none (NX): a no-op once an
+    // expiry exists, but it also heals an orphaned key whose earlier expire()
+    // failed — so a counter can never persist forever and lock a session out.
+    await redis.expire(key, DAY_SECONDS, 'NX');
   } catch (error) {
     logError('Guardrail budget: increment failed — failing open', { sessionId }, error);
   }

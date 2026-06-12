@@ -10,13 +10,13 @@ vi.mock('@/lib/ai/tools', () => ({
   }),
 }));
 
-import { buildConciergeConfig, extractLatestUserText } from '@/lib/ai/run-concierge';
+import { buildConciergeConfig, extractLatestUserText, extractAllUserText } from '@/lib/ai/run-concierge';
 import type { UIMessage } from 'ai';
 
 describe('buildConciergeConfig', () => {
   it('uses the chat model and brand-voice system prompt by default', () => {
     const config = buildConciergeConfig();
-    expect(config.model).toBe('anthropic/claude-sonnet-4-6');
+    expect(config.model).toBe('anthropic/claude-sonnet-4.6');
     expect(config.system).toContain('VeteranPCS Concierge');
     expect(config.tools).toHaveProperty('getAgentsForState');
     expect(config.stopWhen).toBeDefined();
@@ -51,5 +51,28 @@ describe('extractLatestUserText', () => {
   it('returns empty string when there is no user text', () => {
     expect(extractLatestUserText([msg('assistant', 'hi')])).toBe('');
     expect(extractLatestUserText([])).toBe('');
+  });
+});
+
+describe('extractAllUserText', () => {
+  const msg = (role: string, text: string): UIMessage =>
+    ({ role, parts: [{ type: 'text', text }] }) as unknown as UIMessage;
+
+  it('returns the text of every user turn in order, skipping assistant turns', () => {
+    const messages = [msg('user', 'first'), msg('assistant', 'reply'), msg('user', 'second')];
+    expect(extractAllUserText(messages)).toEqual(['first', 'second']);
+  });
+
+  it('skips user turns that contain no text part', () => {
+    const empty = { role: 'user', parts: [{ type: 'image' }] } as unknown as UIMessage;
+    expect(extractAllUserText([msg('user', 'hello'), empty, msg('user', 'world')])).toEqual([
+      'hello',
+      'world',
+    ]);
+  });
+
+  it('throws when a user message has non-array parts (so the route can 400 it)', () => {
+    const malformed = { role: 'user', parts: 'not-an-array' } as unknown as UIMessage;
+    expect(() => extractAllUserText([malformed])).toThrow();
   });
 });
