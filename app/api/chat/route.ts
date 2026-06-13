@@ -44,7 +44,9 @@ export async function POST(req: Request) {
 
   let verification;
   try {
-    verification = await checkBotId();
+    verification = await checkBotId({
+      advancedOptions: { checkLevel: 'deepAnalysis' },
+    });
   } catch (error) {
     logError('Concierge: BotID verification failed', undefined, error);
     return new Response('Unauthorized', { status: 401 });

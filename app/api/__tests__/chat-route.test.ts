@@ -48,6 +48,9 @@ const botIdHeaders = {
   'x-path': '/api/chat',
   'x-method': 'POST',
 };
+const botIdDeepAnalysisOptions = {
+  advancedOptions: { checkLevel: 'deepAnalysis' },
+};
 
 const post = (body: unknown = { messages: [] }, headers: Record<string, string> = {}) =>
   POST(
@@ -112,7 +115,7 @@ describe('POST /api/chat — deployed security gates', () => {
     const res = await post({ messages: [userMsg('hi')] }, botIdHeaders);
 
     expect(res.status).toBe(503);
-    expect(checkBotId).toHaveBeenCalledTimes(1);
+    expect(checkBotId).toHaveBeenCalledWith(botIdDeepAnalysisOptions);
     expect(getOrCreateSessionId).not.toHaveBeenCalled();
     expect(chatLimiter.limit).not.toHaveBeenCalled();
     expect(parseChatRequest).not.toHaveBeenCalled();
@@ -125,7 +128,7 @@ describe('POST /api/chat — deployed security gates', () => {
     const res = await post();
 
     expect(res.status).toBe(400);
-    expect(checkBotId).toHaveBeenCalledTimes(1);
+    expect(checkBotId).toHaveBeenCalledWith(botIdDeepAnalysisOptions);
     expect(getOrCreateSessionId).toHaveBeenCalledTimes(1);
     expect(chatLimiter.limit).toHaveBeenCalledWith('test-sid');
   });

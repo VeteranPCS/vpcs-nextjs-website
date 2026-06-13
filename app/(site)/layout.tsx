@@ -15,7 +15,15 @@ export default function RootLayout({
   return (
     <ConciergeProvider>
       {conciergeEnabled && (
-        <BotIdClient protect={[{ path: '/api/chat', method: 'POST' }]} />
+        <BotIdClient
+          protect={[
+            {
+              path: '/api/chat',
+              method: 'POST',
+              advancedOptions: { checkLevel: 'deepAnalysis' },
+            },
+          ]}
+        />
       )}
       <Header />
       {children}
