@@ -41,6 +41,7 @@ import { evaluateInput } from '@/lib/ai/guardrails';
 import { convertToModelMessages, streamText } from 'ai';
 import { checkBotId } from 'botid/server';
 import { chatLimiter } from '@/lib/rate-limit';
+import { getOrCreateSessionId } from '@/lib/ai/session';
 
 const botIdHeaders = {
   'x-is-human': JSON.stringify({ b: 1 }),
@@ -94,6 +95,7 @@ describe('POST /api/chat — deployed security gates', () => {
 
     expect(res.status).toBe(403);
     expect(checkBotId).not.toHaveBeenCalled();
+    expect(getOrCreateSessionId).not.toHaveBeenCalled();
     expect(chatLimiter.limit).not.toHaveBeenCalled();
     expect(parseChatRequest).not.toHaveBeenCalled();
     expect(streamText).not.toHaveBeenCalled();
@@ -111,6 +113,7 @@ describe('POST /api/chat — deployed security gates', () => {
 
     expect(res.status).toBe(503);
     expect(checkBotId).toHaveBeenCalledTimes(1);
+    expect(getOrCreateSessionId).not.toHaveBeenCalled();
     expect(chatLimiter.limit).not.toHaveBeenCalled();
     expect(parseChatRequest).not.toHaveBeenCalled();
     expect(streamText).not.toHaveBeenCalled();
@@ -123,7 +126,8 @@ describe('POST /api/chat — deployed security gates', () => {
 
     expect(res.status).toBe(400);
     expect(checkBotId).toHaveBeenCalledTimes(1);
-    expect(chatLimiter.limit).toHaveBeenCalledTimes(1);
+    expect(getOrCreateSessionId).toHaveBeenCalledTimes(1);
+    expect(chatLimiter.limit).toHaveBeenCalledWith('test-sid');
   });
 });
 

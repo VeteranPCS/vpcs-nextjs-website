@@ -22,15 +22,6 @@ import {
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
-function clientIp(req: Request): string {
-  const fwd = req.headers.get('x-forwarded-for');
-  if (fwd) {
-    const first = fwd.split(',')[0]?.trim();
-    if (first) return first;
-  }
-  return req.headers.get('x-real-ip')?.trim() || 'anonymous';
-}
-
 function deployedRuntimeRequiresBotId(): boolean {
   return process.env.VERCEL === '1' && process.env.VERCEL_ENV !== 'development';
 }
@@ -72,7 +63,9 @@ export async function POST(req: Request) {
     return new Response('Concierge is temporarily unavailable.', { status: 503 });
   }
 
-  const limit = await chatLimiter.limit(clientIp(req));
+  const { sessionId } = await getOrCreateSessionId();
+
+  const limit = await chatLimiter.limit(sessionId);
   if (!limit.success) {
     const retryAfter = Math.max(1, Math.ceil((limit.reset - Date.now()) / 1000));
     return new Response('Too many requests', {
@@ -106,8 +99,6 @@ export async function POST(req: Request) {
     logError('Concierge: failed to read user message text', undefined, error);
     return new Response('Invalid request', { status: 400 });
   }
-
-  const { sessionId } = await getOrCreateSessionId();
 
   // Tier-0 heuristics scan EVERY user turn, not just the latest, so a multi-turn
   // injection can't smuggle its payload into an earlier message. Honors the
