@@ -292,7 +292,7 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
             retURL: `${BASE_URL}/thank-you`,
             "00N4x00000Lsn28": paramsObj.id || "",
             recordType: "0124x000000Z5yD",
-            lead_source: "Website",
+            lead_source: "Contact Agent",
             "00N4x00000Lsr0G": "true",
             country_code: "US",
             "00N4x00000QQ1LB": `${BASE_URL}/contact-agent${queryString}`,
@@ -457,7 +457,7 @@ export async function GetListedAgentsPostForm(formData: any, options?: InternalC
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
             recordType: "0124x000000Z5yI",
-            lead_source: "Website",
+            lead_source: "Agent Listing Request",
             "00N4x00000Lsr0G": "true",
             country_code: "US",
             "00N4x00000QQ1LB": `${BASE_URL}/get-listed-agents`,
@@ -521,7 +521,7 @@ export async function GetListedAgentsPostForm(formData: any, options?: InternalC
 
         const { response, responseText, redirectUrl } = submissionResult;
 
-        Promise.all([
+        await Promise.all([
             sendToSlack({
                 headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Agent Listing Request' : '🔔 New Agent Listing Request',
                 name: `${formData.firstName} ${formData.lastName}`,
@@ -601,7 +601,7 @@ export async function GetListedLendersPostForm(formData: any, options?: Internal
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
             recordType: "0124x000000ZGGU",
-            lead_source: "Website",
+            lead_source: "Lender Listing Request",
             "00N4x00000Lsr0G": "true",
             country_code: "US",
             "00N4x00000QQ1LB": `${BASE_URL}/get-listed-lenders`,
@@ -662,7 +662,7 @@ export async function GetListedLendersPostForm(formData: any, options?: Internal
 
         const { response, responseText, redirectUrl } = submissionResult;
 
-        Promise.all([
+        await Promise.all([
             sendToSlack({
                 headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Lender Listing Request' : '🔔 New Lender Listing Request',
                 name: `${formData.firstName} ${formData.lastName}`,
@@ -738,8 +738,9 @@ export async function KeepInTouchForm(formData: any, options?: InternalCallOptio
 
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
+            retURL: `${BASE_URL}/thank-you`,
             recordType: "0124x000000Z5yD",
-            lead_source: "Website",
+            lead_source: "Keep in Touch",
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
             email: formData.email || "",
@@ -780,7 +781,7 @@ export async function KeepInTouchForm(formData: any, options?: InternalCallOptio
 
         const { response, responseText, redirectUrl } = submissionResult;
 
-        Promise.all([
+        await Promise.all([
             sendToSlack({
                 headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Keep In Touch Submission' : '🔔 New Keep In Touch Submission',
                 name: `${formData.firstName} ${formData.lastName}`,
@@ -879,7 +880,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             retURL: `${BASE_URL}/thank-you`,
             "00N4x00000QPJUT": paramsObj.id || "",
             recordType: "0124x000000Z5yD",
-            lead_source: "Website",
+            lead_source: "Contact Lender",
             "00N4x00000Lsr0G": "true",
             country_code: "US",
             "00N4x00000QQ1LB": `${BASE_URL}/contact-lender${fullQueryString}`,
@@ -1028,8 +1029,9 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
 
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
+            retURL: `${BASE_URL}/thank-you`,
             recordType: "0124x000000Z5yD",
-            lead_source: "Website",
+            lead_source: "Contact Form",
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
             email: formData.email || "",
@@ -1071,7 +1073,7 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
 
         const { response, responseText, redirectUrl } = submissionResult;
 
-        Promise.all([
+        await Promise.all([
             sendToSlack({
                 headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Contact Form Submission' : '🔔 New Contact Form Submission',
                 name: `${formData.firstName} ${formData.lastName}`,
@@ -1139,8 +1141,9 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
 
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
+            retURL: `${BASE_URL}/thank-you`,
             recordType: "0124x000000Z5yD",
-            lead_source: "Website",
+            lead_source: "VA Loan Guide",
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
             email: formData.email || "",
@@ -1181,7 +1184,7 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
 
         const { response, responseText, redirectUrl } = submissionResult;
 
-        Promise.all([
+        await Promise.all([
             sendToSlack({
                 headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New VA Loan Guide Download' : '🔔 New VA Loan Guide Download',
                 name: `${formData.firstName} ${formData.lastName}`,
@@ -1213,6 +1216,117 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
         );
 
         logError('Error in vaLoanGuideForm', { submissionId }, error);
+        throw new Error('Failed to submit form');
+    }
+}
+
+export async function homebuyerGuideForm(formData: any, options?: InternalCallOptions) {
+    // Start tracking the submission
+    const submissionId = await trackFormSubmission(
+        'homebuyerGuide',
+        formData,
+        FormSubmissionStatus.PENDING
+    );
+
+    logInfo('Processing first time home buyer guide form submission', { submissionId });
+
+    try {
+        // Validate and normalize the payload before processing (HARD reject on invalid data).
+        const validation = parseLeadForm(simpleLeadSchema, formData);
+        if (!validation.ok) {
+            logError('Invalid homebuyerGuide submission', { submissionId, errors: validation.errors });
+            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
+        }
+        formData = validation.data;
+
+        // No free-text field on this form — the flagged Slack header below is the spam signal.
+        const spam = await evaluateLeadSpam({
+            email: formData.email,
+            honeypot: formData[HP_FIELD],
+            renderedAt: formData[TS_FIELD],
+            options,
+        });
+        if (spam.quarantine) {
+            logError('Spam-suspected submission', { submissionId, form: 'homebuyerGuide', reasons: spam.reasons });
+        }
+
+        const formBody = new URLSearchParams({
+            oid: "00D4x000003yaV2",
+            retURL: `${BASE_URL}/thank-you`,
+            recordType: "0124x000000Z5yD",
+            lead_source: "First Time Home Buyer Guide",
+            first_name: formData.firstName || "",
+            last_name: formData.lastName || "",
+            email: formData.email || "",
+            "g-recaptcha-response": "",
+            "captcha_settings": "",
+        }).toString();
+
+        logDebug('Sending first time home buyer guide data to Salesforce with retry logic', {
+            submissionId,
+            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+        });
+
+        // Use enhanced submission with retry logic
+        const submissionResult = await submitToSalesforceWithRetry(
+            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            formBody,
+            submissionId,
+            3, // maxRetries
+            1000 // baseDelay in ms
+        );
+
+        if (!submissionResult.success) {
+            // Track the failure
+            await updateSubmissionStatus(
+                submissionId,
+                FormSubmissionStatus.FAILURE,
+                submissionResult.response || null,
+                submissionResult.error || new Error('Salesforce submission failed')
+            );
+
+            logError('First time home buyer guide submission failed after all retries', {
+                submissionId,
+                error: submissionResult.error?.message
+            }, submissionResult.error);
+
+            throw submissionResult.error || new Error('Failed to submit first time home buyer guide form to Salesforce');
+        }
+
+        const { response, responseText, redirectUrl } = submissionResult;
+
+        await Promise.all([
+            sendToSlack({
+                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New First Time Home Buyer Guide Download' : '🔔 New First Time Home Buyer Guide Download',
+                name: `${formData.firstName} ${formData.lastName}`,
+                email: formData.email || "",
+                phoneNumber: formData.phone || "",
+                message: formData.additionalComments || "",
+            })
+        ]).catch(error => {
+            logError('Error sending first time home buyer guide notifications', { submissionId }, error);
+        });
+
+        // Track the successful submission
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.SUCCESS,
+            response
+        );
+
+        logInfo('First time home buyer guide form submitted successfully', { submissionId });
+        return { success: true, message: 'Form submitted successfully!' };
+    } catch (error) {
+        // If this is an unknown error that wasn't caught earlier,
+        // make sure to update the submission status
+        await updateSubmissionStatus(
+            submissionId,
+            FormSubmissionStatus.FAILURE,
+            null,
+            error instanceof Error ? error : new Error('Unknown error')
+        );
+
+        logError('Error in homebuyerGuideForm', { submissionId }, error);
         throw new Error('Failed to submit form');
     }
 }
@@ -1253,7 +1367,7 @@ export async function internshipFormSubmission(formData: any, options?: Internal
             oid: "00D4x000003yaV2",
             recordType: "0124x000000ZGKv",
             retURL: `${BASE_URL}/thank-you`,
-            lead_source: "Website",
+            lead_source: "Internship Application",
             "00N4x00000Lsr0G": "true",
             country_code: "US",
             first_name: formData.first_name || "",
@@ -1311,7 +1425,7 @@ export async function internshipFormSubmission(formData: any, options?: Internal
 
         const { response, responseText, redirectUrl } = submissionResult;
 
-        Promise.all([
+        await Promise.all([
             sendToSlack({
                 headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Internship Submission' : '🔔 New Internship Submission',
                 name: `${formData.first_name} ${formData.last_name}`,
