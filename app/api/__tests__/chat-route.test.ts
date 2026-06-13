@@ -39,12 +39,20 @@ import { parseChatRequest } from '@/lib/ai/chat-validation';
 import { buildBlockedResponse } from '@/lib/ai/guardrails/responses';
 import { evaluateInput } from '@/lib/ai/guardrails';
 import { convertToModelMessages, streamText } from 'ai';
+import { checkBotId } from 'botid/server';
+import { chatLimiter } from '@/lib/rate-limit';
 
-const post = (body: unknown = { messages: [] }) =>
+const botIdHeaders = {
+  'x-is-human': JSON.stringify({ b: 1 }),
+  'x-path': '/api/chat',
+  'x-method': 'POST',
+};
+
+const post = (body: unknown = { messages: [] }, headers: Record<string, string> = {}) =>
   POST(
     new Request('http://localhost/api/chat', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...headers },
       body: JSON.stringify(body),
     }),
   );
@@ -74,6 +82,48 @@ describe('POST /api/chat — F1 malformed parts', () => {
     expect(res.status).not.toBe(500);
     expect(convertToModelMessages).not.toHaveBeenCalled();
     expect(streamText).not.toHaveBeenCalled();
+  });
+});
+
+describe('POST /api/chat — deployed security gates', () => {
+  it('rejects deployed raw clients before BotID verification logs a misconfiguration', async () => {
+    vi.stubEnv('VERCEL', '1');
+    vi.stubEnv('VERCEL_ENV', 'preview');
+
+    const res = await post({ messages: [userMsg('hi')] });
+
+    expect(res.status).toBe(403);
+    expect(checkBotId).not.toHaveBeenCalled();
+    expect(chatLimiter.limit).not.toHaveBeenCalled();
+    expect(parseChatRequest).not.toHaveBeenCalled();
+    expect(streamText).not.toHaveBeenCalled();
+  });
+
+  it('fails closed on deployed chat when Upstash env vars are missing', async () => {
+    vi.stubEnv('VERCEL', '1');
+    vi.stubEnv('VERCEL_ENV', 'preview');
+    vi.stubEnv('UPSTASH_REDIS_REST_URL', '');
+    vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '');
+    vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_URL', '');
+    vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_TOKEN', '');
+
+    const res = await post({ messages: [userMsg('hi')] }, botIdHeaders);
+
+    expect(res.status).toBe(503);
+    expect(checkBotId).toHaveBeenCalledTimes(1);
+    expect(chatLimiter.limit).not.toHaveBeenCalled();
+    expect(parseChatRequest).not.toHaveBeenCalled();
+    expect(streamText).not.toHaveBeenCalled();
+  });
+
+  it('keeps local malformed request validation usable without BotID headers or Upstash env', async () => {
+    mockParsed([{ role: 'user', parts: 'not-an-array' }]);
+
+    const res = await post();
+
+    expect(res.status).toBe(400);
+    expect(checkBotId).toHaveBeenCalledTimes(1);
+    expect(chatLimiter.limit).toHaveBeenCalledTimes(1);
   });
 });
 

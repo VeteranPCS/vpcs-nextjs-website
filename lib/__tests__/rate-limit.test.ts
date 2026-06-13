@@ -9,6 +9,8 @@ describe('rate-limit fail-open behaviour', () => {
   it('chatLimiter and formLimiter both fail open when Upstash env vars are missing', async () => {
     vi.stubEnv('UPSTASH_REDIS_REST_URL', '');
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '');
+    vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_URL', '');
+    vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_TOKEN', '');
 
     const { chatLimiter, formLimiter } = await import('@/lib/rate-limit');
 
@@ -26,6 +28,8 @@ describe('rate-limit fail-open behaviour', () => {
   it('fail-open mock returns a numeric reset timestamp', async () => {
     vi.stubEnv('UPSTASH_REDIS_REST_URL', '');
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '');
+    vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_URL', '');
+    vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_TOKEN', '');
 
     const { chatLimiter } = await import('@/lib/rate-limit');
 

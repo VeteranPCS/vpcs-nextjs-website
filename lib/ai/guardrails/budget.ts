@@ -1,19 +1,18 @@
 import { Redis } from '@upstash/redis';
-import { logError, logInfo } from '@/services/loggingService';
+import { logError } from '@/services/loggingService';
 import { DAILY_TOKEN_CAP } from '@/lib/ai/guardrails/config';
+import { resolveUpstashRedisEnv } from '@/lib/upstash-env';
 
 const DAY_SECONDS = 60 * 60 * 24;
 
 // Built once at module load (mirrors lib/rate-limit.ts). Null when env is absent,
 // which makes every budget operation fail open.
 const redis: Redis | null = (() => {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) {
-    logInfo('Guardrail token budget disabled — Upstash env vars missing');
+  const env = resolveUpstashRedisEnv();
+  if (!env) {
     return null;
   }
-  return new Redis({ url, token });
+  return new Redis({ url: env.url, token: env.token });
 })();
 
 function keyFor(sessionId: string): string {

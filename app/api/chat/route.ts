@@ -14,6 +14,10 @@ import { buildBlockedResponse } from '@/lib/ai/guardrails/responses';
 import { addSessionTokens } from '@/lib/ai/guardrails/budget';
 import { guardrailsEnforced, REFUSAL_MESSAGE } from '@/lib/ai/guardrails/config';
 import { logError } from '@/services/loggingService';
+import {
+  deployedConciergeRequiresUpstash,
+  missingUpstashEnvVars,
+} from '@/lib/upstash-env';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -27,9 +31,54 @@ function clientIp(req: Request): string {
   return req.headers.get('x-real-ip')?.trim() || 'anonymous';
 }
 
+function deployedRuntimeRequiresBotId(): boolean {
+  return process.env.VERCEL === '1' && process.env.VERCEL_ENV !== 'development';
+}
+
+function hasExpectedBotIdClientHeaders(req: Request): boolean {
+  const path = req.headers.get('x-path')?.trim();
+  const method = req.headers.get('x-method')?.trim().toUpperCase();
+  const challenge = req.headers.get('x-is-human')?.trim();
+  return Boolean(challenge && path === new URL(req.url).pathname && method === 'POST');
+}
+
 export async function POST(req: Request) {
   if (!featureFlags.conciergeEnabled) {
     return new Response('Not found', { status: 404 });
+  }
+
+  if (deployedRuntimeRequiresBotId() && !hasExpectedBotIdClientHeaders(req)) {
+    return new Response('Unauthorized', { status: 403 });
+  }
+
+  let verification;
+  try {
+    verification = await checkBotId();
+  } catch (error) {
+    logError('Concierge: BotID verification failed', undefined, error);
+    return new Response('Unauthorized', { status: 401 });
+  }
+
+  if (verification.isBot) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
+  const missingUpstash = missingUpstashEnvVars();
+  if (deployedConciergeRequiresUpstash() && missingUpstash.length > 0) {
+    logError('Concierge: Upstash env vars missing in deployed runtime', {
+      missingEnv: missingUpstash,
+      vercelEnv: process.env.VERCEL_ENV,
+    });
+    return new Response('Concierge is temporarily unavailable.', { status: 503 });
+  }
+
+  const limit = await chatLimiter.limit(clientIp(req));
+  if (!limit.success) {
+    const retryAfter = Math.max(1, Math.ceil((limit.reset - Date.now()) / 1000));
+    return new Response('Too many requests', {
+      status: 429,
+      headers: { 'Retry-After': String(retryAfter) },
+    });
   }
 
   let raw: unknown;
@@ -46,20 +95,6 @@ export async function POST(req: Request) {
     return new Response('Invalid request', { status: 400 });
   }
   const { messages, pageContext } = parsed.data;
-
-  const verification = await checkBotId();
-  if (verification.isBot) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-
-  const limit = await chatLimiter.limit(clientIp(req));
-  if (!limit.success) {
-    const retryAfter = Math.max(1, Math.ceil((limit.reset - Date.now()) / 1000));
-    return new Response('Too many requests', {
-      status: 429,
-      headers: { 'Retry-After': String(retryAfter) },
-    });
-  }
 
   // Pull the text of every user turn first. Malformed `parts` (e.g. a client
   // sending a non-array) throws here and is caught as a 400 — rather than later

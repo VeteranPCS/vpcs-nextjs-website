@@ -26,6 +26,8 @@ describe('budget fail-open (no Upstash env)', () => {
     vi.unstubAllEnvs();
     vi.stubEnv('UPSTASH_REDIS_REST_URL', '');
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '');
+    vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_URL', '');
+    vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_TOKEN', '');
   });
 
   it('reads 0 tokens and is never over budget', async () => {
@@ -46,6 +48,8 @@ describe('addSessionTokens TTL — NX heal', () => {
     vi.unstubAllEnvs();
     vi.stubEnv('UPSTASH_REDIS_REST_URL', 'https://example.upstash.io');
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', 'token');
+    vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_URL', '');
+    vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_TOKEN', '');
     redisMock.incrby.mockReset();
     redisMock.expire.mockReset();
   });
@@ -61,5 +65,19 @@ describe('addSessionTokens TTL — NX heal', () => {
 
     expect(redisMock.incrby).toHaveBeenCalledWith('concierge:tokens:sid', 100);
     expect(redisMock.expire).toHaveBeenCalledWith('concierge:tokens:sid', 86_400, 'NX');
+  });
+
+  it('uses the Vercel integration REST API aliases', async () => {
+    vi.stubEnv('UPSTASH_REDIS_REST_URL', '');
+    vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '');
+    vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_URL', 'https://vercel-kv.upstash.io');
+    vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_TOKEN', 'vercel-kv-token');
+    redisMock.incrby.mockResolvedValue(500);
+
+    const { addSessionTokens } = await import('@/lib/ai/guardrails/budget');
+
+    await addSessionTokens('sid', 25);
+
+    expect(redisMock.incrby).toHaveBeenCalledWith('concierge:tokens:sid', 25);
   });
 });
