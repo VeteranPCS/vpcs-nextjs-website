@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { vaLoanGuideForm } from "@/services/salesForcePostFormsService";
+import { homebuyerGuideForm } from "@/services/salesForcePostFormsService";
 import { sendGTMEvent } from "@next/third-parties/google";
 import Image from "next/image";
 import Link from "next/link";
@@ -50,7 +50,7 @@ const HomebuyerGuideDownload = () => {
                 lastName,
                 email: data.email,
             };
-            const server_response = await vaLoanGuideForm({ ...payload, ...getSpamFields() });
+            const server_response = await homebuyerGuideForm({ ...payload, ...getSpamFields() });
             if (server_response?.success) {
                 setSuccess(true);
                 reset();
