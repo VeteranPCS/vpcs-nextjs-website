@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import sendToSlack from '@/actions/sendToSlack';
 import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
 import { contactAgentPostForm } from '@/services/salesForcePostFormsService';
+import { logError } from '@/services/loggingService';
 
 vi.mock('@/actions/sendToSlack', () => ({
   default: vi.fn(async () => ({ ok: true })),
@@ -9,6 +10,12 @@ vi.mock('@/actions/sendToSlack', () => ({
 
 vi.mock('@/actions/sendOpenPhoneMessage', () => ({
   sendOpenPhoneMessage: vi.fn(async () => ({ id: 'openphone-test-message' })),
+}));
+
+vi.mock('@/services/loggingService', () => ({
+  logDebug: vi.fn(),
+  logError: vi.fn(),
+  logInfo: vi.fn(),
 }));
 
 vi.mock('@/services/stateService', () => ({
@@ -93,6 +100,25 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not retry Salesforce when Slack returns a failed result after Salesforce accepts', async () => {
+    vi.mocked(sendToSlack).mockResolvedValueOnce({ ok: false, error: 'invalid_webhook' });
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    const result = await contactAgentPostForm(qaPayload(), queryString);
+
+    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
+    expect(logError).toHaveBeenCalledWith(
+      'Slack notification failed',
+      expect.objectContaining({ submissionId: 'submission-test-id', error: 'invalid_webhook' }),
+      expect.any(Error),
+    );
   });
 
   it('rejects an explicit Salesforce error response without retrying or notifying', async () => {

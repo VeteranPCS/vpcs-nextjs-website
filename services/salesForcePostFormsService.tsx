@@ -313,37 +313,68 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
 
         const { response, redirectUrl } = submissionResult;
 
-        // Fire and forget notifications - don't await them
-        await Promise.all([
-            sendToSlack({
-                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Agent Lead' : '🔔 New Agent Lead',
-                name: `${formData.firstName} ${formData.lastName}` || "",
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-                agentInfo: agentInfo ? {
-                    name: agentInfo.Name || "",
-                    email: agentInfo.PersonEmail || "",
-                    phoneNumber: agentInfo.PersonMobilePhone || "",
-                    brokerage: agentInfo.Brokerage_Name__pc,
-                    state: paramsObj.state
-                } : undefined
-            }),
-            // Suppress partner SMS for spam-suspected leads so spammers can't trigger partner outreach.
-            ...(spam.quarantine ? [] : [sendOpenPhoneMessage({
-                content: `New Lead From VeteranPCS:
+        const notificationTasks: Array<{ name: 'Slack' | 'OpenPhone'; promise: Promise<unknown> }> = [
+            {
+                name: 'Slack',
+                promise: sendToSlack({
+                    headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Agent Lead' : '🔔 New Agent Lead',
+                    name: `${formData.firstName} ${formData.lastName}` || "",
+                    email: formData.email || "",
+                    phoneNumber: formData.phone || "",
+                    message: formData.additionalComments || "",
+                    agentInfo: agentInfo ? {
+                        name: agentInfo.Name || "",
+                        email: agentInfo.PersonEmail || "",
+                        phoneNumber: agentInfo.PersonMobilePhone || "",
+                        brokerage: agentInfo.Brokerage_Name__pc,
+                        state: paramsObj.state
+                    } : undefined
+                }),
+            },
+        ];
+
+        // Suppress partner SMS for spam-suspected leads so spammers can't trigger partner outreach.
+        if (!spam.quarantine) {
+            notificationTasks.push({
+                name: 'OpenPhone',
+                promise: sendOpenPhoneMessage({
+                    content: `New Lead From VeteranPCS:
 ${formData.firstName} ${formData.lastName}
 Email: ${formData.email}
 Phone: ${formatPhoneNumberForDisplay(formData.phone)}
 ${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
 ${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
 ${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
-                from: getAdminPhoneNumberForState(paramsObj.state),
-                to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
-            })]),
-        ]).catch(error => {
-            // Log any errors but don't block the main flow
-            logError('Error sending notifications', { submissionId }, error);
+                    from: getAdminPhoneNumberForState(paramsObj.state),
+                    to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
+                }),
+            });
+        }
+
+        const notificationResults = await Promise.allSettled(
+            notificationTasks.map((task) => task.promise)
+        );
+
+        notificationResults.forEach((result, index) => {
+            const task = notificationTasks[index];
+            if (result.status === 'rejected') {
+                logError(`${task.name} notification failed`, { submissionId }, result.reason);
+                return;
+            }
+
+            if (task.name === 'Slack') {
+                const slackResult = result.value as { ok?: boolean; error?: unknown };
+                if (slackResult?.ok !== true) {
+                    logError(
+                        'Slack notification failed',
+                        { submissionId, error: slackResult?.error },
+                        new Error(`Slack returned ok=${String(slackResult?.ok)}`)
+                    );
+                    return;
+                }
+            }
+
+            logInfo(`${task.name} notification accepted`, { submissionId });
         });
 
         // At this point, we know the submission was successful based on our enhanced validation
