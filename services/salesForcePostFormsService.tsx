@@ -28,144 +28,104 @@ interface SalesforceSubmissionResult {
 }
 
 /**
- * Enhanced Salesforce submission with retry logic and proper success validation
+ * Submit once to Salesforce Web-to-Lead.
+ *
+ * Web-to-Lead is not idempotent: a 2xx response can create a Lead even when the
+ * response body is missing, unexpected, or does not contain the normal redirect
+ * script. Retrying after any response can create duplicate Leads, so this helper
+ * intentionally performs exactly one POST.
  */
-async function submitToSalesforceWithRetry(
+async function submitToSalesforceWebToLead(
     url: string,
     formBody: string,
-    submissionId: string,
-    maxRetries = 3,
-    baseDelay = 1000
+    submissionId: string
 ): Promise<SalesforceSubmissionResult> {
-    let lastError: Error | null = null;
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        logDebug(`Salesforce submission attempt ${attempt}/${maxRetries}`, { submissionId });
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formBody,
+            signal: controller.signal
+        });
 
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        clearTimeout(timeoutId);
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: formBody,
-                signal: controller.signal
-            });
+        logInfo('Salesforce Web-to-Lead response received', {
+            submissionId,
+            status: response.status,
+            statusText: response.statusText,
+            ok: response.ok
+        });
 
-            clearTimeout(timeoutId);
-
-            logInfo(`Salesforce response received (attempt ${attempt})`, {
-                submissionId,
-                status: response.status,
-                statusText: response.statusText,
-                ok: response.ok
-            });
-
-            // Basic HTTP error check
-            if (!response.ok) {
-                const error = new Error(`Salesforce HTTP error: ${response.status} ${response.statusText}`);
-                logError(`HTTP error on attempt ${attempt}`, { submissionId, status: response.status }, error);
-                lastError = error;
-
-                // Don't retry on client errors (4xx), only on server errors (5xx) or network issues
-                if (response.status >= 400 && response.status < 500) {
-                    return { success: false, response, error };
-                }
-
-                // Retry on 5xx errors
-                if (attempt < maxRetries) {
-                    await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, attempt - 1)));
-                    continue;
-                }
-
-                return { success: false, response, error };
-            }
-
-            // Read response text for further validation
-            let responseText: string;
-            try {
-                responseText = await response.text();
-                logDebug(`Response text received (attempt ${attempt})`, {
-                    submissionId,
-                    responseLength: responseText.length,
-                    hasContent: responseText.length > 0
-                });
-            } catch (textError) {
-                const error = new Error('Failed to read response text from Salesforce');
-                logError(`Failed to read response text on attempt ${attempt}`, { submissionId }, textError);
-                lastError = error;
-
-                if (attempt < maxRetries) {
-                    await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, attempt - 1)));
-                    continue;
-                }
-
-                return { success: false, response, error };
-            }
-
-            // Validate Salesforce success - look for success indicators
-            const isValidSalesforceResponse = validateSalesforceResponse(responseText, submissionId);
-
-            if (!isValidSalesforceResponse.isValid) {
-                const error = new Error(`Salesforce validation failed: ${isValidSalesforceResponse.reason}`);
-                logError(`Response validation failed on attempt ${attempt}`, {
-                    submissionId,
-                    reason: isValidSalesforceResponse.reason,
-                    responsePreview: responseText.substring(0, 200)
-                }, error);
-                lastError = error;
-
-                if (attempt < maxRetries) {
-                    await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, attempt - 1)));
-                    continue;
-                }
-
-                return { success: false, response, responseText, error };
-            }
-
-            // Extract redirect URL if present
-            const redirectUrlMatch = responseText.match(/window\.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
-            const redirectUrl = redirectUrlMatch ? redirectUrlMatch[1] : undefined;
-
-            logInfo(`Salesforce submission successful on attempt ${attempt}`, {
-                submissionId,
-                hasRedirectUrl: !!redirectUrl,
-                redirectUrl
-            });
-
-            return {
-                success: true,
-                response,
-                responseText,
-                redirectUrl
-            };
-
-        } catch (networkError) {
-            const error = networkError instanceof Error ? networkError : new Error('Unknown network error');
-
-            if (error.name === 'AbortError') {
-                logError(`Request timeout on attempt ${attempt}`, { submissionId }, error);
-            } else {
-                logError(`Network error on attempt ${attempt}`, { submissionId }, error);
-            }
-
-            lastError = error;
-
-            if (attempt < maxRetries) {
-                const delay = baseDelay * Math.pow(2, attempt - 1);
-                logInfo(`Retrying after ${delay}ms (attempt ${attempt + 1}/${maxRetries})`, { submissionId });
-                await new Promise(resolve => setTimeout(resolve, delay));
-                continue;
-            }
+        if (!response.ok) {
+            const error = new Error(`Salesforce HTTP error: ${response.status} ${response.statusText}`);
+            logError('Salesforce Web-to-Lead HTTP error', { submissionId, status: response.status }, error);
+            return { success: false, response, error };
         }
-    }
 
-    // All retries exhausted
-    logError(`All ${maxRetries} submission attempts failed`, { submissionId }, lastError);
-    return { success: false, error: lastError || new Error('Max retries reached') };
+        let responseText = '';
+        try {
+            responseText = await response.text();
+            logDebug('Salesforce Web-to-Lead response text received', {
+                submissionId,
+                responseLength: responseText.length,
+                hasContent: responseText.length > 0
+            });
+        } catch (textError) {
+            logError(
+                'Failed to read Salesforce Web-to-Lead response text - treating accepted HTTP response as success',
+                { submissionId },
+                textError
+            );
+        }
+
+        const validation = validateSalesforceResponse(responseText, submissionId);
+
+        if (!validation.isValid) {
+            const error = new Error(`Salesforce validation failed: ${validation.reason}`);
+            logError('Salesforce Web-to-Lead response validation failed', {
+                submissionId,
+                reason: validation.reason,
+                responsePreview: responseText.substring(0, 200)
+            }, error);
+            return { success: false, response, responseText, error };
+        }
+
+        const redirectUrl = extractSalesforceRedirectUrl(responseText);
+
+        logInfo('Salesforce Web-to-Lead submission accepted', {
+            submissionId,
+            hasRedirectUrl: !!redirectUrl,
+            redirectUrl
+        });
+
+        return {
+            success: true,
+            response,
+            responseText,
+            redirectUrl
+        };
+    } catch (networkError) {
+        const error = networkError instanceof Error ? networkError : new Error('Unknown network error');
+
+        if (error.name === 'AbortError') {
+            logError('Salesforce Web-to-Lead request timeout', { submissionId }, error);
+        } else {
+            logError('Salesforce Web-to-Lead network error', { submissionId }, error);
+        }
+
+        return { success: false, error };
+    }
+}
+
+function extractSalesforceRedirectUrl(responseText: string): string | undefined {
+    const redirectUrlMatch = responseText.match(/window\.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
+    return redirectUrlMatch ? redirectUrlMatch[1] : undefined;
 }
 
 /**
@@ -181,27 +141,27 @@ function validateSalesforceResponse(responseText: string, submissionId: string):
         return { isValid: true };
     }
 
-    // 2. Empty/whitespace response → FAILURE (fail-closed). We must positively
-    //    confirm the lead was created; an empty response cannot do that.
+    // 2. Empty/whitespace response → accepted. Salesforce can create the Lead and
+    //    still return no useful body; retrying here risks duplicate Leads.
     if (!responseText || responseText.trim().length === 0) {
-        logDebug('Empty response from Salesforce - treating as failure', {
+        logDebug('Empty response from Salesforce - treating accepted HTTP response as success', {
             submissionId,
             responseLength: responseText ? responseText.length : 0
         });
-        return { isValid: false, reason: 'Empty response from Salesforce' };
+        return { isValid: true };
     }
 
-    // 3. Has content but no redirect → scan for explicit error indicators.
+    // 3. Has content but no redirect → reject only explicit Salesforce error signals.
     const errorIndicators = [
         'error occurred',
-        'invalid',
         'required field',
+        'required fields are missing',
         'unable to create',
         'failed to submit',
         'system error',
         'temporarily unavailable',
-        'captcha',
-        'security'
+        'invalid captcha',
+        'captcha verification failed'
     ];
 
     const lowerResponseText = responseText.toLowerCase();
@@ -216,13 +176,14 @@ function validateSalesforceResponse(responseText: string, submissionId: string):
         }
     }
 
-    // 4. Has content, no redirect, no known error indicator → ambiguous, FAILURE.
-    logDebug('Response has content but no Salesforce success redirect', {
+    // 4. Has content, no redirect, no known error indicator → accepted. A 2xx
+    //    Web-to-Lead response is the strongest safe signal we have.
+    logDebug('Response has content but no Salesforce success redirect - treating accepted HTTP response as success', {
         submissionId,
         responseLength: responseText.length,
         responsePreview: responseText.substring(0, 200)
     });
-    return { isValid: false, reason: 'No Salesforce success redirect found in response' };
+    return { isValid: true };
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -321,19 +282,16 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
             "captcha_settings": "",
         }).toString();
 
-        logDebug('Sending form data to Salesforce with retry logic', {
+        logDebug('Sending form data to Salesforce Web-to-Lead', {
             submissionId,
             url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
+        const submissionResult = await submitToSalesforceWebToLead(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
+            submissionId
         );
 
         if (!submissionResult.success) {
@@ -345,7 +303,7 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
                 submissionResult.error || new Error('Salesforce submission failed')
             );
 
-            logError('Salesforce submission failed after all retries', {
+            logError('Salesforce Web-to-Lead submission failed', {
                 submissionId,
                 error: submissionResult.error?.message
             }, submissionResult.error);
@@ -353,7 +311,7 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
             throw submissionResult.error || new Error('Failed to submit form to Salesforce');
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        const { response, redirectUrl } = submissionResult;
 
         // Fire and forget notifications - don't await them
         await Promise.all([
@@ -487,19 +445,16 @@ export async function GetListedAgentsPostForm(formData: any, options?: InternalC
             "captcha_settings": "",
         }).toString();
 
-        logDebug('Sending agent listing data to Salesforce with retry logic', {
+        logDebug('Sending agent listing data to Salesforce Web-to-Lead', {
             submissionId,
             url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
+        const submissionResult = await submitToSalesforceWebToLead(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
+            submissionId
         );
 
         if (!submissionResult.success) {
@@ -511,7 +466,7 @@ export async function GetListedAgentsPostForm(formData: any, options?: InternalC
                 submissionResult.error || new Error('Salesforce submission failed')
             );
 
-            logError('Agent listing submission failed after all retries', {
+            logError('Agent listing Salesforce Web-to-Lead submission failed', {
                 submissionId,
                 error: submissionResult.error?.message
             }, submissionResult.error);
@@ -519,7 +474,7 @@ export async function GetListedAgentsPostForm(formData: any, options?: InternalC
             throw submissionResult.error || new Error('Failed to submit agent listing to Salesforce');
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        const { response, redirectUrl } = submissionResult;
 
         Promise.all([
             sendToSlack({
@@ -628,19 +583,16 @@ export async function GetListedLendersPostForm(formData: any, options?: Internal
             "captcha_settings": "",
         }).toString();
 
-        logDebug('Sending lender listing data to Salesforce with retry logic', {
+        logDebug('Sending lender listing data to Salesforce Web-to-Lead', {
             submissionId,
             url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
+        const submissionResult = await submitToSalesforceWebToLead(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
+            submissionId
         );
 
         if (!submissionResult.success) {
@@ -652,7 +604,7 @@ export async function GetListedLendersPostForm(formData: any, options?: Internal
                 submissionResult.error || new Error('Salesforce submission failed')
             );
 
-            logError('Lender listing submission failed after all retries', {
+            logError('Lender listing Salesforce Web-to-Lead submission failed', {
                 submissionId,
                 error: submissionResult.error?.message
             }, submissionResult.error);
@@ -660,7 +612,7 @@ export async function GetListedLendersPostForm(formData: any, options?: Internal
             throw submissionResult.error || new Error('Failed to submit lender listing to Salesforce');
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        const { response, redirectUrl } = submissionResult;
 
         Promise.all([
             sendToSlack({
@@ -747,18 +699,15 @@ export async function KeepInTouchForm(formData: any, options?: InternalCallOptio
             "captcha_settings": "",
         }).toString();
 
-        logDebug('Sending keep in touch data to Salesforce with retry logic', {
+        logDebug('Sending keep in touch data to Salesforce Web-to-Lead', {
             submissionId,
             url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
+        const submissionResult = await submitToSalesforceWebToLead(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
+            submissionId
         );
 
         if (!submissionResult.success) {
@@ -770,7 +719,7 @@ export async function KeepInTouchForm(formData: any, options?: InternalCallOptio
                 submissionResult.error || new Error('Salesforce submission failed')
             );
 
-            logError('Keep in touch submission failed after all retries', {
+            logError('Keep in touch Salesforce Web-to-Lead submission failed', {
                 submissionId,
                 error: submissionResult.error?.message
             }, submissionResult.error);
@@ -778,7 +727,7 @@ export async function KeepInTouchForm(formData: any, options?: InternalCallOptio
             throw submissionResult.error || new Error('Failed to submit keep in touch form to Salesforce');
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        const { response, redirectUrl } = submissionResult;
 
         Promise.all([
             sendToSlack({
@@ -895,19 +844,16 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             "captcha_settings": "",
         }).toString();
 
-        logDebug('Sending lender form data to Salesforce with retry logic', {
+        logDebug('Sending lender form data to Salesforce Web-to-Lead', {
             submissionId,
             url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
+        const submissionResult = await submitToSalesforceWebToLead(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
+            submissionId
         );
 
         if (!submissionResult.success) {
@@ -919,7 +865,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
                 submissionResult.error || new Error('Salesforce submission failed')
             );
 
-            logError('Lender form submission failed after all retries', {
+            logError('Lender form Salesforce Web-to-Lead submission failed', {
                 submissionId,
                 error: submissionResult.error?.message
             }, submissionResult.error);
@@ -927,7 +873,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             throw submissionResult.error || new Error('Failed to submit lender form to Salesforce');
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        const { response, redirectUrl } = submissionResult;
 
         // Fire and forget notifications - don't await them
         await Promise.all([
@@ -1038,18 +984,15 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
             "captcha_settings": "",
         }).toString();
 
-        logDebug('Sending contact form data to Salesforce with retry logic', {
+        logDebug('Sending contact form data to Salesforce Web-to-Lead', {
             submissionId,
             url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
+        const submissionResult = await submitToSalesforceWebToLead(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
+            submissionId
         );
 
         if (!submissionResult.success) {
@@ -1061,7 +1004,7 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
                 submissionResult.error || new Error('Salesforce submission failed')
             );
 
-            logError('Contact form submission failed after all retries', {
+            logError('Contact form Salesforce Web-to-Lead submission failed', {
                 submissionId,
                 error: submissionResult.error?.message
             }, submissionResult.error);
@@ -1069,7 +1012,7 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
             throw submissionResult.error || new Error('Failed to submit contact form to Salesforce');
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        const { response, redirectUrl } = submissionResult;
 
         Promise.all([
             sendToSlack({
@@ -1148,18 +1091,15 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
             "captcha_settings": "",
         }).toString();
 
-        logDebug('Sending VA loan guide data to Salesforce with retry logic', {
+        logDebug('Sending VA loan guide data to Salesforce Web-to-Lead', {
             submissionId,
             url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
+        const submissionResult = await submitToSalesforceWebToLead(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
+            submissionId
         );
 
         if (!submissionResult.success) {
@@ -1171,7 +1111,7 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
                 submissionResult.error || new Error('Salesforce submission failed')
             );
 
-            logError('VA loan guide submission failed after all retries', {
+            logError('VA loan guide Salesforce Web-to-Lead submission failed', {
                 submissionId,
                 error: submissionResult.error?.message
             }, submissionResult.error);
@@ -1179,7 +1119,7 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
             throw submissionResult.error || new Error('Failed to submit VA loan guide form to Salesforce');
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        const { response, redirectUrl } = submissionResult;
 
         Promise.all([
             sendToSlack({
@@ -1277,19 +1217,16 @@ export async function internshipFormSubmission(formData: any, options?: Internal
             "captcha_settings": "",
         }).toString();
 
-        logDebug('Sending internship form data to Salesforce with retry logic', {
+        logDebug('Sending internship form data to Salesforce Web-to-Lead', {
             submissionId,
             url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
+        const submissionResult = await submitToSalesforceWebToLead(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
+            submissionId
         );
 
         if (!submissionResult.success) {
@@ -1301,7 +1238,7 @@ export async function internshipFormSubmission(formData: any, options?: Internal
                 submissionResult.error || new Error('Salesforce submission failed')
             );
 
-            logError('Internship form submission failed after all retries', {
+            logError('Internship form Salesforce Web-to-Lead submission failed', {
                 submissionId,
                 error: submissionResult.error?.message
             }, submissionResult.error);
@@ -1309,7 +1246,7 @@ export async function internshipFormSubmission(formData: any, options?: Internal
             throw submissionResult.error || new Error('Failed to submit internship form to Salesforce');
         }
 
-        const { response, responseText, redirectUrl } = submissionResult;
+        const { response, redirectUrl } = submissionResult;
 
         Promise.all([
             sendToSlack({
@@ -1354,4 +1291,3 @@ export async function internshipFormSubmission(formData: any, options?: Internal
         throw new Error('Failed to submit form');
     }
 }
-

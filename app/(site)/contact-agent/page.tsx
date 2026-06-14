@@ -1,7 +1,6 @@
 "use client";
 import ContactAgents from "@/components/ContactAgents/ContactAgent";
 import { contactAgentPostForm } from "@/services/salesForcePostFormsService";
-import { useRouter } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
 
 interface FormData {
@@ -29,8 +28,6 @@ interface FormData {
 }
 
 export default function ContactAgentPage() {
-  const router = useRouter()
-
   const handleSubmit = async (formData: FormData): Promise<{ success?: boolean; redirectUrl?: string }> => {
     const fullQueryString = window.location.search;
     const queryParams = new URLSearchParams(fullQueryString);
@@ -42,16 +39,12 @@ export default function ContactAgentPage() {
         state: queryParams.get("state") || "",
       });
 
-      // Enhanced contactAgentPostForm now includes:
-      // - Automatic retry logic (up to 3 attempts)
-      // - Better Salesforce response validation
-      // - Exponential backoff between retries
-      // - Proper error handling and logging
       const server_response = await contactAgentPostForm(formData, fullQueryString);
-      // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
       if (server_response?.redirectUrl) {
-        window.location.href = server_response.redirectUrl;
         return { success: true, redirectUrl: server_response.redirectUrl };
+      }
+      if (server_response?.message) {
+        return { success: true, redirectUrl: '/thank-you' };
       }
       return { success: false };
     } catch (error) {
