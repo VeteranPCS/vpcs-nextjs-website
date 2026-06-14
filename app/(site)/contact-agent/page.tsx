@@ -1,37 +1,11 @@
 "use client";
 import ContactAgents from "@/components/ContactAgents/ContactAgent";
-import { contactAgentPostForm } from "@/services/salesForcePostFormsService";
-import { useRouter } from 'next/navigation'
+import { submitContactAgentLead } from "./actions";
 import { sendGTMEvent } from "@next/third-parties/google";
-
-interface FormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  currentBase?: string;
-  destinationBase?: string;
-  howDidYouHear?: string;
-  tellusMore?: string;
-  additionalComments?: string;
-  status_select?: string;
-  branch_select?: string;
-  discharge_status?: string;
-  state?: string;
-  city?: string;
-  buyingSelling?: string;
-  timeframe?: string;
-  typeOfHome?: string | null;
-  bedrooms?: string;
-  bathrooms?: string;
-  maxPrice?: string;
-  preApproval?: string | null;
-}
+import { ContactAgentFormData } from "@/types";
 
 export default function ContactAgentPage() {
-  const router = useRouter()
-
-  const handleSubmit = async (formData: FormData): Promise<{ success?: boolean; redirectUrl?: string }> => {
+  const handleSubmit = async (formData: ContactAgentFormData): Promise<{ success?: boolean; redirectUrl?: string }> => {
     const fullQueryString = window.location.search;
     const queryParams = new URLSearchParams(fullQueryString);
 
@@ -42,18 +16,7 @@ export default function ContactAgentPage() {
         state: queryParams.get("state") || "",
       });
 
-      // Enhanced contactAgentPostForm now includes:
-      // - Automatic retry logic (up to 3 attempts)
-      // - Better Salesforce response validation
-      // - Exponential backoff between retries
-      // - Proper error handling and logging
-      const server_response = await contactAgentPostForm(formData, fullQueryString);
-      // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
-      if (server_response?.redirectUrl) {
-        window.location.href = server_response.redirectUrl;
-        return { success: true, redirectUrl: server_response.redirectUrl };
-      }
-      return { success: false };
+      return await submitContactAgentLead(formData, fullQueryString);
     } catch (error) {
       console.error("Error submitting form:", error);
       return { success: false };

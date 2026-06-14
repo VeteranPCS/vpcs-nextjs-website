@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { sendGTMEvent } from "@next/third-parties/google";
-import stateService, { StateList } from '@/services/stateService';
+import type { StateList } from '@/services/stateService';
 import { clientAreaService, type AreaAssignment } from '@/services/clientAreaService';
+import { clientStateService } from '@/services/clientStateService';
 import { sanitizeCityName } from '@/utils/sanitizeCityName';
 import './AgentFinderPopup.css';
 
@@ -29,7 +30,7 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
     useEffect(() => {
         const loadStates = async () => {
             try {
-                const statesData = await stateService.fetchStateList();
+                const statesData = await clientStateService.fetchStateList();
 
                 if (!statesData || statesData.length === 0) {
                     console.warn('No states data received from Sanity');
@@ -72,7 +73,7 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
             setIsLoadingAreas(true);
             try {
                 // Load state image
-                const imageUrl = await stateService.fetchStateImage(selectedStateSlug);
+                const imageUrl = await clientStateService.fetchStateImage(selectedStateSlug);
                 setStateImage(imageUrl);
 
                 // Load areas from API route (server-side)

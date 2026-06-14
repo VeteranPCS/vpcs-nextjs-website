@@ -4,7 +4,8 @@ import "@/app/globals.css";
 import classes from "./KeepInTouch.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import mediaAccountService from "@/services/mediaAccountService";
+import { clientMediaAccountService } from "@/services/clientMediaAccountService";
+import type { MediaAccountProps } from "@/services/mediaAccountTypes";
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -14,14 +15,6 @@ import { sendGTMEvent } from "@next/third-parties/google";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-export interface MediaAccountProps {
-  _id: string;
-  name: string;
-  designation?: string;
-  icon: string;
-  link: string;
-}
-
 interface ContactFormData {
   firstName?: string;
   lastName?: string;
@@ -83,7 +76,7 @@ const KeepInTouch = () => {
 
   const fetchMediaAccounts = useCallback(async () => {
     try {
-      const response = await mediaAccountService.fetchAccounts();
+      const response = await clientMediaAccountService.fetchAccounts();
       SetMediaAccount(response);
     } catch (error) {
       console.error("Error fetching posts:", error);

@@ -44,9 +44,18 @@ const StarRating: React.FC<{ rating: "ONE" | "TWO" | "THREE" | "FOUR" | "FIVE" }
   );
 };
 
+function formatReviewDate(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  const month = date.getUTCMonth() + 1;
+  const day = date.getUTCDate();
+  const year = date.getUTCFullYear();
+  return `${month}/${day}/${year}`;
+}
+
 const ReviewCard: React.FC<{ review: Review }> = ({ review }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const formattedDate = new Date(review.createTime).toLocaleDateString();
+  const formattedDate = formatReviewDate(review.createTime);
   const comment = review.comment?.trim() || "No review provided.";
   const shouldShowReadMore = comment.length > 250;
 

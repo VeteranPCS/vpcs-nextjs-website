@@ -1,6 +1,6 @@
-import { MediaAccountProps } from '@/components/homepage/KeepInTouch/KeepInTouch';
 import { client } from '@/sanity/lib/client'
 import { SanityDocument } from '@sanity/client'
+import type { MediaAccountProps } from '@/services/mediaAccountTypes';
 
 
 interface AccountDocument extends SanityDocument {

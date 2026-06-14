@@ -5,7 +5,8 @@ import classes from "./ContactForm.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
-import mediaAccountService from "@/services/mediaAccountService";
+import { clientMediaAccountService } from "@/services/clientMediaAccountService";
+import type { MediaAccountProps } from "@/services/mediaAccountTypes";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -15,14 +16,6 @@ import { sendGTMEvent } from "@next/third-parties/google";
 import { useConcierge } from "@/components/Concierge";
 import { featureFlags } from "@/lib/feature-flags";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
-
-interface MediaAccountProps {
-  _id: string;
-  name: string;
-  designation?: string;
-  icon: string;
-  link: string;
-}
 
 export interface ContactFormData {
   firstName?: string;
@@ -94,7 +87,7 @@ const ContactForm = () => {
   const [mediaAccount, SetMediaAccount] = useState<MediaAccountProps[]>([]);
   const fetchMediaAccounts = useCallback(async () => {
     try {
-      const response = await mediaAccountService.fetchAccounts()
+      const response = await clientMediaAccountService.fetchAccounts()
       SetMediaAccount(response)
     } catch (error) {
       console.error('Error fetching posts:', error)
