@@ -1233,18 +1233,15 @@ export async function homebuyerGuideForm(formData: any, options?: InternalCallOp
             "captcha_settings": "",
         }).toString();
 
-        logDebug('Sending first time home buyer guide data to Salesforce with retry logic', {
+        logDebug('Sending first time home buyer guide data to Salesforce Web-to-Lead', {
             submissionId,
             url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
         });
 
-        // Use enhanced submission with retry logic
-        const submissionResult = await submitToSalesforceWithRetry(
+        const submissionResult = await submitToSalesforceWebToLead(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formBody,
-            submissionId,
-            3, // maxRetries
-            1000 // baseDelay in ms
+            submissionId
         );
 
         if (!submissionResult.success) {
@@ -1256,7 +1253,7 @@ export async function homebuyerGuideForm(formData: any, options?: InternalCallOp
                 submissionResult.error || new Error('Salesforce submission failed')
             );
 
-            logError('First time home buyer guide submission failed after all retries', {
+            logError('First time home buyer guide submission failed', {
                 submissionId,
                 error: submissionResult.error?.message
             }, submissionResult.error);
