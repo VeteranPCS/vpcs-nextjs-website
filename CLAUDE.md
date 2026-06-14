@@ -17,7 +17,7 @@ VeteranPCS is a Next.js site that connects active-duty service members, veterans
 - **Framework:** Next.js 16 App Router (Turbopack), React 19.2, Node runtime.
 - **CMS:** Sanity (`next-sanity`, GROQ). Studio mounted at `/studio`.
 - **CRM:** Salesforce REST (SOQL); token retrieval via `services/salesForceTokenService.tsx`, queries via `services/api.tsx` + `services/stateService.tsx`.
-- **AI:** Vercel AI SDK v6 (`ai`, `@ai-sdk/react`) routed through **Vercel AI Gateway** (model id `anthropic/claude-sonnet-4-6` in `lib/ai/models.ts`). No direct provider SDK is wired up — use the Gateway.
+- **AI:** Vercel AI SDK v6 (`ai`, `@ai-sdk/react`) routed through **Vercel AI Gateway** (model id `anthropic/claude-sonnet-4.6` in `lib/ai/models.ts`). No direct provider SDK is wired up — use the Gateway.
 - **Rate limit + bot defense:** `@upstash/ratelimit` + Upstash Redis, `botid` (Vercel BotID), both applied in `app/api/chat/route.ts`.
 - **Notifications:** Slack webhook (`actions/sendToSlack.ts`), OpenPhone SMS (`actions/sendOpenPhoneMessage.ts`). No Resend on this branch.
 - **Test runner:** Vitest 3 (Node env, `**/__tests__/**/*.test.ts`). Pre-commit does NOT run tests yet — run `npm test` before pushing AI-touching changes.
@@ -114,6 +114,7 @@ The current `ai/phase-2-concierge` branch uses:
 - Sanity: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_API_VERSION`, `NEXT_PUBLIC_SANITY_API_TOKEN`, `SANITY_REVALIDATE_KEY`
 - AI: `AI_GATEWAY_API_KEY` (Vercel AI Gateway), `NEXT_PUBLIC_CONCIERGE_ENABLED`
 - **Rate limit / bot:** `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `LEAD_SPAM_ENFORCED` (`LEAD_SPAM_ENFORCED='0'` is the kill-switch that disables lead-spam quarantine — any other value or unset = enforced). BotID is auto-wired on Vercel and now guards **only** the concierge chat route (`/api/chat`), not the lead forms. `BOTID_FORMS_ENFORCED` is retired.
+- **Guardrails:** `GUARDRAILS_ENFORCED` (`'0'` = disable all concierge input guardrails; any other value or unset = enforced). Mirrors `LEAD_SPAM_ENFORCED`. Guardrails run in `app/api/chat/route.ts` via `lib/ai/guardrails/evaluateInput`.
 - Notifications: `SLACK_WEBHOOK_URL`, `OPEN_PHONE_API_KEY`, `OPEN_PHONE_FROM_NUMBER`, plus per-partner `*_PHONE_NUMBER`
 - Misc: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID`, Google Reviews / GA4 / GSC creds
 

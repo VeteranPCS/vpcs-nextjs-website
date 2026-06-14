@@ -1,6 +1,6 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
-import { logInfo } from '@/services/loggingService';
+import { resolveUpstashRedisEnv } from '@/lib/upstash-env';
 
 interface LimitResult {
   success: boolean;
@@ -21,11 +21,9 @@ interface BuildLimiterOpts {
 }
 
 function buildLimiter(opts: BuildLimiterOpts): Limiter {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const env = resolveUpstashRedisEnv();
 
-  if (!url || !token) {
-    logInfo('Rate limit disabled — Upstash env vars missing');
+  if (!env) {
     const now = Date.now();
     return {
       limit: async () => ({
@@ -37,7 +35,7 @@ function buildLimiter(opts: BuildLimiterOpts): Limiter {
     };
   }
 
-  const redis = new Redis({ url, token });
+  const redis = new Redis({ url: env.url, token: env.token });
   return new Ratelimit({
     redis,
     limiter: opts.limiter,

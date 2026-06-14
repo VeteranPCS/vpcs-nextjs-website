@@ -75,10 +75,8 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
       const response = await onSubmit({ ...data, ...getSpamFields() });
       if (response?.success || response?.redirectUrl) {
         reset(); // Reset form after successful submission
-        if (response?.redirectUrl) {
-          window.location.href = response.redirectUrl; // Immediate redirect
-          return;
-        }
+        window.location.href = response?.redirectUrl || '/thank-you'; // Immediate redirect
+        return;
       }
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -93,7 +91,7 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
     const urlParams = new URLSearchParams(window.location.search);
     const agentFirstName = urlParams.get('fn') || 'Us';
     setAgentName(agentFirstName);
-  }, [agentName])
+  }, [])
 
 
   return (

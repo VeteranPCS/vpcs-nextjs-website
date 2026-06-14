@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "eval": "vitest run -c vitest.eval.config.ts",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -75,6 +76,8 @@
     "vitest": "^4.1.8"
   },
   "overridesComments": {
+    "@grpc/grpc-js": "PR #88 audit triage / GHSA-5375-pq7m-f5r2 + GHSA-99f4-grh7-6pcq (high). google-gax allows ^1.12.6, so pin to the patched 1.14.4 release without changing majors.",
+    "protobufjs": "PR #88 audit triage / GHSA-jggg-4jg4-v7c6 (moderate). @grpc/proto-loader and google-gax allow protobufjs ^7.x; pin to a patched 7.x release to avoid the protobufjs 8 major.",
     "glob@10": "Dependabot #8 / GHSA-5j98-mcp5-4vw2 (high). Sanity CLI + archiver + google-gax pin glob 10.3.x/10.4.x (<10.5.0). Version-scoped to 10.x so the unrelated glob@13 (rimraf@6 under @sanity/export/import) is left untouched. Remove once those parents ship glob>=10.5.0.",
     "postcss": "Dependabot #10 / GHSA-qx2v-qp2m-jg93 (moderate, XSS in CSS stringify). next@16.2.6 pins postcss to exactly 8.4.31 (node_modules/next/node_modules/postcss). postcss is also a direct devDependency, so npm forbids a bare/version-scoped postcss override (EOVERRIDE). The `$postcss` reference forces every postcss in the tree to match the direct devDependency (now ^8.5.10), lifting Next's vendored copy to 8.5.10 (within the postcss 8.x major, no breaking changes). Remove once next ships postcss>=8.5.10.",
     "prismjs": "Dependabot #7 / GHSA-x7hr-w5r2-h6wg (moderate, DOM clobbering). prismjs 1.27.0 reaches the tree only transitively via refractor -> react-refractor -> @sanity/ui/sanity (no direct app usage; only the authenticated /studio surface). Pins prismjs to 1.30.0 (minor bump within 1.x; refractor compatible). Remove once react-refractor/@sanity/ui ship prismjs>=1.30.0."
@@ -82,6 +85,8 @@
   "overrides": {
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "@grpc/grpc-js": "1.14.4",
+    "protobufjs": "^7.6.4",
     "glob@10": "^10.5.0",
     "postcss": "$postcss",
     "prismjs": "1.30.0"
