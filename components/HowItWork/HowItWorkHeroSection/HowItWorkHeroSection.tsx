@@ -7,9 +7,6 @@ import { HowItWorksContentProps } from '@/services/howItWorksService';
 import Button from "@/components/common/Button";
 import Link from "next/link";
 
-const agentLenderFitCopy = "Connect with an agent and lender that is the best fit for you";
-const closingBonusCopy = "After closing receive a military bonus of $200-$4000 when working with an agent from VeteranPCS";
-
 const militaryBonusNotes = [
   "Note: You will be eligible for the military bonus or relocation grant when you contact an agent through the VeteranPCS website. If you do not use the website to sign up with your agent you may not be eligible for the military bonus.",
   "Note: the $200-$4,000 military bonus only applies when you work with a real estate agent from VeteranPCS. The lenders associated with VeteranPCS can save you additional money. The $200-$4,000 military bonus only applies if you connect with your agent through our website.",
@@ -17,29 +14,6 @@ const militaryBonusNotes = [
 
 const getBlockText = (block: HowItWorksContentProps["description"][number]) =>
   block.children.map((child) => child.text).join(" ").replace(/\s+/g, " ").trim();
-
-const normalizeHeroBulletCopy = (text: string) => {
-  const normalized = text.toLowerCase().replace(/[“”]/g, "").replace(/\s+/g, " ").trim();
-
-  if (
-    normalized === "connect with an agent or lender that is the best fit for you" ||
-    normalized === "connect with an agent and lender that is the best fit for you"
-  ) {
-    return agentLenderFitCopy;
-  }
-
-  if (normalized.startsWith("after closing")) {
-    return closingBonusCopy;
-  }
-
-  return text;
-};
-
-const shouldRenderAsBullet = (text: string) =>
-  text !== "It's that easy!" && !militaryBonusNotes.includes(text);
-
-const toDedupeKey = (text: string) =>
-  text.toLowerCase().replace(/[^a-z0-9$%]+/g, " ").trim();
 
 async function HowItWorkHeroSection() {
   let overviewSection: HowItWorksContentProps | null = null;
@@ -54,26 +28,10 @@ async function HowItWorkHeroSection() {
     return <p>Failed to load the How It Works Overview Section.</p>;
   }
 
-  const seenBulletCopy = new Set<string>();
-  const heroBullets = overviewSection.description
-    .map((item) => ({
-      key: item._key,
-      text: normalizeHeroBulletCopy(getBlockText(item)),
-    }))
-    .filter(({ text }) => {
-      if (!text || !shouldRenderAsBullet(text)) {
-        return false;
-      }
-
-      const dedupeKey = toDedupeKey(text);
-
-      if (seenBulletCopy.has(dedupeKey)) {
-        return false;
-      }
-
-      seenBulletCopy.add(dedupeKey);
-      return true;
-    });
+  const heroBullets = overviewSection.description.map((item) => ({
+    key: item._key,
+    text: getBlockText(item),
+  })).filter(({ text }) => text);
 
   return (
     <div className="relative">
@@ -110,24 +68,26 @@ async function HowItWorkHeroSection() {
                     </div>
                   ))}
                 </div>
-                <p className="mt-6 text-center text-white poppins lg:text-[24px] md:text-[20px] text-[18px] font-semibold tahoma">
-                  It&apos;s that easy!
-                </p>
-                <div
-                  className="mx-auto mt-6 mb-8 max-w-5xl rounded-md border border-white/25 bg-[#071a44]/75 px-5 py-4 text-white shadow-sm backdrop-blur-sm"
-                  aria-label="Military bonus eligibility notes"
-                >
-                  {militaryBonusNotes.map((note) => (
-                    <p key={note} className="poppins text-[14px] sm:text-[15px] md:text-[16px] leading-7 tahoma [&:not(:last-child)]:mb-3">
-                      {note}
-                    </p>
-                  ))}
-                </div>
-                <div className="flex justify-center">
+                <div className="mt-5 flex flex-col items-center gap-3 sm:mt-6">
+                  <p className="text-center text-white poppins text-[18px] md:text-[20px] lg:text-[22px] font-semibold tahoma">
+                    It&apos;s that easy!
+                  </p>
                   <Link href="/how-it-works#agent-map">
                     <Button buttonText="Find an Agent" />
                   </Link>
                 </div>
+                <details className="mx-auto mt-5 max-w-3xl border-t border-white/20 pt-4 text-white/85">
+                  <summary className="mx-auto w-fit cursor-pointer poppins text-[14px] font-semibold text-white/90 underline decoration-white/30 underline-offset-4 marker:text-white/70">
+                    Military bonus eligibility details
+                  </summary>
+                  <div className="mt-4 space-y-3 text-left">
+                    {militaryBonusNotes.map((note) => (
+                      <p key={note} className="poppins text-[13px] sm:text-[14px] leading-6 tahoma">
+                        {note}
+                      </p>
+                    ))}
+                  </div>
+                </details>
 
               </div>
               <div className="absolute bottom-[-15%] left-1/2 transform -translate-x-1/2">
