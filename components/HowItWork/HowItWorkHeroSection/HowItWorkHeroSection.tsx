@@ -7,6 +7,16 @@ import { HowItWorksContentProps } from '@/services/howItWorksService';
 import Button from "@/components/common/Button";
 import Link from "next/link";
 
+const heroBulletCopyOverrides: Record<number, string> = {
+  2: "Connect with an agent and lender that is the best fit for you",
+  3: "After closing receive a military bonus of $200-$4000 when working with an agent from VeteranPCS",
+};
+
+const militaryBonusNotes = [
+  "Note: You will be eligible for the military bonus or relocation grant when you contact an agent through the VeteranPCS website. If you do not use the website to sign up with your agent you may not be eligible for the military bonus.",
+  "Note: the $200-$4,000 military bonus only applies when you work with a real estate agent from VeteranPCS. The lenders associated with VeteranPCS can save you additional money. The $200-$4,000 military bonus only applies if you connect with your agent through our website.",
+];
+
 async function HowItWorkHeroSection() {
   let overviewSection: HowItWorksContentProps | null = null;
 
@@ -50,9 +60,22 @@ async function HowItWorkHeroSection() {
                         loading="eager"
                       />
                       <p className="text-white poppins lg:text-[24px] md:text-[20px] sm:text-[16px] text-[16px] font-medium text-sm tahoma lg:w-[450px] md:w-full sm:w-full w-full leading-8">
-                        {item.children.map((child) => child.text).join(" ")}
+                        {heroBulletCopyOverrides[index] ?? item.children.map((child) => child.text).join(" ")}
                       </p>
                     </div>
+                  ))}
+                </div>
+                <p className="mt-6 text-center text-white poppins lg:text-[24px] md:text-[20px] text-[18px] font-semibold tahoma">
+                  It&apos;s that easy!
+                </p>
+                <div
+                  className="mx-auto mt-6 mb-8 max-w-5xl rounded-md border border-white/25 bg-[#071a44]/75 px-5 py-4 text-white shadow-sm backdrop-blur-sm"
+                  aria-label="Military bonus eligibility notes"
+                >
+                  {militaryBonusNotes.map((note) => (
+                    <p key={note} className="poppins text-[14px] sm:text-[15px] md:text-[16px] leading-7 tahoma [&:not(:last-child)]:mb-3">
+                      {note}
+                    </p>
                   ))}
                 </div>
                 <div className="flex justify-center">
