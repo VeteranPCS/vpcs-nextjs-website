@@ -3,7 +3,7 @@
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, lastAssistantMessageIsCompleteWithApprovalResponses } from 'ai';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { featureFlags } from '@/lib/feature-flags';
 import MessageRenderer from './MessageRenderer';
 import type { AgentListItem } from './AgentCard';
@@ -72,6 +72,7 @@ function SendIcon() {
 
 const FOCUSABLE_SELECTOR =
   'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
+const SCROLL_BOTTOM_THRESHOLD = 48;
 
 interface PageContextHolder {
   path: string | undefined;
@@ -85,6 +86,12 @@ export default function ConciergeWidget() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const seedConsumedRef = useRef<boolean>(false);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const anchoredAssistantMessageRef = useRef<string | null>(null);
+  const anchoredUserMessageRef = useRef<string | null>(null);
+  const wasNearBottomRef = useRef<boolean>(true);
+  const [showJumpToLatest, setShowJumpToLatest] = useState(false);
 
   const pageContextRef = useRef<PageContextHolder>({
     path: undefined,
@@ -199,18 +206,80 @@ export default function ConciergeWidget() {
     };
   }, [isOpen, close]);
 
-  // Auto-scroll the message list when new messages stream.
-  const listRef = useRef<HTMLDivElement | null>(null);
+  const updateNearBottomState = useCallback(() => {
+    const el = listRef.current;
+    if (!el) return true;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    const isNearBottom = distanceFromBottom < SCROLL_BOTTOM_THRESHOLD;
+    wasNearBottomRef.current = isNearBottom;
+    setShowJumpToLatest(!isNearBottom);
+    return isNearBottom;
+  }, []);
+
+  const handleListScroll = useCallback(() => {
+    updateNearBottomState();
+  }, [updateNearBottomState]);
+
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = 'auto') => {
+    const el = listRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior });
+    wasNearBottomRef.current = true;
+    setShowJumpToLatest(false);
+  }, []);
+
+  const registerMessageRef = useCallback(
+    (id: string) => (node: HTMLDivElement | null) => {
+      if (node) {
+        messageRefs.current.set(id, node);
+      } else {
+        messageRefs.current.delete(id);
+      }
+    },
+    [],
+  );
+
   useEffect(() => {
     if (!isOpen) return;
     const el = listRef.current;
     if (!el) return;
-    el.scrollTop = el.scrollHeight;
-  }, [isOpen, messages]);
+    const latest = messages[messages.length - 1];
+    if (!latest) {
+      updateNearBottomState();
+      return;
+    }
+
+    if (latest.role === 'user' && anchoredUserMessageRef.current !== latest.id) {
+      anchoredUserMessageRef.current = latest.id;
+      window.requestAnimationFrame(() => scrollToBottom());
+      return;
+    }
+
+    if (
+      latest.role === 'assistant' &&
+      anchoredAssistantMessageRef.current !== latest.id
+    ) {
+      anchoredAssistantMessageRef.current = latest.id;
+      window.requestAnimationFrame(() => {
+        const node = messageRefs.current.get(latest.id);
+        if (node) {
+          node.scrollIntoView({ block: 'start' });
+          updateNearBottomState();
+        }
+      });
+      return;
+    }
+
+    if (wasNearBottomRef.current && latest.role !== 'assistant') {
+      window.requestAnimationFrame(() => scrollToBottom());
+    }
+  }, [isOpen, messages, scrollToBottom, updateNearBottomState]);
 
   const handleSelectAgent = (item: AgentListItem) => {
     if (isStreaming) return;
-    void sendMessage({ text: `I'd like to connect with ${item.name}.` });
+    void sendMessage({
+      text: `I want VeteranPCS to help me start intake with ${item.name} for my PCS move. Please collect any missing contact details before sending anything.`,
+    });
   };
 
   const handleApprove = useCallback(
@@ -274,6 +343,7 @@ export default function ConciergeWidget() {
           {/* Message list */}
           <div
             ref={listRef}
+            onScroll={handleListScroll}
             className="flex-1 overflow-y-auto px-3 py-3 flex flex-col gap-3 bg-gray-50"
           >
             {messages.length === 0 ? (
@@ -283,18 +353,29 @@ export default function ConciergeWidget() {
             ) : null}
 
             {messages.map((message) => (
-              <MessageRenderer
-                key={message.id}
-                message={message}
-                onSelectAgent={handleSelectAgent}
-                onApprove={handleApprove}
-              />
+              <div key={message.id} ref={registerMessageRef(message.id)}>
+                <MessageRenderer
+                  message={message}
+                  onSelectAgent={handleSelectAgent}
+                  onApprove={handleApprove}
+                />
+              </div>
             ))}
 
             {error ? (
               <div className="rounded-lg border border-gray-200 bg-white p-3 text-sm text-gray-600">
                 Something went wrong — try again or reach us at support@veteranpcs.com
               </div>
+            ) : null}
+
+            {showJumpToLatest ? (
+              <button
+                type="button"
+                onClick={() => scrollToBottom('smooth')}
+                className="sticky bottom-0 self-center rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-primary shadow-sm motion-safe:transition-colors hover:bg-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red"
+              >
+                Jump to latest
+              </button>
             ) : null}
           </div>
 

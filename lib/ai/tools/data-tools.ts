@@ -1,43 +1,22 @@
 import { tool } from 'ai';
 import { z } from 'zod';
 import stateService, {
-  type Agent,
-  type Lenders,
   type StateList,
 } from '@/services/stateService';
 import { logError, logInfo } from '@/services/loggingService';
 import { stateInputSchema, type ToolResult } from '@/lib/ai/tools/types';
+import { getPartnersForState } from '@/lib/ai/routing/partners';
+import type { PublicPartner } from '@/lib/ai/routing/types';
 
-// --- Public-facing trimmed shapes (NO PII: no PhotoUrl, PersonEmail, PersonMobilePhone) ---
+// --- Public-facing trimmed shapes (NO PII: no PersonEmail or PersonMobilePhone) ---
 
 export interface PublicState {
   slug: string;
   name: string;
 }
 
-export interface PublicAgent {
-  id: string;
-  name: string;
-  firstName: string;
-  lastName: string;
-  brokerage: string;
-  city: string;
-  militaryStatus: string;
-  militaryService: string;
-  statesLicensed: string;
-}
-
-export interface PublicLender {
-  id: string;
-  name: string;
-  firstName: string;
-  brokerage: string;
-  city: string;
-  militaryStatus: string;
-  militaryService: string;
-  individualNmlsId: string;
-  companyNmlsId: string;
-}
+export type PublicAgent = PublicPartner;
+export type PublicLender = PublicPartner;
 
 // --- State normalization ---
 
@@ -119,48 +98,11 @@ const getStateDetailsTool = tool({
   },
 });
 
-// --- Helpers for ranking / trimming ---
-
-function topAreaCity(record: Agent | Lenders): string {
-  const area = record.Area_Assignments__r?.records?.[0]?.Area__r?.Name;
-  return area ?? '';
-}
-
-function trimAgent(agent: Agent): PublicAgent {
-  const billingCity = agent.BillingAddress?.city ?? '';
-  return {
-    id: agent.AccountId_15__c ?? '',
-    name: agent.Name ?? '',
-    firstName: agent.FirstName ?? '',
-    lastName: agent.LastName ?? '',
-    brokerage: agent.Brokerage_Name__pc ?? '',
-    city: billingCity || topAreaCity(agent),
-    militaryStatus: agent.Military_Status__pc ?? '',
-    militaryService: agent.Military_Service__pc ?? '',
-    statesLicensed: agent.State_s_Licensed_in__pc ?? '',
-  };
-}
-
-function trimLender(lender: Lenders): PublicLender {
-  const billingCity = lender.BillingCity ?? '';
-  return {
-    id: lender.AccountId_15__c ?? '',
-    name: lender.Name ?? '',
-    firstName: lender.FirstName ?? '',
-    brokerage: lender.Brokerage_Name__pc ?? '',
-    city: billingCity || topAreaCity(lender),
-    militaryStatus: lender.Military_Status__pc ?? '',
-    militaryService: lender.Military_Service__pc ?? '',
-    individualNmlsId: lender.Individual_NMLS_ID__pc ?? '',
-    companyNmlsId: lender.Company_NMLS_ID__pc ?? '',
-  };
-}
-
 // --- Tool: getAgentsForState ---
 
 const getAgentsForStateTool = tool({
   description:
-    'Get up to 5 vetted real estate agents who serve a given US state. Use this when the user wants help finding an agent. Returns trimmed, public-facing data only (no email or phone).',
+    'Get up to 3 vetted real estate agents who serve a given US state. For city/base/ZIP requests, prefer resolveDestinationLocation -> findCoverageAreas -> getPartnersForCoverageArea first. Returns card-ready public data only (no email or phone).',
   inputSchema: stateInputSchema,
   execute: async ({
     state,
@@ -176,13 +118,8 @@ const getAgentsForStateTool = tool({
           input: state,
         });
       }
-      const data = await stateService.fetchAgentsListByState(matched.short_name, {
-        requireHeadshot: false,
-      });
-      const agents = (data.records || [])
-        .map(trimAgent)
-        .filter((a) => a.id)
-        .slice(0, 5);
+      const data = await getPartnersForState(matched.short_name, 'agent');
+      const agents = (data?.partners ?? []).filter((a) => a.id);
       logInfo('Concierge tool: getAgentsForState', {
         slug: matched.state_slug.current,
         count: agents.length,
@@ -206,7 +143,7 @@ const getAgentsForStateTool = tool({
 
 const getLendersForStateTool = tool({
   description:
-    'Get up to 5 vetted VA-loan lenders who serve a given US state. Use this when the user wants help finding a lender. Returns trimmed, public-facing data only (no email or phone).',
+    'Get up to 3 vetted VA-loan lenders who serve a given US state. For city/base/ZIP requests, prefer resolveDestinationLocation -> findCoverageAreas -> getPartnersForCoverageArea first. Returns card-ready public data only (no email or phone).',
   inputSchema: stateInputSchema,
   execute: async ({
     state,
@@ -224,13 +161,8 @@ const getLendersForStateTool = tool({
           input: state,
         });
       }
-      const data = await stateService.fetchLendersListByState(matched.short_name, {
-        requireHeadshot: false,
-      });
-      const lenders = (data.records || [])
-        .map(trimLender)
-        .filter((l) => l.id)
-        .slice(0, 5);
+      const data = await getPartnersForState(matched.short_name, 'lender');
+      const lenders = (data?.partners ?? []).filter((l) => l.id);
       logInfo('Concierge tool: getLendersForState', {
         slug: matched.state_slug.current,
         count: lenders.length,
