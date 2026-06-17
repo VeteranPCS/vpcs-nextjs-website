@@ -6,6 +6,11 @@ import stateService from '@/services/stateService';
 import { logDebug, logError, logInfo } from './loggingService';
 import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
 import { getAdminPhoneNumberForState } from '@/services/stateRoutingService';
+import { getLeadOwnerForState } from '@/services/salesforceLeadOwnerRouting';
+import {
+    appendLeadOwnerSubmissionMarker,
+    routeSalesforceLeadOwner,
+} from '@/services/salesforceLeadOwnerService';
 import { evaluateLeadSpam, tagSpamSuspected } from '@/lib/spam-protection';
 import { HP_FIELD, TS_FIELD } from '@/lib/validation/spam-fields';
 import { formatStateLabel, normalizeStateCode, normalizeStateSlug } from '@/lib/states';
@@ -260,6 +265,7 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
             throw new Error('Invalid form data: state is required.');
         }
         formData.state = effectiveState.code;
+        const leadOwner = getLeadOwnerForState(effectiveState.slug);
 
         // Soft-quarantine spam-suspected leads: still written to Salesforce, but tagged so the
         // team can filter them and partner SMS is suppressed below. Never drop a real lead.
@@ -292,6 +298,10 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
             }
         }
 
+        const webFormUrl = appendLeadOwnerSubmissionMarker(
+            `${BASE_URL}/contact-agent${queryString}`,
+            submissionId,
+        );
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
@@ -300,7 +310,7 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
             lead_source: "Contact Agent",
             "00N4x00000Lsr0G": "true",
             country_code: "US",
-            "00N4x00000QQ1LB": `${BASE_URL}/contact-agent${queryString}`,
+            "00N4x00000QQ1LB": webFormUrl,
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
             email: formData.email || "",
@@ -332,6 +342,7 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
             formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
         });
 
+        const submissionStartedAt = new Date();
         const submissionResult = await submitToSalesforceWebToLead(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formBody,
@@ -356,6 +367,28 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
         }
 
         const { response, redirectUrl } = submissionResult;
+
+        try {
+            await routeSalesforceLeadOwner({
+                submissionId,
+                submissionStartedAt,
+                leadSource: 'Contact Agent',
+                destinationStateCode: effectiveState.code,
+                destinationStateSlug: effectiveState.slug,
+                email: formData.email,
+                selectedAgentId: paramsObj.id || null,
+                owner: leadOwner,
+            });
+        } catch (ownerRoutingError) {
+            logError('Salesforce Lead owner routing failed after Web-to-Lead acceptance', {
+                submissionId,
+                leadSource: 'Contact Agent',
+                destinationStateCode: effectiveState.code,
+                destinationStateSlug: effectiveState.slug,
+                adminName: leadOwner.adminName,
+                ownerId: leadOwner.ownerId,
+            }, ownerRoutingError);
+        }
 
         const notificationTasks: Array<{ name: 'Slack' | 'OpenPhone'; promise: Promise<unknown> }> = [
             {
@@ -880,6 +913,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             throw new Error('Invalid form data: state is required.');
         }
         formData.state = effectiveState.code;
+        const leadOwner = getLeadOwnerForState(effectiveState.slug);
 
         // Soft-quarantine spam-suspected leads: tagged in Salesforce, partner SMS suppressed below.
         const spam = await evaluateLeadSpam({
@@ -911,6 +945,10 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             }
         }
 
+        const webFormUrl = appendLeadOwnerSubmissionMarker(
+            `${BASE_URL}/contact-lender${fullQueryString}`,
+            submissionId,
+        );
         const formBody = new URLSearchParams({
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
@@ -919,7 +957,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             lead_source: "Contact Lender",
             "00N4x00000Lsr0G": "true",
             country_code: "US",
-            "00N4x00000QQ1LB": `${BASE_URL}/contact-lender${fullQueryString}`,
+            "00N4x00000QQ1LB": webFormUrl,
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
             email: formData.email || "",
@@ -940,6 +978,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
         });
 
+        const submissionStartedAt = new Date();
         const submissionResult = await submitToSalesforceWebToLead(
             "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
             formBody,
@@ -964,6 +1003,28 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
         }
 
         const { response, redirectUrl } = submissionResult;
+
+        try {
+            await routeSalesforceLeadOwner({
+                submissionId,
+                submissionStartedAt,
+                leadSource: 'Contact Lender',
+                destinationStateCode: effectiveState.code,
+                destinationStateSlug: effectiveState.slug,
+                email: formData.email,
+                selectedLenderId: paramsObj.id || null,
+                owner: leadOwner,
+            });
+        } catch (ownerRoutingError) {
+            logError('Salesforce Lead owner routing failed after Web-to-Lead acceptance', {
+                submissionId,
+                leadSource: 'Contact Lender',
+                destinationStateCode: effectiveState.code,
+                destinationStateSlug: effectiveState.slug,
+                adminName: leadOwner.adminName,
+                ownerId: leadOwner.ownerId,
+            }, ownerRoutingError);
+        }
 
         // Fire and forget notifications - don't await them
         await Promise.all([

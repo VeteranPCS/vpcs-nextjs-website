@@ -3,6 +3,8 @@
  * Maps states to appropriate admin phone numbers for contact form notifications
  */
 
+import { normalizeStateSlug } from '@/lib/states';
+
 export interface AdminContact {
     name: string;
     phoneNumber: string;
@@ -28,8 +30,14 @@ export const ADMIN_CONTACTS = {
     }
 } as const;
 
+export type AdminKey = keyof typeof ADMIN_CONTACTS;
+
+export interface AdminRouting extends AdminContact {
+    adminKey: AdminKey;
+}
+
 // State-to-admin mapping based on provided chart
-const STATE_TO_ADMIN_MAP: Record<string, keyof typeof ADMIN_CONTACTS> = {
+const STATE_TO_ADMIN_MAP: Record<string, AdminKey> = {
     // Beth's states
     'alaska': 'BETH',
     'arizona': 'BETH',
@@ -73,6 +81,7 @@ const STATE_TO_ADMIN_MAP: Record<string, keyof typeof ADMIN_CONTACTS> = {
     'new-york': 'STEPHANIE',
     'ohio': 'STEPHANIE',
     'pennsylvania': 'STEPHANIE',
+    'puerto-rico': 'STEPHANIE',
     'rhode-island': 'STEPHANIE',
     'vermont': 'STEPHANIE',
     'virginia': 'STEPHANIE',
@@ -90,6 +99,21 @@ const STATE_TO_ADMIN_MAP: Record<string, keyof typeof ADMIN_CONTACTS> = {
     'texas': 'TARA',
 };
 
+export function getAdminRoutingForState(state?: string): AdminRouting | null {
+    const normalizedState = normalizeStateSlug(state) ?? state?.toLowerCase().trim();
+    if (!normalizedState) return null;
+
+    const adminKey = STATE_TO_ADMIN_MAP[normalizedState];
+    if (!adminKey) return null;
+
+    const adminContact = ADMIN_CONTACTS[adminKey];
+    return {
+        adminKey,
+        name: adminContact.name,
+        phoneNumber: adminContact.phoneNumber,
+    };
+}
+
 /**
  * Get the appropriate admin phone number for a given state
  * @param state - State in lowercase with hyphens (e.g., "new-hampshire")
@@ -105,13 +129,8 @@ export function getAdminContactForState(state?: string): AdminContact {
         };
     }
 
-    // Normalize state string
-    const normalizedState = state.toLowerCase().trim();
-
-    // Get admin for this state
-    const adminKey = STATE_TO_ADMIN_MAP[normalizedState];
-
-    if (!adminKey) {
+    const adminRouting = getAdminRoutingForState(state);
+    if (!adminRouting) {
         console.warn(`No admin mapping found for state: ${state}, using fallback number`);
         return {
             name: 'Default',
@@ -119,10 +138,12 @@ export function getAdminContactForState(state?: string): AdminContact {
         };
     }
 
-    const adminContact = ADMIN_CONTACTS[adminKey];
-    console.log(`OpenPhone routing: ${state} -> ${adminContact.name} (${adminContact.phoneNumber})`);
+    console.log(`OpenPhone routing: ${state} -> ${adminRouting.name} (${adminRouting.phoneNumber})`);
 
-    return adminContact;
+    return {
+        name: adminRouting.name,
+        phoneNumber: adminRouting.phoneNumber,
+    };
 }
 
 /**
@@ -139,8 +160,8 @@ export function getAdminPhoneNumberForState(state?: string): string {
  * @param adminKey - Admin identifier
  * @returns Array of state names
  */
-export function getStatesByAdmin(adminKey: keyof typeof ADMIN_CONTACTS): string[] {
+export function getStatesByAdmin(adminKey: AdminKey): string[] {
     return Object.entries(STATE_TO_ADMIN_MAP)
         .filter(([, admin]) => admin === adminKey)
         .map(([state]) => state);
-} 
+}
