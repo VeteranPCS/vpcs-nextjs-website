@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { Controller, useForm, SubmitHandler, Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
@@ -8,9 +8,12 @@ import { ContactAgentFormData } from '@/types';
 import { useConcierge } from '@/components/Concierge';
 import { featureFlags } from '@/lib/feature-flags';
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
+import { US_STATE_CODES } from '@/constants/usStates';
+import StateSelect from '@/components/common/StateSelect';
 
 interface ContactFormProps {
   onSubmit: (data: ContactAgentFormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
+  derivedStateCode?: string | null;
 }
 
 // Define validation schema using yup
@@ -23,6 +26,10 @@ const contactFormSchema = yup.object().shape({
     .matches(/^\+?[1-9]\d{1,14}$/, "Invalid phone number")
     .required("Phone number is required"),
   currentBase: yup.string().required("Current Base/City is required"),
+  state: yup
+    .string()
+    .required("State is required")
+    .oneOf([...US_STATE_CODES], "Invalid state selected"),
   destinationBase: yup.string().required("Destination Base/City is required"),
   howDidYouHear: yup.string().required("Please select how you heard about us"),
   tellusMore: yup.string().when('howDidYouHear', {
@@ -33,22 +40,25 @@ const contactFormSchema = yup.object().shape({
   additionalComments: yup.string().optional(),
 });
 
-const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
+const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
+    control,
     register,
     handleSubmit,
     watch,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<ContactAgentFormData>({
-    resolver: yupResolver(contactFormSchema),
+    resolver: yupResolver(contactFormSchema) as Resolver<ContactAgentFormData>,
     defaultValues: {
       firstName: '',
       lastName: '',
       email: '',
       phone: '',
       currentBase: '',
+      state: derivedStateCode ?? '',
       destinationBase: '',
       howDidYouHear: '',
       tellusMore: '',
@@ -60,6 +70,12 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
   const destinationBaseValue = watch("destinationBase");
   const { open: openConcierge } = useConcierge();
   const { ref: honeypotRef, getSpamFields } = useHoneypot();
+
+  useEffect(() => {
+    if (derivedStateCode) {
+      setValue('state', derivedStateCode, { shouldValidate: true });
+    }
+  }, [derivedStateCode, setValue]);
 
   const handleConciergeCta = () => {
     const destination = destinationBaseValue?.trim();
@@ -213,6 +229,33 @@ const ContactAgentForm = ({ onSubmit }: ContactFormProps) => {
                     <p className="text-red-500 text-xs mt-1">{errors.currentBase.message}</p>
                   )}
                 </div>
+                {/* Destination State */}
+                {!derivedStateCode && (
+                  <div className="mb-8 flex flex-col">
+                    <label
+                      htmlFor="state"
+                      className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    >
+                      What state are you buying/selling in?*
+                    </label>
+                    <Controller
+                      name="state"
+                      control={control}
+                      render={({ field }) => (
+                        <StateSelect
+                          id="state"
+                          value={field.value ?? ''}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                        />
+                      )}
+                    />
+                    {errors.state && (
+                      <p className="text-red-500 text-xs mt-1">{errors.state.message}</p>
+                    )}
+                  </div>
+                )}
+
                 {/* Destination Base/City */}
                 <div className="mb-8 flex flex-col">
                   <label

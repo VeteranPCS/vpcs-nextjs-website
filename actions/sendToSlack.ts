@@ -24,6 +24,7 @@ export default async function sendToSlack({
     name,
     email,
     phoneNumber,
+    state,
     message,
     agentInfo
 }: {
@@ -31,6 +32,7 @@ export default async function sendToSlack({
     name: string,
     email: string,
     phoneNumber: string,
+    state?: string,
     message: string,
     agentInfo?: {
         name: string,
@@ -47,6 +49,28 @@ export default async function sendToSlack({
         return { ok: false };
     }
 
+    const contactFields = [
+        {
+            type: 'mrkdwn',
+            text: `*Name:*\n${name}`
+        },
+        {
+            type: 'mrkdwn',
+            text: `*Email:*\n${email}`
+        },
+        {
+            type: 'mrkdwn',
+            text: `*Phone Number:*\n<tel:${formatPhoneNumberE164(phoneNumber)}|${formatPhoneNumberForDisplay(phoneNumber)}>`
+        }
+    ];
+
+    if (state) {
+        contactFields.push({
+            type: 'mrkdwn',
+            text: `*Destination State:*\n${state}`
+        });
+    }
+
     const blocks: SlackBlock[] = [
         {
             type: 'header',
@@ -58,20 +82,7 @@ export default async function sendToSlack({
         },
         {
             type: 'section',
-            fields: [
-                {
-                    type: 'mrkdwn',
-                    text: `*Name:*\n${name}`
-                },
-                {
-                    type: 'mrkdwn',
-                    text: `*Email:*\n${email}`
-                },
-                {
-                    type: 'mrkdwn',
-                    text: `*Phone Number:*\n<tel:${formatPhoneNumberE164(phoneNumber)}|${formatPhoneNumberForDisplay(phoneNumber)}>`
-                }
-            ]
+            fields: contactFields
         }
     ];
 

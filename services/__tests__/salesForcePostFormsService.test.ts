@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import sendToSlack from '@/actions/sendToSlack';
 import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
-import { contactAgentPostForm } from '@/services/salesForcePostFormsService';
+import { contactAgentPostForm, contactLenderPostForm } from '@/services/salesForcePostFormsService';
 import { logError } from '@/services/loggingService';
 
 vi.mock('@/actions/sendToSlack', () => ({
@@ -63,8 +63,28 @@ function qaPayload() {
   };
 }
 
+function lenderPayload() {
+  return {
+    firstName: 'QA',
+    lastName: 'Lender Test',
+    email: 'tech+lender-qa@veteranpcs.com',
+    phone: '8302795914',
+    currentBase: 'QA Test Current Base',
+    destinationBase: 'Austin QA Test',
+    howDidYouHear: 'Google',
+    additionalComments: 'QA TEST - lender state routing smoke test.',
+    company_website: '',
+    form_rendered_at: Date.now() - 5_000,
+  };
+}
+
 function mockSalesforceResponse(body: string, init?: ResponseInit) {
   vi.mocked(global.fetch).mockResolvedValueOnce(new Response(body, init));
+}
+
+function salesforceBody() {
+  const requestInit = vi.mocked(global.fetch).mock.calls[0]?.[1] as RequestInit | undefined;
+  return new URLSearchParams(String(requestInit?.body ?? ''));
 }
 
 describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
@@ -84,9 +104,78 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     const result = await contactAgentPostForm(qaPayload(), queryString);
 
     expect(result).toEqual({ redirectUrl: 'https://www.veteranpcs.com/thank-you' });
+    expect(salesforceBody().get('00N4x00000LspV2')).toBe('CO');
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Colorado' }));
     expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses submitted form state when URL state is not derivable', async () => {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    const result = await contactAgentPostForm(
+      { ...qaPayload(), state: 'TX' },
+      '?form=agent&fn=Jason&id=0014x00000HWTqI',
+    );
+
+    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(salesforceBody().get('00N4x00000LspV2')).toBe('TX');
+    expect(salesforceBody().get('00N4x00000Lpb0T')).toBe('QA Test Current Base');
+    expect(salesforceBody().get('00N4x00000LspUs')).toBe('Austin QA Test');
+    expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Texas' }));
+    expect(sendOpenPhoneMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining('Destination State: Texas'),
+      }),
+    );
+  });
+
+  it('lets a valid URL state win over submitted form state', async () => {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    await contactAgentPostForm({ ...qaPayload(), state: 'TX' }, queryString);
+
+    expect(salesforceBody().get('00N4x00000LspV2')).toBe('CO');
+    expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Colorado' }));
+  });
+
+  it('rejects missing effective state before Salesforce and notifications', async () => {
+    await expect(
+      contactAgentPostForm(qaPayload(), '?form=agent&fn=Jason&id=0014x00000HWTqI'),
+    ).rejects.toThrow('Failed to submit form');
+
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(sendToSlack).not.toHaveBeenCalled();
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(logError).toHaveBeenCalledWith(
+      'Invalid contactAgent state',
+      expect.objectContaining({ submissionId: 'submission-test-id' }),
+    );
+  });
+
+  it('submits lender state to Salesforce from the derived URL state', async () => {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    const result = await contactLenderPostForm(
+      lenderPayload(),
+      '?form=lender&fn=Taylor&id=0014x00000Lender&state=texas',
+    );
+
+    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(salesforceBody().get('00N4x00000LspV2')).toBe('TX');
+    expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Texas' }));
+    expect(sendOpenPhoneMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.stringContaining('Destination State: Texas'),
+      }),
+    );
   });
 
   it('accepts a Salesforce 200 without redirect and sends notifications once', async () => {

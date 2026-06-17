@@ -78,6 +78,30 @@ describe('requireContactMethod via contactAgentSchema', () => {
             expect(result.errors.some((e) => e.includes('A valid email or phone number is required.'))).toBe(true);
         }
     });
+
+    it('valid state code is normalized to uppercase', () => {
+        const result = parseLeadForm(contactAgentSchema, {
+            email: 'agent@example.com',
+            state: 'tx',
+        });
+
+        expect(result.ok).toBe(true);
+        if (result.ok) {
+            expect(result.data.state).toBe('TX');
+        }
+    });
+
+    it('invalid state code → ok:false', () => {
+        const result = parseLeadForm(contactAgentSchema, {
+            email: 'agent@example.com',
+            state: 'ZZ',
+        });
+
+        expect(result.ok).toBe(false);
+        if (!result.ok) {
+            expect(result.errors.some((e) => e.includes('Invalid state selected'))).toBe(true);
+        }
+    });
 });
 
 describe('requireContactMethod via contactLenderSchema', () => {
@@ -96,6 +120,30 @@ describe('requireContactMethod via contactLenderSchema', () => {
         expect(result.ok).toBe(false);
         if (!result.ok) {
             expect(result.errors.some((e) => e.includes('A valid email or phone number is required.'))).toBe(true);
+        }
+    });
+
+    it('valid state code is normalized to uppercase', () => {
+        const result = parseLeadForm(contactLenderSchema, {
+            email: 'lender@example.com',
+            state: 'fl',
+        });
+
+        expect(result.ok).toBe(true);
+        if (result.ok) {
+            expect(result.data.state).toBe('FL');
+        }
+    });
+
+    it('invalid state code → ok:false', () => {
+        const result = parseLeadForm(contactLenderSchema, {
+            email: 'lender@example.com',
+            state: 'ZZ',
+        });
+
+        expect(result.ok).toBe(false);
+        if (!result.ok) {
+            expect(result.errors.some((e) => e.includes('Invalid state selected'))).toBe(true);
         }
     });
 });

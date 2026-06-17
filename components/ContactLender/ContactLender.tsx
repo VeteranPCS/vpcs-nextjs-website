@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { Controller, useForm, SubmitHandler, Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import HowDidYouHearAboutUs from '@/components/GetListedLenders/HowDidYouHearAboutUs';
 import * as yup from 'yup';
@@ -9,10 +9,13 @@ import { ContactLenderFormData, HowDidYouHearOptions } from '@/types';
 import { useConcierge } from '@/components/Concierge';
 import { featureFlags } from '@/lib/feature-flags';
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
+import { US_STATE_CODES } from '@/constants/usStates';
+import StateSelect from '@/components/common/StateSelect';
 
 // Props type for ContactForm component
 interface ContactFormProps {
-  onSubmit: (data: ContactLenderFormData) => void;
+  onSubmit: (data: ContactLenderFormData) => Promise<{ success?: boolean; redirectUrl?: string }> | void;
+  derivedStateCode?: string | null;
 }
 
 // Define form errors type
@@ -44,6 +47,10 @@ const contactFormSchema = yup.object().shape({
     .matches(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number format')
     .required('Phone number is required'),
   currentBase: yup.string().required('Current Base/City is required'),
+  state: yup
+    .string()
+    .required('State is required')
+    .oneOf([...US_STATE_CODES], 'Invalid state selected'),
   destinationBase: yup.string().required('Destination Base/City is required'),
   additionalComments: yup.string().nullable(),
   howDidYouHear: yup
@@ -57,7 +64,7 @@ const contactFormSchema = yup.object().shape({
   }),
 });
 
-const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
+const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateCode }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { open: openConcierge } = useConcierge();
 
@@ -69,18 +76,21 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
   };
 
   const {
+    control,
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<ContactLenderFormData>({
-    resolver: yupResolver<ContactLenderFormData>(contactFormSchema),
+    resolver: yupResolver(contactFormSchema) as Resolver<ContactLenderFormData>,
     defaultValues: {
       firstName: '',
       lastName: '',
       email: '',
       phone: '',
       currentBase: '',
+      state: derivedStateCode ?? '',
       destinationBase: '',
       additionalComments: '',
       howDidYouHear: '',
@@ -89,6 +99,12 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
   });
 
   const { ref: honeypotRef, getSpamFields } = useHoneypot();
+
+  useEffect(() => {
+    if (derivedStateCode) {
+      setValue('state', derivedStateCode, { shouldValidate: true });
+    }
+  }, [derivedStateCode, setValue]);
 
   // Form submit handler
   const handleFormSubmit: SubmitHandler<ContactLenderFormData> = async (data) => {
@@ -220,6 +236,29 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
                   />
                   {renderError('currentBase')}
                 </div>
+                {!derivedStateCode && (
+                  <div className="mb-8 flex flex-col">
+                    <label
+                      htmlFor="state"
+                      className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    >
+                      What state are you buying/selling in?*
+                    </label>
+                    <Controller
+                      name="state"
+                      control={control}
+                      render={({ field }) => (
+                        <StateSelect
+                          id="state"
+                          value={field.value ?? ''}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                        />
+                      )}
+                    />
+                    {renderError('state')}
+                  </div>
+                )}
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="destinationBase"
