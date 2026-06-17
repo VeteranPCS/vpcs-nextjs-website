@@ -1,8 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import sendToSlack from '@/actions/sendToSlack';
 import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
+import { routeSalesforceLeadOwner } from '@/services/salesforceLeadOwnerService';
 import { contactAgentPostForm, contactLenderPostForm } from '@/services/salesForcePostFormsService';
 import { logError } from '@/services/loggingService';
+
+vi.mock('server-only', () => ({}));
 
 vi.mock('@/actions/sendToSlack', () => ({
   default: vi.fn(async () => ({ ok: true })),
@@ -10,6 +13,19 @@ vi.mock('@/actions/sendToSlack', () => ({
 
 vi.mock('@/actions/sendOpenPhoneMessage', () => ({
   sendOpenPhoneMessage: vi.fn(async () => ({ id: 'openphone-test-message' })),
+}));
+
+vi.mock('@/services/salesforceLeadOwnerService', () => ({
+  appendLeadOwnerSubmissionMarker: vi.fn((url: string, submissionId: string) => {
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}sid=${encodeURIComponent(submissionId)}`;
+  }),
+  routeSalesforceLeadOwner: vi.fn(async () => ({
+    leadId: '00QTEST',
+    ownerId: '005TEST',
+    ownerName: 'Test Owner',
+    adminName: 'Test Admin',
+  })),
 }));
 
 vi.mock('@/services/loggingService', () => ({
@@ -105,7 +121,23 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     expect(result).toEqual({ redirectUrl: 'https://www.veteranpcs.com/thank-you' });
     expect(salesforceBody().get('00N4x00000LspV2')).toBe('CO');
+    expect(salesforceBody().get('00N4x00000QQ1LB')).toContain('sid=submission-test-id');
     expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(routeSalesforceLeadOwner).toHaveBeenCalledWith(
+      expect.objectContaining({
+        submissionId: 'submission-test-id',
+        submissionStartedAt: expect.any(Date),
+        leadSource: 'Contact Agent',
+        destinationStateCode: 'CO',
+        destinationStateSlug: 'colorado',
+        email: 'tech+qa@veteranpcs.com',
+        selectedAgentId: '0014x00000HWTqI',
+        owner: expect.objectContaining({
+          adminName: 'Beth',
+          ownerId: '0054x000005GsUvAAK',
+        }),
+      }),
+    );
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Colorado' }));
     expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
@@ -117,7 +149,7 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     });
 
     const result = await contactAgentPostForm(
-      { ...qaPayload(), state: 'TX' },
+      { ...qaPayload(), state: 'TX', destinationBase: 'Austin QA Test' },
       '?form=agent&fn=Jason&id=0014x00000HWTqI',
     );
 
@@ -141,6 +173,13 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     await contactAgentPostForm({ ...qaPayload(), state: 'TX' }, queryString);
 
     expect(salesforceBody().get('00N4x00000LspV2')).toBe('CO');
+    expect(routeSalesforceLeadOwner).toHaveBeenCalledWith(
+      expect.objectContaining({
+        destinationStateCode: 'CO',
+        destinationStateSlug: 'colorado',
+        owner: expect.objectContaining({ adminName: 'Beth' }),
+      }),
+    );
     expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Colorado' }));
   });
 
@@ -170,6 +209,18 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     expect(result).toEqual({ message: 'Form submitted successfully!' });
     expect(salesforceBody().get('00N4x00000LspV2')).toBe('TX');
+    expect(routeSalesforceLeadOwner).toHaveBeenCalledWith(
+      expect.objectContaining({
+        leadSource: 'Contact Lender',
+        destinationStateCode: 'TX',
+        destinationStateSlug: 'texas',
+        selectedLenderId: '0014x00000Lender',
+        owner: expect.objectContaining({
+          adminName: 'Tara',
+          ownerId: '005Rg00000BAN0DIAX',
+        }),
+      }),
+    );
     expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Texas' }));
     expect(sendOpenPhoneMessage).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -189,6 +240,30 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the visitor success path when post-Web-to-Lead owner routing fails', async () => {
+    vi.mocked(routeSalesforceLeadOwner).mockRejectedValueOnce(new Error('ambiguous lead'));
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    const result = await contactAgentPostForm(qaPayload(), queryString);
+
+    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
+    expect(logError).toHaveBeenCalledWith(
+      'Salesforce Lead owner routing failed after Web-to-Lead acceptance',
+      expect.objectContaining({
+        submissionId: 'submission-test-id',
+        leadSource: 'Contact Agent',
+        destinationStateCode: 'CO',
+        destinationStateSlug: 'colorado',
+      }),
+      expect.any(Error),
+    );
   });
 
   it('does not retry Salesforce when Slack returns a failed result after Salesforce accepts', async () => {

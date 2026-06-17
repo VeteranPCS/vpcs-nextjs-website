@@ -75,7 +75,8 @@ export const api = async ({
 export const salesForceAPI = async ({
     endpoint,
     data,
-    type
+    type,
+    customHeader
 }: ApiParams): Promise<AxiosResponse | undefined> => {
     let res: AxiosResponse | undefined;
 
@@ -90,6 +91,7 @@ export const salesForceAPI = async ({
         headers: {
             "Cache-Control": "no-cache",
             Authorization: `Bearer ${SALESFORCETOKEN}`,
+            ...customHeader,
         },
     };
 
