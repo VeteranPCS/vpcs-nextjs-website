@@ -53,9 +53,55 @@ export const STATE_ABBR_TO_SLUG: Record<string, string> = {
   WY: 'wyoming',
 };
 
+export const STATE_SLUG_TO_ABBR: Record<string, string> = Object.fromEntries(
+  Object.entries(STATE_ABBR_TO_SLUG).map(([abbr, slug]) => [slug, abbr]),
+);
+
+function normalizeStateInput(value: string | null | undefined): string | null {
+  const normalized = value?.trim();
+  return normalized ? normalized : null;
+}
+
 export function stateSlugFromAbbr(abbr: string | null | undefined): string | null {
-  if (!abbr) return null;
-  return STATE_ABBR_TO_SLUG[abbr.toUpperCase()] ?? null;
+  const normalized = normalizeStateInput(abbr);
+  if (!normalized) return null;
+  return STATE_ABBR_TO_SLUG[normalized.toUpperCase()] ?? null;
+}
+
+export function stateAbbrFromSlug(slug: string | null | undefined): string | null {
+  const normalized = normalizeStateInput(slug);
+  if (!normalized) return null;
+  return STATE_SLUG_TO_ABBR[normalized.toLowerCase()] ?? null;
+}
+
+export function normalizeStateCode(value: string | null | undefined): string | null {
+  const normalized = normalizeStateInput(value);
+  if (!normalized) return null;
+
+  const upper = normalized.toUpperCase();
+  if (STATE_ABBR_TO_SLUG[upper]) return upper;
+
+  return stateAbbrFromSlug(normalized);
+}
+
+export function normalizeStateSlug(value: string | null | undefined): string | null {
+  const normalized = normalizeStateInput(value);
+  if (!normalized) return null;
+
+  const lower = normalized.toLowerCase();
+  if (STATE_SLUG_TO_ABBR[lower]) return lower;
+
+  return stateSlugFromAbbr(normalized);
+}
+
+export function formatStateLabel(value: string | null | undefined): string {
+  const slug = normalizeStateSlug(value);
+  if (!slug) return value?.trim() ?? '';
+
+  return slug
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
 }
 
 export function getStateFullNames(abbreviations: string[]): string[] {

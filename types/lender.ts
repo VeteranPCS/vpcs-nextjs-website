@@ -44,6 +44,7 @@ export interface ContactLenderFormData {
   email?: string;
   phone?: string;
   currentBase?: string;
+  state?: string;
   destinationBase?: string;
   additionalComments?: string | null;
   howDidYouHear?: string;

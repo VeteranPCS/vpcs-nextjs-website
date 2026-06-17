@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { US_STATE_CODES } from '@/constants/usStates';
 
 /**
  * Server-side validation schemas for the lead-capture forms in
@@ -43,6 +44,17 @@ const longTextField = optionalString(5000);
 
 /** Short free-text / select-style fields. */
 const shortTextField = optionalString(255);
+
+/** Optional 2-letter state code from visible consumer lead forms. */
+const optionalStateCodeField = z
+    .string()
+    .trim()
+    .max(2)
+    .optional()
+    .refine((value) => !value || US_STATE_CODES.includes(value.toUpperCase()), {
+        message: 'Invalid state selected',
+    })
+    .transform((value) => value?.toUpperCase());
 
 /** Captcha token field used by most forms. */
 const captchaTokenField = optionalString(5000);
@@ -121,7 +133,7 @@ export const contactAgentSchema = requireContactMethod(
             status_select: shortTextField,
             branch_select: shortTextField,
             discharge_status: shortTextField,
-            state: shortTextField,
+            state: optionalStateCodeField,
             city: shortTextField,
             buyingSelling: shortTextField,
             timeframe: shortTextField,
@@ -147,6 +159,7 @@ export const contactLenderSchema = requireContactMethod(
             email: emailField,
             phone: phoneField,
             currentBase: shortTextField,
+            state: optionalStateCodeField,
             destinationBase: shortTextField,
             howDidYouHear: shortTextField,
             tellusMore: longTextField,

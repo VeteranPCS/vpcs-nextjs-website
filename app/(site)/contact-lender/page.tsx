@@ -1,26 +1,22 @@
 "use client";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import ContactLender from "@/components/ContactLender/ContactLender";
 import { contactLenderPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
-
-export interface FormData {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string;
-  currentBase?: string;
-  destinationBase?: string;
-  additionalComments?: string | null;
-  howDidYouHear?: string;
-  tellusMore?: string;
-}
+import { normalizeStateCode, normalizeStateSlug } from "@/lib/states";
+import { ContactLenderFormData } from "@/types";
 
 export default function ContactLenderPage() {
   const router = useRouter()
+  const [derivedStateCode, setDerivedStateCode] = useState<string | null>(null);
 
-  const handleSubmit = async (formData: FormData): Promise<{ success?: boolean; redirectUrl?: string }> => {
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    setDerivedStateCode(normalizeStateCode(queryParams.get("state")));
+  }, []);
+
+  const handleSubmit = async (formData: ContactLenderFormData): Promise<{ success?: boolean; redirectUrl?: string }> => {
     const fullQueryString = window.location.search;
     const queryParams = new URLSearchParams(fullQueryString);
 
@@ -28,7 +24,7 @@ export default function ContactLenderPage() {
       sendGTMEvent({
         event: "conversion_contact_lender",
         agent_id: queryParams.get('id') || "",
-        state: queryParams.get('state') || "",
+        state: normalizeStateSlug(queryParams.get('state')) || "",
       });
 
       // Enhanced contactLenderPostForm now includes:
@@ -55,6 +51,7 @@ export default function ContactLenderPage() {
       </div>
       <ContactLender
         onSubmit={handleSubmit}
+        derivedStateCode={derivedStateCode}
       />
     </div>
   );

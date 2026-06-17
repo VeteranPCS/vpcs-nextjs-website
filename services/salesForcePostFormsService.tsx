@@ -8,6 +8,7 @@ import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } fro
 import { getAdminPhoneNumberForState } from '@/services/stateRoutingService';
 import { evaluateLeadSpam, tagSpamSuspected } from '@/lib/spam-protection';
 import { HP_FIELD, TS_FIELD } from '@/lib/validation/spam-fields';
+import { formatStateLabel, normalizeStateCode, normalizeStateSlug } from '@/lib/states';
 import {
     parseLeadForm,
     simpleLeadSchema,
@@ -189,6 +190,38 @@ function validateSalesforceResponse(responseText: string, submissionId: string):
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const OPEN_PHONE_FROM_NUMBER = process.env.OPEN_PHONE_FROM_NUMBER || "";
 
+type EffectiveLeadState = {
+    code: string;
+    slug: string;
+    label: string;
+};
+
+function getEffectiveLeadState(formState?: string, queryState?: string): EffectiveLeadState | null {
+    const queryStateCode = normalizeStateCode(queryState);
+    if (queryStateCode) {
+        const slug = normalizeStateSlug(queryState) ?? normalizeStateSlug(queryStateCode);
+        if (slug) {
+            return {
+                code: queryStateCode,
+                slug,
+                label: formatStateLabel(slug),
+            };
+        }
+    }
+
+    const formStateCode = normalizeStateCode(formState);
+    if (!formStateCode) return null;
+
+    const slug = normalizeStateSlug(formStateCode);
+    if (!slug) return null;
+
+    return {
+        code: formStateCode,
+        slug,
+        label: formatStateLabel(slug),
+    };
+}
+
 export async function contactAgentPostForm(formData: any, queryString: string, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
@@ -212,6 +245,22 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
         }
         formData = validation.data;
 
+        const paramsObj: { [key: string]: string } = {};
+        new URLSearchParams(queryString).forEach((value, key) => {
+            paramsObj[key] = value;
+        });
+
+        const effectiveState = getEffectiveLeadState(formData.state, paramsObj.state);
+        if (!effectiveState) {
+            logError('Invalid contactAgent state', {
+                submissionId,
+                formState: formData.state,
+                queryState: paramsObj.state,
+            });
+            throw new Error('Invalid form data: state is required.');
+        }
+        formData.state = effectiveState.code;
+
         // Soft-quarantine spam-suspected leads: still written to Salesforce, but tagged so the
         // team can filter them and partner SMS is suppressed below. Never drop a real lead.
         const spam = await evaluateLeadSpam({
@@ -225,11 +274,6 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
             logError('Spam-suspected submission', { submissionId, form: 'contactAgent', reasons: spam.reasons });
             formData.additionalComments = tagSpamSuspected(formData.additionalComments);
         }
-
-        const paramsObj: { [key: string]: string } = {};
-        new URLSearchParams(queryString).forEach((value, key) => {
-            paramsObj[key] = value;
-        });
 
         // Fetch agent information if ID is provided
         let agentInfo = null;
@@ -321,13 +365,13 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
                     name: `${formData.firstName} ${formData.lastName}` || "",
                     email: formData.email || "",
                     phoneNumber: formData.phone || "",
+                    state: effectiveState.label,
                     message: formData.additionalComments || "",
                     agentInfo: agentInfo ? {
                         name: agentInfo.Name || "",
                         email: agentInfo.PersonEmail || "",
                         phoneNumber: agentInfo.PersonMobilePhone || "",
                         brokerage: agentInfo.Brokerage_Name__pc,
-                        state: paramsObj.state
                     } : undefined
                 }),
             },
@@ -342,10 +386,11 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
 ${formData.firstName} ${formData.lastName}
 Email: ${formData.email}
 Phone: ${formatPhoneNumberForDisplay(formData.phone)}
+Destination State: ${effectiveState.label}
 ${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
 ${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
 ${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
-                    from: getAdminPhoneNumberForState(paramsObj.state),
+                    from: getAdminPhoneNumberForState(effectiveState.slug),
                     to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
                 }),
             });
@@ -820,6 +865,22 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
         }
         formData = validation.data;
 
+        const paramsObj: { [key: string]: string } = {};
+        new URLSearchParams(fullQueryString).forEach((value, key) => {
+            paramsObj[key] = value;
+        });
+
+        const effectiveState = getEffectiveLeadState(formData.state, paramsObj.state);
+        if (!effectiveState) {
+            logError('Invalid contactLender state', {
+                submissionId,
+                formState: formData.state,
+                queryState: paramsObj.state,
+            });
+            throw new Error('Invalid form data: state is required.');
+        }
+        formData.state = effectiveState.code;
+
         // Soft-quarantine spam-suspected leads: tagged in Salesforce, partner SMS suppressed below.
         const spam = await evaluateLeadSpam({
             email: formData.email,
@@ -832,11 +893,6 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             logError('Spam-suspected submission', { submissionId, form: 'contactLender', reasons: spam.reasons });
             formData.additionalComments = tagSpamSuspected(formData.additionalComments);
         }
-
-        const paramsObj: { [key: string]: string } = {};
-        new URLSearchParams(fullQueryString).forEach((value, key) => {
-            paramsObj[key] = value;
-        });
 
         // Fetch agent information if ID is provided
         let agentInfo = null;
@@ -868,7 +924,9 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             last_name: formData.lastName || "",
             email: formData.email || "",
             mobile: formData.phone || "",
-            "00N4x00000LspUs": formData.currentBase || "",
+            "00N4x00000LspV2": formData.state || "",
+            "00N4x00000Lpb0T": formData.currentBase || "",
+            "00N4x00000LspUs": formData.destinationBase || "",
             "00N4x00000QPksj": formData.howDidYouHear || "",
             "00N4x00000QPS7V": formData.tellusMore || "",
             "00N4x00000bfgFA": formData.additionalComments || "",
@@ -914,13 +972,13 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
                 name: `${formData.firstName} ${formData.lastName}`,
                 email: formData.email || "",
                 phoneNumber: formData.phone || "",
+                state: effectiveState.label,
                 message: formData.additionalComments || "",
                 agentInfo: agentInfo ? {
                     name: agentInfo.Name || "",
                     email: agentInfo.PersonEmail || "",
                     phoneNumber: agentInfo.PersonMobilePhone || "",
                     brokerage: agentInfo.Brokerage_Name__pc,
-                    state: paramsObj.state
                 } : undefined
             }),
             // Suppress partner SMS for spam-suspected leads so spammers can't trigger partner outreach.
@@ -929,10 +987,11 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
 ${formData.firstName} ${formData.lastName}
 Email: ${formData.email}
 Phone: ${formatPhoneNumberForDisplay(formData.phone)}
+Destination State: ${effectiveState.label}
 ${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
 ${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
 ${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
-                from: getAdminPhoneNumberForState(paramsObj.state),
+                from: getAdminPhoneNumberForState(effectiveState.slug),
                 to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
             })]),
         ]).catch(error => {

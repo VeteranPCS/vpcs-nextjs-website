@@ -1,19 +1,29 @@
 "use client";
+import { useEffect, useState } from "react";
 import ContactAgents from "@/components/ContactAgents/ContactAgent";
 import { submitContactAgentLead } from "./actions";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { ContactAgentFormData } from "@/types";
+import { normalizeStateCode, normalizeStateSlug } from "@/lib/states";
 
 export default function ContactAgentPage() {
+  const [derivedStateCode, setDerivedStateCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    setDerivedStateCode(normalizeStateCode(queryParams.get("state")));
+  }, []);
+
   const handleSubmit = async (formData: ContactAgentFormData): Promise<{ success?: boolean; redirectUrl?: string }> => {
     const fullQueryString = window.location.search;
     const queryParams = new URLSearchParams(fullQueryString);
+    const queryState = queryParams.get("state");
 
     try {
       sendGTMEvent({
         event: "conversion_contact_agent",
         agent_id: queryParams.get("id") || "",
-        state: queryParams.get("state") || "",
+        state: normalizeStateSlug(queryState) || "",
       });
 
       return await submitContactAgentLead(formData, fullQueryString);
@@ -45,6 +55,7 @@ export default function ContactAgentPage() {
       </div>
       <ContactAgents
         onSubmit={handleSubmit}
+        derivedStateCode={derivedStateCode}
       />
     </div>
   );
