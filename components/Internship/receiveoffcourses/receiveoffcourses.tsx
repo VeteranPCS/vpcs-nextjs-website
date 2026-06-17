@@ -9,6 +9,8 @@ export interface IntershipOfferDataProps {
   button_text: string;
 }
 
+const CE_SHOP_URL = "https://veteranpcs.theceshop.com/";
+
 const receiveoffcourses = async () => {
   let internshipOffer: IntershipOfferDataProps | null = null;
 
@@ -35,10 +37,14 @@ const receiveoffcourses = async () => {
                 {internshipOffer?.details}
               </p>
               <p className="text-[#FFFFFF] text-center roboto lg:text-lg md:text-lg sm:text-sm text-sm font-medium lg:w-[900px] md:w-[900px] sm:w-full w-full mx-auto pt-5 py-5">
-                Use code ‘FREEDOM40′ at checkout!
+                Use code VETERANPCS40 for 40% off prelicensing real estate
+                classes. Use code VETERANPCS35 for 35% off all other classes.
               </p>
               <Button
                 buttonText={internshipOffer?.button_text || "40% off training"}
+                href={CE_SHOP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
               />
             </div>
           </div>
