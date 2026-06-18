@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-26T02:17:30.357Z",
-  "totalPosts": 146,
+  "generatedAt": "2026-06-18T03:31:51.756Z",
+  "totalPosts": 159,
   "byComponent": {
     "PCS Help": [
       "10-essential-questions-for-first-time-military-home-buyers",
@@ -31,11 +31,13 @@
       "new-home-builders-offering-low-rates-here-is-the-clarity-you-need-to-know",
       "new-semi-custom-luxury-homes-in-castle-rock-with-breathtaking-views-signature-crystal-valley",
       "offutt-afb-pcs-guide-2025",
+      "pcs-moves-buying-or-selling-during-relocation",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
       "pcs-to-fort-leavenworth-complete-guide-for-military-families",
       "pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
       "pcs-to-hawaii-with-pets",
+      "pcs-to-kitsap-county-five-things-military-families",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "pcsing-oconus-what-do-i-do-with-my-home",
@@ -73,6 +75,7 @@
     ],
     "U.S. Military Bases": [
       "alabama-military-bases",
+      "best-neighborhoods-redstone-arsenal-military",
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "best-places-to-live-near-fort-benning",
       "best-places-to-live-near-fort-hood",
@@ -80,9 +83,12 @@
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
       "interest-rates-are-falling-heres-what-homebuyers-need-to-know",
+      "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
+      "pcs-to-bremerton-naval-base-kitsap-2026-guide",
       "pcs-to-fort-eisenhower",
       "pcs-to-luke-afb-military-guide-to-phoenix",
+      "pcs-to-walter-reed-bethesda-2026-neighborhoods-bah",
       "pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb",
       "the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel",
       "tinker-air-force-base-pcs-guide",
@@ -128,7 +134,10 @@
     ],
     "Real Estate Insights": [
       "buy-vs-rent-near-camp-lejeune",
+      "colorado-springs-housing-market-update-october-2025",
+      "huntsville-housing-market-2026-military-buyer",
       "veteran-and-military-real-estate-expert-in-castle-rock-colorado",
+      "why-realtors-still-matter-for-military-homebuyers",
       "wilmingtons-emerging-tech-scene-a-goldmine-for-veteran-property-investors"
     ],
     "VA Loan Help": [
@@ -150,6 +159,7 @@
       "va-loan-calculator-mistakes",
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
+      "va-loan-huntsville-madison-county-2026",
       "va-loan-refinance-pro-tip-how-to-lock-in-a-lower-rate-before-it-s-too-late",
       "va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
       "va-vs-fha",
@@ -158,9 +168,12 @@
     ],
     "Financial Guidance": [
       "florida-cost-of-living-military-bases-bah",
+      "fort-meade-bah-2026-what-your-allowance-buys",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
+      "huntsville-redstone-bah-2026-buy-vs-rent",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
-      "the-military-members-complete-guide-to-building-and-maintaining-strong-credit"
+      "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
+      "understanding-escrow-in-real-estate-veterans-guide"
     ]
   },
   "posts": [
@@ -423,6 +436,34 @@
       ]
     },
     {
+      "slug": "best-neighborhoods-redstone-arsenal-military",
+      "title": "Best Neighborhoods Near Redstone Arsenal for Military Families (2026)",
+      "url": "/blog/best-neighborhoods-redstone-arsenal-military",
+      "component": "U.S. Military Bases",
+      "description": "Compare Madison, Hampton Cove, Harvest, Meridianville, Athens, and South Huntsville by schools, commute, and typical home value before your Redstone PCS.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "best neighborhoods near redstone arsenal",
+      "secondaryKeywords": [
+        "where to live near redstone arsenal",
+        "huntsville military neighborhoods",
+        "madison alabama military families",
+        "harvest alabama homes military",
+        "hampton cove military families"
+      ],
+      "h2Outline": [
+        "Neighborhoods at a Glance",
+        "Madison: Best for Schools and Resale",
+        "Hampton Cove and Owens Cross Roads: Master-Planned and Spacious",
+        "Harvest and Monrovia: Best Value for New Construction",
+        "Meridianville: Rural and Affordable",
+        "Athens: Lower Taxes, Fast Growth",
+        "South Huntsville, Jones Valley, and Blossomwood: Established and Central",
+        "A Quick Note on Schools and Living On Post",
+        "How to Decide"
+      ]
+    },
+    {
       "slug": "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "title": "Best Places to Live Near Eglin Air Force Base",
       "url": "/blog/best-places-to-live-near-eglin-air-force-base-veteranpcs",
@@ -662,6 +703,30 @@
         "4. Full-Service HHG Move: Using Military Movers",
         "Final Decision: Which Relocation Method is Best for You?",
         "Ready to Find Your Next Home?"
+      ]
+    },
+    {
+      "slug": "colorado-springs-housing-market-update-october-2025",
+      "title": "Colorado Springs Housing Market Update: October 2025 (Single-Family Homes)",
+      "url": "/blog/colorado-springs-housing-market-update-october-2025",
+      "component": "Real Estate Insights",
+      "description": "A Colorado Springs market snapshot using October 2025 PPMLS data on prices, inventory, days on market, and what military buyers should watch next.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "colorado springs housing market october 2025",
+      "secondaryKeywords": [
+        "colorado springs home prices",
+        "pikes peak mls data",
+        "colorado springs military homebuyers",
+        "fort carson housing market"
+      ],
+      "h2Outline": [
+        "The numbers at a glance",
+        "What the prices tell us",
+        "More homes, a little more breathing room",
+        "A slower, steadier pace",
+        "What this means for military buyers",
+        "About the agent"
       ]
     },
     {
@@ -970,6 +1035,30 @@
       ]
     },
     {
+      "slug": "fort-meade-bah-2026-what-your-allowance-buys",
+      "title": "Fort Meade BAH Rates 2026: What Your Housing Allowance Actually Buys",
+      "url": "/blog/fort-meade-bah-2026-what-your-allowance-buys",
+      "component": "Financial Guidance",
+      "description": "See 2026 Fort Meade BAH rates, what they can buy near Odenton, Crofton, Columbia, and Bowie, and how on-post housing changes the math.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "fort meade bah 2026",
+      "secondaryKeywords": [
+        "fort meade bah rates",
+        "odenton crofton military housing",
+        "fort meade on-post housing corvias",
+        "fort meade buy vs rent",
+        "fort meade va loan"
+      ],
+      "h2Outline": [
+        "2026 Fort Meade BAH Rates",
+        "What Your BAH Actually Gets You",
+        "Buy vs. Rent Near Fort Meade",
+        "On-Post Housing and Schools",
+        "The Bottom Line"
+      ]
+    },
+    {
       "slug": "fun-family-and-date-night-activities-near-tinker-afb",
       "title": "Fun Family and Date Night Activities Near Tinker AFB",
       "url": "/blog/fun-family-and-date-night-activities-near-tinker-afb",
@@ -1174,6 +1263,53 @@
         "how does a 2-1 buydown work"
       ],
       "h2Outline": []
+    },
+    {
+      "slug": "huntsville-housing-market-2026-military-buyer",
+      "title": "Huntsville Housing Market 2026: A Military Buyer's Outlook",
+      "url": "/blog/huntsville-housing-market-2026-military-buyer",
+      "component": "Real Estate Insights",
+      "description": "A plain-language look at Huntsville home prices, days on market, supply, SPACECOM demand, and what the 2026 market means for military buyers.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "huntsville housing market 2026",
+      "secondaryKeywords": [
+        "huntsville home prices 2026",
+        "is it a good time to buy in huntsville",
+        "redstone arsenal housing demand",
+        "huntsville real estate military buyer"
+      ],
+      "h2Outline": [
+        "What Home Prices Are Actually Doing",
+        "How Fast Homes Are Selling",
+        "The SPACECOM Demand Floor, and Why It Is Not the Whole Story",
+        "Affordability: Cost of Living and Taxes",
+        "What This Means for a Military Buyer",
+        "The Bottom Line"
+      ]
+    },
+    {
+      "slug": "huntsville-redstone-bah-2026-buy-vs-rent",
+      "title": "Huntsville & Redstone BAH Rates 2026: What They Really Cover (Buy vs. Rent)",
+      "url": "/blog/huntsville-redstone-bah-2026-buy-vs-rent",
+      "component": "Financial Guidance",
+      "description": "See 2026 Huntsville BAH rates, how Alabama's low property taxes affect your monthly payment, and when buying or renting near Redstone makes sense.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "huntsville bah 2026",
+      "secondaryKeywords": [
+        "redstone arsenal bah",
+        "huntsville bah buy vs rent",
+        "al003 bah rates",
+        "does bah cover mortgage huntsville"
+      ],
+      "h2Outline": [
+        "2026 BAH Rates for Huntsville (AL003)",
+        "Why Your BAH Goes Further in Huntsville",
+        "Buy vs. Rent: A 2026 Example",
+        "When Renting Still Makes Sense",
+        "The Bottom Line"
+      ]
     },
     {
       "slug": "hurricane-prep-military-families-florida",
@@ -1456,6 +1592,60 @@
       ]
     },
     {
+      "slug": "pcs-moves-buying-or-selling-during-relocation",
+      "title": "PCS Moves Made Easier: A Veteran's Guide to Buying or Selling During Relocation",
+      "url": "/blog/pcs-moves-buying-or-selling-during-relocation",
+      "component": "PCS Help",
+      "description": "A veteran-focused guide to buying, selling, using a VA loan, and building a flexible timeline when a PCS move puts your housing plan under pressure.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "buying or selling a home during pcs",
+      "secondaryKeywords": [
+        "pcs relocation real estate",
+        "va loan pcs move",
+        "selling a home during pcs",
+        "remote home buying military"
+      ],
+      "h2Outline": [
+        "Start With the Timeline",
+        "You Do Not Have to Be There in Person",
+        "Use Your VA Loan the Right Way",
+        "Build in Flexibility",
+        "You Are Not in This Alone",
+        "About the Agent"
+      ]
+    },
+    {
+      "slug": "pcs-redstone-arsenal-huntsville-guide",
+      "title": "PCSing to Redstone Arsenal: The Complete 2026 Guide for Military Families Moving to Huntsville",
+      "url": "/blog/pcs-redstone-arsenal-huntsville-guide",
+      "component": "U.S. Military Bases",
+      "description": "A complete Redstone Arsenal PCS guide covering SPACECOM, in-processing, housing, BAH, schools, VA loans, taxes, and local life in Huntsville.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "pcs to redstone arsenal",
+      "secondaryKeywords": [
+        "moving to huntsville military",
+        "redstone arsenal housing",
+        "space command huntsville move",
+        "redstone arsenal pcs guide",
+        "huntsville bah 2026"
+      ],
+      "h2Outline": [
+        "The SPACECOM Move: What It Means for the Huntsville Housing Market",
+        "Redstone Arsenal at a Glance",
+        "In-Processing and Temporary Lodging",
+        "Your BAH at Redstone: A Quick Snapshot",
+        "Neighborhoods at a Glance",
+        "The Three School Systems",
+        "Cost of Living, Taxes, and Climate",
+        "Using Your VA Loan in Huntsville",
+        "Is Now a Good Time to Buy?",
+        "Things to Do",
+        "Putting It All Together"
+      ]
+    },
+    {
       "slug": "pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
       "title": "PCS to Arizona: A Comprehensive Guide for Active Duty Military Personnel Moving to Arizona",
       "url": "/blog/pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
@@ -1479,6 +1669,35 @@
         "Arizona Schools & Education Benefits",
         "Arizona Housing & Cost of Living",
         "Get Ready for Your PCS to Arizona"
+      ]
+    },
+    {
+      "slug": "pcs-to-bremerton-naval-base-kitsap-2026-guide",
+      "title": "The 2026 Area Guide to PCSing to Bremerton, WA: Neighborhoods, Schools, Food, and More",
+      "url": "/blog/pcs-to-bremerton-naval-base-kitsap-2026-guide",
+      "component": "U.S. Military Bases",
+      "description": "A 2026 Bremerton and Naval Base Kitsap PCS guide covering neighborhoods, schools, BAH, commute realities, food, recreation, and local housing choices.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "pcsing to bremerton wa",
+      "secondaryKeywords": [
+        "naval base kitsap bah 2026",
+        "kitsap county schools",
+        "bremerton vs silverdale",
+        "military families kitsap county",
+        "port orchard gorst commute"
+      ],
+      "h2Outline": [
+        "Cost of Living in Kitsap County",
+        "Renting vs Buying for a 2 to 3 Year Tour",
+        "Where to Live Near Naval Base Kitsap",
+        "Port Orchard and the Gorst Commute",
+        "Moving with Kids: School Enrollment Tips",
+        "Restaurants in Bremerton, Silverdale, and Poulsbo",
+        "Military Community in Kitsap County",
+        "Things to Do Near Naval Base Kitsap",
+        "Planning Your Move the Right Way",
+        "About the Agents"
       ]
     },
     {
@@ -1638,6 +1857,32 @@
       ]
     },
     {
+      "slug": "pcs-to-kitsap-county-five-things-military-families",
+      "title": "PCSing to Kitsap County: Five Things Military Families Need to Know",
+      "url": "/blog/pcs-to-kitsap-county-five-things-military-families",
+      "component": "PCS Help",
+      "description": "Five practical Kitsap County PCS notes for military families, from the housing market and VA assumptions to the Gorst commute, HHG timing, and cost of living.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "pcsing to kitsap county",
+      "secondaryKeywords": [
+        "naval base kitsap",
+        "va loan assumption kitsap county",
+        "gorst commute",
+        "kitsap county housing market 2026",
+        "kitsap cost of living"
+      ],
+      "h2Outline": [
+        "1. The Kitsap County Housing Market in 2026",
+        "2. VA Loan Assumptions: The Lower Rates Most Buyers Miss",
+        "3. The Gorst Commute Changes Everything",
+        "4. HHG Timing: What to Plan For in 2026",
+        "5. The Real Cost of Living in Kitsap County",
+        "After the Move: Living in Kitsap County",
+        "About the Agents"
+      ]
+    },
+    {
       "slug": "pcs-to-luke-afb-military-guide-to-phoenix",
       "title": "PCS to Luke AFB: Military Guide to Phoenix's West Valley Neighborhoods",
       "url": "/blog/pcs-to-luke-afb-military-guide-to-phoenix",
@@ -1691,6 +1936,34 @@
         "Weekend Activities and Big City Access",
         "Planning Your New Braunfels PCS",
         "New Braunfels: The Best of Both Worlds"
+      ]
+    },
+    {
+      "slug": "pcs-to-walter-reed-bethesda-2026-neighborhoods-bah",
+      "title": "PCS to Walter Reed Bethesda (2026): Best Neighborhoods, BAH Reality & Northern Virginia Comparison",
+      "url": "/blog/pcs-to-walter-reed-bethesda-2026-neighborhoods-bah",
+      "component": "U.S. Military Bases",
+      "description": "Compare Walter Reed Bethesda neighborhoods, 2026 BAH realities, Montgomery County trade-offs, and how Maryland stacks up against Northern Virginia.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "pcs to walter reed bethesda",
+      "secondaryKeywords": [
+        "bethesda bah 2026",
+        "montgomery county military neighborhoods",
+        "rockville silver spring military families",
+        "maryland vs northern virginia military",
+        "walter reed national military medical center housing"
+      ],
+      "h2Outline": [
+        "Bethesda Itself: Prestige Pricing That Outruns Most BAH",
+        "Best Value With Metro Access: Rockville and Silver Spring",
+        "Budget Tier: Germantown and Gaithersburg",
+        "Premium Tier: Potomac and Chevy Chase",
+        "Walter Reed Bethesda Neighborhood Tiers at a Glance",
+        "Schools: Montgomery County Is Genuinely Excellent",
+        "The Commute Reality",
+        "One Advantage Montgomery County Has Over Northern Virginia",
+        "Your Next Step"
       ]
     },
     {
@@ -2538,6 +2811,30 @@
       ]
     },
     {
+      "slug": "understanding-escrow-in-real-estate-veterans-guide",
+      "title": "Understanding Escrow in Real Estate: A Simple Guide for Veterans",
+      "url": "/blog/understanding-escrow-in-real-estate-veterans-guide",
+      "component": "Financial Guidance",
+      "description": "A simple escrow guide for veterans and VA homebuyers, covering earnest money, closing, tax and insurance accounts, and the questions to ask before signing.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "what is escrow in real estate",
+      "secondaryKeywords": [
+        "escrow process at closing",
+        "escrow account taxes insurance",
+        "va loan escrow",
+        "earnest money deposit"
+      ],
+      "h2Outline": [
+        "What Is Escrow?",
+        "How Escrow Works at Closing",
+        "Escrow for Future Maintenance",
+        "Why Escrow Matters",
+        "What Escrow Means for VA Buyers",
+        "About the agent"
+      ]
+    },
+    {
       "slug": "understanding-the-va-funding-fee-a-complete-guide-for-military-families",
       "title": "Understanding the VA Funding Fee: A Complete Guide for Military Families",
       "url": "/blog/understanding-the-va-funding-fee-a-complete-guide-for-military-families",
@@ -2798,6 +3095,30 @@
         "Why Your VA Loan Home Buying Team Matters",
         "Build Your VA Loan Team Before Orders Arrive",
         "Get Matched With Your VA Loan Team"
+      ]
+    },
+    {
+      "slug": "va-loan-huntsville-madison-county-2026",
+      "title": "Using Your VA Loan to Buy a Home in Huntsville (Madison County, 2026)",
+      "url": "/blog/va-loan-huntsville-madison-county-2026",
+      "component": "VA Loan Help",
+      "description": "Learn how VA loan entitlement, Madison County limits, the funding fee, Alabama tax breaks, and Redstone-area jobs affect a Huntsville home purchase.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "va loan huntsville",
+      "secondaryKeywords": [
+        "madison county va loan limit 2026",
+        "va loan entitlement huntsville",
+        "alabama veteran property tax exemption",
+        "va funding fee 2026"
+      ],
+      "h2Outline": [
+        "The 2026 Madison County VA Loan Limit",
+        "Full vs. Partial Entitlement",
+        "The VA Funding Fee (and the Disabled-Veteran Waiver)",
+        "Alabama's Tax Breaks for Veterans",
+        "From Active Duty to a Civilian Redstone Job: Your Eligibility Still Counts",
+        "Putting It All Together"
       ]
     },
     {
@@ -3596,6 +3917,31 @@
         "2. Tailored Solutions for Frequent Relocations",
         "3. Streamlined, Stress-Free Transactions",
         "4. A Trusted Advocate with Military Experience"
+      ]
+    },
+    {
+      "slug": "why-realtors-still-matter-for-military-homebuyers",
+      "title": "Why Realtors Still Matter for Military Homebuyers: Beyond the Door-Opening Myth",
+      "url": "/blog/why-realtors-still-matter-for-military-homebuyers",
+      "component": "Real Estate Insights",
+      "description": "A clear look at why realtors still matter for military buyers, including pricing, negotiation, contract terms, remote showings, and PCS timing.",
+      "publishedAt": "2026-06-17T12:00:00.000Z",
+      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "primaryKeyword": "why realtors still matter",
+      "secondaryKeywords": [
+        "military real estate agent value",
+        "fsbo vs realtor",
+        "nar settlement homebuyers",
+        "veteran friendly realtor"
+      ],
+      "h2Outline": [
+        "A realtor does far more than open doors",
+        "Local knowledge you cannot get from a listing photo",
+        "Deals close more often when both sides have representation",
+        "Why this matters more after the NAR settlement",
+        "What representation actually protects you from",
+        "Why a military-experienced agent is worth even more",
+        "About the agent"
       ]
     },
     {

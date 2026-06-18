@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Button from '@/components/common/Button';
 import { resolveAuthor } from '@/lib/blog/authors';
 import { buildContactCtaHref } from '@/lib/contactAgentUrl';
+import { normalizeStateSlug } from '@/lib/states';
 import type { FrontmatterAuthor } from '@/lib/blog/types';
 
 const VPCS_FALLBACK = {
@@ -18,13 +19,23 @@ const VPCS_FALLBACK = {
 type Props = {
   frontmatterAuthor: FrontmatterAuthor | null | undefined;
   variant?: 'card' | 'inline';
+  ctaStateSlug?: string | null;
 };
+
+function normalizeCtaState(value: string | undefined): string | null {
+  if (!value) return null;
+  return normalizeStateSlug(value) ?? normalizeStateSlug(value.replace(/\s+/g, '-'));
+}
 
 export default async function AuthorByline({
   frontmatterAuthor,
   variant = 'card',
+  ctaStateSlug,
 }: Props) {
   const author = await resolveAuthor(frontmatterAuthor ?? null);
+  const frontmatterStateSlug =
+    normalizeCtaState(frontmatterAuthor?.stateSlug) ??
+    normalizeCtaState(frontmatterAuthor?.state);
 
   if (!author) {
     if (variant === 'inline') {
@@ -94,7 +105,7 @@ export default async function AuthorByline({
   const ctaHref = buildContactCtaHref({
     firstName: author.firstName,
     salesforceId: author.salesforceId,
-    stateSlug: author.stateSlug,
+    stateSlug: ctaStateSlug ?? frontmatterStateSlug ?? author.stateSlug,
     form: author.isLender ? 'lender' : 'agent',
   });
 
