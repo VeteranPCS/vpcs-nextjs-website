@@ -54,6 +54,7 @@ const Covered = () => {
   useEffect(() => {
     AOS.init({
       once: true,      // Make animation run once
+      disable: () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     });
   }, []);
 

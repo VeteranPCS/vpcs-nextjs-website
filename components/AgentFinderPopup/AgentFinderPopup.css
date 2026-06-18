@@ -45,8 +45,8 @@
   font-size: 24px;
   cursor: pointer;
   color: #666;
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -57,6 +57,11 @@
 .agent-finder-popup__close:hover {
   background-color: #f0f0f0;
   color: #333;
+}
+
+.agent-finder-popup__close:focus-visible {
+  outline: 2px solid #a81f23;
+  outline-offset: 2px;
 }
 
 .agent-finder-popup__content {
@@ -117,9 +122,10 @@
 }
 
 .agent-finder-popup__select:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: 2px solid #a81f23;
+  outline-offset: 2px;
+  border-color: #a81f23;
+  box-shadow: none;
 }
 
 .agent-finder-popup__select:disabled {
@@ -129,7 +135,7 @@
 }
 
 .agent-finder-popup__submit {
-  background-color: #dc2626;
+  background-color: #a81f23;
   color: white;
   border: none;
   padding: 14px 24px;
@@ -142,9 +148,14 @@
 }
 
 .agent-finder-popup__submit:hover:not(:disabled) {
-  background-color: #b91c1c;
+  background-color: #7e1618;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.agent-finder-popup__submit:focus-visible {
+  outline: 2px solid #a81f23;
+  outline-offset: 3px;
 }
 
 .agent-finder-popup__submit:disabled {

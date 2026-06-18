@@ -47,7 +47,7 @@ const SupportContent: React.FC<BlockContentProps> = ({ block }) => {
 
   switch (block.style) {
     case "h1":
-      return <h1 className="text-4xl font-bold mb-2">{renderContent(block)}</h1>;
+      return <h3 className="text-3xl font-bold mb-2">{renderContent(block)}</h3>;
     case "h2":
       return <h2 className="text-2xl font-bold my-4">{renderContent(block)}</h2>;
     case "h3":

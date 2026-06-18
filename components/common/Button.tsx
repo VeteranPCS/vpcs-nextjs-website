@@ -20,12 +20,11 @@ const Button: React.FC<ButtonProps> = ({
   divClassName = "",
   buttonClassName = "",
 }) => {
-  const className = `${buttonClassName} items-center bg-[#A81F23] w-auto inline-flex xl:px-8 lg:px-8 sm:px-5 px-5 xl:py-4 lg:py-4 sm:py-3.5 py-3.5 rounded-2xl text-center duration-500 transition-all hover:bg-[#871B1C] active:bg-[#871B1C]`;
+  const className = `${buttonClassName} inline-flex min-h-11 max-w-full items-center justify-center rounded-2xl bg-accent-red px-5 py-3.5 text-center transition-colors duration-200 hover:bg-accent-red-dark active:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-5 lg:px-8 lg:py-4 xl:px-8 xl:py-4`;
 
   const label = (
     <span
-      className="xl:text-lg lg:text-lg md:text-lg text-sm font-normal leading-6 bg-cover 
-            text-white text-nowrap tahoma"
+      className="bg-cover text-sm font-normal leading-6 text-white tahoma md:text-lg"
     >
       {buttonText}
     </span>
@@ -37,6 +36,10 @@ const Button: React.FC<ButtonProps> = ({
         <a href={href} target={target} rel={rel} onClick={onClick} className={className}>
           {label}
         </a>
+      ) : !onClick ? (
+        <span className={className}>
+          {label}
+        </span>
       ) : (
         <button onClick={onClick} className={className}>
           {label}

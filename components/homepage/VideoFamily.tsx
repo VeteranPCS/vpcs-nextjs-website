@@ -46,12 +46,12 @@ const FamilyVideo = () => {
           autoPlay
           playsInline
           muted
-          preload="auto"
+          preload="metadata"
           src="/assets/military-families.mp4"
           className="w-full"
+          aria-label="Military families helped by VeteranPCS"
         >
-          <source type="video/mp4" src="/assets/military-families.mp4 " />
-          <source type="video/webm" src="/assets/military-families.mp4" />
+          <source type="video/mp4" src="/assets/military-families.mp4" />
         </video>
       </div>
       <div className="container mx-auto overflow-hidden">
@@ -64,7 +64,7 @@ const FamilyVideo = () => {
                     width={100}
                     height={100}
                     src="/icon/yourimpacthendwhhite.svg"
-                    alt="impact_wearblue"
+	                    alt=""
                     className="w-full h-full"
                   />
                 </div>
@@ -84,7 +84,7 @@ const FamilyVideo = () => {
                     width={100}
                     height={100}
                     src="/icon/yourhome.svg"
-                    alt="impact_wearblue"
+	                    alt=""
                     className="w-full h-full"
                   />
                 </div>
@@ -104,7 +104,7 @@ const FamilyVideo = () => {
                     width={100}
                     height={100}
                     src="/icon/yourSymbol.svg"
-                    alt="impact_wearblue"
+	                    alt=""
                     className="w-full h-full"
                   />
                 </div>

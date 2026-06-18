@@ -90,7 +90,7 @@ const ReviewCard: React.FC<{ review: Review }> = ({ review }) => {
         {shouldShowReadMore && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="mt-2 text-[#A81F23] hover:text-[#8a1a1d] font-medium focus:outline-none transition-colors duration-200"
+            className="mt-2 text-[#A81F23] hover:text-[#8a1a1d] font-medium transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A81F23]"
           >
             {isExpanded ? 'Show less' : 'Read more'}
           </button>
@@ -132,7 +132,7 @@ const ReviewsSlider: React.FC<ReviewsSliderProps> = ({ reviews, averageRating, t
     return (
       <button
         onClick={onClick}
-        className="absolute -right-4 md:-right-8 lg:-right-10 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-[#A81F23] hover:bg-opacity-90 rounded-full transition-all duration-200 focus:outline-none z-10 shadow-lg"
+        className="absolute -right-4 md:-right-8 lg:-right-10 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center bg-[#A81F23] hover:bg-opacity-90 rounded-full transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white z-10 shadow-lg"
         aria-label="Next slide"
       >
         <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,7 +147,7 @@ const ReviewsSlider: React.FC<ReviewsSliderProps> = ({ reviews, averageRating, t
     return (
       <button
         onClick={onClick}
-        className="absolute -left-4 md:-left-8 lg:-left-10 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-[#A81F23] hover:bg-opacity-90 rounded-full transition-all duration-200 focus:outline-none z-10 shadow-lg"
+        className="absolute -left-4 md:-left-8 lg:-left-10 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center bg-[#A81F23] hover:bg-opacity-90 rounded-full transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white z-10 shadow-lg"
         aria-label="Previous slide"
       >
         <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
