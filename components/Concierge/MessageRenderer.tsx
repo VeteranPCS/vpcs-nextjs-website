@@ -106,6 +106,12 @@ const SUBMIT_TOOL_NAMES = new Set<string>([
 
 function loadingLabel(toolName: string): string {
   switch (toolName) {
+    case 'resolveDestinationLocation':
+      return 'Resolving destination…';
+    case 'findCoverageAreas':
+      return 'Checking coverage areas…';
+    case 'getPartnersForCoverageArea':
+      return 'Looking up partners…';
     case 'getAgentsForState':
       return 'Looking up agents…';
     case 'getLendersForState':
@@ -215,6 +221,22 @@ export default function MessageRenderer({ message, onSelectAgent, onApprove }: P
                     />
                   );
                 }
+                case 'getPartnersForCoverageArea': {
+                  const partners = (data && Array.isArray((data as { partners?: unknown }).partners)
+                    ? ((data as { partners: AgentListItem[] }).partners)
+                    : []) as AgentListItem[];
+                  const role = data && (data as { role?: unknown }).role === 'lender'
+                    ? 'lender'
+                    : 'agent';
+                  return (
+                    <AgentCard
+                      key={key}
+                      list={partners}
+                      kind={role}
+                      onSelect={onSelectAgent}
+                    />
+                  );
+                }
                 case 'getStateDetails': {
                   const stateRecord = (data && (data as { state?: unknown }).state) as
                     | { state_name?: string; short_name?: string; state_slug?: { current?: string } }
@@ -233,6 +255,10 @@ export default function MessageRenderer({ message, onSelectAgent, onApprove }: P
                   );
                 }
                 case 'listStates': {
+                  return null;
+                }
+                case 'resolveDestinationLocation':
+                case 'findCoverageAreas': {
                   return null;
                 }
                 default: {

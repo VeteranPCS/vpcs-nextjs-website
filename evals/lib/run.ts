@@ -17,6 +17,10 @@ export interface RunResult {
   text: string;
   /** Names of every tool the model called across all steps. */
   toolNames: string[];
+  /** Every tool call with the model-provided input. */
+  toolCalls: Array<{ toolName: string; input: unknown }>;
+  /** Every tool result with the tool output. */
+  toolResults: Array<{ toolName: string; output: unknown }>;
   usage: { totalTokens?: number } | undefined;
 }
 
@@ -37,5 +41,14 @@ export async function runConcierge(userText: string, opts: RunOptions = {}): Pro
   });
 
   const toolNames = result.steps.flatMap((step) => step.toolCalls.map((c) => c.toolName));
-  return { text: result.text, toolNames, usage: result.usage };
+  const toolCalls = result.steps.flatMap((step) =>
+    step.toolCalls.map((call) => ({ toolName: call.toolName, input: call.input })),
+  );
+  const toolResults = result.steps.flatMap((step) =>
+    step.toolResults.map((toolResult) => ({
+      toolName: toolResult.toolName,
+      output: toolResult.output,
+    })),
+  );
+  return { text: result.text, toolNames, toolCalls, toolResults, usage: result.usage };
 }
