@@ -34,19 +34,41 @@ export type BlogPost = BlogFrontmatter & {
   filepath: string;
 };
 
-export type ResolvedAuthor = {
-  salesforceId: string | null;
+type BaseResolvedAuthor = {
   firstName: string;
   lastName: string;
   fullName: string;
+  name: string;
   city: string | null;
   state: string | null;
   stateSlug: string | null;
   militaryStatus: string | null;
   brokerage: string | null;
   headshotPath: string | null;
+  contactHref: string;
   isAgent: boolean;
   isLender: boolean;
   active: boolean;
   matchKind: 'salesforceId' | 'name' | 'fallback';
 };
+
+export type SalesforceBlogAuthor = BaseResolvedAuthor & {
+  kind: 'salesforce';
+  salesforceId: string;
+  role: 'agent' | 'lender';
+  active: true;
+  matchKind: 'salesforceId' | 'name';
+};
+
+export type VeteranPcsBlogAuthor = BaseResolvedAuthor & {
+  kind: 'fallback';
+  salesforceId: null;
+  role: 'organization';
+  sourceSalesforceId: string | null;
+  active: false;
+  matchKind: 'fallback';
+};
+
+export type ResolvedBlogAuthor = SalesforceBlogAuthor | VeteranPcsBlogAuthor;
+
+export type ResolvedAuthor = ResolvedBlogAuthor;

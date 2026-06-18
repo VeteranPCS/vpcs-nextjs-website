@@ -1,14 +1,21 @@
 import "@/app/globals.css";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { mdxComponents } from "@/mdx-components";
+import { createBlogMdxComponents } from "@/mdx-components";
 import { mdxOptions } from "@/lib/blog/mdx-options";
+import type { ResolvedAuthor } from "@/lib/blog/types";
 
 type Props = {
   bodySecondHalf: string;
+  resolvedAuthor: ResolvedAuthor;
 };
 
-export default function EndBlogPostDetails({ bodySecondHalf }: Props) {
+export default function EndBlogPostDetails({
+  bodySecondHalf,
+  resolvedAuthor,
+}: Props) {
   if (!bodySecondHalf) return null;
+  const mdxComponents = createBlogMdxComponents({ resolvedAuthor });
+
   return (
     <div className="relative py-12 md:px-10 px-5">
       <div className="container mx-auto">

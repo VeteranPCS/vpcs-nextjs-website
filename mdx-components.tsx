@@ -1,9 +1,11 @@
 import type { MDXComponents } from 'mdx/types';
+import type { ComponentProps } from 'react';
 import Image, { type ImageProps } from 'next/image';
 import Link from 'next/link';
 import * as BlogMdx from '@/components/Blog/mdx';
 import BAHCalculator from '@/components/BAHCalculator';
 import MovingBonusCalculator from '@/components/PcsResources/MovingBonusCalculator/MovingBonusCalculator';
+import type { ResolvedAuthor } from '@/lib/blog/types';
 
 function isExternal(href: string): boolean {
   return /^https?:\/\//i.test(href);
@@ -137,6 +139,26 @@ export const mdxComponents: MDXComponents = {
     BAHCalculator,
     MovingBonusCalculator,
 };
+
+type BlogMdxContext = {
+  resolvedAuthor?: ResolvedAuthor | null;
+};
+
+export function createBlogMdxComponents({
+  resolvedAuthor,
+}: BlogMdxContext = {}): MDXComponents {
+  return {
+    ...mdxComponents,
+    AgentCTA: (props: ComponentProps<typeof BlogMdx.AgentCTA>) => (
+      <BlogMdx.AgentCTA {...props} resolvedAuthor={resolvedAuthor} />
+    ),
+    AgentContactLink: (
+      props: ComponentProps<typeof BlogMdx.AgentContactLink>,
+    ) => (
+      <BlogMdx.AgentContactLink {...props} resolvedAuthor={resolvedAuthor} />
+    ),
+  };
+}
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return { ...mdxComponents, ...components };

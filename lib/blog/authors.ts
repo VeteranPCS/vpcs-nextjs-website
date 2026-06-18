@@ -6,7 +6,8 @@ import { unstable_cache } from 'next/cache';
 import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api';
 import { RequestType, salesForceAPI } from '@/services/api';
 import { getSalesforceToken } from '@/services/salesForceTokenService';
-import { stateSlugFromAbbr } from '@/lib/states';
+import { buildContactCtaHref } from '@/lib/contactAgentUrl';
+import { normalizeStateSlug, stateSlugFromAbbr } from '@/lib/states';
 import type { FrontmatterAuthor, ResolvedAuthor } from '@/lib/blog/types';
 
 const AUTHOR_FIELDS = [
@@ -38,6 +39,43 @@ type SfAccount = {
 };
 
 const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp'] as const;
+const FALLBACK_AUTHOR_NAME = 'VeteranPCS';
+
+function normalizeAuthorStateSlug(value: string | null | undefined): string | null {
+  if (!value) return null;
+  return normalizeStateSlug(value) ?? normalizeStateSlug(value.replace(/\s+/g, '-'));
+}
+
+function frontmatterStateSlug(input: FrontmatterAuthor | undefined | null): string | null {
+  return (
+    normalizeAuthorStateSlug(input?.stateSlug) ??
+    normalizeAuthorStateSlug(input?.state)
+  );
+}
+
+function fallbackAuthor(input?: FrontmatterAuthor | null): ResolvedAuthor {
+  return {
+    kind: 'fallback',
+    salesforceId: null,
+    sourceSalesforceId: input?.salesforceId ?? null,
+    firstName: '',
+    lastName: '',
+    fullName: FALLBACK_AUTHOR_NAME,
+    name: FALLBACK_AUTHOR_NAME,
+    city: null,
+    state: null,
+    stateSlug: null,
+    militaryStatus: 'Veteran Agents',
+    brokerage: 'Solid Oak Realty',
+    headshotPath: '/logo-stacked.png',
+    contactHref: '/contact-agent',
+    isAgent: false,
+    isLender: false,
+    active: false,
+    role: 'organization',
+    matchKind: 'fallback',
+  };
+}
 
 function resolveHeadshotPath(salesforceId: string, isLender: boolean): string | null {
   const folders = isLender ? ['lenders', 'agents'] : ['agents', 'lenders'];
@@ -104,55 +142,113 @@ const fetchByName = unstable_cache(
 
 function toResolved(
   record: SfAccount,
-  matchKind: ResolvedAuthor['matchKind'],
+  matchKind: Extract<ResolvedAuthor, { kind: 'salesforce' }>['matchKind'],
+  input?: FrontmatterAuthor | null,
 ): ResolvedAuthor {
   const firstName = record.FirstName ?? '';
   const lastName = record.LastName ?? '';
   const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
   const stateAbbr = record.BillingStateCode ?? null;
   const isLender = record.isLender__pc === true;
+  const isAgent = record.isAgent__pc === true;
   const salesforceId = record.AccountId_15__c ?? record.Id;
+  const stateSlug = frontmatterStateSlug(input) ?? stateSlugFromAbbr(stateAbbr);
 
   return {
+    kind: 'salesforce',
     salesforceId,
     firstName,
     lastName,
-    fullName: fullName || 'VeteranPCS',
+    fullName: fullName || FALLBACK_AUTHOR_NAME,
+    name: fullName || FALLBACK_AUTHOR_NAME,
     city: record.BillingAddress?.city ?? null,
     state: stateAbbr,
-    stateSlug: stateSlugFromAbbr(stateAbbr),
+    stateSlug,
     militaryStatus: record.Military_Status__pc ?? null,
     brokerage: record.Brokerage_Name__pc ?? null,
     headshotPath: resolveHeadshotPath(salesforceId, isLender),
-    isAgent: record.isAgent__pc === true,
+    contactHref: buildContactCtaHref({
+      firstName,
+      salesforceId,
+      stateSlug,
+      form: isLender ? 'lender' : 'agent',
+    }),
+    isAgent,
     isLender,
-    active: record.Active_on_Website__pc !== false,
+    active: true,
+    role: isLender ? 'lender' : 'agent',
     matchKind,
   };
 }
 
+function isPublicAuthor(record: SfAccount): boolean {
+  return (
+    record.Active_on_Website__pc !== false &&
+    (record.isAgent__pc === true || record.isLender__pc === true)
+  );
+}
+
+export function isSameSalesforceId(
+  first: string | null | undefined,
+  second: string | null | undefined,
+): boolean {
+  if (!first || !second) return false;
+  return first.slice(0, 15) === second.slice(0, 15);
+}
+
+export function resolvedAuthorMatchesSalesforceId(
+  author: ResolvedAuthor | null | undefined,
+  salesforceId: string | null | undefined,
+): author is ResolvedAuthor {
+  if (!author || !salesforceId) return false;
+  const authorId = author.kind === 'fallback' ? author.sourceSalesforceId : author.salesforceId;
+  return isSameSalesforceId(authorId, salesforceId);
+}
+
+export function getAuthorContactHref(
+  author: ResolvedAuthor,
+  input?: Pick<FrontmatterAuthor, 'state' | 'stateSlug'> | null,
+): string {
+  if (author.kind === 'fallback') return author.contactHref;
+
+  return buildContactCtaHref({
+    firstName: author.firstName,
+    salesforceId: author.salesforceId,
+    stateSlug: frontmatterStateSlug(input) ?? author.stateSlug,
+    form: author.isLender ? 'lender' : 'agent',
+  });
+}
+
 export async function resolveAuthor(
   input: FrontmatterAuthor | undefined | null,
-): Promise<ResolvedAuthor | null> {
-  if (!input) return null;
+): Promise<ResolvedAuthor> {
+  if (!input) return fallbackAuthor(input);
 
   if (input.salesforceId) {
     try {
       const record = await fetchById(input.salesforceId);
-      if (record) return toResolved(record, 'salesforceId');
+      if (!record || !isPublicAuthor(record)) return fallbackAuthor(input);
+      return toResolved(record, 'salesforceId', input);
     } catch (err) {
       console.error('[resolveAuthor] by-id lookup failed:', err);
+      return fallbackAuthor(input);
     }
   }
 
   if (input.name) {
     try {
       const record = await fetchByName(input.name);
-      if (record) return toResolved(record, 'name');
+      if (record && isPublicAuthor(record)) return toResolved(record, 'name', input);
     } catch (err) {
       console.error('[resolveAuthor] by-name lookup failed:', err);
     }
   }
 
-  return null;
+  return fallbackAuthor(input);
 }
+
+export const __testables = {
+  fallbackAuthor,
+  frontmatterStateSlug,
+  isPublicAuthor,
+};
