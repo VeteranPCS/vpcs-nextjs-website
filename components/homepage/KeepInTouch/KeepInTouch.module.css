@@ -9,9 +9,10 @@
   font-size: 1rem;
 
   &:focus {
-    outline: none;
-    border-color: #6b46c1;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.5);
+    outline: 2px solid #a81f23;
+    outline-offset: 2px;
+    border-color: #a81f23;
+    box-shadow: none;
   }
 }
 @media screen and (max-width: 575px) {

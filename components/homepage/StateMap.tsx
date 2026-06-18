@@ -1,9 +1,18 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import Button from "@/components/common/Button";
 import { sendGTMEvent } from "@next/third-parties/google";
-import StateMapSvg from "@/components/homepage/StateMapSvg";
+
+const StateMapSvg = dynamic(() => import("@/components/homepage/StateMapSvg"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex min-h-[420px] items-center justify-center text-primary tahoma">
+      Loading state map...
+    </div>
+  ),
+});
 
 interface TooltipState {
   display: boolean;
@@ -19,6 +28,17 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
     x: 0,
     y: 0,
   });
+  const [showDesktopMap, setShowDesktopMap] = useState(false);
+
+  useEffect(() => {
+    const desktopQuery = window.matchMedia("(min-width: 768px)");
+    const updateMapVisibility = () => setShowDesktopMap(desktopQuery.matches);
+
+    updateMapVisibility();
+    desktopQuery.addEventListener("change", updateMapVisibility);
+
+    return () => desktopQuery.removeEventListener("change", updateMapVisibility);
+  }, []);
 
   // NOTE: these handlers are wrapped in useCallback with empty deps so they keep
   // a stable identity across renders. The tooltip-position state above changes on
@@ -60,61 +80,59 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
   const states = [
-    { name: 'Alabama', link: `${BASE_URL}/alabama` },
-    { name: 'Alaska', link: `${BASE_URL}/alaska` },
-    { name: 'Arizona', link: `${BASE_URL}/arizona` },
-    { name: 'Arkansas', link: `${BASE_URL}/arkansas` },
-    { name: 'California', link: `${BASE_URL}/california` },
-    { name: 'Colorado', link: `${BASE_URL}/colorado` },
-    { name: 'Connecticut', link: `${BASE_URL}/connecticut` },
-    { name: 'Delaware', link: `${BASE_URL}/delaware` },
-    { name: 'Florida', link: `${BASE_URL}/florida` },
-    { name: 'Georgia', link: `${BASE_URL}/georgia` },
-    { name: 'Hawaii', link: `${BASE_URL}/hawaii` },
-    { name: 'Idaho', link: `${BASE_URL}/idaho` },
-    { name: 'Illinois', link: `${BASE_URL}/illinois` },
-    { name: 'Indiana', link: `${BASE_URL}/indiana` },
-    { name: 'Iowa', link: `${BASE_URL}/iowa` },
-    { name: 'Kansas', link: `${BASE_URL}/kansas` },
-    { name: 'Kentucky', link: `${BASE_URL}/kentucky` },
-    { name: 'Louisiana', link: `${BASE_URL}/louisiana` },
-    { name: 'Maine', link: `${BASE_URL}/maine` },
-    { name: 'Maryland', link: `${BASE_URL}/maryland` },
-    { name: 'Massachusetts', link: `${BASE_URL}/massachusetts` },
-    { name: 'Michigan', link: `${BASE_URL}/michigan` },
-    { name: 'Minnesota', link: `${BASE_URL}/minnesota` },
-    { name: 'Mississippi', link: `${BASE_URL}/mississippi` },
-    { name: 'Missouri', link: `${BASE_URL}/missouri` },
-    { name: 'Montana', link: `${BASE_URL}/montana` },
-    { name: 'Nebraska', link: `${BASE_URL}/nebraska` },
-    { name: 'Nevada', link: `${BASE_URL}/nevada` },
-    { name: 'New Hampshire', link: `${BASE_URL}/new-hampshire` },
-    { name: 'New Jersey', link: `${BASE_URL}/new-jersey` },
-    { name: 'New Mexico', link: `${BASE_URL}/new-mexico` },
-    { name: 'New York', link: `${BASE_URL}/new-york` },
-    { name: 'North Carolina', link: `${BASE_URL}/north-carolina` },
-    { name: 'North Dakota', link: `${BASE_URL}/north-dakota` },
-    { name: 'Ohio', link: `${BASE_URL}/ohio` },
-    { name: 'Oklahoma', link: `${BASE_URL}/oklahoma` },
-    { name: 'Oregon', link: `${BASE_URL}/oregon` },
-    { name: 'Pennsylvania', link: `${BASE_URL}/pennsylvania` },
-    { name: 'Puerto Rico', link: `${BASE_URL}/puerto-rico` },
-    { name: 'Rhode Island', link: `${BASE_URL}/rhode-island` },
-    { name: 'South Carolina', link: `${BASE_URL}/south-carolina` },
-    { name: 'South Dakota', link: `${BASE_URL}/south-dakota` },
-    { name: 'Tennessee', link: `${BASE_URL}/tennessee` },
-    { name: 'Texas', link: `${BASE_URL}/texas` },
-    { name: 'Utah', link: `${BASE_URL}/utah` },
-    { name: 'Vermont', link: `${BASE_URL}/vermont` },
-    { name: 'Virginia', link: `${BASE_URL}/virginia` },
-    { name: 'Washington', link: `${BASE_URL}/washington` },
-    { name: 'Washington DC', link: `${BASE_URL}/washington-dc` },
-    { name: 'West Virginia', link: `${BASE_URL}/west-virginia` },
-    { name: 'Wisconsin', link: `${BASE_URL}/wisconsin` },
-    { name: 'Wyoming', link: `${BASE_URL}/wyoming` }
+    { name: 'Alabama', link: `/alabama` },
+    { name: 'Alaska', link: `/alaska` },
+    { name: 'Arizona', link: `/arizona` },
+    { name: 'Arkansas', link: `/arkansas` },
+    { name: 'California', link: `/california` },
+    { name: 'Colorado', link: `/colorado` },
+    { name: 'Connecticut', link: `/connecticut` },
+    { name: 'Delaware', link: `/delaware` },
+    { name: 'Florida', link: `/florida` },
+    { name: 'Georgia', link: `/georgia` },
+    { name: 'Hawaii', link: `/hawaii` },
+    { name: 'Idaho', link: `/idaho` },
+    { name: 'Illinois', link: `/illinois` },
+    { name: 'Indiana', link: `/indiana` },
+    { name: 'Iowa', link: `/iowa` },
+    { name: 'Kansas', link: `/kansas` },
+    { name: 'Kentucky', link: `/kentucky` },
+    { name: 'Louisiana', link: `/louisiana` },
+    { name: 'Maine', link: `/maine` },
+    { name: 'Maryland', link: `/maryland` },
+    { name: 'Massachusetts', link: `/massachusetts` },
+    { name: 'Michigan', link: `/michigan` },
+    { name: 'Minnesota', link: `/minnesota` },
+    { name: 'Mississippi', link: `/mississippi` },
+    { name: 'Missouri', link: `/missouri` },
+    { name: 'Montana', link: `/montana` },
+    { name: 'Nebraska', link: `/nebraska` },
+    { name: 'Nevada', link: `/nevada` },
+    { name: 'New Hampshire', link: `/new-hampshire` },
+    { name: 'New Jersey', link: `/new-jersey` },
+    { name: 'New Mexico', link: `/new-mexico` },
+    { name: 'New York', link: `/new-york` },
+    { name: 'North Carolina', link: `/north-carolina` },
+    { name: 'North Dakota', link: `/north-dakota` },
+    { name: 'Ohio', link: `/ohio` },
+    { name: 'Oklahoma', link: `/oklahoma` },
+    { name: 'Oregon', link: `/oregon` },
+    { name: 'Pennsylvania', link: `/pennsylvania` },
+    { name: 'Puerto Rico', link: `/puerto-rico` },
+    { name: 'Rhode Island', link: `/rhode-island` },
+    { name: 'South Carolina', link: `/south-carolina` },
+    { name: 'South Dakota', link: `/south-dakota` },
+    { name: 'Tennessee', link: `/tennessee` },
+    { name: 'Texas', link: `/texas` },
+    { name: 'Utah', link: `/utah` },
+    { name: 'Vermont', link: `/vermont` },
+    { name: 'Virginia', link: `/virginia` },
+    { name: 'Washington', link: `/washington` },
+    { name: 'Washington DC', link: `/washington-dc` },
+    { name: 'West Virginia', link: `/west-virginia` },
+    { name: 'Wisconsin', link: `/wisconsin` },
+    { name: 'Wyoming', link: `/wyoming` }
   ];
 
   const filteredStates = states.filter((state) =>
@@ -127,52 +145,55 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
 
   return (
     <>
-      <div className="z-0 w-full" id="state-map">
-        <div className="bg-[#aeb0c7] lg:px-16 py-10 w-full">
+      <section className="z-0 w-full scroll-mt-24" id="state-map" aria-labelledby="state-map-title">
+        <div className="w-full bg-primary-light px-4 py-10 lg:px-16">
           <div>
             <div className="text-center pb-5 w-full relative">
-              <h2 className="text-[#292f6c] text-center text-shadow-lg tahoma font-bold leading-10 lg:text-[59px] md:text-[40px] sm:text-[32px] text-[32px]">
+              <h2 id="state-map-title" className="text-center text-[2rem] font-bold leading-tight text-primary tahoma sm:text-[2.4rem] md:text-[2.75rem] lg:text-[3.4rem]">
                 {title}
               </h2>
-              <p className="lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] text-[#292f6c] text-center text-shadow-lg font-normal lg:my-10 md:my-5 sm:my-5 my-5 tahoma px-2 sm:px-28 lg:px-36 max-w-screen-md mx-auto">
+              <p className="mx-auto my-5 max-w-[46rem] px-2 text-center text-base font-normal leading-7 text-primary tahoma md:my-6 md:text-lg">
                 {subTitle}
               </p>
             </div>
-            <StateMapSvg
-              onMouseEnter={handleMouseEnter}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-              onGtmEvent={handleSendGtmEvent}
-            />
-            <div className="dropdown md:hidden block">
-              <div className="flex mb-2 bg-white w-[337px] mx-auto rounded-xl py-3">
-                <button onClick={toggleDropdown} className="dropbtn ml-6 flex justify-between items-center w-[85%]">
-                  Select State    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div className="dropdown mx-auto block w-full max-w-[360px] md:hidden">
+              <div className="mb-2 flex w-full rounded-xl bg-white py-3 shadow-sm">
+                <button
+                  type="button"
+                  onClick={toggleDropdown}
+                  className="dropbtn mx-5 flex min-h-11 w-full items-center justify-between text-left font-medium text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  aria-expanded={isOpen}
+                  aria-controls="mobile-state-list"
+                >
+                  Choose your destination state
+                  <svg aria-hidden="true" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path id="Vector" d="M1.42857 -3.74668e-07L5 3.57143L8.57143 -6.24447e-08L10 0.714286L5 5.71429L-3.12225e-08 0.714285L1.42857 -3.74668e-07Z" fill="#252B42" />
                   </svg>
-
                 </button>
               </div>
               {isOpen && (
-                <div id="myDropdown" className="dropdown-content">
-                  <div className="w-[337px] mx-auto">
+                <div id="mobile-state-list" className="dropdown-content">
+                  <div className="mx-auto w-full">
+                    <label htmlFor="stateSearch" className="sr-only">
+                      Search destination states
+                    </label>
                     <input
                       type="text"
                       id="stateSearch"
-                      className="search-input h-[48px] w-full rounded-xl pl-3"
-                      placeholder="Search..."
+                      className="search-input h-12 w-full rounded-xl px-3 text-base text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      placeholder="Search by state"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
                   </div>
-                  <div className="bg-white mt-2 w-[337px] mx-auto h-[250px] overflow-auto rounded-lg">
+                  <div className="mx-auto mt-2 h-[250px] w-full overflow-auto rounded-lg bg-white">
                     {filteredStates.length === 0 ? (
                       <div className="flex items-center justify-center h-full">
-                        <span className="text-gray-500">No data found</span>
+                        <span className="text-gray-500">No states found</span>
                       </div>
                     ) : (
                       filteredStates.map((state) => (
-                        <a key={state.name} href={state.link} className="py-2 flex justify-center border border-solid">
+                        <a key={state.name} href={state.link} className="flex min-h-11 items-center justify-center border border-solid px-3 py-2 text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-primary">
                           {state.name}
                         </a>
                       ))
@@ -181,12 +202,25 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
                 </div>
               )}
             </div>
-            <Link href={buttonLink} className="md:py-8 py-2 flex justify-center" onClick={handleSendGtmEvent}>
+            <div className="hidden md:block" aria-describedby="state-map-help">
+              <p id="state-map-help" className="sr-only">
+                Select a state on the map to view VeteranPCS agents and lenders for that destination.
+              </p>
+              {showDesktopMap && (
+                <StateMapSvg
+                  onMouseEnter={handleMouseEnter}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                  onGtmEvent={handleSendGtmEvent}
+                />
+              )}
+            </div>
+            <Link href={buttonLink} className="flex justify-center py-4 md:py-8" onClick={handleSendGtmEvent}>
               <Button buttonText={buttonText} />
             </Link>
           </div>
         </div>
-      </div>
+      </section>
       {tooltip.display && (
         <div
           className="tooltip"

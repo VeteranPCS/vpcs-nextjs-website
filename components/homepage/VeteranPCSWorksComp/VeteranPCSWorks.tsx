@@ -14,8 +14,8 @@ const cardsData = [
     img: "/icon/checkred.svg",
     title: "VA LOAN",
     subTitle:
-      "Don’t overpay when using your va loan. Our va loan experts are here to help.",
-    link: "#state-map",
+      "Don’t overpay when using your VA loan. Our VA loan experts are here to help.",
+    link: "/va-loan-help",
   },
   {
     img: "/icon/checkred.svg",

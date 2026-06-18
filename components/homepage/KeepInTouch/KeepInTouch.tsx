@@ -135,40 +135,52 @@ const KeepInTouch = () => {
           <div className="mt-5 lg:mt-0 md:mt-0 sm:mt-5">
             <div className={classes.CustomResponsiveCenter}>
               <form onSubmit={handleSubmit(handleFormSubmission)}>
-                <h2 className="lg:text-[36px] sm:text-[25px] text-[25px] poppins font-bold text-[#292F6C] lg:text-left md:text-left sm:text-center text-center">
+                <h2 className="lg:text-[36px] sm:text-[25px] text-[25px] poppins font-bold text-primary lg:text-left md:text-left sm:text-center text-center">
                   Keep In Touch
                 </h2>
-                <p className="text-[#292F6C] font-bold lg:text-[21px] sm:text-[15px] text-[15px] roboto mb-6 lg:text-left md:text-left sm:text-center text-center">
+                <p className="text-primary font-bold lg:text-[21px] sm:text-[15px] text-[15px] roboto mb-6 lg:text-left md:text-left sm:text-center text-center">
                   No spam mail, no fees. VeteranPCS is free to use.
                 </p>
                 <div className="flex flex-col mb-5">
+                  <label htmlFor="keep-first-name" className="mb-2 text-left text-sm font-semibold text-primary roboto">
+                    First name <span aria-hidden="true">*</span>
+                  </label>
                   <input
+                    id="keep-first-name"
                     className={classes.KeepInTouchInput}
                     type="text"
                     {...register('firstName')}
-                    placeholder="First Name*"
+                    autoComplete="given-name"
                   />
                   {renderError('firstName')}
                 </div>
                 <div className="flex flex-col mb-5">
+                  <label htmlFor="keep-last-name" className="mb-2 text-left text-sm font-semibold text-primary roboto">
+                    Last name <span aria-hidden="true">*</span>
+                  </label>
                   <input
+                    id="keep-last-name"
                     className={classes.KeepInTouchInput}
                     type="text"
-                    placeholder="Last Name*"
                     {...register('lastName')}
+                    autoComplete="family-name"
                   />
                   {renderError('lastName')}
                 </div>
                 <div className="flex flex-col mb-5">
+                  <label htmlFor="keep-email" className="mb-2 text-left text-sm font-semibold text-primary roboto">
+                    Email <span aria-hidden="true">*</span>
+                  </label>
                   <input
+                    id="keep-email"
                     className={classes.KeepInTouchInput}
                     type="email"
-                    placeholder="Email*"
                     {...register('email')}
+                    autoComplete="email"
                   />
                   {renderError('email')}
                 </div>
-                <p className="text-[#292F6C] roboto lg:text-[14px] max-w-[390px] sm:max-w-full mx-auto sm:text-[9px] text-[9px] font-medium mb-3 text-left md:pl-0 sm:pl-3 pl-3">
+                <p className="text-primary roboto text-xs lg:text-sm max-w-[390px] sm:max-w-full mx-auto font-medium mb-3 text-left md:pl-0 sm:pl-3 pl-3">
                   Fields marked with an asterisk (*) are required.
                 </p>
                 <HoneypotField ref={honeypotRef} />
@@ -178,7 +190,7 @@ const KeepInTouch = () => {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`items-center ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#A81F23]'} w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px] px-[20px] xl:py-[15px] lg:py-[15px] sm:py-[14px] py-[14px] rounded-[16px] text-center tracking-[1px] hover:tracking-[5px] duration-500 transition-all hover:bg-[#871B1C]`}
+	                        className={`inline-flex min-h-11 items-center rounded-2xl px-5 py-3.5 text-center transition-colors duration-200 sm:px-5 lg:px-[30px] lg:py-[15px] xl:px-[30px] xl:py-[15px] ${isSubmitting ? 'cursor-not-allowed bg-gray-400' : 'bg-accent-red hover:bg-accent-red-dark'}`}
                       >
                         <span
                           className="xl:text-[18px] lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal leading-6 bg-cover 

@@ -2,7 +2,6 @@ import React from "react";
 import classes from "./Footer.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import { date } from "yup";
 
 const Locations = () => {
   const locations = [
@@ -69,17 +68,34 @@ const Locations = () => {
     <div className={classes.FooterLocationsContainer}>
       <div className={classes.FooterContainer}>
         <div className="container mx-auto">
-          <div className="flex justify-center items-center mb-10 roboto font-bold">
+          <details className="mx-5 mb-8 rounded-xl border border-white/30 px-4 py-3 text-white md:hidden">
+            <summary className="cursor-pointer text-center roboto text-2xl font-bold">
+              Locations
+            </summary>
+            <div className="mt-5 grid grid-cols-1 gap-2">
+              {locations.map((location, index) => (
+                <div key={index} className={classes.LocationItem}>
+                  <Link
+                    href={`/${formattedLocation(location)}`}
+                    className="flex min-h-11 items-center justify-center text-center roboto text-base font-medium text-white"
+                  >
+                    {location}
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </details>
+          <div className="mb-10 hidden justify-center items-center roboto font-bold md:flex">
             <div className="text-white text-center roboto text-3xl font-bold">
               LOCATIONS
             </div>
           </div>
-          <div className={classes.LocationsGrid}>
+          <div className="hidden grid-cols-1 gap-2 md:grid md:grid-cols-3 lg:grid-cols-4">
             {locations.map((location, index) => (
               <div key={index} className={classes.LocationItem}>
                 <Link
                   href={`/${formattedLocation(location)}`}
-                  className="text-white text-center roboto text-base font-medium"
+                  className="flex min-h-11 items-center justify-center text-white text-center roboto text-base font-medium"
                 >
                   {location}
                 </Link>

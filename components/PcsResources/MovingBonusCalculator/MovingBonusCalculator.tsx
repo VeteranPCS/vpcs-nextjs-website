@@ -122,8 +122,9 @@ const MovingBonusCalculator = () => {
                             <div className="flex-shrink-0">
                                 <Image
                                     src={imgHouse}
-                                    alt="House Icon"
-                                    className="h-16 lg:w-20 w-auto"
+                                    alt=""
+                                    className="w-16 lg:w-20"
+                                    style={{ height: "auto" }}
                                     width={80}
                                     height={80}
                                 />
@@ -137,7 +138,7 @@ const MovingBonusCalculator = () => {
                                         Estimated <span className="font-normal">Veteran</span>PCS Bonus
                                     </h2>
                                     <p className="text-[#231f20] text-sm tahoma">
-                                        Adjust the slider to see your estimated VeteranPCSBonus! Are you a Veteran? See if you qualify today!
+	                                        Adjust the slider to estimate your VeteranPCS bonus. We can confirm your options when we match you with an agent.
                                     </p>
                                 </div>
 
@@ -149,7 +150,8 @@ const MovingBonusCalculator = () => {
                                             min={sliderMinValue}
                                             max={sliderMaxValue}
                                             value={Math.min(Math.max(homeValue, sliderMinValue), sliderMaxValue)}
-                                            onChange={handleSliderChange}
+	                                            onChange={handleSliderChange}
+	                                            aria-label="Estimated home price"
                                             className={`w-full h-3 rounded-md appearance-none cursor-pointer outline-none ${styles.sliderThumb}`}
                                             style={{
                                                 background: `linear-gradient(to right, #A81F23 0%, #A81F23 ${sliderPercentage}%, #8B8B8B ${sliderPercentage}%, #8B8B8B 100%)`
@@ -184,11 +186,11 @@ const MovingBonusCalculator = () => {
                                         </p>
                                     </div>
 
-                                    {/* Connect Button */}
+                                    {/* CTA Button */}
                                     <div className="text-center md:text-center">
                                         <Link href="/contact-agent" onClick={handleConnectClick}>
                                             <Button
-                                                buttonText="Connect Now"
+                                                buttonText="Find An Agent"
                                                 divClassName="py-0"
                                             />
                                         </Link>
@@ -212,4 +214,4 @@ const MovingBonusCalculator = () => {
     );
 };
 
-export default MovingBonusCalculator; 
+export default MovingBonusCalculator;

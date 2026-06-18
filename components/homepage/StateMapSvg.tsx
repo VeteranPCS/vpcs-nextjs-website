@@ -32,7 +32,7 @@ function StateMapSvgInner({
               viewBox="0 0 1766 1067"
               className="w-full h-full mx-auto"
             >
-              <Link href="/washington" onClick={onGtmEvent}>
+              <Link href="/washington" aria-label="View VeteranPCS agents in Washington" onClick={onGtmEvent}>
                 <g
                   id="Washington"
                   className="state"
@@ -61,7 +61,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/oregon" onClick={onGtmEvent}>
+              <Link href="/oregon" aria-label="View VeteranPCS agents in Oregon" onClick={onGtmEvent}>
                 <g
                   id="Oregon"
                   className="state"
@@ -90,7 +90,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/california" onClick={onGtmEvent}>
+              <Link href="/california" aria-label="View VeteranPCS agents in California" onClick={onGtmEvent}>
                 <g
                   id="California"
                   className="state"
@@ -119,7 +119,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/nevada" onClick={onGtmEvent}>
+              <Link href="/nevada" aria-label="View VeteranPCS agents in Nevada" onClick={onGtmEvent}>
                 <g
                   id="Nevada"
                   className="state"
@@ -147,7 +147,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/idaho" onClick={onGtmEvent}>
+              <Link href="/idaho" aria-label="View VeteranPCS agents in Idaho" onClick={onGtmEvent}>
                 <g
                   id="Idaho"
                   className="state"
@@ -175,7 +175,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/utah" onClick={onGtmEvent}>
+              <Link href="/utah" aria-label="View VeteranPCS agents in Utah" onClick={onGtmEvent}>
                 <g
                   id="Utah"
                   className="state"
@@ -205,7 +205,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/arizona" onClick={onGtmEvent}>
+              <Link href="/arizona" aria-label="View VeteranPCS agents in Arizona" onClick={onGtmEvent}>
                 <g
                   id="Arizona"
                   className="state"
@@ -233,7 +233,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/new-mexico" onClick={onGtmEvent}>
+              <Link href="/new-mexico" aria-label="View VeteranPCS agents in New Mexico" onClick={onGtmEvent}>
                 <g
                   id="New Mexico"
                   className="state"
@@ -261,7 +261,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/colorado" onClick={onGtmEvent}>
+              <Link href="/colorado" aria-label="View VeteranPCS agents in Colorado" onClick={onGtmEvent}>
                 <g
                   id="Colorado"
                   className="state"
@@ -289,7 +289,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/wyoming" onClick={onGtmEvent}>
+              <Link href="/wyoming" aria-label="View VeteranPCS agents in Wyoming" onClick={onGtmEvent}>
                 <g
                   id="Wyoming"
                   className="state"
@@ -317,7 +317,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/montana" onClick={onGtmEvent}>
+              <Link href="/montana" aria-label="View VeteranPCS agents in Montana" onClick={onGtmEvent}>
                 <g
                   id="Montana"
                   className="state"
@@ -345,7 +345,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/north-dakota" onClick={onGtmEvent}>
+              <Link href="/north-dakota" aria-label="View VeteranPCS agents in North Dakota" onClick={onGtmEvent}>
                 <g
                   id="North Dakota"
                   className="state"
@@ -373,7 +373,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/south-dakota" onClick={onGtmEvent}>
+              <Link href="/south-dakota" aria-label="View VeteranPCS agents in South Dakota" onClick={onGtmEvent}>
                 <g
                   id="South Dakota"
                   className="state"
@@ -401,7 +401,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/nebraska" onClick={onGtmEvent}>
+              <Link href="/nebraska" aria-label="View VeteranPCS agents in Nebraska" onClick={onGtmEvent}>
                 <g
                   id="Nebraska"
                   className="state"
@@ -429,7 +429,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/kansas" onClick={onGtmEvent}>
+              <Link href="/kansas" aria-label="View VeteranPCS agents in Kansas" onClick={onGtmEvent}>
                 <g
                   id="Kansas"
                   className="state"
@@ -457,7 +457,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/oklahoma" onClick={onGtmEvent}>
+              <Link href="/oklahoma" aria-label="View VeteranPCS agents in Oklahoma" onClick={onGtmEvent}>
                 <g
                   id="Oklahoma"
                   className="state"
@@ -485,7 +485,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/wisconsin" onClick={onGtmEvent}>
+              <Link href="/wisconsin" aria-label="View VeteranPCS agents in Wisconsin" onClick={onGtmEvent}>
                 <g
                   id="Wisconsin"
                   className="state"
@@ -514,7 +514,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/minnesota" onClick={onGtmEvent}>
+              <Link href="/minnesota" aria-label="View VeteranPCS agents in Minnesota" onClick={onGtmEvent}>
                 <g
                   id="Minnesota"
                   className="state"
@@ -542,7 +542,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/michigan" onClick={onGtmEvent}>
+              <Link href="/michigan" aria-label="View VeteranPCS agents in Michigan" onClick={onGtmEvent}>
                 <g
                   id="Michigan"
                   className="state"
@@ -571,7 +571,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/iowa" onClick={onGtmEvent}>
+              <Link href="/iowa" aria-label="View VeteranPCS agents in Iowa" onClick={onGtmEvent}>
                 <g
                   id="Iowa"
                   className="state"
@@ -599,7 +599,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/missouri" onClick={onGtmEvent}>
+              <Link href="/missouri" aria-label="View VeteranPCS agents in Missouri" onClick={onGtmEvent}>
                 <g
                   id="Missouri"
                   className="state"
@@ -627,7 +627,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/illinois" onClick={onGtmEvent}>
+              <Link href="/illinois" aria-label="View VeteranPCS agents in Illinois" onClick={onGtmEvent}>
                 <g
                   id="Illinois"
                   className="state"
@@ -655,7 +655,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/indiana" onClick={onGtmEvent}>
+              <Link href="/indiana" aria-label="View VeteranPCS agents in Indiana" onClick={onGtmEvent}>
                 <g
                   id="Indiana"
                   className="state"
@@ -683,7 +683,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/ohio" onClick={onGtmEvent}>
+              <Link href="/ohio" aria-label="View VeteranPCS agents in Ohio" onClick={onGtmEvent}>
                 <g
                   id="Ohio"
                   className="state"
@@ -711,7 +711,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/maine" onClick={onGtmEvent}>
+              <Link href="/maine" aria-label="View VeteranPCS agents in Maine" onClick={onGtmEvent}>
                 <g
                   id="Maine"
                   className="state"
@@ -740,7 +740,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/new-york" onClick={onGtmEvent}>
+              <Link href="/new-york" aria-label="View VeteranPCS agents in New York" onClick={onGtmEvent}>
                 <g
                   id="New York"
                   className="state"
@@ -769,7 +769,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/pennsylvania" onClick={onGtmEvent}>
+              <Link href="/pennsylvania" aria-label="View VeteranPCS agents in Pennsylvania" onClick={onGtmEvent}>
                 <g
                   id="Pennsylvania"
                   className="state"
@@ -797,7 +797,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/kentucky" onClick={onGtmEvent}>
+              <Link href="/kentucky" aria-label="View VeteranPCS agents in Kentucky" onClick={onGtmEvent}>
                 <g
                   id="Kentucky"
                   className="state"
@@ -826,7 +826,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/tennessee" onClick={onGtmEvent}>
+              <Link href="/tennessee" aria-label="View VeteranPCS agents in Tennessee" onClick={onGtmEvent}>
                 <g
                   id="Tennessee"
                   className="state"
@@ -854,7 +854,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/arkansas" onClick={onGtmEvent}>
+              <Link href="/arkansas" aria-label="View VeteranPCS agents in Arkansas" onClick={onGtmEvent}>
                 <g
                   id="Arkansas"
                   className="state"
@@ -882,7 +882,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/louisiana" onClick={onGtmEvent}>
+              <Link href="/louisiana" aria-label="View VeteranPCS agents in Louisiana" onClick={onGtmEvent}>
                 <g
                   id="Louisiana"
                   className="state"
@@ -911,7 +911,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/mississippi" onClick={onGtmEvent}>
+              <Link href="/mississippi" aria-label="View VeteranPCS agents in Mississippi" onClick={onGtmEvent}>
                 <g
                   id="Mississippi"
                   className="state"
@@ -940,7 +940,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/alabama" onClick={onGtmEvent}>
+              <Link href="/alabama" aria-label="View VeteranPCS agents in Alabama" onClick={onGtmEvent}>
                 <g
                   id="Alabama"
                   className="state"
@@ -969,7 +969,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/georgia" onClick={onGtmEvent}>
+              <Link href="/georgia" aria-label="View VeteranPCS agents in Georgia" onClick={onGtmEvent}>
                 <g
                   id="Georgia"
                   className="state"
@@ -998,7 +998,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/west-virginia" onClick={onGtmEvent}>
+              <Link href="/west-virginia" aria-label="View VeteranPCS agents in West Virginia" onClick={onGtmEvent}>
                 <g
                   id="West Virginia"
                   className="state"
@@ -1026,7 +1026,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/virginia" onClick={onGtmEvent}>
+              <Link href="/virginia" aria-label="View VeteranPCS agents in Virginia" onClick={onGtmEvent}>
                 <g
                   id="Virginia"
                   className="state"
@@ -1055,7 +1055,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/north-carolina" onClick={onGtmEvent}>
+              <Link href="/north-carolina" aria-label="View VeteranPCS agents in North Carolina" onClick={onGtmEvent}>
                 <g
                   id="North Carolina"
                   className="state"
@@ -1084,7 +1084,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/south-carolina" onClick={onGtmEvent}>
+              <Link href="/south-carolina" aria-label="View VeteranPCS agents in South Carolina" onClick={onGtmEvent}>
                 <g
                   id="South Carolina"
                   className="state"
@@ -1113,7 +1113,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/florida" onClick={onGtmEvent}>
+              <Link href="/florida" aria-label="View VeteranPCS agents in Florida" onClick={onGtmEvent}>
                 <g
                   id="Florida"
                   className="state"
@@ -1142,7 +1142,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/maryland" onClick={onGtmEvent}>
+              <Link href="/maryland" aria-label="View VeteranPCS agents in Maryland" onClick={onGtmEvent}>
                 <g
                   id="Maryland"
                   className="state small-state-group"
@@ -1175,7 +1175,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/washington-dc" onClick={onGtmEvent}>
+              <Link href="/washington-dc" aria-label="View VeteranPCS agents in Washington Dc" onClick={onGtmEvent}>
                 <g
                   id="Washington DC"
                   className="state small-state-group"
@@ -1203,7 +1203,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/delaware" onClick={onGtmEvent}>
+              <Link href="/delaware" aria-label="View VeteranPCS agents in Delaware" onClick={onGtmEvent}>
                 <g
                   id="Delaware"
                   className="state small-state-group"
@@ -1236,7 +1236,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/new-jersey" onClick={onGtmEvent}>
+              <Link href="/new-jersey" aria-label="View VeteranPCS agents in New Jersey" onClick={onGtmEvent}>
                 <g
                   id="New Jersey"
                   className="state small-state-group"
@@ -1269,7 +1269,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/connecticut" onClick={onGtmEvent}>
+              <Link href="/connecticut" aria-label="View VeteranPCS agents in Connecticut" onClick={onGtmEvent}>
                 <g
                   id="Connecticut"
                   className="state small-state-group"
@@ -1301,7 +1301,7 @@ function StateMapSvgInner({
                   ></path>
                 </g>
               </Link>
-              <Link href="/rhode-island" onClick={onGtmEvent}>
+              <Link href="/rhode-island" aria-label="View VeteranPCS agents in Rhode Island" onClick={onGtmEvent}>
                 <g
                   id="Rhode Island"
                   className="state small-state-group"
@@ -1333,7 +1333,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/massachusetts" onClick={onGtmEvent}>
+              <Link href="/massachusetts" aria-label="View VeteranPCS agents in Massachusetts" onClick={onGtmEvent}>
                 <g
                   id="Massachusetts"
                   className="state small-state-group"
@@ -1366,7 +1366,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/new-hampshire" onClick={onGtmEvent}>
+              <Link href="/new-hampshire" aria-label="View VeteranPCS agents in New Hampshire" onClick={onGtmEvent}>
                 <g
                   id="New Hampshire"
                   className="state small-state-group"
@@ -1398,7 +1398,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/vermont" onClick={onGtmEvent}>
+              <Link href="/vermont" aria-label="View VeteranPCS agents in Vermont" onClick={onGtmEvent}>
                 <g
                   id="Vermont"
                   className="state small-state-group"
@@ -1430,7 +1430,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/texas" onClick={onGtmEvent}>
+              <Link href="/texas" aria-label="View VeteranPCS agents in Texas" onClick={onGtmEvent}>
                 <g
                   id="Texas"
                   className="state"
@@ -1459,7 +1459,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/alaska" onClick={onGtmEvent}>
+              <Link href="/alaska" aria-label="View VeteranPCS agents in Alaska" onClick={onGtmEvent}>
                 <g
                   id="Alaska"
                   className="state"
@@ -1488,7 +1488,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/hawaii" onClick={onGtmEvent}>
+              <Link href="/hawaii" aria-label="View VeteranPCS agents in Hawaii" onClick={onGtmEvent}>
                 <g
                   id="Hawaii"
                   className="state small-state-group"
@@ -1523,7 +1523,7 @@ function StateMapSvgInner({
                   </g>
                 </g>
               </Link>
-              <Link href="/puerto-rico">
+              <Link href="/puerto-rico" aria-label="View VeteranPCS agents in Puerto Rico" onClick={onGtmEvent}>
                 <g
                   id="Puerto Rico"
                   className="state small-state-group"

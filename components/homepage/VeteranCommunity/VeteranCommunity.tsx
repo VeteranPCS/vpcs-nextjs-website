@@ -76,13 +76,13 @@ const VeteranCommunity = async ({ component_slug }: { component_slug: string }) 
                 height={100}
                 src={pageData?.icon?.asset?.image_url || "/icon/userplus.svg"}
                 className="w-auto h-auto"
-                alt={pageData?.icon?.alt || "Description of the image"}
+                alt={pageData?.icon?.alt || ""}
               />
             </div>
             <div>
-              <h1 className="text-white poppins lg:text-left md:text-left sm:text-center text-center text-3xl font-bold leading-[40px] mt-5">
+              <h2 className="text-white poppins lg:text-left md:text-left sm:text-center text-center text-3xl font-bold leading-[40px] mt-5">
                 {pageData?.title}
-              </h1>
+              </h2>
               <div className="text-white md:text-xl sm:text-sm lg:text-left md:text-left sm:text-center text-center italic font-medium leading-[25px] mt-4 roboto">
                 {pageData?.description?.map((block, index) => (
                   <SupportContent
@@ -107,7 +107,7 @@ const VeteranCommunity = async ({ component_slug }: { component_slug: string }) 
                     height={100}
                     src="/icon/checkred.svg"
                     className="md:w-[25px] md:h-[25px] sm:w-[20px] sm:h-[20px] w-[25px] h-[25px] mt-1"
-                    alt="Description of the image"
+                    alt=""
                   />
                   <h6 className="text-white roboto md:text-lg sm:text-sm font-medium my-0">
                     <SupportContent

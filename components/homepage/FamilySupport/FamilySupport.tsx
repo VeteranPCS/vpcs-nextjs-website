@@ -56,13 +56,13 @@ const FamilySupport = async ({ link, component_slug }: { link: string, component
                 height={150}
                 className={component_slug === "freedom-service-dogs" ? "w-auto h-auto min-w-64" : "hidden md:block w-auto h-auto lg:min-w-32 min-w-32"}
                 src={pageData?.icon?.asset?.image_url || "/icon/userplus.svg"}
-                alt={pageData?.icon?.alt || "Description of the image"}
+                alt={pageData?.icon?.alt || ""}
               />
             </div>
             <div>
-              <h1 className="text-white poppins lg:text-[31px] md:text-[31px] sm:text-[29px] text-[29px] font-bold mt-5 lg:text-left md:text-left sm:text-center text-center lg:w-[400px]">
+              <h2 className="text-white poppins lg:text-[31px] md:text-[31px] sm:text-[29px] text-[29px] font-bold mt-5 lg:text-left md:text-left sm:text-center text-center lg:w-[400px]">
                 {pageData?.title}
-              </h1>
+              </h2>
               <div className="text-white roboto lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] italic font-medium leading-[25px] mt-4 lg:text-left md:text-left sm:text-center text-center">
                 {pageData?.description?.map((block, index) => (
                   <SupportContent
@@ -88,7 +88,7 @@ const FamilySupport = async ({ link, component_slug }: { link: string, component
                     height={100}
                     className="md:mt-1 mt-0.5 w-6 h-6"
                     src="/icon/checkred.svg"
-                    alt="Description of the image"
+                    alt=""
                   />
                   <h6 className="text-white roboto lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] font-medium leading-[41px]">
                     <SupportContent

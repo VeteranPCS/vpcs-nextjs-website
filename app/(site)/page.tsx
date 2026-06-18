@@ -1,7 +1,6 @@
 import StateMap from "@/components/homepage/StateMap";
 import HeroSection from "@/components/homepage/HeroSection/HeroSection";
 import FeaturedLogos from "@/components/homepage/FeaturedLogos/FeaturedLogos";
-import Testimonials from "@/components/Testimonials/TestimonialPage";
 import VideoFamily from "@/components/homepage/VideoFamily";
 import Covered from "@/components/homepage/Covered/Covered";
 import FamilySupport from "@/components/homepage/FamilySupport/FamilySupport";
@@ -26,25 +25,24 @@ export default function Home() {
         page="home"
       />
       <StateMap
-        title="Buying or Selling?"
-        subTitle="Choose a state below to connect with our veteran and military spouse agents and lenders"
-        buttonText="Don't want to browse? Find an Agent For Me"
+        title="Where are you moving?"
+        subTitle="Choose your destination state to see military-friendly agents and VA loan experts, or let us match you directly."
+        buttonText="Match Me With An Agent"
         buttonLink="/contact-agent"
       />
       <FeaturedLogos />
-      <VideoFamily />
-      <Testimonials />
       <MovingBonusCalculator />
-      <Covered />
+      <VeteranPCS />
+      <ReviewsList />
+      <VideoFamily />
+      <VeteranCommunity component_slug="support-our-veteran-community" />
+      <WhyVeteranPcs />
       <FamilySupport
         link="https://www.veteranpcs.com/impact"
         component_slug="support-our-veteran-community"
       />
-      <VeteranPCS />
-      <ReviewsList />
       <MakeItHome />
-      <VeteranCommunity component_slug="support-our-veteran-community" />
-      <WhyVeteranPcs />
+      <Covered />
       <AgentLoanExpert />
       <SkillFuturesBuild />
       <KeepInTouch />

@@ -83,8 +83,18 @@ select option:not([value=""]) {
 }
 
 .nav li:hover>.sub-menu,
+.nav li:focus-within>.sub-menu,
 .nav .sub-menu:hover {
   @apply opacity-100 visible transition-visibility duration-300;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid theme('colors.accent.red.DEFAULT');
+  outline-offset: 3px;
 }
 
 .menu .menu-nav ul ul {

@@ -6,6 +6,10 @@ import Link from "next/link";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [cashBackAmount, setCashBackAmount] = useState("$500,000");
+  const navItemClass =
+    "relative max-w-fit pr-3 py-1 text-sm after:absolute after:bottom-0 after:left-0 after:h-1 after:w-0 after:bg-accent-red after:transition-all after:duration-300 hover:after:w-full focus-within:after:w-full md:pr-0 xl:text-base";
+  const navLinkClass =
+    "text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white";
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -30,51 +34,61 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-[#292f6c] fixed top-0 left-0 w-full z-50 shadow-lg lg:px-0 px-5">
+    <header className="fixed left-0 top-0 z-50 w-full bg-primary px-5 shadow-lg lg:px-0">
       <div className="container mx-auto w-full">
-        <nav className="flex justify-between">
+        <nav className="flex min-h-[64px] justify-between lg:min-h-[80px]" aria-label="Primary navigation">
           <Link className="w-[130px] md:w-[200px] flex items-center" href="/">
             <Image
               width={235}
               height={63}
               src="/icon/VeteranPCSlogo.svg"
-              className="lg:w-[235px] lg:h-[63px] md:w-[235px] md:h-[63px] sm:w-[200px] sm:h-[63px] w-[200px] h-[63px]"
+              className="h-auto w-[200px] md:w-[235px]"
               alt="VeteranPCS logo"
               onClick={isMenuOpen ? onMenuToggle : undefined}
             />
           </Link>
           <div className="flex items-center lg:gap-8 xl:gap-10">
             <div
-              className={`navLinks duration-500 absolute md:static md:w-auto ${isMenuOpen ? "w-[60%]" : "w-full"} w-full md:h-auto ${isMenuOpen ? "h-[100vh]" : "h-[100vh]"}  bg-[#292f6c] flex md:items-center gap-[1.5vw] top-[100%] ${isMenuOpen ? "left-[0%]" : "left-[-100%]"} px-5 md:py-0 py-5`}
+              id="primary-navigation"
+              className={`navLinks absolute top-full bg-primary px-5 py-5 md:static md:flex md:h-auto md:w-auto md:items-center md:bg-transparent md:px-0 md:py-0 ${isMenuOpen ? "left-0 flex h-[calc(100vh-64px)] w-[min(86vw,340px)]" : "hidden"} gap-[1.5vw]`}
             >
               <ul className="menu nav flex md:flex-row flex-col md:items-center xl:gap-12 gap-6">
-                <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                  <Link className="text-white" href="/about" onClick={onMenuToggle}>
+                <li className="md:hidden">
+                  <Link
+                    className="inline-flex min-h-11 rounded-2xl bg-accent-red px-5 py-3 text-white transition-colors hover:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                    href="/contact-agent"
+                    onClick={onMenuToggle}
+                  >
+                    Find An Agent
+                  </Link>
+                </li>
+                <li className={navItemClass}>
+                  <Link className={navLinkClass} href="/about" onClick={onMenuToggle}>
                     About
                   </Link>
                 </li>
-                <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                  <Link className="text-white" href="/how-it-works" onClick={onMenuToggle}>
+                <li className={navItemClass}>
+                  <Link className={navLinkClass} href="/how-it-works" onClick={onMenuToggle}>
                     How It Works
                   </Link>
                 </li>
-                <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                  <Link className="text-white" href="/impact" onClick={onMenuToggle}>
+                <li className={navItemClass}>
+                  <Link className={navLinkClass} href="/impact" onClick={onMenuToggle}>
                     Impact
                   </Link>
                 </li>
-                <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                  <Link className="text-white" href="/blog" onClick={onMenuToggle}>
+                <li className={navItemClass}>
+                  <Link className={navLinkClass} href="/blog" onClick={onMenuToggle}>
                     Blog
                   </Link>
                 </li>
-                <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                  <Link className="text-white" href="/pcs-resources" onClick={onMenuToggle}>
+                <li className={navItemClass}>
+                  <Link className={navLinkClass} href="/pcs-resources" onClick={onMenuToggle}>
                     PCS Resources
                   </Link>
                 </li>
-                <li className="relative xl:text-base text-sm max-w-fit pr-3 md:pr-0 py-1 after:bg-gradient-to-r from-[#A81F23] to-[#A81F23] after:absolute after:h-1 after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300">
-                  <Link className="text-white" href="/contact" onClick={onMenuToggle}>
+                <li className={navItemClass}>
+                  <Link className={navLinkClass} href="/contact" onClick={onMenuToggle}>
                     Contact
                   </Link>
                   <ul className="sub-menu">
@@ -102,22 +116,32 @@ const Header = () => {
               </ul>
             </div>
             <div className="flex items-center gap-2">
-              <div className="text-sm bg-[#7e1618] px-5 lg:block md:hidden sm:hidden hidden">
-                <div className="text-center py-[28px]">
-                  <p className="text-white text-[33px]">
-                    <strong className="text-[33px] text-white font-bold">
-                      {cashBackAmount}<strong></strong>
+              <Link
+                href="/contact-agent"
+                className="hidden min-h-11 items-center rounded-2xl bg-accent-red px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex"
+              >
+                Find An Agent
+              </Link>
+              <div className="hidden bg-accent-red-dark px-4 text-sm xl:block">
+                <div className="text-center py-4">
+                  <p className="text-white text-xl">
+                    <strong className="text-xl text-white font-bold">
+                      {cashBackAmount}
                     </strong>
                   </p>
-                  <p className="py-4 text-white mb-0 pb-0 text-xs">
+                  <p className="pt-1 text-white mb-0 pb-0 text-xs">
                     Given Back to Military Families
                   </p>
                 </div>
               </div>
               <button
+                type="button"
                 name={isMenuOpen ? "close" : "menu"}
                 onClick={onMenuToggle}
-                className="text-[30px] cursor-pointer md:hidden"
+                className="relative min-h-11 min-w-11 cursor-pointer text-[30px] md:hidden"
+                aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                aria-expanded={isMenuOpen}
+                aria-controls="primary-navigation"
               >
                 <span className="absolute top-1/2 left-1/2 size-12 -translate-x-1/2 -translate-y-1/2 [@media(pointer:fine):hidden]"></span>
                 <svg
