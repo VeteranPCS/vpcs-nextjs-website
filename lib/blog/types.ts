@@ -1,6 +1,8 @@
 export type FrontmatterAuthor = {
   salesforceId?: string;
   name?: string;
+  state?: string;
+  stateSlug?: string;
 };
 
 export type BlogFrontmatter = {
