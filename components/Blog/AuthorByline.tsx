@@ -1,10 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Button from '@/components/common/Button';
-import { resolveAuthor } from '@/lib/blog/authors';
-import { buildContactCtaHref } from '@/lib/contactAgentUrl';
-import { normalizeStateSlug } from '@/lib/states';
-import type { FrontmatterAuthor } from '@/lib/blog/types';
+import { getAuthorContactHref, resolveAuthor } from '@/lib/blog/authors';
+import type { FrontmatterAuthor, ResolvedAuthor } from '@/lib/blog/types';
 
 const VPCS_FALLBACK = {
   logo: '/logo-stacked.png',
@@ -18,26 +16,20 @@ const VPCS_FALLBACK = {
 
 type Props = {
   frontmatterAuthor: FrontmatterAuthor | null | undefined;
+  resolvedAuthor?: ResolvedAuthor | null;
   variant?: 'card' | 'inline';
   ctaStateSlug?: string | null;
 };
 
-function normalizeCtaState(value: string | undefined): string | null {
-  if (!value) return null;
-  return normalizeStateSlug(value) ?? normalizeStateSlug(value.replace(/\s+/g, '-'));
-}
-
 export default async function AuthorByline({
   frontmatterAuthor,
+  resolvedAuthor,
   variant = 'card',
   ctaStateSlug,
 }: Props) {
-  const author = await resolveAuthor(frontmatterAuthor ?? null);
-  const frontmatterStateSlug =
-    normalizeCtaState(frontmatterAuthor?.stateSlug) ??
-    normalizeCtaState(frontmatterAuthor?.state);
+  const author = resolvedAuthor ?? await resolveAuthor(frontmatterAuthor ?? null);
 
-  if (!author) {
+  if (author.kind === 'fallback') {
     if (variant === 'inline') {
       return (
         <span className="inline-flex items-center gap-2">
@@ -74,7 +66,7 @@ export default async function AuthorByline({
           <b className="text-[#495057]">{VPCS_FALLBACK.brokerage}</b>
         </p>
         <div className="w-full flex justify-center mt-4">
-          <Link href="/contact-agent">
+          <Link href={author.contactHref}>
             <Button buttonText="Get in Touch" />
           </Link>
         </div>
@@ -101,12 +93,9 @@ export default async function AuthorByline({
     );
   }
 
-  const showCta = Boolean(author.salesforceId && author.active);
-  const ctaHref = buildContactCtaHref({
-    firstName: author.firstName,
-    salesforceId: author.salesforceId,
-    stateSlug: ctaStateSlug ?? frontmatterStateSlug ?? author.stateSlug,
-    form: author.isLender ? 'lender' : 'agent',
+  const ctaHref = getAuthorContactHref(author, {
+    stateSlug: ctaStateSlug ?? frontmatterAuthor?.stateSlug,
+    state: frontmatterAuthor?.state,
   });
 
   return (
@@ -141,13 +130,11 @@ export default async function AuthorByline({
           </>
         ) : null}
       </p>
-      {showCta ? (
-        <div className="w-full flex justify-center mt-4">
-          <Link href={ctaHref}>
-            <Button buttonText="Get in Touch" />
-          </Link>
-        </div>
-      ) : null}
+      <div className="w-full flex justify-center mt-4">
+        <Link href={ctaHref}>
+          <Button buttonText="Get in Touch" />
+        </Link>
+      </div>
     </div>
   );
 }

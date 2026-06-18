@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Script from "next/script";
+import { cache } from "react";
 import { BlogPosting, WithContext } from "schema-dts";
 import BlogDetailsHeroSection from "@/components/BlogDetails/BlogDetailsHeroSection/BlogDetailsHeroSection";
 import BlogBeginingPostAgent from "@/components/BlogDetails/BlogBeginingBlogPostAgent/BlogBeginingBlogPostAgent";
@@ -11,12 +12,21 @@ import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 import FindAgentInState from "@/components/Blog/FindAgentInState";
 import { getBlogBySlug, getBlogSlugs } from "@/lib/blog/mdx";
+import { resolveAuthor } from "@/lib/blog/authors";
 import { getStateForBlog } from "@/lib/blog/getStateForBlog";
 import { splitMdxAtMidpoint } from "@/lib/blog/splitMdxAtMidpoint";
 import { formatDate } from "@/utils/helper";
 import { buildBreadcrumbList } from "@/lib/structured-data";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+const getBlogPageData = cache(async (slug: string) => {
+    const blog = await getBlogBySlug(slug);
+    if (!blog) return null;
+
+    const resolvedAuthor = await resolveAuthor(blog.author);
+    return { blog, resolvedAuthor };
+});
 
 export async function generateStaticParams() {
     const slugs = await getBlogSlugs();
@@ -25,11 +35,13 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
     const params = await props.params;
-    const blog = await getBlogBySlug(params.slug);
+    const pageData = await getBlogPageData(params.slug);
 
-    if (!blog) {
+    if (!pageData) {
         return { title: "Blog not found" };
     }
+
+    const { blog, resolvedAuthor } = pageData;
 
     return {
         title: blog.metaTitle,
@@ -42,7 +54,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
             description: blog.metaDescription,
             url: `${BASE_URL}/blog/${params.slug}`,
             type: "article",
-            authors: blog.author?.name ? [blog.author.name] : undefined,
+            authors: [resolvedAuthor.name],
         },
         twitter: {
             card: "summary_large_image",
@@ -54,12 +66,13 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
 export default async function Home(props: { params: Promise<{ slug: string }> }) {
     const { slug } = await props.params;
-    const blog = await getBlogBySlug(slug);
+    const pageData = await getBlogPageData(slug);
 
-    if (!blog) {
+    if (!pageData) {
         notFound();
     }
 
+    const { blog, resolvedAuthor } = pageData;
     const { first: bodyFirstHalf, second: bodySecondHalf } = splitMdxAtMidpoint(blog.content);
     const bridgeState = getStateForBlog(slug);
 
@@ -80,10 +93,15 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
         image: heroImageUrl,
         datePublished: formatDate(blog.publishedAt),
         dateModified: formatDate(blog.updatedAt ?? blog.publishedAt),
-        author: {
-            "@type": "Person",
-            name: blog.author?.name ?? "VeteranPCS",
-        },
+        author: resolvedAuthor.kind === "salesforce"
+            ? {
+                "@type": "Person",
+                name: resolvedAuthor.name,
+            }
+            : {
+                "@type": "Organization",
+                name: resolvedAuthor.name,
+            },
         publisher: {
             "@type": "Organization",
             name: "VeteranPCS",
@@ -125,14 +143,21 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
             />
-            <BlogDetailsHeroSection blog={blog} />
-            <BlogBeginingPostAgent blog={blog} bodyFirstHalf={bodyFirstHalf} />
+            <BlogDetailsHeroSection blog={blog} resolvedAuthor={resolvedAuthor} />
+            <BlogBeginingPostAgent
+                blog={blog}
+                bodyFirstHalf={bodyFirstHalf}
+                resolvedAuthor={resolvedAuthor}
+            />
             {bridgeState && (
                 <FindAgentInState state={bridgeState} blogSlug={slug} position="top" />
             )}
             <Testimonials />
             <BlogDetailsCta />
-            <EndBlogPostDetails bodySecondHalf={bodySecondHalf} />
+            <EndBlogPostDetails
+                bodySecondHalf={bodySecondHalf}
+                resolvedAuthor={resolvedAuthor}
+            />
             {bridgeState && (
                 <FindAgentInState state={bridgeState} blogSlug={slug} position="bottom" />
             )}
