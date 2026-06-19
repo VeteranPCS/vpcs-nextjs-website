@@ -1,0 +1,76 @@
+# Content Execution Progress — Organic Growth (B1–B6)
+
+**Purpose.** Cross-session handoff tracker for the Cowork content runbook
+(`execution-cowork.md`). Cowork sessions are stateless, so this file is how each new session
+learns what's done and what's next. **Keep it accurate.**
+
+## Protocol — every Cowork session does this, in order
+1. **Read** `docs/blog-updates/organic-growth-projects/execution-cowork.md` (the runbook — follow it
+   exactly), this file, `docs/ai-first/weekly-blog-routine.md`, `.claude/skills/vpcs-blog/SKILL.md`,
+   `.impeccable.md`, `lib/blog/types.ts`, `CLAUDE.md`.
+2. **Reconcile reality (ground truth = repo + PRs, not this file).** On current `main`, run
+   `gh pr list --state all --limit 50`, check which posts already exist under `content/`, and
+   rebuild + read `content/_registry/internal-links.json`. If this tracker has drifted from
+   reality, fix the tracker first.
+3. **Verify v6 contracts** (see runbook's alignment guardrail): registry has `posts[].stateSlug`,
+   `posts[].componentSlug`, `byState`, `byComponentSlug`; MDX CTA components present; Mac/Chrome/
+   Salesforce reachable. If anything is missing, **STOP and report** — do not guess.
+4. **Do the next incomplete batch** per the priority order below and the runbook's per-task prompt.
+   One PR per batch, never merge.
+5. **Update this file in the SAME PR**: tick the items, paste the PR link, and append a Session Log
+   entry. (This is part of "definition of done" for every batch — without it, handoff breaks.)
+
+**Priority order:** B1 → B3 → B5 → B4.  (B2 gated on BAH snapshots; B6 coordinates with B6-code.)
+
+**Status legend:** `[ ]` not started · `[~]` in progress · `[PR]` PR open, awaiting review ·
+`[x]` done (PR merged) · `[BLOCKED]` dependency missing.
+
+---
+
+## B1 — Backfill internal links + state-matched CTAs into orphan posts — Status: `[~]`
+~126 of 162 posts have zero outbound internal links. Maintenance pass only: add 3–5 contextual
+internal links + a state/topic-matched CTA (`<AgentContactLink>` + `<AgentCTA>`, set
+`author.salesforceId` + top-level `stateSlug`), bump `updatedAt`. **No body rewrites, no
+`publishedAt` change.** ≤~8 posts/PR.
+- [PR] Batch 1 — GA4 decayers: `what-military-bases-are-in-california`, `tennessee-military-bases-*`, `alabama-military-bases`, `what-military-bases-are-in-georgia`, `the-ultimate-pcs-checklist-*` · PR: https://github.com/VeteranPCS/vpcs-nextjs-website/pull/99
+- [ ] Batch 2 — zero-converting traffic leaders: `what-military-bases-are-in-hawaii` / `-florida` / `-new-york`, `pcs-to-hawaii-*` · PR: —
+- [ ] Batch 3+ — remaining pre-2026 orphans (zero outbound `/blog/` links) · PRs: —
+
+## B3 — Finish the 50-state "what-military-bases-are-in-{state}" cluster — Status: `[ ]`
+22 missing states. Priority first: TX, VA, WA, MD, SC, OK. Reconcile `alabama-military-bases` /
+`tennessee-military-bases-*` to the canonical slug/format (note any needed 301 for the code track;
+don't implement redirects here). ≤5–6 posts/PR, weekday-staggered dates, cited `.mil` facts only.
+- [ ] TX · [ ] VA · [ ] WA · [ ] MD · [ ] SC · [ ] OK
+- [ ] Remaining 16: OH, NV, MO, … (fill in as you go)
+- PRs: —
+
+## B5 — "PCS to {base}" guides for uncovered installations — Status: `[ ]`
+Best-converting format. ≤5 posts/PR.
+- [ ] Fort Bliss · [ ] Fort Cavazos · [ ] MCB Quantico · [ ] NS Norfolk · [ ] Fort Carson
+- [ ] Wright-Patterson · [ ] Fort Sill · [ ] Fort Leonard Wood · [ ] Parris Island · [ ] Fort Drum · [ ] Travis AFB
+- PRs: —
+
+## B4 — State military/veteran property-tax series — Status: `[ ]`
+~50 pages, almost no competition. Financial/legal-adjacent — cite state `.gov`, add "consult a
+professional" + "verify with the county/state" caveats; set `reviewBy` to next year.
+- [ ] TX · [ ] VA · [ ] FL · [ ] CA · [ ] NC · [ ] GA · [ ] WA · [ ] CO · [ ] HI
+- [ ] Remaining states (fill in as you go)
+- PRs: —
+
+## B2 — BAH-by-base data pages — Status: `[BLOCKED]`
+Use **committed snapshots only** (`content/_data/bah-snapshots/{base}/{year}.json`). Never hand-enter
+a rate table or call DTMO live.
+- [ ] Fort Bliss 2025 (snapshot present — runnable) · PR: —
+- [BLOCKED] All other bases — need a code/data PR to add the target + snapshot via
+  `scripts/build-bah-snapshots.mjs` first. Do not publish a BAH page without its committed snapshot.
+
+## B6 — Consolidate cannibalizing `va-loan-assumption*` posts — Status: `[ ]` (coordinate with B6-code)
+Draft ONE canonical "VA Loan Assumptions" pillar; **list the retired slugs + inbound links** for the
+code track. Do NOT delete files or add redirects in Cowork.
+- [ ] Canonical draft + retired-slug list · PR: —
+
+---
+
+## Session Log (newest first)
+<!-- Append one line per batch/PR: YYYY-MM-DD · program/batch · PR #/link · posts touched · notes -->
+- 2026-06-19 · B1 Batch 1 (GA4 decayers) · PR https://github.com/VeteranPCS/vpcs-nextjs-website/pull/99 · 5 posts: `what-military-bases-are-in-california` (CTA: Jacob Mahaffey, San Diego `0014x000027YATG`), `alabama-military-bases` (Kelli Malace, Huntsville `0014x00001uLvPH`), `what-military-bases-are-in-georgia` (Trista Allen, Columbus `0014x0000298nbK`), `tennessee-military-bases-*` (generic CTA — see note), `the-ultimate-pcs-checklist-*` (national, generic CTA). Each: +4–5 contextual `/blog/` internal links, state-matched `<AgentContactLink>`+`<AgentCTA>` (geo posts) or generic `/contact-agent` (TN + checklist), top-level `stateSlug` set on the 4 geo posts, `updatedAt` bumped to 2026-06-19, `publishedAt` unchanged. Stripped pre-existing emoji from CA + AL to clear the editorial audit (no prose rewrite). Notes: (1) **Grant Thompson** (the in-body author of the TN post) is `Active_on_Website__pc=false`, so a matched-agent CTA would contradict the body — used a generic `/contact-agent` link + `stateSlug` instead; recommend a future body refresh to reconcile the byline. (2) Registry regenerated (`internal-links.json` committed). (3) Reconciliation finding: the `docs/blog-updates/` tree (this tracker + `execution-cowork.md` + `claude-opus-4.8-plan*.md`) is **untracked** in git on `main`; this PR commits the tracker only. Gate: editorial audit clean on all 5 slugs · Mac `lint`+`type-check`+`build` green.
