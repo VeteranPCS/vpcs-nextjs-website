@@ -1,5 +1,5 @@
 {
-  "contentHash": "dcdc9a6fe9f905197d8042b399e2b0a531b08d9a7ea2a8107dc8c17e310921c1",
+  "contentHash": "131d9293eae18d46b80a64c7f985c03eaffe9c422c3efac36dcc0f1f236ec986",
   "totalPosts": 162,
   "byComponent": {
     "Financial Guidance": [
@@ -383,10 +383,12 @@
       "what-military-bases-are-in-delaware"
     ],
     "florida": [
+      "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "pcsing-to-florida-military-bases-2026-guide",
       "what-military-bases-are-in-florida"
     ],
     "georgia": [
+      "best-places-to-live-near-fort-benning",
       "what-military-bases-are-in-georgia"
     ],
     "hawaii": [
@@ -447,6 +449,13 @@
     "tennessee": [
       "tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state"
     ],
+    "texas": [
+      "best-places-to-live-near-fort-hood",
+      "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know"
+    ],
+    "utah": [
+      "discover-the-best-places-to-live-near-hill-air-force-base-utah"
+    ],
     "washington": [
       "pcs-to-joint-base-lewis-mcchord-jblm-2026-guide"
     ],
@@ -461,11 +470,11 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 37,
+    "resolved": 42,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 9,
-      "slug-heuristic": 24,
+      "frontmatter-state-slug": 17,
+      "slug-heuristic": 21,
       "state-map-post": 2
     },
     "unmappedHighIntent": [
@@ -473,15 +482,10 @@
       "7-best-family-friendly-activities-near-kirtland-afb",
       "arizona-pcs-guide",
       "best-neighborhoods-near-nas-jrb-fort-worth",
-      "best-places-to-live-near-eglin-air-force-base-veteranpcs",
-      "best-places-to-live-near-fort-benning",
-      "best-places-to-live-near-fort-hood",
       "best-places-to-live-near-philadelphia-military-bases",
       "buy-vs-rent-near-camp-lejeune",
-      "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "buying-a-home-sight-unseen-during-a-pcs-move",
       "choosing-the-best-relocation-method-for-your-pcs",
-      "discover-the-best-places-to-live-near-hill-air-force-base-utah",
       "florida-cost-of-living-military-bases-bah",
       "fun-family-and-date-night-activities-near-tinker-afb",
       "how-to-choose-the-right-real-estate-agent-for-your-military-pcs-move",
@@ -917,14 +921,14 @@
       "url": "/blog/best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "Looking to Buy or Sell a Home Near Eglin AFB?",
       "publishedAt": "2023-10-25T15:31:42.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "cities near eglin afb",
       "secondaryKeywords": [
         "apartments near eglin air force base",
@@ -938,7 +942,9 @@
         "Top Places to Live Near Eglin AFB",
         "Crestview – A Great Alternative",
         "Hurlburt Field – A Hidden Gem",
-        "Work with a Veteran Real Estate Agent"
+        "Schools, Commutes, and Cost of Living near Eglin AFB",
+        "Work with a Veteran Real Estate Agent",
+        "Plan Your PCS to Northwest Florida"
       ]
     },
     {
@@ -947,14 +953,14 @@
       "url": "/blog/best-places-to-live-near-fort-benning",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "georgia",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "If you're preparing for a Permanent Change of Station (PCS) to Fort Benning, Georgia, home to the United States Army Infantry School and the Maneuver Center of Excellence, finding the right place to live is crucial.",
       "publishedAt": "2023-11-14T06:02:14.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "best places to live near fort benning ga",
       "secondaryKeywords": [
         "columbus georgia military housing",
@@ -966,7 +972,8 @@
       "h2Outline": [
         "Best Places to Live Near Fort Benning",
         "Factors to Consider When Choosing a Place to Live",
-        "Finding Your Next Home"
+        "Finding Your Next Home",
+        "Plan Your PCS to Georgia"
       ]
     },
     {
@@ -975,14 +982,14 @@
       "url": "/blog/best-places-to-live-near-fort-hood",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "Fort Hood is one of the largest military installations in the world, home to over 45,000 active-duty soldiers and their families. If you are moving to Fort Hood, finding the right place to live is an important decision. This guide explor...",
       "publishedAt": "2023-11-03T16:32:24.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "housing around fort hood",
       "secondaryKeywords": [
         "best places to live near fort hood",
@@ -996,7 +1003,8 @@
         "Best Places to Live Near Fort Hood",
         "Hidden Gems Near Fort Hood",
         "How to Find the Right Place to Live Near Fort Hood",
-        "Find Your Ideal Home Near Fort Hood"
+        "Find Your Ideal Home Near Fort Hood",
+        "Plan Your PCS to Texas"
       ]
     },
     {
@@ -1098,14 +1106,14 @@
       "url": "/blog/buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "Relocating to Joint Base San Antonio (JBSA) for a Permanent Change of Station (PCS) is a significant transition, especially when purchasing a home in a new city. Finding the right home while balancing military timelines, VA loan benefits...",
       "publishedAt": "2024-05-09T19:01:09.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "how to buy a home during a pcs move to san antonio",
       "secondaryKeywords": [
         "best neighborhoods near jbsa for military families buying a home",
@@ -1120,7 +1128,8 @@
         "4. Consider Proximity to JBSA and Commute Times",
         "5. Choose a Military-Friendly Community",
         "Ready to PCS to San Antonio?",
-        "Frequently Asked Questions (FAQ)"
+        "Frequently Asked Questions (FAQ)",
+        "Plan Your PCS to San Antonio"
       ]
     },
     {
@@ -1441,14 +1450,14 @@
       "url": "/blog/discover-the-best-places-to-live-near-hill-air-force-base-utah",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "utah",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "For military families and civilian employees relocating to Hill Air Force Base (HAFB), finding the right community to call home is an essential part of the transition. Located in Davis County, Utah, Hill AFB is surrounded by a mix of vib...",
       "publishedAt": "2024-05-10T02:21:27.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "hill afb housing",
       "secondaryKeywords": [
         "apartments near hill afb utah",
@@ -1462,7 +1471,8 @@
         "Top 4 Cities Near Hill AFB for Military Families",
         "Choosing the Right Community for Your PCS Move",
         "Work with a Trusted Military Real Estate Agent",
-        "Frequently Asked Questions (FAQ)"
+        "Frequently Asked Questions (FAQ)",
+        "Plan Your PCS to Hill Air Force Base"
       ]
     },
     {
@@ -4562,13 +4572,13 @@
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
       "stateSlug": "arizona",
-      "stateSource": "slug-heuristic",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "Arizona is home to a large and active military community, with over 100,000 active-duty service members, reservists, and National Guard members. The state's military installations play a crucial role in national defense, aviation trainin...",
       "publishedAt": "2023-07-19T14:40:58.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "military bases in az",
       "secondaryKeywords": [
         "air force bases in arizona",
@@ -4586,7 +4596,8 @@
         "5. Luke Air Force Base",
         "6. Marine Corps Air Station (MCAS) Yuma",
         "7. Yuma Proving Ground (YPG)",
-        "Moving to Arizona? We Can Help!"
+        "Moving to Arizona? We Can Help!",
+        "Plan Your PCS to Arizona"
       ]
     },
     {
@@ -4656,13 +4667,13 @@
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
       "stateSlug": "colorado",
-      "stateSource": "slug-heuristic",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "Colorado is home to several key military installations that support the U.S. Air Force, Space Force, Army, and national defense operations. Whether you're PCSing (Permanent Change of Station) to Colorado or just curious about the militar...",
       "publishedAt": "2022-09-20T14:35:24.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "air force bases in colorado",
       "secondaryKeywords": [
         "colorado air force bases",
@@ -4671,14 +4682,15 @@
         "ranger base colorado"
       ],
       "h2Outline": [
-        "1️⃣ United States Air Force Academy (USAFA)",
-        "2️⃣ Buckley Space Force Base (SFB)",
-        "3️⃣ Cheyenne Mountain Space Force Station (CMSFS)",
-        "4️⃣ Fort Carson – \"The Mountain Post\"",
-        "5️⃣ Peterson Space Force Base (SFB)",
-        "6️⃣ Pueblo Chemical Weapons Depot (PCD)",
-        "7️⃣ Schriever Space Force Base (SFB)",
-        "📢 Moving to Colorado? We Can Help!"
+        "1 United States Air Force Academy (USAFA)",
+        "2 Buckley Space Force Base (SFB)",
+        "3 Cheyenne Mountain Space Force Station (CMSFS)",
+        "4 Fort Carson – \"The Mountain Post\"",
+        "5 Peterson Space Force Base (SFB)",
+        "6 Pueblo Chemical Weapons Depot (PCD)",
+        "7 Schriever Space Force Base (SFB)",
+        "Moving to Colorado? We Can Help!",
+        "Plan Your PCS to Colorado"
       ]
     },
     {
@@ -5165,13 +5177,13 @@
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
       "stateSlug": "north-carolina",
-      "stateSource": "slug-heuristic",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "North Carolina has a rich and diverse military presence, with ten major military installations across the state. Each base plays a crucial role in supporting national defense, training, and logistics operations.",
       "publishedAt": "2022-10-18T02:18:27.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "military bases in north carolina",
       "secondaryKeywords": [
         "how many military bases are in north carolina",
@@ -5191,7 +5203,8 @@
         "8. Military Ocean Terminal Sunny Point",
         "9. Pope Army Airfield",
         "10. Seymour Johnson Air Force Base",
-        "Moving to North Carolina? We Can Help!"
+        "Moving to North Carolina? We Can Help!",
+        "Plan Your PCS to North Carolina"
       ]
     },
     {
