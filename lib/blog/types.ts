@@ -13,6 +13,9 @@ export type BlogFrontmatter = {
   slug: string;
   publishedAt: string;
   component: string;
+  // Canonical post subject location. Author state remains a temporary fallback.
+  stateSlug?: string;
+  state?: string;
   categories: string[];
   mainImage: { src: string; alt: string };
   author: FrontmatterAuthor;

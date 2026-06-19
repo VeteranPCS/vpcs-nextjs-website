@@ -13,7 +13,7 @@ import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 import FindAgentInState from "@/components/Blog/FindAgentInState";
 import { getBlogBySlug, getBlogSlugs } from "@/lib/blog/mdx";
 import { resolveAuthor } from "@/lib/blog/authors";
-import { getStateForBlog } from "@/lib/blog/getStateForBlog";
+import { resolveBlogStateSlug } from "@/lib/blog/state";
 import { splitMdxAtMidpoint } from "@/lib/blog/splitMdxAtMidpoint";
 import { formatDate } from "@/utils/helper";
 import { buildBreadcrumbList } from "@/lib/structured-data";
@@ -74,7 +74,7 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
 
     const { blog, resolvedAuthor } = pageData;
     const { first: bodyFirstHalf, second: bodySecondHalf } = splitMdxAtMidpoint(blog.content);
-    const bridgeState = getStateForBlog(slug);
+    const bridgeState = resolveBlogStateSlug(blog);
 
     const heroImageUrl = blog.mainImage?.src
         ? `${BASE_URL}${blog.mainImage.src}`
