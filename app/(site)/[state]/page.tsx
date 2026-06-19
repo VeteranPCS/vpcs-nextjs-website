@@ -4,6 +4,7 @@ import StatePageHeroSecondSection from "@/components/StatePage/StatePageHeroSeco
 import StatePageVaLoan from "@/components/StatePage/StatePageVaLoan/StatePageVaLoan";
 import StatePageCTA from "@/components/StatePage/StatePageCTA/StatePageCTA";
 import StatePageCityAgents from "@/components/StatePage/StatePageCityAgents/StatePageCityAgents";
+import StatePageRelatedGuides from "@/components/StatePage/StatePageRelatedGuides/StatePageRelatedGuides";
 import StatePageLetFindAgent from "@/components/StatePage/StatePageLetFindAgent/StatePageLetFindAgent";
 import StatePageWhyChooseVetpcs from "@/components/StatePage/StatePageWhyChooseVetpcs/StatePageWhyChooseVetpcs";
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
@@ -20,6 +21,7 @@ import {
   type StateAgentGroups,
 } from "@/lib/stateAgents";
 import { SITE_URL } from "@/lib/siteUrl";
+import { getStateGuidePosts } from "@/lib/blog/registry";
 
 const BASE_URL = SITE_URL;
 
@@ -126,6 +128,7 @@ export default async function StatePage(props: { params: Promise<{ state: string
   const stateName = state_data?.state_name || 'Unknown';
   const agentCount = (agents_data as AgentsData).records?.length ?? 0;
   const lenderCount = (lenders_data as LendersData).records?.length ?? 0;
+  const guidePosts = getStateGuidePosts(state, 6);
 
   const localBusinessJsonLd = buildStateLocalBusiness({
     stateName,
@@ -175,6 +178,11 @@ export default async function StatePage(props: { params: Promise<{ state: string
       />
       <StatePageVaLoan cityName={state_data?.state_name || 'Unknown'} lendersData={lenders_data} state={state} />
       <StatePageCTA cityName={state_data?.state_name || 'Unknown'} />
+
+      <StatePageRelatedGuides
+        stateName={stateName}
+        guides={guidePosts}
+      />
 
       {Object.entries(formatted_data).sort().map(([cityName, agents]: [string, any[]]) => (
         <StatePageCityAgents key={cityName} city={cityName} agent_data={agents} state={state} />

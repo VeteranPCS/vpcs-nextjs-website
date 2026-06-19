@@ -4,3 +4,4 @@ export { default as AgentCTA } from './AgentCTA';
 export { default as AgentContactLink } from './AgentContactLink';
 export { default as YouTubeEmbed } from './YouTubeEmbed';
 export { default as BlogImage } from './BlogImage';
+export { default as BahRateTable } from './BahRateTable';
