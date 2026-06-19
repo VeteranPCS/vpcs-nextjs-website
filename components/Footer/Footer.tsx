@@ -59,6 +59,14 @@ const Locations = () => {
   ];
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
+  const exploreLinks = [
+    { href: "/how-it-works", label: "How It Works" },
+    { href: "/bah-calculator", label: "BAH Calculator" },
+    { href: "/va-loan-calculator", label: "VA Loan Calculator" },
+    { href: "/pcs-resources", label: "Guides & PCS Resources" },
+    { href: "/contact-agent", label: "Find an Agent" },
+    { href: "/contact-lender", label: "Find a Lender" },
+  ];
 
   const formattedLocation = (location: string) => {
     return location.toLowerCase().replace(/\s+/g, "-");
@@ -131,7 +139,7 @@ const Locations = () => {
       </div>
       <div className={classes.Footer}>
         <div className="container mx-auto">
-          <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 gap-4">
+          <div className="grid lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-1 grid-cols-1 gap-8">
             <div>
               <div>
                 <Image
@@ -169,6 +177,23 @@ const Locations = () => {
                   />
                 </div>
               </div>
+            </div>
+            <div>
+              <h2 className="text-white text-[18px] font-bold roboto mb-4">
+                Explore
+              </h2>
+              <ul className="space-y-2">
+                {exploreLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="inline-flex min-h-11 items-center text-white text-[14px] font-medium roboto hover:underline"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
             <div>
               <p className="text-white text-[14px] font-medium roboto mb-2">

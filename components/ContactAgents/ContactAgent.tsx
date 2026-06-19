@@ -2,43 +2,18 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm, SubmitHandler, Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 
 import { ContactAgentFormData } from '@/types';
 import { useConcierge } from '@/components/Concierge';
 import { featureFlags } from '@/lib/feature-flags';
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
-import { US_STATE_CODES } from '@/constants/usStates';
 import StateSelect from '@/components/common/StateSelect';
+import { contactAgentClientSchema } from '@/lib/validation/contactForms';
 
 interface ContactFormProps {
   onSubmit: (data: ContactAgentFormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
   derivedStateCode?: string | null;
 }
-
-// Define validation schema using yup
-const contactFormSchema = yup.object().shape({
-  firstName: yup.string().required("First name is required"),
-  lastName: yup.string().required("Last name is required"),
-  email: yup.string().email("Invalid email address").required("Email is required"),
-  phone: yup
-    .string()
-    .matches(/^\+?[1-9]\d{1,14}$/, "Invalid phone number")
-    .required("Phone number is required"),
-  currentBase: yup.string().required("Current Base/City is required"),
-  state: yup
-    .string()
-    .required("State is required")
-    .oneOf([...US_STATE_CODES], "Invalid state selected"),
-  destinationBase: yup.string().required("Destination Base/City is required"),
-  howDidYouHear: yup.string().required("Please select how you heard about us"),
-  tellusMore: yup.string().when('howDidYouHear', {
-    is: 'Other',
-    then: (schema) => schema,
-    otherwise: (schema) => schema.nullable(),
-  }),
-  additionalComments: yup.string().optional(),
-});
 
 const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,7 +26,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
     setValue,
     formState: { errors },
   } = useForm<ContactAgentFormData>({
-    resolver: yupResolver(contactFormSchema) as Resolver<ContactAgentFormData>,
+    resolver: yupResolver(contactAgentClientSchema) as Resolver<ContactAgentFormData>,
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -175,7 +150,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     htmlFor="email"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
-                    Email*
+                    Email
                   </label>
                   <input
                     {...register("email")}
@@ -195,7 +170,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     htmlFor="phone"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
-                    Phone*
+                    Phone
                   </label>
                   <input
                     {...register("phone")}
@@ -283,7 +258,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     htmlFor="howDidYouHear"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
-                    How did you hear about us?*
+                    How did you hear about us?
                   </label>
                   <select
                     {...register('howDidYouHear')}

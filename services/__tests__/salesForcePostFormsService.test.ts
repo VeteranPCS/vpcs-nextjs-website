@@ -2,7 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import sendToSlack from '@/actions/sendToSlack';
 import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
 import { routeSalesforceLeadOwner } from '@/services/salesforceLeadOwnerService';
-import { contactAgentPostForm, contactLenderPostForm } from '@/services/salesForcePostFormsService';
+import {
+  contactAgentPostForm,
+  contactLenderPostForm,
+} from '@/services/salesForcePostFormsService';
+import {
+  buildAgentLeadParams,
+  buildLenderLeadParams,
+} from '@/services/salesforceLeadParams';
 import { logError } from '@/services/loggingService';
 
 vi.mock('server-only', () => ({}));
@@ -109,6 +116,90 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     vi.stubGlobal('fetch', vi.fn());
     process.env.NEXT_PUBLIC_API_BASE_URL = 'https://www.veteranpcs.com';
     process.env.OPEN_PHONE_FROM_NUMBER = '+17194153014';
+  });
+
+  it('builds the protected contact-agent Salesforce payload keys without dropping empty strings', () => {
+    const params = buildAgentLeadParams(
+      { ...qaPayload(), email: '', phone: '', state: 'DC', howDidYouHear: '' },
+      { id: '001AGENT' },
+      'https://www.veteranpcs.com/contact-agent?sid=test',
+      'https://www.veteranpcs.com',
+    );
+
+    expect([...params.keys()]).toEqual([
+      'oid',
+      'retURL',
+      '00N4x00000Lsn28',
+      'recordType',
+      'lead_source',
+      '00N4x00000Lsr0G',
+      'country_code',
+      '00N4x00000QQ1LB',
+      'first_name',
+      'last_name',
+      'email',
+      'mobile',
+      '00N4x00000Lpb0T',
+      '00N4x00000LspUs',
+      '00N4x00000QPksj',
+      '00N4x00000QPS7V',
+      '00N4x00000bfgFA',
+      '00N4x00000LsnP2',
+      '00N4x00000LsnOx',
+      '00N4x00000QQ0Vz',
+      '00N4x00000LspV2',
+      '00N4x00000LspUi',
+      '00N4x00000LsaDm',
+      '00N4x00000cKsNF',
+      '00N4x00000LssBZ',
+      '00N4x00000Lpb2K',
+      '00N4x00000Lpb2Z',
+      '00N4x00000LsaCy',
+      '00N4x00000Lpbfw',
+      'g-recaptcha-response',
+      'captcha_settings',
+    ]);
+    expect(params.get('email')).toBe('');
+    expect(params.get('mobile')).toBe('');
+    expect(params.get('00N4x00000QPksj')).toBe('');
+    expect(params.get('00N4x00000LspV2')).toBe('DC');
+    expect(params.get('00N4x00000QQ1LB')).toBe('https://www.veteranpcs.com/contact-agent?sid=test');
+  });
+
+  it('builds the protected contact-lender Salesforce payload keys without dropping empty strings', () => {
+    const params = buildLenderLeadParams(
+      { ...lenderPayload(), phone: '', state: 'TX', howDidYouHear: '' },
+      { id: '001LENDER' },
+      'https://www.veteranpcs.com/contact-lender?sid=test',
+      'https://www.veteranpcs.com',
+    );
+
+    expect([...params.keys()]).toEqual([
+      'oid',
+      'retURL',
+      '00N4x00000QPJUT',
+      'recordType',
+      'lead_source',
+      '00N4x00000Lsr0G',
+      'country_code',
+      '00N4x00000QQ1LB',
+      'first_name',
+      'last_name',
+      'email',
+      'mobile',
+      '00N4x00000LspV2',
+      '00N4x00000Lpb0T',
+      '00N4x00000LspUs',
+      '00N4x00000QPksj',
+      '00N4x00000QPS7V',
+      '00N4x00000bfgFA',
+      'g-recaptcha-response',
+      'captcha_settings',
+    ]);
+    expect(params.get('mobile')).toBe('');
+    expect(params.get('00N4x00000QPksj')).toBe('');
+    expect(params.get('00N4x00000LspV2')).toBe('TX');
+    expect(params.get('00N4x00000QQ1LB')).toBe('https://www.veteranpcs.com/contact-lender?sid=test');
   });
 
   it('accepts a Salesforce redirect response and sends notifications once', async () => {

@@ -3,14 +3,13 @@ import { useState, useEffect } from 'react';
 import { Controller, useForm, SubmitHandler, Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import HowDidYouHearAboutUs from '@/components/GetListedLenders/HowDidYouHearAboutUs';
-import * as yup from 'yup';
 
-import { ContactLenderFormData, HowDidYouHearOptions } from '@/types';
+import { ContactLenderFormData } from '@/types';
 import { useConcierge } from '@/components/Concierge';
 import { featureFlags } from '@/lib/feature-flags';
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
-import { US_STATE_CODES } from '@/constants/usStates';
 import StateSelect from '@/components/common/StateSelect';
+import { contactLenderClientSchema } from '@/lib/validation/contactForms';
 
 // Props type for ContactForm component
 interface ContactFormProps {
@@ -20,49 +19,6 @@ interface ContactFormProps {
 
 // Define form errors type
 type FormErrors = Partial<Record<keyof ContactLenderFormData, { message?: string }>>;
-
-// Define available options for "howDidYouHear" field
-const howDidYouHearOptions: HowDidYouHearOptions[] = [
-  'Google',
-  'Facebook',
-  'Instagram',
-  'Linkedin',
-  'Tiktok',
-  'Base Event',
-  'Transition Brief',
-  'Agent Referral',
-  'Friend Referral',
-  'Skillbridge',
-  'Youtube',
-  'Other',
-  ''
-];
-
-const contactFormSchema = yup.object().shape({
-  firstName: yup.string().required('First name is required'),
-  lastName: yup.string().required('Last name is required'),
-  email: yup.string().email('Invalid email address').required('Email is required'),
-  phone: yup
-    .string()
-    .matches(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number format')
-    .required('Phone number is required'),
-  currentBase: yup.string().required('Current Base/City is required'),
-  state: yup
-    .string()
-    .required('State is required')
-    .oneOf([...US_STATE_CODES], 'Invalid state selected'),
-  destinationBase: yup.string().required('Destination Base/City is required'),
-  additionalComments: yup.string().nullable(),
-  howDidYouHear: yup
-    .string()
-    .required('Please select an option')
-    .oneOf(howDidYouHearOptions, 'Invalid option selected'),
-  tellusMore: yup.string().when('howDidYouHear', {
-    is: 'Other',
-    then: (schema) => schema,
-    otherwise: (schema) => schema.nullable(),
-  }),
-});
 
 const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateCode }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -83,7 +39,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
     setValue,
     formState: { errors },
   } = useForm<ContactLenderFormData>({
-    resolver: yupResolver(contactFormSchema) as Resolver<ContactLenderFormData>,
+    resolver: yupResolver(contactLenderClientSchema) as Resolver<ContactLenderFormData>,
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -190,7 +146,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
                     htmlFor="email"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
-                    Email*
+                    Email
                   </label>
                   <input
                     {...register('email')}
@@ -207,7 +163,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
                     htmlFor="phone"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                   >
-                    Phone*
+                    Phone
                   </label>
                   <input
                     {...register('phone')}

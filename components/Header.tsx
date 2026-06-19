@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import AgentCtaLink from "@/components/common/AgentCtaLink";
+import LenderCtaLink from "@/components/common/LenderCtaLink";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -54,13 +56,12 @@ const Header = () => {
             >
               <ul className="menu nav flex md:flex-row flex-col md:items-center xl:gap-12 gap-6">
                 <li className="md:hidden">
-                  <Link
+                  <AgentCtaLink
                     className="inline-flex min-h-11 rounded-2xl bg-accent-red px-5 py-3 text-white transition-colors hover:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-                    href="/contact-agent"
                     onClick={onMenuToggle}
                   >
-                    Find An Agent
-                  </Link>
+                    Find an Agent
+                  </AgentCtaLink>
                 </li>
                 <li className={navItemClass}>
                   <Link className={navLinkClass} href="/about" onClick={onMenuToggle}>
@@ -88,8 +89,18 @@ const Header = () => {
                   </Link>
                 </li>
                 <li className={navItemClass}>
+                  <Link className={navLinkClass} href="/contact-lender" onClick={onMenuToggle}>
+                    Find a Lender
+                  </Link>
+                </li>
+                <li className={navItemClass}>
                   <Link className={navLinkClass} href="/contact" onClick={onMenuToggle}>
                     Contact
+                  </Link>
+                </li>
+                <li className={navItemClass}>
+                  <Link className={navLinkClass} href="/get-listed-agents" onClick={onMenuToggle}>
+                    For Agents & Lenders
                   </Link>
                   <ul className="sub-menu">
                     <li className="px-10 py-3 text-white">
@@ -116,12 +127,12 @@ const Header = () => {
               </ul>
             </div>
             <div className="flex items-center gap-2">
-              <Link
-                href="/contact-agent"
+              <AgentCtaLink
                 className="hidden min-h-11 items-center rounded-2xl bg-accent-red px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex"
               >
-                Find An Agent
-              </Link>
+                Find an Agent
+              </AgentCtaLink>
+              <LenderCtaLink className="hidden min-h-11 items-center rounded-2xl border border-white/70 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-white hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex" />
               <div className="hidden bg-accent-red-dark px-4 text-sm xl:block">
                 <div className="text-center py-4">
                   <p className="text-white text-xl">

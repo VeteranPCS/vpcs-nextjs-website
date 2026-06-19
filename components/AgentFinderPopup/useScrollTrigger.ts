@@ -32,7 +32,7 @@ export const useScrollTrigger = ({
     }, []);
 
     const handleScroll = useCallback(() => {
-        if (!isDesktop || hasTriggered) return;
+        if (hasTriggered) return;
 
         // Check cooldown period
         if (lastDismissTime && Date.now() - lastDismissTime < cooldownDuration) {
@@ -54,14 +54,12 @@ export const useScrollTrigger = ({
             setShowPopup(true);
             setHasTriggered(true);
         }
-    }, [isDesktop, hasTriggered, lastDismissTime, cooldownDuration, triggerElementId, offset]);
+    }, [hasTriggered, lastDismissTime, cooldownDuration, triggerElementId, offset]);
 
     useEffect(() => {
-        if (!isDesktop) return;
-
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [handleScroll, isDesktop]);
+    }, [handleScroll]);
 
     const closePopup = useCallback(() => {
         setShowPopup(false);
@@ -79,7 +77,7 @@ export const useScrollTrigger = ({
     }, []);
 
     return {
-        showPopup: showPopup && isDesktop,
+        showPopup,
         closePopup,
         resetTrigger,
         isDesktop
