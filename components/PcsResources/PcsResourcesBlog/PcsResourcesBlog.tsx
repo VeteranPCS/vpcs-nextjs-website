@@ -4,6 +4,7 @@ import classes from "./PcsResourcesBlog.module.css";
 import { formatDate } from "@/utils/helper";
 import { excerpt } from "@/lib/blog/mdx";
 import type { BlogPost } from "@/lib/blog/types";
+import { normalizeBlogComponentSlug } from "@/lib/blog/components";
 
 type Props = {
   blogList: BlogPost[];
@@ -11,6 +12,9 @@ type Props = {
 };
 
 export default function PcsResourcesBlog({ blogList, component }: Props) {
+  const componentSlug = normalizeBlogComponentSlug(component);
+  const categoryHref = componentSlug ? `/blog/category/${componentSlug}` : "/blog";
+
   return (
     <div className="py-6 px-5" id={component}>
       <div className="container mx-auto">
@@ -20,6 +24,9 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
               {component}
             </h1>
           </div>
+          <Link href={categoryHref} className="text-[#292F6C] robot text-sm font-bold">
+            View All
+          </Link>
         </div>
         <div
           className={`grid ${blogList.length === 1

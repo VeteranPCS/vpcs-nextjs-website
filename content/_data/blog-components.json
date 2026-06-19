@@ -1,0 +1,44 @@
+[
+  {
+    "slug": "pcs-help",
+    "label": "PCS Help",
+    "description": "PCS planning, timelines, move strategy, and relocation guidance.",
+    "ctaCopy": "Find an Agent"
+  },
+  {
+    "slug": "us-military-bases",
+    "label": "U.S. Military Bases",
+    "description": "Installation guides, state base lists, and local PCS context.",
+    "ctaCopy": "Find an Agent"
+  },
+  {
+    "slug": "va-loan-help",
+    "label": "VA Loan Help",
+    "description": "VA loan education, entitlement, funding fee, assumptions, and lender guidance.",
+    "ctaCopy": "Find a Lender"
+  },
+  {
+    "slug": "military-transition-help",
+    "label": "Military Transition Help",
+    "description": "Separation, retirement, SkillBridge, and civilian move planning.",
+    "ctaCopy": "Find an Agent"
+  },
+  {
+    "slug": "financial-guidance",
+    "label": "Financial Guidance",
+    "description": "Budgeting, BAH, taxes, cost of living, and military money decisions.",
+    "ctaCopy": "Find a Lender"
+  },
+  {
+    "slug": "things-to-do-near-you",
+    "label": "Things to Do Near You",
+    "description": "Local activities and neighborhood context near military communities.",
+    "ctaCopy": "Find an Agent"
+  },
+  {
+    "slug": "real-estate-insights",
+    "label": "Real Estate Insights",
+    "description": "Market, agent, and home-buying guidance for military families.",
+    "ctaCopy": "Find an Agent"
+  }
+]

@@ -4,20 +4,51 @@ import Link from "next/link";
 import { formatDate } from "@/utils/helper";
 import { excerpt } from "@/lib/blog/mdx";
 import type { BlogPost } from "@/lib/blog/types";
+import { BLOG_COMPONENTS } from "@/lib/blog/components";
+import BlogSearchForm from "@/components/BlogPage/BlogSearchForm";
 
-type Props = { searchedBlog: BlogPost[] };
+type Props = {
+  searchedBlog: BlogPost[];
+  query: string;
+};
 
-export default function SearchBlog({ searchedBlog }: Props) {
+export default function SearchBlog({ searchedBlog, query }: Props) {
+  const trimmedQuery = query.trim();
+
   if (!searchedBlog || searchedBlog.length === 0) {
     return (
-      <div className="text-center my-10">
-        <p className="text-gray-600 text-lg">No blogs found.</p>
+      <div className="container mx-auto my-16 px-5">
+        <div className="mx-auto max-w-2xl text-center">
+          <h1 className="text-[#292F6C] tahoma text-[30px] font-bold md:text-[42px]">
+            No results{trimmedQuery ? ` for "${trimmedQuery}"` : ''}
+          </h1>
+          <div className="mx-auto mt-6 max-w-md">
+            <BlogSearchForm id="blog-empty-search-query" defaultQuery={query} />
+          </div>
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <Link href="/blog" className="text-[#292F6C] font-bold">Back to all guides</Link>
+            {BLOG_COMPONENTS.slice(0, 3).map((component) => (
+              <Link key={component.slug} href={`/blog/category/${component.slug}`} className="text-[#292F6C] underline">
+                {component.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="container mx-auto md:mt-36 sm:mt-5 mt-5 px-5">
+      <div className="max-w-3xl">
+        <h1 className="text-[#292F6C] tahoma text-[30px] font-bold md:text-[42px]">
+          {searchedBlog.length} result{searchedBlog.length === 1 ? '' : 's'}
+          {trimmedQuery ? ` for "${trimmedQuery}"` : ''}
+        </h1>
+        <Link href="/blog" className="mt-4 inline-block text-[#292F6C] font-bold">
+          Back to all guides
+        </Link>
+      </div>
       <div className="flex flex-wrap justify-start gap-10 my-10">
         <div className="lg:w-3/5 sm:w-full w-full xl:mr-14 lg:mr-5 md:mr-10 ">
           {searchedBlog.map((blog) => {
@@ -58,19 +89,7 @@ export default function SearchBlog({ searchedBlog }: Props) {
         </div>
         <div className="lg:w-1/5 sm:w-full w-full">
           <aside className="w-full max-w-xs p-6 md:border-l border-b-0 sticky top-16 right-0 bg-white">
-            <form method="GET" action="/blog-search" className="mb-8">
-              <div className="flex gap-2">
-                <input
-                  name="query"
-                  type="text"
-                  placeholder="Search"
-                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button type="submit" className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
-                  Search
-                </button>
-              </div>
-            </form>
+            <BlogSearchForm id="blog-results-search-query" className="mb-8" defaultQuery={query} />
           </aside>
         </div>
       </div>

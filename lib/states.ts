@@ -1,65 +1,61 @@
-export const STATE_ABBR_TO_SLUG: Record<string, string> = {
-  AL: 'alabama',
-  AK: 'alaska',
-  AZ: 'arizona',
-  AR: 'arkansas',
-  CA: 'california',
-  CO: 'colorado',
-  CT: 'connecticut',
-  DC: 'washington-dc',
-  DE: 'delaware',
-  FL: 'florida',
-  GA: 'georgia',
-  HI: 'hawaii',
-  ID: 'idaho',
-  IL: 'illinois',
-  IN: 'indiana',
-  IA: 'iowa',
-  KS: 'kansas',
-  KY: 'kentucky',
-  LA: 'louisiana',
-  ME: 'maine',
-  MD: 'maryland',
-  MA: 'massachusetts',
-  MI: 'michigan',
-  MN: 'minnesota',
-  MS: 'mississippi',
-  MO: 'missouri',
-  MT: 'montana',
-  NE: 'nebraska',
-  NV: 'nevada',
-  NH: 'new-hampshire',
-  NJ: 'new-jersey',
-  NM: 'new-mexico',
-  NY: 'new-york',
-  NC: 'north-carolina',
-  ND: 'north-dakota',
-  OH: 'ohio',
-  OK: 'oklahoma',
-  OR: 'oregon',
-  PA: 'pennsylvania',
-  PR: 'puerto-rico',
-  RI: 'rhode-island',
-  SC: 'south-carolina',
-  SD: 'south-dakota',
-  TN: 'tennessee',
-  TX: 'texas',
-  UT: 'utah',
-  VT: 'vermont',
-  VA: 'virginia',
-  WA: 'washington',
-  WV: 'west-virginia',
-  WI: 'wisconsin',
-  WY: 'wyoming',
-};
+import { US_STATES } from '@/constants/usStates';
+
+export const STATE_ABBR_TO_SLUG: Record<string, string> = Object.fromEntries(
+  US_STATES.map((state) => [state.code, state.slug]),
+);
 
 export const STATE_SLUG_TO_ABBR: Record<string, string> = Object.fromEntries(
-  Object.entries(STATE_ABBR_TO_SLUG).map(([abbr, slug]) => [slug, abbr]),
+  US_STATES.map((state) => [state.slug, state.code]),
+);
+
+export const STATE_ABBR_TO_NAME: Record<string, string> = Object.fromEntries(
+  US_STATES.map((state) => [state.code, state.name]),
+);
+
+export const STATE_SLUG_TO_NAME: Record<string, string> = Object.fromEntries(
+  US_STATES.map((state) => [state.slug, state.name]),
 );
 
 function normalizeStateInput(value: string | null | undefined): string | null {
   const normalized = value?.trim();
   return normalized ? normalized : null;
+}
+
+function slugifyStateInput(value: string): string {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, ' and ')
+    .replace(/\./g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function compactStateInput(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/\./g, '')
+    .replace(/[^a-z0-9]+/g, '')
+    .trim();
+}
+
+const STATE_NAME_TO_ABBR: Record<string, string> = Object.fromEntries(
+  US_STATES.map((state) => [compactStateInput(state.name), state.code]),
+);
+
+const STATE_ALIAS_TO_ABBR: Record<string, string> = {
+  dc: 'DC',
+  dca: 'DC',
+  districtcolumbia: 'DC',
+  districtofcolumbia: 'DC',
+  washingtondc: 'DC',
+};
+
+function stateCodeFromDisplayName(value: string): string | null {
+  const compact = compactStateInput(value);
+  return STATE_NAME_TO_ABBR[compact] ?? STATE_ALIAS_TO_ABBR[compact] ?? null;
 }
 
 export function stateSlugFromAbbr(abbr: string | null | undefined): string | null {
@@ -71,7 +67,7 @@ export function stateSlugFromAbbr(abbr: string | null | undefined): string | nul
 export function stateAbbrFromSlug(slug: string | null | undefined): string | null {
   const normalized = normalizeStateInput(slug);
   if (!normalized) return null;
-  return STATE_SLUG_TO_ABBR[normalized.toLowerCase()] ?? null;
+  return STATE_SLUG_TO_ABBR[slugifyStateInput(normalized)] ?? null;
 }
 
 export function normalizeStateCode(value: string | null | undefined): string | null {
@@ -81,32 +77,23 @@ export function normalizeStateCode(value: string | null | undefined): string | n
   const upper = normalized.toUpperCase();
   if (STATE_ABBR_TO_SLUG[upper]) return upper;
 
-  return stateAbbrFromSlug(normalized);
+  return stateAbbrFromSlug(normalized) ?? stateCodeFromDisplayName(normalized);
 }
 
 export function normalizeStateSlug(value: string | null | undefined): string | null {
-  const normalized = normalizeStateInput(value);
-  if (!normalized) return null;
-
-  const lower = normalized.toLowerCase();
-  if (STATE_SLUG_TO_ABBR[lower]) return lower;
-
-  return stateSlugFromAbbr(normalized);
+  const code = normalizeStateCode(value);
+  return code ? STATE_ABBR_TO_SLUG[code] : null;
 }
 
 export function formatStateLabel(value: string | null | undefined): string {
-  const slug = normalizeStateSlug(value);
-  if (!slug) return value?.trim() ?? '';
-
-  return slug
-    .split('-')
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
+  const code = normalizeStateCode(value);
+  if (!code) return value?.trim() ?? '';
+  return STATE_ABBR_TO_NAME[code] ?? value?.trim() ?? '';
 }
 
 export function getStateFullNames(abbreviations: string[]): string[] {
   if (!Array.isArray(abbreviations)) return [];
   return abbreviations
-    .map((abbr) => STATE_ABBR_TO_SLUG[abbr] ?? '')
+    .map((abbr) => STATE_ABBR_TO_NAME[normalizeStateCode(abbr) ?? ''] ?? '')
     .filter(Boolean);
 }

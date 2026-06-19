@@ -1,0 +1,9 @@
+[
+  {
+    "baseName": "Fort Bliss",
+    "slug": "fort-bliss",
+    "stateSlug": "texas",
+    "primaryZip": "79918",
+    "expectedMha": "TX279"
+  }
+]

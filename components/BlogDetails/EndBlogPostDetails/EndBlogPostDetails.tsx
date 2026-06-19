@@ -3,18 +3,21 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { createBlogMdxComponents } from "@/mdx-components";
 import { mdxOptions } from "@/lib/blog/mdx-options";
 import type { ResolvedAuthor } from "@/lib/blog/types";
+import type { TocHeading } from "@/lib/blog/mdx";
 
 type Props = {
   bodySecondHalf: string;
   resolvedAuthor: ResolvedAuthor;
+  headingIds: TocHeading[];
 };
 
 export default function EndBlogPostDetails({
   bodySecondHalf,
   resolvedAuthor,
+  headingIds,
 }: Props) {
   if (!bodySecondHalf) return null;
-  const mdxComponents = createBlogMdxComponents({ resolvedAuthor });
+  const mdxComponents = createBlogMdxComponents({ resolvedAuthor, headingIds });
 
   return (
     <div className="relative py-12 md:px-10 px-5">

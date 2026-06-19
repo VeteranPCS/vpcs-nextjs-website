@@ -1,9 +1,11 @@
 import stateService, { type Agent, type Lenders } from '@/services/stateService';
-import { getAllBlogs } from '@/lib/blog/mdx';
+import { SITE_URL } from '@/lib/siteUrl';
+import { getStateGuidePosts } from '@/lib/blog/registry';
+import { areaAssignmentsInState } from '@/lib/stateAgents';
 
 export const revalidate = 43200;
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://veteranpcs.com';
+const BASE_URL = SITE_URL;
 
 export async function generateStaticParams() {
   try {
@@ -17,20 +19,18 @@ export async function generateStaticParams() {
   }
 }
 
-function agentCitiesInState(agent: Agent, stateCode: string): string {
-  const records = agent.Area_Assignments__r?.records ?? [];
-  const cities = records
-    .filter((r) => r.Area__r?.State__c === stateCode)
+function agentCitiesInState(agent: Agent, stateSlugInput: string): string {
+  const cities = areaAssignmentsInState(agent, stateSlugInput)
     .map((r) => r.Area__r?.Name)
     .filter((name): name is string => Boolean(name));
   const unique = Array.from(new Set(cities));
   return unique.length ? unique.join(', ') : '—';
 }
 
-function formatAgentLine(agent: Agent, stateCode: string): string {
+function formatAgentLine(agent: Agent, stateSlugInput: string): string {
   const name = agent.Name || `${agent.FirstName ?? ''} ${agent.LastName ?? ''}`.trim() || '—';
   const brokerage = agent.Brokerage_Name__pc || '—';
-  const cities = agentCitiesInState(agent, stateCode);
+  const cities = agentCitiesInState(agent, stateSlugInput);
   const status = agent.Military_Status__pc || '—';
   return `- ${name} — ${brokerage} — ${cities} — ${status}`;
 }
@@ -78,27 +78,7 @@ export async function GET(
     console.error('[llms.txt] lenders fetch failed:', err);
   }
 
-  let relatedBlogs: { title: string; slug: string }[] = [];
-  try {
-    const all = await getAllBlogs();
-    const needle = stateName.toLowerCase();
-    relatedBlogs = all
-      .filter((post) => {
-        const haystack = [
-          post.title,
-          post.primaryKeyword ?? '',
-          post.slug,
-          ...(post.secondaryKeywords ?? []),
-        ]
-          .join(' ')
-          .toLowerCase();
-        return haystack.includes(needle);
-      })
-      .slice(0, 20)
-      .map((p) => ({ title: p.title, slug: p.slug }));
-  } catch (err) {
-    console.error('[llms.txt] blogs fetch failed:', err);
-  }
+  const relatedBlogs = getStateGuidePosts(slug, 20);
 
   const lines: string[] = [];
   lines.push(`# VeteranPCS — ${stateName}`);
@@ -112,7 +92,7 @@ export async function GET(
   lines.push('');
   lines.push(`## Agents (${agents.length})`);
   lines.push('');
-  for (const a of agents) lines.push(formatAgentLine(a, shortName));
+  for (const a of agents) lines.push(formatAgentLine(a, slug));
   lines.push('');
   lines.push(`## Lenders (${lenders.length})`);
   lines.push('');

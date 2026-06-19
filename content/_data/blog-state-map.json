@@ -1,0 +1,33 @@
+{
+  "posts": {
+    "fort-meade-bah-2026-what-your-allowance-buys": {
+      "stateSlug": "maryland",
+      "source": "frontmatter-author-backfill",
+      "note": "Existing author.stateSlug coverage retained until top-level post metadata is backfilled."
+    },
+    "pcs-to-walter-reed-bethesda-2026-neighborhoods-bah": {
+      "stateSlug": "maryland",
+      "source": "frontmatter-author-backfill",
+      "note": "Existing author.stateSlug coverage retained until top-level post metadata is backfilled."
+    },
+    "complete-fort-campbell-pcs-guide": {
+      "stateSlug": "kentucky",
+      "source": "manual-base-map",
+      "note": "Primary installation address; Tennessee coverage remains body-copy context."
+    },
+    "pcs-to-joint-base-lewis-mcchord-jblm-2026-guide": {
+      "stateSlug": "washington",
+      "source": "manual-base-map",
+      "note": "Joint Base Lewis-McChord primary installation state."
+    }
+  },
+  "aliases": {
+    "bethesda": ["maryland"],
+    "fort-campbell": ["kentucky", "tennessee"],
+    "fort-meade": ["maryland"],
+    "jblm": ["washington"],
+    "joint-base-lewis-mcchord": ["washington"],
+    "walter-reed": ["maryland"],
+    "washington-dc": ["washington-dc"]
+  }
+}

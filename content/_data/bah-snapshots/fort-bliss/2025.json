@@ -1,0 +1,21 @@
+{
+  "baseName": "Fort Bliss",
+  "slug": "fort-bliss",
+  "stateSlug": "texas",
+  "primaryZip": "79918",
+  "expectedMha": "TX279",
+  "year": "2025",
+  "sourceYear": "2025",
+  "source": "travel.dod.mil/DTMO",
+  "generatedAt": "2026-06-19T02:01:56.635Z",
+  "ranks": [
+    {
+      "rankId": "5",
+      "rank": "E-5",
+      "mha": "EL PASO, TX (TX279)",
+      "withDependents": 1773,
+      "withoutDependents": 1425,
+      "difference": 348
+    }
+  ]
+}

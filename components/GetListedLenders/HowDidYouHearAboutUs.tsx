@@ -22,7 +22,7 @@ const HowDidYouHearAboutUs: React.FC<HowDidYouHearAboutUsProps> = ({
                     htmlFor="howDidYouHear"
                     className="text-[#242426] tahoma text-sm font-normal mb-1"
                 >
-                    How did you hear about us?*
+                    How did you hear about us?
                 </label>
                 <select
                     {...register('howDidYouHear')}

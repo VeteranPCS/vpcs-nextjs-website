@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Script from "next/script";
+import Link from "next/link";
 import { cache } from "react";
 import { BlogPosting, WithContext } from "schema-dts";
 import BlogDetailsHeroSection from "@/components/BlogDetails/BlogDetailsHeroSection/BlogDetailsHeroSection";
@@ -11,14 +12,24 @@ import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestio
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 import FindAgentInState from "@/components/Blog/FindAgentInState";
-import { getBlogBySlug, getBlogSlugs } from "@/lib/blog/mdx";
+import {
+    extractTocHeadings,
+    getBlogBySlug,
+    getBlogSlugs,
+    readingTimeMinutes,
+} from "@/lib/blog/mdx";
 import { resolveAuthor } from "@/lib/blog/authors";
-import { getStateForBlog } from "@/lib/blog/getStateForBlog";
+import {
+    getStateDisplayName,
+    resolveBlogStateSlug,
+} from "@/lib/blog/state";
 import { splitMdxAtMidpoint } from "@/lib/blog/splitMdxAtMidpoint";
 import { formatDate } from "@/utils/helper";
 import { buildBreadcrumbList } from "@/lib/structured-data";
+import { SITE_URL } from "@/lib/siteUrl";
+import { buildContactCtaHref } from "@/lib/contactAgentUrl";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const BASE_URL = SITE_URL;
 
 const getBlogPageData = cache(async (slug: string) => {
     const blog = await getBlogBySlug(slug);
@@ -74,7 +85,16 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
 
     const { blog, resolvedAuthor } = pageData;
     const { first: bodyFirstHalf, second: bodySecondHalf } = splitMdxAtMidpoint(blog.content);
-    const bridgeState = getStateForBlog(slug);
+    const bridgeState = resolveBlogStateSlug(blog);
+    const tocHeadings = extractTocHeadings(blog.content);
+    const firstHeadingCount = extractTocHeadings(bodyFirstHalf).length;
+    const firstHeadingIds = tocHeadings.slice(0, firstHeadingCount);
+    const secondHeadingIds = tocHeadings.slice(firstHeadingCount);
+    const readingMinutes = readingTimeMinutes(blog.content);
+    const contactHref = buildContactCtaHref({ stateSlug: bridgeState, form: "agent" });
+    const ctaLabel = bridgeState
+        ? `Find an agent in ${getStateDisplayName(bridgeState)}`
+        : "Find an Agent";
 
     const heroImageUrl = blog.mainImage?.src
         ? `${BASE_URL}${blog.mainImage.src}`
@@ -144,10 +164,20 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
             />
             <BlogDetailsHeroSection blog={blog} resolvedAuthor={resolvedAuthor} />
+            <nav className="container mx-auto px-5 pt-8 text-sm text-[#6C757D]" aria-label="Breadcrumb">
+                <Link href="/" className="hover:text-[#292F6C]">Home</Link>
+                <span className="mx-2">/</span>
+                <Link href="/blog" className="hover:text-[#292F6C]">Blog</Link>
+                <span className="mx-2">/</span>
+                <span className="text-[#292F6C]">{blog.title}</span>
+            </nav>
             <BlogBeginingPostAgent
                 blog={blog}
                 bodyFirstHalf={bodyFirstHalf}
                 resolvedAuthor={resolvedAuthor}
+                readingMinutes={readingMinutes}
+                tocHeadings={tocHeadings}
+                headingIds={firstHeadingIds}
             />
             {bridgeState && (
                 <FindAgentInState state={bridgeState} blogSlug={slug} position="top" />
@@ -157,13 +187,28 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
             <EndBlogPostDetails
                 bodySecondHalf={bodySecondHalf}
                 resolvedAuthor={resolvedAuthor}
+                headingIds={secondHeadingIds}
             />
             {bridgeState && (
                 <FindAgentInState state={bridgeState} blogSlug={slug} position="bottom" />
             )}
-            <CommonBlog component={blog.component || ""} />
+            <CommonBlog
+                component={blog.component || ""}
+                currentSlug={slug}
+                stateSlug={bridgeState}
+                categories={blog.categories}
+                primaryKeyword={blog.primaryKeyword}
+            />
             <FrequentlyAskedQuestion />
             <KeepInTouch />
+            <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E5E7EB] bg-white/95 px-5 py-3 shadow-lg md:hidden">
+                <Link
+                    href={contactHref}
+                    className="block min-h-11 rounded-custom bg-[#a81f23] px-5 py-3 text-center text-sm font-bold text-white"
+                >
+                    {ctaLabel}
+                </Link>
+            </div>
         </>
     );
 }

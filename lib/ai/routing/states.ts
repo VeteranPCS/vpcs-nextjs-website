@@ -1,10 +1,7 @@
 import { US_STATES } from '@/constants/usStates';
 import type { RoutingState } from '@/lib/ai/routing/types';
 
-export const ROUTING_STATES: readonly RoutingState[] = [
-  ...US_STATES,
-  { code: 'DC', name: 'District of Columbia', slug: 'washington-dc' },
-];
+export const ROUTING_STATES: readonly RoutingState[] = US_STATES;
 
 export function slugifyRoutingText(input: string): string {
   return input

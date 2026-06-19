@@ -6,5 +6,5 @@ export default async function BlogSearchPage(props: { searchParams: Promise<{ qu
   const query = searchParams?.query || '';
   const searchedBlog = await searchBlogs(query);
 
-  return <SearchBlog searchedBlog={searchedBlog} />;
+  return <SearchBlog searchedBlog={searchedBlog} query={query} />;
 }

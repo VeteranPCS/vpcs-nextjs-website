@@ -15,6 +15,10 @@ import { evaluateLeadSpam, tagSpamSuspected } from '@/lib/spam-protection';
 import { HP_FIELD, TS_FIELD } from '@/lib/validation/spam-fields';
 import { formatStateLabel, normalizeStateCode, normalizeStateSlug } from '@/lib/states';
 import {
+    buildAgentLeadParams,
+    buildLenderLeadParams,
+} from '@/services/salesforceLeadParams';
+import {
     parseLeadForm,
     simpleLeadSchema,
     contactAgentSchema,
@@ -302,39 +306,7 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
             `${BASE_URL}/contact-agent${queryString}`,
             submissionId,
         );
-        const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
-            retURL: `${BASE_URL}/thank-you`,
-            "00N4x00000Lsn28": paramsObj.id || "",
-            recordType: "0124x000000Z5yD",
-            lead_source: "Contact Agent",
-            "00N4x00000Lsr0G": "true",
-            country_code: "US",
-            "00N4x00000QQ1LB": webFormUrl,
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            mobile: formData.phone || "",
-            "00N4x00000Lpb0T": formData.currentBase || "",
-            "00N4x00000LspUs": formData.destinationBase || "",
-            "00N4x00000QPksj": formData.howDidYouHear || "",
-            "00N4x00000QPS7V": formData.tellusMore || "",
-            "00N4x00000bfgFA": formData.additionalComments || "",
-            "00N4x00000LsnP2": formData.status_select || "",
-            "00N4x00000LsnOx": formData.branch_select || "",
-            "00N4x00000QQ0Vz": formData.discharge_status || "",
-            "00N4x00000LspV2": formData.state || "",
-            "00N4x00000LspUi": formData.city || "",
-            "00N4x00000LsaDm": formData.buyingSelling || "",
-            "00N4x00000cKsNF": formData.timeframe || "",
-            "00N4x00000LssBZ": formData.typeOfHome || "",
-            "00N4x00000Lpb2K": formData.bedrooms || "",
-            "00N4x00000Lpb2Z": formData.bathrooms || "",
-            "00N4x00000LsaCy": formData.maxPrice || "",
-            "00N4x00000Lpbfw": formData.preApproval || "",
-            "g-recaptcha-response": "",
-            "captcha_settings": "",
-        }).toString();
+        const formBody = buildAgentLeadParams(formData, paramsObj, webFormUrl, BASE_URL).toString();
 
         logDebug('Sending form data to Salesforce Web-to-Lead', {
             submissionId,
@@ -949,28 +921,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             `${BASE_URL}/contact-lender${fullQueryString}`,
             submissionId,
         );
-        const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
-            retURL: `${BASE_URL}/thank-you`,
-            "00N4x00000QPJUT": paramsObj.id || "",
-            recordType: "0124x000000Z5yD",
-            lead_source: "Contact Lender",
-            "00N4x00000Lsr0G": "true",
-            country_code: "US",
-            "00N4x00000QQ1LB": webFormUrl,
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            mobile: formData.phone || "",
-            "00N4x00000LspV2": formData.state || "",
-            "00N4x00000Lpb0T": formData.currentBase || "",
-            "00N4x00000LspUs": formData.destinationBase || "",
-            "00N4x00000QPksj": formData.howDidYouHear || "",
-            "00N4x00000QPS7V": formData.tellusMore || "",
-            "00N4x00000bfgFA": formData.additionalComments || "",
-            "g-recaptcha-response": "",
-            "captcha_settings": "",
-        }).toString();
+        const formBody = buildLenderLeadParams(formData, paramsObj, webFormUrl, BASE_URL).toString();
 
         logDebug('Sending lender form data to Salesforce Web-to-Lead', {
             submissionId,

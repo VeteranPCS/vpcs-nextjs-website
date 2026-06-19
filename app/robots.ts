@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { SITE_URL } from '@/lib/siteUrl';
 
 const DISALLOW = [
     '/api/*',
@@ -44,6 +45,6 @@ export default function robots(): MetadataRoute.Robots {
             { userAgent: '*', allow: '/', disallow: DISALLOW },
             ...AI_USER_AGENTS.map((ua) => ({ userAgent: ua, allow: '/', disallow: DISALLOW })),
         ],
-        sitemap: `${process.env.NEXT_PUBLIC_API_BASE_URL}/sitemap.xml`,
+        sitemap: `${SITE_URL}/sitemap.xml`,
     }
 }

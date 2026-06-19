@@ -6,6 +6,7 @@ import * as BlogMdx from '@/components/Blog/mdx';
 import BAHCalculator from '@/components/BAHCalculator';
 import MovingBonusCalculator from '@/components/PcsResources/MovingBonusCalculator/MovingBonusCalculator';
 import type { ResolvedAuthor } from '@/lib/blog/types';
+import type { TocHeading } from '@/lib/blog/mdx';
 
 function isExternal(href: string): boolean {
   return /^https?:\/\//i.test(href);
@@ -142,13 +143,29 @@ export const mdxComponents: MDXComponents = {
 
 type BlogMdxContext = {
   resolvedAuthor?: ResolvedAuthor | null;
+  headingIds?: TocHeading[];
 };
 
 export function createBlogMdxComponents({
   resolvedAuthor,
+  headingIds = [],
 }: BlogMdxContext = {}): MDXComponents {
+  let h2Index = 0;
   return {
     ...mdxComponents,
+    h2: ({ children, ...props }) => {
+      const heading = headingIds[h2Index];
+      h2Index += 1;
+      return (
+        <h2
+          id={heading?.id}
+          className="tahoma scroll-mt-28 text-2xl md:text-3xl font-bold text-[#212529] mt-8 mb-3"
+          {...props}
+        >
+          {children}
+        </h2>
+      );
+    },
     AgentCTA: (props: ComponentProps<typeof BlogMdx.AgentCTA>) => (
       <BlogMdx.AgentCTA {...props} resolvedAuthor={resolvedAuthor} />
     ),

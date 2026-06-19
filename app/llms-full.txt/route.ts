@@ -1,9 +1,11 @@
 import { getAllBlogs } from '@/lib/blog/mdx';
 import stateService from '@/services/stateService';
+import { SITE_URL } from '@/lib/siteUrl';
+import { getRegistryPost } from '@/lib/blog/registry';
 
 export const revalidate = 86400;
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://veteranpcs.com';
+const BASE_URL = SITE_URL;
 
 function stripMdxComponents(body: string): string {
   return body
@@ -51,12 +53,15 @@ export async function GET(): Promise<Response> {
   for (const post of blogs) {
     const url = `${BASE_URL}/blog/${post.slug}`;
     const categories = (post.categories ?? []).join(', ') || '—';
+    const registryPost = getRegistryPost(post.slug);
     const section: string[] = [];
     section.push(`### ${post.title}\n`);
     section.push(`- URL: ${url}`);
     section.push(`- Raw markdown: ${url}/page.md`);
     section.push(`- Published: ${formatDate(post.publishedAt)}  Updated: ${formatDate(post.updatedAt)}`);
     section.push(`- Categories: ${categories}`);
+    section.push(`- Component slug: ${registryPost?.componentSlug ?? '—'}`);
+    section.push(`- State slug: ${registryPost?.stateSlug ?? '—'}`);
     if (post.primaryKeyword) section.push(`- Primary keyword: ${post.primaryKeyword}`);
     section.push('');
     section.push(stripMdxComponents(post.content).trim());

@@ -7,7 +7,6 @@ import { sendGTMEvent } from "@next/third-parties/google";
 import type { StateList } from '@/services/stateService';
 import { clientAreaService, type AreaAssignment } from '@/services/clientAreaService';
 import { clientStateService } from '@/services/clientStateService';
-import { sanitizeCityName } from '@/utils/sanitizeCityName';
 import './AgentFinderPopup.css';
 
 
@@ -25,6 +24,7 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
     const [selectedArea, setSelectedArea] = useState<string>('');
     const [stateImage, setStateImage] = useState<string>('');
     const [isLoadingAreas, setIsLoadingAreas] = useState(false);
+    const [isRouting, setIsRouting] = useState(false);
 
     // Load states on component mount
     useEffect(() => {
@@ -118,28 +118,39 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
         });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!selectedStateSlug || !selectedArea) {
             return;
         }
 
-        // Find the area name to sanitize for the anchor
-        const selectedAreaData = areas.find(area => area.slug === selectedArea);
-        const sanitizedAreaName = selectedAreaData ? sanitizeCityName(selectedAreaData.name) : sanitizeCityName(selectedArea);
-
         // Send GTM event to track agent finder popup usage
         sendGTMEvent({
             event: "agent_finder_popup_submission",
             state: selectedStateSlug,
-            area_assignment: sanitizedAreaName,
+            area_assignment: selectedArea,
         });
 
-        // Navigate to the state page with sanitized area anchor
-        const url = `/${selectedStateSlug}#${sanitizedAreaName}`;
-        router.push(url);
-        onClose();
+        const fallbackUrl = `/contact-agent?form=agent&state=${encodeURIComponent(selectedStateSlug)}`;
+        setIsRouting(true);
+        try {
+            const response = await fetch(`/api/v1/states/${encodeURIComponent(selectedStateSlug)}/area-agent?area=${encodeURIComponent(selectedArea)}`);
+            if (!response.ok) {
+                router.push(fallbackUrl);
+                onClose();
+                return;
+            }
+            const body = await response.json() as { success?: boolean; data?: { contactHref?: string } };
+            router.push(body.success && body.data?.contactHref ? body.data.contactHref : fallbackUrl);
+            onClose();
+        } catch (error) {
+            console.error('Agent finder route failed:', error);
+            router.push(fallbackUrl);
+            onClose();
+        } finally {
+            setIsRouting(false);
+        }
     };
 
     const handleCloseButtonClick = () => {
@@ -252,9 +263,9 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
                         <button
                             type="submit"
                             className="agent-finder-popup__submit"
-                            disabled={!selectedState || !selectedArea || isLoadingAreas}
+                            disabled={!selectedState || !selectedArea || isLoadingAreas || isRouting}
                         >
-                            Find Agents
+                            {isRouting ? 'Finding agent...' : 'Find an Agent'}
                         </button>
                     </form>
                 </div>
