@@ -5,8 +5,8 @@ import PcsResourcesBlog from "@/components/PcsResources/PcsResourcesBlog/PcsReso
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import { getAllBlogs, groupBlogsByComponent } from "@/lib/blog/mdx";
 import { Metadata } from "next";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import { SITE_URL } from "@/lib/siteUrl";
+import { BLOG_COMPONENTS } from "@/lib/blog/components";
 
 // Re-render daily so future-dated posts surface without a deploy.
 export const revalidate = 86400;
@@ -15,23 +15,23 @@ const META_TITLE = "Military PCS & VA Loan Guides - Real Estate Advice for Servi
 const META_DESCRIPTION = "Expert resources for military homebuyers and sellers. Get PCS checklists, BAH maximization strategies, VA loan qualification guides, and base-specific housing insights written by veterans who've been in your boots.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     template: "%s | VeteranPCS",
     default: META_TITLE,
   },
   alternates: {
-    canonical: `${BASE_URL}/blog`,
+    canonical: `${SITE_URL}/blog`,
   },
   description: META_DESCRIPTION,
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: BASE_URL,
+    url: SITE_URL,
     siteName: "VeteranPCS",
     images: [
       {
-        url: `${BASE_URL}/opengraph/og-logo.png`,
+        url: `${SITE_URL}/opengraph/og-logo.png`,
         width: 1200,
         height: 630,
         alt: "VeteranPCS",
@@ -52,17 +52,20 @@ export default async function Home() {
     return <p>Failed to load the blog.</p>;
   }
   const groupedBlogs = await groupBlogsByComponent();
-  const categories_list = new Set(Object.keys(groupedBlogs));
+  const orderedGroups = BLOG_COMPONENTS
+    .map((component) => [component.label, groupedBlogs[component.label] ?? []] as const)
+    .filter(([, blogsList]) => blogsList.length > 0);
+  const categories_list = new Set(orderedGroups.map(([component]) => component));
 
   return (
     <>
       <BlogPageHeroSection blog={blogs[0]} />
-      {Object.entries(groupedBlogs).map(([component, blogsList], index) => (
-        index === 0 && <BlogMovingPcsingBlogPostSection key={component} blogList={blogsList} component={component} categories_list={categories_list} />
+      {orderedGroups.map(([component, blogsList], index) => (
+        index === 0 && <BlogMovingPcsingBlogPostSection key={component} blogList={blogsList.slice(0, 9)} component={component} categories_list={categories_list} />
       ))}
       <BlogCta />
-      {Object.entries(groupedBlogs).map(([component, blogsList], index) => (
-        index !== 0 && <PcsResourcesBlog key={component} blogList={blogsList} component={component} />
+      {orderedGroups.map(([component, blogsList], index) => (
+        index !== 0 && <PcsResourcesBlog key={component} blogList={blogsList.slice(0, 6)} component={component} />
       ))}
       <KeepInTouch />
     </>

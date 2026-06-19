@@ -1,10 +1,10 @@
 import "@/app/globals.css";
 import classes from "./BlogPageHeroSection.module.css";
-import Image from "next/image";
 import Link from "next/link";
 import { formatDate } from "@/utils/helper";
 import { excerpt } from "@/lib/blog/mdx";
 import type { BlogPost } from "@/lib/blog/types";
+import BlogSearchForm from "@/components/BlogPage/BlogSearchForm";
 
 type Props = { blog: BlogPost };
 
@@ -16,8 +16,8 @@ export default function BlogPageHeroSection({ blog }: Props) {
         className={classes.blogpageherosectioncontainer}
         style={{ backgroundImage: `url("${bg}")` }}
       >
-        <Link href={`/blog/${blog.slug}`}>
-          <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center items-center">
+          <Link href={`/blog/${blog.slug}`} className="block">
             <div>
               <div className="text-center">
                 {blog.categories?.[0] ? (
@@ -45,26 +45,13 @@ export default function BlogPageHeroSection({ blog }: Props) {
                     </h6>
                   </div>
                 ) : null}
-                <div className="flex items-center justify-center sm:mt-10 mt-10 md:mt-0 md:hidden sm:ma-auto">
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    className="w-full max-w-md px-4 py-3 border bg-[#F9F9F9] border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 "
-                  />
-                  <button className="bg-[#003486] hover:bg-blue-600 text-white px-4 py-4 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                    <Image
-                      src="/icon/search.svg"
-                      width={20}
-                      height={20}
-                      alt="search"
-                      loading="eager"
-                    />
-                  </button>
-                </div>
               </div>
             </div>
+          </Link>
+          <div className="mt-8 w-full max-w-md px-5 md:px-0">
+            <BlogSearchForm id="blog-hero-search-query" />
           </div>
-        </Link>
+        </div>
       </div>
     </div>
   );

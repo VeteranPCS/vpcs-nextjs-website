@@ -19,8 +19,9 @@ import {
   groupAgentsByAreaForState,
   type StateAgentGroups,
 } from "@/lib/stateAgents";
+import { SITE_URL } from "@/lib/siteUrl";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const BASE_URL = SITE_URL;
 
 export async function generateStaticParams() {
   try {
@@ -49,7 +50,7 @@ export async function generateMetadata(props: { params: Promise<{ state: string 
   const ogImage = await stateService.fetchStateImage(params.state);
 
   return {
-    metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
+    metadataBase: new URL(BASE_URL),
     title: ogTitle,
     description: ogDescription,
     alternates: {

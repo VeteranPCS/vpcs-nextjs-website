@@ -5,8 +5,10 @@ import path from 'node:path';
 import matter from 'gray-matter';
 import { cache } from 'react';
 import type { BlogFrontmatter, BlogPost } from '@/lib/blog/types';
+import { getBlogComponentBySlug, normalizeBlogComponentSlug } from '@/lib/blog/components';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'blog');
+export const BLOG_CATEGORY_PAGE_SIZE = 12;
 
 function readAllFromDisk(): BlogPost[] {
   if (!fs.existsSync(CONTENT_DIR)) return [];
@@ -70,6 +72,24 @@ export async function getBlogsByComponent(
   return typeof limit === 'number' ? filtered.slice(0, limit) : filtered;
 }
 
+export async function getBlogsByComponentSlug(
+  componentSlug: string,
+  limit?: number,
+): Promise<BlogPost[]> {
+  const component = getBlogComponentBySlug(componentSlug);
+  if (!component) return [];
+  return getBlogsByComponent(component.label, limit);
+}
+
+export function paginateBlogs<T>(items: T[], page: number, pageSize: number): T[] {
+  const start = (page - 1) * pageSize;
+  return items.slice(start, start + pageSize);
+}
+
+export function pageCount(totalItems: number, pageSize: number): number {
+  return Math.max(1, Math.ceil(totalItems / pageSize));
+}
+
 export async function searchBlogs(query: string): Promise<BlogPost[]> {
   if (!query.trim()) return [];
   const needle = query.toLowerCase();
@@ -92,6 +112,10 @@ export async function groupBlogsByComponent(): Promise<Record<string, BlogPost[]
   return grouped;
 }
 
+export function componentSlugForBlog(blog: Pick<BlogPost, 'component'>): string | null {
+  return normalizeBlogComponentSlug(blog.component);
+}
+
 export function excerpt(mdx: string, length: number): string {
   const stripped = mdx
     .replace(/```[\s\S]*?```/g, '')
@@ -103,4 +127,60 @@ export function excerpt(mdx: string, length: number): string {
     .trim();
   if (stripped.length <= length) return stripped;
   return `${stripped.slice(0, length).trimEnd()}…`;
+}
+
+export type TocHeading = {
+  text: string;
+  id: string;
+};
+
+function stripMdxForText(mdx: string): string {
+  return mdx
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/^(import|export)\s.*?$/gm, '')
+    .replace(/<([A-Z][A-Za-z0-9]*)\b[^>]*\/>/g, '')
+    .replace(/<([A-Z][A-Za-z0-9]*)\b[^>]*>[\s\S]*?<\/\1>/g, '')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/[#>*_~`]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export function readingTimeMinutes(mdx: string): number {
+  const text = stripMdxForText(mdx);
+  if (!text) return 1;
+  const words = text.split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 225));
+}
+
+export function slugifyHeading(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '') || 'section';
+}
+
+export function extractTocHeadings(mdx: string): TocHeading[] {
+  const counts = new Map<string, number>();
+  return mdx
+    .replace(/```[\s\S]*?```/g, '')
+    .split('\n')
+    .map((line) => /^##\s+(?!#)(.+)$/.exec(line))
+    .filter((match): match is RegExpExecArray => Boolean(match))
+    .map((match) => {
+      const text = match[1].replace(/[*_`]+/g, '').trim();
+      const baseId = slugifyHeading(text);
+      const count = (counts.get(baseId) ?? 0) + 1;
+      counts.set(baseId, count);
+      return {
+        text,
+        id: count === 1 ? baseId : `${baseId}-${count}`,
+      };
+    })
+    .filter((heading) => heading.text.length > 0);
 }
