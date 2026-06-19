@@ -1,5 +1,5 @@
 {
-  "contentHash": "47210fc7570e0dbb0b15a809c3453560bebe802929083b413baba2995324d650",
+  "contentHash": "ce2031666486d2456f90b3aa96a0c2729e6dbea6fa020db2264775acd182b592",
   "totalPosts": 162,
   "byComponent": {
     "Financial Guidance": [
@@ -462,7 +462,8 @@
     "resolved": 35,
     "bySource": {
       "author-state-slug": 2,
-      "slug-heuristic": 31,
+      "frontmatter-state-slug": 4,
+      "slug-heuristic": 27,
       "state-map-post": 2
     },
     "unmappedHighIntent": [
@@ -726,13 +727,13 @@
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
       "stateSlug": "alabama",
-      "stateSource": "slug-heuristic",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "Alabama is home to over 100,000 active-duty military personnel and their families. The military community in Alabama is diverse and close-knit, bringing together service members from across the country and around the world.",
       "publishedAt": "2023-09-19T03:34:43.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "army forts in alabama",
       "secondaryKeywords": [
         "air force base alabama",
@@ -748,7 +749,8 @@
         "3. Maxwell Air Force Base & Gunter Annex",
         "4. Redstone Arsenal",
         "5. USCG Sector Mobile",
-        "Moving to Alabama? We Can Help!"
+        "Moving to Alabama? We Can Help!",
+        "Where Military Families Live Near Alabama's Bases"
       ]
     },
     {
@@ -3490,13 +3492,13 @@
       "component": "PCS Help",
       "componentSlug": "pcs-help",
       "stateSlug": "tennessee",
-      "stateSource": "slug-heuristic",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "Receiving orders to Tennessee? You're in for a treat. As a military-friendly state with diverse landscapes, vibrant cities, and significant tax advantages, Tennessee offers an exceptional quality of life for active duty service members, ...",
       "publishedAt": "2025-01-28T00:07:00.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "tennessee military bases",
       "secondaryKeywords": [
         "arnold air force base",
@@ -3514,7 +3516,8 @@
         "Military Community Support in Tennessee",
         "Making Your Tennessee PCS Successful",
         "Why Tennessee Could Be Your Forever Home",
-        "Ready to PCS to Tennessee?"
+        "Ready to PCS to Tennessee?",
+        "Related PCS Guides for Your Tennessee Move"
       ]
     },
     {
@@ -3651,7 +3654,7 @@
       ],
       "description": "A Permanent Change of Station (PCS) move is one of the most significant transitions for active duty military personnel and their families. Whether you are relocating within the United States or moving overseas, planning ahead is essentia...",
       "publishedAt": "2024-05-09T18:45:35.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "pcs checklist",
       "secondaryKeywords": [
         "active duty pcs move",
@@ -3667,7 +3670,8 @@
         "Post-Move Checklist (First Week After Arrival)",
         "Within the First Month",
         "Final Thoughts: Stay Organized for a Smooth PCS Move",
-        "Frequently Asked Questions (FAQ)"
+        "Frequently Asked Questions (FAQ)",
+        "Related PCS Resources"
       ]
     },
     {
@@ -4623,13 +4627,13 @@
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
       "stateSlug": "california",
-      "stateSource": "slug-heuristic",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "California has the largest military population in the United States, with over 157,000 active-duty personnel and more than 800,000 veterans. The military contributes over $90 billion annually to the state's economy and supports over 700,...",
       "publishedAt": "2023-10-14T01:19:32.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "california air force bases",
       "secondaryKeywords": [
         "air force bases in california",
@@ -4640,7 +4644,8 @@
       "h2Outline": [
         "List of Military Bases in California",
         "Featured Military Bases in California",
-        "Moving to California? We Can Help!"
+        "Moving to California? We Can Help!",
+        "Plan Your PCS to California"
       ]
     },
     {
@@ -4768,13 +4773,13 @@
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
       "stateSlug": "georgia",
-      "stateSource": "slug-heuristic",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "Georgia has played a pivotal role in U.S. military history, from the American Revolution to modern-day defense operations. With thirteen active military installations, the state remains a key hub for national security, training, and logi...",
       "publishedAt": "2024-06-25T13:47:49.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "military forts in georgia",
       "secondaryKeywords": [
         "air force base georgia",
@@ -4789,7 +4794,8 @@
         "Navy and Marine Corps Bases in Georgia",
         "Moving to Georgia? Let Us Help You Find a Home",
         "Frequently Asked Questions (FAQ)",
-        "Final Thoughts"
+        "Final Thoughts",
+        "Where to Live Near Georgia's Bases"
       ]
     },
     {
