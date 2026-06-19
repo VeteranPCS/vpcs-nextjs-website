@@ -1,5 +1,5 @@
 {
-  "contentHash": "ce2031666486d2456f90b3aa96a0c2729e6dbea6fa020db2264775acd182b592",
+  "contentHash": "dcdc9a6fe9f905197d8042b399e2b0a531b08d9a7ea2a8107dc8c17e310921c1",
   "totalPosts": 162,
   "byComponent": {
     "Financial Guidance": [
@@ -390,6 +390,8 @@
       "what-military-bases-are-in-georgia"
     ],
     "hawaii": [
+      "pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
+      "pcs-to-hawaii-with-pets",
       "what-military-bases-are-in-hawaii"
     ],
     "idaho": [
@@ -459,11 +461,11 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 35,
+    "resolved": 37,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 4,
-      "slug-heuristic": 27,
+      "frontmatter-state-slug": 9,
+      "slug-heuristic": 24,
       "state-map-post": 2
     },
     "unmappedHighIntent": [
@@ -496,8 +498,6 @@
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
       "pcs-to-fort-eisenhower",
       "pcs-to-fort-leavenworth-complete-guide-for-military-families",
-      "pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
-      "pcs-to-hawaii-with-pets",
       "pcs-to-kitsap-county-five-things-military-families",
       "pcs-to-luke-afb-military-guide-to-phoenix",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
@@ -2650,15 +2650,15 @@
       "url": "/blog/pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "hawaii",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "US Military Bases"
       ],
       "description": "Relocating to Hawaii during a Permanent Change of Station (PCS) is both exciting and challenging. The idea of living in paradise is appealing, but navigating Hawaii’s real estate market requires careful planning. Property values are high...",
       "publishedAt": "2024-07-15T20:59:07.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "buying a home pcs hawaii",
       "secondaryKeywords": [
         "hawaii real estate market military",
@@ -2675,14 +2675,14 @@
       "url": "/blog/pcs-to-hawaii-with-pets",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "hawaii",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "Updated May 2025",
       "publishedAt": "2025-05-08T22:37:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "pcs to hawaii with pets",
       "secondaryKeywords": [
         "hawaii direct release program pets",
@@ -2699,6 +2699,7 @@
         "Finding Pet-Friendly Housing in Hawaii",
         "Preparing Your Pet for the Move",
         "Hawaii-Specific Pet Considerations",
+        "Related Hawaii PCS Guides",
         "Ready to Go?"
       ]
     },
@@ -4743,13 +4744,13 @@
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
       "stateSlug": "florida",
-      "stateSource": "slug-heuristic",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "Florida has a long history of military involvement, from the American Revolution to modern defense operations. The state is home to twenty-four active military installations, supporting the Army, Navy, Air Force, Marine Corps, Space Forc...",
       "publishedAt": "2024-06-25T13:58:25.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "military bases in florida",
       "secondaryKeywords": [
         "air force bases in florida",
@@ -4763,6 +4764,7 @@
         "Navy and Marine Corps Bases in Florida",
         "Coast Guard Installations in Florida",
         "Moving to Florida? Let Us Help You Find a Home",
+        "Plan Your PCS to Florida",
         "Frequently Asked Questions (FAQ)"
       ]
     },
@@ -4805,13 +4807,13 @@
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
       "stateSlug": "hawaii",
-      "stateSource": "slug-heuristic",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "Hawaii has a rich military history and is home to eleven active military installations spread across multiple islands. With its strategic location in the Pacific, Hawaii has played a critical role in U.S. military operations for over a c...",
       "publishedAt": "2024-06-25T14:58:26.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "what are the 11 military bases in hawaii",
       "secondaryKeywords": [
         "air force bases in hawaii",
@@ -4827,6 +4829,7 @@
         "Coast Guard Installations in Hawaii",
         "Specialized Military Installations in Hawaii",
         "Moving to Hawaii? Let Us Help You Find a Home",
+        "Plan Your PCS to Hawaii",
         "Frequently Asked Questions (FAQ)"
       ]
     },
@@ -5139,13 +5142,13 @@
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
       "stateSlug": "new-york",
-      "stateSource": "slug-heuristic",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "New York has played a pivotal role in U.S. military history, dating back to the Revolutionary War. The state is home to West Point, the oldest continuously occupied military post in the United States, which served as a key stronghold for...",
       "publishedAt": "2024-07-10T14:45:55.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "military bases in new york",
       "secondaryKeywords": [
         "army base in new york",
