@@ -1,5 +1,5 @@
 {
-  "contentHash": "372a9a4f6fdb4c33cca538ae68cfb96f7a7d1ebdc0b99fde6cc315d8cd030752",
+  "contentHash": "38aaf9c3a798dfbe0d489ae4386615f925567d63d4cf88506f801eea39a702be",
   "totalPosts": 162,
   "byComponent": {
     "Financial Guidance": [
@@ -359,12 +359,14 @@
   },
   "byState": {
     "alabama": [
-      "alabama-military-bases"
+      "alabama-military-bases",
+      "settling-down-pcsing-to-birmingham-alabama-with-the-military"
     ],
     "alaska": [
       "what-military-bases-are-in-alaska"
     ],
     "arizona": [
+      "pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
       "pcs-to-luke-afb-military-guide-to-phoenix",
       "what-military-bases-are-in-arizona",
       "your-complete-guide-to-mcas-yuma"
@@ -374,6 +376,7 @@
     ],
     "california": [
       "pcsing-to-san-diego-top-military-friendly-neighborhoods-and-resources",
+      "top-things-to-do-near-san-diego-military-bases",
       "what-military-bases-are-in-california"
     ],
     "colorado": [
@@ -416,6 +419,7 @@
       "what-military-bases-are-in-iowa"
     ],
     "kansas": [
+      "pcs-to-fort-leavenworth-complete-guide-for-military-families",
       "what-military-bases-are-in-kansas"
     ],
     "kentucky": [
@@ -438,15 +442,18 @@
       "what-military-bases-are-in-montana"
     ],
     "nebraska": [
+      "offutt-afb-pcs-guide-2025",
       "what-military-bases-are-in-nebraska"
     ],
     "new-mexico": [
+      "7-best-family-friendly-activities-near-kirtland-afb",
       "what-military-bases-are-in-new-mexico"
     ],
     "new-york": [
       "what-military-bases-are-in-new-york"
     ],
     "north-carolina": [
+      "9-things-to-do-near-ft-bragg",
       "buy-vs-rent-near-camp-lejeune",
       "pcsing-to-camp-lejeune-2026-onslow-county-guide",
       "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
@@ -474,7 +481,8 @@
       "discover-the-best-places-to-live-near-hill-air-force-base-utah"
     ],
     "washington": [
-      "pcs-to-joint-base-lewis-mcchord-jblm-2026-guide"
+      "pcs-to-joint-base-lewis-mcchord-jblm-2026-guide",
+      "top-communities-for-military-families-near-naval-base-kitsap"
     ],
     "west-virginia": [
       "what-military-bases-are-in-west-virginia"
@@ -487,16 +495,15 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 57,
+    "resolved": 65,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 33,
+      "frontmatter-state-slug": 41,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
     "unmappedHighIntent": [
       "12-tips-for-a-successful-pcs-move-or-home-relocation",
-      "7-best-family-friendly-activities-near-kirtland-afb",
       "arizona-pcs-guide",
       "best-places-to-live-near-philadelphia-military-bases",
       "buying-a-home-sight-unseen-during-a-pcs-move",
@@ -508,12 +515,9 @@
       "managing-a-pcs-move-with-children-strategies-for-military-families",
       "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
-      "offutt-afb-pcs-guide-2025",
       "pcs-moves-buying-or-selling-during-relocation",
       "pcs-redstone-arsenal-huntsville-guide",
-      "pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
       "pcs-to-bremerton-naval-base-kitsap-2026-guide",
-      "pcs-to-fort-leavenworth-complete-guide-for-military-families",
       "pcs-to-kitsap-county-five-things-military-families",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
@@ -526,9 +530,7 @@
       "the-ultimate-pcs-binder-guide-get-organized-for-your-move",
       "the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel",
       "things-to-do-near-fort-riley-a-local-guide",
-      "tinker-air-force-base-pcs-guide",
-      "top-communities-for-military-families-near-naval-base-kitsap",
-      "top-things-to-do-near-san-diego-military-bases"
+      "tinker-air-force-base-pcs-guide"
     ]
   },
   "posts": [
@@ -638,15 +640,15 @@
       "url": "/blog/7-best-family-friendly-activities-near-kirtland-afb",
       "component": "Things to Do Near You",
       "componentSlug": "things-to-do-near-you",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "new-mexico",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "Things to Do Near You",
         "US Military Bases"
       ],
       "description": "Receiving PCS orders to Kirtland Air Force Base brings your military family to one of the Southwest's most vibrant and culturally rich cities. As a veteran real estate agent who's helped countless military families settle into Albuquerqu...",
       "publishedAt": "2025-03-01T01:19:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "things to do near kirtland afb",
       "secondaryKeywords": [
         "albuquerque attractions for military families",
@@ -664,7 +666,8 @@
         "6. Sandia Peak Tramway: Touch the Sky",
         "7. New Mexico Museum of Natural History & Science: Dinosaurs and Beyond",
         "Making Albuquerque Home During Your Kirtland AFB Assignment",
-        "Ready to Find Your Perfect Home Near Kirtland AFB?"
+        "Ready to Find Your Perfect Home Near Kirtland AFB?",
+        "Plan Your PCS to New Mexico"
       ]
     },
     {
@@ -673,14 +676,14 @@
       "url": "/blog/9-things-to-do-near-ft-bragg",
       "component": "Things to Do Near You",
       "componentSlug": "things-to-do-near-you",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "north-carolina",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "Things to Do Near You"
       ],
       "description": "Whether you're looking to spend a day on the beach, explore military history, or enjoy outdoor adventures, there’s plenty to do near Fort Liberty (formerly Fort Bragg). Here are nine great activities to check out for your next weekend ou...",
       "publishedAt": "2022-10-13T13:47:03.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "things to do near fort bragg nc",
       "secondaryKeywords": [
         "fayetteville nc activities",
@@ -699,7 +702,11 @@
         "7. Take the Kids to Fascinate-U Children’s Museum",
         "8. Relax at Cape Fear Botanical Garden",
         "9. Watch a Minor League Baseball Game at J.P. Riddle Stadium",
-        "Moving to Fort Liberty? We Can Help!"
+        "Getting to Know Fort Liberty (formerly Fort Bragg)",
+        "Cost of Living and Housing Around Fayetteville",
+        "Fayetteville-Area Schools for Military Families",
+        "Moving to Fort Liberty? We Can Help!",
+        "Plan Your PCS to North Carolina"
       ]
     },
     {
@@ -2327,15 +2334,15 @@
       "url": "/blog/offutt-afb-pcs-guide-2025",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "nebraska",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "Things to Do Near You"
       ],
       "description": "From the VeteranPCS Team\nUpdated May 2025",
       "publishedAt": "2025-05-03T03:07:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "offutt afb pcs guide",
       "secondaryKeywords": [
         "is offutt afb a good base",
@@ -2357,7 +2364,8 @@
         "Commuting and Transportation",
         "Financial Considerations for Military Families",
         "Final Thoughts: Why Many Choose to Retire in Omaha",
-        "Connect with a VeteranPCS Expert"
+        "Connect with a VeteranPCS Expert",
+        "Plan Your PCS to Nebraska"
       ]
     },
     {
@@ -2467,14 +2475,14 @@
       "url": "/blog/pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "arizona",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "Arizona is a prime destination for active-duty military personnel and veterans. With its many military bases, tax-free military pay, outdoor recreation opportunities, and military-friendly communities, Arizona provides a welcoming enviro...",
       "publishedAt": "2023-11-14T05:22:06.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "pcs to arizona",
       "secondaryKeywords": [
         "arizona cost of living military",
@@ -2485,12 +2493,17 @@
       ],
       "h2Outline": [
         "Military Bases in Arizona",
+        "Arizona's Major Military Installations",
+        "Housing Markets and Cost of Living",
         "Tax-Free Military Pay in Arizona",
         "Outdoor Activities in Arizona",
         "Military-Friendly Communities in Arizona",
         "Arizona Schools & Education Benefits",
         "Arizona Housing & Cost of Living",
-        "Get Ready for Your PCS to Arizona"
+        "Arizona Climate and What to Expect",
+        "Schools and VA Loan Considerations",
+        "Get Ready for Your PCS to Arizona",
+        "Plan the Rest of Your Arizona Move"
       ]
     },
     {
@@ -2640,14 +2653,14 @@
       "url": "/blog/pcs-to-fort-leavenworth-complete-guide-for-military-families",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "kansas",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "Receiving orders to Fort Leavenworth means you're headed to what's known as the \"Intellectual Center of the Army\" - a historic installation with a strong sense of community and tradition. Whether this is your first Permanent Change of St...",
       "publishedAt": "2025-05-30T12:00:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "pcs to fort leavenworth",
       "secondaryKeywords": [
         "fort leavenworth housing",
@@ -2665,7 +2678,8 @@
         "Exploring the Surrounding Area",
         "Preparing for Your PCS to Fort Leavenworth",
         "Climate and Seasonal Considerations",
-        "Finding Your Fort Leavenworth Home"
+        "Finding Your Fort Leavenworth Home",
+        "Plan Your PCS to Kansas"
       ]
     },
     {
@@ -3374,14 +3388,14 @@
       "url": "/blog/settling-down-pcsing-to-birmingham-alabama-with-the-military",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "alabama",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "As military families, we’re accustomed to the transient nature of our lifestyle. Permanent Change of Station (PCS) orders are part and parcel of our reality, presenting both challenges and opportunities. One such opportunity led me to Bi...",
       "publishedAt": "2024-06-13T11:49:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "pcsing to birmingham alabama",
       "secondaryKeywords": [
         "alabama va loan",
@@ -3390,7 +3404,13 @@
         "cost of living birmingham",
         "military spouse employment"
       ],
-      "h2Outline": []
+      "h2Outline": [
+        "Birmingham's Military and Veteran Connections",
+        "Cost of Living and Housing in Birmingham",
+        "Schools and Family Life",
+        "Why Veterans Choose Birmingham",
+        "Plan Your PCS to Alabama"
+      ]
     },
     {
       "slug": "should-active-duty-military-buy-a-home-in-hawaii",
@@ -3868,14 +3888,14 @@
       "url": "/blog/top-communities-for-military-families-near-naval-base-kitsap",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "washington",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "Receiving PCS orders to Naval Base Kitsap means finding the perfect community for your military family in the beautiful Pacific Northwest. As a military veteran real estate agent serving the Kitsap Peninsula, I've helped countless servic...",
       "publishedAt": "2025-02-04T01:06:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "communities near naval base kitsap",
       "secondaryKeywords": [
         "bremerton",
@@ -3892,7 +3912,8 @@
         "Bainbridge Island: Upscale Living with Seattle Access",
         "Kingston: Quiet Charm with Mainland Connections",
         "Making the Right Choice for Your PCS to Naval Base Kitsap",
-        "Ready to Find Your Perfect Home Near Naval Base Kitsap?"
+        "Ready to Find Your Perfect Home Near Naval Base Kitsap?",
+        "Plan Your PCS to Washington"
       ]
     },
     {
@@ -3901,15 +3922,15 @@
       "url": "/blog/top-things-to-do-near-san-diego-military-bases",
       "component": "Things to Do Near You",
       "componentSlug": "things-to-do-near-you",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "california",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "Things to Do Near You"
       ],
       "description": "Receiving PCS orders to San Diego is often considered a dream assignment for military families. With year-round perfect weather, 70 miles of pristine beaches, and a deeply military-friendly community, America's Finest City offers an exce...",
       "publishedAt": "2025-05-15T00:00:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "things to do near san diego military bases",
       "secondaryKeywords": [
         "camp pendleton",
@@ -3926,7 +3947,8 @@
         "Marine Corps Air Station (MCAS) Miramar – Located in northern San Diego near Mira Mesa and Sorrento Valley",
         "Housing Options Near San Diego Military Bases",
         "San Diego Military Discounts",
-        "Finding Your San Diego Home"
+        "Finding Your San Diego Home",
+        "Plan Your PCS to California"
       ]
     },
     {
