@@ -1,5 +1,5 @@
 {
-  "contentHash": "38aaf9c3a798dfbe0d489ae4386615f925567d63d4cf88506f801eea39a702be",
+  "contentHash": "91df4b36fc215bedfe94088f1880dc244b948da3329b3b6f8a14a2613c5da55c",
   "totalPosts": 162,
   "byComponent": {
     "Financial Guidance": [
@@ -366,6 +366,7 @@
       "what-military-bases-are-in-alaska"
     ],
     "arizona": [
+      "arizona-pcs-guide",
       "pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
       "pcs-to-luke-afb-military-guide-to-phoenix",
       "what-military-bases-are-in-arizona",
@@ -391,9 +392,11 @@
     "florida": [
       "best-neighborhoods-nas-jacksonville-military-families",
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
+      "discovering-military-friendly-living-in-panama-city-florida",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
       "pcsing-to-florida-military-bases-2026-guide",
-      "what-military-bases-are-in-florida"
+      "what-military-bases-are-in-florida",
+      "your-first-home-in-florida-a-complete-guide-for-veterans-and-military-families"
     ],
     "georgia": [
       "best-places-to-live-near-fort-benning",
@@ -404,6 +407,7 @@
     "hawaii": [
       "pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
       "pcs-to-hawaii-with-pets",
+      "should-active-duty-military-buy-a-home-in-hawaii",
       "what-military-bases-are-in-hawaii"
     ],
     "idaho": [
@@ -457,7 +461,8 @@
       "buy-vs-rent-near-camp-lejeune",
       "pcsing-to-camp-lejeune-2026-onslow-county-guide",
       "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
-      "what-military-bases-are-in-north-carolina"
+      "what-military-bases-are-in-north-carolina",
+      "wilmingtons-emerging-tech-scene-a-goldmine-for-veteran-property-investors"
     ],
     "north-dakota": [
       "what-military-bases-are-in-north-dakota"
@@ -495,16 +500,15 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 65,
+    "resolved": 70,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 41,
+      "frontmatter-state-slug": 46,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
     "unmappedHighIntent": [
       "12-tips-for-a-successful-pcs-move-or-home-relocation",
-      "arizona-pcs-guide",
       "best-places-to-live-near-philadelphia-military-bases",
       "buying-a-home-sight-unseen-during-a-pcs-move",
       "choosing-the-best-relocation-method-for-your-pcs",
@@ -776,14 +780,14 @@
       "url": "/blog/arizona-pcs-guide",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "arizona",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "Received orders for Arizona? Congratulations! The Grand Canyon State offers military families an exceptional combination of year-round sunshine, growing job markets, and strong military communities. Whether you're heading to Luke Air For...",
       "publishedAt": "2025-06-30T12:00:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "arizona pcs guide",
       "secondaryKeywords": [
         "davis-monthan afb pcs",
@@ -803,7 +807,8 @@
         "VA Loan Benefits Specific to Arizona",
         "Real Estate Investment Potential",
         "Getting Started: Your Arizona PCS Action Plan",
-        "Why Choose VeteranPCS for Your Arizona Move"
+        "Why Choose VeteranPCS for Your Arizona Move",
+        "Plan Your PCS to Arizona"
       ]
     },
     {
@@ -1194,7 +1199,7 @@
       ],
       "description": "For many military service members, veterans, and military families, the VA loan is one of the most powerful tools for achieving homeownership. But one of the most common—and costly—misconceptions about the VA loan is this:",
       "publishedAt": "2025-04-15T23:30:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "can you use the va loan more than once",
       "secondaryKeywords": [
         "second va loan",
@@ -1211,7 +1216,8 @@
         "What to Consider When Using the VA Loan More Than Once",
         "Your VA Loan Timeline During Military Career",
         "Why This Matters for Military Families and Veterans",
-        "Ready to Leverage Your VA Loan Benefit Again?"
+        "Ready to Leverage Your VA Loan Benefit Again?",
+        "Keep Learning About Your VA Loan"
       ]
     },
     {
@@ -1499,15 +1505,15 @@
       "url": "/blog/discovering-military-friendly-living-in-panama-city-florida",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "Things to Do Near You"
       ],
       "description": "Welcome to a Community That Honors Service",
       "publishedAt": "2024-01-10T01:51:10.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "military-friendly communities in panama city florida",
       "secondaryKeywords": [
         "best neighborhoods for military families panama city",
@@ -1515,7 +1521,13 @@
         "panama city fl pcs",
         "panama city florida military relocation"
       ],
-      "h2Outline": []
+      "h2Outline": [
+        "Military Installations Near Panama City",
+        "Housing and Cost of Living in Bay County",
+        "Schools for Military Families",
+        "Beaches, Climate, and Hurricane Readiness",
+        "Plan Your PCS to Florida"
+      ]
     },
     {
       "slug": "does-the-va-loan-always-have-the-best-rate",
@@ -1789,7 +1801,7 @@
       ],
       "description": "The VA loan program offers one of the most beneficial home financing options for eligible service members, veterans, and surviving spouses. With no down payment requirement, competitive interest rates, and no private mortgage insurance (...",
       "publishedAt": "2024-01-02T15:44:22.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "va home loan 0 down",
       "secondaryKeywords": [
         "minimum down payment for a va loan",
@@ -1798,7 +1810,9 @@
         "va loan no down payment",
         "zero down va loan"
       ],
-      "h2Outline": []
+      "h2Outline": [
+        "Keep Learning About Your VA Loan"
+      ]
     },
     {
       "slug": "how-expensive-is-castle-rock",
@@ -3418,14 +3432,14 @@
       "url": "/blog/should-active-duty-military-buy-a-home-in-hawaii",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "hawaii",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "You've just received orders to paradise—Hawaii. As you picture yourself enjoying breathtaking sunsets and pristine beaches, an important question arises: Should you buy a home during your assignment to the islands?",
       "publishedAt": "2025-05-12T22:32:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "buying a home in hawaii military",
       "secondaryKeywords": [
         "active duty homeownership",
@@ -3442,7 +3456,8 @@
         "Is Buying in Hawaii Right for You? A Decision Framework",
         "Steps to Successful Military Homebuying in Hawaii",
         "Finding the Right Support Team",
-        "The Bottom Line"
+        "The Bottom Line",
+        "Plan Your PCS to Hawaii"
       ]
     },
     {
@@ -4292,7 +4307,7 @@
       ],
       "description": "Homeownership is a significant milestone, and for military personnel and veterans, the VA loan program provides a unique opportunity to achieve this goal. With competitive interest rates, no down payment requirements, and a simplified ap...",
       "publishedAt": "2023-11-29T16:04:09.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "how to qualify for a va loan",
       "secondaryKeywords": [
         "certificate of eligibility",
@@ -4307,7 +4322,8 @@
         "Steps for Getting a VA Direct or VA-Backed Home Loan",
         "Understanding VA Loan Entitlement",
         "Maximizing Your VA Loan Entitlement",
-        "Summary"
+        "Summary",
+        "Keep Learning About Your VA Loan"
       ]
     },
     {
@@ -5435,14 +5451,14 @@
       "url": "/blog/wilmingtons-emerging-tech-scene-a-goldmine-for-veteran-property-investors",
       "component": "Real Estate Insights",
       "componentSlug": "real-estate-insights",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "north-carolina",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "Real Estate Insights"
       ],
       "description": "Are you a veteran or active duty service member considering property investment in coastal North Carolina? While most people know Wilmington for its beautiful beaches and historic charm, this coastal gem is quietly transforming into a th...",
       "publishedAt": "2025-03-04T01:30:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "wilmington property investment",
       "secondaryKeywords": [
         "downtown wilmington real estate",
@@ -5456,7 +5472,8 @@
         "Top 3 Areas for Veteran Property Investment in Wilmington",
         "Key Factors for Successful Veteran Property Investment",
         "Leveraging Your Veteran Status for Real Estate Success",
-        "Start Your Wilmington Investment Journey"
+        "Start Your Wilmington Investment Journey",
+        "Plan Your PCS to North Carolina"
       ]
     },
     {
@@ -5499,15 +5516,15 @@
       "url": "/blog/your-first-home-in-florida-a-complete-guide-for-veterans-and-military-families",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "Real Estate Insights"
       ],
       "description": "Moving to Florida for your next assignment or transitioning out of the military? Whether you're PCSing to MacDill Air Force Base, Naval Air Station Pensacola, or settling in the Tampa Bay area after service, buying your first home as a v...",
       "publishedAt": "2025-07-18T12:00:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "va loan florida",
       "secondaryKeywords": [
         "buying your first home florida",
@@ -5523,7 +5540,8 @@
         "The Home Selling Process for Military Families",
         "Special Considerations for Florida Military Families",
         "Closing Your Transaction Successfully",
-        "Your Next Steps"
+        "Your Next Steps",
+        "Plan Your PCS to Florida"
       ]
     }
   ]
