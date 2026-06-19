@@ -1,5 +1,5 @@
 {
-  "contentHash": "131d9293eae18d46b80a64c7f985c03eaffe9c422c3efac36dcc0f1f236ec986",
+  "contentHash": "8a80a7102235a03caf798ef3e8115d8bfb3216b4c6b7817037cec9e8f576f8c1",
   "totalPosts": 162,
   "byComponent": {
     "Financial Guidance": [
@@ -365,7 +365,9 @@
       "what-military-bases-are-in-alaska"
     ],
     "arizona": [
-      "what-military-bases-are-in-arizona"
+      "pcs-to-luke-afb-military-guide-to-phoenix",
+      "what-military-bases-are-in-arizona",
+      "your-complete-guide-to-mcas-yuma"
     ],
     "arkansas": [
       "what-military-bases-are-in-arkansas"
@@ -383,12 +385,15 @@
       "what-military-bases-are-in-delaware"
     ],
     "florida": [
+      "best-neighborhoods-nas-jacksonville-military-families",
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "pcsing-to-florida-military-bases-2026-guide",
       "what-military-bases-are-in-florida"
     ],
     "georgia": [
       "best-places-to-live-near-fort-benning",
+      "best-places-to-live-near-ft-gordon-augusta-georgia",
+      "pcs-to-fort-eisenhower",
       "what-military-bases-are-in-georgia"
     ],
     "hawaii": [
@@ -441,6 +446,8 @@
       "what-military-bases-are-in-new-york"
     ],
     "north-carolina": [
+      "buy-vs-rent-near-camp-lejeune",
+      "pcsing-to-camp-lejeune-2026-onslow-county-guide",
       "what-military-bases-are-in-north-carolina"
     ],
     "north-dakota": [
@@ -450,6 +457,7 @@
       "tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state"
     ],
     "texas": [
+      "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-fort-hood",
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know"
     ],
@@ -470,10 +478,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 42,
+    "resolved": 50,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 17,
+      "frontmatter-state-slug": 25,
       "slug-heuristic": 21,
       "state-map-post": 2
     },
@@ -481,9 +489,7 @@
       "12-tips-for-a-successful-pcs-move-or-home-relocation",
       "7-best-family-friendly-activities-near-kirtland-afb",
       "arizona-pcs-guide",
-      "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-philadelphia-military-bases",
-      "buy-vs-rent-near-camp-lejeune",
       "buying-a-home-sight-unseen-during-a-pcs-move",
       "choosing-the-best-relocation-method-for-your-pcs",
       "florida-cost-of-living-military-bases-bah",
@@ -500,14 +506,11 @@
       "pcs-to-bremerton-naval-base-kitsap-2026-guide",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
-      "pcs-to-fort-eisenhower",
       "pcs-to-fort-leavenworth-complete-guide-for-military-families",
       "pcs-to-kitsap-county-five-things-military-families",
-      "pcs-to-luke-afb-military-guide-to-phoenix",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
       "pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
-      "pcsing-to-camp-lejeune-2026-onslow-county-guide",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "percheron-colorado-springs-master-planned-community-near-colorado-military-bases",
       "prepare-to-pcs-how-do-i-prepare-for-movers",
@@ -823,14 +826,14 @@
       "url": "/blog/best-neighborhoods-nas-jacksonville-military-families",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "A military family guide to the best neighborhoods near NAS Jacksonville with 2026 BAH rates, school grades, commute times, and real median home prices.",
       "publishedAt": "2026-05-25T15:00:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "best neighborhoods nas jacksonville",
       "secondaryKeywords": [
         "mandarin nas jax commute",
@@ -847,7 +850,8 @@
         "Use Your VA Loan and PCS Bonus to Move the Math",
         "Flood Zones, Insurance, and Other Florida Realities",
         "A 30-60 Day NAS Jacksonville Housing Plan",
-        "Ready to Pick Your Jacksonville Neighborhood?"
+        "Ready to Pick Your Jacksonville Neighborhood?",
+        "Plan Your PCS to Florida"
       ]
     },
     {
@@ -856,14 +860,14 @@
       "url": "/blog/best-neighborhoods-near-nas-jrb-fort-worth",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "Getting PCS orders to Naval Air Station Joint Reserve Base (NAS JRB) Fort Worth? You're heading to one of Texas's most family-friendly military communities. Located in the heart of the Dallas-Fort Worth metroplex, this base offers milita...",
       "publishedAt": "2025-08-28T11:46:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "best neighborhoods near nas jrb fort worth",
       "secondaryKeywords": [
         "dallas fort worth military families",
@@ -877,7 +881,8 @@
         "Top 5 Neighborhoods for NAS JRB Fort Worth Military Families",
         "Making Your Decision: Key Factors to Consider",
         "VA Loan Benefits for Fort Worth Area Purchases",
-        "Getting Started with Your Fort Worth PCS Move"
+        "Getting Started with Your Fort Worth PCS Move",
+        "Plan Your PCS to Texas"
       ]
     },
     {
@@ -1013,14 +1018,14 @@
       "url": "/blog/best-places-to-live-near-ft-gordon-augusta-georgia",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "georgia",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
       "description": "Looking to Buy or Sell a Home Near Fort Gordon?",
       "publishedAt": "2023-10-25T16:23:03.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "fort gordon housing",
       "secondaryKeywords": [
         "apartments in augusta ga near fort gordon",
@@ -1032,7 +1037,8 @@
         "Looking to Buy or Sell a Home Near Fort Gordon?",
         "Top Areas to Consider Near Fort Gordon",
         "Connect with a Military-Friendly Realtor in Augusta, Georgia",
-        "Find Your Perfect Home Near ◊"
+        "Find Your Perfect Home Near Fort Gordon",
+        "Plan Your PCS to Georgia"
       ]
     },
     {
@@ -1070,8 +1076,8 @@
       "url": "/blog/buy-vs-rent-near-camp-lejeune",
       "component": "Real Estate Insights",
       "componentSlug": "real-estate-insights",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "north-carolina",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "Real Estate Insights",
@@ -1079,7 +1085,7 @@
       ],
       "description": "Marines stationed at Camp Lejeune for 24+ months typically benefit financially from buying with a VA loan, while shorter assignments favor renting. Current Jacksonville market conditions and VA loan advantages make homeownership particul...",
       "publishedAt": "2025-06-02T11:45:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "buy vs rent near camp lejeune",
       "secondaryKeywords": [
         "buying a home near camp lejeune",
@@ -1097,7 +1103,8 @@
         "Rental Strategy for Military Families",
         "Making Your Decision: Action Steps",
         "Current Market Recommendations",
-        "Building Long-Term Military Wealth"
+        "Building Long-Term Military Wealth",
+        "Plan Your PCS to North Carolina"
       ]
     },
     {
@@ -2589,15 +2596,15 @@
       "url": "/blog/pcs-to-fort-eisenhower",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "georgia",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "US Military Bases"
       ],
       "description": "If you just received orders to Fort Eisenhower (formerly Fort Gordon), welcome to the Augusta area. PCS moves can feel overwhelming, especially when you are relocating to a new state and trying to figure out where to live, what the area ...",
       "publishedAt": "2026-04-15T03:23:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "pcs to fort eisenhower",
       "secondaryKeywords": [
         "augusta georgia military families",
@@ -2617,7 +2624,8 @@
         "Recreation and Quality of Life",
         "On-Post Housing: What to Expect",
         "Getting Started: Your PCS Action Plan",
-        "Final Thoughts"
+        "Final Thoughts",
+        "Plan Your PCS to Georgia"
       ]
     },
     {
@@ -2787,15 +2795,15 @@
       "url": "/blog/pcs-to-luke-afb-military-guide-to-phoenix",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "arizona",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "US Military Bases"
       ],
       "description": "Receiving PCS orders to Luke Air Force Base or planning to retire in the Phoenix area? The West Valley offers a perfect blend of desert sunshine, family-friendly neighborhoods, and a strong military community. This guide provides essenti...",
       "publishedAt": "2025-05-01T22:59:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "pcs to luke afb",
       "secondaryKeywords": [
         "air force base near surprise arizona",
@@ -2813,7 +2821,8 @@
         "Veterans Resources in the Greater Phoenix Area",
         "Transportation and Getting Around",
         "Your PCS Checklist for Luke AFB",
-        "Why Choose VeteranPCS for Your Luke AFB Move"
+        "Why Choose VeteranPCS for Your Luke AFB Move",
+        "Plan Your PCS to Arizona"
       ]
     },
     {
@@ -3014,15 +3023,15 @@
       "url": "/blog/pcsing-to-camp-lejeune-2026-onslow-county-guide",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "north-carolina",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "US Military Bases"
       ],
       "description": "If you are PCSing to Camp Lejeune or MCAS New River, you are headed into the heart of Onslow County, one of the most military-connected communities in the country. Jacksonville, North Carolina, is the primary support city for both instal...",
       "publishedAt": "2026-04-17T15:20:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "pcsing to camp lejeune",
       "secondaryKeywords": [
         "camp lejeune bah",
@@ -3041,7 +3050,8 @@
         "Coastal Climate: The Good and the Honest Truth",
         "Recreation and Quality of Life",
         "Your PCS Action Plan",
-        "Final Thoughts"
+        "Final Thoughts",
+        "Plan Your PCS to North Carolina"
       ]
     },
     {
@@ -5421,15 +5431,15 @@
       "url": "/blog/your-complete-guide-to-mcas-yuma",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "arizona",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "US Military Bases"
       ],
       "description": "Moving to Marine Corps Air Station Yuma presents military families with unique opportunities in Arizona's sunny desert landscape. MCAS Yuma serves as the Marine Corps' premier air-to-ground aviation training facility, supporting 80% of t...",
       "publishedAt": "2025-06-25T09:00:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "mcas yuma",
       "secondaryKeywords": [
         "marine corps air station yuma",
@@ -5445,7 +5455,8 @@
         "Employment Landscape Requires Strategic Planning",
         "Desert Lifestyle Offers Year-Round Recreation",
         "PCS Timing and Preparation Strategies",
-        "Conclusion"
+        "Conclusion",
+        "Plan Your PCS to Arizona"
       ]
     },
     {
