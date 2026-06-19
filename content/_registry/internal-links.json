@@ -1,5 +1,5 @@
 {
-  "contentHash": "8a80a7102235a03caf798ef3e8115d8bfb3216b4c6b7817037cec9e8f576f8c1",
+  "contentHash": "372a9a4f6fdb4c33cca538ae68cfb96f7a7d1ebdc0b99fde6cc315d8cd030752",
   "totalPosts": 162,
   "byComponent": {
     "Financial Guidance": [
@@ -373,6 +373,7 @@
       "what-military-bases-are-in-arkansas"
     ],
     "california": [
+      "pcsing-to-san-diego-top-military-friendly-neighborhoods-and-resources",
       "what-military-bases-are-in-california"
     ],
     "colorado": [
@@ -387,6 +388,7 @@
     "florida": [
       "best-neighborhoods-nas-jacksonville-military-families",
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
+      "pcs-to-florida-a-military-familys-guide-to-polk-county",
       "pcsing-to-florida-military-bases-2026-guide",
       "what-military-bases-are-in-florida"
     ],
@@ -417,7 +419,6 @@
       "what-military-bases-are-in-kansas"
     ],
     "kentucky": [
-      "complete-fort-campbell-pcs-guide",
       "what-military-bases-are-in-kentucky"
     ],
     "louisiana": [
@@ -448,18 +449,26 @@
     "north-carolina": [
       "buy-vs-rent-near-camp-lejeune",
       "pcsing-to-camp-lejeune-2026-onslow-county-guide",
+      "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
       "what-military-bases-are-in-north-carolina"
     ],
     "north-dakota": [
       "what-military-bases-are-in-north-dakota"
     ],
+    "south-carolina": [
+      "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston"
+    ],
     "tennessee": [
+      "complete-fort-campbell-pcs-guide",
       "tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state"
     ],
     "texas": [
       "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-fort-hood",
-      "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know"
+      "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
+      "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
+      "pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb",
+      "why-dallas-fort-worth-is-the-ideal-destination-for-military-members-and-veterans"
     ],
     "utah": [
       "discover-the-best-places-to-live-near-hill-air-force-base-utah"
@@ -478,12 +487,12 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 50,
+    "resolved": 57,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 25,
+      "frontmatter-state-slug": 33,
       "slug-heuristic": 21,
-      "state-map-post": 2
+      "state-map-post": 1
     },
     "unmappedHighIntent": [
       "12-tips-for-a-successful-pcs-move-or-home-relocation",
@@ -504,12 +513,8 @@
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
       "pcs-to-bremerton-naval-base-kitsap-2026-guide",
-      "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
-      "pcs-to-florida-a-military-familys-guide-to-polk-county",
       "pcs-to-fort-leavenworth-complete-guide-for-military-families",
       "pcs-to-kitsap-county-five-things-military-families",
-      "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
-      "pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "percheron-colorado-springs-master-planned-community-near-colorado-military-bases",
@@ -522,10 +527,8 @@
       "the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel",
       "things-to-do-near-fort-riley-a-local-guide",
       "tinker-air-force-base-pcs-guide",
-      "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
       "top-communities-for-military-families-near-naval-base-kitsap",
-      "top-things-to-do-near-san-diego-military-bases",
-      "why-dallas-fort-worth-is-the-ideal-destination-for-military-members-and-veterans"
+      "top-things-to-do-near-san-diego-military-bases"
     ]
   },
   "posts": [
@@ -1300,15 +1303,15 @@
       "url": "/blog/complete-fort-campbell-pcs-guide",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": "kentucky",
-      "stateSource": "state-map-post",
+      "stateSlug": "tennessee",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "Things to Do Near You"
       ],
       "description": "Moving to a new duty station can feel overwhelming, especially when you have children who are active in sports and activities. As a military veteran and local real estate expert, I've helped countless families transition to the Fort Camp...",
       "publishedAt": "2025-01-16T16:57:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "fort campbell pcs guide",
       "secondaryKeywords": [
         "clarksville tn military families",
@@ -1323,7 +1326,8 @@
         "Dining Scene: From Southern Comfort to International Cuisine",
         "Housing and Investment Potential: Why I Stayed After My PCS",
         "Your VA Loan Advantage in the Clarksville Market",
-        "Ready to Make Your PCS to Fort Campbell?"
+        "Ready to Make Your PCS to Fort Campbell?",
+        "Plan Your PCS to Tennessee"
       ]
     },
     {
@@ -2531,14 +2535,14 @@
       "url": "/blog/pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "Receiving orders to Charleston, South Carolina? You're in for a treat! This comprehensive guide helps military families navigate their Permanent Change of Station (PCS) to Joint Base Charleston or Naval Weapons Station Charleston. From h...",
       "publishedAt": "2025-05-23T12:00:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "pcs to charleston sc",
       "secondaryKeywords": [
         "charleston military family guide",
@@ -2555,7 +2559,8 @@
         "Quality of Life for Military Families",
         "Practical Tips for Your Charleston PCS",
         "Charleston Schools for Military Children",
-        "Connect with the VeteranPCS Team in Charleston"
+        "Connect with the VeteranPCS Team in Charleston",
+        "Plan Your PCS to South Carolina"
       ]
     },
     {
@@ -2564,14 +2569,14 @@
       "url": "/blog/pcs-to-florida-a-military-familys-guide-to-polk-county",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "Receiving PCS orders to Central Florida? Polk County might be the perfect home base for your military family. Strategically positioned between major installations and offering substantial housing value, this growing region provides an id...",
       "publishedAt": "2025-05-27T12:00:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "pcs to polk county florida",
       "secondaryKeywords": [
         "central florida military bases",
@@ -2587,7 +2592,8 @@
         "Education Transition Support for Military Children",
         "Quality of Life Beyond the Base",
         "Planning Your Polk County PCS",
-        "Conclusion: Your Next Mission Base"
+        "Conclusion: Your Next Mission Base",
+        "Plan Your PCS to Florida"
       ]
     },
     {
@@ -2831,14 +2837,14 @@
       "url": "/blog/pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "Facing a Permanent Change of Station (PCS) to one of San Antonio's military installations? New Braunfels, Texas might be your ideal off-base community. Located between San Antonio and Austin, this charming town offers military families t...",
       "publishedAt": "2025-05-19T16:45:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "pcs to new braunfels",
       "secondaryKeywords": [
         "joint base san antonio housing",
@@ -2856,7 +2862,8 @@
         "Best Neighborhoods for Military Families",
         "Weekend Activities and Big City Access",
         "Planning Your New Braunfels PCS",
-        "New Braunfels: The Best of Both Worlds"
+        "New Braunfels: The Best of Both Worlds",
+        "Plan Your PCS to Texas"
       ]
     },
     {
@@ -2900,15 +2907,15 @@
       "url": "/blog/pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "US Military Bases"
       ],
       "description": "Receiving PCS orders to Wichita Falls, Texas brings exciting opportunities for military families stationed at Sheppard Air Force Base. Beyond finding the right home, understanding the robust support systems and community resources can tr...",
       "publishedAt": "2025-05-16T00:10:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "pcs to wichita falls",
       "secondaryKeywords": [
         "moving to wichita falls",
@@ -2925,7 +2932,8 @@
         "Mental Health and Community Support",
         "Local Military Discounts and Community Integration",
         "Preparing for Your Wichita Falls PCS",
-        "Your Next Steps in Wichita Falls"
+        "Your Next Steps in Wichita Falls",
+        "Plan Your PCS to Texas"
       ]
     },
     {
@@ -3127,14 +3135,14 @@
       "url": "/blog/pcsing-to-san-diego-top-military-friendly-neighborhoods-and-resources",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "california",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "Receiving orders to San Diego brings a mix of excitement and questions for military families. With year-round sunshine, diverse neighborhoods, and one of the nation's largest military communities, America's Finest City offers an exceptio...",
       "publishedAt": "2025-05-13T23:42:00.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "military friendly apartments san diego",
       "secondaryKeywords": [
         "camp pendleton",
@@ -3151,7 +3159,8 @@
         "Military Support Services and Resources",
         "Enjoying San Diego's World-Class Recreation",
         "Making Your PCS to San Diego Successful",
-        "Let's Make Your San Diego PCS a Success"
+        "Let's Make Your San Diego PCS a Success",
+        "Plan Your PCS to California"
       ]
     },
     {
@@ -3822,15 +3831,15 @@
       "url": "/blog/top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
       "component": "Things to Do Near You",
       "componentSlug": "things-to-do-near-you",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "north-carolina",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "Things to Do Near You",
         "US Military Bases"
       ],
       "description": "Getting PCS orders to Camp Lejeune brings excitement and questions for military families. Located in eastern North Carolina, Marine Corps Base Camp Lejeune serves as home to the largest Marine Corps base on the East Coast. Beyond duty re...",
       "publishedAt": "2025-06-25T12:00:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "outdoor activities near camp lejeune",
       "secondaryKeywords": [
         "camp lejeune",
@@ -3849,7 +3858,8 @@
         "Making the Most of Your Camp Lejeune Assignment",
         "Planning Your Outdoor Adventures",
         "Finding Your Home Near the Action",
-        "Conclusion: Building Memories at Camp Lejeune"
+        "Conclusion: Building Memories at Camp Lejeune",
+        "Plan Your PCS to North Carolina"
       ]
     },
     {
@@ -5316,14 +5326,14 @@
       "url": "/blog/why-dallas-fort-worth-is-the-ideal-destination-for-military-members-and-veterans",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help"
       ],
       "description": "Relocating after military service is a major transition. Finding the right place to settle down impacts your career, finances, and overall quality of life. For military families and veterans, Dallas-Fort Worth (DFW) offers an ideal combi...",
       "publishedAt": "2024-09-26T01:32:58.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-19T00:00:00.000Z",
       "primaryKeyword": "dfw military",
       "secondaryKeywords": [
         "dallas fort worth military",
@@ -5332,7 +5342,9 @@
         "pcsing to texas",
         "veteran friendly city texas"
       ],
-      "h2Outline": []
+      "h2Outline": [
+        "Plan Your PCS to Texas"
+      ]
     },
     {
       "slug": "why-military-members-should-choose-a-veteran-friendly-realtor",
