@@ -1,6 +1,6 @@
 {
-  "contentHash": "75c764ef5b8987353c2c60987d4367a19e18696a0b7e35debd2699625a54ac28",
-  "totalPosts": 162,
+  "contentHash": "1829ec6207ba72dfd22ec89045dce58d3b69675c79f328fb56131f7e53101bc7",
+  "totalPosts": 168,
   "byComponent": {
     "Financial Guidance": [
       "florida-cost-of-living-military-bases-bah",
@@ -138,6 +138,7 @@
       "what-military-bases-are-in-kentucky",
       "what-military-bases-are-in-louisiana",
       "what-military-bases-are-in-maine",
+      "what-military-bases-are-in-maryland",
       "what-military-bases-are-in-minnesota",
       "what-military-bases-are-in-montana",
       "what-military-bases-are-in-nebraska",
@@ -145,6 +146,11 @@
       "what-military-bases-are-in-new-york",
       "what-military-bases-are-in-north-carolina",
       "what-military-bases-are-in-north-dakota",
+      "what-military-bases-are-in-oklahoma",
+      "what-military-bases-are-in-south-carolina",
+      "what-military-bases-are-in-texas",
+      "what-military-bases-are-in-virginia",
+      "what-military-bases-are-in-washington",
       "what-military-bases-are-in-west-virginia",
       "what-military-bases-are-in-wisconsin",
       "what-military-bases-are-in-wyoming",
@@ -316,6 +322,7 @@
       "what-military-bases-are-in-kentucky",
       "what-military-bases-are-in-louisiana",
       "what-military-bases-are-in-maine",
+      "what-military-bases-are-in-maryland",
       "what-military-bases-are-in-minnesota",
       "what-military-bases-are-in-montana",
       "what-military-bases-are-in-nebraska",
@@ -323,6 +330,11 @@
       "what-military-bases-are-in-new-york",
       "what-military-bases-are-in-north-carolina",
       "what-military-bases-are-in-north-dakota",
+      "what-military-bases-are-in-oklahoma",
+      "what-military-bases-are-in-south-carolina",
+      "what-military-bases-are-in-texas",
+      "what-military-bases-are-in-virginia",
+      "what-military-bases-are-in-washington",
       "what-military-bases-are-in-west-virginia",
       "what-military-bases-are-in-wisconsin",
       "what-military-bases-are-in-wyoming",
@@ -437,7 +449,8 @@
     ],
     "maryland": [
       "fort-meade-bah-2026-what-your-allowance-buys",
-      "pcs-to-walter-reed-bethesda-2026-neighborhoods-bah"
+      "pcs-to-walter-reed-bethesda-2026-neighborhoods-bah",
+      "what-military-bases-are-in-maryland"
     ],
     "minnesota": [
       "what-military-bases-are-in-minnesota"
@@ -467,8 +480,12 @@
     "north-dakota": [
       "what-military-bases-are-in-north-dakota"
     ],
+    "oklahoma": [
+      "what-military-bases-are-in-oklahoma"
+    ],
     "south-carolina": [
-      "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston"
+      "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
+      "what-military-bases-are-in-south-carolina"
     ],
     "tennessee": [
       "complete-fort-campbell-pcs-guide",
@@ -480,14 +497,19 @@
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
       "pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb",
+      "what-military-bases-are-in-texas",
       "why-dallas-fort-worth-is-the-ideal-destination-for-military-members-and-veterans"
     ],
     "utah": [
       "discover-the-best-places-to-live-near-hill-air-force-base-utah"
     ],
+    "virginia": [
+      "what-military-bases-are-in-virginia"
+    ],
     "washington": [
       "pcs-to-joint-base-lewis-mcchord-jblm-2026-guide",
-      "top-communities-for-military-families-near-naval-base-kitsap"
+      "top-communities-for-military-families-near-naval-base-kitsap",
+      "what-military-bases-are-in-washington"
     ],
     "west-virginia": [
       "what-military-bases-are-in-west-virginia"
@@ -500,10 +522,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 70,
+    "resolved": 76,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 46,
+      "frontmatter-state-slug": 52,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -5141,6 +5163,37 @@
       "h2Outline": []
     },
     {
+      "slug": "what-military-bases-are-in-maryland",
+      "title": "What Military Bases are in Maryland?",
+      "url": "/blog/what-military-bases-are-in-maryland",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "maryland",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Maryland sits at the heart of the nation's defense network, with bases that handle everything from cyber defense to medical care to weapons testing. According to the State of Maryland, twenty military installations support active-duty mi...",
+      "publishedAt": "2026-06-25T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in maryland",
+      "secondaryKeywords": [
+        "air force bases in maryland",
+        "army bases in maryland",
+        "maryland military base",
+        "military base in maryland"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Maryland",
+        "Army Bases in Maryland",
+        "Navy Bases in Maryland",
+        "Air Force Bases in Maryland",
+        "Moving to Maryland? Let Us Help You Find a Home",
+        "Plan Your PCS to Maryland",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
       "slug": "what-military-bases-are-in-minnesota",
       "title": "What Military Bases are in Minnesota?",
       "url": "/blog/what-military-bases-are-in-minnesota",
@@ -5321,6 +5374,161 @@
         "north dakota military base"
       ],
       "h2Outline": []
+    },
+    {
+      "slug": "what-military-bases-are-in-oklahoma",
+      "title": "What Military Bases are in Oklahoma?",
+      "url": "/blog/what-military-bases-are-in-oklahoma",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "oklahoma",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Oklahoma has a long military history, and it is still a busy home for the armed forces today. The state hosts five major active military installations, supporting the Army and the Air Force. Whether you are PCSing to Oklahoma (PCS stands...",
+      "publishedAt": "2026-06-29T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in oklahoma",
+      "secondaryKeywords": [
+        "air force bases in oklahoma",
+        "army bases in oklahoma",
+        "military base in oklahoma",
+        "oklahoma military base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Oklahoma",
+        "Air Force Bases in Oklahoma",
+        "Army Bases in Oklahoma",
+        "Moving to Oklahoma? Let Us Help You Find a Home",
+        "Plan Your PCS to Oklahoma",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
+      "slug": "what-military-bases-are-in-south-carolina",
+      "title": "What Military Bases are in South Carolina?",
+      "url": "/blog/what-military-bases-are-in-south-carolina",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "South Carolina has a long and proud military history, and it is still a busy training hub today. The state is home to six major active-duty installations, supporting the Army, Navy, Air Force, and Marine Corps, along with an Air National...",
+      "publishedAt": "2026-06-26T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in south carolina",
+      "secondaryKeywords": [
+        "army bases in south carolina",
+        "marine bases in south carolina",
+        "military base in south carolina",
+        "south carolina military base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in South Carolina",
+        "Army Bases in South Carolina",
+        "Marine Corps Bases in South Carolina",
+        "Air Force Bases in South Carolina",
+        "Moving to South Carolina? Let Us Help You Find a Home",
+        "Plan Your PCS to South Carolina",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
+      "slug": "what-military-bases-are-in-texas",
+      "title": "What Military Bases are in Texas?",
+      "url": "/blog/what-military-bases-are-in-texas",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Texas has one of the largest military footprints in the country. The state is home to eleven major active installations, supporting the Army, Air Force, and Navy, plus reserve and joint units that train alongside them. Whether you are PC...",
+      "publishedAt": "2026-06-22T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in texas",
+      "secondaryKeywords": [
+        "air force bases in texas",
+        "army bases in texas",
+        "military base in texas",
+        "texas army base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Texas",
+        "Army Bases in Texas",
+        "Air Force Bases in Texas",
+        "Navy Bases in Texas",
+        "Moving to Texas? Let Us Help You Find a Home",
+        "Plan Your PCS to Texas",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
+      "slug": "what-military-bases-are-in-virginia",
+      "title": "What Military Bases are in Virginia?",
+      "url": "/blog/what-military-bases-are-in-virginia",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "virginia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Virginia has one of the deepest military histories in the country, and it is still one of the most active military states today. The state is home to eleven major military installations, supporting the Navy, Marine Corps, Army, and Air F...",
+      "publishedAt": "2026-06-23T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in virginia",
+      "secondaryKeywords": [
+        "army bases in virginia",
+        "military base in virginia",
+        "navy bases in virginia",
+        "virginia navy base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Virginia",
+        "Navy and Marine Corps Bases in Virginia",
+        "Army Bases in Virginia",
+        "Department of Defense Headquarters in Virginia",
+        "Moving to Virginia? Let Us Help You Find a Home",
+        "Plan Your PCS to Virginia",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
+      "slug": "what-military-bases-are-in-washington",
+      "title": "What Military Bases are in Washington?",
+      "url": "/blog/what-military-bases-are-in-washington",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "washington",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Washington State sits at the center of America's defense in the Pacific Northwest. It is home to seven major active military installations that support the Army, Navy, Air Force, and Coast Guard. From the South Sound to the Kitsap Penins...",
+      "publishedAt": "2026-06-24T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in washington state",
+      "secondaryKeywords": [
+        "army bases in washington",
+        "military base in washington state",
+        "navy bases in washington",
+        "washington military base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Washington",
+        "Joint Base Lewis-McChord and Army in Washington",
+        "Navy Bases in Washington",
+        "Air Force Bases in Washington",
+        "Coast Guard in Washington",
+        "Moving to Washington? Let Us Help You Find a Home",
+        "Plan Your PCS to Washington",
+        "Frequently Asked Questions (FAQ)"
+      ]
     },
     {
       "slug": "what-military-bases-are-in-west-virginia",
