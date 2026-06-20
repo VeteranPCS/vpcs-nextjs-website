@@ -25,6 +25,13 @@ learns what's done and what's next. **Keep it accurate.**
 **Status legend:** `[ ]` not started · `[~]` in progress · `[PR]` PR open, awaiting review ·
 `[x]` done (PR merged) · `[BLOCKED]` dependency missing.
 
+**Environment notes (as of 2026-06-19 — read before the image + git steps):**
+- **Chrome MCP `navigate` hangs** (repeated 180s timeouts, tab stuck on `chrome://newtab/`). For Unsplash hero downloads, skip `navigate` and trigger the download from the Mac via osascript: `tell application "Google Chrome" to open location "https://unsplash.com/photos/<ID>/download?force=true"`. The file lands in `~/Downloads` a few seconds later — poll, don't check instantly. Then `cp` into `public/images/blog/{slug}/source.jpg`, PIL-mask to `main.webp`, delete `source.jpg`.
+- **`git commit` runs the full pre-commit hook (lint + type-check + build)** and exceeds the osascript timeout. Launch the commit in the background to a logfile + a sentinel (`echo RESULT=PASS/FAIL`), then poll the sentinel with short calls. Keep any in-shell `sleep` ≤ ~30s (35s tripped the osascript timeout). Verify the push with `git rev-parse HEAD` vs `git ls-remote`.
+- **`gh pr edit` fails on this repo.** Use the two-commit `__PR_URL__` placeholder pattern (commit with placeholder → create PR → replace → commit/push follow-up), or PATCH the body via REST: `gh api repos/VeteranPCS/vpcs-nextjs-website/pulls/<n> -X PATCH -F body=@<file>`.
+- **Salesforce:** API-version env already includes the `v` (`v62.0`) — strip a leading `v` before `/services/data/v${ver}/query`. `instance_url = https://veteranpcs.my.salesforce.com`. Agent **Jessica Brown** (`001Rg00000Vvld8`) is licensed in nearly every state with no `PersonMailingCity` — treat as NOT city-matched; prefer a local agent, else fall back to a generic `/contact-agent` link (+ keep top-level `stateSlug`).
+- **zsh gotchas (osascript):** use `${var%%:*}` brace expansion; avoid `echo` args that start with `=` or are bare `---` (zsh errors); BSD `grep` has no `-P` (do regex in the Linux sandbox); write temp helper files into the repo root (no spaces in the path) and never stage them.
+
 ---
 
 ## B1 — Backfill internal links + state-matched CTAs into orphan posts — Status: `[~]`
