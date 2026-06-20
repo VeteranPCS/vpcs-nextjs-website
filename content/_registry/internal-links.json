@@ -1,6 +1,6 @@
 {
-  "contentHash": "1829ec6207ba72dfd22ec89045dce58d3b69675c79f328fb56131f7e53101bc7",
-  "totalPosts": 168,
+  "contentHash": "f355307111269b3d7eee09835014686193956f70b5079a8fe8fab57516fc9750",
+  "totalPosts": 174,
   "byComponent": {
     "Financial Guidance": [
       "florida-cost-of-living-military-bases-bah",
@@ -140,13 +140,19 @@
       "what-military-bases-are-in-maine",
       "what-military-bases-are-in-maryland",
       "what-military-bases-are-in-minnesota",
+      "what-military-bases-are-in-mississippi",
+      "what-military-bases-are-in-missouri",
       "what-military-bases-are-in-montana",
       "what-military-bases-are-in-nebraska",
+      "what-military-bases-are-in-nevada",
+      "what-military-bases-are-in-new-jersey",
       "what-military-bases-are-in-new-mexico",
       "what-military-bases-are-in-new-york",
       "what-military-bases-are-in-north-carolina",
       "what-military-bases-are-in-north-dakota",
+      "what-military-bases-are-in-ohio",
       "what-military-bases-are-in-oklahoma",
+      "what-military-bases-are-in-pennsylvania",
       "what-military-bases-are-in-south-carolina",
       "what-military-bases-are-in-texas",
       "what-military-bases-are-in-virginia",
@@ -324,13 +330,19 @@
       "what-military-bases-are-in-maine",
       "what-military-bases-are-in-maryland",
       "what-military-bases-are-in-minnesota",
+      "what-military-bases-are-in-mississippi",
+      "what-military-bases-are-in-missouri",
       "what-military-bases-are-in-montana",
       "what-military-bases-are-in-nebraska",
+      "what-military-bases-are-in-nevada",
+      "what-military-bases-are-in-new-jersey",
       "what-military-bases-are-in-new-mexico",
       "what-military-bases-are-in-new-york",
       "what-military-bases-are-in-north-carolina",
       "what-military-bases-are-in-north-dakota",
+      "what-military-bases-are-in-ohio",
       "what-military-bases-are-in-oklahoma",
+      "what-military-bases-are-in-pennsylvania",
       "what-military-bases-are-in-south-carolina",
       "what-military-bases-are-in-texas",
       "what-military-bases-are-in-virginia",
@@ -455,12 +467,24 @@
     "minnesota": [
       "what-military-bases-are-in-minnesota"
     ],
+    "mississippi": [
+      "what-military-bases-are-in-mississippi"
+    ],
+    "missouri": [
+      "what-military-bases-are-in-missouri"
+    ],
     "montana": [
       "what-military-bases-are-in-montana"
     ],
     "nebraska": [
       "offutt-afb-pcs-guide-2025",
       "what-military-bases-are-in-nebraska"
+    ],
+    "nevada": [
+      "what-military-bases-are-in-nevada"
+    ],
+    "new-jersey": [
+      "what-military-bases-are-in-new-jersey"
     ],
     "new-mexico": [
       "7-best-family-friendly-activities-near-kirtland-afb",
@@ -480,8 +504,14 @@
     "north-dakota": [
       "what-military-bases-are-in-north-dakota"
     ],
+    "ohio": [
+      "what-military-bases-are-in-ohio"
+    ],
     "oklahoma": [
       "what-military-bases-are-in-oklahoma"
+    ],
+    "pennsylvania": [
+      "what-military-bases-are-in-pennsylvania"
     ],
     "south-carolina": [
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
@@ -522,10 +552,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 76,
+    "resolved": 82,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 52,
+      "frontmatter-state-slug": 58,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -5217,6 +5247,68 @@
       "h2Outline": []
     },
     {
+      "slug": "what-military-bases-are-in-mississippi",
+      "title": "What Military Bases are in Mississippi?",
+      "url": "/blog/what-military-bases-are-in-mississippi",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "mississippi",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Mississippi has a strong and steady military presence, much of it along the Gulf Coast. The state is home to six major active installations, supporting the Air Force, Navy, and Army National Guard, plus reserve and tenant units that trai...",
+      "publishedAt": "2026-07-08T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in mississippi",
+      "secondaryKeywords": [
+        "air force bases in mississippi",
+        "military base in mississippi",
+        "mississippi air force base",
+        "navy bases in mississippi"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Mississippi",
+        "Air Force Bases in Mississippi",
+        "Navy Bases in Mississippi",
+        "Army Bases in Mississippi",
+        "Moving to Mississippi? Let Us Help You Find a Home",
+        "Plan Your PCS to Mississippi",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
+      "slug": "what-military-bases-are-in-missouri",
+      "title": "What Military Bases are in Missouri?",
+      "url": "/blog/what-military-bases-are-in-missouri",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "missouri",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Missouri sits in the heart of the country and plays a key role in training and defense. The state is home to four major active installations, supporting the Army, Air Force, and Air National Guard, plus reserve and joint units that train...",
+      "publishedAt": "2026-07-01T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in missouri",
+      "secondaryKeywords": [
+        "air force bases in missouri",
+        "army bases in missouri",
+        "military base in missouri",
+        "missouri army base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Missouri",
+        "Army Bases in Missouri",
+        "Air Force Bases in Missouri",
+        "Air National Guard Bases in Missouri",
+        "Moving to Missouri? Let Us Help You Find a Home",
+        "Plan Your PCS to Missouri",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
       "slug": "what-military-bases-are-in-montana",
       "title": "What Military Bases are in Montana?",
       "url": "/blog/what-military-bases-are-in-montana",
@@ -5261,6 +5353,69 @@
         "navy base in nebraska"
       ],
       "h2Outline": []
+    },
+    {
+      "slug": "what-military-bases-are-in-nevada",
+      "title": "What Military Bases are in Nevada?",
+      "url": "/blog/what-military-bases-are-in-nevada",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "nevada",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Nevada plays a quiet but important role in how the military trains for war. The state is home to four major active installations, supporting the Air Force, Navy, and Army, plus the vast ranges where pilots and aircrews sharpen their skil...",
+      "publishedAt": "2026-07-06T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in nevada",
+      "secondaryKeywords": [
+        "air force bases in nevada",
+        "military base in nevada",
+        "navy bases in nevada",
+        "nevada air force base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Nevada",
+        "Air Force Bases in Nevada",
+        "Navy Bases in Nevada",
+        "Army Bases in Nevada",
+        "Moving to Nevada? Let Us Help You Find a Home",
+        "Plan Your PCS to Nevada",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
+      "slug": "what-military-bases-are-in-new-jersey",
+      "title": "What Military Bases are in New Jersey?",
+      "url": "/blog/what-military-bases-are-in-new-jersey",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "new-jersey",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "New Jersey has a small but important military footprint. The state is home to four major active installations, supporting the Air Force, Army, Navy, and Coast Guard, including the one base where all three of the largest services share th...",
+      "publishedAt": "2026-07-02T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in new jersey",
+      "secondaryKeywords": [
+        "air force bases in new jersey",
+        "army bases in new jersey",
+        "military base in new jersey",
+        "new jersey military base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in New Jersey",
+        "Joint Bases in New Jersey",
+        "Army Bases in New Jersey",
+        "Navy Bases in New Jersey",
+        "Coast Guard Bases in New Jersey",
+        "Moving to New Jersey? Let Us Help You Find a Home",
+        "Plan Your PCS to New Jersey",
+        "Frequently Asked Questions (FAQ)"
+      ]
     },
     {
       "slug": "what-military-bases-are-in-new-mexico",
@@ -5376,6 +5531,36 @@
       "h2Outline": []
     },
     {
+      "slug": "what-military-bases-are-in-ohio",
+      "title": "What Military Bases are in Ohio?",
+      "url": "/blog/what-military-bases-are-in-ohio",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "ohio",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Ohio's military footprint is built around airpower and logistics. The state is home to six major active installations, supporting the Air Force, the Air Force Reserve, the Air National Guard, and the Defense Logistics Agency. Whether you...",
+      "publishedAt": "2026-06-30T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in ohio",
+      "secondaryKeywords": [
+        "air force bases in ohio",
+        "army bases in ohio",
+        "military base in ohio",
+        "ohio air force base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Ohio",
+        "Air Force Bases in Ohio",
+        "Defense Logistics Agency Installations in Ohio",
+        "Moving to Ohio? Let Us Help You Find a Home",
+        "Plan Your PCS to Ohio",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
       "slug": "what-military-bases-are-in-oklahoma",
       "title": "What Military Bases are in Oklahoma?",
       "url": "/blog/what-military-bases-are-in-oklahoma",
@@ -5402,6 +5587,38 @@
         "Army Bases in Oklahoma",
         "Moving to Oklahoma? Let Us Help You Find a Home",
         "Plan Your PCS to Oklahoma",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
+      "slug": "what-military-bases-are-in-pennsylvania",
+      "title": "What Military Bases are in Pennsylvania?",
+      "url": "/blog/what-military-bases-are-in-pennsylvania",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "pennsylvania",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Pennsylvania has a long and proud military history. The state is home to seven major active installations, supporting the Army, Navy, and Air Force, plus a major Defense Logistics Agency site and reserve and Guard units that train alongs...",
+      "publishedAt": "2026-07-07T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in pennsylvania",
+      "secondaryKeywords": [
+        "army bases in pennsylvania",
+        "military base in pennsylvania",
+        "navy bases in pennsylvania",
+        "pennsylvania army base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Pennsylvania",
+        "Army Bases in Pennsylvania",
+        "Navy Bases in Pennsylvania",
+        "Air Force Bases in Pennsylvania",
+        "Defense Logistics Agency in Pennsylvania",
+        "Moving to Pennsylvania? Let Us Help You Find a Home",
+        "Plan Your PCS to Pennsylvania",
         "Frequently Asked Questions (FAQ)"
       ]
     },
