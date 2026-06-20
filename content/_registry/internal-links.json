@@ -1,6 +1,6 @@
 {
-  "contentHash": "f355307111269b3d7eee09835014686193956f70b5079a8fe8fab57516fc9750",
-  "totalPosts": 174,
+  "contentHash": "5c8154b4f4814156924027876848a69e29bf731dfb7b5408791ced87c9b51607",
+  "totalPosts": 180,
   "byComponent": {
     "Financial Guidance": [
       "florida-cost-of-living-military-bases-bah",
@@ -139,6 +139,8 @@
       "what-military-bases-are-in-louisiana",
       "what-military-bases-are-in-maine",
       "what-military-bases-are-in-maryland",
+      "what-military-bases-are-in-massachusetts",
+      "what-military-bases-are-in-michigan",
       "what-military-bases-are-in-minnesota",
       "what-military-bases-are-in-mississippi",
       "what-military-bases-are-in-missouri",
@@ -152,9 +154,13 @@
       "what-military-bases-are-in-north-dakota",
       "what-military-bases-are-in-ohio",
       "what-military-bases-are-in-oklahoma",
+      "what-military-bases-are-in-oregon",
       "what-military-bases-are-in-pennsylvania",
+      "what-military-bases-are-in-rhode-island",
       "what-military-bases-are-in-south-carolina",
+      "what-military-bases-are-in-south-dakota",
       "what-military-bases-are-in-texas",
+      "what-military-bases-are-in-utah",
       "what-military-bases-are-in-virginia",
       "what-military-bases-are-in-washington",
       "what-military-bases-are-in-west-virginia",
@@ -329,6 +335,8 @@
       "what-military-bases-are-in-louisiana",
       "what-military-bases-are-in-maine",
       "what-military-bases-are-in-maryland",
+      "what-military-bases-are-in-massachusetts",
+      "what-military-bases-are-in-michigan",
       "what-military-bases-are-in-minnesota",
       "what-military-bases-are-in-mississippi",
       "what-military-bases-are-in-missouri",
@@ -342,9 +350,13 @@
       "what-military-bases-are-in-north-dakota",
       "what-military-bases-are-in-ohio",
       "what-military-bases-are-in-oklahoma",
+      "what-military-bases-are-in-oregon",
       "what-military-bases-are-in-pennsylvania",
+      "what-military-bases-are-in-rhode-island",
       "what-military-bases-are-in-south-carolina",
+      "what-military-bases-are-in-south-dakota",
       "what-military-bases-are-in-texas",
+      "what-military-bases-are-in-utah",
       "what-military-bases-are-in-virginia",
       "what-military-bases-are-in-washington",
       "what-military-bases-are-in-west-virginia",
@@ -464,6 +476,12 @@
       "pcs-to-walter-reed-bethesda-2026-neighborhoods-bah",
       "what-military-bases-are-in-maryland"
     ],
+    "massachusetts": [
+      "what-military-bases-are-in-massachusetts"
+    ],
+    "michigan": [
+      "what-military-bases-are-in-michigan"
+    ],
     "minnesota": [
       "what-military-bases-are-in-minnesota"
     ],
@@ -510,12 +528,21 @@
     "oklahoma": [
       "what-military-bases-are-in-oklahoma"
     ],
+    "oregon": [
+      "what-military-bases-are-in-oregon"
+    ],
     "pennsylvania": [
       "what-military-bases-are-in-pennsylvania"
+    ],
+    "rhode-island": [
+      "what-military-bases-are-in-rhode-island"
     ],
     "south-carolina": [
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "what-military-bases-are-in-south-carolina"
+    ],
+    "south-dakota": [
+      "what-military-bases-are-in-south-dakota"
     ],
     "tennessee": [
       "complete-fort-campbell-pcs-guide",
@@ -531,7 +558,8 @@
       "why-dallas-fort-worth-is-the-ideal-destination-for-military-members-and-veterans"
     ],
     "utah": [
-      "discover-the-best-places-to-live-near-hill-air-force-base-utah"
+      "discover-the-best-places-to-live-near-hill-air-force-base-utah",
+      "what-military-bases-are-in-utah"
     ],
     "virginia": [
       "what-military-bases-are-in-virginia"
@@ -552,10 +580,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 82,
+    "resolved": 88,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 58,
+      "frontmatter-state-slug": 64,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -5224,6 +5252,68 @@
       ]
     },
     {
+      "slug": "what-military-bases-are-in-massachusetts",
+      "title": "What Military Bases are in Massachusetts?",
+      "url": "/blog/what-military-bases-are-in-massachusetts",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "massachusetts",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Massachusetts has a small but important military footprint. The state is home to five major active installations, supporting the Air Force, Army, and Coast Guard, plus Air Force Reserve and National Guard units that train and fly alongsi...",
+      "publishedAt": "2026-07-09T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in massachusetts",
+      "secondaryKeywords": [
+        "air force bases in massachusetts",
+        "army bases in massachusetts",
+        "massachusetts air force base",
+        "military base in massachusetts"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Massachusetts",
+        "Air Force Bases in Massachusetts",
+        "Army Bases in Massachusetts",
+        "Coast Guard Bases in Massachusetts",
+        "Moving to Massachusetts? Let Us Help You Find a Home",
+        "Plan Your PCS to Massachusetts",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
+      "slug": "what-military-bases-are-in-michigan",
+      "title": "What Military Bases are in Michigan?",
+      "url": "/blog/what-military-bases-are-in-michigan",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "michigan",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Michigan has a smaller military footprint than some states, but the installations it does have carry important missions. The state is home to four major active installations, supporting the Air Force, Army, and Coast Guard, with much of ...",
+      "publishedAt": "2026-07-10T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in michigan",
+      "secondaryKeywords": [
+        "air force bases in michigan",
+        "army bases in michigan",
+        "michigan air force base",
+        "military base in michigan"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Michigan",
+        "Air Force Bases in Michigan",
+        "Army Bases in Michigan",
+        "Coast Guard Bases in Michigan",
+        "Moving to Michigan? Let Us Help You Find a Home",
+        "Plan Your PCS to Michigan",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
       "slug": "what-military-bases-are-in-minnesota",
       "title": "What Military Bases are in Minnesota?",
       "url": "/blog/what-military-bases-are-in-minnesota",
@@ -5591,6 +5681,37 @@
       ]
     },
     {
+      "slug": "what-military-bases-are-in-oregon",
+      "title": "What Military Bases are in Oregon?",
+      "url": "/blog/what-military-bases-are-in-oregon",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "oregon",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Oregon has a smaller military footprint than many states, but the bases here carry important national missions. The state is home to five major active installations, supporting the Air National Guard, Coast Guard, and Army National Guard...",
+      "publishedAt": "2026-07-13T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in oregon",
+      "secondaryKeywords": [
+        "air force bases in oregon",
+        "air national guard bases in oregon",
+        "military base in oregon",
+        "oregon military base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Oregon",
+        "Air National Guard Bases in Oregon",
+        "Coast Guard Bases in Oregon",
+        "Army National Guard Bases in Oregon",
+        "Moving to Oregon? Let Us Help You Find a Home",
+        "Plan Your PCS to Oregon",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
       "slug": "what-military-bases-are-in-pennsylvania",
       "title": "What Military Bases are in Pennsylvania?",
       "url": "/blog/what-military-bases-are-in-pennsylvania",
@@ -5619,6 +5740,37 @@
         "Defense Logistics Agency in Pennsylvania",
         "Moving to Pennsylvania? Let Us Help You Find a Home",
         "Plan Your PCS to Pennsylvania",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
+      "slug": "what-military-bases-are-in-rhode-island",
+      "title": "What Military Bases are in Rhode Island?",
+      "url": "/blog/what-military-bases-are-in-rhode-island",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "rhode-island",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Rhode Island is the smallest state, but it carries a big role in the military. The state is home to one major active installation, Naval Station Newport, plus Air National Guard and Coast Guard units. The Navy leads the way here, with Ne...",
+      "publishedAt": "2026-07-14T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in rhode island",
+      "secondaryKeywords": [
+        "military base in rhode island",
+        "naval station newport",
+        "navy bases in rhode island",
+        "rhode island navy base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Rhode Island",
+        "Navy Bases in Rhode Island",
+        "Air National Guard in Rhode Island",
+        "Coast Guard in Rhode Island",
+        "Moving to Rhode Island? Let Us Help You Find a Home",
+        "Plan Your PCS to Rhode Island",
         "Frequently Asked Questions (FAQ)"
       ]
     },
@@ -5654,6 +5806,37 @@
       ]
     },
     {
+      "slug": "what-military-bases-are-in-south-dakota",
+      "title": "What Military Bases are in South Dakota?",
+      "url": "/blog/what-military-bases-are-in-south-dakota",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "south-dakota",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "South Dakota has a small but important military footprint. The state is home to one major active-duty installation, Ellsworth Air Force Base, plus key Air National Guard and Army National Guard sites that train and support the force. The...",
+      "publishedAt": "2026-07-15T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in south dakota",
+      "secondaryKeywords": [
+        "air force bases in south dakota",
+        "ellsworth air force base",
+        "military base in south dakota",
+        "south dakota air force base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in South Dakota",
+        "Air Force Bases in South Dakota",
+        "Air National Guard Bases in South Dakota",
+        "Army National Guard Bases in South Dakota",
+        "Moving to South Dakota? Let Us Help You Find a Home",
+        "Plan Your PCS to South Dakota",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
       "slug": "what-military-bases-are-in-texas",
       "title": "What Military Bases are in Texas?",
       "url": "/blog/what-military-bases-are-in-texas",
@@ -5681,6 +5864,37 @@
         "Navy Bases in Texas",
         "Moving to Texas? Let Us Help You Find a Home",
         "Plan Your PCS to Texas",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
+      "slug": "what-military-bases-are-in-utah",
+      "title": "What Military Bases are in Utah?",
+      "url": "/blog/what-military-bases-are-in-utah",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "utah",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Utah has a smaller but very busy military footprint. The state is home to five major active installations, supporting the Air Force and Army, plus National Guard units that train alongside them. Whether you are PCSing to Utah (Permanent ...",
+      "publishedAt": "2026-07-16T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in utah",
+      "secondaryKeywords": [
+        "air force bases in utah",
+        "army bases in utah",
+        "military base in utah",
+        "utah air force base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Utah",
+        "Air Force Bases in Utah",
+        "Army Bases in Utah",
+        "National Guard Bases in Utah",
+        "Moving to Utah? Let Us Help You Find a Home",
+        "Plan Your PCS to Utah",
         "Frequently Asked Questions (FAQ)"
       ]
     },
