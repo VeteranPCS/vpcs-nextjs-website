@@ -1,6 +1,6 @@
 {
-  "contentHash": "5c8154b4f4814156924027876848a69e29bf731dfb7b5408791ced87c9b51607",
-  "totalPosts": 180,
+  "contentHash": "c075345a5220327a47ad68095916559976cd3eebb347ff5479fbcb31989d41f6",
+  "totalPosts": 182,
   "byComponent": {
     "Financial Guidance": [
       "florida-cost-of-living-military-bases-bah",
@@ -147,6 +147,7 @@
       "what-military-bases-are-in-montana",
       "what-military-bases-are-in-nebraska",
       "what-military-bases-are-in-nevada",
+      "what-military-bases-are-in-new-hampshire",
       "what-military-bases-are-in-new-jersey",
       "what-military-bases-are-in-new-mexico",
       "what-military-bases-are-in-new-york",
@@ -161,6 +162,7 @@
       "what-military-bases-are-in-south-dakota",
       "what-military-bases-are-in-texas",
       "what-military-bases-are-in-utah",
+      "what-military-bases-are-in-vermont",
       "what-military-bases-are-in-virginia",
       "what-military-bases-are-in-washington",
       "what-military-bases-are-in-west-virginia",
@@ -343,6 +345,7 @@
       "what-military-bases-are-in-montana",
       "what-military-bases-are-in-nebraska",
       "what-military-bases-are-in-nevada",
+      "what-military-bases-are-in-new-hampshire",
       "what-military-bases-are-in-new-jersey",
       "what-military-bases-are-in-new-mexico",
       "what-military-bases-are-in-new-york",
@@ -357,6 +360,7 @@
       "what-military-bases-are-in-south-dakota",
       "what-military-bases-are-in-texas",
       "what-military-bases-are-in-utah",
+      "what-military-bases-are-in-vermont",
       "what-military-bases-are-in-virginia",
       "what-military-bases-are-in-washington",
       "what-military-bases-are-in-west-virginia",
@@ -501,6 +505,9 @@
     "nevada": [
       "what-military-bases-are-in-nevada"
     ],
+    "new-hampshire": [
+      "what-military-bases-are-in-new-hampshire"
+    ],
     "new-jersey": [
       "what-military-bases-are-in-new-jersey"
     ],
@@ -561,6 +568,9 @@
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
       "what-military-bases-are-in-utah"
     ],
+    "vermont": [
+      "what-military-bases-are-in-vermont"
+    ],
     "virginia": [
       "what-military-bases-are-in-virginia"
     ],
@@ -580,10 +590,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 88,
+    "resolved": 90,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 64,
+      "frontmatter-state-slug": 66,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -5476,6 +5486,36 @@
       ]
     },
     {
+      "slug": "what-military-bases-are-in-new-hampshire",
+      "title": "What Military Bases are in New Hampshire?",
+      "url": "/blog/what-military-bases-are-in-new-hampshire",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "new-hampshire",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "New Hampshire has a small but important military footprint. The state is home to two major active installations, supporting the Air National Guard (part of the Air Force) and the Space Force. Whether you are PCSing to New Hampshire (Perm...",
+      "publishedAt": "2026-07-17T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in new hampshire",
+      "secondaryKeywords": [
+        "air national guard bases in new hampshire",
+        "military base in new hampshire",
+        "new hampshire military base",
+        "pease air national guard base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in New Hampshire",
+        "Air National Guard Bases in New Hampshire",
+        "Space Force Bases in New Hampshire",
+        "Moving to New Hampshire? Let Us Help You Find a Home",
+        "Plan Your PCS to New Hampshire",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
       "slug": "what-military-bases-are-in-new-jersey",
       "title": "What Military Bases are in New Jersey?",
       "url": "/blog/what-military-bases-are-in-new-jersey",
@@ -5895,6 +5935,36 @@
         "National Guard Bases in Utah",
         "Moving to Utah? Let Us Help You Find a Home",
         "Plan Your PCS to Utah",
+        "Frequently Asked Questions (FAQ)"
+      ]
+    },
+    {
+      "slug": "what-military-bases-are-in-vermont",
+      "title": "What Military Bases are in Vermont?",
+      "url": "/blog/what-military-bases-are-in-vermont",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "vermont",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "US Military Bases"
+      ],
+      "description": "Vermont has a small but important military footprint, built almost entirely on the National Guard. The state is home to two major active installations, one supporting the Air National Guard and one supporting the Army National Guard. Whe...",
+      "publishedAt": "2026-07-20T09:00:00.000Z",
+      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "primaryKeyword": "military bases in vermont",
+      "secondaryKeywords": [
+        "air national guard bases in vermont",
+        "burlington air national guard base",
+        "military base in vermont",
+        "vermont military base"
+      ],
+      "h2Outline": [
+        "Overview of Military Installations in Vermont",
+        "Air National Guard Bases in Vermont",
+        "Army National Guard Bases in Vermont",
+        "Moving to Vermont? Let Us Help You Find a Home",
+        "Plan Your PCS to Vermont",
         "Frequently Asked Questions (FAQ)"
       ]
     },
