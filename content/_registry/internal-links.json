@@ -1,6 +1,6 @@
 {
-  "contentHash": "0d8d2ecb9082c6ab164f23c417a1435ce205d0314de3f5573859f9bd5188e77f",
-  "totalPosts": 192,
+  "contentHash": "0318dd3ec4e3c3d3d3d1d7ab86cbab0cd66277455ab77524beccb5dc153135ac",
+  "totalPosts": 197,
   "byComponent": {
     "Financial Guidance": [
       "florida-cost-of-living-military-bases-bah",
@@ -57,16 +57,21 @@
       "pcs-to-fort-carson-colorado-springs-2026-guide",
       "pcs-to-fort-cavazos-killeen-2026-guide",
       "pcs-to-fort-drum-watertown-2026-guide",
+      "pcs-to-fort-jackson-columbia-2026-guide",
+      "pcs-to-fort-knox-2026-guide",
       "pcs-to-fort-leavenworth-complete-guide-for-military-families",
       "pcs-to-fort-leonard-wood-2026-guide",
       "pcs-to-fort-sill-lawton-2026-guide",
+      "pcs-to-fort-stewart-hunter-aaf-2026-guide",
       "pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
       "pcs-to-hawaii-with-pets",
       "pcs-to-kitsap-county-five-things-military-families",
+      "pcs-to-mcb-camp-pendleton-2026-guide",
       "pcs-to-mcb-quantico-2026-guide",
       "pcs-to-mcrd-parris-island-2026-guide",
       "pcs-to-naval-station-norfolk-2026-guide",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
+      "pcs-to-travis-afb-fairfield-2026-guide",
       "pcs-to-wright-patterson-afb-dayton-2026-guide",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "pcsing-oconus-what-do-i-do-with-my-home",
@@ -265,16 +270,21 @@
       "pcs-to-fort-carson-colorado-springs-2026-guide",
       "pcs-to-fort-cavazos-killeen-2026-guide",
       "pcs-to-fort-drum-watertown-2026-guide",
+      "pcs-to-fort-jackson-columbia-2026-guide",
+      "pcs-to-fort-knox-2026-guide",
       "pcs-to-fort-leavenworth-complete-guide-for-military-families",
       "pcs-to-fort-leonard-wood-2026-guide",
       "pcs-to-fort-sill-lawton-2026-guide",
+      "pcs-to-fort-stewart-hunter-aaf-2026-guide",
       "pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
       "pcs-to-hawaii-with-pets",
       "pcs-to-kitsap-county-five-things-military-families",
+      "pcs-to-mcb-camp-pendleton-2026-guide",
       "pcs-to-mcb-quantico-2026-guide",
       "pcs-to-mcrd-parris-island-2026-guide",
       "pcs-to-naval-station-norfolk-2026-guide",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
+      "pcs-to-travis-afb-fairfield-2026-guide",
       "pcs-to-wright-patterson-afb-dayton-2026-guide",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "pcsing-oconus-what-do-i-do-with-my-home",
@@ -436,6 +446,8 @@
       "what-military-bases-are-in-arkansas"
     ],
     "california": [
+      "pcs-to-mcb-camp-pendleton-2026-guide",
+      "pcs-to-travis-afb-fairfield-2026-guide",
       "pcsing-to-san-diego-top-military-friendly-neighborhoods-and-resources",
       "top-things-to-do-near-san-diego-military-bases",
       "what-military-bases-are-in-california"
@@ -463,6 +475,7 @@
       "best-places-to-live-near-fort-benning",
       "best-places-to-live-near-ft-gordon-augusta-georgia",
       "pcs-to-fort-eisenhower",
+      "pcs-to-fort-stewart-hunter-aaf-2026-guide",
       "what-military-bases-are-in-georgia"
     ],
     "hawaii": [
@@ -488,6 +501,7 @@
       "what-military-bases-are-in-kansas"
     ],
     "kentucky": [
+      "pcs-to-fort-knox-2026-guide",
       "what-military-bases-are-in-kentucky"
     ],
     "louisiana": [
@@ -571,6 +585,7 @@
     ],
     "south-carolina": [
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
+      "pcs-to-fort-jackson-columbia-2026-guide",
       "pcs-to-mcrd-parris-island-2026-guide",
       "what-military-bases-are-in-south-carolina"
     ],
@@ -620,10 +635,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 100,
+    "resolved": 105,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 76,
+      "frontmatter-state-slug": 81,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -2934,6 +2949,74 @@
       ]
     },
     {
+      "slug": "pcs-to-fort-jackson-columbia-2026-guide",
+      "title": "PCS to Fort Jackson: A 2026 Guide for Military Families",
+      "url": "/blog/pcs-to-fort-jackson-columbia-2026-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A 2026 guide for military families moving to Fort Jackson, covering where to live, BAH, schools, healthcare, and life in Columbia, South Carolina.",
+      "publishedAt": "2026-08-12T09:00:00.000Z",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to fort jackson",
+      "secondaryKeywords": [
+        "columbia south carolina military families",
+        "fort jackson bah",
+        "fort jackson housing",
+        "moving to fort jackson",
+        "where to live near fort jackson"
+      ],
+      "h2Outline": [
+        "What and Where Is Fort Jackson?",
+        "Where to Live When PCSing to Fort Jackson",
+        "Fort Jackson BAH and the Cost of Living",
+        "Schools Near Fort Jackson",
+        "Healthcare: Moncrief Army Health Clinic",
+        "Climate and Things to Do",
+        "Plan Your PCS to Fort Jackson",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "pcs-to-fort-knox-2026-guide",
+      "title": "PCS to Fort Knox: A 2026 Guide for Military Families",
+      "url": "/blog/pcs-to-fort-knox-2026-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "kentucky",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A 2026 guide for military families moving to Fort Knox, covering where to live, BAH, schools, healthcare, and life in north-central Kentucky.",
+      "publishedAt": "2026-08-13T09:00:00.000Z",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to fort knox",
+      "secondaryKeywords": [
+        "fort knox bah",
+        "fort knox housing",
+        "moving to fort knox",
+        "radcliff kentucky military families",
+        "where to live near fort knox"
+      ],
+      "h2Outline": [
+        "What and Where Is Fort Knox?",
+        "Where to Live When PCSing to Fort Knox",
+        "Fort Knox BAH and the Cost of Living",
+        "Schools Near Fort Knox",
+        "Healthcare: Ireland Army Health Clinic",
+        "Climate and Things to Do",
+        "Plan Your PCS to Fort Knox",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "pcs-to-fort-leavenworth-complete-guide-for-military-families",
       "title": "PCS to Fort Leavenworth: Complete Guide for Military Families",
       "url": "/blog/pcs-to-fort-leavenworth-complete-guide-for-military-families",
@@ -3033,6 +3116,40 @@
         "Healthcare: Reynolds Army Health Clinic",
         "Climate and Things to Do",
         "Plan Your PCS to Fort Sill",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "pcs-to-fort-stewart-hunter-aaf-2026-guide",
+      "title": "PCS to Fort Stewart and Hunter AAF: A 2026 Guide for Military Families",
+      "url": "/blog/pcs-to-fort-stewart-hunter-aaf-2026-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "georgia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A 2026 guide for military families moving to Fort Stewart and Hunter Army Airfield, covering where to live, BAH, schools, healthcare, and coastal Georgia life.",
+      "publishedAt": "2026-08-11T09:00:00.000Z",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to fort stewart",
+      "secondaryKeywords": [
+        "fort stewart bah",
+        "fort stewart housing",
+        "hunter army airfield savannah",
+        "moving to fort stewart",
+        "where to live near fort stewart"
+      ],
+      "h2Outline": [
+        "What and Where Are Fort Stewart and Hunter Army Airfield?",
+        "Where to Live When PCSing to Fort Stewart and Hunter AAF",
+        "Fort Stewart BAH and the Cost of Living",
+        "Schools Near Fort Stewart and Hunter AAF",
+        "Healthcare: Winn Army Community Hospital and Tuttle Army Health Clinic",
+        "Climate and Things to Do",
+        "Plan Your PCS to Fort Stewart",
         "Frequently Asked Questions"
       ]
     },
@@ -3200,6 +3317,40 @@
       ]
     },
     {
+      "slug": "pcs-to-mcb-camp-pendleton-2026-guide",
+      "title": "PCS to MCB Camp Pendleton: A 2026 Guide for Military Families",
+      "url": "/blog/pcs-to-mcb-camp-pendleton-2026-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "california",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A 2026 guide for military families moving to MCB Camp Pendleton, covering where to live, BAH, schools, healthcare, and coastal Southern California life.",
+      "publishedAt": "2026-08-14T09:00:00.000Z",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to camp pendleton",
+      "secondaryKeywords": [
+        "camp pendleton bah",
+        "camp pendleton housing",
+        "moving to camp pendleton",
+        "oceanside california military families",
+        "where to live near camp pendleton"
+      ],
+      "h2Outline": [
+        "What and Where Is MCB Camp Pendleton?",
+        "Where to Live When PCSing to Camp Pendleton",
+        "Camp Pendleton BAH and the Cost of Living",
+        "Schools Near Camp Pendleton",
+        "Healthcare: Naval Hospital Camp Pendleton",
+        "Climate and Things to Do",
+        "Plan Your PCS to Camp Pendleton",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "pcs-to-mcb-quantico-2026-guide",
       "title": "PCS to MCB Quantico: A 2026 Guide for Military Families",
       "url": "/blog/pcs-to-mcb-quantico-2026-guide",
@@ -3334,6 +3485,40 @@
         "Planning Your New Braunfels PCS",
         "New Braunfels: The Best of Both Worlds",
         "Plan Your PCS to Texas"
+      ]
+    },
+    {
+      "slug": "pcs-to-travis-afb-fairfield-2026-guide",
+      "title": "PCS to Travis AFB: A 2026 Guide for Military Families",
+      "url": "/blog/pcs-to-travis-afb-fairfield-2026-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "california",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A 2026 guide for military families moving to Travis AFB, covering where to live, BAH, schools, healthcare, and life in Solano County, California.",
+      "publishedAt": "2026-08-10T09:00:00.000Z",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to travis afb",
+      "secondaryKeywords": [
+        "fairfield california military families",
+        "moving to travis afb",
+        "travis afb bah",
+        "travis afb housing",
+        "where to live near travis afb"
+      ],
+      "h2Outline": [
+        "What and Where Is Travis AFB?",
+        "Where to Live When PCSing to Travis AFB",
+        "Travis AFB BAH and the Cost of Living",
+        "Schools Near Travis AFB",
+        "Healthcare: David Grant USAF Medical Center",
+        "Climate and Things to Do",
+        "Plan Your PCS to Travis AFB",
+        "Frequently Asked Questions"
       ]
     },
     {
