@@ -1,12 +1,15 @@
 {
-  "contentHash": "c7aa7f57580dc500234237cf8e42bcaa8794ccbe00f6a7cb7502306f2f3c839c",
-  "totalPosts": 217,
+  "contentHash": "27dbc1a2eeda2246c5de409154c7f8169341e28fd5a9d3fc719245a21eba828c",
+  "totalPosts": 221,
   "byComponent": {
     "Financial Guidance": [
       "california-veteran-property-tax-exemptions-2026",
+      "colorado-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
       "florida-veteran-property-tax-exemptions-2026",
       "fort-meade-bah-2026-what-your-allowance-buys",
+      "georgia-veteran-property-tax-exemptions-2026",
+      "hawaii-veteran-property-tax-exemptions-2026",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
       "north-carolina-veteran-property-tax-exemptions-2026",
@@ -14,7 +17,8 @@
       "texas-veteran-property-tax-exemptions-2026",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
       "understanding-escrow-in-real-estate-veterans-guide",
-      "virginia-veteran-property-tax-exemptions-2026"
+      "virginia-veteran-property-tax-exemptions-2026",
+      "washington-veteran-property-tax-exemptions-2026"
     ],
     "Military Transition Help": [
       "benefits-of-working-with-veteran-real-estate-agents-for-military-veterans",
@@ -237,9 +241,12 @@
   "byComponentSlug": {
     "financial-guidance": [
       "california-veteran-property-tax-exemptions-2026",
+      "colorado-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
       "florida-veteran-property-tax-exemptions-2026",
       "fort-meade-bah-2026-what-your-allowance-buys",
+      "georgia-veteran-property-tax-exemptions-2026",
+      "hawaii-veteran-property-tax-exemptions-2026",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
       "north-carolina-veteran-property-tax-exemptions-2026",
@@ -247,7 +254,8 @@
       "texas-veteran-property-tax-exemptions-2026",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
       "understanding-escrow-in-real-estate-veterans-guide",
-      "virginia-veteran-property-tax-exemptions-2026"
+      "virginia-veteran-property-tax-exemptions-2026",
+      "washington-veteran-property-tax-exemptions-2026"
     ],
     "military-transition-help": [
       "benefits-of-working-with-veteran-real-estate-agents-for-military-veterans",
@@ -496,6 +504,7 @@
       "what-military-bases-are-in-california"
     ],
     "colorado": [
+      "colorado-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-carson-colorado-springs-2026-guide",
       "what-military-bases-are-in-colorado"
     ],
@@ -520,12 +529,14 @@
     "georgia": [
       "best-places-to-live-near-fort-benning",
       "best-places-to-live-near-ft-gordon-augusta-georgia",
+      "georgia-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-benning-2026-guide",
       "pcs-to-fort-gordon",
       "pcs-to-fort-stewart-hunter-aaf-2026-guide",
       "what-military-bases-are-in-georgia"
     ],
     "hawaii": [
+      "hawaii-veteran-property-tax-exemptions-2026",
       "pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
       "pcs-to-hawaii-with-pets",
       "pcs-to-schofield-barracks-2026-guide",
@@ -682,6 +693,7 @@
     "washington": [
       "pcs-to-joint-base-lewis-mcchord-jblm-2026-guide",
       "top-communities-for-military-families-near-naval-base-kitsap",
+      "washington-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-washington"
     ],
     "west-virginia": [
@@ -695,10 +707,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 125,
+    "resolved": 129,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 101,
+      "frontmatter-state-slug": 105,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -1539,6 +1551,37 @@
       ]
     },
     {
+      "slug": "colorado-veteran-property-tax-exemptions-2026",
+      "title": "Colorado Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/colorado-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "colorado",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language look at the Colorado property tax exemption for disabled veterans and Gold Star spouses, plus how military pay is treated by the state.",
+      "publishedAt": "2026-09-17T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "colorado disabled veteran property tax exemption",
+      "secondaryKeywords": [
+        "colorado 100 disabled veteran benefits",
+        "colorado division of veterans affairs",
+        "colorado military retirement subtraction",
+        "colorado property tax military",
+        "colorado veteran property tax exemption"
+      ],
+      "h2Outline": [
+        "The Colorado Disabled Veteran Property Tax Exemption",
+        "How It Works With the Senior Exemption and Local Property Tax",
+        "Military Pay and Colorado State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "complete-fort-campbell-pcs-guide",
       "title": "Your Complete Fort Campbell PCS Guide: Why Military Families Thrive in Clarksville, TN",
       "url": "/blog/complete-fort-campbell-pcs-guide",
@@ -2020,6 +2063,37 @@
       ]
     },
     {
+      "slug": "georgia-veteran-property-tax-exemptions-2026",
+      "title": "Georgia Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/georgia-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "georgia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language look at Georgia property tax relief for disabled veterans and surviving spouses, plus how military pay and retirement pay are treated by the state.",
+      "publishedAt": "2026-09-15T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "georgia veteran property tax exemption",
+      "secondaryKeywords": [
+        "georgia 100 percent disabled veteran benefits",
+        "georgia department of veterans service",
+        "georgia disabled veteran homestead exemption",
+        "georgia military retirement income tax",
+        "georgia property tax military"
+      ],
+      "h2Outline": [
+        "The Georgia Disabled Veteran Homestead Exemption",
+        "How It Works With the Homestead and Local Property Tax",
+        "Military Pay and Georgia State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "greater-phoenix-valley-a-guide-for-military-veterans",
       "title": "Greater Phoenix Valley: A Guide for Military Veterans",
       "url": "/blog/greater-phoenix-valley-a-guide-for-military-veterans",
@@ -2046,6 +2120,37 @@
         "A Strong Job Market for Experienced Veterans",
         "Lifestyle and Quality of Life",
         "Start Your Home Search in the Phoenix Valley"
+      ]
+    },
+    {
+      "slug": "hawaii-veteran-property-tax-exemptions-2026",
+      "title": "Hawaii Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/hawaii-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "hawaii",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language look at how each Hawaii county exempts totally disabled veterans from property tax, plus how the state treats military pay.",
+      "publishedAt": "2026-09-18T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "hawaii veteran property tax exemption",
+      "secondaryKeywords": [
+        "hawaii 100 disabled veteran benefits",
+        "hawaii disabled veteran property tax exemption",
+        "hawaii military retirement tax exemption",
+        "hawaii office of veterans services",
+        "honolulu property tax veterans"
+      ],
+      "h2Outline": [
+        "The Hawaii Disabled Veteran Property Tax Exemption",
+        "The County Home Exemption and How It Stacks",
+        "Military Pay and Hawaii State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -5944,6 +6049,37 @@
         "The Virginia Disabled Veteran Property Tax Exemption",
         "How It Works With Local Property Taxes and Homestead Relief",
         "Military Pay and Virginia State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "washington-veteran-property-tax-exemptions-2026",
+      "title": "Washington Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/washington-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "washington",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language look at Washington property tax relief for disabled veterans, how the income-based exemption works by county, and how the state treats military pay.",
+      "publishedAt": "2026-09-16T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "washington veteran property tax exemption",
+      "secondaryKeywords": [
+        "washington department of veterans affairs",
+        "washington disabled veteran property tax exemption",
+        "washington no state income tax military",
+        "washington property tax exemption disabled veterans",
+        "washington veterans property tax assistance"
+      ],
+      "h2Outline": [
+        "The Washington Property Tax Relief for Disabled Veterans",
+        "How It Works Locally and the Deferral Option",
+        "Military Pay and Washington Taxes",
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
