@@ -1,6 +1,6 @@
 {
-  "contentHash": "194c5266460168ff7fdf105a131204e16c6604e56f3f8af6eb7287cac0c3bb9a",
-  "totalPosts": 202,
+  "contentHash": "870d33ce76e28436884fd8158930fbf89df6ed56a3e49d744164f46c05b842f3",
+  "totalPosts": 207,
   "byComponent": {
     "Financial Guidance": [
       "florida-cost-of-living-military-bases-bah",
@@ -53,10 +53,13 @@
       "pcs-moves-buying-or-selling-during-relocation",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
+      "pcs-to-fort-belvoir-2026-guide",
+      "pcs-to-fort-benning-2026-guide",
       "pcs-to-fort-bliss-el-paso-2026-guide",
+      "pcs-to-fort-bragg-2026-guide",
       "pcs-to-fort-carson-colorado-springs-2026-guide",
-      "pcs-to-fort-cavazos-killeen-2026-guide",
       "pcs-to-fort-drum-watertown-2026-guide",
+      "pcs-to-fort-hood-killeen-2026-guide",
       "pcs-to-fort-huachuca-2026-guide",
       "pcs-to-fort-irwin-2026-guide",
       "pcs-to-fort-jackson-columbia-2026-guide",
@@ -70,10 +73,12 @@
       "pcs-to-fort-stewart-hunter-aaf-2026-guide",
       "pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
       "pcs-to-hawaii-with-pets",
+      "pcs-to-joint-base-san-antonio-2026-guide",
       "pcs-to-kitsap-county-five-things-military-families",
       "pcs-to-mcb-camp-pendleton-2026-guide",
       "pcs-to-mcb-quantico-2026-guide",
       "pcs-to-mcrd-parris-island-2026-guide",
+      "pcs-to-nas-pensacola-2026-guide",
       "pcs-to-naval-station-norfolk-2026-guide",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
       "pcs-to-travis-afb-fairfield-2026-guide",
@@ -133,7 +138,7 @@
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
       "pcs-to-bremerton-naval-base-kitsap-2026-guide",
-      "pcs-to-fort-eisenhower",
+      "pcs-to-fort-gordon",
       "pcs-to-joint-base-lewis-mcchord-jblm-2026-guide",
       "pcs-to-luke-afb-military-guide-to-phoenix",
       "pcs-to-walter-reed-bethesda-2026-neighborhoods-bah",
@@ -271,10 +276,13 @@
       "pcs-moves-buying-or-selling-during-relocation",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
+      "pcs-to-fort-belvoir-2026-guide",
+      "pcs-to-fort-benning-2026-guide",
       "pcs-to-fort-bliss-el-paso-2026-guide",
+      "pcs-to-fort-bragg-2026-guide",
       "pcs-to-fort-carson-colorado-springs-2026-guide",
-      "pcs-to-fort-cavazos-killeen-2026-guide",
       "pcs-to-fort-drum-watertown-2026-guide",
+      "pcs-to-fort-hood-killeen-2026-guide",
       "pcs-to-fort-huachuca-2026-guide",
       "pcs-to-fort-irwin-2026-guide",
       "pcs-to-fort-jackson-columbia-2026-guide",
@@ -288,10 +296,12 @@
       "pcs-to-fort-stewart-hunter-aaf-2026-guide",
       "pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
       "pcs-to-hawaii-with-pets",
+      "pcs-to-joint-base-san-antonio-2026-guide",
       "pcs-to-kitsap-county-five-things-military-families",
       "pcs-to-mcb-camp-pendleton-2026-guide",
       "pcs-to-mcb-quantico-2026-guide",
       "pcs-to-mcrd-parris-island-2026-guide",
+      "pcs-to-nas-pensacola-2026-guide",
       "pcs-to-naval-station-norfolk-2026-guide",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
       "pcs-to-travis-afb-fairfield-2026-guide",
@@ -351,7 +361,7 @@
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
       "pcs-to-bremerton-naval-base-kitsap-2026-guide",
-      "pcs-to-fort-eisenhower",
+      "pcs-to-fort-gordon",
       "pcs-to-joint-base-lewis-mcchord-jblm-2026-guide",
       "pcs-to-luke-afb-military-guide-to-phoenix",
       "pcs-to-walter-reed-bethesda-2026-neighborhoods-bah",
@@ -479,6 +489,7 @@
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "discovering-military-friendly-living-in-panama-city-florida",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
+      "pcs-to-nas-pensacola-2026-guide",
       "pcsing-to-florida-military-bases-2026-guide",
       "what-military-bases-are-in-florida",
       "your-first-home-in-florida-a-complete-guide-for-veterans-and-military-families"
@@ -486,7 +497,8 @@
     "georgia": [
       "best-places-to-live-near-fort-benning",
       "best-places-to-live-near-ft-gordon-augusta-georgia",
-      "pcs-to-fort-eisenhower",
+      "pcs-to-fort-benning-2026-guide",
+      "pcs-to-fort-gordon",
       "pcs-to-fort-stewart-hunter-aaf-2026-guide",
       "what-military-bases-are-in-georgia"
     ],
@@ -572,6 +584,7 @@
     "north-carolina": [
       "9-things-to-do-near-ft-bragg",
       "buy-vs-rent-near-camp-lejeune",
+      "pcs-to-fort-bragg-2026-guide",
       "pcsing-to-camp-lejeune-2026-onslow-county-guide",
       "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
       "what-military-bases-are-in-north-carolina",
@@ -615,7 +628,8 @@
       "best-places-to-live-near-fort-hood",
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "pcs-to-fort-bliss-el-paso-2026-guide",
-      "pcs-to-fort-cavazos-killeen-2026-guide",
+      "pcs-to-fort-hood-killeen-2026-guide",
+      "pcs-to-joint-base-san-antonio-2026-guide",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
       "pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb",
       "what-military-bases-are-in-texas",
@@ -629,6 +643,7 @@
       "what-military-bases-are-in-vermont"
     ],
     "virginia": [
+      "pcs-to-fort-belvoir-2026-guide",
       "pcs-to-fort-lee-2026-guide",
       "pcs-to-mcb-quantico-2026-guide",
       "pcs-to-naval-station-norfolk-2026-guide",
@@ -650,10 +665,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 110,
+    "resolved": 115,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 86,
+      "frontmatter-state-slug": 91,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -2790,6 +2805,74 @@
       ]
     },
     {
+      "slug": "pcs-to-fort-belvoir-2026-guide",
+      "title": "PCS to Fort Belvoir: A 2026 Guide for Military Families in Northern Virginia",
+      "url": "/blog/pcs-to-fort-belvoir-2026-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "virginia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A 2026 guide for military families moving to Fort Belvoir, covering where to live, BAH, schools, healthcare, and life in Northern Virginia.",
+      "publishedAt": "2026-08-24T09:00:00.000Z",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to fort belvoir",
+      "secondaryKeywords": [
+        "fort belvoir bah",
+        "fort belvoir housing",
+        "moving to fort belvoir",
+        "northern virginia military families",
+        "where to live near fort belvoir"
+      ],
+      "h2Outline": [
+        "What and Where Is Fort Belvoir?",
+        "Where to Live When PCSing to Fort Belvoir",
+        "Fort Belvoir BAH and the Cost of Living",
+        "Schools Near Fort Belvoir",
+        "Healthcare: Fort Belvoir Community Hospital",
+        "Climate and Things to Do",
+        "Plan Your PCS to Fort Belvoir",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "pcs-to-fort-benning-2026-guide",
+      "title": "PCS to Fort Benning: A 2026 Guide for Military Families",
+      "url": "/blog/pcs-to-fort-benning-2026-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "georgia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A 2026 guide for military families moving to Fort Benning, Georgia (formerly Fort Moore), covering where to live, BAH, schools, healthcare, and life near Columbus.",
+      "publishedAt": "2026-08-27T09:00:00.000Z",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to fort benning",
+      "secondaryKeywords": [
+        "fort benning bah",
+        "fort benning housing",
+        "fort moore",
+        "moving to fort benning",
+        "where to live near fort benning"
+      ],
+      "h2Outline": [
+        "What and Where Is Fort Benning?",
+        "Where to Live When PCSing to Fort Benning",
+        "Fort Benning BAH and the Cost of Living",
+        "Schools Near Fort Benning",
+        "Healthcare: Martin Army Community Hospital",
+        "Climate and Things to Do",
+        "Plan Your PCS to Fort Benning",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "pcs-to-fort-bliss-el-paso-2026-guide",
       "title": "PCS to Fort Bliss: A 2026 Guide for Military Families in El Paso",
       "url": "/blog/pcs-to-fort-bliss-el-paso-2026-guide",
@@ -2820,6 +2903,40 @@
         "Healthcare: William Beaumont Army Medical Center",
         "Climate and Things to Do",
         "Plan Your PCS to Fort Bliss",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "pcs-to-fort-bragg-2026-guide",
+      "title": "PCS to Fort Bragg: A 2026 Guide for Military Families",
+      "url": "/blog/pcs-to-fort-bragg-2026-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "north-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A 2026 guide for military families moving to Fort Bragg, North Carolina (formerly Fort Liberty), covering where to live, BAH, schools, healthcare, and life near Fayetteville.",
+      "publishedAt": "2026-08-26T09:00:00.000Z",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to fort bragg",
+      "secondaryKeywords": [
+        "fort bragg bah",
+        "fort bragg housing",
+        "fort liberty",
+        "moving to fort bragg",
+        "where to live near fort bragg"
+      ],
+      "h2Outline": [
+        "What and Where Is Fort Bragg?",
+        "Where to Live When PCSing to Fort Bragg",
+        "Fort Bragg BAH and the Cost of Living",
+        "Schools Near Fort Bragg",
+        "Healthcare: Womack Army Medical Center",
+        "Climate and Things to Do",
+        "Plan Your PCS to Fort Bragg",
         "Frequently Asked Questions"
       ]
     },
@@ -2858,40 +2975,6 @@
       ]
     },
     {
-      "slug": "pcs-to-fort-cavazos-killeen-2026-guide",
-      "title": "PCS to Fort Cavazos: A 2026 Guide for Military Families in Killeen",
-      "url": "/blog/pcs-to-fort-cavazos-killeen-2026-guide",
-      "component": "PCS Help",
-      "componentSlug": "pcs-help",
-      "stateSlug": "texas",
-      "stateSource": "frontmatter-state-slug",
-      "categories": [
-        "PCS Help",
-        "US Military Bases"
-      ],
-      "description": "A plain-language 2026 guide to moving to Fort Cavazos near Killeen, Texas, covering housing, BAH, schools, healthcare, and things to do.",
-      "publishedAt": "2026-07-28T09:00:00.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
-      "primaryKeyword": "pcs to fort cavazos",
-      "secondaryKeywords": [
-        "fort cavazos bah",
-        "fort cavazos housing",
-        "killeen military families",
-        "moving to fort cavazos",
-        "where to live near fort cavazos"
-      ],
-      "h2Outline": [
-        "What and Where Is Fort Cavazos?",
-        "Where to Live When PCSing to Fort Cavazos",
-        "Fort Cavazos BAH and the Cost of Living",
-        "Schools Near Fort Cavazos",
-        "Healthcare: Carl R. Darnall Army Medical Center",
-        "Climate and Things to Do",
-        "Plan Your PCS to Fort Cavazos",
-        "Frequently Asked Questions"
-      ]
-    },
-    {
       "slug": "pcs-to-fort-drum-watertown-2026-guide",
       "title": "PCS to Fort Drum: A 2026 Guide for Military Families in Watertown",
       "url": "/blog/pcs-to-fort-drum-watertown-2026-guide",
@@ -2926,9 +3009,9 @@
       ]
     },
     {
-      "slug": "pcs-to-fort-eisenhower",
-      "title": "PCS to Fort Eisenhower: What Military Families Need to Know Before You Move",
-      "url": "/blog/pcs-to-fort-eisenhower",
+      "slug": "pcs-to-fort-gordon",
+      "title": "PCS to Fort Gordon: What Military Families Need to Know Before You Move",
+      "url": "/blog/pcs-to-fort-gordon",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
       "stateSlug": "georgia",
@@ -2937,19 +3020,19 @@
         "PCS Help",
         "US Military Bases"
       ],
-      "description": "If you just received orders to Fort Eisenhower (formerly Fort Gordon), welcome to the Augusta area. PCS moves can feel overwhelming, especially when you are relocating to a new state and trying to figure out where to live, what the area ...",
+      "description": "If you just received orders to Fort Gordon (formerly Fort Eisenhower), welcome to the Augusta area. PCS moves can feel overwhelming, especially when you are relocating to a new state and trying to figure out where to live, what the area ...",
       "publishedAt": "2026-04-15T03:23:00.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
-      "primaryKeyword": "pcs to fort eisenhower",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to fort gordon",
       "secondaryKeywords": [
         "augusta georgia military families",
-        "buying a home before pcs to fort eisenhower",
-        "fort eisenhower housing",
-        "fort eisenhower va loan",
-        "fort gordon to fort eisenhower"
+        "buying a home before pcs to fort gordon",
+        "fort eisenhower",
+        "fort gordon housing",
+        "fort gordon va loan"
       ],
       "h2Outline": [
-        "What Is Fort Eisenhower and Why Are You Going There?",
+        "What Is Fort Gordon and Why Are You Going There?",
         "You Do Not Have to Live Right Outside the Gate",
         "Understanding BAH and the Cost of Living",
         "Your VA Loan Is More Powerful Than You Think",
@@ -2958,9 +3041,42 @@
         "Healthcare on Post",
         "Recreation and Quality of Life",
         "On-Post Housing: What to Expect",
-        "Getting Started: Your PCS Action Plan",
-        "Final Thoughts",
+        "Frequently Asked Questions",
         "Plan Your PCS to Georgia"
+      ]
+    },
+    {
+      "slug": "pcs-to-fort-hood-killeen-2026-guide",
+      "title": "PCS to Fort Hood: A 2026 Guide for Military Families in Killeen",
+      "url": "/blog/pcs-to-fort-hood-killeen-2026-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A plain-language 2026 guide to moving to Fort Hood near Killeen, Texas (formerly Fort Cavazos), covering housing, BAH, schools, healthcare, and things to do.",
+      "publishedAt": "2026-07-28T09:00:00.000Z",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to fort hood",
+      "secondaryKeywords": [
+        "fort cavazos",
+        "fort hood bah",
+        "fort hood housing",
+        "killeen military families",
+        "where to live near fort hood"
+      ],
+      "h2Outline": [
+        "What and Where Is Fort Hood?",
+        "Where to Live When PCSing to Fort Hood",
+        "Fort Hood BAH and the Cost of Living",
+        "Schools Near Fort Hood",
+        "Healthcare: Carl R. Darnall Army Medical Center",
+        "Climate and Things to Do",
+        "Plan Your PCS to Fort Hood",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -3433,6 +3549,40 @@
       ]
     },
     {
+      "slug": "pcs-to-joint-base-san-antonio-2026-guide",
+      "title": "PCS to Joint Base San Antonio: A 2026 Guide for Military Families",
+      "url": "/blog/pcs-to-joint-base-san-antonio-2026-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A 2026 guide for military families moving to Joint Base San Antonio, covering where to live, BAH, schools, healthcare, and life in South Texas.",
+      "publishedAt": "2026-08-25T09:00:00.000Z",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to joint base san antonio",
+      "secondaryKeywords": [
+        "fort sam houston lackland randolph",
+        "jbsa housing",
+        "joint base san antonio bah",
+        "moving to san antonio military",
+        "where to live near jbsa"
+      ],
+      "h2Outline": [
+        "What and Where Is Joint Base San Antonio?",
+        "Where to Live When PCSing to JBSA",
+        "JBSA BAH and the Cost of Living",
+        "Schools Near JBSA",
+        "Healthcare: Brooke Army Medical Center",
+        "Climate and Things to Do",
+        "Plan Your PCS to JBSA",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "pcs-to-kitsap-county-five-things-military-families",
       "title": "PCSing to Kitsap County: Five Things Military Families Need to Know",
       "url": "/blog/pcs-to-kitsap-county-five-things-military-families",
@@ -3600,6 +3750,40 @@
         "Healthcare: Naval Hospital Beaufort",
         "Climate and Things to Do",
         "Plan Your PCS to Parris Island",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "pcs-to-nas-pensacola-2026-guide",
+      "title": "PCS to NAS Pensacola: A 2026 Guide for Military Families",
+      "url": "/blog/pcs-to-nas-pensacola-2026-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A 2026 guide for military families moving to NAS Pensacola, covering where to live, BAH, schools, healthcare, and life on the Gulf Coast.",
+      "publishedAt": "2026-08-28T09:00:00.000Z",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to nas pensacola",
+      "secondaryKeywords": [
+        "moving to pensacola",
+        "nas pensacola bah",
+        "nas pensacola housing",
+        "pensacola military families",
+        "where to live near nas pensacola"
+      ],
+      "h2Outline": [
+        "What and Where Is NAS Pensacola?",
+        "Where to Live When PCSing to NAS Pensacola",
+        "NAS Pensacola BAH and the Cost of Living",
+        "Schools Near NAS Pensacola",
+        "Healthcare: Naval Hospital Pensacola",
+        "Climate and Things to Do",
+        "Plan Your PCS to NAS Pensacola",
         "Frequently Asked Questions"
       ]
     },
