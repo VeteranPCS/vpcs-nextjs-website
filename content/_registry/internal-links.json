@@ -1,6 +1,6 @@
 {
-  "contentHash": "74be32eaa0dd9e9ab17fa2d5cf02fbbbe8fbaf9587a182481c2947628bbe6082",
-  "totalPosts": 225,
+  "contentHash": "933d0b9d3d8fc7b1dc580ca73d42f90e44b30314f8e2c9d4c8105dd6d5baecd2",
+  "totalPosts": 229,
   "byComponent": {
     "Financial Guidance": [
       "arizona-veteran-property-tax-exemptions-2026",
@@ -14,8 +14,12 @@
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
       "maryland-veteran-property-tax-exemptions-2026",
+      "missouri-veteran-property-tax-exemptions-2026",
+      "new-york-veteran-property-tax-exemptions-2026",
       "north-carolina-veteran-property-tax-exemptions-2026",
+      "ohio-veteran-property-tax-exemptions-2026",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
+      "pennsylvania-veteran-property-tax-exemptions-2026",
       "south-carolina-veteran-property-tax-exemptions-2026",
       "tennessee-veteran-property-tax-exemptions-2026",
       "texas-veteran-property-tax-exemptions-2026",
@@ -255,8 +259,12 @@
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
       "maryland-veteran-property-tax-exemptions-2026",
+      "missouri-veteran-property-tax-exemptions-2026",
+      "new-york-veteran-property-tax-exemptions-2026",
       "north-carolina-veteran-property-tax-exemptions-2026",
+      "ohio-veteran-property-tax-exemptions-2026",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
+      "pennsylvania-veteran-property-tax-exemptions-2026",
       "south-carolina-veteran-property-tax-exemptions-2026",
       "tennessee-veteran-property-tax-exemptions-2026",
       "texas-veteran-property-tax-exemptions-2026",
@@ -600,6 +608,7 @@
       "what-military-bases-are-in-mississippi"
     ],
     "missouri": [
+      "missouri-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-leonard-wood-2026-guide",
       "what-military-bases-are-in-missouri"
     ],
@@ -625,6 +634,7 @@
       "what-military-bases-are-in-new-mexico"
     ],
     "new-york": [
+      "new-york-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-drum-watertown-2026-guide",
       "what-military-bases-are-in-new-york"
     ],
@@ -642,6 +652,7 @@
       "what-military-bases-are-in-north-dakota"
     ],
     "ohio": [
+      "ohio-veteran-property-tax-exemptions-2026",
       "pcs-to-wright-patterson-afb-dayton-2026-guide",
       "what-military-bases-are-in-ohio"
     ],
@@ -653,6 +664,7 @@
       "what-military-bases-are-in-oregon"
     ],
     "pennsylvania": [
+      "pennsylvania-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-pennsylvania"
     ],
     "rhode-island": [
@@ -719,10 +731,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 133,
+    "resolved": 137,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 109,
+      "frontmatter-state-slug": 113,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -2630,6 +2642,38 @@
       ]
     },
     {
+      "slug": "missouri-veteran-property-tax-exemptions-2026",
+      "title": "Missouri Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/missouri-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "missouri",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Missouri's narrow property tax exemption for disabled former prisoners of war, the property tax credit, and how the state treats military pay.",
+      "publishedAt": "2026-09-30T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "missouri veteran property tax exemption",
+      "secondaryKeywords": [
+        "missouri disabled veteran property tax",
+        "missouri military retirement tax",
+        "missouri prisoner of war property tax exemption",
+        "missouri property tax credit veterans",
+        "missouri veterans commission"
+      ],
+      "h2Outline": [
+        "Missouri's Property Tax Exemption for Certain Veterans",
+        "The Missouri Property Tax Credit for Disabled Veterans",
+        "How It Works With Local Property Taxes",
+        "Military Pay and Missouri State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "title": "Navigating Temporary Housing During Your PCS Move: What You Need to Know",
       "url": "/blog/navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
@@ -2795,6 +2839,37 @@
       "h2Outline": []
     },
     {
+      "slug": "new-york-veteran-property-tax-exemptions-2026",
+      "title": "New York Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/new-york-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "new-york",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to New York's alternative veterans exemption, the new exemption for 100 percent disabled veterans, and how the state treats military pay and pensions.",
+      "publishedAt": "2026-09-29T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "new york veteran property tax exemption",
+      "secondaryKeywords": [
+        "new york alternative veterans exemption",
+        "new york department of veterans services",
+        "new york disabled veteran property tax",
+        "new york military pension tax exemption",
+        "new york property tax military"
+      ],
+      "h2Outline": [
+        "The New York Alternative Veterans Exemption",
+        "How It Works With Local Property Taxes",
+        "Military Pay and New York State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "north-carolina-veteran-property-tax-exemptions-2026",
       "title": "North Carolina Military & Veteran Property Tax Exemptions (2026)",
       "url": "/blog/north-carolina-veteran-property-tax-exemptions-2026",
@@ -2863,6 +2938,37 @@
         "Final Thoughts: Why Many Choose to Retire in Omaha",
         "Connect with a VeteranPCS Expert",
         "Plan Your PCS to Nebraska"
+      ]
+    },
+    {
+      "slug": "ohio-veteran-property-tax-exemptions-2026",
+      "title": "Ohio Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/ohio-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "ohio",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language look at Ohio's enhanced homestead exemption for disabled veterans and surviving spouses, plus how the state treats military retirement and active-duty pay.",
+      "publishedAt": "2026-09-25T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "ohio veteran property tax exemption",
+      "secondaryKeywords": [
+        "ohio 100 percent disabled veteran benefits",
+        "ohio department of veterans services",
+        "ohio disabled veteran homestead exemption",
+        "ohio enhanced homestead exemption veterans",
+        "ohio military retirement tax"
+      ],
+      "h2Outline": [
+        "The Ohio Enhanced Homestead Exemption for Disabled Veterans",
+        "How It Works With Local Property Taxes",
+        "Military Pay and Ohio State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -4728,6 +4834,37 @@
         "Oklahoma-Specific Financial Advantages for Military Families",
         "Buying Smart: Your PCS Exit Strategy",
         "Your 30–60 Day Pre-Arrival Action Plan"
+      ]
+    },
+    {
+      "slug": "pennsylvania-veteran-property-tax-exemptions-2026",
+      "title": "Pennsylvania Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/pennsylvania-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "pennsylvania",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Pennsylvania's need-based real estate tax exemption for 100 percent disabled wartime veterans and surviving spouses, plus how the state treats military pay.",
+      "publishedAt": "2026-09-28T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "pennsylvania veteran property tax exemption",
+      "secondaryKeywords": [
+        "pennsylvania 100 percent disabled veteran benefits",
+        "pennsylvania department of military and veterans affairs",
+        "pennsylvania disabled veterans real estate tax exemption",
+        "pennsylvania military retirement tax",
+        "pennsylvania property tax military"
+      ],
+      "h2Outline": [
+        "The Pennsylvania Disabled Veterans Real Estate Tax Exemption",
+        "How It Works With Local Property Taxes",
+        "Military Pay and Pennsylvania State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
