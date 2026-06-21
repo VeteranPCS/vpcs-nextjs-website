@@ -1,5 +1,5 @@
 {
-  "contentHash": "9a9be7dbef849d89097d60502828468061e06081bb4643a61810cf1da82d3b4e",
+  "contentHash": "194c5266460168ff7fdf105a131204e16c6604e56f3f8af6eb7287cac0c3bb9a",
   "totalPosts": 202,
   "byComponent": {
     "Financial Guidance": [
@@ -57,12 +57,12 @@
       "pcs-to-fort-carson-colorado-springs-2026-guide",
       "pcs-to-fort-cavazos-killeen-2026-guide",
       "pcs-to-fort-drum-watertown-2026-guide",
-      "pcs-to-fort-gregg-adams-2026-guide",
       "pcs-to-fort-huachuca-2026-guide",
       "pcs-to-fort-irwin-2026-guide",
       "pcs-to-fort-jackson-columbia-2026-guide",
       "pcs-to-fort-knox-2026-guide",
       "pcs-to-fort-leavenworth-complete-guide-for-military-families",
+      "pcs-to-fort-lee-2026-guide",
       "pcs-to-fort-leonard-wood-2026-guide",
       "pcs-to-fort-polk-2026-guide",
       "pcs-to-fort-riley-2026-guide",
@@ -275,12 +275,12 @@
       "pcs-to-fort-carson-colorado-springs-2026-guide",
       "pcs-to-fort-cavazos-killeen-2026-guide",
       "pcs-to-fort-drum-watertown-2026-guide",
-      "pcs-to-fort-gregg-adams-2026-guide",
       "pcs-to-fort-huachuca-2026-guide",
       "pcs-to-fort-irwin-2026-guide",
       "pcs-to-fort-jackson-columbia-2026-guide",
       "pcs-to-fort-knox-2026-guide",
       "pcs-to-fort-leavenworth-complete-guide-for-military-families",
+      "pcs-to-fort-lee-2026-guide",
       "pcs-to-fort-leonard-wood-2026-guide",
       "pcs-to-fort-polk-2026-guide",
       "pcs-to-fort-riley-2026-guide",
@@ -629,7 +629,7 @@
       "what-military-bases-are-in-vermont"
     ],
     "virginia": [
-      "pcs-to-fort-gregg-adams-2026-guide",
+      "pcs-to-fort-lee-2026-guide",
       "pcs-to-mcb-quantico-2026-guide",
       "pcs-to-naval-station-norfolk-2026-guide",
       "what-military-bases-are-in-virginia"
@@ -2964,40 +2964,6 @@
       ]
     },
     {
-      "slug": "pcs-to-fort-gregg-adams-2026-guide",
-      "title": "PCS to Fort Gregg-Adams: A 2026 Guide for Military Families",
-      "url": "/blog/pcs-to-fort-gregg-adams-2026-guide",
-      "component": "PCS Help",
-      "componentSlug": "pcs-help",
-      "stateSlug": "virginia",
-      "stateSource": "frontmatter-state-slug",
-      "categories": [
-        "PCS Help",
-        "US Military Bases"
-      ],
-      "description": "A 2026 guide for military families moving to Fort Gregg-Adams, Virginia, covering where to live, BAH, schools, healthcare, and life in the Tri-Cities region.",
-      "publishedAt": "2026-08-20T09:00:00.000Z",
-      "updatedAt": "2026-06-20T00:00:00.000Z",
-      "primaryKeyword": "pcs to fort gregg-adams",
-      "secondaryKeywords": [
-        "fort gregg-adams bah",
-        "fort gregg-adams housing",
-        "fort lee virginia",
-        "moving to fort gregg-adams",
-        "where to live near fort gregg-adams"
-      ],
-      "h2Outline": [
-        "What and Where Is Fort Gregg-Adams?",
-        "Where to Live When PCSing to Fort Gregg-Adams",
-        "Fort Gregg-Adams BAH and the Cost of Living",
-        "Schools Near Fort Gregg-Adams",
-        "Healthcare: Kenner Army Health Clinic",
-        "Climate and Things to Do",
-        "Plan Your PCS to Fort Gregg-Adams",
-        "Frequently Asked Questions"
-      ]
-    },
-    {
       "slug": "pcs-to-fort-huachuca-2026-guide",
       "title": "PCS to Fort Huachuca: A 2026 Guide for Military Families",
       "url": "/blog/pcs-to-fort-huachuca-2026-guide",
@@ -3166,6 +3132,40 @@
         "Climate and Seasonal Considerations",
         "Finding Your Fort Leavenworth Home",
         "Plan Your PCS to Kansas"
+      ]
+    },
+    {
+      "slug": "pcs-to-fort-lee-2026-guide",
+      "title": "PCS to Fort Lee: A 2026 Guide for Military Families",
+      "url": "/blog/pcs-to-fort-lee-2026-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "virginia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A 2026 guide for military families moving to Fort Lee, Virginia (formerly Fort Gregg-Adams), covering where to live, BAH, schools, healthcare, and life in the Tri-Cities.",
+      "publishedAt": "2026-08-20T09:00:00.000Z",
+      "updatedAt": "2026-06-20T00:00:00.000Z",
+      "primaryKeyword": "pcs to fort lee",
+      "secondaryKeywords": [
+        "fort gregg-adams",
+        "fort lee bah",
+        "fort lee virginia",
+        "moving to fort lee",
+        "where to live near fort lee"
+      ],
+      "h2Outline": [
+        "What and Where Is Fort Lee?",
+        "Where to Live When PCSing to Fort Lee",
+        "Fort Lee BAH and the Cost of Living",
+        "Schools Near Fort Lee",
+        "Healthcare: Kenner Army Health Clinic",
+        "Climate and Things to Do",
+        "Plan Your PCS to Fort Lee",
+        "Frequently Asked Questions"
       ]
     },
     {
