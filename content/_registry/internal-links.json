@@ -1,15 +1,20 @@
 {
-  "contentHash": "4dd59bc14c365bce2730f4f68b0527668b59929d928db75bf1a3bb68c07038ef",
-  "totalPosts": 212,
+  "contentHash": "c7aa7f57580dc500234237cf8e42bcaa8794ccbe00f6a7cb7502306f2f3c839c",
+  "totalPosts": 217,
   "byComponent": {
     "Financial Guidance": [
+      "california-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
+      "florida-veteran-property-tax-exemptions-2026",
       "fort-meade-bah-2026-what-your-allowance-buys",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
+      "north-carolina-veteran-property-tax-exemptions-2026",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
+      "texas-veteran-property-tax-exemptions-2026",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
-      "understanding-escrow-in-real-estate-veterans-guide"
+      "understanding-escrow-in-real-estate-veterans-guide",
+      "virginia-veteran-property-tax-exemptions-2026"
     ],
     "Military Transition Help": [
       "benefits-of-working-with-veteran-real-estate-agents-for-military-veterans",
@@ -231,13 +236,18 @@
   },
   "byComponentSlug": {
     "financial-guidance": [
+      "california-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
+      "florida-veteran-property-tax-exemptions-2026",
       "fort-meade-bah-2026-what-your-allowance-buys",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
+      "north-carolina-veteran-property-tax-exemptions-2026",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
+      "texas-veteran-property-tax-exemptions-2026",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
-      "understanding-escrow-in-real-estate-veterans-guide"
+      "understanding-escrow-in-real-estate-veterans-guide",
+      "virginia-veteran-property-tax-exemptions-2026"
     ],
     "military-transition-help": [
       "benefits-of-working-with-veteran-real-estate-agents-for-military-veterans",
@@ -477,6 +487,7 @@
       "what-military-bases-are-in-arkansas"
     ],
     "california": [
+      "california-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-irwin-2026-guide",
       "pcs-to-mcb-camp-pendleton-2026-guide",
       "pcs-to-travis-afb-fairfield-2026-guide",
@@ -498,6 +509,7 @@
       "best-neighborhoods-nas-jacksonville-military-families",
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "discovering-military-friendly-living-in-panama-city-florida",
+      "florida-veteran-property-tax-exemptions-2026",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
       "pcs-to-macdill-afb-tampa-2026-guide",
       "pcs-to-nas-pensacola-2026-guide",
@@ -598,6 +610,7 @@
     "north-carolina": [
       "9-things-to-do-near-ft-bragg",
       "buy-vs-rent-near-camp-lejeune",
+      "north-carolina-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-bragg-2026-guide",
       "pcsing-to-camp-lejeune-2026-onslow-county-guide",
       "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
@@ -646,6 +659,7 @@
       "pcs-to-joint-base-san-antonio-2026-guide",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
       "pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb",
+      "texas-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-texas",
       "why-dallas-fort-worth-is-the-ideal-destination-for-military-members-and-veterans"
     ],
@@ -662,6 +676,7 @@
       "pcs-to-joint-base-langley-eustis-2026-guide",
       "pcs-to-mcb-quantico-2026-guide",
       "pcs-to-naval-station-norfolk-2026-guide",
+      "virginia-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-virginia"
     ],
     "washington": [
@@ -680,10 +695,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 120,
+    "resolved": 125,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 96,
+      "frontmatter-state-slug": 101,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -1369,6 +1384,37 @@
       ]
     },
     {
+      "slug": "california-veteran-property-tax-exemptions-2026",
+      "title": "California Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/california-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "california",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language look at how California veterans can cut their property tax bill, how the homeowners exemption fits in, and how the state taxes military pay.",
+      "publishedAt": "2026-09-11T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "california veteran property tax exemption",
+      "secondaryKeywords": [
+        "california 100 percent disabled veteran benefits",
+        "california disabled veterans exemption",
+        "california homeowners exemption",
+        "california military retirement tax",
+        "calvet property tax"
+      ],
+      "h2Outline": [
+        "The California Disabled Veterans' Exemption",
+        "How It Works With the Homeowners' Exemption",
+        "Military Pay and California State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "can-you-use-the-va-loan-more-than-once",
       "title": "Can You Use the VA Loan More Than Once? Yes—Here's How It Works in 2025",
       "url": "/blog/can-you-use-the-va-loan-more-than-once",
@@ -1880,6 +1926,37 @@
         "Filing Order: When to Do What",
         "How Florida Compares to Other Veteran-Friendly States",
         "Key Takeaways"
+      ]
+    },
+    {
+      "slug": "florida-veteran-property-tax-exemptions-2026",
+      "title": "Florida Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/florida-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language look at the Florida property tax breaks that veterans and military families may qualify for, and how they fit with the state homestead exemption.",
+      "publishedAt": "2026-09-10T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "florida veteran property tax exemption",
+      "secondaryKeywords": [
+        "florida 100 percent disabled veteran benefits",
+        "florida department of veterans affairs",
+        "florida disabled veteran property tax exemption",
+        "florida homestead exemption veterans",
+        "florida property tax military"
+      ],
+      "h2Outline": [
+        "Florida Property Tax Exemptions for Disabled Veterans",
+        "How These Stack With the Florida Homestead Exemption",
+        "Military Pay and Florida State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -2537,6 +2614,37 @@
         "workshop colorado homes"
       ],
       "h2Outline": []
+    },
+    {
+      "slug": "north-carolina-veteran-property-tax-exemptions-2026",
+      "title": "North Carolina Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/north-carolina-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "north-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A clear, plain-language look at how disabled veterans and military families in North Carolina can lower their property taxes, plus how the state treats military pay.",
+      "publishedAt": "2026-09-14T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "north carolina veteran property tax exemption",
+      "secondaryKeywords": [
+        "form av-9 north carolina",
+        "nc 100 percent disabled veteran benefits",
+        "nc military retirement tax exemption",
+        "north carolina disabled veteran homestead exclusion",
+        "north carolina property tax military"
+      ],
+      "h2Outline": [
+        "The North Carolina Disabled Veteran Homestead Exclusion",
+        "How It Works With Other Homestead Relief Programs",
+        "Military Pay and North Carolina State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
     },
     {
       "slug": "offutt-afb-pcs-guide-2025",
@@ -4813,6 +4921,37 @@
       ]
     },
     {
+      "slug": "texas-veteran-property-tax-exemptions-2026",
+      "title": "Texas Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/texas-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language look at the property tax breaks Texas offers veterans and military families, from partial exemptions by disability rating to the full homestead exemption for 100% disabled veterans.",
+      "publishedAt": "2026-09-08T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "texas veteran property tax exemption",
+      "secondaryKeywords": [
+        "texas 100 percent disabled veteran benefits",
+        "texas disabled veteran property tax exemption",
+        "texas property tax military",
+        "texas residence homestead exemption",
+        "texas veterans commission"
+      ],
+      "h2Outline": [
+        "The Texas Disabled Veteran Property Tax Exemption",
+        "How It Works With the Homestead Exemption",
+        "Military Pay and Texas State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "the-complete-guide-to-luxury-new-home-builders-in-castle-rock-colorado",
       "title": "The Complete Guide to Luxury New Home Builders in Castle Rock, Colorado: Your 2025 Buyer's Manual",
       "url": "/blog/the-complete-guide-to-luxury-new-home-builders-in-castle-rock-colorado",
@@ -5778,6 +5917,37 @@
         "va loan entitlement"
       ],
       "h2Outline": []
+    },
+    {
+      "slug": "virginia-veteran-property-tax-exemptions-2026",
+      "title": "Virginia Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/virginia-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "virginia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language look at Virginia property tax relief for disabled veterans and surviving spouses, plus how military pay and retirement pay are treated by the state.",
+      "publishedAt": "2026-09-09T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "virginia veteran property tax exemption",
+      "secondaryKeywords": [
+        "virginia 100 percent disabled veteran benefits",
+        "virginia department of veterans services",
+        "virginia disabled veteran property tax exemption",
+        "virginia military retirement tax subtraction",
+        "virginia property tax military"
+      ],
+      "h2Outline": [
+        "The Virginia Disabled Veteran Property Tax Exemption",
+        "How It Works With Local Property Taxes and Homestead Relief",
+        "Military Pay and Virginia State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
     },
     {
       "slug": "what-are-the-benefits-of-a-va-loan",
