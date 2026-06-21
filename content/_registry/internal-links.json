@@ -1,8 +1,9 @@
 {
-  "contentHash": "27dbc1a2eeda2246c5de409154c7f8169341e28fd5a9d3fc719245a21eba828c",
-  "totalPosts": 221,
+  "contentHash": "74be32eaa0dd9e9ab17fa2d5cf02fbbbe8fbaf9587a182481c2947628bbe6082",
+  "totalPosts": 225,
   "byComponent": {
     "Financial Guidance": [
+      "arizona-veteran-property-tax-exemptions-2026",
       "california-veteran-property-tax-exemptions-2026",
       "colorado-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
@@ -12,8 +13,11 @@
       "hawaii-veteran-property-tax-exemptions-2026",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
+      "maryland-veteran-property-tax-exemptions-2026",
       "north-carolina-veteran-property-tax-exemptions-2026",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
+      "south-carolina-veteran-property-tax-exemptions-2026",
+      "tennessee-veteran-property-tax-exemptions-2026",
       "texas-veteran-property-tax-exemptions-2026",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
       "understanding-escrow-in-real-estate-veterans-guide",
@@ -240,6 +244,7 @@
   },
   "byComponentSlug": {
     "financial-guidance": [
+      "arizona-veteran-property-tax-exemptions-2026",
       "california-veteran-property-tax-exemptions-2026",
       "colorado-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
@@ -249,8 +254,11 @@
       "hawaii-veteran-property-tax-exemptions-2026",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
+      "maryland-veteran-property-tax-exemptions-2026",
       "north-carolina-veteran-property-tax-exemptions-2026",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
+      "south-carolina-veteran-property-tax-exemptions-2026",
+      "tennessee-veteran-property-tax-exemptions-2026",
       "texas-veteran-property-tax-exemptions-2026",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
       "understanding-escrow-in-real-estate-veterans-guide",
@@ -485,6 +493,7 @@
     ],
     "arizona": [
       "arizona-pcs-guide",
+      "arizona-veteran-property-tax-exemptions-2026",
       "pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
       "pcs-to-fort-huachuca-2026-guide",
       "pcs-to-luke-afb-military-guide-to-phoenix",
@@ -573,6 +582,7 @@
     ],
     "maryland": [
       "fort-meade-bah-2026-what-your-allowance-buys",
+      "maryland-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-meade-2026-guide",
       "pcs-to-walter-reed-bethesda-2026-neighborhoods-bah",
       "what-military-bases-are-in-maryland"
@@ -652,6 +662,7 @@
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-fort-jackson-columbia-2026-guide",
       "pcs-to-mcrd-parris-island-2026-guide",
+      "south-carolina-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-south-carolina"
     ],
     "south-dakota": [
@@ -659,7 +670,8 @@
     ],
     "tennessee": [
       "complete-fort-campbell-pcs-guide",
-      "tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state"
+      "tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state",
+      "tennessee-veteran-property-tax-exemptions-2026"
     ],
     "texas": [
       "best-neighborhoods-near-nas-jrb-fort-worth",
@@ -707,10 +719,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 129,
+    "resolved": 133,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 105,
+      "frontmatter-state-slug": 109,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -1018,6 +1030,37 @@
         "Getting Started: Your Arizona PCS Action Plan",
         "Why Choose VeteranPCS for Your Arizona Move",
         "Plan Your PCS to Arizona"
+      ]
+    },
+    {
+      "slug": "arizona-veteran-property-tax-exemptions-2026",
+      "title": "Arizona Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/arizona-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "arizona",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Arizona's property tax exemption for disabled veterans, including the full home exemption for 100 percent rated veterans, plus how the state taxes military pay and retirement.",
+      "publishedAt": "2026-09-21T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "arizona veteran property tax exemption",
+      "secondaryKeywords": [
+        "arizona 100 percent disabled veteran benefits",
+        "arizona department of veterans services",
+        "arizona disabled veteran property tax exemption",
+        "arizona military retirement tax exemption",
+        "arizona property tax military"
+      ],
+      "h2Outline": [
+        "The Arizona Disabled Veteran Property Tax Exemption",
+        "How It Works With Local Property Taxes",
+        "Military Pay and Arizona State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -2523,6 +2566,37 @@
         "Final Thoughts: Turning a PCS Move into an Opportunity",
         "Frequently Asked Questions",
         "More PCS Planning Resources"
+      ]
+    },
+    {
+      "slug": "maryland-veteran-property-tax-exemptions-2026",
+      "title": "Maryland Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/maryland-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "maryland",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language look at Maryland's full property tax exemption for 100 percent disabled veterans and surviving spouses, plus how the state taxes military retirement pay.",
+      "publishedAt": "2026-09-22T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "maryland veteran property tax exemption",
+      "secondaryKeywords": [
+        "maryland 100 percent disabled veteran benefits",
+        "maryland disabled veteran property tax exemption",
+        "maryland military retirement tax subtraction",
+        "maryland property tax military",
+        "maryland sdat veteran exemption"
+      ],
+      "h2Outline": [
+        "The Maryland Disabled Veteran Property Tax Exemption",
+        "How It Works With Local Property Taxes",
+        "Military Pay and Maryland State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -4955,6 +5029,37 @@
       ]
     },
     {
+      "slug": "south-carolina-veteran-property-tax-exemptions-2026",
+      "title": "South Carolina Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/south-carolina-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language look at South Carolina's total property tax exemption for disabled veterans and surviving spouses, plus the state's full military retirement income tax break.",
+      "publishedAt": "2026-09-23T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "south carolina veteran property tax exemption",
+      "secondaryKeywords": [
+        "south carolina 100 percent disabled veteran benefits",
+        "south carolina department of revenue veteran",
+        "south carolina disabled veteran property tax exemption",
+        "south carolina military retirement tax exemption",
+        "south carolina property tax military"
+      ],
+      "h2Outline": [
+        "The South Carolina Disabled Veteran Property Tax Exemption",
+        "How It Works With Local Property Taxes",
+        "Military Pay and South Carolina State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "strategic-refinancing-for-luxury-homeowners-in-castle-rock-co",
       "title": "Strategic Refinancing for Luxury Homeowners in Castle Rock, CO",
       "url": "/blog/strategic-refinancing-for-luxury-homeowners-in-castle-rock-co",
@@ -5023,6 +5128,37 @@
         "Why Tennessee Could Be Your Forever Home",
         "Ready to PCS to Tennessee?",
         "Related PCS Guides for Your Tennessee Move"
+      ]
+    },
+    {
+      "slug": "tennessee-veteran-property-tax-exemptions-2026",
+      "title": "Tennessee Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/tennessee-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "tennessee",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language look at Tennessee's property tax relief for disabled veterans and surviving spouses, plus what having no state income tax means for military pay.",
+      "publishedAt": "2026-09-24T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "tennessee veteran property tax exemption",
+      "secondaryKeywords": [
+        "tennessee 100 percent disabled veteran benefits",
+        "tennessee comptroller property tax relief",
+        "tennessee disabled veteran property tax relief",
+        "tennessee no state income tax military",
+        "tennessee property tax military"
+      ],
+      "h2Outline": [
+        "How Tennessee Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Tennessee's No Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
