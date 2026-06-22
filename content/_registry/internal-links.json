@@ -1,6 +1,6 @@
 {
-  "contentHash": "ab0975ec9034f1b90088526901907e920cf1b91b0a98c7d2012bbd0bda428dc9",
-  "totalPosts": 241,
+  "contentHash": "5a4563a401886f1301026ee829551a6965a4e61f5027181b0ddd9adc2c360e2c",
+  "totalPosts": 245,
   "byComponent": {
     "Financial Guidance": [
       "alabama-veteran-property-tax-exemptions-2026",
@@ -9,6 +9,7 @@
       "arkansas-veteran-property-tax-exemptions-2026",
       "california-veteran-property-tax-exemptions-2026",
       "colorado-veteran-property-tax-exemptions-2026",
+      "connecticut-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
       "florida-veteran-property-tax-exemptions-2026",
       "fort-meade-bah-2026-what-your-allowance-buys",
@@ -16,6 +17,8 @@
       "hawaii-veteran-property-tax-exemptions-2026",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
+      "idaho-veteran-property-tax-exemptions-2026",
+      "illinois-veteran-property-tax-exemptions-2026",
       "indiana-veteran-property-tax-exemptions-2026",
       "kansas-veteran-property-tax-exemptions-2026",
       "kentucky-veteran-property-tax-exemptions-2026",
@@ -25,6 +28,7 @@
       "missouri-veteran-property-tax-exemptions-2026",
       "nebraska-veteran-property-tax-exemptions-2026",
       "nevada-veteran-property-tax-exemptions-2026",
+      "new-jersey-veteran-property-tax-exemptions-2026",
       "new-mexico-veteran-property-tax-exemptions-2026",
       "new-york-veteran-property-tax-exemptions-2026",
       "north-carolina-veteran-property-tax-exemptions-2026",
@@ -266,6 +270,7 @@
       "arkansas-veteran-property-tax-exemptions-2026",
       "california-veteran-property-tax-exemptions-2026",
       "colorado-veteran-property-tax-exemptions-2026",
+      "connecticut-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
       "florida-veteran-property-tax-exemptions-2026",
       "fort-meade-bah-2026-what-your-allowance-buys",
@@ -273,6 +278,8 @@
       "hawaii-veteran-property-tax-exemptions-2026",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
+      "idaho-veteran-property-tax-exemptions-2026",
+      "illinois-veteran-property-tax-exemptions-2026",
       "indiana-veteran-property-tax-exemptions-2026",
       "kansas-veteran-property-tax-exemptions-2026",
       "kentucky-veteran-property-tax-exemptions-2026",
@@ -282,6 +289,7 @@
       "missouri-veteran-property-tax-exemptions-2026",
       "nebraska-veteran-property-tax-exemptions-2026",
       "nevada-veteran-property-tax-exemptions-2026",
+      "new-jersey-veteran-property-tax-exemptions-2026",
       "new-mexico-veteran-property-tax-exemptions-2026",
       "new-york-veteran-property-tax-exemptions-2026",
       "north-carolina-veteran-property-tax-exemptions-2026",
@@ -553,6 +561,7 @@
       "what-military-bases-are-in-colorado"
     ],
     "connecticut": [
+      "connecticut-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-connecticut"
     ],
     "delaware": [
@@ -588,9 +597,11 @@
       "what-military-bases-are-in-hawaii"
     ],
     "idaho": [
+      "idaho-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-idaho"
     ],
     "illinois": [
+      "illinois-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-illinois"
     ],
     "indiana": [
@@ -661,6 +672,7 @@
       "what-military-bases-are-in-new-hampshire"
     ],
     "new-jersey": [
+      "new-jersey-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-new-jersey"
     ],
     "new-mexico": [
@@ -767,10 +779,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 149,
+    "resolved": 153,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 125,
+      "frontmatter-state-slug": 129,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -1838,6 +1850,37 @@
       ]
     },
     {
+      "slug": "connecticut-veteran-property-tax-exemptions-2026",
+      "title": "Connecticut Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/connecticut-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "connecticut",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Connecticut's new full property tax exemption for 100% disabled veterans, the rating-based and local-option exemptions, and how the state treats military pay.",
+      "publishedAt": "2026-10-22T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "connecticut veteran property tax exemption",
+      "secondaryKeywords": [
+        "connecticut 100 percent disabled veteran property tax",
+        "connecticut department of veterans affairs",
+        "connecticut disabled veteran property tax exemption",
+        "connecticut military retirement tax exempt",
+        "connecticut veterans property tax exemption amounts"
+      ],
+      "h2Outline": [
+        "How Connecticut Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Connecticut State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "cost-of-living-in-st-louis-for-military-families",
       "title": "Cost of Living in St. Louis for Military Families",
       "url": "/blog/cost-of-living-in-st-louis-for-military-families",
@@ -2655,6 +2698,69 @@
       ]
     },
     {
+      "slug": "idaho-veteran-property-tax-exemptions-2026",
+      "title": "Idaho Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/idaho-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "idaho",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Idaho's property tax benefit for 100% disabled veterans, the income-based Property Tax Reduction, and how the state treats military pay.",
+      "publishedAt": "2026-10-23T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "idaho veteran property tax exemption",
+      "secondaryKeywords": [
+        "idaho 100 percent disabled veteran property tax",
+        "idaho disabled veteran property tax benefit",
+        "idaho division of veterans services",
+        "idaho military retirement tax",
+        "idaho property tax reduction circuit breaker"
+      ],
+      "h2Outline": [
+        "How Idaho Helps Disabled Veterans With Property Taxes",
+        "The Income-Based Property Tax Reduction",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Idaho State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "illinois-veteran-property-tax-exemptions-2026",
+      "title": "Illinois Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/illinois-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "illinois",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Illinois's Standard Homestead Exemption for Veterans with Disabilities, how the EAV reduction scales by rating, and how the state treats military pay.",
+      "publishedAt": "2026-10-20T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "illinois veteran property tax exemption",
+      "secondaryKeywords": [
+        "illinois department of veterans affairs",
+        "illinois disabled veteran property tax exemption",
+        "illinois military retirement tax",
+        "illinois standard homestead exemption veterans disabilities",
+        "illinois veteran property tax 2026"
+      ],
+      "h2Outline": [
+        "How Illinois Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Illinois State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "indiana-veteran-property-tax-exemptions-2026",
       "title": "Indiana Military & Veteran Property Tax Exemptions (2026)",
       "url": "/blog/indiana-veteran-property-tax-exemptions-2026",
@@ -3161,6 +3267,37 @@
         "new construction interest rates"
       ],
       "h2Outline": []
+    },
+    {
+      "slug": "new-jersey-veteran-property-tax-exemptions-2026",
+      "title": "New Jersey Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/new-jersey-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "new-jersey",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to New Jersey's full property tax exemption for 100% disabled veterans, the $250 veterans deduction, and how the state treats military pay.",
+      "publishedAt": "2026-10-21T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "new jersey veteran property tax exemption",
+      "secondaryKeywords": [
+        "new jersey $250 veterans property tax deduction",
+        "new jersey 100 percent disabled veteran property tax",
+        "new jersey disabled veteran property tax exemption",
+        "new jersey division of taxation veterans",
+        "new jersey military pension tax exempt"
+      ],
+      "h2Outline": [
+        "How New Jersey Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and New Jersey State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
     },
     {
       "slug": "new-mexico-veteran-property-tax-exemptions-2026",
