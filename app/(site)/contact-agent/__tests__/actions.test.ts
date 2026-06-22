@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { submitContactAgentLead } from '../actions';
 import { contactAgentPostForm } from '@/services/salesForcePostFormsService';
 import { logError } from '@/services/loggingService';
+import { captureServerEvent } from '@/lib/posthog-server';
 import { ContactAgentFormData } from '@/types';
 
 vi.mock('@/services/salesForcePostFormsService', () => ({
@@ -10,6 +11,10 @@ vi.mock('@/services/salesForcePostFormsService', () => ({
 
 vi.mock('@/services/loggingService', () => ({
   logError: vi.fn(),
+}));
+
+vi.mock('@/lib/posthog-server', () => ({
+  captureServerEvent: vi.fn(),
 }));
 
 const payload: ContactAgentFormData = {
@@ -50,6 +55,24 @@ describe('submitContactAgentLead', () => {
     });
   });
 
+  it('captures the server lead event keyed to the lead email on success', async () => {
+    vi.mocked(contactAgentPostForm).mockResolvedValueOnce({
+      redirectUrl: 'https://www.veteranpcs.com/thank-you',
+    });
+
+    await submitContactAgentLead(payload, '?id=001&state=colorado');
+
+    expect(captureServerEvent).toHaveBeenCalledWith({
+      distinctId: payload.email,
+      event: 'contact_agent_lead_created',
+      properties: {
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        email: payload.email,
+      },
+    });
+  });
+
   it('returns failure when the service throws', async () => {
     vi.mocked(contactAgentPostForm).mockRejectedValueOnce(new Error('Salesforce failed'));
 
@@ -61,5 +84,6 @@ describe('submitContactAgentLead', () => {
       undefined,
       expect.any(Error),
     );
+    expect(captureServerEvent).not.toHaveBeenCalled();
   });
 });

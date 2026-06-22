@@ -14,7 +14,7 @@ import { buildBlockedResponse } from '@/lib/ai/guardrails/responses';
 import { addSessionTokens } from '@/lib/ai/guardrails/budget';
 import { guardrailsEnforced, REFUSAL_MESSAGE } from '@/lib/ai/guardrails/config';
 import { logError } from '@/services/loggingService';
-import { getPostHogClient } from '@/lib/posthog-server';
+import { captureServerEvent } from '@/lib/posthog-server';
 import {
   deployedConciergeRequiresUpstash,
   missingUpstashEnvVars,
@@ -67,6 +67,13 @@ export async function POST(req: Request) {
   }
 
   const { sessionId } = await getOrCreateSessionId();
+
+  // Stitch the server event to the same PostHog person as the client. The widget
+  // forwards posthog-js's distinct_id (anonymous, or the lead's email once a form
+  // calls identify()) in this header; fall back to the concierge session id when
+  // the client couldn't read one so the event still lands somewhere consistent.
+  const posthogDistinctId =
+    req.headers.get('x-posthog-distinct-id')?.trim() || sessionId;
 
   const limit = await chatLimiter.limit(sessionId);
   if (!limit.success) {
@@ -132,9 +139,8 @@ export async function POST(req: Request) {
       onFinish: async ({ usage, totalUsage }) => {
         const tokens = totalUsage?.totalTokens ?? usage?.totalTokens ?? 0;
         await addSessionTokens(sessionId, tokens);
-        const phog = getPostHogClient();
-        phog.capture({
-          distinctId: sessionId,
+        await captureServerEvent({
+          distinctId: posthogDistinctId,
           event: 'concierge_chat_completed',
           properties: { tokens_used: tokens },
         });

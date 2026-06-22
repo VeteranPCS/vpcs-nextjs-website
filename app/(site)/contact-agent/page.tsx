@@ -29,11 +29,13 @@ export default function ContactAgentPage() {
 
       const result = await submitContactAgentLead(formData, fullQueryString);
       if (result.success) {
-        posthog.identify(formData.email, {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-        });
+        if (formData.email) {
+          posthog.identify(formData.email, {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+          });
+        }
         posthog.capture("contact_agent_form_submitted", {
           state: normalizeStateSlug(queryState) || "",
           agent_id: queryParams.get("id") || "",
