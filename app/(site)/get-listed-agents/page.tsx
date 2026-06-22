@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import posthog from "posthog-js";
 import GetListedAgents from "@/components/GetListedAgents/GetListedAgents";
 import CurrentLocation from "@/components/GetListedAgents/CurrentLocation";
 import AgentInfo from "@/components/GetListedAgents/AgentInfo";
@@ -50,6 +51,15 @@ export default function GetListedAgentsPage() {
         const server_response = await GetListedAgentsPostForm({ ...formData, ...getSpamFields() });
         // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
         if (server_response?.redirectUrl) {
+          const data = formData as any;
+          if (data.email) {
+            posthog.identify(data.email, {
+              firstName: data.firstName,
+              lastName: data.lastName,
+              email: data.email,
+            });
+          }
+          posthog.capture('get_listed_agent_submitted');
           router.push(server_response.redirectUrl);
         } else {
           console.error('No redirect URL found');

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, FormEvent, ChangeEvent, useEffect, useRef } from 'react';
+import posthog from 'posthog-js';
 import { BAHData } from '@/lib/bah-scraper';
 import Link from 'next/link';
 import { sendGTMEvent } from "@next/third-parties/google";
@@ -67,6 +68,12 @@ export default function BAHCalculator() {
                     event: 'bah_calculator_use',
                     bah_zip_code: formData.zipCode,
                     bah_paygrade: getRankDisplayName(formData.rank)
+                });
+                posthog.capture('bah_calculator_used', {
+                    zip_code: formData.zipCode,
+                    paygrade: getRankDisplayName(formData.rank),
+                    dependents: formData.dependents,
+                    year: formData.year,
                 });
             } else {
                 setError(data.error || 'Unknown error occurred');

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import posthog from "posthog-js";
 import ContactLender from "@/components/ContactLender/ContactLender";
 import { contactLenderPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from 'next/navigation'
@@ -35,6 +36,17 @@ export default function ContactLenderPage() {
       const server_response = await contactLenderPostForm(formData, fullQueryString);
       // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
       if (server_response?.redirectUrl) {
+        if (formData.email) {
+          posthog.identify(formData.email, {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+          });
+        }
+        posthog.capture("contact_lender_form_submitted", {
+          state: normalizeStateSlug(queryParams.get('state')) || "",
+          lender_id: queryParams.get('id') || "",
+        });
         router.push(server_response.redirectUrl);
         return { success: true, redirectUrl: server_response.redirectUrl };
       }

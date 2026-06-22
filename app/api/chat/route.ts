@@ -14,6 +14,7 @@ import { buildBlockedResponse } from '@/lib/ai/guardrails/responses';
 import { addSessionTokens } from '@/lib/ai/guardrails/budget';
 import { guardrailsEnforced, REFUSAL_MESSAGE } from '@/lib/ai/guardrails/config';
 import { logError } from '@/services/loggingService';
+import { getPostHogClient } from '@/lib/posthog-server';
 import {
   deployedConciergeRequiresUpstash,
   missingUpstashEnvVars,
@@ -131,6 +132,12 @@ export async function POST(req: Request) {
       onFinish: async ({ usage, totalUsage }) => {
         const tokens = totalUsage?.totalTokens ?? usage?.totalTokens ?? 0;
         await addSessionTokens(sessionId, tokens);
+        const phog = getPostHogClient();
+        phog.capture({
+          distinctId: sessionId,
+          event: 'concierge_chat_completed',
+          properties: { tokens_used: tokens },
+        });
       },
     });
 

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import posthog from 'posthog-js';
 import { sendGTMEvent } from '@next/third-parties/google';
 import { getStateDisplayName } from '@/lib/blog/getStateForBlog';
 
@@ -19,6 +20,11 @@ export default function FindAgentInState({ state, blogSlug, position }: Props) {
   const handleClick = () => {
     sendGTMEvent({
       event: 'blog_to_state_cta_click',
+      state,
+      blog_slug: blogSlug,
+      position,
+    });
+    posthog.capture('blog_agent_cta_clicked', {
       state,
       blog_slug: blogSlug,
       position,

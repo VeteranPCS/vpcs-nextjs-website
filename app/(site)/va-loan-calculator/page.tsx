@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import posthog from "posthog-js";
 import { Doughnut, Line } from "react-chartjs-2";
 import {
     Chart as ChartJS,
@@ -467,6 +468,11 @@ export default function VaLoanCalculatorPage() {
                         <div className="mt-6">
                             <Link
                                 href="/contact-lender"
+                                onClick={() => posthog.capture('va_loan_calculator_quote_clicked', {
+                                    loan_type: loanType,
+                                    loan_term: loanTerm,
+                                    home_value: homeValue,
+                                })}
                                 className="w-full items-center justify-center bg-blue-600 inline-flex px-5 sm:px-6 py-2 sm:py-2.5 rounded-md text-center duration-300 transition-all hover:bg-blue-700 active:bg-blue-800 text-white text-sm sm:text-base font-medium leading-6 shadow-sm"
                             >
                                 Get a Custom Quote

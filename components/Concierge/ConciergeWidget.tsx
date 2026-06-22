@@ -4,6 +4,7 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, lastAssistantMessageIsCompleteWithApprovalResponses } from 'ai';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import posthog from 'posthog-js';
 import { featureFlags } from '@/lib/feature-flags';
 import MessageRenderer from './MessageRenderer';
 import type { AgentListItem } from './AgentCard';
@@ -298,6 +299,7 @@ export default function ConciergeWidget() {
     const text = field.value.trim();
     if (!text) return;
     if (isStreaming) return;
+    posthog.capture('concierge_message_sent', { path: pathname });
     void sendMessage({ text });
     field.value = '';
   };
@@ -311,7 +313,7 @@ export default function ConciergeWidget() {
       {!isOpen ? (
         <button
           type="button"
-          onClick={() => open()}
+          onClick={() => { posthog.capture('concierge_opened', { path: pathname }); open(); }}
           aria-label="Open chat with VeteranPCS concierge"
           className="fixed bottom-6 right-6 z-concierge h-14 w-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center motion-safe:transition-colors hover:bg-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red"
         >

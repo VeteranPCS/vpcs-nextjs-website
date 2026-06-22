@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react"; // No need for useState or useEffect
+import posthog from "posthog-js";
 import "@/app/globals.css";
 import classes from "./KeepInTouch.module.css";
 import Image from "next/image";
@@ -61,6 +62,14 @@ const KeepInTouch = () => {
       });
       const server_response = await KeepInTouchForm({ ...data, ...getSpamFields() });
       if (server_response?.success) {
+        if (data.email) {
+          posthog.identify(data.email, {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+          });
+        }
+        posthog.capture('keep_in_touch_submitted', { page: pathname });
         reset();
         window.location.href = `${BASE_URL}/thank-you`;
         return;
