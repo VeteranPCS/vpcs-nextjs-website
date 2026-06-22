@@ -1,5 +1,5 @@
 {
-  "contentHash": "cbc0f92ec454e009442d2197b9166ddf11939f7e23cfcae314ee7f4d18c49cf3",
+  "contentHash": "09fb13b408082ba776bf2d48c679a1fb096b56fddfba461db1fa8e84d6b92238",
   "totalPosts": 261,
   "byComponent": {
     "Financial Guidance": [
@@ -6954,7 +6954,7 @@
     },
     {
       "slug": "va-loan-assumptions-what-military-families-must-know",
-      "title": "VA Loan Assumptions: What Military Families Must Know",
+      "title": "VA Loan Assumptions: The Complete Guide for Military Families",
       "url": "/blog/va-loan-assumptions-what-military-families-must-know",
       "component": "VA Loan Help",
       "componentSlug": "va-loan-help",
@@ -6963,24 +6963,27 @@
       "categories": [
         "VA Loan Help"
       ],
-      "description": "VA loan assumptions have become a hot topic in military real estate circles, and for good reason. With mortgage rates significantly higher than they were a few years ago, the idea of taking over someone else's low-interest VA loan sounds...",
+      "description": "Assuming a VA loan can hand a military buyer a 2 to 3 percent mortgage in a 6 to 7 percent market. Here is the full picture for buyers and sellers, including the entitlement rule, the cash you really need, and how long it takes.",
       "publishedAt": "2026-02-23T15:36:00.000Z",
-      "updatedAt": null,
-      "primaryKeyword": "va loan assumption pros and cons",
+      "updatedAt": "2026-06-22",
+      "primaryKeyword": "va loan assumption",
       "secondaryKeywords": [
-        "assumption timeline",
-        "military families",
+        "assuming a va loan",
+        "can a non veteran assume a va loan",
         "va entitlement substitution",
-        "va funding fee",
-        "va loan assumption"
+        "va loan assumption funding fee",
+        "va loan assumption requirements"
       ],
       "h2Outline": [
         "What Is a VA Loan Assumption?",
-        "The \"Gap\" Replaces the Down Payment",
-        "Key Risks for Sellers",
-        "Entitlement Substitution Is Based on the Original Loan Amount",
-        "Lower Closing Costs for Veterans Who Substitute Entitlement",
-        "Should You Pursue a VA Loan Assumption?"
+        "Why Military Families Consider Assuming a VA Loan",
+        "Who Can Assume a VA Loan?",
+        "The Entitlement Rule That Trips People Up",
+        "What an Assumption Actually Costs",
+        "VA Loan Assumption vs. a New VA Loan",
+        "The Risks and Realities",
+        "Frequently Asked Questions",
+        "Is a VA Loan Assumption Right for You?"
       ]
     },
     {
