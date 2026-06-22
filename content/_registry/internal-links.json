@@ -1,6 +1,6 @@
 {
-  "contentHash": "b98742cb47e4cfb5a079297931707a8a603f89f94f58b3507963b7669af78ebd",
-  "totalPosts": 249,
+  "contentHash": "d92212de0ccd3af046dcca6ed18a6b39ceb76a86054748bd4b24bdd88ab65e4f",
+  "totalPosts": 253,
   "byComponent": {
     "Financial Guidance": [
       "alabama-veteran-property-tax-exemptions-2026",
@@ -21,11 +21,13 @@
       "idaho-veteran-property-tax-exemptions-2026",
       "illinois-veteran-property-tax-exemptions-2026",
       "indiana-veteran-property-tax-exemptions-2026",
+      "iowa-veteran-property-tax-exemptions-2026",
       "kansas-veteran-property-tax-exemptions-2026",
       "kentucky-veteran-property-tax-exemptions-2026",
       "louisiana-veteran-property-tax-exemptions-2026",
       "maryland-veteran-property-tax-exemptions-2026",
       "michigan-veteran-property-tax-exemptions-2026",
+      "minnesota-veteran-property-tax-exemptions-2026",
       "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
       "nebraska-veteran-property-tax-exemptions-2026",
@@ -37,6 +39,7 @@
       "north-dakota-veteran-property-tax-exemptions-2026",
       "ohio-veteran-property-tax-exemptions-2026",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
+      "oregon-veteran-property-tax-exemptions-2026",
       "pennsylvania-veteran-property-tax-exemptions-2026",
       "south-carolina-veteran-property-tax-exemptions-2026",
       "south-dakota-veteran-property-tax-exemptions-2026",
@@ -46,7 +49,8 @@
       "understanding-escrow-in-real-estate-veterans-guide",
       "utah-veteran-property-tax-exemptions-2026",
       "virginia-veteran-property-tax-exemptions-2026",
-      "washington-veteran-property-tax-exemptions-2026"
+      "washington-veteran-property-tax-exemptions-2026",
+      "wisconsin-veteran-property-tax-exemptions-2026"
     ],
     "Military Transition Help": [
       "benefits-of-working-with-veteran-real-estate-agents-for-military-veterans",
@@ -286,11 +290,13 @@
       "idaho-veteran-property-tax-exemptions-2026",
       "illinois-veteran-property-tax-exemptions-2026",
       "indiana-veteran-property-tax-exemptions-2026",
+      "iowa-veteran-property-tax-exemptions-2026",
       "kansas-veteran-property-tax-exemptions-2026",
       "kentucky-veteran-property-tax-exemptions-2026",
       "louisiana-veteran-property-tax-exemptions-2026",
       "maryland-veteran-property-tax-exemptions-2026",
       "michigan-veteran-property-tax-exemptions-2026",
+      "minnesota-veteran-property-tax-exemptions-2026",
       "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
       "nebraska-veteran-property-tax-exemptions-2026",
@@ -302,6 +308,7 @@
       "north-dakota-veteran-property-tax-exemptions-2026",
       "ohio-veteran-property-tax-exemptions-2026",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
+      "oregon-veteran-property-tax-exemptions-2026",
       "pennsylvania-veteran-property-tax-exemptions-2026",
       "south-carolina-veteran-property-tax-exemptions-2026",
       "south-dakota-veteran-property-tax-exemptions-2026",
@@ -311,7 +318,8 @@
       "understanding-escrow-in-real-estate-veterans-guide",
       "utah-veteran-property-tax-exemptions-2026",
       "virginia-veteran-property-tax-exemptions-2026",
-      "washington-veteran-property-tax-exemptions-2026"
+      "washington-veteran-property-tax-exemptions-2026",
+      "wisconsin-veteran-property-tax-exemptions-2026"
     ],
     "military-transition-help": [
       "benefits-of-working-with-veteran-real-estate-agents-for-military-veterans",
@@ -618,6 +626,7 @@
       "what-military-bases-are-in-indiana"
     ],
     "iowa": [
+      "iowa-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-iowa"
     ],
     "kansas": [
@@ -654,6 +663,7 @@
       "what-military-bases-are-in-michigan"
     ],
     "minnesota": [
+      "minnesota-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-minnesota"
     ],
     "mississippi": [
@@ -719,6 +729,7 @@
       "what-military-bases-are-in-oklahoma"
     ],
     "oregon": [
+      "oregon-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-oregon"
     ],
     "pennsylvania": [
@@ -784,17 +795,18 @@
       "what-military-bases-are-in-west-virginia"
     ],
     "wisconsin": [
-      "what-military-bases-are-in-wisconsin"
+      "what-military-bases-are-in-wisconsin",
+      "wisconsin-veteran-property-tax-exemptions-2026"
     ],
     "wyoming": [
       "what-military-bases-are-in-wyoming"
     ]
   },
   "stateCoverage": {
-    "resolved": 157,
+    "resolved": 161,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 133,
+      "frontmatter-state-slug": 137,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -2859,6 +2871,37 @@
       "h2Outline": []
     },
     {
+      "slug": "iowa-veteran-property-tax-exemptions-2026",
+      "title": "Iowa Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/iowa-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "iowa",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Iowa's disabled veteran homestead tax credit, who qualifies at a 100 percent rating, and how the state treats military pay.",
+      "publishedAt": "2026-11-04T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "iowa veteran property tax exemption",
+      "secondaryKeywords": [
+        "iowa 100 percent disabled veteran property tax",
+        "iowa disabled veteran homestead tax credit",
+        "iowa disabled veteran property tax credit",
+        "iowa military pay income tax",
+        "iowa military retirement tax exempt"
+      ],
+      "h2Outline": [
+        "How Iowa Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Iowa State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "kansas-veteran-property-tax-exemptions-2026",
       "title": "Kansas Military & Veteran Property Tax Exemptions (2026)",
       "url": "/blog/kansas-veteran-property-tax-exemptions-2026",
@@ -3074,6 +3117,37 @@
         "Can You Deny Military PCS Orders?",
         "Is Military PCS Travel Pay Taxable?",
         "Need More PCS Help? Contact Us!"
+      ]
+    },
+    {
+      "slug": "minnesota-veteran-property-tax-exemptions-2026",
+      "title": "Minnesota Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/minnesota-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "minnesota",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Minnesota's market value exclusion for veterans with a disability, the surviving-spouse rules, and how the state treats military pay.",
+      "publishedAt": "2026-10-30T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "minnesota veteran property tax exemption",
+      "secondaryKeywords": [
+        "minnesota 100 percent disabled veteran property tax",
+        "minnesota disabled veteran property tax exclusion",
+        "minnesota market value exclusion veterans",
+        "minnesota military pay subtraction",
+        "minnesota military retirement tax"
+      ],
+      "h2Outline": [
+        "How Minnesota Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Minnesota State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -3623,6 +3697,37 @@
         "Step 5: Complete and Submit Form 998",
         "Step 6: Follow Up After Filing",
         "Key Takeaways"
+      ]
+    },
+    {
+      "slug": "oregon-veteran-property-tax-exemptions-2026",
+      "title": "Oregon Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/oregon-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "oregon",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Oregon's disabled veteran property tax exemption, who qualifies at 40 percent, and how the state treats military pay.",
+      "publishedAt": "2026-11-02T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "oregon veteran property tax exemption",
+      "secondaryKeywords": [
+        "oregon 40 percent disabled veteran property tax",
+        "oregon disabled veteran exemption amount 2026",
+        "oregon disabled veteran property tax exemption",
+        "oregon military pay income tax",
+        "ors 307.250 disabled veteran exemption"
+      ],
+      "h2Outline": [
+        "How Oregon Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Oregon State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -8588,6 +8693,37 @@
         "Leveraging Your Veteran Status for Real Estate Success",
         "Start Your Wilmington Investment Journey",
         "Plan Your PCS to North Carolina"
+      ]
+    },
+    {
+      "slug": "wisconsin-veteran-property-tax-exemptions-2026",
+      "title": "Wisconsin Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/wisconsin-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "wisconsin",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Wisconsin's refundable veterans property tax credit, who qualifies at a 100 percent rating, and how the state treats military pay.",
+      "publishedAt": "2026-11-03T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "wisconsin veteran property tax credit",
+      "secondaryKeywords": [
+        "wisconsin 100 percent disabled veteran property tax",
+        "wisconsin military pay subtraction",
+        "wisconsin military retirement tax exempt",
+        "wisconsin surviving spouses property tax credit",
+        "wisconsin veterans property tax credit"
+      ],
+      "h2Outline": [
+        "How Wisconsin Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Wisconsin State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
