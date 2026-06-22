@@ -1,6 +1,6 @@
 {
-  "contentHash": "a1df27216f176e1d205ed2696dcfdfb00a48e541842e64f6c6fc0da0b9b4ca7f",
-  "totalPosts": 233,
+  "contentHash": "c1ab94cdaa6943cc622a1752cd9bec9fa2bb05c59f6376a2cdc80909615e9ba7",
+  "totalPosts": 237,
   "byComponent": {
     "Financial Guidance": [
       "alabama-veteran-property-tax-exemptions-2026",
@@ -16,8 +16,12 @@
       "huntsville-redstone-bah-2026-buy-vs-rent",
       "kansas-veteran-property-tax-exemptions-2026",
       "kentucky-veteran-property-tax-exemptions-2026",
+      "louisiana-veteran-property-tax-exemptions-2026",
       "maryland-veteran-property-tax-exemptions-2026",
+      "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
+      "nebraska-veteran-property-tax-exemptions-2026",
+      "nevada-veteran-property-tax-exemptions-2026",
       "new-mexico-veteran-property-tax-exemptions-2026",
       "new-york-veteran-property-tax-exemptions-2026",
       "north-carolina-veteran-property-tax-exemptions-2026",
@@ -265,8 +269,12 @@
       "huntsville-redstone-bah-2026-buy-vs-rent",
       "kansas-veteran-property-tax-exemptions-2026",
       "kentucky-veteran-property-tax-exemptions-2026",
+      "louisiana-veteran-property-tax-exemptions-2026",
       "maryland-veteran-property-tax-exemptions-2026",
+      "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
+      "nebraska-veteran-property-tax-exemptions-2026",
+      "nevada-veteran-property-tax-exemptions-2026",
       "new-mexico-veteran-property-tax-exemptions-2026",
       "new-york-veteran-property-tax-exemptions-2026",
       "north-carolina-veteran-property-tax-exemptions-2026",
@@ -593,6 +601,7 @@
       "what-military-bases-are-in-kentucky"
     ],
     "louisiana": [
+      "louisiana-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-polk-2026-guide",
       "what-military-bases-are-in-louisiana"
     ],
@@ -616,6 +625,7 @@
       "what-military-bases-are-in-minnesota"
     ],
     "mississippi": [
+      "mississippi-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-mississippi"
     ],
     "missouri": [
@@ -627,10 +637,12 @@
       "what-military-bases-are-in-montana"
     ],
     "nebraska": [
+      "nebraska-veteran-property-tax-exemptions-2026",
       "offutt-afb-pcs-guide-2025",
       "what-military-bases-are-in-nebraska"
     ],
     "nevada": [
+      "nevada-veteran-property-tax-exemptions-2026",
       "pcs-to-nellis-afb-las-vegas-2026-guide",
       "what-military-bases-are-in-nevada"
     ],
@@ -743,10 +755,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 141,
+    "resolved": 145,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 117,
+      "frontmatter-state-slug": 121,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -2656,6 +2668,37 @@
       ]
     },
     {
+      "slug": "louisiana-veteran-property-tax-exemptions-2026",
+      "title": "Louisiana Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/louisiana-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "louisiana",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Louisiana's tiered disabled-veteran property tax exemption, the homestead exemption, and how the state treats military pay.",
+      "publishedAt": "2026-10-09T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "louisiana veteran property tax exemption",
+      "secondaryKeywords": [
+        "louisiana department of veterans affairs",
+        "louisiana disabled veteran homestead exemption tiers",
+        "louisiana disabled veteran property tax exemption",
+        "louisiana homestead exemption",
+        "louisiana military retirement tax exempt"
+      ],
+      "h2Outline": [
+        "How Louisiana Helps Disabled Veterans With Property Taxes",
+        "How It Works With the Homestead Exemption",
+        "Military Pay and Louisiana State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "managing-a-pcs-move-with-children-strategies-for-military-families",
       "title": "Managing a PCS Move with Children: Strategies for Military Families",
       "url": "/blog/managing-a-pcs-move-with-children-strategies-for-military-families",
@@ -2746,6 +2789,37 @@
         "Can You Deny Military PCS Orders?",
         "Is Military PCS Travel Pay Taxable?",
         "Need More PCS Help? Contact Us!"
+      ]
+    },
+    {
+      "slug": "mississippi-veteran-property-tax-exemptions-2026",
+      "title": "Mississippi Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/mississippi-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "mississippi",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Mississippi's full property tax exemption for totally disabled veterans and surviving spouses, plus how the state treats military pay.",
+      "publishedAt": "2026-10-13T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "mississippi veteran property tax exemption",
+      "secondaryKeywords": [
+        "mississippi 100 percent disabled veteran homestead",
+        "mississippi ad valorem tax exemption veteran",
+        "mississippi disabled veteran property tax exemption",
+        "mississippi military retirement tax exempt",
+        "mississippi veterans affairs board"
+      ],
+      "h2Outline": [
+        "How Mississippi Helps Disabled Veterans With Property Taxes",
+        "How It Works With the Homestead Exemption",
+        "Military Pay and Mississippi State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -2840,6 +2914,68 @@
         "Final Thoughts: Ensuring a Smooth PCS Move for Your Pet",
         "Frequently Asked Questions (FAQ)",
         "More PCS Planning Resources"
+      ]
+    },
+    {
+      "slug": "nebraska-veteran-property-tax-exemptions-2026",
+      "title": "Nebraska Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/nebraska-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "nebraska",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Nebraska's Homestead Exemption for totally disabled veterans and surviving spouses, plus how the state treats military retirement and active-duty pay.",
+      "publishedAt": "2026-10-08T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "nebraska veteran property tax exemption",
+      "secondaryKeywords": [
+        "nebraska 100 percent disabled veteran property tax",
+        "nebraska department of veterans affairs",
+        "nebraska disabled veteran homestead exemption",
+        "nebraska homestead exemption income limit",
+        "nebraska military retirement tax exempt"
+      ],
+      "h2Outline": [
+        "How Nebraska Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Nebraska State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "nevada-veteran-property-tax-exemptions-2026",
+      "title": "Nevada Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/nevada-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "nevada",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Nevada's Disabled Veteran's Exemption, how it lowers your assessed value, and what having no state income tax means for military pay.",
+      "publishedAt": "2026-10-07T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "nevada veteran property tax exemption",
+      "secondaryKeywords": [
+        "nevada department of veterans services",
+        "nevada disabled veteran exemption amount 2026",
+        "nevada disabled veteran property tax exemption",
+        "nevada military retirement tax",
+        "nevada no state income tax military"
+      ],
+      "h2Outline": [
+        "How Nevada Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Nevada's No Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
