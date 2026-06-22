@@ -116,7 +116,17 @@ export default function ConciergeWidget() {
       new DefaultChatTransport({
         api: '/api/chat',
         prepareSendMessagesRequest({ messages, id, trigger, messageId }) {
+          // Forward posthog-js's distinct_id so the server `concierge_chat_completed`
+          // event stitches to the same person as the client events and any form
+          // identify(). Guarded because posthog may be uninitialised (flag/env off).
+          let distinctId: string | undefined;
+          try {
+            distinctId = posthog.get_distinct_id?.();
+          } catch {
+            distinctId = undefined;
+          }
           return {
+            headers: distinctId ? { 'x-posthog-distinct-id': distinctId } : undefined,
             body: {
               id,
               trigger,

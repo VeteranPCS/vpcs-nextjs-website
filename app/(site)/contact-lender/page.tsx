@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import posthog from "posthog-js";
 import ContactLender from "@/components/ContactLender/ContactLender";
 import { contactLenderPostForm } from "@/services/salesForcePostFormsService";
+import { recordContactLenderLead } from "./actions";
 import { useRouter } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
 import { normalizeStateCode, normalizeStateSlug } from "@/lib/states";
@@ -47,6 +48,9 @@ export default function ContactLenderPage() {
           state: normalizeStateSlug(queryParams.get('state')) || "",
           lender_id: queryParams.get('id') || "",
         });
+        // Server-confirmed, ad-blocker-resilient conversion event (mirrors the
+        // agent flow). Awaited so the event flushes before we navigate away.
+        await recordContactLenderLead(formData);
         router.push(server_response.redirectUrl);
         return { success: true, redirectUrl: server_response.redirectUrl };
       }
