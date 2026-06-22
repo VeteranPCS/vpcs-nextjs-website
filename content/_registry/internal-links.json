@@ -1,6 +1,6 @@
 {
-  "contentHash": "d92212de0ccd3af046dcca6ed18a6b39ceb76a86054748bd4b24bdd88ab65e4f",
-  "totalPosts": 253,
+  "contentHash": "166c0f38607a5b2d0c76c3a164eac9b5d1b10a61a4e5d54d67ffa5c945788185",
+  "totalPosts": 257,
   "byComponent": {
     "Financial Guidance": [
       "alabama-veteran-property-tax-exemptions-2026",
@@ -25,11 +25,13 @@
       "kansas-veteran-property-tax-exemptions-2026",
       "kentucky-veteran-property-tax-exemptions-2026",
       "louisiana-veteran-property-tax-exemptions-2026",
+      "maine-veteran-property-tax-exemptions-2026",
       "maryland-veteran-property-tax-exemptions-2026",
       "michigan-veteran-property-tax-exemptions-2026",
       "minnesota-veteran-property-tax-exemptions-2026",
       "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
+      "montana-veteran-property-tax-exemptions-2026",
       "nebraska-veteran-property-tax-exemptions-2026",
       "nevada-veteran-property-tax-exemptions-2026",
       "new-jersey-veteran-property-tax-exemptions-2026",
@@ -48,9 +50,11 @@
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
       "understanding-escrow-in-real-estate-veterans-guide",
       "utah-veteran-property-tax-exemptions-2026",
+      "vermont-veteran-property-tax-exemptions-2026",
       "virginia-veteran-property-tax-exemptions-2026",
       "washington-veteran-property-tax-exemptions-2026",
-      "wisconsin-veteran-property-tax-exemptions-2026"
+      "wisconsin-veteran-property-tax-exemptions-2026",
+      "wyoming-veteran-property-tax-exemptions-2026"
     ],
     "Military Transition Help": [
       "benefits-of-working-with-veteran-real-estate-agents-for-military-veterans",
@@ -294,11 +298,13 @@
       "kansas-veteran-property-tax-exemptions-2026",
       "kentucky-veteran-property-tax-exemptions-2026",
       "louisiana-veteran-property-tax-exemptions-2026",
+      "maine-veteran-property-tax-exemptions-2026",
       "maryland-veteran-property-tax-exemptions-2026",
       "michigan-veteran-property-tax-exemptions-2026",
       "minnesota-veteran-property-tax-exemptions-2026",
       "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
+      "montana-veteran-property-tax-exemptions-2026",
       "nebraska-veteran-property-tax-exemptions-2026",
       "nevada-veteran-property-tax-exemptions-2026",
       "new-jersey-veteran-property-tax-exemptions-2026",
@@ -317,9 +323,11 @@
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
       "understanding-escrow-in-real-estate-veterans-guide",
       "utah-veteran-property-tax-exemptions-2026",
+      "vermont-veteran-property-tax-exemptions-2026",
       "virginia-veteran-property-tax-exemptions-2026",
       "washington-veteran-property-tax-exemptions-2026",
-      "wisconsin-veteran-property-tax-exemptions-2026"
+      "wisconsin-veteran-property-tax-exemptions-2026",
+      "wyoming-veteran-property-tax-exemptions-2026"
     ],
     "military-transition-help": [
       "benefits-of-working-with-veteran-real-estate-agents-for-military-veterans",
@@ -646,6 +654,7 @@
       "what-military-bases-are-in-louisiana"
     ],
     "maine": [
+      "maine-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-maine"
     ],
     "maryland": [
@@ -676,6 +685,7 @@
       "what-military-bases-are-in-missouri"
     ],
     "montana": [
+      "montana-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-montana"
     ],
     "nebraska": [
@@ -774,6 +784,7 @@
       "what-military-bases-are-in-utah"
     ],
     "vermont": [
+      "vermont-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-vermont"
     ],
     "virginia": [
@@ -799,14 +810,15 @@
       "wisconsin-veteran-property-tax-exemptions-2026"
     ],
     "wyoming": [
-      "what-military-bases-are-in-wyoming"
+      "what-military-bases-are-in-wyoming",
+      "wyoming-veteran-property-tax-exemptions-2026"
     ]
   },
   "stateCoverage": {
-    "resolved": 161,
+    "resolved": 165,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 137,
+      "frontmatter-state-slug": 141,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -2996,6 +3008,37 @@
       ]
     },
     {
+      "slug": "maine-veteran-property-tax-exemptions-2026",
+      "title": "Maine Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/maine-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "maine",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Maine's $6,000 veteran property tax exemption, the $50,000 adapted-housing exemption, and why the state does not tax military retirement pay.",
+      "publishedAt": "2026-11-05T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "maine veteran property tax exemption",
+      "secondaryKeywords": [
+        "maine 100 percent disabled veteran property tax",
+        "maine bureau of veterans services property tax",
+        "maine disabled veteran property tax exemption",
+        "maine military retirement tax exempt",
+        "maine veteran property tax exemption amount"
+      ],
+      "h2Outline": [
+        "How Maine Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Maine State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "managing-a-pcs-move-with-children-strategies-for-military-families",
       "title": "Managing a PCS Move with Children: Strategies for Military Families",
       "url": "/blog/managing-a-pcs-move-with-children-strategies-for-military-families",
@@ -3208,6 +3251,37 @@
         "The Missouri Property Tax Credit for Disabled Veterans",
         "How It Works With Local Property Taxes",
         "Military Pay and Missouri State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "montana-veteran-property-tax-exemptions-2026",
+      "title": "Montana Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/montana-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "montana",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Montana's income-tested Disabled Veterans (MDV) property tax program, the sliding-scale rate reduction, and how the state treats military pay.",
+      "publishedAt": "2026-11-06T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "montana veteran property tax exemption",
+      "secondaryKeywords": [
+        "montana department of revenue veteran property tax",
+        "montana disabled veteran property tax assistance",
+        "montana disabled veteran property tax income limit",
+        "montana mdv program 100 percent disabled veteran",
+        "montana military pay state income tax"
+      ],
+      "h2Outline": [
+        "How Montana Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Montana State Income Tax",
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
@@ -7023,6 +7097,37 @@
       ]
     },
     {
+      "slug": "vermont-veteran-property-tax-exemptions-2026",
+      "title": "Vermont Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/vermont-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "vermont",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Vermont's town-set veteran property tax exemption, who qualifies, and the new Act 71 exclusion for military retirement pay.",
+      "publishedAt": "2026-11-09T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "vermont veteran property tax exemption",
+      "secondaryKeywords": [
+        "vermont 50 percent disabled veteran property tax",
+        "vermont disabled veteran property tax exemption",
+        "vermont military retirement tax exempt act 71",
+        "vermont office of veterans affairs property tax",
+        "vermont veteran property tax exemption amount"
+      ],
+      "h2Outline": [
+        "How Vermont Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Vermont State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "veteran-and-military-real-estate-expert-in-castle-rock-colorado",
       "title": "Veteran & Military Real Estate Expert in Castle Rock: Your Guide to Colorado's Premier Communities",
       "url": "/blog/veteran-and-military-real-estate-expert-in-castle-rock-colorado",
@@ -8721,6 +8826,37 @@
         "How Wisconsin Helps Disabled Veterans With Property Taxes",
         "How It Works With Your Local Tax Bill",
         "Military Pay and Wisconsin State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "wyoming-veteran-property-tax-exemptions-2026",
+      "title": "Wyoming Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/wyoming-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "wyoming",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Wyoming's veteran property tax exemption, who qualifies, the vehicle-fee option, and why the state taxes no military pay.",
+      "publishedAt": "2026-11-10T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "wyoming veteran property tax exemption",
+      "secondaryKeywords": [
+        "wyoming county assessor veteran exemption",
+        "wyoming disabled veteran property tax exemption",
+        "wyoming no state income tax military",
+        "wyoming veteran property tax exemption amount",
+        "wyoming veterans exemption vehicle registration"
+      ],
+      "h2Outline": [
+        "How Wyoming Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Wyoming Taxes",
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
