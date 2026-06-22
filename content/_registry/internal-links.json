@@ -1,10 +1,12 @@
 {
-  "contentHash": "c1ab94cdaa6943cc622a1752cd9bec9fa2bb05c59f6376a2cdc80909615e9ba7",
-  "totalPosts": 237,
+  "contentHash": "ab0975ec9034f1b90088526901907e920cf1b91b0a98c7d2012bbd0bda428dc9",
+  "totalPosts": 241,
   "byComponent": {
     "Financial Guidance": [
       "alabama-veteran-property-tax-exemptions-2026",
+      "alaska-veteran-property-tax-exemptions-2026",
       "arizona-veteran-property-tax-exemptions-2026",
+      "arkansas-veteran-property-tax-exemptions-2026",
       "california-veteran-property-tax-exemptions-2026",
       "colorado-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
@@ -14,6 +16,7 @@
       "hawaii-veteran-property-tax-exemptions-2026",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
+      "indiana-veteran-property-tax-exemptions-2026",
       "kansas-veteran-property-tax-exemptions-2026",
       "kentucky-veteran-property-tax-exemptions-2026",
       "louisiana-veteran-property-tax-exemptions-2026",
@@ -33,6 +36,7 @@
       "texas-veteran-property-tax-exemptions-2026",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
       "understanding-escrow-in-real-estate-veterans-guide",
+      "utah-veteran-property-tax-exemptions-2026",
       "virginia-veteran-property-tax-exemptions-2026",
       "washington-veteran-property-tax-exemptions-2026"
     ],
@@ -257,7 +261,9 @@
   "byComponentSlug": {
     "financial-guidance": [
       "alabama-veteran-property-tax-exemptions-2026",
+      "alaska-veteran-property-tax-exemptions-2026",
       "arizona-veteran-property-tax-exemptions-2026",
+      "arkansas-veteran-property-tax-exemptions-2026",
       "california-veteran-property-tax-exemptions-2026",
       "colorado-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
@@ -267,6 +273,7 @@
       "hawaii-veteran-property-tax-exemptions-2026",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
+      "indiana-veteran-property-tax-exemptions-2026",
       "kansas-veteran-property-tax-exemptions-2026",
       "kentucky-veteran-property-tax-exemptions-2026",
       "louisiana-veteran-property-tax-exemptions-2026",
@@ -286,6 +293,7 @@
       "texas-veteran-property-tax-exemptions-2026",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
       "understanding-escrow-in-real-estate-veterans-guide",
+      "utah-veteran-property-tax-exemptions-2026",
       "virginia-veteran-property-tax-exemptions-2026",
       "washington-veteran-property-tax-exemptions-2026"
     ],
@@ -514,6 +522,7 @@
       "settling-down-pcsing-to-birmingham-alabama-with-the-military"
     ],
     "alaska": [
+      "alaska-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-alaska"
     ],
     "arizona": [
@@ -526,6 +535,7 @@
       "your-complete-guide-to-mcas-yuma"
     ],
     "arkansas": [
+      "arkansas-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-arkansas"
     ],
     "california": [
@@ -584,6 +594,7 @@
       "what-military-bases-are-in-illinois"
     ],
     "indiana": [
+      "indiana-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-indiana"
     ],
     "iowa": [
@@ -724,6 +735,7 @@
     ],
     "utah": [
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
+      "utah-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-utah"
     ],
     "vermont": [
@@ -755,10 +767,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 145,
+    "resolved": 149,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 121,
+      "frontmatter-state-slug": 125,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -1064,6 +1076,37 @@
       ]
     },
     {
+      "slug": "alaska-veteran-property-tax-exemptions-2026",
+      "title": "Alaska Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/alaska-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "alaska",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Alaska's $150,000 disabled-veteran property tax exemption, how boroughs administer it, and what no state income tax means for military pay.",
+      "publishedAt": "2026-10-19T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "alaska veteran property tax exemption",
+      "secondaryKeywords": [
+        "alaska disabled veteran exemption $150,000",
+        "alaska disabled veteran property tax exemption",
+        "alaska military retirement tax",
+        "alaska no state income tax military",
+        "alaska office of veterans affairs property tax"
+      ],
+      "h2Outline": [
+        "How Alaska Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Alaska's No Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "arizona-pcs-guide",
       "title": "Arizona PCS Guide: Military Families Moving to the Grand Canyon State",
       "url": "/blog/arizona-pcs-guide",
@@ -1126,6 +1169,37 @@
         "The Arizona Disabled Veteran Property Tax Exemption",
         "How It Works With Local Property Taxes",
         "Military Pay and Arizona State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "arkansas-veteran-property-tax-exemptions-2026",
+      "title": "Arkansas Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/arkansas-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "arkansas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Arkansas's full property tax exemption for 100% disabled veterans, the homestead credit, and how the state treats military pay.",
+      "publishedAt": "2026-10-16T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "arkansas veteran property tax exemption",
+      "secondaryKeywords": [
+        "arkansas 100 percent disabled veteran property tax",
+        "arkansas department of veterans affairs",
+        "arkansas disabled veteran property tax exemption",
+        "arkansas homestead property tax credit 2026",
+        "arkansas military retirement tax exempt"
+      ],
+      "h2Outline": [
+        "How Arkansas Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Arkansas State Income Tax",
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
@@ -2578,6 +2652,37 @@
         "A Real Prep Checklist You Can Actually Use",
         "What If You Are PCSing Mid-Season?",
         "The Bottom Line"
+      ]
+    },
+    {
+      "slug": "indiana-veteran-property-tax-exemptions-2026",
+      "title": "Indiana Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/indiana-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "indiana",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Indiana's disabled-veteran property tax deductions, the assessed-value rules behind them, and how the state treats military pay.",
+      "publishedAt": "2026-10-14T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "indiana veteran property tax exemption",
+      "secondaryKeywords": [
+        "indiana department of veterans affairs property tax",
+        "indiana disabled veteran property tax deduction",
+        "indiana disabled veteran property tax deduction amount 2026",
+        "indiana military retirement tax",
+        "indiana property tax deduction assessed value cap"
+      ],
+      "h2Outline": [
+        "How Indiana Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Indiana State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -6147,6 +6252,37 @@
         "GI Bill and Yellow Ribbon Program",
         "Want to See What You Missed?",
         "Connect with VeteranPCS"
+      ]
+    },
+    {
+      "slug": "utah-veteran-property-tax-exemptions-2026",
+      "title": "Utah Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/utah-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "utah",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Utah's rating-scaled veteran property tax exemption, the active-duty exemption, and how the state credits military retirement pay.",
+      "publishedAt": "2026-10-15T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "utah veteran property tax exemption",
+      "secondaryKeywords": [
+        "utah active duty property tax exemption",
+        "utah department of veterans and military affairs",
+        "utah disabled veteran property tax exemption",
+        "utah military retirement tax credit",
+        "utah veteran exemption amount 2026"
+      ],
+      "h2Outline": [
+        "How Utah Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Utah State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
