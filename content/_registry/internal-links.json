@@ -1,8 +1,9 @@
 {
-  "contentHash": "933d0b9d3d8fc7b1dc580ca73d42f90e44b30314f8e2c9d4c8105dd6d5baecd2",
-  "totalPosts": 229,
+  "contentHash": "a1df27216f176e1d205ed2696dcfdfb00a48e541842e64f6c6fc0da0b9b4ca7f",
+  "totalPosts": 233,
   "byComponent": {
     "Financial Guidance": [
+      "alabama-veteran-property-tax-exemptions-2026",
       "arizona-veteran-property-tax-exemptions-2026",
       "california-veteran-property-tax-exemptions-2026",
       "colorado-veteran-property-tax-exemptions-2026",
@@ -13,8 +14,11 @@
       "hawaii-veteran-property-tax-exemptions-2026",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
+      "kansas-veteran-property-tax-exemptions-2026",
+      "kentucky-veteran-property-tax-exemptions-2026",
       "maryland-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
+      "new-mexico-veteran-property-tax-exemptions-2026",
       "new-york-veteran-property-tax-exemptions-2026",
       "north-carolina-veteran-property-tax-exemptions-2026",
       "ohio-veteran-property-tax-exemptions-2026",
@@ -248,6 +252,7 @@
   },
   "byComponentSlug": {
     "financial-guidance": [
+      "alabama-veteran-property-tax-exemptions-2026",
       "arizona-veteran-property-tax-exemptions-2026",
       "california-veteran-property-tax-exemptions-2026",
       "colorado-veteran-property-tax-exemptions-2026",
@@ -258,8 +263,11 @@
       "hawaii-veteran-property-tax-exemptions-2026",
       "how-veterans-can-save-on-their-home-with-a-2-1-interest-rate-buy-down",
       "huntsville-redstone-bah-2026-buy-vs-rent",
+      "kansas-veteran-property-tax-exemptions-2026",
+      "kentucky-veteran-property-tax-exemptions-2026",
       "maryland-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
+      "new-mexico-veteran-property-tax-exemptions-2026",
       "new-york-veteran-property-tax-exemptions-2026",
       "north-carolina-veteran-property-tax-exemptions-2026",
       "ohio-veteran-property-tax-exemptions-2026",
@@ -494,6 +502,7 @@
   "byState": {
     "alabama": [
       "alabama-military-bases",
+      "alabama-veteran-property-tax-exemptions-2026",
       "settling-down-pcsing-to-birmingham-alabama-with-the-military"
     ],
     "alaska": [
@@ -573,11 +582,13 @@
       "what-military-bases-are-in-iowa"
     ],
     "kansas": [
+      "kansas-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-leavenworth-complete-guide-for-military-families",
       "pcs-to-fort-riley-2026-guide",
       "what-military-bases-are-in-kansas"
     ],
     "kentucky": [
+      "kentucky-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-knox-2026-guide",
       "what-military-bases-are-in-kentucky"
     ],
@@ -631,6 +642,7 @@
     ],
     "new-mexico": [
       "7-best-family-friendly-activities-near-kirtland-afb",
+      "new-mexico-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-new-mexico"
     ],
     "new-york": [
@@ -731,10 +743,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 137,
+    "resolved": 141,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 113,
+      "frontmatter-state-slug": 117,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -1005,6 +1017,38 @@
         "5. USCG Sector Mobile",
         "Moving to Alabama? We Can Help!",
         "Where Military Families Live Near Alabama's Bases"
+      ]
+    },
+    {
+      "slug": "alabama-veteran-property-tax-exemptions-2026",
+      "title": "Alabama Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/alabama-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "alabama",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Alabama's full property tax exemption for totally disabled veterans and surviving spouses, plus how the state treats military retirement and active-duty pay.",
+      "publishedAt": "2026-10-05T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "alabama veteran property tax exemption",
+      "secondaryKeywords": [
+        "alabama 100 percent disabled veteran benefits",
+        "alabama department of veterans affairs",
+        "alabama disabled veteran property tax exemption",
+        "alabama homestead exemption H-3 disabled",
+        "alabama military retirement tax exempt"
+      ],
+      "h2Outline": [
+        "Alabama's Property Tax Exemption for Disabled Veterans",
+        "New 2026 Laws for Disabled Veterans",
+        "How It Works With Local Property Taxes",
+        "Military Pay and Alabama State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -2549,6 +2593,69 @@
       "h2Outline": []
     },
     {
+      "slug": "kansas-veteran-property-tax-exemptions-2026",
+      "title": "Kansas Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/kansas-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "kansas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Kansas property tax relief for disabled veterans through the K-40SVR refund, plus how the state treats military retirement and active-duty pay.",
+      "publishedAt": "2026-10-01T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "kansas veteran property tax exemption",
+      "secondaryKeywords": [
+        "kansas commission on veterans affairs",
+        "kansas disabled veteran property tax refund",
+        "kansas homestead refund veterans",
+        "kansas k-40svr property tax relief",
+        "kansas military retirement tax"
+      ],
+      "h2Outline": [
+        "How Kansas Helps Disabled Veterans With Property Taxes",
+        "Other Kansas Property Tax Refunds",
+        "How It Works With Local Property Taxes",
+        "Military Pay and Kansas State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "kentucky-veteran-property-tax-exemptions-2026",
+      "title": "Kentucky Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/kentucky-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "kentucky",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Kentucky's homestead exemption for totally disabled veterans, plus how the state treats military retirement and active-duty pay.",
+      "publishedAt": "2026-10-02T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "kentucky veteran property tax exemption",
+      "secondaryKeywords": [
+        "kentucky active duty pay tax exempt",
+        "kentucky department of veterans affairs",
+        "kentucky disabled veteran homestead exemption",
+        "kentucky homestead exemption 2026 amount",
+        "kentucky military retirement tax"
+      ],
+      "h2Outline": [
+        "The Kentucky Homestead Exemption for Disabled Veterans",
+        "How It Works With Local Property Taxes",
+        "Military Pay and Kentucky State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "managing-a-pcs-move-with-children-strategies-for-military-families",
       "title": "Managing a PCS Move with Children: Strategies for Military Families",
       "url": "/blog/managing-a-pcs-move-with-children-strategies-for-military-families",
@@ -2813,6 +2920,37 @@
         "new construction interest rates"
       ],
       "h2Outline": []
+    },
+    {
+      "slug": "new-mexico-veteran-property-tax-exemptions-2026",
+      "title": "New Mexico Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/new-mexico-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "new-mexico",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to New Mexico's expanded veteran property tax exemptions, including the new proportional disabled-veteran exemption, plus how the state treats military pay.",
+      "publishedAt": "2026-10-06T09:00:00.000Z",
+      "updatedAt": "2026-06-21T00:00:00.000Z",
+      "primaryKeyword": "new mexico veteran property tax exemption",
+      "secondaryKeywords": [
+        "new mexico active duty pay tax exempt",
+        "new mexico department of veterans services",
+        "new mexico disabled veteran property tax exemption",
+        "new mexico military retirement tax",
+        "new mexico veteran exemption 2025 2026"
+      ],
+      "h2Outline": [
+        "New Mexico's Expanded Veteran Property Tax Exemptions",
+        "How It Works With Local Property Taxes",
+        "Military Pay and New Mexico State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
     },
     {
       "slug": "new-semi-custom-luxury-homes-in-castle-rock-with-breathtaking-views-signature-crystal-valley",
