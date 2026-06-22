@@ -20,7 +20,7 @@ learns what's done and what's next. **Keep it accurate.**
 5. **Update this file in the SAME PR**: tick the items, paste the PR link, and append a Session Log
    entry. (This is part of "definition of done" for every batch — without it, handoff breaks.)
 
-**Priority order:** B1 → B3 → B5 → B4.  (B2 gated on BAH snapshots; B6 coordinates with B6-code.)
+**Priority order (updated 2026-06-22):** B1, B3, and B4 are **COMPLETE**; B5 is **paused** (original named-base list exhausted — extendable with more uncovered installations); **B6 is the next un-started, unblocked content program** (consolidate the four `va-loan-assumption*` posts; coordinates merge with B6-code). **B2 remains BLOCKED** pending a BAH-snapshot code/data expansion. (Original arrow was B1 → B3 → B5 → B4.)
 
 **Status legend:** `[ ]` not started · `[~]` in progress · `[PR]` PR open, awaiting review ·
 `[x]` done (PR merged) · `[BLOCKED]` dependency missing.
