@@ -1,6 +1,6 @@
 {
-  "contentHash": "5a4563a401886f1301026ee829551a6965a4e61f5027181b0ddd9adc2c360e2c",
-  "totalPosts": 245,
+  "contentHash": "b98742cb47e4cfb5a079297931707a8a603f89f94f58b3507963b7669af78ebd",
+  "totalPosts": 249,
   "byComponent": {
     "Financial Guidance": [
       "alabama-veteran-property-tax-exemptions-2026",
@@ -10,6 +10,7 @@
       "california-veteran-property-tax-exemptions-2026",
       "colorado-veteran-property-tax-exemptions-2026",
       "connecticut-veteran-property-tax-exemptions-2026",
+      "delaware-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
       "florida-veteran-property-tax-exemptions-2026",
       "fort-meade-bah-2026-what-your-allowance-buys",
@@ -24,6 +25,7 @@
       "kentucky-veteran-property-tax-exemptions-2026",
       "louisiana-veteran-property-tax-exemptions-2026",
       "maryland-veteran-property-tax-exemptions-2026",
+      "michigan-veteran-property-tax-exemptions-2026",
       "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
       "nebraska-veteran-property-tax-exemptions-2026",
@@ -32,10 +34,12 @@
       "new-mexico-veteran-property-tax-exemptions-2026",
       "new-york-veteran-property-tax-exemptions-2026",
       "north-carolina-veteran-property-tax-exemptions-2026",
+      "north-dakota-veteran-property-tax-exemptions-2026",
       "ohio-veteran-property-tax-exemptions-2026",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
       "pennsylvania-veteran-property-tax-exemptions-2026",
       "south-carolina-veteran-property-tax-exemptions-2026",
+      "south-dakota-veteran-property-tax-exemptions-2026",
       "tennessee-veteran-property-tax-exemptions-2026",
       "texas-veteran-property-tax-exemptions-2026",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
@@ -271,6 +275,7 @@
       "california-veteran-property-tax-exemptions-2026",
       "colorado-veteran-property-tax-exemptions-2026",
       "connecticut-veteran-property-tax-exemptions-2026",
+      "delaware-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
       "florida-veteran-property-tax-exemptions-2026",
       "fort-meade-bah-2026-what-your-allowance-buys",
@@ -285,6 +290,7 @@
       "kentucky-veteran-property-tax-exemptions-2026",
       "louisiana-veteran-property-tax-exemptions-2026",
       "maryland-veteran-property-tax-exemptions-2026",
+      "michigan-veteran-property-tax-exemptions-2026",
       "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
       "nebraska-veteran-property-tax-exemptions-2026",
@@ -293,10 +299,12 @@
       "new-mexico-veteran-property-tax-exemptions-2026",
       "new-york-veteran-property-tax-exemptions-2026",
       "north-carolina-veteran-property-tax-exemptions-2026",
+      "north-dakota-veteran-property-tax-exemptions-2026",
       "ohio-veteran-property-tax-exemptions-2026",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
       "pennsylvania-veteran-property-tax-exemptions-2026",
       "south-carolina-veteran-property-tax-exemptions-2026",
+      "south-dakota-veteran-property-tax-exemptions-2026",
       "tennessee-veteran-property-tax-exemptions-2026",
       "texas-veteran-property-tax-exemptions-2026",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
@@ -565,6 +573,7 @@
       "what-military-bases-are-in-connecticut"
     ],
     "delaware": [
+      "delaware-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-delaware"
     ],
     "florida": [
@@ -641,6 +650,7 @@
       "what-military-bases-are-in-massachusetts"
     ],
     "michigan": [
+      "michigan-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-michigan"
     ],
     "minnesota": [
@@ -696,6 +706,7 @@
       "wilmingtons-emerging-tech-scene-a-goldmine-for-veteran-property-investors"
     ],
     "north-dakota": [
+      "north-dakota-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-north-dakota"
     ],
     "ohio": [
@@ -725,6 +736,7 @@
       "what-military-bases-are-in-south-carolina"
     ],
     "south-dakota": [
+      "south-dakota-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-south-dakota"
     ],
     "tennessee": [
@@ -779,10 +791,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 153,
+    "resolved": 157,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 129,
+      "frontmatter-state-slug": 133,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
@@ -1969,6 +1981,37 @@
       ]
     },
     {
+      "slug": "delaware-veteran-property-tax-exemptions-2026",
+      "title": "Delaware Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/delaware-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "delaware",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Delaware's disabled veterans school property tax credit, the senior credit, and how the state treats military pensions and pay.",
+      "publishedAt": "2026-10-26T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "delaware veteran property tax exemption",
+      "secondaryKeywords": [
+        "delaware 100 percent disabled veteran property tax",
+        "delaware department of finance veterans",
+        "delaware disabled veterans school property tax credit",
+        "delaware military pension exclusion 2026",
+        "delaware military retirement tax"
+      ],
+      "h2Outline": [
+        "How Delaware Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Delaware State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "discover-the-best-places-to-live-near-hill-air-force-base-utah",
       "title": "Discover the Best Places to Live Near Hill Air Force Base, Utah",
       "url": "/blog/discover-the-best-places-to-live-near-hill-air-force-base-utah",
@@ -2973,6 +3016,37 @@
       ]
     },
     {
+      "slug": "michigan-veteran-property-tax-exemptions-2026",
+      "title": "Michigan Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/michigan-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "michigan",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to Michigan's full property tax exemption for 100% disabled veterans, the surviving-spouse rules, and how the state treats military pay.",
+      "publishedAt": "2026-10-28T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "michigan veteran property tax exemption",
+      "secondaryKeywords": [
+        "mcl 211.7b disabled veterans exemption",
+        "michigan 100 percent disabled veteran property tax",
+        "michigan disabled veteran property tax exemption",
+        "michigan form 5107",
+        "michigan military retirement tax exempt"
+      ],
+      "h2Outline": [
+        "How Michigan Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and Michigan State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "military-quick-guide-q-a",
       "title": "Military PCS Quick Guide Q & A",
       "url": "/blog/military-quick-guide-q-a",
@@ -3411,6 +3485,37 @@
         "The North Carolina Disabled Veteran Homestead Exclusion",
         "How It Works With Other Homestead Relief Programs",
         "Military Pay and North Carolina State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "north-dakota-veteran-property-tax-exemptions-2026",
+      "title": "North Dakota Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/north-dakota-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "north-dakota",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to North Dakota's disabled veterans property tax credit, how it scales with your VA rating, and how the state treats military pay.",
+      "publishedAt": "2026-10-27T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "north dakota veteran property tax exemption",
+      "secondaryKeywords": [
+        "ndcc 57-02-08.8",
+        "north dakota 100 percent disabled veteran property tax",
+        "north dakota disabled veterans property tax credit",
+        "north dakota military pay income tax deduction",
+        "north dakota military retirement tax"
+      ],
+      "h2Outline": [
+        "How North Dakota Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and North Dakota State Income Tax",
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
@@ -5707,6 +5812,37 @@
         "The South Carolina Disabled Veteran Property Tax Exemption",
         "How It Works With Local Property Taxes",
         "Military Pay and South Carolina State Income Tax",
+        "A Note for Military Spouses: MSRRA",
+        "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "south-dakota-veteran-property-tax-exemptions-2026",
+      "title": "South Dakota Military & Veteran Property Tax Exemptions (2026)",
+      "url": "/blog/south-dakota-veteran-property-tax-exemptions-2026",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "south-dakota",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance"
+      ],
+      "description": "A plain-language guide to South Dakota's disabled veteran property tax exemption, the paraplegic exemption, and why the state taxes no military pay.",
+      "publishedAt": "2026-10-29T09:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "primaryKeyword": "south dakota veteran property tax exemption",
+      "secondaryKeywords": [
+        "south dakota 100 percent disabled veteran property tax",
+        "south dakota director of equalization veteran",
+        "south dakota disabled veteran property tax exemption",
+        "south dakota no state income tax military",
+        "south dakota paraplegic veteran property tax exemption"
+      ],
+      "h2Outline": [
+        "How South Dakota Helps Disabled Veterans With Property Taxes",
+        "How It Works With Your Local Tax Bill",
+        "Military Pay and South Dakota Taxes",
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
