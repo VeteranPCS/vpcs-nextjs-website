@@ -1,5 +1,5 @@
 {
-  "contentHash": "f9335a025a1647cc4f250936a243ad56f5d017c6805a9e785e6ec49070a5e7a2",
+  "contentHash": "cbc0f92ec454e009442d2197b9166ddf11939f7e23cfcae314ee7f4d18c49cf3",
   "totalPosts": 261,
   "byComponent": {
     "Financial Guidance": [
@@ -95,7 +95,6 @@
       "military-quick-guide-q-a",
       "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "new-costco-and-dawson-trails-development-coming-to-castle-rock-co",
-      "new-home-builders-offering-4-99-4-5-or-even-4-rates-heres-the-clarity-you-need-to-know",
       "new-home-builders-offering-low-rates-here-is-the-clarity-you-need-to-know",
       "new-semi-custom-luxury-homes-in-castle-rock-with-breathtaking-views-signature-crystal-valley",
       "offutt-afb-pcs-guide-2025",
@@ -167,6 +166,7 @@
       "buy-vs-rent-near-camp-lejeune",
       "colorado-springs-housing-market-update-october-2025",
       "huntsville-housing-market-2026-military-buyer",
+      "interest-rates-are-falling-heres-what-homebuyers-need-to-know",
       "veteran-and-military-real-estate-expert-in-castle-rock-colorado",
       "why-realtors-still-matter-for-military-homebuyers",
       "wilmingtons-emerging-tech-scene-a-goldmine-for-veteran-property-investors"
@@ -188,7 +188,6 @@
       "best-places-to-live-near-ft-gordon-augusta-georgia",
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
-      "interest-rates-are-falling-heres-what-homebuyers-need-to-know",
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
       "pcs-to-bremerton-naval-base-kitsap-2026-guide",
@@ -259,6 +258,7 @@
       "how-does-a-0-down-va-loan-work",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
+      "new-home-builders-offering-4-99-4-5-or-even-4-rates-heres-the-clarity-you-need-to-know",
       "should-you-buy-now-and-refinance-later",
       "should-you-put-money-down-on-a-va-loan-in-oklahoma-city",
       "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
@@ -372,7 +372,6 @@
       "military-quick-guide-q-a",
       "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "new-costco-and-dawson-trails-development-coming-to-castle-rock-co",
-      "new-home-builders-offering-4-99-4-5-or-even-4-rates-heres-the-clarity-you-need-to-know",
       "new-home-builders-offering-low-rates-here-is-the-clarity-you-need-to-know",
       "new-semi-custom-luxury-homes-in-castle-rock-with-breathtaking-views-signature-crystal-valley",
       "offutt-afb-pcs-guide-2025",
@@ -444,6 +443,7 @@
       "buy-vs-rent-near-camp-lejeune",
       "colorado-springs-housing-market-update-october-2025",
       "huntsville-housing-market-2026-military-buyer",
+      "interest-rates-are-falling-heres-what-homebuyers-need-to-know",
       "veteran-and-military-real-estate-expert-in-castle-rock-colorado",
       "why-realtors-still-matter-for-military-homebuyers",
       "wilmingtons-emerging-tech-scene-a-goldmine-for-veteran-property-investors"
@@ -465,7 +465,6 @@
       "best-places-to-live-near-ft-gordon-augusta-georgia",
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
-      "interest-rates-are-falling-heres-what-homebuyers-need-to-know",
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
       "pcs-to-bremerton-naval-base-kitsap-2026-guide",
@@ -536,6 +535,7 @@
       "how-does-a-0-down-va-loan-work",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
+      "new-home-builders-offering-4-99-4-5-or-even-4-rates-heres-the-clarity-you-need-to-know",
       "should-you-buy-now-and-refinance-later",
       "should-you-put-money-down-on-a-va-loan-in-oklahoma-city",
       "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
@@ -915,7 +915,7 @@
       ],
       "description": "Relocation is consistently ranked as one of life’s most stressful events—it even ranks up there with divorce, job loss, and major illnesses. But unlike other big life moments, the average American will move nearly a dozen times over the ...",
       "publishedAt": "2024-11-12T11:44:00.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
       "primaryKeyword": "tips for a successful pcs move",
       "secondaryKeywords": [
         "home relocation tips",
@@ -930,6 +930,12 @@
         "4. Pick a moving method",
         "5. Prep the home",
         "6. Ask for help/have a moving day plan",
+        "7. Hand-carry your most important documents",
+        "8. Know your PCS entitlements before you move",
+        "9. Photograph and inventory your valuables",
+        "10. Update your address everywhere",
+        "11. Plan early for pets and overseas rules",
+        "12. Build a moving budget and a cash cushion",
         "More PCS Planning Resources"
       ]
     },
@@ -1278,7 +1284,7 @@
       ],
       "description": "When it comes to finding a home, veterans have unique needs and considerations that may be best understood by those who have shared similar experiences. This is where the importance of working with a veteran real estate agent becomes app...",
       "publishedAt": "2024-01-03T04:25:21.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-22T00:00:00.000Z",
       "primaryKeyword": "veteran real estate agent",
       "secondaryKeywords": [
         "military friendly real estate agents va loan pcs",
@@ -2553,7 +2559,7 @@
       ],
       "description": "How to Become a Real Estate Agent After the Military",
       "publishedAt": "2022-06-22T03:36:02.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-22T00:00:00.000Z",
       "primaryKeyword": "how to become a real estate agent after the military",
       "secondaryKeywords": [
         "military transition to real estate",
@@ -2872,23 +2878,23 @@
     },
     {
       "slug": "interest-rates-are-falling-heres-what-homebuyers-need-to-know",
-      "title": "Interest Rates may fall in 2024: Heres What Homebuyers Need to Know",
+      "title": "When Mortgage Rates Fall: What Military Homebuyers Should Know",
       "url": "/blog/interest-rates-are-falling-heres-what-homebuyers-need-to-know",
-      "component": "U.S. Military Bases",
-      "componentSlug": "us-military-bases",
+      "component": "Real Estate Insights",
+      "componentSlug": "real-estate-insights",
       "stateSlug": null,
       "stateSource": null,
       "categories": [
-        "US Military Bases"
+        "Real Estate Insights"
       ],
-      "description": "What Happens When Interest Rates Drop?",
+      "description": "Mortgage rates move from week to week, and when they fall it changes the math for buyers, sellers, and anyone holding a mortgage. As of the week of June 18, 2026, the average 30-year fixed rate was 6.47%, according to Freddie Mac's Prima...",
       "publishedAt": "2024-01-18T16:27:52.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-22T00:00:00.000Z",
       "primaryKeyword": "falling interest rates for homebuyers",
       "secondaryKeywords": [
-        "2024 mortgage rate forecast",
         "homebuyer purchasing power",
         "housing demand and interest rates",
+        "mortgage rate forecast",
         "mortgage rates dropping",
         "refinancing when rates fall"
       ],
@@ -3186,9 +3192,9 @@
       "categories": [
         "PCS Help"
       ],
-      "description": "When Uncle Sam makes the call, it's time to move. Every year, over 400,000 service members undergo a Permanent Change of Station (PCS) move, relocating to a new duty station.",
+      "description": "When Uncle Sam makes the call, it's time to move. Each year, more than 400,000 service members undergo a Permanent Change of Station (PCS) move, relocating to a new duty station, according to Military OneSource.",
       "publishedAt": "2022-09-20T14:38:39.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
       "primaryKeyword": "differences between conus and oconus pcs military",
       "secondaryKeywords": [
         "choosing a duty station",
@@ -3202,6 +3208,8 @@
         "When Is Military PCS Season?",
         "Can You Deny Military PCS Orders?",
         "Is Military PCS Travel Pay Taxable?",
+        "What Is a PPM (DITY) Move, and Can You Make Money on It?",
+        "How Long Does a PCS Move Take?",
         "Need More PCS Help? Contact Us!"
       ]
     },
@@ -3519,17 +3527,16 @@
       "slug": "new-home-builders-offering-4-99-4-5-or-even-4-rates-heres-the-clarity-you-need-to-know",
       "title": "New home builders offering 4.99%, 4.5%, or even 4% rates? Here's the clarity you need to know",
       "url": "/blog/new-home-builders-offering-4-99-4-5-or-even-4-rates-heres-the-clarity-you-need-to-know",
-      "component": "PCS Help",
-      "componentSlug": "pcs-help",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
       "stateSlug": null,
       "stateSource": null,
       "categories": [
-        "PCS Help",
         "VA Loan Help"
       ],
       "description": "Understanding Builder-Advertised Low Interest Rates: What Military Homebuyers Need to Know",
       "publishedAt": "2024-12-10T18:12:34.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-22T00:00:00.000Z",
       "primaryKeyword": "is 4.99 a good mortgage rate",
       "secondaryKeywords": [
         "4.5 mortgage rate",
@@ -6029,7 +6036,7 @@
       ],
       "description": "Understanding the Buy Now, Refinance Later Strategy",
       "publishedAt": "2024-02-06T18:34:53.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-06-22T00:00:00.000Z",
       "primaryKeyword": "buy now refinance later",
       "secondaryKeywords": [
         "housing market interest rates",
@@ -7183,7 +7190,7 @@
       ],
       "description": "If researching home loans doesn’t grab your attention like the last season of Ozark, I get it. But let’s be real—Marty Byrde would probably love digging into the fine print of mortgage rates and government-backed loan policies.",
       "publishedAt": "2022-06-22T03:42:37.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "updatedAt": "2026-06-22T00:00:00.000Z",
       "primaryKeyword": "va loan vs fha loan",
       "secondaryKeywords": [
         "fha loan down payment",
