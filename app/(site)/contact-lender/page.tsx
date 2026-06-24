@@ -1,13 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import posthog from "posthog-js";
 import ContactLender from "@/components/ContactLender/ContactLender";
 import { contactLenderPostForm } from "@/services/salesForcePostFormsService";
-import { recordContactLenderLead } from "./actions";
 import { useRouter } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
 import { normalizeStateCode, normalizeStateSlug } from "@/lib/states";
 import { ContactLenderFormData } from "@/types";
+import { formTrackingPayload } from "@/lib/analytics/client";
 
 export default function ContactLenderPage() {
   const router = useRouter()
@@ -34,23 +33,12 @@ export default function ContactLenderPage() {
       // - Better Salesforce response validation
       // - Exponential backoff between retries
       // - Proper error handling and logging
-      const server_response = await contactLenderPostForm(formData, fullQueryString);
+      const server_response = await contactLenderPostForm(
+        { ...formData, ...formTrackingPayload() },
+        fullQueryString,
+      );
       // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
       if (server_response?.redirectUrl) {
-        if (formData.email) {
-          posthog.identify(formData.email, {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-          });
-        }
-        posthog.capture("contact_lender_form_submitted", {
-          state: normalizeStateSlug(queryParams.get('state')) || "",
-          lender_id: queryParams.get('id') || "",
-        });
-        // Server-confirmed, ad-blocker-resilient conversion event (mirrors the
-        // agent flow). Awaited so the event flushes before we navigate away.
-        await recordContactLenderLead(formData);
         router.push(server_response.redirectUrl);
         return { success: true, redirectUrl: server_response.redirectUrl };
       }

@@ -14,7 +14,7 @@ import { buildBlockedResponse } from '@/lib/ai/guardrails/responses';
 import { addSessionTokens } from '@/lib/ai/guardrails/budget';
 import { guardrailsEnforced, REFUSAL_MESSAGE } from '@/lib/ai/guardrails/config';
 import { logError } from '@/services/loggingService';
-import { captureServerEvent } from '@/lib/posthog-server';
+import { captureServerAnalyticsEvent } from '@/lib/analytics/server';
 import {
   deployedConciergeRequiresUpstash,
   missingUpstashEnvVars,
@@ -68,12 +68,7 @@ export async function POST(req: Request) {
 
   const { sessionId } = await getOrCreateSessionId();
 
-  // Stitch the server event to the same PostHog person as the client. The widget
-  // forwards posthog-js's distinct_id (anonymous, or the lead's email once a form
-  // calls identify()) in this header; fall back to the concierge session id when
-  // the client couldn't read one so the event still lands somewhere consistent.
-  const posthogDistinctId =
-    req.headers.get('x-posthog-distinct-id')?.trim() || sessionId;
+  const headerVisitorId = req.headers.get('x-vpcs-visitor-id')?.trim();
 
   const limit = await chatLimiter.limit(sessionId);
   if (!limit.success) {
@@ -97,7 +92,11 @@ export async function POST(req: Request) {
     logError('Concierge: invalid request body', { reason: parsed.error });
     return new Response('Invalid request', { status: 400 });
   }
-  const { messages, pageContext } = parsed.data;
+  const { messages, pageContext, analyticsContext } = parsed.data;
+  const visitorId =
+    (typeof analyticsContext?.vpcs_visitor_id === 'string' && analyticsContext.vpcs_visitor_id)
+    || (headerVisitorId?.startsWith('vpcs_') ? headerVisitorId : undefined)
+    || sessionId;
 
   // Pull the text of every user turn first. Malformed `parts` (e.g. a client
   // sending a non-array) throws here and is caught as a 400 — rather than later
@@ -131,7 +130,16 @@ export async function POST(req: Request) {
 
   try {
     const modelMessages = await convertToModelMessages(messages);
-    const config = buildConciergeConfig({ pageContext });
+    const sourcePagePath = typeof analyticsContext?.source_page_path === 'string'
+      ? analyticsContext.source_page_path
+      : undefined;
+    const config = buildConciergeConfig({
+      pageContext,
+      analyticsContext: {
+        ...analyticsContext,
+        vpcs_visitor_id: visitorId,
+      },
+    });
     const result = streamText({
       ...config,
       messages: modelMessages,
@@ -139,10 +147,14 @@ export async function POST(req: Request) {
       onFinish: async ({ usage, totalUsage }) => {
         const tokens = totalUsage?.totalTokens ?? usage?.totalTokens ?? 0;
         await addSessionTokens(sessionId, tokens);
-        await captureServerEvent({
-          distinctId: posthogDistinctId,
+        await captureServerAnalyticsEvent({
           event: 'concierge_chat_completed',
-          properties: { tokens_used: tokens },
+          distinctId: visitorId,
+          properties: {
+            vpcs_visitor_id: visitorId,
+            source_page_path: sourcePagePath,
+            tokens_used: tokens,
+          },
         });
       },
     });

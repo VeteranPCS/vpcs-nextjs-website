@@ -5,6 +5,7 @@ import { MODELS } from '@/lib/ai/models';
 
 export interface ConciergeConfigOpts {
   pageContext?: PageContext;
+  analyticsContext?: Record<string, unknown>;
   /** Override the tool set (evals inject deterministic mock tools). */
   tools?: ToolSet;
 }
@@ -25,7 +26,7 @@ export function buildConciergeConfig(opts: ConciergeConfigOpts = {}): ConciergeC
   return {
     model: MODELS.chat,
     system: buildSystemPrompt(opts.pageContext),
-    tools: opts.tools ?? (buildTools() as ToolSet),
+    tools: opts.tools ?? (buildTools(opts.analyticsContext) as ToolSet),
     stopWhen: stepCountIs(12),
   };
 }

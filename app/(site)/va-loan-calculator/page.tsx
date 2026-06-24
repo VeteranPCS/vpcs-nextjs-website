@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import posthog from "posthog-js";
 import { Doughnut, Line } from "react-chartjs-2";
 import {
     Chart as ChartJS,
@@ -13,6 +12,7 @@ import {
     LineElement,
 } from "chart.js";
 import Link from "next/link";
+import { captureAnalyticsEvent } from "@/lib/analytics/client";
 
 ChartJS.register(
     ArcElement,
@@ -232,6 +232,13 @@ export default function VaLoanCalculatorPage() {
     // --------------------------
     const [activeTab, setActiveTab] = useState("breakdown"); // 'breakdown' | 'over-time' | 'amortization'
     const [currentPage, setCurrentPage] = useState(1); // State for pagination
+    const homeValueBucket = (value: number): string => {
+        if (value < 200000) return 'under_200k';
+        if (value < 400000) return '200k_399k';
+        if (value < 650000) return '400k_649k';
+        if (value < 1000000) return '650k_999k';
+        return '1m_plus';
+    };
 
     // Reset pagination when loan term changes
     useEffect(() => {
@@ -468,10 +475,15 @@ export default function VaLoanCalculatorPage() {
                         <div className="mt-6">
                             <Link
                                 href="/contact-lender"
-                                onClick={() => posthog.capture('va_loan_calculator_quote_clicked', {
+                                onClick={() => captureAnalyticsEvent('calculator_cta_clicked', {
+                                    calculator_id: 'va_loan',
+                                    cta_id: 'va_loan_custom_quote',
+                                    cta_intent: 'contact_lender',
+                                    cta_position: 'calculator',
+                                    destination_path: '/contact-lender',
                                     loan_type: loanType,
                                     loan_term: loanTerm,
-                                    home_value: homeValue,
+                                    home_value_bucket: homeValueBucket(homeValue),
                                 })}
                                 className="w-full items-center justify-center bg-blue-600 inline-flex px-5 sm:px-6 py-2 sm:py-2.5 rounded-md text-center duration-300 transition-all hover:bg-blue-700 active:bg-blue-800 text-white text-sm sm:text-base font-medium leading-6 shadow-sm"
                             >

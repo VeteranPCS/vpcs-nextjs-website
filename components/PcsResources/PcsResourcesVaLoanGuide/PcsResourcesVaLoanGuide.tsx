@@ -10,6 +10,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { vaLoanGuideForm } from "@/services/salesForcePostFormsService";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
+import {
+  captureAnalyticsEvent,
+  formTrackingPayload,
+  trackFormStarted,
+  trackFormSubmitAttempted,
+  trackFormSubmissionFailed,
+  trackFormValidationFailed,
+} from '@/lib/analytics/client';
 
 type FormInputs = {
   firstName: string;
@@ -38,17 +46,35 @@ const PcsResourcesVaLoanGuide = () => {
   const { ref: honeypotRef, getSpamFields } = useHoneypot();
 
   const onSubmitHandler: SubmitHandler<FormInputs> = async (data) => {
+    captureAnalyticsEvent('guide_download_requested', {
+      guide_id: 'va_loan_guide',
+      form_id: 'va_loan_guide',
+      has_email: Boolean(data.email),
+    });
+    trackFormSubmitAttempted('va_loan_guide', {
+      guide_id: 'va_loan_guide',
+      has_email: Boolean(data.email),
+      has_phone: false,
+    });
     try {
       sendGTMEvent({
         event: "conversion_download",
         content: "VA Loan Guide",
       });
 
-      const server_response = await vaLoanGuideForm({ ...data, ...getSpamFields() });
+      const server_response = await vaLoanGuideForm({
+        ...data,
+        ...getSpamFields(),
+        ...formTrackingPayload(),
+      });
       if (server_response?.success) {
         setValue('firstName', '');
         setValue('lastName', '');
         setValue('email', '');
+        captureAnalyticsEvent('guide_download_started', {
+          guide_id: 'va_loan_guide',
+          form_id: 'va_loan_guide',
+        });
 
         const link = document.createElement('a');
         link.href = '/downloads/VA-Loan-Guide.pdf';  // Note: case-sensitive path
@@ -58,18 +84,31 @@ const PcsResourcesVaLoanGuide = () => {
         link.click();
         document.body.removeChild(link);
       } else {
+        trackFormSubmissionFailed('va_loan_guide', 'server_submission', ['no_success_response'], {
+          guide_id: 'va_loan_guide',
+        });
         console.log("No redirect URL found");
       }
     } catch (error) {
+      trackFormSubmissionFailed('va_loan_guide', 'server_submission', ['submission_exception'], {
+        guide_id: 'va_loan_guide',
+      });
       console.error('Error submitting form:', error);
     }
+  };
+
+  const handleInvalidSubmit = (formErrors: typeof errors) => {
+    trackFormValidationFailed('va_loan_guide', formErrors, { guide_id: 'va_loan_guide' });
   };
 
   return (
     <div className={classes.pcsresourcesvaloanguide}>
       <div className="container mx-auto px-5">
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-6">
-          <form onSubmit={handleSubmit(onSubmitHandler)}>
+          <form
+            onSubmit={handleSubmit(onSubmitHandler, handleInvalidSubmit)}
+            onFocus={() => trackFormStarted('va_loan_guide', { guide_id: 'va_loan_guide' })}
+          >
             <HoneypotField ref={honeypotRef} />
             <div className="lg:px-20 mg:px-20 sm:px-10 px-10 order-2 sm:order-1">
               <div className="text-center">

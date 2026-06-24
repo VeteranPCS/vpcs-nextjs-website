@@ -7,6 +7,7 @@ import { sendGTMEvent } from "@next/third-parties/google";
 import type { StateList } from '@/services/stateService';
 import { clientAreaService, type AreaAssignment } from '@/services/clientAreaService';
 import { clientStateService } from '@/services/clientStateService';
+import { captureAnalyticsEvent, trackCtaClicked } from '@/lib/analytics/client';
 import './AgentFinderPopup.css';
 
 
@@ -101,6 +102,12 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
                 event: "agent_finder_popup_shown",
                 trigger_type: "scroll_trigger", // You could make this dynamic if needed
             });
+            captureAnalyticsEvent('cta_clicked', {
+                cta_id: 'agent_finder_popup_viewed',
+                cta_intent: 'agent_finder_popup',
+                cta_position: 'scroll_trigger',
+                cta_component: 'agent_finder_popup',
+            });
         }
     }, [isVisible]);
 
@@ -125,14 +132,24 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
             return;
         }
 
+        const fallbackUrl = `/contact-agent?form=agent&state=${encodeURIComponent(selectedStateSlug)}`;
+
         // Send GTM event to track agent finder popup usage
         sendGTMEvent({
             event: "agent_finder_popup_submission",
             state: selectedStateSlug,
             area_assignment: selectedArea,
         });
-
-        const fallbackUrl = `/contact-agent?form=agent&state=${encodeURIComponent(selectedStateSlug)}`;
+        trackCtaClicked({
+            cta_id: 'agent_finder_popup_submit',
+            cta_intent: 'contact_agent',
+            cta_position: 'popup_form',
+            cta_component: 'agent_finder_popup',
+            destination_path: fallbackUrl,
+            state_code: selectedState,
+            state_slug: selectedStateSlug,
+            area_slug: selectedArea,
+        });
         setIsRouting(true);
         try {
             const response = await fetch(`/api/v1/states/${encodeURIComponent(selectedStateSlug)}/area-agent?area=${encodeURIComponent(selectedArea)}`);

@@ -1,10 +1,13 @@
+import { appendSalesforceAttributionParams } from '@/lib/analytics/server';
+
 export function buildAgentLeadParams(
     formData: any,
     paramsObj: Record<string, string>,
     webFormUrl: string,
     baseUrl: string | undefined,
+    submissionId?: string,
 ): URLSearchParams {
-    return new URLSearchParams({
+    const params = new URLSearchParams({
         oid: "00D4x000003yaV2",
         retURL: `${baseUrl}/thank-you`,
         "00N4x00000Lsn28": paramsObj.id || "",
@@ -37,6 +40,7 @@ export function buildAgentLeadParams(
         "g-recaptcha-response": "",
         "captcha_settings": "",
     });
+    return submissionId ? appendSalesforceAttributionParams(params, formData, submissionId) : params;
 }
 
 export function buildLenderLeadParams(
@@ -44,8 +48,9 @@ export function buildLenderLeadParams(
     paramsObj: Record<string, string>,
     webFormUrl: string,
     baseUrl: string | undefined,
+    submissionId?: string,
 ): URLSearchParams {
-    return new URLSearchParams({
+    const params = new URLSearchParams({
         oid: "00D4x000003yaV2",
         retURL: `${baseUrl}/thank-you`,
         "00N4x00000QPJUT": paramsObj.id || "",
@@ -67,4 +72,5 @@ export function buildLenderLeadParams(
         "g-recaptcha-response": "",
         "captcha_settings": "",
     });
+    return submissionId ? appendSalesforceAttributionParams(params, formData, submissionId) : params;
 }

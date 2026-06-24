@@ -1,11 +1,14 @@
+"use client";
+
 import "@/app/globals.css";
 import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./StatePageCTA.module.css";
 import Image from "next/image";
 import Link from "next/link";
+import { trackCtaClicked } from "@/lib/analytics/client";
 
-const StatePageCTA = ({ cityName }: { cityName: string }) => {
+const StatePageCTA = ({ cityName, stateSlug }: { cityName: string; stateSlug: string }) => {
   return (
     <div className="container mx-auto w-full py-16">
       <div className={classes.statepagectacontainer}>
@@ -49,10 +52,30 @@ const StatePageCTA = ({ cityName }: { cityName: string }) => {
             </div>
 
             <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center gap-4">
-              <Link href="/contact-agent">
+              <Link
+                href="/contact-agent"
+                onClick={() => trackCtaClicked({
+                  cta_id: 'state_page_agent_cta',
+                  cta_intent: 'contact_agent',
+                  cta_position: 'state_cta_band',
+                  cta_component: 'state_page_cta',
+                  destination_path: '/contact-agent',
+                  state_slug: stateSlug,
+                })}
+              >
                 <Button buttonText="Agent" />
               </Link>
-              <Link href="/contact-lender">
+              <Link
+                href="/contact-lender"
+                onClick={() => trackCtaClicked({
+                  cta_id: 'state_page_lender_cta',
+                  cta_intent: 'contact_lender',
+                  cta_position: 'state_cta_band',
+                  cta_component: 'state_page_cta',
+                  destination_path: '/contact-lender',
+                  state_slug: stateSlug,
+                })}
+              >
                 <button
                   className="items-center border-2 border-[#A3161B] bg-white w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px]
                px-[20px] md:py-[14px] py-[12px] rounded-[16px] text-center tracking-[1px] text-[#A3161B] hover:bg-[#A3161B] hover:text-[#ffffff] all-duration transition-all duration-300 ease-in-out"

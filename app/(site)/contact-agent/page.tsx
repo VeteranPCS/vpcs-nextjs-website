@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import posthog from "posthog-js";
 import ContactAgents from "@/components/ContactAgents/ContactAgent";
 import { submitContactAgentLead } from "./actions";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { ContactAgentFormData } from "@/types";
 import { normalizeStateCode, normalizeStateSlug } from "@/lib/states";
+import { formTrackingPayload } from "@/lib/analytics/client";
 
 export default function ContactAgentPage() {
   const [derivedStateCode, setDerivedStateCode] = useState<string | null>(null);
@@ -27,20 +27,10 @@ export default function ContactAgentPage() {
         state: normalizeStateSlug(queryState) || "",
       });
 
-      const result = await submitContactAgentLead(formData, fullQueryString);
-      if (result.success) {
-        if (formData.email) {
-          posthog.identify(formData.email, {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-          });
-        }
-        posthog.capture("contact_agent_form_submitted", {
-          state: normalizeStateSlug(queryState) || "",
-          agent_id: queryParams.get("id") || "",
-        });
-      }
+      const result = await submitContactAgentLead(
+        { ...formData, ...formTrackingPayload() },
+        fullQueryString,
+      );
       return result;
     } catch (error) {
       console.error("Error submitting form:", error);

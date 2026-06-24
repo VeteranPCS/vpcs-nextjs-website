@@ -6,6 +6,7 @@ import {
 } from '@/lib/bah-scraper';
 import { logError, logInfo } from '@/services/loggingService';
 import { bahInputSchema, type ToolResult } from '@/lib/ai/tools/types';
+import { zipPrefix } from '@/lib/analytics/sanitizer';
 
 // Reverse map: RANK_MAPPING is { '5': 'E-5', ... }.
 // We want the model-friendly inputs ("E5", "E-5", "e5") to resolve to the numeric id "5".
@@ -53,14 +54,14 @@ const calculateBAHTool = tool({
       const data = await extractBAHData(year, zipCode, rankId);
       logInfo('Concierge tool: calculateBAH', {
         year,
-        zipCode,
+        zipPrefix: zipPrefix(zipCode),
         rank: data.rank,
       });
       return { ok: true, data };
     } catch (error) {
       logError(
         'Concierge tool: calculateBAH failed',
-        { year, zipCode, rank },
+        { year, zipPrefix: zipPrefix(zipCode), rank },
         error,
       );
       const message =

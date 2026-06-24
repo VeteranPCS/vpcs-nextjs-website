@@ -53,6 +53,7 @@ const pageContextSchema = z
 const chatRequestSchema = z.object({
   messages: z.array(messageSchema).min(1).max(MAX_MESSAGES),
   pageContext: pageContextSchema,
+  analyticsContext: z.unknown().optional(),
 });
 
 /**
@@ -89,9 +90,61 @@ export function sanitizePageContext(pc: unknown): PageContext | undefined {
   return clean.path || clean.state || clean.topic ? clean : undefined;
 }
 
+function sanitizeAttributionSnapshot(value: unknown): Record<string, string> | undefined {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined;
+  const raw = value as Record<string, unknown>;
+  const clean: Record<string, string> = {};
+  for (const key of [
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_content',
+    'utm_term',
+    'gclid',
+    'gbraid',
+    'wbraid',
+    'fbclid',
+    'msclkid',
+    'referrer_domain',
+    'landing_page_path',
+    'captured_at',
+  ]) {
+    const safe = sanitizeField(raw[key]);
+    if (safe) clean[key] = safe;
+  }
+  return Object.keys(clean).length > 0 ? clean : undefined;
+}
+
+export function sanitizeAnalyticsContext(value: unknown): Record<string, unknown> | undefined {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined;
+  const raw = value as Record<string, unknown>;
+  const clean: Record<string, unknown> = {};
+  const visitorId = sanitizeField(raw.vpcs_visitor_id);
+  const sourcePagePath = sanitizeField(raw.source_page_path);
+  const firstTouch = sanitizeAttributionSnapshot(raw.first_touch_attribution);
+  const lastTouch = sanitizeAttributionSnapshot(raw.last_touch_attribution);
+
+  if (visitorId?.startsWith('vpcs_')) clean.vpcs_visitor_id = visitorId;
+  if (sourcePagePath?.startsWith('/')) clean.source_page_path = sourcePagePath;
+  if (firstTouch) clean.first_touch_attribution = firstTouch;
+  if (lastTouch) clean.last_touch_attribution = lastTouch;
+
+  for (const key of [
+    'pageview_count_before_conversion',
+    'cta_click_count_before_conversion',
+    'form_attempt_count_before_conversion',
+  ]) {
+    const numeric = Number(raw[key]);
+    if (Number.isFinite(numeric) && numeric >= 0) clean[key] = Math.floor(numeric);
+  }
+
+  return Object.keys(clean).length > 0 ? clean : undefined;
+}
+
 export interface ParsedChatRequest {
   messages: UIMessage[];
   pageContext?: PageContext;
+  analyticsContext?: Record<string, unknown>;
 }
 
 export type ParseChatRequestResult =
@@ -118,6 +171,7 @@ export function parseChatRequest(raw: unknown): ParseChatRequestResult {
     data: {
       messages: result.data.messages as unknown as UIMessage[],
       pageContext: sanitizePageContext(result.data.pageContext),
+      analyticsContext: sanitizeAnalyticsContext(result.data.analyticsContext),
     },
   };
 }

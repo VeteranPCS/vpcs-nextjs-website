@@ -12,6 +12,7 @@ import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestio
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 import FindAgentInState from "@/components/Blog/FindAgentInState";
+import { ContentViewedTracker } from "@/components/Analytics/Trackers";
 import {
     extractTocHeadings,
     getBlogBySlug,
@@ -162,6 +163,12 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                 id={`json-ld-blog-breadcrumb-${slug}`}
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+            />
+            <ContentViewedTracker
+                contentId={blog.sanityId}
+                contentSlug={slug}
+                contentType="blog_post"
+                topicCluster={blog.component || blog.categories?.[0]}
             />
             <BlogDetailsHeroSection blog={blog} resolvedAuthor={resolvedAuthor} />
             <nav className="container mx-auto px-5 pt-8 text-sm text-[#6C757D]" aria-label="Breadcrumb">

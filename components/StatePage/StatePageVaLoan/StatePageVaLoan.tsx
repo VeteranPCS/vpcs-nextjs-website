@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import "@/app/globals.css";
 import Image from "next/image";
@@ -5,8 +7,21 @@ import Button from "@/components/common/Button";
 import Link from "next/link";
 import { LendersData, Lenders } from "@/services/stateService";
 import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
+import { trackCtaClicked } from "@/lib/analytics/client";
 
 const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, lendersData: LendersData | [], state: string }) => {
+  const trackLenderCta = (lenderId: string, position: string) => {
+    trackCtaClicked({
+      cta_id: 'state_lender_card_contact',
+      cta_intent: 'contact_lender',
+      cta_position: position,
+      cta_component: 'state_lender_card',
+      destination_path: '/contact-lender',
+      state_slug: state,
+      partner_type: 'lender',
+      partner_salesforce_id: lenderId,
+    });
+  };
 
   return (
     <div>
@@ -30,7 +45,10 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
               <div key={lender.AccountId_15__c} className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4">
                 <div className="justify-center items-center flex flex-col">
                   <div className="rounded-full bg-[#E1EDFB] sm:w-[200px] sm:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
-                    <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}>
+                    <Link
+                      href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}
+                      onClick={() => trackLenderCta(lender.AccountId_15__c, 'card_image')}
+                    >
                       <Image
                         src={lender?.PhotoUrl || ""}
                         alt={`${lender?.Name}'s Profile Picture`}
@@ -40,13 +58,19 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                       />
                     </Link>
                   </div>
-                  <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}>
+                  <Link
+                    href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}
+                    onClick={() => trackLenderCta(lender.AccountId_15__c, 'card_button')}
+                  >
                     <Button buttonText="Contact Now" />
                   </Link>
                 </div>
                 <div className="pl-10">
                   <div>
-                    <Link href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}>
+                    <Link
+                      href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}
+                      onClick={() => trackLenderCta(lender.AccountId_15__c, 'card_heading')}
+                    >
                       <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[24px] text-[24px] font-bold">
                         {lender?.Name}
                       </h3>

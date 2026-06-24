@@ -10,6 +10,14 @@ import Link from "next/link";
 import { useConcierge } from "@/components/Concierge";
 import { featureFlags } from "@/lib/feature-flags";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
+import {
+    captureAnalyticsEvent,
+    formTrackingPayload,
+    trackFormStarted,
+    trackFormSubmitAttempted,
+    trackFormSubmissionFailed,
+    trackFormValidationFailed,
+} from '@/lib/analytics/client';
 
 // Form input types
 interface FormInputs {
@@ -50,6 +58,16 @@ const VaLoanGuideDownload = () => {
     const onSubmitHandler: SubmitHandler<FormInputs> = async (data) => {
         setSubmitting(true);
         setError(null);
+        captureAnalyticsEvent('guide_download_requested', {
+            guide_id: 'va_loan_guide',
+            form_id: 'va_loan_guide',
+            has_email: Boolean(data.email),
+        });
+        trackFormSubmitAttempted('va_loan_guide', {
+            guide_id: 'va_loan_guide',
+            has_email: Boolean(data.email),
+            has_phone: false,
+        });
         try {
             sendGTMEvent({ event: "conversion_download", content: "VA Loan Guide" });
             // Split name into first/last for Salesforce
@@ -60,10 +78,18 @@ const VaLoanGuideDownload = () => {
                 lastName,
                 email: data.email,
             };
-            const server_response = await vaLoanGuideForm({ ...payload, ...getSpamFields() });
+            const server_response = await vaLoanGuideForm({
+                ...payload,
+                ...getSpamFields(),
+                ...formTrackingPayload(),
+            });
             if (server_response?.success) {
                 setSuccess(true);
                 reset();
+                captureAnalyticsEvent('guide_download_started', {
+                    guide_id: 'va_loan_guide',
+                    form_id: 'va_loan_guide',
+                });
                 // Download the PDF
                 const link = document.createElement('a');
                 link.href = '/downloads/VA-Loan-Guide.pdf';
@@ -72,13 +98,23 @@ const VaLoanGuideDownload = () => {
                 link.click();
                 document.body.removeChild(link);
             } else {
+                trackFormSubmissionFailed('va_loan_guide', 'server_submission', ['no_success_response'], {
+                    guide_id: 'va_loan_guide',
+                });
                 setError("Submission failed. Please try again.");
             }
         } catch (err) {
+            trackFormSubmissionFailed('va_loan_guide', 'server_submission', ['submission_exception'], {
+                guide_id: 'va_loan_guide',
+            });
             setError("Submission failed. Please try again.");
         } finally {
             setSubmitting(false);
         }
+    };
+
+    const handleInvalidSubmit = (formErrors: typeof errors) => {
+        trackFormValidationFailed('va_loan_guide', formErrors, { guide_id: 'va_loan_guide' });
     };
 
     return (
@@ -96,7 +132,11 @@ const VaLoanGuideDownload = () => {
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmitHandler)} className="mb-6">
+                <form
+                    onSubmit={handleSubmit(onSubmitHandler, handleInvalidSubmit)}
+                    onFocus={() => trackFormStarted('va_loan_guide', { guide_id: 'va_loan_guide' })}
+                    className="mb-6"
+                >
                     <HoneypotField ref={honeypotRef} />
                     <div className="flex flex-col md:flex-row gap-4 mb-4">
                         <input
@@ -155,4 +195,4 @@ const VaLoanGuideDownload = () => {
     );
 };
 
-export default VaLoanGuideDownload; 
+export default VaLoanGuideDownload;

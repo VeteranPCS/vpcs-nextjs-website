@@ -1,11 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { recordContactLenderLead } from '../actions';
-import { captureServerEvent } from '@/lib/posthog-server';
 import { ContactLenderFormData } from '@/types';
-
-vi.mock('@/lib/posthog-server', () => ({
-  captureServerEvent: vi.fn(),
-}));
 
 const payload: ContactLenderFormData = {
   firstName: 'QA',
@@ -23,23 +18,11 @@ describe('recordContactLenderLead', () => {
     vi.clearAllMocks();
   });
 
-  it('captures the server lead event keyed to the lead email', async () => {
-    await recordContactLenderLead(payload);
-
-    expect(captureServerEvent).toHaveBeenCalledWith({
-      distinctId: payload.email,
-      event: 'contact_lender_lead_created',
-      properties: {
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        email: payload.email,
-      },
-    });
+  it('keeps the compatibility action as a no-op', async () => {
+    await expect(recordContactLenderLead(payload)).resolves.toBeUndefined();
   });
 
-  it('skips capture when there is no email to key the person on', async () => {
-    await recordContactLenderLead({ ...payload, email: undefined });
-
-    expect(captureServerEvent).not.toHaveBeenCalled();
+  it('does not require an email because it emits no analytics', async () => {
+    await expect(recordContactLenderLead({ ...payload, email: undefined })).resolves.toBeUndefined();
   });
 });

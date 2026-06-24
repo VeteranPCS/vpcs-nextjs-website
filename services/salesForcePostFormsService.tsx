@@ -19,6 +19,10 @@ import {
     buildLenderLeadParams,
 } from '@/services/salesforceLeadParams';
 import {
+    appendSalesforceAttributionParams,
+    captureLeadConversionCreated,
+} from '@/lib/analytics/server';
+import {
     parseLeadForm,
     simpleLeadSchema,
     contactAgentSchema,
@@ -231,6 +235,33 @@ function getEffectiveLeadState(formState?: string, queryState?: string): Effecti
     };
 }
 
+async function captureAcceptedCustomerLead(args: {
+    spamQuarantined: boolean;
+    formId: string;
+    leadSource: string;
+    submissionId: string;
+    formData: Record<string, unknown>;
+    stateCode?: string;
+    stateSlug?: string;
+    partnerType?: 'agent' | 'lender';
+    partnerSalesforceId?: string | null;
+    guideId?: string;
+}): Promise<void> {
+    if (args.spamQuarantined) return;
+
+    await captureLeadConversionCreated({
+        formId: args.formId,
+        leadSource: args.leadSource,
+        submissionId: args.submissionId,
+        formData: args.formData,
+        stateCode: args.stateCode,
+        stateSlug: args.stateSlug,
+        partnerType: args.partnerType,
+        partnerSalesforceId: args.partnerSalesforceId,
+        guideId: args.guideId,
+    });
+}
+
 export async function contactAgentPostForm(formData: any, queryString: string, options?: InternalCallOptions) {
     // Start tracking the submission
     const submissionId = await trackFormSubmission(
@@ -306,7 +337,7 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
             `${BASE_URL}/contact-agent${queryString}`,
             submissionId,
         );
-        const formBody = buildAgentLeadParams(formData, paramsObj, webFormUrl, BASE_URL).toString();
+        const formBody = buildAgentLeadParams(formData, paramsObj, webFormUrl, BASE_URL, submissionId).toString();
 
         logDebug('Sending form data to Salesforce Web-to-Lead', {
             submissionId,
@@ -435,16 +466,28 @@ ${formData.additionalComments ? `Additional Comments: ${formData.additionalComme
             response
         );
 
+        await captureAcceptedCustomerLead({
+            spamQuarantined: spam.quarantine,
+            formId: 'contact_agent',
+            leadSource: 'Contact Agent',
+            submissionId,
+            formData,
+            stateCode: effectiveState.code,
+            stateSlug: effectiveState.slug,
+            partnerType: 'agent',
+            partnerSalesforceId: paramsObj.id || null,
+        });
+
         if (redirectUrl) {
             logInfo('Form submitted successfully with redirect URL', {
                 submissionId,
                 redirectUrl
             });
-            return { redirectUrl };
+            return { redirectUrl, submissionId };
         }
 
         logInfo('Form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!' };
+        return { message: 'Form submitted successfully!', submissionId };
     } catch (error) {
         // If this is an unknown error that wasn't caught earlier,
         // make sure to update the submission status
@@ -769,7 +812,7 @@ export async function KeepInTouchForm(formData: any, options?: InternalCallOptio
             logError('Spam-suspected submission', { submissionId, form: 'keepInTouch', reasons: spam.reasons });
         }
 
-        const formBody = new URLSearchParams({
+        const keepInTouchParams = new URLSearchParams({
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
             recordType: "0124x000000Z5yD",
@@ -779,7 +822,12 @@ export async function KeepInTouchForm(formData: any, options?: InternalCallOptio
             email: formData.email || "",
             "g-recaptcha-response": "",
             "captcha_settings": "",
-        }).toString();
+        });
+        const formBody = appendSalesforceAttributionParams(
+            keepInTouchParams,
+            formData,
+            submissionId,
+        ).toString();
 
         logDebug('Sending keep in touch data to Salesforce Web-to-Lead', {
             submissionId,
@@ -830,8 +878,16 @@ export async function KeepInTouchForm(formData: any, options?: InternalCallOptio
             response
         );
 
+        await captureAcceptedCustomerLead({
+            spamQuarantined: spam.quarantine,
+            formId: 'keep_in_touch',
+            leadSource: 'Keep in Touch',
+            submissionId,
+            formData,
+        });
+
         logInfo('Keep in touch form submitted successfully', { submissionId });
-        return { success: true, message: 'Form submitted successfully!' };
+        return { success: true, message: 'Form submitted successfully!', submissionId };
     } catch (error) {
         // If this is an unknown error that wasn't caught earlier,
         // make sure to update the submission status
@@ -921,7 +977,7 @@ export async function contactLenderPostForm(formData: any, fullQueryString: stri
             `${BASE_URL}/contact-lender${fullQueryString}`,
             submissionId,
         );
-        const formBody = buildLenderLeadParams(formData, paramsObj, webFormUrl, BASE_URL).toString();
+        const formBody = buildLenderLeadParams(formData, paramsObj, webFormUrl, BASE_URL, submissionId).toString();
 
         logDebug('Sending lender form data to Salesforce Web-to-Lead', {
             submissionId,
@@ -1018,16 +1074,28 @@ ${formData.additionalComments ? `Additional Comments: ${formData.additionalComme
             response
         );
 
+        await captureAcceptedCustomerLead({
+            spamQuarantined: spam.quarantine,
+            formId: 'contact_lender',
+            leadSource: 'Contact Lender',
+            submissionId,
+            formData,
+            stateCode: effectiveState.code,
+            stateSlug: effectiveState.slug,
+            partnerType: 'lender',
+            partnerSalesforceId: paramsObj.id || null,
+        });
+
         if (redirectUrl) {
             logInfo('Lender form submitted successfully with redirect URL', {
                 submissionId,
                 redirectUrl
             });
-            return { redirectUrl };
+            return { redirectUrl, submissionId };
         }
 
         logInfo('Lender form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!' };
+        return { message: 'Form submitted successfully!', submissionId };
     } catch (error) {
         // If this is an unknown error that wasn't caught earlier,
         // make sure to update the submission status
@@ -1075,7 +1143,7 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
             formData.additionalComments = tagSpamSuspected(formData.additionalComments);
         }
 
-        const formBody = new URLSearchParams({
+        const contactParams = new URLSearchParams({
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
             recordType: "0124x000000Z5yD",
@@ -1086,7 +1154,12 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
             "00N4x00000bfgFA": formData.additionalComments || "",
             "g-recaptcha-response": "",
             "captcha_settings": "",
-        }).toString();
+        });
+        const formBody = appendSalesforceAttributionParams(
+            contactParams,
+            formData,
+            submissionId,
+        ).toString();
 
         logDebug('Sending contact form data to Salesforce Web-to-Lead', {
             submissionId,
@@ -1137,8 +1210,16 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
             response
         );
 
+        await captureAcceptedCustomerLead({
+            spamQuarantined: spam.quarantine,
+            formId: 'contact_form',
+            leadSource: 'Contact Form',
+            submissionId,
+            formData,
+        });
+
         logInfo('Contact form submitted successfully', { submissionId });
-        return { success: true, message: 'Form submitted successfully!' };
+        return { success: true, message: 'Form submitted successfully!', submissionId };
     } catch (error) {
         // If this is an unknown error that wasn't caught earlier,
         // make sure to update the submission status
@@ -1184,7 +1265,7 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
             logError('Spam-suspected submission', { submissionId, form: 'vaLoanGuide', reasons: spam.reasons });
         }
 
-        const formBody = new URLSearchParams({
+        const vaLoanGuideParams = new URLSearchParams({
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
             recordType: "0124x000000Z5yD",
@@ -1194,7 +1275,12 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
             email: formData.email || "",
             "g-recaptcha-response": "",
             "captcha_settings": "",
-        }).toString();
+        });
+        const formBody = appendSalesforceAttributionParams(
+            vaLoanGuideParams,
+            formData,
+            submissionId,
+        ).toString();
 
         logDebug('Sending VA loan guide data to Salesforce Web-to-Lead', {
             submissionId,
@@ -1245,8 +1331,17 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
             response
         );
 
+        await captureAcceptedCustomerLead({
+            spamQuarantined: spam.quarantine,
+            formId: 'va_loan_guide',
+            leadSource: 'VA Loan Guide',
+            submissionId,
+            formData,
+            guideId: 'va_loan_guide',
+        });
+
         logInfo('VA loan guide form submitted successfully', { submissionId });
-        return { success: true, message: 'Form submitted successfully!' };
+        return { success: true, message: 'Form submitted successfully!', submissionId };
     } catch (error) {
         // If this is an unknown error that wasn't caught earlier,
         // make sure to update the submission status
@@ -1292,7 +1387,7 @@ export async function homebuyerGuideForm(formData: any, options?: InternalCallOp
             logError('Spam-suspected submission', { submissionId, form: 'homebuyerGuide', reasons: spam.reasons });
         }
 
-        const formBody = new URLSearchParams({
+        const homebuyerGuideParams = new URLSearchParams({
             oid: "00D4x000003yaV2",
             retURL: `${BASE_URL}/thank-you`,
             recordType: "0124x000000Z5yD",
@@ -1302,7 +1397,12 @@ export async function homebuyerGuideForm(formData: any, options?: InternalCallOp
             email: formData.email || "",
             "g-recaptcha-response": "",
             "captcha_settings": "",
-        }).toString();
+        });
+        const formBody = appendSalesforceAttributionParams(
+            homebuyerGuideParams,
+            formData,
+            submissionId,
+        ).toString();
 
         logDebug('Sending first time home buyer guide data to Salesforce Web-to-Lead', {
             submissionId,
@@ -1353,8 +1453,17 @@ export async function homebuyerGuideForm(formData: any, options?: InternalCallOp
             response
         );
 
+        await captureAcceptedCustomerLead({
+            spamQuarantined: spam.quarantine,
+            formId: 'first_time_homebuyer_guide',
+            leadSource: 'First Time Home Buyer Guide',
+            submissionId,
+            formData,
+            guideId: 'first_time_homebuyer_guide',
+        });
+
         logInfo('First time home buyer guide form submitted successfully', { submissionId });
-        return { success: true, message: 'Form submitted successfully!' };
+        return { success: true, message: 'Form submitted successfully!', submissionId };
     } catch (error) {
         // If this is an unknown error that wasn't caught earlier,
         // make sure to update the submission status

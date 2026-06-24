@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import "@/app/globals.css";
 import Image from "next/image";
@@ -6,6 +8,7 @@ import Link from "next/link";
 import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
 import { sanitizeCityName } from "@/utils/sanitizeCityName";
 import { Agent } from "@/services/stateService";
+import { trackCtaClicked } from "@/lib/analytics/client";
 
 type Props = {
   city: string;
@@ -39,6 +42,18 @@ function toTitleCase(str: string): string {
 
 
 const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
+  const trackAgentCta = (agentId: string, position: string) => {
+    trackCtaClicked({
+      cta_id: 'state_agent_card_contact',
+      cta_intent: 'contact_agent',
+      cta_position: position,
+      cta_component: 'state_agent_card',
+      destination_path: '/contact-agent',
+      state_slug: state,
+      partner_type: 'agent',
+      partner_salesforce_id: agentId,
+    });
+  };
 
   return (
     <div id={sanitizeCityName(city)}>
@@ -58,7 +73,10 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
               >
                 <div className="justify-center items-center flex flex-col">
                   <div className="rounded-full bg-[#E1EDFB] md:w-[200px] md:h-[200px] sm:w-[100px] sm:h-[100px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
-                    <Link href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}>
+                    <Link
+                      href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}
+                      onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_image')}
+                    >
                       <Image
                         src={agent?.PhotoUrl || ""}
                         alt={`${agent?.Name}'s Profile Picture`}
@@ -70,13 +88,17 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                   </div>
                   <Link
                     href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}
+                    onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_button')}
                   >
                     <Button buttonText="Contact Now" />
                   </Link>
                 </div>
                 <div className="md:pl-10 sm:pl-4 pl-4">
                   <div>
-                    <Link href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}>
+                    <Link
+                      href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}
+                      onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_heading')}
+                    >
                       <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[20px] text-[20px] font-bold">
                         {agent?.Name}
                       </h3>

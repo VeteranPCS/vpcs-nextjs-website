@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { submitContactAgentLead } from '../actions';
 import { contactAgentPostForm } from '@/services/salesForcePostFormsService';
 import { logError } from '@/services/loggingService';
-import { captureServerEvent } from '@/lib/posthog-server';
 import { ContactAgentFormData } from '@/types';
 
 vi.mock('@/services/salesForcePostFormsService', () => ({
@@ -11,10 +10,6 @@ vi.mock('@/services/salesForcePostFormsService', () => ({
 
 vi.mock('@/services/loggingService', () => ({
   logError: vi.fn(),
-}));
-
-vi.mock('@/lib/posthog-server', () => ({
-  captureServerEvent: vi.fn(),
 }));
 
 const payload: ContactAgentFormData = {
@@ -36,17 +31,20 @@ describe('submitContactAgentLead', () => {
   it('preserves a Salesforce redirect URL', async () => {
     vi.mocked(contactAgentPostForm).mockResolvedValueOnce({
       redirectUrl: 'https://www.veteranpcs.com/thank-you',
+      submissionId: 'submission-test-id',
     });
 
     await expect(submitContactAgentLead(payload, '?id=001&state=colorado')).resolves.toEqual({
       success: true,
       redirectUrl: 'https://www.veteranpcs.com/thank-you',
     });
+    expect(contactAgentPostForm).toHaveBeenCalledWith(payload, '?id=001&state=colorado');
   });
 
   it('normalizes message-only success to the thank-you route', async () => {
     vi.mocked(contactAgentPostForm).mockResolvedValueOnce({
       message: 'Form submitted successfully!',
+      submissionId: 'submission-test-id',
     });
 
     await expect(submitContactAgentLead(payload, '?id=001&state=colorado')).resolves.toEqual({
@@ -55,22 +53,15 @@ describe('submitContactAgentLead', () => {
     });
   });
 
-  it('captures the server lead event keyed to the lead email on success', async () => {
+  it('does not emit legacy email-keyed analytics from the action layer', async () => {
     vi.mocked(contactAgentPostForm).mockResolvedValueOnce({
       redirectUrl: 'https://www.veteranpcs.com/thank-you',
+      submissionId: 'submission-test-id',
     });
 
     await submitContactAgentLead(payload, '?id=001&state=colorado');
 
-    expect(captureServerEvent).toHaveBeenCalledWith({
-      distinctId: payload.email,
-      event: 'contact_agent_lead_created',
-      properties: {
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        email: payload.email,
-      },
-    });
+    expect(contactAgentPostForm).toHaveBeenCalledTimes(1);
   });
 
   it('returns failure when the service throws', async () => {
@@ -84,6 +75,5 @@ describe('submitContactAgentLead', () => {
       undefined,
       expect.any(Error),
     );
-    expect(captureServerEvent).not.toHaveBeenCalled();
   });
 });

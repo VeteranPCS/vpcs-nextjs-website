@@ -16,6 +16,13 @@ import { sendGTMEvent } from "@next/third-parties/google";
 import { useConcierge } from "@/components/Concierge";
 import { featureFlags } from "@/lib/feature-flags";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
+import {
+  formTrackingPayload,
+  trackFormStarted,
+  trackFormSubmitAttempted,
+  trackFormSubmissionFailed,
+  trackFormValidationFailed,
+} from '@/lib/analytics/client';
 
 export interface ContactFormData {
   firstName?: string;
@@ -64,20 +71,30 @@ const ContactForm = () => {
 
   async function onSubmit(data: ContactFormData) {
     setIsSubmitting(true);
+    trackFormSubmitAttempted('contact_form', {
+      has_email: Boolean(data.email),
+      has_phone: false,
+    });
     try {
       sendGTMEvent({
         event: 'contact_form_submission',
       });
 
-      const server_response = await contactPostForm({ ...data, ...getSpamFields() });
+      const server_response = await contactPostForm({
+        ...data,
+        ...getSpamFields(),
+        ...formTrackingPayload(),
+      });
       if (server_response?.success || server_response?.message) {
         reset();
         window.location.href = `${BASE_URL}/thank-you`;
         return;
       } else {
+        trackFormSubmissionFailed('contact_form', 'server_submission', ['no_success_response']);
         console.log("Form submission failed or no success indicator found");
       }
     } catch (error) {
+      trackFormSubmissionFailed('contact_form', 'server_submission', ['submission_exception']);
       console.error('Error submitting form:', error);
       // You might want to show an error message to the user here
     } finally {
@@ -104,6 +121,10 @@ const ContactForm = () => {
     return error ? (
       <span className="text-error">{error.message}</span>
     ) : null;
+  };
+
+  const handleInvalidSubmit = (formErrors: typeof errors) => {
+    trackFormValidationFailed('contact_form', formErrors);
   };
 
   return (
@@ -176,7 +197,10 @@ const ContactForm = () => {
         </div>
         <div className="md:w-2/3 sm:w-full w-full relative md:px-10 lg:px-20 mt-10 md:mt-0">
 
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form
+            onSubmit={handleSubmit(onSubmit, handleInvalidSubmit)}
+            onFocus={() => trackFormStarted('contact_form')}
+          >
             <div className={classes.FormContainer}>
               <div className="w-full">
                 <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1  gap-5 mb-10">

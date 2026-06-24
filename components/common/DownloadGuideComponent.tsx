@@ -3,11 +3,19 @@ import React, { useState } from "react";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { vaLoanGuideForm } from "@/services/salesForcePostFormsService";
+import { homebuyerGuideForm, vaLoanGuideForm } from "@/services/salesForcePostFormsService";
 import { sendGTMEvent } from "@next/third-parties/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
+import {
+    captureAnalyticsEvent,
+    formTrackingPayload,
+    trackFormStarted,
+    trackFormSubmitAttempted,
+    trackFormSubmissionFailed,
+    trackFormValidationFailed,
+} from '@/lib/analytics/client';
 
 // Form input types
 interface FormInputs {
@@ -27,6 +35,7 @@ interface DownloadGuideComponentProps {
     downloadFileName: string;
     downloadDisplayName: string;
     gtmEventContent?: string;
+    guideId?: 'va_loan_guide' | 'first_time_homebuyer_guide';
     className?: string;
 }
 
@@ -41,6 +50,7 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
     downloadFileName,
     downloadDisplayName,
     gtmEventContent,
+    guideId,
     className = "",
 }) => {
     const [submitting, setSubmitting] = useState(false);
@@ -64,11 +74,29 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
     });
 
     const { ref: honeypotRef, getSpamFields } = useHoneypot();
+    const resolvedGuideId = guideId ?? (
+        downloadFileName.toLowerCase().includes('first-time')
+            ? 'first_time_homebuyer_guide'
+            : 'va_loan_guide'
+    );
+    const submitGuideForm = resolvedGuideId === 'first_time_homebuyer_guide'
+        ? homebuyerGuideForm
+        : vaLoanGuideForm;
 
     // On submit
     const onSubmitHandler: SubmitHandler<FormInputs> = async (data) => {
         setSubmitting(true);
         setError(null);
+        captureAnalyticsEvent('guide_download_requested', {
+            guide_id: resolvedGuideId,
+            form_id: resolvedGuideId,
+            has_email: Boolean(data.email),
+        });
+        trackFormSubmitAttempted(resolvedGuideId, {
+            guide_id: resolvedGuideId,
+            has_email: Boolean(data.email),
+            has_phone: false,
+        });
         try {
             if (gtmEventContent) {
                 sendGTMEvent({ event: "conversion_download", content: gtmEventContent });
@@ -80,10 +108,18 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                 email: data.email,
             };
 
-            const server_response = await vaLoanGuideForm({ ...payload, ...getSpamFields() });
+            const server_response = await submitGuideForm({
+                ...payload,
+                ...getSpamFields(),
+                ...formTrackingPayload(),
+            });
             if (server_response?.success) {
                 setSuccess(true);
                 reset();
+                captureAnalyticsEvent('guide_download_started', {
+                    guide_id: resolvedGuideId,
+                    form_id: resolvedGuideId,
+                });
 
                 // Download the PDF
                 const link = document.createElement('a');
@@ -93,13 +129,23 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                 link.click();
                 document.body.removeChild(link);
             } else {
+                trackFormSubmissionFailed(resolvedGuideId, 'server_submission', ['no_success_response'], {
+                    guide_id: resolvedGuideId,
+                });
                 setError("Submission failed. Please try again.");
             }
         } catch (err) {
+            trackFormSubmissionFailed(resolvedGuideId, 'server_submission', ['submission_exception'], {
+                guide_id: resolvedGuideId,
+            });
             setError("Submission failed. Please try again.");
         } finally {
             setSubmitting(false);
         }
+    };
+
+    const handleInvalidSubmit = (formErrors: typeof errors) => {
+        trackFormValidationFailed(resolvedGuideId, formErrors, { guide_id: resolvedGuideId });
     };
 
     return (
@@ -125,7 +171,11 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmitHandler)} className="mb-6">
+                <form
+                    onSubmit={handleSubmit(onSubmitHandler, handleInvalidSubmit)}
+                    onFocus={() => trackFormStarted(resolvedGuideId, { guide_id: resolvedGuideId })}
+                    className="mb-6"
+                >
                     <HoneypotField ref={honeypotRef} />
                     <div className="flex flex-col md:flex-row gap-4 mb-4">
                         <input
@@ -180,4 +230,4 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
     );
 };
 
-export default DownloadGuideComponent; 
+export default DownloadGuideComponent;

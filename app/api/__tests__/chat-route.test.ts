@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+vi.mock('server-only', () => ({}));
+
 // Mock the external/heavy edges; keep the Tier-0 heuristics + config REAL so the
 // multi-turn scan (F4) exercises the actual injection signatures.
 vi.mock('botid/server', () => ({ checkBotId: vi.fn(async () => ({ isBot: false })) }));

@@ -14,12 +14,11 @@ export interface FormSubmissionRecord {
     timestamp: string;
     status: FormSubmissionStatus;
     formData: {
-        firstName?: string;
-        lastName?: string;
-        email?: string;
+        hasName?: boolean;
+        hasEmail?: boolean;
         hasPhone?: boolean;
-        currentBase?: string;
-        destinationBase?: string;
+        hasCurrentBase?: boolean;
+        hasDestinationBase?: boolean;
     };
     responseCode?: number;
     responseText?: string;
@@ -46,12 +45,11 @@ export async function trackFormSubmission(
             formType,
             status,
             formData: {
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                email: formData.email,
+                hasName: Boolean(formData.firstName || formData.lastName || formData.first_name || formData.last_name),
+                hasEmail: Boolean(formData.email),
                 hasPhone: !!formData.phone,
-                currentBase: formData.currentBase,
-                destinationBase: formData.destinationBase,
+                hasCurrentBase: Boolean(formData.currentBase),
+                hasDestinationBase: Boolean(formData.destinationBase),
             },
             timestamp: new Date().toISOString(),
             responseCode: response?.status,
@@ -122,4 +120,4 @@ function generateSubmissionId(): string {
     const timestamp = Date.now().toString(36);
     const randomStr = Math.random().toString(36).substring(2, 8);
     return `${timestamp}-${randomStr}`;
-} 
+}

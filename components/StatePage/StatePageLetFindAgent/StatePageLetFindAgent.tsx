@@ -1,7 +1,10 @@
+"use client";
+
 import React from "react";
 import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import Link from "next/link";
+import { trackCtaClicked } from "@/lib/analytics/client";
 
 const StatePageCityAgents = () => {
   return (
@@ -12,7 +15,16 @@ const StatePageCityAgents = () => {
             <h6 className="text-[#FFFFFF] text-enter text-[31px] sm:text-[19px] px-8 text-center sm:text-left sm:font-normal font-bold leading-[34px] sm:leading-none">Don’t see an agent for your area?</h6>
           </div>
           <div className="mt-8 sm:mt-0">
-            <Link href="/contact-agent">
+            <Link
+              href="/contact-agent"
+              onClick={() => trackCtaClicked({
+                cta_id: 'state_page_find_agent_fallback',
+                cta_intent: 'contact_agent',
+                cta_position: 'state_agent_list_footer',
+                cta_component: 'state_page_let_find_agent',
+                destination_path: '/contact-agent',
+              })}
+            >
               <Button buttonText="Let us find you an agent" />
             </Link>
           </div>

@@ -3,7 +3,6 @@
 import { contactAgentPostForm } from '@/services/salesForcePostFormsService';
 import { logError } from '@/services/loggingService';
 import { ContactAgentFormData } from '@/types';
-import { captureServerEvent } from '@/lib/posthog-server';
 
 export interface ContactAgentSubmitResult {
   success: boolean;
@@ -26,15 +25,6 @@ export async function submitContactAgentLead(
         : null;
 
     if (redirectUrl) {
-      await captureServerEvent({
-        distinctId: formData.email,
-        event: 'contact_agent_lead_created',
-        properties: {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-        },
-      });
       return { success: true, redirectUrl };
     }
 

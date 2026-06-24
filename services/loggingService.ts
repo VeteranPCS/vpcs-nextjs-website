@@ -1,5 +1,9 @@
 // Environment-specific logging (more detailed in dev)
 const isDev = process.env.NODE_ENV === 'development';
+const SENSITIVE_KEY_RE =
+    /(^|_)(name|first_name|firstname|last_name|lastname|email|phone|mobile|tel|street|address|captcha|message|comment|comments|free_text|payload|form_data|query|search_query|raw_text|text)$/i;
+const EMAIL_RE = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
+const PHONE_RE = /(?:\+?1[\s.-]?)?(?:\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}/;
 
 // Log levels
 export enum LogLevel {
@@ -26,7 +30,7 @@ export function log(level: LogLevel, message: string, data?: any, error?: any): 
         message,
         data: sanitizeData(data),
         error: error ? {
-            message: error.message,
+            message: sanitizeString(error.message),
             stack: isDev ? error.stack : undefined,
             name: error.name,
             code: error.code,
@@ -67,8 +71,8 @@ export function logFormSubmission(
     log(logLevel, message, {
         formType,
         formDataSummary: {
-            name: `${formData.firstName} ${formData.lastName}`,
-            email: formData.email,
+            hasName: Boolean(formData.firstName || formData.lastName),
+            hasEmail: Boolean(formData.email),
             hasPhone: !!formData.phone,
             timestamp: new Date().toISOString(),
         },
@@ -86,19 +90,35 @@ export function getRecentLogs(): LogEntry[] {
 function sanitizeData(data: any): any {
     if (!data) return data;
 
-    const sanitized = { ...data };
-
-    // Sanitize sensitive fields if present
-    if (sanitized.formData) {
-        sanitized.formData = {
-            ...sanitized.formData,
-            // Mask sensitive information
-            phone: sanitized.formData.phone ? '********' : undefined,
-            captchaToken: sanitized.formData.captchaToken ? '[REDACTED]' : undefined,
-        };
+    if (Array.isArray(data)) {
+        return data.map((item) => sanitizeData(item));
     }
 
+    if (typeof data !== 'object') {
+        return sanitizeString(data);
+    }
+
+    const sanitized: Record<string, any> = {};
+    for (const [key, value] of Object.entries(data)) {
+        if (SENSITIVE_KEY_RE.test(key)) {
+            sanitized[`has_${key.replace(/[^a-zA-Z0-9]+/g, '_').toLowerCase()}`] = Boolean(value);
+            continue;
+        }
+
+        if (typeof value === 'string') {
+            sanitized[key] = sanitizeString(value);
+            continue;
+        }
+
+        sanitized[key] = sanitizeData(value);
+    }
     return sanitized;
+}
+
+function sanitizeString(value: any): any {
+    if (typeof value !== 'string') return value;
+    if (EMAIL_RE.test(value) || PHONE_RE.test(value)) return '[REDACTED]';
+    return value.length > 500 ? `${value.slice(0, 500)}…` : value;
 }
 
 // Helper to sanitize response data

@@ -4,11 +4,16 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, lastAssistantMessageIsCompleteWithApprovalResponses } from 'ai';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import posthog from 'posthog-js';
 import { featureFlags } from '@/lib/feature-flags';
 import MessageRenderer from './MessageRenderer';
 import type { AgentListItem } from './AgentCard';
 import { useConcierge } from './ConciergeProvider';
+import {
+  captureAnalyticsEvent,
+  formTrackingPayload,
+  getOrCreateVisitorId,
+} from '@/lib/analytics/client';
+import { queryMetrics } from '@/lib/analytics/sanitizer';
 
 const PANEL_TITLE = 'VeteranPCS Concierge';
 const GREETING =
@@ -116,22 +121,15 @@ export default function ConciergeWidget() {
       new DefaultChatTransport({
         api: '/api/chat',
         prepareSendMessagesRequest({ messages, id, trigger, messageId }) {
-          // Forward posthog-js's distinct_id so the server `concierge_chat_completed`
-          // event stitches to the same person as the client events and any form
-          // identify(). Guarded because posthog may be uninitialised (flag/env off).
-          let distinctId: string | undefined;
-          try {
-            distinctId = posthog.get_distinct_id?.();
-          } catch {
-            distinctId = undefined;
-          }
+          const visitorId = getOrCreateVisitorId();
           return {
-            headers: distinctId ? { 'x-posthog-distinct-id': distinctId } : undefined,
+            headers: { 'x-vpcs-visitor-id': visitorId },
             body: {
               id,
               trigger,
               messageId,
               messages,
+              analyticsContext: formTrackingPayload(),
               pageContext: {
                 path: pageContextRef.current.path,
                 topic: pageContextRef.current.topic,
@@ -295,6 +293,9 @@ export default function ConciergeWidget() {
 
   const handleApprove = useCallback(
     (id: string, approved: boolean) => {
+      captureAnalyticsEvent('concierge_tool_approval_responded', {
+        approval_response: approved ? 'approved' : 'denied',
+      });
       void addToolApprovalResponse({ id, approved });
     },
     [addToolApprovalResponse],
@@ -309,7 +310,10 @@ export default function ConciergeWidget() {
     const text = field.value.trim();
     if (!text) return;
     if (isStreaming) return;
-    posthog.capture('concierge_message_sent', { path: pathname });
+    captureAnalyticsEvent('concierge_message_sent', {
+      source_page_path: pathname ?? undefined,
+      ...queryMetrics(text),
+    });
     void sendMessage({ text });
     field.value = '';
   };
@@ -323,7 +327,10 @@ export default function ConciergeWidget() {
       {!isOpen ? (
         <button
           type="button"
-          onClick={() => { posthog.capture('concierge_opened', { path: pathname }); open(); }}
+          onClick={() => {
+            captureAnalyticsEvent('concierge_opened', { source_page_path: pathname ?? undefined });
+            open();
+          }}
           aria-label="Open chat with VeteranPCS concierge"
           className="fixed bottom-6 right-6 z-concierge h-14 w-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center motion-safe:transition-colors hover:bg-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red"
         >

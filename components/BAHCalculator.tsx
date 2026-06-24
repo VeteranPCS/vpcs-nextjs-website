@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, FormEvent, ChangeEvent, useEffect, useRef } from 'react';
-import posthog from 'posthog-js';
+import { useState, FormEvent, ChangeEvent, useEffect, useRef, useCallback } from 'react';
 import { BAHData } from '@/lib/bah-scraper';
 import Link from 'next/link';
 import { sendGTMEvent } from "@next/third-parties/google";
+import { captureAnalyticsEvent } from '@/lib/analytics/client';
+import { zipPrefix } from '@/lib/analytics/sanitizer';
 
 interface FormData {
     zipCode: string;
@@ -17,6 +18,17 @@ interface APIResponse {
     success: boolean;
     data?: BAHData;
     error?: string;
+}
+
+function getRankDisplayName(rankValue: string): string {
+    const rankMap: { [key: string]: string } = {
+        '1': 'E-1', '2': 'E-2', '3': 'E-3', '4': 'E-4', '5': 'E-5',
+        '6': 'E-6', '7': 'E-7', '8': 'E-8', '9': 'E-9',
+        '10': 'W-1', '11': 'W-2', '12': 'W-3', '13': 'W-4', '14': 'W-5',
+        '15': 'O1E', '16': 'O2E', '17': 'O3E',
+        '18': 'O-1', '19': 'O-2', '20': 'O-3', '21': 'O-4', '22': 'O-5', '23': 'O-6', '24': 'O-7/O-7+'
+    };
+    return rankMap[rankValue] || rankValue;
 }
 
 export default function BAHCalculator() {
@@ -38,6 +50,16 @@ export default function BAHCalculator() {
             currency: 'USD'
         }).format(amount);
     };
+
+    const trackBahCalculatorUsed = useCallback((data: BAHData): void => {
+        captureAnalyticsEvent('bah_calculator_used', {
+            zip_prefix: zipPrefix(formData.zipCode),
+            paygrade: getRankDisplayName(formData.rank),
+            dependents: formData.dependents,
+            year: data.year,
+            mha: data.mha,
+        });
+    }, [formData.dependents, formData.rank, formData.zipCode]);
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
@@ -66,15 +88,10 @@ export default function BAHCalculator() {
                 // Send GTM event for successful BAH calculation
                 sendGTMEvent({
                     event: 'bah_calculator_use',
-                    bah_zip_code: formData.zipCode,
+                    bah_zip_prefix: zipPrefix(formData.zipCode),
                     bah_paygrade: getRankDisplayName(formData.rank)
                 });
-                posthog.capture('bah_calculator_used', {
-                    zip_code: formData.zipCode,
-                    paygrade: getRankDisplayName(formData.rank),
-                    dependents: formData.dependents,
-                    year: formData.year,
-                });
+                trackBahCalculatorUsed(data.data);
             } else {
                 setError(data.error || 'Unknown error occurred');
             }
@@ -144,11 +161,12 @@ export default function BAHCalculator() {
 
                     if (data.success && data.data) {
                         setResult(data.data);
+                        trackBahCalculatorUsed(data.data);
 
                         // Send GTM event for successful BAH calculation
                         sendGTMEvent({
                             event: 'bah_calculator_use',
-                            bah_zip_code: formData.zipCode,
+                            bah_zip_prefix: zipPrefix(formData.zipCode),
                             bah_paygrade: getRankDisplayName(formData.rank)
                         });
                     } else {
@@ -162,18 +180,7 @@ export default function BAHCalculator() {
             }, 500);
             return () => clearTimeout(timer);
         }
-    }, [formData.zipCode, formData.rank, formData.year, loading]);
-
-    const getRankDisplayName = (rankValue: string): string => {
-        const rankMap: { [key: string]: string } = {
-            '1': 'E-1', '2': 'E-2', '3': 'E-3', '4': 'E-4', '5': 'E-5',
-            '6': 'E-6', '7': 'E-7', '8': 'E-8', '9': 'E-9',
-            '10': 'W-1', '11': 'W-2', '12': 'W-3', '13': 'W-4', '14': 'W-5',
-            '15': 'O1E', '16': 'O2E', '17': 'O3E',
-            '18': 'O-1', '19': 'O-2', '20': 'O-3', '21': 'O-4', '22': 'O-5', '23': 'O-6', '24': 'O-7/O-7+'
-        };
-        return rankMap[rankValue] || rankValue;
-    };
+    }, [formData.zipCode, formData.rank, formData.year, loading, trackBahCalculatorUsed]);
 
     return (
         <div id="bah-calculator" className="w-full max-w-6xl mx-auto my-8 bg-white rounded-2xl shadow-xl overflow-hidden">

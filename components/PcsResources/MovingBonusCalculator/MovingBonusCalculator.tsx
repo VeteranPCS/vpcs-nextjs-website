@@ -6,6 +6,7 @@ import Image from "next/image";
 import styles from "./MovingBonusCalculator.module.css";
 import Button from "@/components/common/Button";
 import { sendGTMEvent } from "@next/third-parties/google";
+import { captureAnalyticsEvent } from "@/lib/analytics/client";
 
 // Figma assets
 const imgHouse = "/icon/home-calculator-icon.webp";
@@ -54,6 +55,18 @@ const MovingBonusCalculator = () => {
         }).format(amount);
     };
 
+    const homeValueBucket = (value: number): string => {
+        if (value < 100000) return 'under_100k';
+        if (value < 200000) return '100k_199k';
+        if (value < 300000) return '200k_299k';
+        if (value < 400000) return '300k_399k';
+        if (value < 500000) return '400k_499k';
+        if (value < 650000) return '500k_649k';
+        if (value < 800000) return '650k_799k';
+        if (value < 1000000) return '800k_999k';
+        return '1m_plus';
+    };
+
     const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setHomeValue(parseInt(e.target.value));
     };
@@ -97,10 +110,15 @@ const MovingBonusCalculator = () => {
                 home_value: homeValue,
                 bonus_amount: movingBonus
             });
+            captureAnalyticsEvent('moving_bonus_calculated', {
+                home_value_bucket: homeValueBucket(homeValue),
+                bonus_amount: movingBonus,
+                charity_amount: charityDonation,
+            });
         }, 750); // 750ms debounce
 
         return () => clearTimeout(timer);
-    }, [homeValue, movingBonus]);
+    }, [charityDonation, homeValue, movingBonus]);
 
     // Handle Connect Now button click
     const handleConnectClick = () => {
@@ -108,6 +126,15 @@ const MovingBonusCalculator = () => {
             event: 'moving_bonus_calculator_cta_click',
             home_value: homeValue,
             bonus_amount: movingBonus
+        });
+        captureAnalyticsEvent('calculator_cta_clicked', {
+            calculator_id: 'moving_bonus',
+            cta_id: 'moving_bonus_find_agent',
+            cta_intent: 'contact_agent',
+            cta_position: 'calculator',
+            destination_path: '/contact-agent',
+            home_value_bucket: homeValueBucket(homeValue),
+            bonus_amount: movingBonus,
         });
     };
 

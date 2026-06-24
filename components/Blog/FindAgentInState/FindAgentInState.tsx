@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import posthog from 'posthog-js';
 import { sendGTMEvent } from '@next/third-parties/google';
 import { getStateDisplayName } from '@/lib/blog/getStateForBlog';
+import { trackCtaClicked } from '@/lib/analytics/client';
 
 type Position = 'top' | 'bottom';
 
@@ -24,10 +24,15 @@ export default function FindAgentInState({ state, blogSlug, position }: Props) {
       blog_slug: blogSlug,
       position,
     });
-    posthog.capture('blog_agent_cta_clicked', {
-      state,
-      blog_slug: blogSlug,
-      position,
+    trackCtaClicked({
+      cta_id: 'blog_find_agent_in_state',
+      cta_intent: 'state_agent_search',
+      cta_position: position,
+      cta_component: 'blog_find_agent_in_state',
+      destination_path: href,
+      state_slug: state,
+      content_slug: blogSlug,
+      content_type: 'blog_post',
     });
   };
 

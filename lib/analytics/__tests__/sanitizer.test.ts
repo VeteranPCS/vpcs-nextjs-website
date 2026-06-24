@@ -1,0 +1,65 @@
+import { describe, expect, it } from 'vitest';
+import {
+  errorCodesFromErrors,
+  queryMetrics,
+  sanitizeAnalyticsProperties,
+  zipPrefix,
+} from '@/lib/analytics/sanitizer';
+
+describe('analytics sanitizer', () => {
+  it('drops direct PII keys and PII-looking values while keeping safe flags', () => {
+    const clean = sanitizeAnalyticsProperties({
+      email: 'alex@example.com',
+      phone: '555-555-1212',
+      firstName: 'Alex',
+      message: 'My move details',
+      has_email: true,
+      has_phone: false,
+      source_page_path: '/contact-agent?email=alex@example.com',
+      destination_path: 'https://www.veteranpcs.com/contact-lender?phone=5555551212',
+      zip_code: '80920',
+      zip_prefix: '809',
+      state_code: 'tx',
+      first_touch_attribution: {
+        utm_source: 'google',
+        utm_campaign: 'pcs-guide',
+        email: 'alex@example.com',
+        landing_page_path: '/va-loan-guide?email=alex@example.com',
+      },
+    });
+
+    expect(clean).not.toHaveProperty('email');
+    expect(clean).not.toHaveProperty('phone');
+    expect(clean).not.toHaveProperty('firstName');
+    expect(clean).not.toHaveProperty('message');
+    expect(clean).not.toHaveProperty('zip_code');
+    expect(clean.has_email).toBe(true);
+    expect(clean.has_phone).toBe(false);
+    expect(clean.source_page_path).toBe('/contact-agent');
+    expect(clean.destination_path).toBe('/contact-lender');
+    expect(clean.zip_prefix).toBe('809');
+    expect(clean.state_code).toBe('TX');
+    expect(clean.first_touch_attribution).toEqual({
+      utm_source: 'google',
+      utm_campaign: 'pcs-guide',
+      landing_page_path: '/va-loan-guide',
+    });
+  });
+
+  it('turns validation errors into field codes without contact fields', () => {
+    expect(errorCodesFromErrors({
+      email: { message: 'Invalid email' },
+      phone: { message: 'Invalid phone' },
+      currentBase: { message: 'Required' },
+      state: { message: 'Required' },
+    })).toEqual(['currentbase', 'state']);
+  });
+
+  it('keeps only aggregate query and ZIP values for analytics', () => {
+    expect(queryMetrics('moving from Fort Carson to Austin')).toEqual({
+      query_length: 33,
+      query_word_count: 6,
+    });
+    expect(zipPrefix('80920-1234')).toBe('809');
+  });
+});

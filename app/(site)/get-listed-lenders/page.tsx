@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import posthog from "posthog-js";
 import GetListedLenders from "@/components/GetListedLenders/GetListedLenders";
 import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListedLendersProfileInfo";
 import GetListedLendersProfileInfoWantShareMore from "@/components/GetListedLenders/GetListedLendersProfileInfoWantShareMore";
@@ -50,15 +49,6 @@ export default function GetListedLendersPage() {
 
         // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
         if (server_response?.redirectUrl) {
-          const data = formData as any;
-          if (data.email) {
-            posthog.identify(data.email, {
-              firstName: data.firstName,
-              lastName: data.lastName,
-              email: data.email,
-            });
-          }
-          posthog.capture('get_listed_lender_submitted');
           router.push(server_response.redirectUrl);
         } else {
           console.error('No redirect URL found');

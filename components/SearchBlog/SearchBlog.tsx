@@ -6,6 +6,7 @@ import { excerpt } from "@/lib/blog/mdx";
 import type { BlogPost } from "@/lib/blog/types";
 import { BLOG_COMPONENTS } from "@/lib/blog/components";
 import BlogSearchForm from "@/components/BlogPage/BlogSearchForm";
+import { BlogSearchTracker } from "@/components/Analytics/Trackers";
 
 type Props = {
   searchedBlog: BlogPost[];
@@ -18,6 +19,7 @@ export default function SearchBlog({ searchedBlog, query }: Props) {
   if (!searchedBlog || searchedBlog.length === 0) {
     return (
       <div className="container mx-auto my-16 px-5">
+        <BlogSearchTracker query={query} resultCount={0} />
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-[#292F6C] tahoma text-[30px] font-bold md:text-[42px]">
             No results{trimmedQuery ? ` for "${trimmedQuery}"` : ''}
@@ -40,6 +42,7 @@ export default function SearchBlog({ searchedBlog, query }: Props) {
 
   return (
     <div className="container mx-auto md:mt-36 sm:mt-5 mt-5 px-5">
+      <BlogSearchTracker query={query} resultCount={searchedBlog.length} />
       <div className="max-w-3xl">
         <h1 className="text-[#292F6C] tahoma text-[30px] font-bold md:text-[42px]">
           {searchedBlog.length} result{searchedBlog.length === 1 ? '' : 's'}

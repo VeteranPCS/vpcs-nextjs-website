@@ -11,6 +11,8 @@ import {
   buildLenderLeadParams,
 } from '@/services/salesforceLeadParams';
 import { logError } from '@/services/loggingService';
+import { captureLeadConversionCreated } from '@/lib/analytics/server';
+import { evaluateLeadSpam } from '@/lib/spam-protection';
 
 vi.mock('server-only', () => ({}));
 
@@ -57,6 +59,26 @@ vi.mock('@/lib/spam-protection', () => ({
   tagSpamSuspected: vi.fn((comments?: string) => `[SPAM-SUSPECTED] ${comments ?? ''}`.trim()),
 }));
 
+vi.mock('@/lib/analytics/server', () => ({
+  VPCS_VISITOR_ID_W2L_FIELD_ID: '00NRg00000PjSD3MAN',
+  VPCS_SUBMISSION_ID_W2L_FIELD_ID: '00NRg00000PjSEfMAN',
+  appendSalesforceAttributionParams: vi.fn((
+    params: URLSearchParams,
+    formData: Record<string, unknown>,
+    submissionId: string,
+  ) => {
+    const visitorId = typeof formData.vpcs_visitor_id === 'string'
+      && formData.vpcs_visitor_id.startsWith('vpcs_')
+      ? formData.vpcs_visitor_id
+      : '';
+    params.set('00NRg00000PjSD3MAN', visitorId);
+    params.set('00NRg00000PjSEfMAN', submissionId);
+    return params;
+  }),
+  captureLeadConversionCreated: vi.fn(async () => undefined),
+  captureServerAnalyticsEvent: vi.fn(async () => undefined),
+}));
+
 vi.mock('@/services/formTrackingService', () => ({
   FormSubmissionStatus: {
     PENDING: 'PENDING',
@@ -83,6 +105,10 @@ function qaPayload() {
       'QA TEST - PR #88 concierge/lead smoke test for Jason Anderson. Do not treat as a real lead.',
     company_website: '',
     form_rendered_at: Date.now() - 5_000,
+    vpcs_visitor_id: 'vpcs_test_visitor_1234567890',
+    pageview_count_before_conversion: 3,
+    cta_click_count_before_conversion: 1,
+    form_attempt_count_before_conversion: 1,
   };
 }
 
@@ -98,6 +124,7 @@ function lenderPayload() {
     additionalComments: 'QA TEST - lender state routing smoke test.',
     company_website: '',
     form_rendered_at: Date.now() - 5_000,
+    vpcs_visitor_id: 'vpcs_test_lender_1234567890',
   };
 }
 
@@ -202,6 +229,19 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     expect(params.get('00N4x00000QQ1LB')).toBe('https://www.veteranpcs.com/contact-lender?sid=test');
   });
 
+  it('appends the fixed Web-to-Lead attribution fields when a submission id is present', () => {
+    const params = buildAgentLeadParams(
+      qaPayload(),
+      { id: '001AGENT' },
+      'https://www.veteranpcs.com/contact-agent?sid=test',
+      'https://www.veteranpcs.com',
+      'submission-test-id',
+    );
+
+    expect(params.get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
+    expect(params.get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
+  });
+
   it('accepts a Salesforce redirect response and sends notifications once', async () => {
     mockSalesforceResponse(
       "<html><script>window.location('https://www.veteranpcs.com/thank-you')</script></html>",
@@ -210,9 +250,14 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     const result = await contactAgentPostForm(qaPayload(), queryString);
 
-    expect(result).toEqual({ redirectUrl: 'https://www.veteranpcs.com/thank-you' });
+    expect(result).toEqual({
+      redirectUrl: 'https://www.veteranpcs.com/thank-you',
+      submissionId: 'submission-test-id',
+    });
     expect(salesforceBody().get('00N4x00000LspV2')).toBe('CO');
     expect(salesforceBody().get('00N4x00000QQ1LB')).toContain('sid=submission-test-id');
+    expect(salesforceBody().get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
+    expect(salesforceBody().get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(routeSalesforceLeadOwner).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -232,6 +277,21 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Colorado' }));
     expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
+    expect(captureLeadConversionCreated).toHaveBeenCalledWith(
+      expect.objectContaining({
+        formId: 'contact_agent',
+        leadSource: 'Contact Agent',
+        submissionId: 'submission-test-id',
+        stateCode: 'CO',
+        stateSlug: 'colorado',
+        partnerType: 'agent',
+        partnerSalesforceId: '0014x00000HWTqI',
+        formData: expect.objectContaining({
+          vpcs_visitor_id: 'vpcs_test_visitor_1234567890',
+          state: 'CO',
+        }),
+      }),
+    );
   });
 
   it('uses submitted form state when URL state is not derivable', async () => {
@@ -244,7 +304,10 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
       '?form=agent&fn=Jason&id=0014x00000HWTqI',
     );
 
-    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(result).toEqual({
+      message: 'Form submitted successfully!',
+      submissionId: 'submission-test-id',
+    });
     expect(salesforceBody().get('00N4x00000LspV2')).toBe('TX');
     expect(salesforceBody().get('00N4x00000Lpb0T')).toBe('QA Test Current Base');
     expect(salesforceBody().get('00N4x00000LspUs')).toBe('Austin QA Test');
@@ -298,7 +361,10 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
       '?form=lender&fn=Taylor&id=0014x00000Lender&state=texas',
     );
 
-    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(result).toEqual({
+      message: 'Form submitted successfully!',
+      submissionId: 'submission-test-id',
+    });
     expect(salesforceBody().get('00N4x00000LspV2')).toBe('TX');
     expect(routeSalesforceLeadOwner).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -327,7 +393,10 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     const result = await contactAgentPostForm(qaPayload(), queryString);
 
-    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(result).toEqual({
+      message: 'Form submitted successfully!',
+      submissionId: 'submission-test-id',
+    });
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
@@ -341,7 +410,10 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     const result = await contactAgentPostForm(qaPayload(), queryString);
 
-    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(result).toEqual({
+      message: 'Form submitted successfully!',
+      submissionId: 'submission-test-id',
+    });
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
@@ -365,7 +437,10 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     const result = await contactAgentPostForm(qaPayload(), queryString);
 
-    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(result).toEqual({
+      message: 'Form submitted successfully!',
+      submissionId: 'submission-test-id',
+    });
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
@@ -387,6 +462,23 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).not.toHaveBeenCalled();
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+  });
+
+  it('does not emit lead conversion telemetry for spam-quarantined leads', async () => {
+    vi.mocked(evaluateLeadSpam).mockResolvedValueOnce({ quarantine: true, reasons: ['honeypot'] });
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    const result = await contactAgentPostForm(qaPayload(), queryString);
+
+    expect(result).toEqual({
+      message: 'Form submitted successfully!',
+      submissionId: 'submission-test-id',
+    });
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
     expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
   });
 

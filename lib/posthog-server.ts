@@ -30,10 +30,14 @@ interface ServerEvent {
  */
 export async function captureServerEvent({ distinctId, event, properties }: ServerEvent): Promise<void> {
   try {
-    const client = getPostHogClient();
-    client.capture({ distinctId, event, properties });
-    await client.flush();
+    await captureServerEventStrict({ distinctId, event, properties });
   } catch {
     // best-effort: never surface analytics errors to the caller
   }
+}
+
+export async function captureServerEventStrict({ distinctId, event, properties }: ServerEvent): Promise<void> {
+  const client = getPostHogClient();
+  client.capture({ distinctId, event, properties });
+  await client.flush();
 }

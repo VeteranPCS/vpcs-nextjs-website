@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react"; // No need for useState or useEffect
-import posthog from "posthog-js";
 import "@/app/globals.css";
 import classes from "./KeepInTouch.module.css";
 import Image from "next/image";
@@ -14,6 +13,13 @@ import { KeepInTouchForm } from "@/services/salesForcePostFormsService";
 import { useRouter, usePathname } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
+import {
+  formTrackingPayload,
+  trackFormStarted,
+  trackFormSubmitAttempted,
+  trackFormSubmissionFailed,
+  trackFormValidationFailed,
+} from '@/lib/analytics/client';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 interface ContactFormData {
@@ -55,28 +61,30 @@ const KeepInTouch = () => {
 
   const handleFormSubmission = async (data: ContactFormData) => {
     setIsSubmitting(true);
+    trackFormSubmitAttempted('keep_in_touch', {
+      has_email: Boolean(data.email),
+      has_phone: false,
+    });
     try {
       sendGTMEvent({
         event: 'keep_in_touch_form_submission',
         page: pathname,
       });
-      const server_response = await KeepInTouchForm({ ...data, ...getSpamFields() });
+      const server_response = await KeepInTouchForm({
+        ...data,
+        ...getSpamFields(),
+        ...formTrackingPayload(),
+      });
       if (server_response?.success) {
-        if (data.email) {
-          posthog.identify(data.email, {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-          });
-        }
-        posthog.capture('keep_in_touch_submitted', { page: pathname });
         reset();
         window.location.href = `${BASE_URL}/thank-you`;
         return;
       } else {
+        trackFormSubmissionFailed('keep_in_touch', 'server_submission', ['no_success_response']);
         console.log("No redirect URL found");
       }
     } catch (error) {
+      trackFormSubmissionFailed('keep_in_touch', 'server_submission', ['submission_exception']);
       console.error('Error submitting form:', error);
     } finally {
       setIsSubmitting(false);
@@ -101,6 +109,10 @@ const KeepInTouch = () => {
     return error ? (
       <span className="text-error">{error.message}</span>
     ) : null;
+  };
+
+  const handleInvalidSubmit = (formErrors: typeof errors) => {
+    trackFormValidationFailed('keep_in_touch', formErrors);
   };
 
   return (
@@ -143,7 +155,10 @@ const KeepInTouch = () => {
           </div>
           <div className="mt-5 lg:mt-0 md:mt-0 sm:mt-5">
             <div className={classes.CustomResponsiveCenter}>
-              <form onSubmit={handleSubmit(handleFormSubmission)}>
+              <form
+                onSubmit={handleSubmit(handleFormSubmission, handleInvalidSubmit)}
+                onFocus={() => trackFormStarted('keep_in_touch')}
+              >
                 <h2 className="lg:text-[36px] sm:text-[25px] text-[25px] poppins font-bold text-primary lg:text-left md:text-left sm:text-center text-center">
                   Keep In Touch
                 </h2>

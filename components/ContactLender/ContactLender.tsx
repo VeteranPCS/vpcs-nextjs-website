@@ -10,6 +10,12 @@ import { featureFlags } from '@/lib/feature-flags';
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 import StateSelect from '@/components/common/StateSelect';
 import { contactLenderClientSchema } from '@/lib/validation/contactForms';
+import {
+  trackFormStarted,
+  trackFormSubmitAttempted,
+  trackFormSubmissionFailed,
+  trackFormValidationFailed,
+} from '@/lib/analytics/client';
 
 // Props type for ContactForm component
 interface ContactFormProps {
@@ -65,13 +71,26 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
   // Form submit handler
   const handleFormSubmit: SubmitHandler<ContactLenderFormData> = async (data) => {
     setIsSubmitting(true);
+    trackFormSubmitAttempted('contact_lender', {
+      has_email: Boolean(data.email),
+      has_phone: Boolean(data.phone),
+      state_code: data.state,
+    });
     try {
-      await onSubmit({ ...data, ...getSpamFields() });
+      const response = await onSubmit({ ...data, ...getSpamFields() });
+      if (!response?.success && !response?.redirectUrl) {
+        trackFormSubmissionFailed('contact_lender', 'server_submission', ['no_success_response']);
+      }
     } catch (error) {
+      trackFormSubmissionFailed('contact_lender', 'server_submission', ['submission_exception']);
       console.error('Error submitting form:', error);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleInvalidSubmit = (formErrors: typeof errors) => {
+    trackFormValidationFailed('contact_lender', formErrors);
   };
 
   // Error rendering function
@@ -93,7 +112,10 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
   return (
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
-        <form onSubmit={handleSubmit(handleFormSubmit)}>
+        <form
+          onSubmit={handleSubmit(handleFormSubmit, handleInvalidSubmit)}
+          onFocus={() => trackFormStarted('contact_lender')}
+        >
           <HoneypotField ref={honeypotRef} />
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">

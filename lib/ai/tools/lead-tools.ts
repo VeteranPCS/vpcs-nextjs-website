@@ -16,6 +16,8 @@ import {
 } from '@/lib/ai/tools/types';
 import { INTERNAL_CALL_TOKEN } from '@/lib/internal-call-token';
 import { SUCCESS_MESSAGE } from '@/lib/ai/tools/messages';
+import { captureServerAnalyticsEvent } from '@/lib/analytics/server';
+import { normalizeStateCode, normalizeStateSlug } from '@/lib/states';
 
 interface LeadSuccess {
   kind: 'agent' | 'lender' | 'general' | 'va_guide';
@@ -40,6 +42,45 @@ function composeAdditionalComments(parts: Array<[string, string | undefined]>): 
   return `${prefix} ${filled.join(' | ')}`.trim();
 }
 
+type SubmitToolName =
+  | 'submitAgentRequest'
+  | 'submitLenderRequest'
+  | 'submitGeneralInquiry'
+  | 'submitVALoanGuideRequest';
+
+function safeContext(analyticsContext: Record<string, unknown>): Record<string, unknown> {
+  return {
+    vpcs_visitor_id: analyticsContext.vpcs_visitor_id,
+    source_page_path: analyticsContext.source_page_path,
+    first_touch_attribution: analyticsContext.first_touch_attribution,
+    last_touch_attribution: analyticsContext.last_touch_attribution,
+    pageview_count_before_conversion: analyticsContext.pageview_count_before_conversion,
+    cta_click_count_before_conversion: analyticsContext.cta_click_count_before_conversion,
+    form_attempt_count_before_conversion: analyticsContext.form_attempt_count_before_conversion,
+  };
+}
+
+export function buildLeadTools(analyticsContext: Record<string, unknown> = {}) {
+const analyticsFormContext = safeContext(analyticsContext);
+
+async function captureToolTelemetry(
+  event: 'concierge_tool_submitted' | 'concierge_tool_completed' | 'concierge_tool_failed',
+  toolName: SubmitToolName,
+  properties: Record<string, unknown> = {},
+) {
+  await captureServerAnalyticsEvent({
+    event,
+    distinctId: typeof analyticsFormContext.vpcs_visitor_id === 'string'
+      ? analyticsFormContext.vpcs_visitor_id
+      : undefined,
+    properties: {
+      ...analyticsFormContext,
+      tool_name: toolName,
+      ...properties,
+    },
+  });
+}
+
 // --- Agent ---
 
 const submitAgentRequestTool = tool({
@@ -47,7 +88,16 @@ const submitAgentRequestTool = tool({
   inputSchema: agentRequestSchema,
   needsApproval: true,
   execute: async (input): Promise<ToolResult<LeadSuccess>> => {
+    const toolName = 'submitAgentRequest';
+    const stateCode = normalizeStateCode(input.destinationState) ?? undefined;
+    const stateSlug = normalizeStateSlug(input.destinationState) ?? undefined;
     try {
+      await captureToolTelemetry('concierge_tool_submitted', toolName, {
+        form_id: 'contact_agent',
+        lead_source: 'Contact Agent',
+        state_code: stateCode,
+        state_slug: stateSlug,
+      });
       const additionalComments = composeAdditionalComments([
         ['Rank', input.rank],
         ['Branch', input.branch],
@@ -63,12 +113,19 @@ const submitAgentRequestTool = tool({
         currentBase: input.currentLocation ?? '',
         branch_select: input.branch ?? '',
         additionalComments,
+        ...analyticsFormContext,
       };
       logInfo('Concierge tool: submitAgentRequest', {
         destinationState: input.destinationState,
         hasMessage: Boolean(input.message),
       });
       await contactAgentPostForm(formData, '', { internalCallToken: INTERNAL_CALL_TOKEN });
+      await captureToolTelemetry('concierge_tool_completed', toolName, {
+        form_id: 'contact_agent',
+        lead_source: 'Contact Agent',
+        state_code: stateCode,
+        state_slug: stateSlug,
+      });
       return {
         ok: true,
         data: { kind: 'agent', message: SUCCESS_MESSAGE },
@@ -79,6 +136,14 @@ const submitAgentRequestTool = tool({
         { destinationState: input.destinationState },
         error,
       );
+      await captureToolTelemetry('concierge_tool_failed', toolName, {
+        form_id: 'contact_agent',
+        lead_source: 'Contact Agent',
+        state_code: stateCode,
+        state_slug: stateSlug,
+        failure_stage: 'tool_execute',
+        error_codes: ['submission_failed'],
+      });
       return { ok: false, error: errorMessage(error) };
     }
   },
@@ -91,7 +156,16 @@ const submitLenderRequestTool = tool({
   inputSchema: lenderRequestSchema,
   needsApproval: true,
   execute: async (input): Promise<ToolResult<LeadSuccess>> => {
+    const toolName = 'submitLenderRequest';
+    const stateCode = normalizeStateCode(input.destinationState) ?? undefined;
+    const stateSlug = normalizeStateSlug(input.destinationState) ?? undefined;
     try {
+      await captureToolTelemetry('concierge_tool_submitted', toolName, {
+        form_id: 'contact_lender',
+        lead_source: 'Contact Lender',
+        state_code: stateCode,
+        state_slug: stateSlug,
+      });
       const additionalComments = composeAdditionalComments([
         ['Destination state', input.destinationState],
         ['Destination city', input.destinationCity],
@@ -104,13 +178,21 @@ const submitLenderRequestTool = tool({
         email: input.email,
         phone: input.phone,
         currentBase: input.destinationCity ?? '',
+        state: input.destinationState,
         additionalComments,
+        ...analyticsFormContext,
       };
       logInfo('Concierge tool: submitLenderRequest', {
         destinationState: input.destinationState,
         hasMessage: Boolean(input.message),
       });
       await contactLenderPostForm(formData, '', { internalCallToken: INTERNAL_CALL_TOKEN });
+      await captureToolTelemetry('concierge_tool_completed', toolName, {
+        form_id: 'contact_lender',
+        lead_source: 'Contact Lender',
+        state_code: stateCode,
+        state_slug: stateSlug,
+      });
       return {
         ok: true,
         data: { kind: 'lender', message: SUCCESS_MESSAGE },
@@ -121,6 +203,14 @@ const submitLenderRequestTool = tool({
         { destinationState: input.destinationState },
         error,
       );
+      await captureToolTelemetry('concierge_tool_failed', toolName, {
+        form_id: 'contact_lender',
+        lead_source: 'Contact Lender',
+        state_code: stateCode,
+        state_slug: stateSlug,
+        failure_stage: 'tool_execute',
+        error_codes: ['submission_failed'],
+      });
       return { ok: false, error: errorMessage(error) };
     }
   },
@@ -133,7 +223,12 @@ const submitGeneralInquiryTool = tool({
   inputSchema: generalInquirySchema,
   needsApproval: true,
   execute: async (input): Promise<ToolResult<LeadSuccess>> => {
+    const toolName = 'submitGeneralInquiry';
     try {
+      await captureToolTelemetry('concierge_tool_submitted', toolName, {
+        form_id: 'contact_form',
+        lead_source: 'Contact Form',
+      });
       const additionalComments = composeAdditionalComments([
         ['Subject', input.subject],
         ['Phone', input.phone],
@@ -145,17 +240,28 @@ const submitGeneralInquiryTool = tool({
         email: input.email,
         phone: input.phone,
         additionalComments,
+        ...analyticsFormContext,
       };
       logInfo('Concierge tool: submitGeneralInquiry', {
         hasSubject: Boolean(input.subject),
       });
       await contactPostForm(formData, { internalCallToken: INTERNAL_CALL_TOKEN });
+      await captureToolTelemetry('concierge_tool_completed', toolName, {
+        form_id: 'contact_form',
+        lead_source: 'Contact Form',
+      });
       return {
         ok: true,
         data: { kind: 'general', message: SUCCESS_MESSAGE },
       };
     } catch (error) {
       logError('Concierge tool: submitGeneralInquiry failed', undefined, error);
+      await captureToolTelemetry('concierge_tool_failed', toolName, {
+        form_id: 'contact_form',
+        lead_source: 'Contact Form',
+        failure_stage: 'tool_execute',
+        error_codes: ['submission_failed'],
+      });
       return { ok: false, error: errorMessage(error) };
     }
   },
@@ -168,7 +274,17 @@ const submitVALoanGuideRequestTool = tool({
   inputSchema: vaLoanGuideSchema,
   needsApproval: true,
   execute: async (input): Promise<ToolResult<LeadSuccess>> => {
+    const toolName = 'submitVALoanGuideRequest';
+    const stateCode = normalizeStateCode(input.destinationState) ?? undefined;
+    const stateSlug = normalizeStateSlug(input.destinationState) ?? undefined;
     try {
+      await captureToolTelemetry('concierge_tool_submitted', toolName, {
+        form_id: 'va_loan_guide',
+        lead_source: 'VA Loan Guide',
+        guide_id: 'va_loan_guide',
+        state_code: stateCode,
+        state_slug: stateSlug,
+      });
       const additionalComments = composeAdditionalComments([
         ['Destination state', input.destinationState],
         ['Phone', input.phone],
@@ -180,11 +296,19 @@ const submitVALoanGuideRequestTool = tool({
         phone: input.phone,
         state: input.destinationState ?? '',
         additionalComments,
+        ...analyticsFormContext,
       };
       logInfo('Concierge tool: submitVALoanGuideRequest', {
         hasState: Boolean(input.destinationState),
       });
       await vaLoanGuideForm(formData, { internalCallToken: INTERNAL_CALL_TOKEN });
+      await captureToolTelemetry('concierge_tool_completed', toolName, {
+        form_id: 'va_loan_guide',
+        lead_source: 'VA Loan Guide',
+        guide_id: 'va_loan_guide',
+        state_code: stateCode,
+        state_slug: stateSlug,
+      });
       return {
         ok: true,
         data: { kind: 'va_guide', message: SUCCESS_MESSAGE },
@@ -195,14 +319,24 @@ const submitVALoanGuideRequestTool = tool({
         undefined,
         error,
       );
+      await captureToolTelemetry('concierge_tool_failed', toolName, {
+        form_id: 'va_loan_guide',
+        lead_source: 'VA Loan Guide',
+        guide_id: 'va_loan_guide',
+        state_code: stateCode,
+        state_slug: stateSlug,
+        failure_stage: 'tool_execute',
+        error_codes: ['submission_failed'],
+      });
       return { ok: false, error: errorMessage(error) };
     }
   },
 });
 
-export const leadTools = {
+return {
   submitAgentRequest: submitAgentRequestTool,
   submitLenderRequest: submitLenderRequestTool,
   submitGeneralInquiry: submitGeneralInquiryTool,
   submitVALoanGuideRequest: submitVALoanGuideRequestTool,
 };
+}

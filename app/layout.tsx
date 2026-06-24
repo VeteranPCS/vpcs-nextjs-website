@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Inter, Poppins, Roboto, Lora } from "next/font/google";
 import "./globals.css";
+import { Suspense } from "react";
 import { RealEstateAgent, WithContext } from "schema-dts";
 import Script from "next/script";
 import { GoogleTagManager } from '@next/third-parties/google'
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { PageviewTracker } from "@/components/Analytics/Trackers";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const GTM_ID = process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID || "";
@@ -159,6 +161,9 @@ export default function RootLayout({
                 <Script id={`json-ld-real-estate-agent`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
             </head>
             <body className={inter.className}>
+                <Suspense fallback={null}>
+                    <PageviewTracker />
+                </Suspense>
                 {children}
                 <SpeedInsights />
             </body>

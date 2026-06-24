@@ -9,6 +9,7 @@ import StatePageLetFindAgent from "@/components/StatePage/StatePageLetFindAgent/
 import StatePageWhyChooseVetpcs from "@/components/StatePage/StatePageWhyChooseVetpcs/StatePageWhyChooseVetpcs";
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
+import { StatePageViewedTracker } from "@/components/Analytics/Trackers";
 import stateService, { StateList as StateList, AgentsData, LendersData, Lenders } from "@/services/stateService";
 import {
   buildStateLocalBusiness,
@@ -176,8 +177,9 @@ export default async function StatePage(props: { params: Promise<{ state: string
       <StatePageHeroSecondSection
         stateName={state_data?.state_name || 'Unknown'}
       />
+      <StatePageViewedTracker stateCode={state_code} stateSlug={state} />
       <StatePageVaLoan cityName={state_data?.state_name || 'Unknown'} lendersData={lenders_data} state={state} />
-      <StatePageCTA cityName={state_data?.state_name || 'Unknown'} />
+      <StatePageCTA cityName={state_data?.state_name || 'Unknown'} stateSlug={state} />
 
       <StatePageRelatedGuides
         stateName={stateName}
