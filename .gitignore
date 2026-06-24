@@ -52,5 +52,8 @@ docs/migration
 # blog migration raw dumps (recon)
 /docs/blog-migration/raw
 
+# blog update raw audit dumps (recon)
+/docs/blog-updates/raw
+
 # AI-first project journal — local only
 docs/ai-first/
