@@ -1,8 +1,9 @@
 {
-  "contentHash": "77aa887d3111c0a8c4caefda2853d1735e35fc5b09212cb8322084dac3ac0f99",
-  "totalPosts": 320,
+  "contentHash": "8ac2128b6da63bc0f057e234d59f0b59b7ab9677b9c69815d387ce0aad922ce4",
+  "totalPosts": 324,
   "byComponent": {
     "Financial Guidance": [
+      "2026-bah-rates-what-changed-and-how-to-check-yours",
       "alabama-veteran-property-tax-exemptions-2026",
       "alaska-veteran-property-tax-exemptions-2026",
       "arizona-veteran-property-tax-exemptions-2026",
@@ -29,6 +30,7 @@
       "maryland-veteran-property-tax-exemptions-2026",
       "massachusetts-veteran-property-tax-exemptions-2026",
       "michigan-veteran-property-tax-exemptions-2026",
+      "military-capital-gains-exclusion-selling-your-home",
       "minnesota-veteran-property-tax-exemptions-2026",
       "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
@@ -46,6 +48,7 @@
       "oregon-veteran-property-tax-exemptions-2026",
       "pennsylvania-veteran-property-tax-exemptions-2026",
       "rhode-island-veteran-property-tax-exemptions-2026",
+      "san-diego-bah-2026-what-your-allowance-covers",
       "south-carolina-veteran-property-tax-exemptions-2026",
       "south-dakota-veteran-property-tax-exemptions-2026",
       "tennessee-veteran-property-tax-exemptions-2026",
@@ -144,6 +147,7 @@
       "pcsing-to-san-diego-top-military-friendly-neighborhoods-and-resources",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "percheron-colorado-springs-master-planned-community-near-colorado-military-bases",
+      "ppm-move-how-to-maximize-your-incentive-2026",
       "prepare-to-pcs-how-do-i-prepare-for-movers",
       "prepare-to-pcs-understanding-your-pcs-entitlements-and-benefits",
       "prepare-to-pcs-what-military-movers-wont-pack-in-2024",
@@ -339,6 +343,7 @@
   },
   "byComponentSlug": {
     "financial-guidance": [
+      "2026-bah-rates-what-changed-and-how-to-check-yours",
       "alabama-veteran-property-tax-exemptions-2026",
       "alaska-veteran-property-tax-exemptions-2026",
       "arizona-veteran-property-tax-exemptions-2026",
@@ -365,6 +370,7 @@
       "maryland-veteran-property-tax-exemptions-2026",
       "massachusetts-veteran-property-tax-exemptions-2026",
       "michigan-veteran-property-tax-exemptions-2026",
+      "military-capital-gains-exclusion-selling-your-home",
       "minnesota-veteran-property-tax-exemptions-2026",
       "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
@@ -382,6 +388,7 @@
       "oregon-veteran-property-tax-exemptions-2026",
       "pennsylvania-veteran-property-tax-exemptions-2026",
       "rhode-island-veteran-property-tax-exemptions-2026",
+      "san-diego-bah-2026-what-your-allowance-covers",
       "south-carolina-veteran-property-tax-exemptions-2026",
       "south-dakota-veteran-property-tax-exemptions-2026",
       "tennessee-veteran-property-tax-exemptions-2026",
@@ -480,6 +487,7 @@
       "pcsing-to-san-diego-top-military-friendly-neighborhoods-and-resources",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "percheron-colorado-springs-master-planned-community-near-colorado-military-bases",
+      "ppm-move-how-to-maximize-your-incentive-2026",
       "prepare-to-pcs-how-do-i-prepare-for-movers",
       "prepare-to-pcs-understanding-your-pcs-entitlements-and-benefits",
       "prepare-to-pcs-what-military-movers-wont-pack-in-2024",
@@ -715,6 +723,7 @@
       "pcs-to-travis-afb-fairfield-2026-guide",
       "pcs-to-vandenberg-sfb-2026-guide",
       "pcsing-to-san-diego-top-military-friendly-neighborhoods-and-resources",
+      "san-diego-bah-2026-what-your-allowance-covers",
       "top-things-to-do-near-san-diego-military-bases",
       "what-military-bases-are-in-california"
     ],
@@ -1004,15 +1013,16 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 228,
+    "resolved": 229,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 204,
+      "frontmatter-state-slug": 205,
       "slug-heuristic": 21,
       "state-map-post": 1
     },
     "unmappedHighIntent": [
       "12-tips-for-a-successful-pcs-move-or-home-relocation",
+      "2026-bah-rates-what-changed-and-how-to-check-yours",
       "best-places-to-live-near-philadelphia-military-bases",
       "buying-a-home-sight-unseen-during-a-pcs-move",
       "choosing-the-best-relocation-method-for-your-pcs",
@@ -1114,6 +1124,39 @@
         "11. Plan early for pets and overseas rules",
         "12. Build a moving budget and a cash cushion",
         "More PCS Planning Resources"
+      ]
+    },
+    {
+      "slug": "2026-bah-rates-what-changed-and-how-to-check-yours",
+      "title": "2026 BAH Rates: What Changed and How to Check Yours",
+      "url": "/blog/2026-bah-rates-what-changed-and-how-to-check-yours",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "Your 2026 BAH went up an average of 4.2%. Here is what changed, why you may still pay a little out of pocket, and how to confirm your exact rate.",
+      "publishedAt": "2026-06-29T09:00:00.000Z",
+      "updatedAt": "2026-06-23T12:00:00.000Z",
+      "primaryKeyword": "2026 bah rates",
+      "secondaryKeywords": [
+        "bah increase 2026",
+        "bah out of pocket 2026",
+        "basic allowance for housing 2026",
+        "check my bah rate",
+        "how is bah calculated"
+      ],
+      "h2Outline": [
+        "What Changed for 2026",
+        "How Your BAH Rate Is Set",
+        "Why You May Still Pay Out of Pocket",
+        "How to Check Your Exact 2026 Rate",
+        "Should You Rent or Buy With Your BAH?",
+        "Frequently Asked Questions",
+        "The Bottom Line"
       ]
     },
     {
@@ -3356,6 +3399,39 @@
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "military-capital-gains-exclusion-selling-your-home",
+      "title": "Military Capital Gains Exclusion When Selling Your Home",
+      "url": "/blog/military-capital-gains-exclusion-selling-your-home",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "Real Estate Insights"
+      ],
+      "description": "Active-duty service can pause the IRS home-sale clock for up to 10 years. Here is how the military capital gains exclusion lets you avoid tax on more gain.",
+      "publishedAt": "2026-07-01T09:00:00.000Z",
+      "updatedAt": "2026-06-23T12:00:00.000Z",
+      "primaryKeyword": "military capital gains exclusion",
+      "secondaryKeywords": [
+        "capital gains pcs",
+        "military home sale tax exclusion",
+        "military tax home sale",
+        "section 121 military extension",
+        "selling a home capital gains military"
+      ],
+      "h2Outline": [
+        "The Basic Home-Sale Exclusion",
+        "Why the Standard Rule Hurts Military Families",
+        "The Military Suspension: Up to 10 Extra Years",
+        "A Simple Example",
+        "How This Fits Your PCS Decisions",
+        "Frequently Asked Questions",
+        "The Bottom Line"
       ]
     },
     {
@@ -7970,6 +8046,39 @@
       ]
     },
     {
+      "slug": "ppm-move-how-to-maximize-your-incentive-2026",
+      "title": "PPM Move in 2026: How to Maximize Your DITY Move Payout",
+      "url": "/blog/ppm-move-how-to-maximize-your-incentive-2026",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "A personally procured move (PPM or DITY) can pay you to move your own household goods. Here is how the 2026 incentive works and how to maximize it.",
+      "publishedAt": "2026-06-30T09:00:00.000Z",
+      "updatedAt": "2026-06-23T12:00:00.000Z",
+      "primaryKeyword": "ppm move",
+      "secondaryKeywords": [
+        "dity move 2026",
+        "how does a ppm move work",
+        "personally procured move payment",
+        "ppm incentive",
+        "ppm move taxable"
+      ],
+      "h2Outline": [
+        "What a PPM Move Actually Pays",
+        "How the Payment Is Calculated",
+        "The PPM Process, Step by Step",
+        "How to Maximize Your PPM Payout",
+        "Is a PPM Move Taxable?",
+        "Frequently Asked Questions",
+        "The Bottom Line"
+      ]
+    },
+    {
       "slug": "prepare-to-pcs-how-do-i-prepare-for-movers",
       "title": "Prepare to PCS: How do I prepare for movers?",
       "url": "/blog/prepare-to-pcs-how-do-i-prepare-for-movers",
@@ -8141,6 +8250,38 @@
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "san-diego-bah-2026-what-your-allowance-covers",
+      "title": "San Diego BAH 2026: What Your Housing Allowance Covers",
+      "url": "/blog/san-diego-bah-2026-what-your-allowance-covers",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "california",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance",
+        "US Military Bases"
+      ],
+      "description": "See the 2026 San Diego BAH rates by pay grade, how far they stretch against local rents and home prices, and whether renting or buying makes more sense.",
+      "publishedAt": "2026-07-02T09:00:00.000Z",
+      "updatedAt": "2026-06-23T12:00:00.000Z",
+      "primaryKeyword": "san diego bah 2026",
+      "secondaryKeywords": [
+        "bah ca038",
+        "san diego bah rates",
+        "san diego buy vs rent military",
+        "san diego military housing allowance",
+        "san diego va loan"
+      ],
+      "h2Outline": [
+        "2026 San Diego BAH Rates by Pay Grade",
+        "What Your BAH Covers Against San Diego Prices",
+        "Should You Rent or Buy in San Diego?",
+        "Getting to Know the Area",
+        "Frequently Asked Questions",
+        "The Bottom Line"
       ]
     },
     {
@@ -9738,7 +9879,7 @@
       ],
       "description": "California has the largest military population in the United States, with over 157,000 active-duty personnel and more than 800,000 veterans. The military contributes over $90 billion annually to the state's economy and supports over 700,...",
       "publishedAt": "2023-10-14T01:19:32.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "updatedAt": "2026-06-23T00:00:00.000Z",
       "primaryKeyword": "california air force bases",
       "secondaryKeywords": [
         "air force bases in california",
@@ -9886,7 +10027,7 @@
       ],
       "description": "Georgia has played a pivotal role in U.S. military history, from the American Revolution to modern-day defense operations. With thirteen active military installations, the state remains a key hub for national security, training, and logi...",
       "publishedAt": "2024-06-25T13:47:49.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "updatedAt": "2026-06-23T00:00:00.000Z",
       "primaryKeyword": "military forts in georgia",
       "secondaryKeywords": [
         "air force base georgia",
