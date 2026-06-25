@@ -24,9 +24,6 @@ export type AnalyticsEventName =
   | 'moving_bonus_calculated'
   | 'calculator_cta_clicked'
   | 'cta_clicked'
-  | 'agent_card_clicked'
-  | 'lender_card_clicked'
-  | 'contact_click'
   | 'form_started'
   | 'form_submit_attempted'
   | 'form_validation_failed'
@@ -50,9 +47,6 @@ const EVENT_STAGE: Record<AnalyticsEventName, JourneyStage> = {
   moving_bonus_calculated: 'top',
   calculator_cta_clicked: 'mid',
   cta_clicked: 'mid',
-  agent_card_clicked: 'mid',
-  lender_card_clicked: 'mid',
-  contact_click: 'mid',
   form_started: 'mid',
   form_submit_attempted: 'mid',
   form_validation_failed: 'mid',

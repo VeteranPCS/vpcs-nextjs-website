@@ -18,6 +18,7 @@ VeteranPCS is a Next.js site that connects active-duty service members, veterans
 - **CMS:** Sanity (`next-sanity`, GROQ). Studio mounted at `/studio`.
 - **CRM:** Salesforce REST (SOQL); token retrieval via `services/salesForceTokenService.tsx`, queries via `services/api.tsx` + `services/stateService.tsx`.
 - **AI:** Vercel AI SDK v6 (`ai`, `@ai-sdk/react`) routed through **Vercel AI Gateway** (model id `anthropic/Codex-sonnet-4-6` in `lib/ai/models.ts`). No direct provider SDK is wired up — use the Gateway.
+- **Telemetry:** PostHog is the primary funnel telemetry source; GA/GTM is a comparator. Taxonomy and troubleshooting live in `docs/analytics/telemetry-taxonomy.md`.
 - **Rate limit + bot defense:** `@upstash/ratelimit` + Upstash Redis, `botid` (Vercel BotID), both applied in `app/api/chat/route.ts`.
 - **Notifications:** Slack webhook (`actions/sendToSlack.ts`), OpenPhone SMS (`actions/sendOpenPhoneMessage.ts`). No Resend on this branch.
 - **Test runner:** Vitest 3 (Node env, `**/__tests__/**/*.test.ts`). Pre-commit does NOT run tests yet — run `npm test` before pushing AI-touching changes.
@@ -68,6 +69,7 @@ scripts/               Node scripts (audits, ingest, headshot classify, etc.)
 emails/                React Email templates (other branches; unused here)
 docs/
   ai-first/PROJECT.md  AI-first journal — read this for current goals/status
+  analytics/           PostHog taxonomy, GA/GTM comparator, Salesforce joins
   REVERSION-PLAN.md    why we stayed on Salesforce (vs. the Attio migration)
   salesforce-schema/   Salesforce field reference
 ```
