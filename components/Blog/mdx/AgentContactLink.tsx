@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import Link from 'next/link';
+import TrackedCtaLink from '@/components/common/TrackedCtaLink';
 import {
   getAuthorContactHref,
   resolveAuthor,
@@ -32,8 +32,23 @@ export default async function AgentContactLink({
   const href = getAuthorContactHref(author, authorInput);
 
   return (
-    <Link href={href} className="text-[#A81F23] underline hover:text-[#871B1C]">
+    <TrackedCtaLink
+      href={href}
+      className="text-[#A81F23] underline hover:text-[#871B1C]"
+      cta={{
+        ctaId: 'blog_mdx_agent_contact',
+        ctaIntent: 'contact_agent',
+        ctaPosition: 'mdx_body',
+        ctaComponent: 'blog_mdx_agent_contact_link',
+        ctaLabel: 'Agent contact link',
+        destination: href,
+        pageType: 'blog_post',
+        stateSlug,
+        partnerType: 'agent',
+        partnerSalesforceId: salesforceId,
+      }}
+    >
       {children}
-    </Link>
+    </TrackedCtaLink>
   );
 }

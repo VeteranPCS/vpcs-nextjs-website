@@ -4,7 +4,7 @@ import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
 import aboutService from "@/services/aboutService";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 interface ImageAsset {
     image_url?: string;
 }
@@ -59,11 +59,23 @@ const SupportOurVeterans = async () => {
                                         </p>
                                     </div>
                                     <div className="flex justify-start">
-                                        <Link href="/contact-agent">
+                                        <TrackedCtaLink
+                                            href="/contact-agent"
+                                            cta={{
+                                                ctaId: 'about_support_agent',
+                                                ctaIntent: 'contact_agent',
+                                                ctaPosition: 'about_support',
+                                                ctaComponent: 'support_our_veterans',
+                                                ctaLabel: pageData?.buttonText_1 || 'Contact Agent',
+                                                destination: '/contact-agent',
+                                                pageType: 'about',
+                                                partnerType: 'agent',
+                                            }}
+                                        >
                                             <Button
                                                 buttonText={pageData?.buttonText_1 || "Default Button"}
                                             />
-                                        </Link>
+                                        </TrackedCtaLink>
                                     </div>
                                 </div>
                                 <div>
@@ -91,14 +103,23 @@ const SupportOurVeterans = async () => {
                                             {pageData?.description_2}
                                         </p>
                                     </div>
-                                    <Link
+                                    <TrackedCtaLink
                                         href="/impact"
                                         className="flex lg:justify-start md:justify-start sm:justify-start justify-start items-center"
+                                        cta={{
+                                            ctaId: 'about_support_impact',
+                                            ctaIntent: 'impact_navigation',
+                                            ctaPosition: 'about_support',
+                                            ctaComponent: 'support_our_veterans',
+                                            ctaLabel: pageData?.buttonText_2 || 'Impact',
+                                            destination: '/impact',
+                                            pageType: 'about',
+                                        }}
                                     >
                                         <Button
                                             buttonText={pageData?.buttonText_2 || "Default Button"}
                                         />
-                                    </Link>
+                                    </TrackedCtaLink>
                                 </div>
                             </div>
                         </div>

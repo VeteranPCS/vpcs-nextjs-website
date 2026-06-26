@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./BlogDetailsCta.module.css";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const BlogDetailsCta = () => {
   return (
@@ -15,9 +15,21 @@ const BlogDetailsCta = () => {
               </h2>
             </div>
             <div>
-              <Link href="/contact-agent">
+              <TrackedCtaLink
+                href="/contact-agent"
+                cta={{
+                  ctaId: 'blog_details_find_agent',
+                  ctaIntent: 'contact_agent',
+                  ctaPosition: 'blog_details_cta_band',
+                  ctaComponent: 'blog_details_cta',
+                  ctaLabel: 'Find An Agent',
+                  destination: '/contact-agent',
+                  pageType: 'blog_post',
+                  partnerType: 'agent',
+                }}
+              >
                 <Button buttonText="Find An Agent" />
-              </Link>
+              </TrackedCtaLink>
             </div>
             <div>
               <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold">
@@ -25,9 +37,21 @@ const BlogDetailsCta = () => {
               </h2>
             </div>
             <div>
-              <Link href="/contact-lender">
+              <TrackedCtaLink
+                href="/contact-lender"
+                cta={{
+                  ctaId: 'blog_details_find_lender',
+                  ctaIntent: 'contact_lender',
+                  ctaPosition: 'blog_details_cta_band',
+                  ctaComponent: 'blog_details_cta',
+                  ctaLabel: 'Find A Lender',
+                  destination: '/contact-lender',
+                  pageType: 'blog_post',
+                  partnerType: 'lender',
+                }}
+              >
                 <Button buttonText="Find A Lender" />
-              </Link>
+              </TrackedCtaLink>
             </div>
           </div>
         </div>

@@ -1,12 +1,14 @@
-import Link from 'next/link';
+import TrackedCtaLink from '@/components/common/TrackedCtaLink';
 import type { InternalLinkRegistryPost } from '@/lib/blog/registry';
 
 type Props = {
   stateName: string;
   guides: InternalLinkRegistryPost[];
+  stateSlug: string;
+  stateCode?: string;
 };
 
-export default function StatePageRelatedGuides({ stateName, guides }: Props) {
+export default function StatePageRelatedGuides({ stateName, guides, stateSlug, stateCode }: Props) {
   if (guides.length === 0) return null;
 
   return (
@@ -25,10 +27,23 @@ export default function StatePageRelatedGuides({ stateName, guides }: Props) {
         </div>
         <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {guides.map((guide) => (
-            <Link
+            <TrackedCtaLink
               key={guide.slug}
               href={guide.url}
               className="group flex min-h-[210px] flex-col justify-between rounded-lg border border-[#E5E7EB] bg-[#F8F9FA] p-5 transition hover:-translate-y-1 hover:border-[#A81F23] hover:bg-white hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A81F23]"
+              cta={{
+                ctaId: 'state_related_guide',
+                ctaIntent: 'content_navigation',
+                ctaPosition: 'state_related_guides',
+                ctaComponent: 'state_page_related_guides',
+                ctaLabel: 'Read guide',
+                destination: guide.url,
+                pageType: 'state_page',
+                stateCode,
+                stateSlug,
+                contentSlug: guide.slug,
+                contentType: 'blog_post',
+              }}
             >
               <div>
                 <p className="tahoma text-xs font-bold uppercase tracking-[1px] text-[#6C757D]">
@@ -46,7 +61,7 @@ export default function StatePageRelatedGuides({ stateName, guides }: Props) {
               <span className="tahoma mt-5 text-sm font-bold text-[#A81F23]">
                 Read guide
               </span>
-            </Link>
+            </TrackedCtaLink>
           ))}
         </div>
       </div>

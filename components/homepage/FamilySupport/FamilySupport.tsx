@@ -4,8 +4,8 @@ import classes from "./FamilySupport.module.css";
 import Image from "next/image";
 import veterenceSupportService from "@/services/veterenceSupportService";
 import SupportContent from "./SupportContent";
-import Link from "next/link";
 import { VeteranCommunityProps } from "@/components/homepage/VeteranCommunity/VeteranCommunity";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
@@ -103,12 +103,21 @@ const FamilySupport = async ({ link, component_slug }: { link: string, component
               ))}
             </div>
 
-            <Link
+            <TrackedCtaLink
               href={link}
               className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center"
+              cta={{
+                ctaId: `homepage_family_support_${component_slug}`,
+                ctaIntent: 'content_navigation',
+                ctaPosition: 'homepage_family_support',
+                ctaComponent: 'family_support',
+                ctaLabel: pageData?.button_text || 'Learn More',
+                destination: link,
+                pageType: 'homepage',
+              }}
             >
               <Button buttonText={pageData?.button_text || "Learn More"} />
-            </Link>
+            </TrackedCtaLink>
           </div>
         </div>
       </div>

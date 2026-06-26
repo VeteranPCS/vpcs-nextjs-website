@@ -32,6 +32,12 @@ function errorMessage(error: unknown): string {
   return 'Submission failed.';
 }
 
+function submissionIdFromResponse(response: unknown): string | undefined {
+  if (!response || typeof response !== 'object') return undefined;
+  const submissionId = (response as { submissionId?: unknown }).submissionId;
+  return typeof submissionId === 'string' ? submissionId : undefined;
+}
+
 // Overwrites SF additionalComments on each call — fine for single-submit flows;
 // a retry within one conversation will replace prior context.
 function composeAdditionalComments(parts: Array<[string, string | undefined]>): string {
@@ -119,12 +125,13 @@ const submitAgentRequestTool = tool({
         destinationState: input.destinationState,
         hasMessage: Boolean(input.message),
       });
-      await contactAgentPostForm(formData, '', { internalCallToken: INTERNAL_CALL_TOKEN });
+      const serverResponse = await contactAgentPostForm(formData, '', { internalCallToken: INTERNAL_CALL_TOKEN });
       await captureToolTelemetry('concierge_tool_completed', toolName, {
         form_id: 'contact_agent',
         lead_source: 'Contact Agent',
         state_code: stateCode,
         state_slug: stateSlug,
+        submission_id: submissionIdFromResponse(serverResponse),
       });
       return {
         ok: true,
@@ -186,12 +193,13 @@ const submitLenderRequestTool = tool({
         destinationState: input.destinationState,
         hasMessage: Boolean(input.message),
       });
-      await contactLenderPostForm(formData, '', { internalCallToken: INTERNAL_CALL_TOKEN });
+      const serverResponse = await contactLenderPostForm(formData, '', { internalCallToken: INTERNAL_CALL_TOKEN });
       await captureToolTelemetry('concierge_tool_completed', toolName, {
         form_id: 'contact_lender',
         lead_source: 'Contact Lender',
         state_code: stateCode,
         state_slug: stateSlug,
+        submission_id: submissionIdFromResponse(serverResponse),
       });
       return {
         ok: true,
@@ -245,10 +253,11 @@ const submitGeneralInquiryTool = tool({
       logInfo('Concierge tool: submitGeneralInquiry', {
         hasSubject: Boolean(input.subject),
       });
-      await contactPostForm(formData, { internalCallToken: INTERNAL_CALL_TOKEN });
+      const serverResponse = await contactPostForm(formData, { internalCallToken: INTERNAL_CALL_TOKEN });
       await captureToolTelemetry('concierge_tool_completed', toolName, {
         form_id: 'contact_form',
         lead_source: 'Contact Form',
+        submission_id: submissionIdFromResponse(serverResponse),
       });
       return {
         ok: true,
@@ -301,13 +310,14 @@ const submitVALoanGuideRequestTool = tool({
       logInfo('Concierge tool: submitVALoanGuideRequest', {
         hasState: Boolean(input.destinationState),
       });
-      await vaLoanGuideForm(formData, { internalCallToken: INTERNAL_CALL_TOKEN });
+      const serverResponse = await vaLoanGuideForm(formData, { internalCallToken: INTERNAL_CALL_TOKEN });
       await captureToolTelemetry('concierge_tool_completed', toolName, {
         form_id: 'va_loan_guide',
         lead_source: 'VA Loan Guide',
         guide_id: 'va_loan_guide',
         state_code: stateCode,
         state_slug: stateSlug,
+        submission_id: submissionIdFromResponse(serverResponse),
       });
       return {
         ok: true,

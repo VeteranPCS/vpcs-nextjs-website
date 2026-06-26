@@ -2,8 +2,8 @@ import React from "react";
 import "@/app/globals.css";
 import styles from "./RefinancingHero.module.css";
 import Image from "next/image";
-import Link from "next/link";
 import Button from "@/components/common/Button";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const RefinancingHero = () => {
     return (
@@ -19,15 +19,36 @@ const RefinancingHero = () => {
                                 Lower your mortgage rate with the VA Streamline IRRRL. No income verification, no appraisal, and closing costs rolled into your loan. Close in as little as 10-14 business days.
                             </p>
                             <div className="flex flex-wrap gap-4 mb-10 mt-8">
-                                <Link href="/contact-lender">
+                                <TrackedCtaLink
+                                    href="/contact-lender"
+                                    cta={{
+                                        ctaId: 'refinancing_hero_lender',
+                                        ctaIntent: 'contact_lender',
+                                        ctaPosition: 'refinancing_hero',
+                                        ctaComponent: 'refinancing_hero',
+                                        ctaLabel: 'Connect with a Lender',
+                                        destination: '/contact-lender',
+                                        pageType: 'refinancing',
+                                        partnerType: 'lender',
+                                    }}
+                                >
                                     <Button buttonText="Connect with a Lender" />
-                                </Link>
-                                <Link
+                                </TrackedCtaLink>
+                                <TrackedCtaLink
                                     href="#how-it-works"
                                     className="px-6 bg-white text-[#292F6C] rounded-lg py-3 text-base font-medium hover:bg-gray-100 transition-colors h-full my-auto"
+                                    cta={{
+                                        ctaId: 'refinancing_hero_learn_more',
+                                        ctaIntent: 'section_navigation',
+                                        ctaPosition: 'refinancing_hero',
+                                        ctaComponent: 'refinancing_hero',
+                                        ctaLabel: 'Learn More',
+                                        destination: '#how-it-works',
+                                        pageType: 'refinancing',
+                                    }}
                                 >
                                     Learn More
-                                </Link>
+                                </TrackedCtaLink>
                             </div>
                         </div>
                     </div>

@@ -2,9 +2,9 @@ import "@/app/globals.css";
 import BlogMovingPcsingPost from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPostSection/BlogMovingPcsingPost";
 import BlogCategory from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPostSection/BlogCategory";
 import type { BlogPost } from "@/lib/blog/types";
-import Link from "next/link";
 import BlogSearchForm from "@/components/BlogPage/BlogSearchForm";
 import { normalizeBlogComponentSlug } from "@/lib/blog/components";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 type Props = {
   blogList: BlogPost[];
@@ -44,9 +44,22 @@ export default async function BlogMovingPcsingBlogPostSection({
           ))}
         </div>
         <div className="flex justify-end mt-5 sm:hidden ">
-          <Link href={categoryHref} className="text-[#292F6C] robot text-sm font-bold ">
+          <TrackedCtaLink
+            href={categoryHref}
+            className="text-[#292F6C] robot text-sm font-bold "
+            cta={{
+              ctaId: 'blog_section_view_all',
+              ctaIntent: 'content_navigation',
+              ctaPosition: 'blog_section_footer',
+              ctaComponent: 'blog_section',
+              ctaLabel: 'View All',
+              destination: categoryHref,
+              pageType: 'blog_landing',
+              contentType: 'blog_category',
+            }}
+          >
             View All
-          </Link>
+          </TrackedCtaLink>
         </div>
       </div>
     </div>

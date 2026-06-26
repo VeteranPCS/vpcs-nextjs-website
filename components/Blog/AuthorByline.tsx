@@ -1,8 +1,8 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import Button from '@/components/common/Button';
 import { getAuthorContactHref, resolveAuthor } from '@/lib/blog/authors';
 import type { FrontmatterAuthor, ResolvedAuthor } from '@/lib/blog/types';
+import TrackedCtaLink from '@/components/common/TrackedCtaLink';
 
 const VPCS_FALLBACK = {
   logo: '/logo-stacked.png',
@@ -66,9 +66,22 @@ export default async function AuthorByline({
           <b className="text-[#495057]">{VPCS_FALLBACK.brokerage}</b>
         </p>
         <div className="w-full flex justify-center mt-4">
-          <Link href={author.contactHref}>
+          <TrackedCtaLink
+            href={author.contactHref}
+            cta={{
+              ctaId: 'blog_author_fallback_contact',
+              ctaIntent: 'contact_agent',
+              ctaPosition: 'author_card',
+              ctaComponent: 'blog_author_byline',
+              ctaLabel: 'Get in Touch',
+              destination: author.contactHref,
+              pageType: 'blog_post',
+              stateSlug: ctaStateSlug,
+              partnerType: 'agent',
+            }}
+          >
             <Button buttonText="Get in Touch" />
-          </Link>
+          </TrackedCtaLink>
         </div>
       </div>
     );
@@ -131,9 +144,23 @@ export default async function AuthorByline({
         ) : null}
       </p>
       <div className="w-full flex justify-center mt-4">
-        <Link href={ctaHref}>
+        <TrackedCtaLink
+          href={ctaHref}
+          cta={{
+            ctaId: 'blog_author_contact',
+            ctaIntent: 'contact_agent',
+            ctaPosition: 'author_card',
+            ctaComponent: 'blog_author_byline',
+            ctaLabel: 'Get in Touch',
+            destination: ctaHref,
+            pageType: 'blog_post',
+            stateSlug: ctaStateSlug ?? frontmatterAuthor?.stateSlug,
+            partnerType: 'agent',
+            partnerSalesforceId: author.salesforceId,
+          }}
+        >
           <Button buttonText="Get in Touch" />
-        </Link>
+        </TrackedCtaLink>
       </div>
     </div>
   );

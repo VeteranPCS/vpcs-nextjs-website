@@ -2,7 +2,7 @@ import React from "react";
 import "@/app/globals.css";
 import styles from "./GuidesHero.module.css";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const GuidesHero = () => {
     const scrollToSection = (id: string) => {
@@ -25,18 +25,38 @@ const GuidesHero = () => {
                                 Resources designed to help military families navigate PCS moves, home buying, VA loans, and more
                             </p>
                             <div className="flex flex-wrap gap-4 mb-10 mt-8">
-                                <Link
+                                <TrackedCtaLink
                                     href="/guides#va-loan-guide"
                                     className="px-6 bg-[#8B2D2D] text-white rounded-lg py-3 text-base font-medium hover:bg-[#722424] transition-colors"
+                                    cta={{
+                                        ctaId: 'guides_hero_va_loan',
+                                        ctaIntent: 'guide_section_navigation',
+                                        ctaPosition: 'guides_hero',
+                                        ctaComponent: 'guides_hero',
+                                        ctaLabel: 'VA Loan',
+                                        destination: '/guides#va-loan-guide',
+                                        pageType: 'guides',
+                                        guideId: 'va_loan_guide',
+                                    }}
                                 >
                                     VA Loan
-                                </Link>
-                                <Link
+                                </TrackedCtaLink>
+                                <TrackedCtaLink
                                     href="/guides#homebuyer-guide"
                                     className="px-6 bg-[#8B2D2D] text-white rounded-lg py-3 text-base font-medium hover:bg-[#722424] transition-colors"
+                                    cta={{
+                                        ctaId: 'guides_hero_homebuyer',
+                                        ctaIntent: 'guide_section_navigation',
+                                        ctaPosition: 'guides_hero',
+                                        ctaComponent: 'guides_hero',
+                                        ctaLabel: 'First Time Home Buyer',
+                                        destination: '/guides#homebuyer-guide',
+                                        pageType: 'guides',
+                                        guideId: 'first_time_homebuyer_guide',
+                                    }}
                                 >
                                     First Time Home Buyer
-                                </Link>
+                                </TrackedCtaLink>
                             </div>
                         </div>
                         <div className="hidden lg:flex justify-end items-center">
@@ -58,4 +78,4 @@ const GuidesHero = () => {
     );
 };
 
-export default GuidesHero; 
+export default GuidesHero;

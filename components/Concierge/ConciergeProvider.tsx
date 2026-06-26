@@ -1,6 +1,8 @@
 'use client';
 
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { captureAnalyticsEvent } from '@/lib/analytics/client';
 
 export interface ConciergeSeed {
   openingMessage?: string;
@@ -25,21 +27,35 @@ interface Props {
 export default function ConciergeProvider({ children }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [pendingSeed, setPendingSeed] = useState<ConciergeSeed | null>(null);
+  const pathname = usePathname();
 
   const open = useCallback((seed?: ConciergeSeed) => {
     if (seed) {
       setPendingSeed(seed);
     }
+    if (!isOpen) {
+      captureAnalyticsEvent('concierge_opened', {
+        source_page_path: pathname ?? undefined,
+        concierge_topic: seed?.topic,
+        input_origin: seed ? 'seeded_cta' : 'launcher',
+      });
+    }
     setIsOpen(true);
-  }, []);
+  }, [isOpen, pathname]);
 
   const close = useCallback(() => {
     setIsOpen(false);
   }, []);
 
   const toggle = useCallback(() => {
+    if (!isOpen) {
+      captureAnalyticsEvent('concierge_opened', {
+        source_page_path: pathname ?? undefined,
+        input_origin: 'toggle',
+      });
+    }
     setIsOpen((prev) => !prev);
-  }, []);
+  }, [isOpen, pathname]);
 
   const clearPendingSeed = useCallback(() => {
     setPendingSeed(null);

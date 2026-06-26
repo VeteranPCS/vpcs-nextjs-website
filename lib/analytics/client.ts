@@ -32,11 +32,7 @@ export type AnalyticsEventName =
   | 'guide_download_started'
   | 'concierge_opened'
   | 'concierge_message_sent'
-  | 'concierge_tool_approval_responded'
-  | 'concierge_tool_submitted'
-  | 'concierge_tool_completed'
-  | 'concierge_tool_failed'
-  | 'lead_conversion_created';
+  | 'concierge_tool_approval_responded';
 
 const EVENT_STAGE: Record<AnalyticsEventName, JourneyStage> = {
   content_viewed: 'top',
@@ -56,10 +52,6 @@ const EVENT_STAGE: Record<AnalyticsEventName, JourneyStage> = {
   concierge_opened: 'mid',
   concierge_message_sent: 'mid',
   concierge_tool_approval_responded: 'mid',
-  concierge_tool_submitted: 'mid',
-  concierge_tool_completed: 'mid',
-  concierge_tool_failed: 'mid',
-  lead_conversion_created: 'bottom',
 };
 
 const startedForms = new Set<string>();

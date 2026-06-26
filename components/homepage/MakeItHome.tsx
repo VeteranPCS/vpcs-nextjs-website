@@ -2,7 +2,7 @@ import Button from "@/components/common/Button";
 import "@/app/globals.css";
 import "aos/dist/aos.css";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const MilitaryHomePage = () => {
   return (
@@ -41,12 +41,22 @@ const MilitaryHomePage = () => {
                 </li>
               </div>
             </ul>
-            <Link
+            <TrackedCtaLink
               href="/contact-lender"
               className="flex lg:justify-start md:justify-start sm:justify-center justify-center"
+              cta={{
+                ctaId: 'homepage_make_it_home_lender',
+                ctaIntent: 'contact_lender',
+                ctaPosition: 'homepage_make_it_home',
+                ctaComponent: 'make_it_home',
+                ctaLabel: 'Contact VA Loan Expert',
+                destination: '/contact-lender',
+                pageType: 'homepage',
+                partnerType: 'lender',
+              }}
             >
               <Button buttonText="Contact VA Loan Expert" />
-            </Link>
+            </TrackedCtaLink>
           </div>
         </div>
       </div>

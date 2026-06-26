@@ -2,7 +2,7 @@ import React from "react";
 import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const SupportSpanish = async () => {
 
@@ -30,11 +30,23 @@ const SupportSpanish = async () => {
                       </p>
                     </div>
                     <div className="flex justify-start">
-                      <Link href="/contact-agent">
+                      <TrackedCtaLink
+                        href="/contact-agent"
+                        cta={{
+                          ctaId: 'spanish_support_agent',
+                          ctaIntent: 'contact_agent',
+                          ctaPosition: 'spanish_support',
+                          ctaComponent: 'support_spanish',
+                          ctaLabel: 'Descubre como conectarte con un prestamista',
+                          destination: '/contact-agent',
+                          pageType: 'spanish',
+                          partnerType: 'agent',
+                        }}
+                      >
                         <Button
                           buttonText={"Descubre cómo conectarte con un prestamista"}
                         />
-                      </Link>
+                      </TrackedCtaLink>
                     </div>
                   </div>
                   <div className="flex justify-center">

@@ -5,7 +5,7 @@ import "aos/dist/aos.css";
 import Image from "next/image";
 import impactService from "@/services/impactService";
 import SupportContent from "@/components/homepage/FamilySupport/SupportContent";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
 interface ForegroundImage {
@@ -96,9 +96,20 @@ const FeaturedCharities = async () => {
                             ))}
                         </p>
                         <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center mt-4 md:mt-0">
-                            <Link href="https://www.wearblueruntoremember.org">
+                            <TrackedCtaLink
+                                href="https://www.wearblueruntoremember.org"
+                                cta={{
+                                    ctaId: 'charity_partner_wear_blue',
+                                    ctaIntent: 'charity_partner_navigation',
+                                    ctaPosition: 'charity_featured',
+                                    ctaComponent: 'featured_charities',
+                                    ctaLabel: storieDetails?.button_text || 'Read More',
+                                    destination: 'https://www.wearblueruntoremember.org',
+                                    pageType: 'charity',
+                                }}
+                            >
                                 <Button buttonText={storieDetails?.button_text || "Read More"} />
-                            </Link>
+                            </TrackedCtaLink>
                         </div>
                     </div>
                 </div>
@@ -130,9 +141,20 @@ const FeaturedCharities = async () => {
                             We transform lives by partnering people with custom-trained assistance dogs.  At Freedom Service Dogs, we believe dogs can make a profound difference in the everyday lives of people challenged by disabilities.
                         </p>
                         <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center mt-4 md:mt-0">
-                            <Link href="https://freedomservicedogs.org">
+                            <TrackedCtaLink
+                                href="https://freedomservicedogs.org"
+                                cta={{
+                                    ctaId: 'charity_partner_freedom_service_dogs',
+                                    ctaIntent: 'charity_partner_navigation',
+                                    ctaPosition: 'charity_featured',
+                                    ctaComponent: 'featured_charities',
+                                    ctaLabel: 'Freedom Service Dogs',
+                                    destination: 'https://freedomservicedogs.org',
+                                    pageType: 'charity',
+                                }}
+                            >
                                 <Button buttonText="Freedom Service Dogs" />
-                            </Link>
+                            </TrackedCtaLink>
                         </div>
                     </div>
                 </div>

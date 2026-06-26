@@ -5,7 +5,7 @@ import classes from "./VeteranCommunity.module.css";
 import Image from "next/image";
 import veterenceSupportService from "@/services/veterenceSupportService";
 import SupportContent from "@/components/homepage/FamilySupport/SupportContent";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
@@ -122,12 +122,21 @@ const VeteranCommunity = async ({ component_slug }: { component_slug: string }) 
                 </div>
               ))}
             </div>
-            <Link
+            <TrackedCtaLink
               href="/impact"
               className="flex lg:justify-start md:justify-start sm:justify-center justify-center items-center"
+              cta={{
+                ctaId: 'homepage_veteran_community_impact',
+                ctaIntent: 'impact_navigation',
+                ctaPosition: 'homepage_veteran_community',
+                ctaComponent: 'veteran_community',
+                ctaLabel: pageData?.button_text || 'Our Impact',
+                destination: '/impact',
+                pageType: 'homepage',
+              }}
             >
               <Button buttonText={pageData?.button_text || "Our Impact"} />
-            </Link>
+            </TrackedCtaLink>
           </div>
           <div>
             <Image

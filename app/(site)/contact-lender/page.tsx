@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import ContactLender from "@/components/ContactLender/ContactLender";
-import { contactLenderPostForm } from "@/services/salesForcePostFormsService";
+import { submitContactLenderLead } from "./actions";
 import { useRouter } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
 import { normalizeStateCode, normalizeStateSlug } from "@/lib/states";
@@ -28,21 +28,14 @@ export default function ContactLenderPage() {
         state: normalizeStateSlug(queryParams.get('state')) || "",
       });
 
-      // Enhanced contactLenderPostForm now includes:
-      // - Automatic retry logic (up to 3 attempts)
-      // - Better Salesforce response validation
-      // - Exponential backoff between retries
-      // - Proper error handling and logging
-      const server_response = await contactLenderPostForm(
+      const result = await submitContactLenderLead(
         { ...formData, ...formTrackingPayload() },
         fullQueryString,
       );
-      // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
-      if (server_response?.redirectUrl) {
-        router.push(server_response.redirectUrl);
-        return { success: true, redirectUrl: server_response.redirectUrl };
+      if (result.redirectUrl) {
+        router.push(result.redirectUrl);
       }
-      return { success: false };
+      return result;
     } catch (error) {
       console.error('Error submitting form:', error);
       return { success: false };

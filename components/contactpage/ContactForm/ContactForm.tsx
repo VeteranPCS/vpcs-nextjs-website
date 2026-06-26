@@ -3,7 +3,6 @@ import Button from "@/components/common/Button";
 import "@/app/globals.css";
 import classes from "./ContactForm.module.css";
 import Image from "next/image";
-import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import { clientMediaAccountService } from "@/services/clientMediaAccountService";
 import type { MediaAccountProps } from "@/services/mediaAccountTypes";
@@ -16,6 +15,7 @@ import { sendGTMEvent } from "@next/third-parties/google";
 import { useConcierge } from "@/components/Concierge";
 import { featureFlags } from "@/lib/feature-flags";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 import {
   formTrackingPayload,
   trackFormStarted,
@@ -55,6 +55,7 @@ const ContactForm = () => {
   const {
     register,
     handleSubmit,
+    getValues,
     reset,
     formState: { errors },
   } = useForm<ContactFormData>({
@@ -71,10 +72,6 @@ const ContactForm = () => {
 
   async function onSubmit(data: ContactFormData) {
     setIsSubmitting(true);
-    trackFormSubmitAttempted('contact_form', {
-      has_email: Boolean(data.email),
-      has_phone: false,
-    });
     try {
       sendGTMEvent({
         event: 'contact_form_submission',
@@ -127,24 +124,56 @@ const ContactForm = () => {
     trackFormValidationFailed('contact_form', formErrors);
   };
 
+  const trackSubmitAttempt = () => {
+    const values = getValues();
+    trackFormSubmitAttempted('contact_form', {
+      has_email: Boolean(values.email),
+      has_phone: false,
+    });
+  };
+
   return (
     <div className="container mx-auto flex flex-wrap justify-center lg:py-12 md:py-12 sm:py-2 py-2 gap-10">
       <div className="flex flex-wrap justify-around rounded-[12.128px] bg-white shadow-[0px_0px_72.766px_36.383px_rgba(0,0,0,0.03)] p-4 w-full overflow-hidden mx-8 md:mb-0 mb-5">
         <div className="md:w-1/3 sm:w-full w-full ">
           <div className={classes.Container}>
-            <Link href="/get-listed-agents" className="block justify-start items-center gap-4 flex-wrap">
+            <TrackedCtaLink
+              href="/get-listed-agents"
+              className="block justify-start items-center gap-4 flex-wrap"
+              cta={{
+                ctaId: 'contact_page_get_listed_agents',
+                ctaIntent: 'partner_recruiting_agent',
+                ctaPosition: 'contact_page_sidebar',
+                ctaComponent: 'contact_form',
+                ctaLabel: 'Agents, Get Listed Here',
+                destination: '/get-listed-agents',
+                pageType: 'contact',
+              }}
+            >
               <Button
                 buttonText="Agents, Get Listed Here"
                 divClassName="!pb-0"
                 buttonClassName="border border-white border-2"
               />
-            </Link>
-            <Link href="/get-listed-lenders" className="block justify-start items-center gap-4 flex-wrap mb-6">
+            </TrackedCtaLink>
+            <TrackedCtaLink
+              href="/get-listed-lenders"
+              className="block justify-start items-center gap-4 flex-wrap mb-6"
+              cta={{
+                ctaId: 'contact_page_get_listed_lenders',
+                ctaIntent: 'partner_recruiting_lender',
+                ctaPosition: 'contact_page_sidebar',
+                ctaComponent: 'contact_form',
+                ctaLabel: 'Lenders, Get Listed Here',
+                destination: '/get-listed-lenders',
+                pageType: 'contact',
+              }}
+            >
               <Button
                 buttonText="Lenders, Get Listed Here"
                 buttonClassName="border border-white border-2"
               />
-            </Link>
+            </TrackedCtaLink>
 
             <div className={classes.Heading}>
               We would love to hear from you
@@ -163,7 +192,18 @@ const ContactForm = () => {
                     src="/icon/phone-call.svg"
                     alt="phone"
                   />
-                  <Link href="tel:7197825065">719-782-5065</Link>
+                  <TrackedCtaLink
+                    href="tel:7197825065"
+                    cta={{
+                      ctaId: 'contact_page_phone',
+                      ctaIntent: 'contact_phone',
+                      ctaPosition: 'contact_page_sidebar',
+                      ctaComponent: 'contact_form',
+                      ctaLabel: 'Phone',
+                      destination: 'tel:7197825065',
+                      pageType: 'contact',
+                    }}
+                  >719-782-5065</TrackedCtaLink>
                 </div>
                 <div className={classes.ContactItem}>
                   <Image
@@ -173,7 +213,18 @@ const ContactForm = () => {
                     src="/icon/sharp-email.svg"
                     alt="phone"
                   />
-                  <Link href="mailto:info@veteranpcs.com">info@veteranpcs.com</Link>
+                  <TrackedCtaLink
+                    href="mailto:info@veteranpcs.com"
+                    cta={{
+                      ctaId: 'contact_page_email',
+                      ctaIntent: 'contact_email',
+                      ctaPosition: 'contact_page_sidebar',
+                      ctaComponent: 'contact_form',
+                      ctaLabel: 'Email',
+                      destination: 'mailto:info@veteranpcs.com',
+                      pageType: 'contact',
+                    }}
+                  >info@veteranpcs.com</TrackedCtaLink>
                 </div>
               </div>
             </div>
@@ -181,14 +232,25 @@ const ContactForm = () => {
               <ul className="flex items-center md:justify-start justify-center gap-4 mt-5">
                 {mediaAccount.map((acc) => (
                   <li key={acc._id} className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2">
-                    <Link href={acc.link}>
+                    <TrackedCtaLink
+                      href={acc.link}
+                      cta={{
+                        ctaId: 'contact_page_social',
+                        ctaIntent: 'social_navigation',
+                        ctaPosition: 'contact_page_sidebar',
+                        ctaComponent: 'contact_form',
+                        ctaLabel: acc.name,
+                        destination: acc.link,
+                        pageType: 'contact',
+                      }}
+                    >
                       <Image
                         width={100}
                         height={100}
                         src={`/icon/${acc.icon}`}
                         alt={acc.name}
                       />
-                    </Link>
+                    </TrackedCtaLink>
                   </li>
                 ))}
               </ul>
@@ -198,7 +260,10 @@ const ContactForm = () => {
         <div className="md:w-2/3 sm:w-full w-full relative md:px-10 lg:px-20 mt-10 md:mt-0">
 
           <form
-            onSubmit={handleSubmit(onSubmit, handleInvalidSubmit)}
+            onSubmit={(event) => {
+              trackSubmitAttempt();
+              void handleSubmit(onSubmit, handleInvalidSubmit)(event);
+            }}
             onFocus={() => trackFormStarted('contact_form')}
           >
             <div className={classes.FormContainer}>

@@ -5,7 +5,7 @@ import "aos/dist/aos.css";
 import Image from "next/image";
 import impactService from "@/services/impactService";
 import SupportContent from "@/components/homepage/FamilySupport/SupportContent";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
 interface ForegroundImage {
@@ -68,9 +68,20 @@ const MilitaryHomePage = async () => {
               Our mission is to provide financial assistance, support services, and advocacy for the Army Aviation community and its Gold Star Families.
             </p>
             <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center mt-4 md:mt-0">
-              <Link href="https://www.flybbsf.org/">
+              <TrackedCtaLink
+                href="https://www.flybbsf.org/"
+                cta={{
+                  ctaId: 'impact_partner_blue_skies',
+                  ctaIntent: 'charity_partner_navigation',
+                  ctaPosition: 'impact_charity_section',
+                  ctaComponent: 'wear_blue_section',
+                  ctaLabel: 'Blue Skies Foundation',
+                  destination: 'https://www.flybbsf.org/',
+                  pageType: 'impact',
+                }}
+              >
                 <Button buttonText="Blue Skies Foundation" />
-              </Link>
+              </TrackedCtaLink>
             </div>
           </div>
           <div className="w-full md:w-1/2 flex justify-center">
@@ -120,9 +131,20 @@ const MilitaryHomePage = async () => {
               ))}
             </p>
             <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center mt-4 md:mt-0">
-              <Link href="https://www.wearblueruntoremember.org">
+              <TrackedCtaLink
+                href="https://www.wearblueruntoremember.org"
+                cta={{
+                  ctaId: 'impact_partner_wear_blue',
+                  ctaIntent: 'charity_partner_navigation',
+                  ctaPosition: 'impact_charity_section',
+                  ctaComponent: 'wear_blue_section',
+                  ctaLabel: storieDetails?.button_text || 'Read More',
+                  destination: 'https://www.wearblueruntoremember.org',
+                  pageType: 'impact',
+                }}
+              >
                 <Button buttonText={storieDetails?.button_text || "Read More"} />
-              </Link>
+              </TrackedCtaLink>
             </div>
           </div>
         </div>
@@ -136,9 +158,20 @@ const MilitaryHomePage = async () => {
               The Warrior Bonfire Program is designed to meet a critical need throughout the United States to provide much needed mental health and peer support to combat wounded Veterans through recreational therapy, and Post-traumatic healing. We are a 501c3 organization founded and led by Veterans to support and honor the immense number of Purple Heart recipients throughout the nation. Our signature program, the Bonfire retreat, Bonfire Retreats are recreational therapy based, multi-day events that are reserved primarily for six Purple Heart Veterans. Bonfire retreats provide opportunities for wounded veterans, in small groups of six, to enjoy a favorite activity while partaking in the camaraderie and therapeutic value of spending time around the bonfire with fellow veterans while promoting Post-Traumatic Healing and the building of support communities, fostering healing and improving lives. Each retreat is concluded with a bonfire including a U.S. Flag retirement ceremony providing participants with an opportunity to honor fallen comrades.
             </p>
             <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center mt-4 md:mt-0">
-              <Link href="https://warriorbonfireprogram.org">
+              <TrackedCtaLink
+                href="https://warriorbonfireprogram.org"
+                cta={{
+                  ctaId: 'impact_partner_warrior_bonfire',
+                  ctaIntent: 'charity_partner_navigation',
+                  ctaPosition: 'impact_charity_section',
+                  ctaComponent: 'wear_blue_section',
+                  ctaLabel: 'Warrior Bonfire Program',
+                  destination: 'https://warriorbonfireprogram.org',
+                  pageType: 'impact',
+                }}
+              >
                 <Button buttonText="Warrior Bonfire Program" />
-              </Link>
+              </TrackedCtaLink>
             </div>
           </div>
           <div className="w-full md:w-1/2 flex justify-center">

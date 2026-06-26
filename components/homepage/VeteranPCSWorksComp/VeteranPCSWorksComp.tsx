@@ -2,7 +2,7 @@ import React from "react"; // No need for useState or useEffect
 import "@/app/globals.css";
 import classes from "./VeteranPCSWorksComp.module.css";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 // Define the type for the `veteranpcs` prop
 interface VeteranPCSWorksCompProps {
@@ -19,7 +19,19 @@ const VeteranPCSWorksComp: React.FC<VeteranPCSWorksCompProps> = ({
 }) => {
   const { img, title, subTitle, link } = veteranpcs;
   return (
-    <Link className={classes.veteranpcsworkscontainer} href={link}>
+    <TrackedCtaLink
+      className={classes.veteranpcsworkscontainer}
+      href={link}
+      cta={{
+        ctaId: 'homepage_how_it_works_card',
+        ctaIntent: 'content_navigation',
+        ctaPosition: 'homepage_veteranpcs_works',
+        ctaComponent: 'veteranpcs_works_card',
+        ctaLabel: title,
+        destination: link,
+        pageType: 'homepage',
+      }}
+    >
       <div className="xl:p-9 lg:p-9 md:p-9 sm:p-2 p-4 lg:w-[300px] lg:h-[340px] sm:w-[250px] w-[250px] sm:py-6 py-10 lg:mb-0 mb-4 flex flex-col justify-center items-center">
         <div className="text-center ">
           <div className="items-center justify-center">
@@ -47,7 +59,7 @@ const VeteranPCSWorksComp: React.FC<VeteranPCSWorksCompProps> = ({
           </div>
         </div>
       </div>
-    </Link>
+    </TrackedCtaLink>
   );
 };
 

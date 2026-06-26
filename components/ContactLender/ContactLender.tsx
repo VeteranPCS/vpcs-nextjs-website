@@ -41,6 +41,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
     control,
     register,
     handleSubmit,
+    getValues,
     watch,
     setValue,
     formState: { errors },
@@ -71,11 +72,6 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
   // Form submit handler
   const handleFormSubmit: SubmitHandler<ContactLenderFormData> = async (data) => {
     setIsSubmitting(true);
-    trackFormSubmitAttempted('contact_lender', {
-      has_email: Boolean(data.email),
-      has_phone: Boolean(data.phone),
-      state_code: data.state,
-    });
     try {
       const response = await onSubmit({ ...data, ...getSpamFields() });
       if (!response?.success && !response?.redirectUrl) {
@@ -91,6 +87,15 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
 
   const handleInvalidSubmit = (formErrors: typeof errors) => {
     trackFormValidationFailed('contact_lender', formErrors);
+  };
+
+  const trackSubmitAttempt = () => {
+    const values = getValues();
+    trackFormSubmitAttempted('contact_lender', {
+      has_email: Boolean(values.email),
+      has_phone: Boolean(values.phone),
+      state_code: values.state,
+    });
   };
 
   // Error rendering function
@@ -113,7 +118,10 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form
-          onSubmit={handleSubmit(handleFormSubmit, handleInvalidSubmit)}
+          onSubmit={(event) => {
+            trackSubmitAttempt();
+            void handleSubmit(handleFormSubmit, handleInvalidSubmit)(event);
+          }}
           onFocus={() => trackFormStarted('contact_lender')}
         >
           <HoneypotField ref={honeypotRef} />

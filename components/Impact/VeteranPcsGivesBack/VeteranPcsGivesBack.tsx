@@ -2,7 +2,7 @@ import React from "react";
 import Button from "@/components/common/Button";
 import classes from "./VeteranPcsGivesBack.module.css";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const VeteranPcsGivesBack = () => {
     return (
@@ -19,9 +19,20 @@ const VeteranPcsGivesBack = () => {
                             </p>
                         </div>
                         <div className="mt-5 md:block flex justify-center">
-                            <Link href="/charity">
+                            <TrackedCtaLink
+                                href="/charity"
+                                cta={{
+                                    ctaId: 'impact_gives_back_charity',
+                                    ctaIntent: 'charity_navigation',
+                                    ctaPosition: 'impact_gives_back',
+                                    ctaComponent: 'veteranpcs_gives_back',
+                                    ctaLabel: 'Charities VeteranPCS Backs',
+                                    destination: '/charity',
+                                    pageType: 'impact',
+                                }}
+                            >
                                 <Button buttonText="Charities VeteranPCS Backs" />
-                            </Link>
+                            </TrackedCtaLink>
                         </div>
                     </div>
                     <div className="lg:ml-10 md:ml-0 sm:ml-0 ml-0 sm:order-2 order-1">
@@ -39,4 +50,4 @@ const VeteranPcsGivesBack = () => {
     );
 };
 
-export default VeteranPcsGivesBack; 
+export default VeteranPcsGivesBack;

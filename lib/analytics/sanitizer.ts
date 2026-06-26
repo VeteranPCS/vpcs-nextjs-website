@@ -30,6 +30,17 @@ const ALLOWED_ATTRIBUTION_KEYS = new Set([
   'captured_at',
 ]);
 
+const SAFE_ERROR_CODE_FIELDS = new Set([
+  'email',
+  'phone',
+  'firstName',
+  'firstname',
+  'first_name',
+  'lastName',
+  'lastname',
+  'last_name',
+]);
+
 function isBlockedKey(key: string): boolean {
   return !SAFE_CONTACT_FLAG_KEYS.has(key) && BLOCKED_KEY_RE.test(key);
 }
@@ -153,7 +164,7 @@ export function sanitizeAnalyticsProperties(
 export function errorCodesFromErrors(errors: unknown): string[] {
   if (!errors || typeof errors !== 'object') return ['unknown'];
   return Object.keys(errors as Record<string, unknown>)
-    .filter((key) => !isBlockedKey(key))
+    .filter((key) => SAFE_ERROR_CODE_FIELDS.has(key) || !isBlockedKey(key))
     .map((key) => key.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase())
     .slice(0, 12);
 }

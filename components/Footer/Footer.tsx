@@ -1,7 +1,7 @@
 import React from "react";
 import classes from "./Footer.module.css";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const Locations = () => {
   const locations = [
@@ -60,12 +60,12 @@ const Locations = () => {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const exploreLinks = [
-    { href: "/how-it-works", label: "How It Works" },
-    { href: "/bah-calculator", label: "BAH Calculator" },
-    { href: "/va-loan-calculator", label: "VA Loan Calculator" },
-    { href: "/pcs-resources", label: "Guides & PCS Resources" },
-    { href: "/contact-agent", label: "Find an Agent" },
-    { href: "/contact-lender", label: "Find a Lender" },
+    { href: "/how-it-works", label: "How It Works", intent: "navigate" },
+    { href: "/bah-calculator", label: "BAH Calculator", intent: "calculator" },
+    { href: "/va-loan-calculator", label: "VA Loan Calculator", intent: "calculator" },
+    { href: "/pcs-resources", label: "Guides & PCS Resources", intent: "navigate_content" },
+    { href: "/contact-agent", label: "Find an Agent", intent: "contact_agent" },
+    { href: "/contact-lender", label: "Find a Lender", intent: "contact_lender" },
   ];
 
   const formattedLocation = (location: string) => {
@@ -83,12 +83,21 @@ const Locations = () => {
             <div className="mt-5 grid grid-cols-1 gap-2">
               {locations.map((location, index) => (
                 <div key={index} className={classes.LocationItem}>
-                  <Link
+                  <TrackedCtaLink
                     href={`/${formattedLocation(location)}`}
                     className="flex min-h-11 items-center justify-center text-center roboto text-base font-medium text-white"
+                    cta={{
+                      ctaId: 'footer_location_state',
+                      ctaIntent: 'state_page',
+                      ctaPosition: 'footer_locations_mobile',
+                      ctaComponent: 'site_footer',
+                      ctaLabel: location,
+                      destination: `/${formattedLocation(location)}`,
+                      stateSlug: formattedLocation(location),
+                    }}
                   >
                     {location}
-                  </Link>
+                  </TrackedCtaLink>
                 </div>
               ))}
             </div>
@@ -101,24 +110,41 @@ const Locations = () => {
           <div className="hidden grid-cols-1 gap-2 md:grid md:grid-cols-3 lg:grid-cols-4">
             {locations.map((location, index) => (
               <div key={index} className={classes.LocationItem}>
-                <Link
+                <TrackedCtaLink
                   href={`/${formattedLocation(location)}`}
                   className="flex min-h-11 items-center justify-center text-white text-center roboto text-base font-medium"
+                  cta={{
+                    ctaId: 'footer_location_state',
+                    ctaIntent: 'state_page',
+                    ctaPosition: 'footer_locations_desktop',
+                    ctaComponent: 'site_footer',
+                    ctaLabel: location,
+                    destination: `/${formattedLocation(location)}`,
+                    stateSlug: formattedLocation(location),
+                  }}
                 >
                   {location}
-                </Link>
+                </TrackedCtaLink>
               </div>
             ))}
           </div>
           <div className="mt-10 px-5">
             <div className="md:flex sm:block sm:justify-center sm:text-center text-center flex-wrap gap-5 md:justify-between items-center">
               <div>
-                <Link
+                <TrackedCtaLink
                   href="/terms-of-use"
                   className="text-white text-center roboto text-lg font-medium"
+                  cta={{
+                    ctaId: 'footer_terms',
+                    ctaIntent: 'legal_navigation',
+                    ctaPosition: 'footer_legal',
+                    ctaComponent: 'site_footer',
+                    ctaLabel: 'Terms Of Service',
+                    destination: '/terms-of-use',
+                  }}
                 >
                   Terms Of Service
-                </Link>
+                </TrackedCtaLink>
               </div>
               <div className="my-7 sm:my-7 md:my-0">
                 <span className="text-white text-center roboto text-lg font-medium">
@@ -126,12 +152,20 @@ const Locations = () => {
                 </span>
               </div>
               <div>
-                <Link
+                <TrackedCtaLink
                   href="/privacy-policy"
                   className="text-white text-center roboto text-lg font-medium"
+                  cta={{
+                    ctaId: 'footer_privacy',
+                    ctaIntent: 'legal_navigation',
+                    ctaPosition: 'footer_legal',
+                    ctaComponent: 'site_footer',
+                    ctaLabel: 'Privacy Policy',
+                    destination: '/privacy-policy',
+                  }}
                 >
                   Privacy Policy{" "}
-                </Link>
+                </TrackedCtaLink>
               </div>
             </div>
           </div>
@@ -185,12 +219,20 @@ const Locations = () => {
               <ul className="space-y-2">
                 {exploreLinks.map((link) => (
                   <li key={link.href}>
-                    <Link
+                    <TrackedCtaLink
                       href={link.href}
                       className="inline-flex min-h-11 items-center text-white text-[14px] font-medium roboto hover:underline"
+                      cta={{
+                        ctaId: `footer_explore_${link.label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')}`,
+                        ctaIntent: link.intent,
+                        ctaPosition: 'footer_explore',
+                        ctaComponent: 'site_footer',
+                        ctaLabel: link.label,
+                        destination: link.href,
+                      }}
                     >
                       {link.label}
-                    </Link>
+                    </TrackedCtaLink>
                   </li>
                 ))}
               </ul>
@@ -213,7 +255,17 @@ const Locations = () => {
                 use of a VeteranPCS-introduced real estate agent. Other terms
                 and conditions may apply. This is not a solicitation if you are
                 already represented by a real estate broker. Please contact
-                <Link href='mailto:info@veteranpcs.com'> info@veteranpcs.com</Link> for details. Program terms and
+                <TrackedCtaLink
+                  href='mailto:info@veteranpcs.com'
+                  cta={{
+                    ctaId: 'footer_email',
+                    ctaIntent: 'contact_email',
+                    ctaPosition: 'footer_disclaimer',
+                    ctaComponent: 'site_footer',
+                    ctaLabel: 'info@veteranpcs.com',
+                    destination: 'mailto:info@veteranpcs.com',
+                  }}
+                > info@veteranpcs.com</TrackedCtaLink> for details. Program terms and
                 conditions are subject to change at any time without notice. By
                 using the services offered herein, you represent that you have
                 read, understood, and agree to the Platform Terms of Use.

@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./AgentLoanExpert.module.css";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const AgentLoanExpert = () => {
   return (
@@ -15,9 +15,21 @@ const AgentLoanExpert = () => {
             <p className="roboto text-[21px] italic font-medium text-white m-0 pt-5">
               Want to be featured?
             </p>
-            <Link href="/contact" className="md:mt-0 mt-7">
+            <TrackedCtaLink
+              href="/contact"
+              className="md:mt-0 mt-7"
+              cta={{
+                ctaId: 'homepage_agent_loan_expert_signup',
+                ctaIntent: 'partner_recruiting',
+                ctaPosition: 'homepage_agent_loan_expert',
+                ctaComponent: 'agent_loan_expert',
+                ctaLabel: 'Sign-up here',
+                destination: '/contact',
+                pageType: 'homepage',
+              }}
+            >
               <Button buttonText="Sign-up here" />
-            </Link>
+            </TrackedCtaLink>
           </div>
         </div>
       </div>

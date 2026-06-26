@@ -155,9 +155,15 @@ export default function ConciergeWidget() {
     if (!pendingSeed?.openingMessage) return;
     if (messages.length > 0) return;
     seedConsumedRef.current = true;
+    captureAnalyticsEvent('concierge_message_sent', {
+      source_page_path: pathname ?? undefined,
+      input_origin: 'seeded_cta',
+      concierge_topic: pendingSeed.topic,
+      ...queryMetrics(pendingSeed.openingMessage),
+    });
     void sendMessage({ text: pendingSeed.openingMessage });
     clearPendingSeed();
-  }, [isOpen, pendingSeed, messages.length, sendMessage, clearPendingSeed]);
+  }, [isOpen, pendingSeed, messages.length, pathname, sendMessage, clearPendingSeed]);
 
   // Reset seed-consumed flag when the panel closes so a future open works.
   useEffect(() => {
@@ -286,15 +292,22 @@ export default function ConciergeWidget() {
 
   const handleSelectAgent = (item: AgentListItem) => {
     if (isStreaming) return;
-    void sendMessage({
-      text: `I want VeteranPCS to help me start intake with ${item.name} for my PCS move. Please collect any missing contact details before sending anything.`,
+    const text = `I want VeteranPCS to help me start intake with ${item.name} for my PCS move. Please collect any missing contact details before sending anything.`;
+    captureAnalyticsEvent('concierge_message_sent', {
+      source_page_path: pathname ?? undefined,
+      input_origin: 'agent_card',
+      partner_type: item.role,
+      partner_salesforce_id: item.id,
+      ...queryMetrics(text),
     });
+    void sendMessage({ text });
   };
 
   const handleApprove = useCallback(
-    (id: string, approved: boolean) => {
+    (id: string, approved: boolean, toolName?: string) => {
       captureAnalyticsEvent('concierge_tool_approval_responded', {
-        approval_response: approved ? 'approved' : 'denied',
+        tool_name: toolName,
+        approved,
       });
       void addToolApprovalResponse({ id, approved });
     },
@@ -327,10 +340,7 @@ export default function ConciergeWidget() {
       {!isOpen ? (
         <button
           type="button"
-          onClick={() => {
-            captureAnalyticsEvent('concierge_opened', { source_page_path: pathname ?? undefined });
-            open();
-          }}
+          onClick={() => open()}
           aria-label="Open chat with VeteranPCS concierge"
           className="fixed bottom-6 right-6 z-concierge h-14 w-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center motion-safe:transition-colors hover:bg-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red"
         >

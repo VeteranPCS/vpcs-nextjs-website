@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react"; // No need for 
 import "@/app/globals.css";
 import classes from "./KeepInTouch.module.css";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 import { clientMediaAccountService } from "@/services/clientMediaAccountService";
 import type { MediaAccountProps } from "@/services/mediaAccountTypes";
 import { useForm } from 'react-hook-form';
@@ -44,6 +44,7 @@ const KeepInTouch = () => {
   const {
     register,
     handleSubmit,
+    getValues,
     reset,
     formState: { errors },
   } = useForm<ContactFormData>({
@@ -61,10 +62,6 @@ const KeepInTouch = () => {
 
   const handleFormSubmission = async (data: ContactFormData) => {
     setIsSubmitting(true);
-    trackFormSubmitAttempted('keep_in_touch', {
-      has_email: Boolean(data.email),
-      has_phone: false,
-    });
     try {
       sendGTMEvent({
         event: 'keep_in_touch_form_submission',
@@ -115,6 +112,14 @@ const KeepInTouch = () => {
     trackFormValidationFailed('keep_in_touch', formErrors);
   };
 
+  const trackSubmitAttempt = () => {
+    const values = getValues();
+    trackFormSubmitAttempted('keep_in_touch', {
+      has_email: Boolean(values.email),
+      has_phone: false,
+    });
+  };
+
   return (
     <div className="bg-[#EEEEEE] py-12">
       <div className="container mx-auto mb-12">
@@ -140,14 +145,25 @@ const KeepInTouch = () => {
                     key={acc._id}
                     className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2"
                   >
-                    <Link href={acc.link}>
+                    <TrackedCtaLink
+                      href={acc.link}
+                      cta={{
+                        ctaId: 'keep_in_touch_social',
+                        ctaIntent: 'social_navigation',
+                        ctaPosition: 'keep_in_touch',
+                        ctaComponent: 'keep_in_touch',
+                        ctaLabel: acc.name,
+                        destination: acc.link,
+                        pageType: 'homepage',
+                      }}
+                    >
                       <Image
                         width={50}
                         height={50}
                         src={`/icon/${acc.icon}`}
                         alt={acc.name}
                       />
-                    </Link>
+                    </TrackedCtaLink>
                   </li>
                 ))}
               </ul>
@@ -156,7 +172,10 @@ const KeepInTouch = () => {
           <div className="mt-5 lg:mt-0 md:mt-0 sm:mt-5">
             <div className={classes.CustomResponsiveCenter}>
               <form
-                onSubmit={handleSubmit(handleFormSubmission, handleInvalidSubmit)}
+                onSubmit={(event) => {
+                  trackSubmitAttempt();
+                  void handleSubmit(handleFormSubmission, handleInvalidSubmit)(event);
+                }}
                 onFocus={() => trackFormStarted('keep_in_touch')}
               >
                 <h2 className="lg:text-[36px] sm:text-[25px] text-[25px] poppins font-bold text-primary lg:text-left md:text-left sm:text-center text-center">

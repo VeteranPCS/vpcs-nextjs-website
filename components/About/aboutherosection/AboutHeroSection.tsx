@@ -5,7 +5,7 @@ import classes from "./AboutHeroSection.module.css";
 import Image from "next/image";
 import aboutService from "@/services/aboutService";
 import { AboutVetPcsResponse } from '@/components/About/HowVetPcsStarted/HowVetPcsStarted'
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const AboutHeroSection = async () => {
   let pageData: AboutVetPcsResponse | null = null;
@@ -36,9 +36,20 @@ const AboutHeroSection = async () => {
                   This is military families, helping military families move.
                 </p>
                 <div>
-                  <Link href="/#state-map">
+                  <TrackedCtaLink
+                    href="/#state-map"
+                    cta={{
+                      ctaId: 'about_hero_state_map',
+                      ctaIntent: 'state_map',
+                      ctaPosition: 'about_hero',
+                      ctaComponent: 'about_hero',
+                      ctaLabel: pageData?.buttonText || 'Find an Agent',
+                      destination: '/#state-map',
+                      pageType: 'about',
+                    }}
+                  >
                     <Button buttonText={pageData?.buttonText || "default button"} />
-                  </Link>
+                  </TrackedCtaLink>
                 </div>
                 <div className="absolute bottom-[-15%] xl:left-[41%]  lg:left-[35%] md:left-[35%] sm:left-[26%] left-[26%] translate-[-45%] ">
                   <Image

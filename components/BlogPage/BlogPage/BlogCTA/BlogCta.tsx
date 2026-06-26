@@ -4,7 +4,7 @@ import "@/app/globals.css";
 import classes from "./BlogCts.module.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const StatePageHeroSecondSection = () => {
     return (
@@ -15,15 +15,37 @@ const StatePageHeroSecondSection = () => {
                         <div>
                             <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold">Buying Or Selling</h2>
                         </div>
-                        <Link href="/#state-map">
+                        <TrackedCtaLink
+                            href="/#state-map"
+                            cta={{
+                                ctaId: 'blog_landing_agent_cta',
+                                ctaIntent: 'state_map',
+                                ctaPosition: 'blog_landing_cta_band',
+                                ctaComponent: 'blog_cta_band',
+                                ctaLabel: 'Find An Agent',
+                                destination: '/#state-map',
+                                pageType: 'blog_landing',
+                            }}
+                        >
                             <Button buttonText="Find An Agent" />
-                        </Link>
+                        </TrackedCtaLink>
                         <div>
                             <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold">VA Loan Expert</h2>
                         </div>
-                        <Link href="/#state-map">
+                        <TrackedCtaLink
+                            href="/#state-map"
+                            cta={{
+                                ctaId: 'blog_landing_lender_cta',
+                                ctaIntent: 'state_map',
+                                ctaPosition: 'blog_landing_cta_band',
+                                ctaComponent: 'blog_cta_band',
+                                ctaLabel: 'Find A Lender',
+                                destination: '/#state-map',
+                                pageType: 'blog_landing',
+                            }}
+                        >
                             <Button buttonText="Find A Lender" />
-                        </Link>
+                        </TrackedCtaLink>
                     </div>
                     <div>
                         <div>

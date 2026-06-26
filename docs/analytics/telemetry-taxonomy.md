@@ -1,6 +1,6 @@
 # VeteranPCS Telemetry Taxonomy
 
-Last updated: 2026-06-24
+Last updated: 2026-06-26
 
 This is the durable reference for VeteranPCS web telemetry. Use it when changing analytics code, troubleshooting PostHog, comparing against Google Analytics, or planning Salesforce closed-loop reporting.
 
@@ -18,6 +18,7 @@ Salesforce remains the business source of truth for Leads, Customer Opportunitie
 | Server analytics wrapper | `lib/analytics/server.ts` |
 | Visitor id and attribution state | `lib/analytics/visitor.ts` |
 | Property sanitizer | `lib/analytics/sanitizer.ts` |
+| Reusable CTA tracking | `lib/analytics/cta.ts`, `components/common/TrackedCtaLink.tsx`, `components/common/AgentCtaLink.tsx`, `components/common/LenderCtaLink.tsx` |
 | PostHog browser SDK config | `instrumentation-client.ts` |
 | Page/content/search trackers | `components/Analytics/Trackers.tsx` |
 | Salesforce Web-to-Lead attribution fields | `services/salesforceLeadParams.ts`, `services/salesForcePostFormsService.tsx` |
@@ -71,8 +72,12 @@ Common optional properties:
 | `state_code`, `state_slug` | State pages, partner CTAs, lead intent |
 | `partner_type` | `agent` or `lender` |
 | `partner_salesforce_id` | Salesforce Account/partner id, not a person name |
-| `cta_id`, `cta_intent`, `cta_position`, `cta_component` | Click reporting dimensions |
+| `cta_id`, `cta_intent`, `cta_position`, `cta_component`, `cta_location`, `cta_label` | Click reporting dimensions |
 | `destination_path` | Path only, no query string |
+| `page_type` | Route/content surface grouping for CTA coverage |
+| `content_slug`, `content_type` | Content-navigation CTA context |
+| `calculator_id`, `calculator_name` | Calculator-specific CTA context |
+| `input_origin`, `concierge_topic` | Concierge open/message context; controlled enums only |
 | `has_email`, `has_phone` | Boolean contact coverage flags only |
 | `first_touch_attribution`, `last_touch_attribution` | Snapshotted onto `lead_conversion_created` |
 | `pageview_count_before_conversion` | Safe pre-conversion counter |
@@ -97,19 +102,19 @@ Common optional properties:
 
 | Event | Emitted By | Key Properties |
 |---|---|---|
-| `cta_clicked` | State CTAs, partner cards, blog CTAs, popup CTAs | `cta_id`, `cta_intent`, `cta_position`, `cta_component`, `destination_path`, optional partner/state fields |
-| `calculator_cta_clicked` | VA loan calculator, moving bonus calculator | `calculator_id`, `cta_id`, `cta_intent`, `destination_path`, calculator-specific buckets |
+| `cta_clicked` | Shared tracked CTA links, state CTAs, partner cards, blog CTAs, popup CTAs | `cta_id`, `cta_intent`, `cta_position`, `cta_component`, `cta_location`, `cta_label`, `page_type`, `destination_path`, optional partner/state/content fields |
+| `calculator_cta_clicked` | VA loan calculator, moving bonus calculator, BAH result CTA, PCS calculator cards | `calculator_id`, `calculator_name`, `cta_id`, `cta_intent`, `destination_path`, calculator-specific buckets |
 | `form_started` | Customer forms | `form_id`, optional `guide_id` |
-| `form_submit_attempted` | Customer forms | `form_id`, `has_email`, `has_phone`, optional `guide_id`, state fields |
-| `form_validation_failed` | Customer forms | `form_id`, `failure_stage`, `error_codes` |
+| `form_submit_attempted` | Customer forms before client validation | `form_id`, `has_email`, `has_phone`, optional `guide_id`, state fields |
+| `form_validation_failed` | Customer forms | `form_id`, `failure_stage`, safe field-level `error_codes` |
 | `form_submission_failed` | Customer forms | `form_id`, `failure_stage`, `error_codes` |
 | `guide_download_requested` | Guide forms | `guide_id`, `form_id`, `has_email` |
 | `guide_download_started` | Guide forms after accepted server response | `guide_id`, `form_id` |
-| `concierge_opened` | Concierge widget | `source_page_path` |
-| `concierge_message_sent` | Concierge widget | `query_length`, `query_word_count` |
+| `concierge_opened` | Concierge provider open paths | `source_page_path`, optional `input_origin`, `concierge_topic` |
+| `concierge_message_sent` | Concierge widget manual sends, seeded messages, agent-card selections | `query_length`, `query_word_count`, optional `input_origin`, no raw text |
 | `concierge_tool_approval_responded` | Concierge approval UI | `tool_name`, `approved` |
 | `concierge_tool_submitted` | Server-side concierge lead tools | `tool_name`, `form_id`, `lead_source`, optional state/guide fields |
-| `concierge_tool_completed` | Server-side concierge lead tools | same as submitted |
+| `concierge_tool_completed` | Server-side concierge lead tools | same as submitted plus optional `submission_id` |
 | `concierge_tool_failed` | Server-side concierge lead tools | same as submitted plus `failure_stage`, `error_codes` |
 | `concierge_chat_completed` | Chat route finish | `tokens_used`, `source_page_path` |
 
@@ -141,10 +146,15 @@ Use `cta_clicked` as the canonical event for partner cards, state CTAs, blog CTA
 - `cta_intent`
 - `cta_position`
 - `cta_component`
+- `cta_location`
+- `cta_label`
+- `page_type`
 - `partner_type`
 - `partner_salesforce_id`
 - `state_code`
 - `state_slug`
+- `content_slug`
+- `content_type`
 - `destination_path`
 
 Do not add dedicated events like `agent_card_clicked`, `lender_card_clicked`, or `contact_click` unless a future reporting requirement cannot be handled with `cta_clicked` properties.
@@ -203,6 +213,7 @@ Allowed substitutes:
 | ZIP code | `zip_prefix`, MHA, state, or controlled bucket |
 | Full URL | `source_page_path`, `destination_path` |
 | Partner name | `partner_salesforce_id`, `partner_type` |
+| Validation error message/value | safe field-level `error_codes` only |
 
 ## Google Analytics / GTM Comparator Events
 
@@ -268,6 +279,38 @@ ORDER BY events DESC
 LIMIT 100
 ```
 
+### Check CTA Coverage By Surface
+
+```sql
+SELECT properties.cta_location AS cta_location,
+       properties.page_type AS page_type,
+       properties.destination_path AS destination_path,
+       count() AS clicks,
+       uniqExact(distinct_id) AS distinct_ids
+FROM events
+WHERE timestamp >= toDateTime('YYYY-MM-DD HH:MM:SS')
+  AND timestamp < toDateTime('YYYY-MM-DD HH:MM:SS')
+  AND event = 'cta_clicked'
+GROUP BY cta_location, page_type, destination_path
+ORDER BY clicks DESC
+LIMIT 200
+```
+
+### Check CTA Required Properties
+
+```sql
+SELECT count() AS clicks,
+       countIf(properties.cta_id IS NOT NULL) AS with_cta_id,
+       countIf(properties.cta_intent IS NOT NULL) AS with_cta_intent,
+       countIf(properties.cta_location IS NOT NULL OR properties.cta_component IS NOT NULL) AS with_location,
+       countIf(properties.destination_path IS NOT NULL) AS with_destination_path,
+       countIf(position(toString(properties.destination_path), '?') > 0) AS rows_with_query_strings
+FROM events
+WHERE timestamp >= toDateTime('YYYY-MM-DD HH:MM:SS')
+  AND timestamp < toDateTime('YYYY-MM-DD HH:MM:SS')
+  AND event = 'cta_clicked'
+```
+
 ### Check Required Property Coverage
 
 ```sql
@@ -300,15 +343,37 @@ SELECT event,
          OR properties['firstName'] IS NOT NULL
          OR properties['lastName'] IS NOT NULL
          OR properties.message IS NOT NULL
+         OR properties.query IS NOT NULL
+         OR properties.search_query IS NOT NULL
+         OR properties.raw_text IS NOT NULL
          OR properties.zip_code IS NOT NULL
          OR properties.zipCode IS NOT NULL
          OR properties.bah_zip_code IS NOT NULL
+         OR position(toString(properties.source_page_path), '?') > 0
+         OR position(toString(properties.destination_path), '?') > 0
        ) AS rows_with_blocked_properties
 FROM events
 WHERE timestamp >= toDateTime('YYYY-MM-DD HH:MM:SS')
   AND timestamp < toDateTime('YYYY-MM-DD HH:MM:SS')
 GROUP BY event
 ORDER BY rows_with_blocked_properties DESC, events DESC
+LIMIT 100
+```
+
+### Check Lead Join Properties
+
+```sql
+SELECT event,
+       properties.form_id AS form_id,
+       count() AS events,
+       countIf(properties.submission_id IS NOT NULL) AS with_submission_id,
+       countIf(properties.vpcs_visitor_id IS NOT NULL) AS with_visitor_id
+FROM events
+WHERE timestamp >= toDateTime('YYYY-MM-DD HH:MM:SS')
+  AND timestamp < toDateTime('YYYY-MM-DD HH:MM:SS')
+  AND event IN ('lead_conversion_created', 'concierge_tool_completed')
+GROUP BY event, form_id
+ORDER BY event ASC, form_id ASC
 LIMIT 100
 ```
 

@@ -46,13 +46,15 @@ describe('analytics sanitizer', () => {
     });
   });
 
-  it('turns validation errors into field codes without contact fields', () => {
+  it('turns validation errors into safe field codes including contact field names', () => {
     expect(errorCodesFromErrors({
       email: { message: 'Invalid email' },
       phone: { message: 'Invalid phone' },
+      firstName: { message: 'Required' },
+      lastName: { message: 'Required' },
       currentBase: { message: 'Required' },
       state: { message: 'Required' },
-    })).toEqual(['currentbase', 'state']);
+    })).toEqual(['email', 'phone', 'firstname', 'lastname', 'currentbase', 'state']);
   });
 
   it('keeps only aggregate query and ZIP values for analytics', () => {
