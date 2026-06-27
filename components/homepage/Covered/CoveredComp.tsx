@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import "@/app/globals.css";
-import Link from "next/link";
 import ClassNames from "./CoveredComp.module.css";
 import Image from "next/image";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 // Define the type for the 'card' prop
 interface Card {
@@ -32,7 +32,18 @@ const Covered: React.FC<CoveredProps> = ({ card }) => {
   }
 
   return (
-    <Link href={link}>
+    <TrackedCtaLink
+      href={link}
+      cta={{
+        ctaId: 'homepage_covered_card',
+        ctaIntent: 'content_navigation',
+        ctaPosition: 'homepage_covered',
+        ctaComponent: 'covered_card',
+        ctaLabel: title,
+        destination: link,
+        pageType: 'homepage',
+      }}
+    >
       <div className={ClassNames.coveredwrappercontainer}>
         <div className="xl:p-9 lg:p-9 md:p-9 sm:p-2 p-4 cover-card mx-auto">
           <div className="text-center">
@@ -72,7 +83,7 @@ const Covered: React.FC<CoveredProps> = ({ card }) => {
           </div>
         </div>
       </div>
-    </Link>
+    </TrackedCtaLink>
   );
 };
 

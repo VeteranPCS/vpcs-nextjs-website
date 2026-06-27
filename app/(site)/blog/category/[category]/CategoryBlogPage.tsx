@@ -7,6 +7,7 @@ import { BLOG_COMPONENTS, getBlogComponentBySlug } from '@/lib/blog/components';
 import { BLOG_CATEGORY_PAGE_SIZE, getBlogsByComponentSlug, pageCount, paginateBlogs } from '@/lib/blog/mdx';
 import { SITE_URL } from '@/lib/siteUrl';
 import { buildBreadcrumbList } from '@/lib/structured-data';
+import TrackedCtaLink from '@/components/common/TrackedCtaLink';
 
 type Props = {
   category: string;
@@ -68,9 +69,23 @@ export async function CategoryBlogPage({ category, page = 1 }: Props) {
               <p className="text-[#6C757D] roboto text-sm">
                 {posts.length} guides{totalPages > 1 ? `, page ${page} of ${totalPages}` : ''}
               </p>
-              <Link href="/contact-agent" className="rounded-custom bg-[#a81f23] px-5 py-3 text-sm font-bold text-white">
+              <TrackedCtaLink
+                href="/contact-agent"
+                className="rounded-custom bg-[#a81f23] px-5 py-3 text-sm font-bold text-white"
+                cta={{
+                  ctaId: 'blog_category_find_agent',
+                  ctaIntent: 'contact_agent',
+                  ctaPosition: 'blog_category_header',
+                  ctaComponent: 'blog_category_page',
+                  ctaLabel: 'Find an Agent',
+                  destination: '/contact-agent',
+                  pageType: 'blog_category',
+                  contentType: 'blog_category',
+                  partnerType: 'agent',
+                }}
+              >
                 Find an Agent
-              </Link>
+              </TrackedCtaLink>
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
               {pagePosts.map((post) => (

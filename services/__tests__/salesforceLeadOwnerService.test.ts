@@ -213,7 +213,7 @@ describe('salesforceLeadOwnerService', () => {
     vi.mocked(salesForceAPI)
       .mockResolvedValueOnce(queryResponse([{ Id: '00QCONFIRM', OwnerId: '005WRONG' }]) as any)
       .mockResolvedValueOnce({ status: 204 } as any)
-      .mockResolvedValueOnce(
+      .mockResolvedValue(
         queryResponse([{ Id: '00QCONFIRM', OwnerId: '005STILLWRONG', Owner: { Name: 'Stephanie Guree' } }]) as any,
       );
 

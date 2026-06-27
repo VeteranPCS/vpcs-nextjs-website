@@ -2,7 +2,7 @@ import Button from "@/components/common/Button";
 import "@/app/globals.css";
 import classes from "./HeroSection.module.css";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 interface HeroSectionProps {
   title: string;
@@ -76,28 +76,71 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
               )}
               {page == "home" && (
                 <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:mb-12 lg:justify-start">
-                  <Link href="/contact-agent">
+                  <TrackedCtaLink
+                    href="/contact-agent"
+                    cta={{
+                      ctaId: 'homepage_hero_find_agent',
+                      ctaIntent: 'contact_agent',
+                      ctaPosition: 'hero_primary',
+                      ctaComponent: 'homepage_hero',
+                      ctaLabel: 'Find An Agent',
+                      destination: '/contact-agent',
+                      pageType: 'homepage',
+                    }}
+                  >
                     <Button buttonText="Find An Agent" />
-                  </Link>
-                  <Link
+                  </TrackedCtaLink>
+                  <TrackedCtaLink
                     href="#state-map"
                     className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-white/70 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:text-base"
+                    cta={{
+                      ctaId: 'homepage_hero_browse_state',
+                      ctaIntent: 'state_map',
+                      ctaPosition: 'hero_secondary',
+                      ctaComponent: 'homepage_hero',
+                      ctaLabel: 'Browse by State',
+                      destination: '#state-map',
+                      pageType: 'homepage',
+                    }}
                   >
                     Browse by State
-                  </Link>
+                  </TrackedCtaLink>
                 </div>
               )}
               {page == "spanish" && (
                 <div className="lg:flex md:flex justify-start items-center gap-4 flex-wrap ">
-                  <Link href="#state-map">
+                  <TrackedCtaLink
+                    href="#state-map"
+                    cta={{
+                      ctaId: 'spanish_hero_browse_state',
+                      ctaIntent: 'state_map',
+                      ctaPosition: 'hero_primary',
+                      ctaComponent: 'homepage_hero',
+                      ctaLabel: 'Explora nuestro mapa',
+                      destination: '#state-map',
+                      pageType: 'spanish',
+                    }}
+                  >
                     <Button buttonText="Explora nuestro mapa" />
-                  </Link>
+                  </TrackedCtaLink>
                   <p className="text-white font-normal xl:text-[30px] lg:text-[30px] md:text-[20px] sm:text-[20px] text-[20px] mx-10 xl:w-auto w-full hidden md:block">
                     O
                   </p>
-                  <Link href="/contact-agent" className="hidden md:block">
+                  <TrackedCtaLink
+                    href="/contact-agent"
+                    className="hidden md:block"
+                    cta={{
+                      ctaId: 'spanish_hero_find_agent',
+                      ctaIntent: 'contact_agent',
+                      ctaPosition: 'hero_secondary',
+                      ctaComponent: 'homepage_hero',
+                      ctaLabel: 'Encuentra un agente',
+                      destination: '/contact-agent',
+                      pageType: 'spanish',
+                    }}
+                  >
                     <Button buttonText="Encuentra un agente" />
-                  </Link>
+                  </TrackedCtaLink>
                 </div>
               )}
             </div>

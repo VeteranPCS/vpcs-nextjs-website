@@ -1,7 +1,11 @@
+"use client";
+
 import React from "react";
 import "@/app/globals.css";
 import Image from "next/image";
 import Link from "next/link";
+import { captureAnalyticsEvent } from "@/lib/analytics/client";
+import { buildCtaProperties } from "@/lib/analytics/cta";
 
 const PcsResourcesCalculators = () => {
   return (
@@ -26,6 +30,17 @@ const PcsResourcesCalculators = () => {
               target=""
               rel="noopener noreferrer"
               className="bg-white rounded-lg shadow-lg p-8 text-center hover:shadow-xl transition-shadow duration-300 block"
+              onClick={() => captureAnalyticsEvent('calculator_cta_clicked', buildCtaProperties({
+                ctaId: 'pcs_resources_bah_calculator_card',
+                ctaIntent: 'calculator_navigation',
+                ctaPosition: 'pcs_resources_calculator_cards',
+                ctaComponent: 'pcs_resources_calculators',
+                ctaLabel: 'BAH Calculator',
+                destination: '/pcs-resources#bah-calculator',
+                pageType: 'pcs_resources',
+                calculatorId: 'bah_calculator',
+                calculatorName: 'BAH Calculator',
+              }))}
             >
               <div className="mb-6 flex justify-center">
                 <Image
@@ -51,6 +66,17 @@ const PcsResourcesCalculators = () => {
             <Link
               href="/va-loan-calculator"
               className="bg-white rounded-lg shadow-lg p-8 text-center hover:shadow-xl transition-shadow duration-300 block"
+              onClick={() => captureAnalyticsEvent('calculator_cta_clicked', buildCtaProperties({
+                ctaId: 'pcs_resources_va_loan_calculator_card',
+                ctaIntent: 'calculator_navigation',
+                ctaPosition: 'pcs_resources_calculator_cards',
+                ctaComponent: 'pcs_resources_calculators',
+                ctaLabel: 'Mortgage Calculator',
+                destination: '/va-loan-calculator',
+                pageType: 'pcs_resources',
+                calculatorId: 'va_loan_calculator',
+                calculatorName: 'VA Loan Calculator',
+              }))}
             >
               <div className="mb-6 flex justify-center">
                 <Image

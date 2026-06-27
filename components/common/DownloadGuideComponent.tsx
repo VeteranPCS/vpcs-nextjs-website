@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { homebuyerGuideForm, vaLoanGuideForm } from "@/services/salesForcePostFormsService";
 import { sendGTMEvent } from "@next/third-parties/google";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 import {
     captureAnalyticsEvent,
@@ -64,7 +64,7 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
         email: Yup.string().email('Invalid email').required('Email is required'),
     });
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormInputs>({
+    const { register, handleSubmit, getValues, formState: { errors }, reset } = useForm<FormInputs>({
         resolver: yupResolver(validationSchema),
         defaultValues: {
             firstName: '',
@@ -91,11 +91,6 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
             guide_id: resolvedGuideId,
             form_id: resolvedGuideId,
             has_email: Boolean(data.email),
-        });
-        trackFormSubmitAttempted(resolvedGuideId, {
-            guide_id: resolvedGuideId,
-            has_email: Boolean(data.email),
-            has_phone: false,
         });
         try {
             if (gtmEventContent) {
@@ -148,6 +143,15 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
         trackFormValidationFailed(resolvedGuideId, formErrors, { guide_id: resolvedGuideId });
     };
 
+    const trackSubmitAttempt = () => {
+        const values = getValues();
+        trackFormSubmitAttempted(resolvedGuideId, {
+            guide_id: resolvedGuideId,
+            has_email: Boolean(values.email),
+            has_phone: false,
+        });
+    };
+
     return (
         <div className={`flex justify-center items-center py-4 bg-white ${className}`}>
             <div className="w-full max-w-[800px] bg-white rounded-2xl shadow-lg p-8">
@@ -172,7 +176,10 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                 </div>
 
                 <form
-                    onSubmit={handleSubmit(onSubmitHandler, handleInvalidSubmit)}
+                    onSubmit={(event) => {
+                        trackSubmitAttempt();
+                        void handleSubmit(onSubmitHandler, handleInvalidSubmit)(event);
+                    }}
                     onFocus={() => trackFormStarted(resolvedGuideId, { guide_id: resolvedGuideId })}
                     className="mb-6"
                 >
@@ -218,12 +225,22 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                 </form>
 
                 <div className="w-full flex justify-center">
-                    <Link
+                    <TrackedCtaLink
                         className="w-auto px-8 bg-[#8B2D2D] text-white rounded-lg py-3 text-base font-medium hover:bg-[#722424]"
                         href={secondaryButtonLink}
+                        cta={{
+                            ctaId: 'guide_secondary_cta',
+                            ctaIntent: secondaryButtonLink.includes('contact-lender') ? 'contact_lender' : 'contact_agent',
+                            ctaPosition: 'guide_download_secondary',
+                            ctaComponent: 'download_guide_component',
+                            ctaLabel: secondaryButtonText,
+                            destination: secondaryButtonLink,
+                            pageType: 'guide',
+                            guideId: resolvedGuideId,
+                        }}
                     >
                         {secondaryButtonText}
-                    </Link>
+                    </TrackedCtaLink>
                 </div>
             </div>
         </div>

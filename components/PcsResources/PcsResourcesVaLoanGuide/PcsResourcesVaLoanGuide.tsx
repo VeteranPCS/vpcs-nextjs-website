@@ -34,7 +34,7 @@ const PcsResourcesVaLoanGuide = () => {
     email: Yup.string().email('Invalid email').required('Email is required'),
   });
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormInputs>({
+  const { register, handleSubmit, getValues, setValue, formState: { errors } } = useForm<FormInputs>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       firstName: '',
@@ -50,11 +50,6 @@ const PcsResourcesVaLoanGuide = () => {
       guide_id: 'va_loan_guide',
       form_id: 'va_loan_guide',
       has_email: Boolean(data.email),
-    });
-    trackFormSubmitAttempted('va_loan_guide', {
-      guide_id: 'va_loan_guide',
-      has_email: Boolean(data.email),
-      has_phone: false,
     });
     try {
       sendGTMEvent({
@@ -101,12 +96,24 @@ const PcsResourcesVaLoanGuide = () => {
     trackFormValidationFailed('va_loan_guide', formErrors, { guide_id: 'va_loan_guide' });
   };
 
+  const trackSubmitAttempt = () => {
+    const values = getValues();
+    trackFormSubmitAttempted('va_loan_guide', {
+      guide_id: 'va_loan_guide',
+      has_email: Boolean(values.email),
+      has_phone: false,
+    });
+  };
+
   return (
     <div className={classes.pcsresourcesvaloanguide}>
       <div className="container mx-auto px-5">
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-6">
           <form
-            onSubmit={handleSubmit(onSubmitHandler, handleInvalidSubmit)}
+            onSubmit={(event) => {
+              trackSubmitAttempt();
+              void handleSubmit(onSubmitHandler, handleInvalidSubmit)(event);
+            }}
             onFocus={() => trackFormStarted('va_loan_guide', { guide_id: 'va_loan_guide' })}
           >
             <HoneypotField ref={honeypotRef} />

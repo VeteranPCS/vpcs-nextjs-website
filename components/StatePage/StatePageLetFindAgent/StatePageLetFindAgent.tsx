@@ -6,7 +6,13 @@ import Button from "@/components/common/Button";
 import Link from "next/link";
 import { trackCtaClicked } from "@/lib/analytics/client";
 
-const StatePageCityAgents = () => {
+const StatePageCityAgents = ({
+  stateSlug,
+  stateCode,
+}: {
+  stateSlug?: string;
+  stateCode?: string;
+}) => {
   return (
     <div className="bg-[#292F6C]">
       <div className="container mx-auto">
@@ -23,6 +29,8 @@ const StatePageCityAgents = () => {
                 cta_position: 'state_agent_list_footer',
                 cta_component: 'state_page_let_find_agent',
                 destination_path: '/contact-agent',
+                state_slug: stateSlug,
+                state_code: stateCode,
               })}
             >
               <Button buttonText="Let us find you an agent" />

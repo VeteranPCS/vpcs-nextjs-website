@@ -1,4 +1,5 @@
 import { PostHog } from 'posthog-node';
+import { logError } from '@/services/loggingService';
 
 let posthogClient: PostHog | null = null;
 
@@ -31,7 +32,8 @@ interface ServerEvent {
 export async function captureServerEvent({ distinctId, event, properties }: ServerEvent): Promise<void> {
   try {
     await captureServerEventStrict({ distinctId, event, properties });
-  } catch {
+  } catch (error) {
+    logError('PostHog server capture failed', { distinctId, event }, error);
     // best-effort: never surface analytics errors to the caller
   }
 }

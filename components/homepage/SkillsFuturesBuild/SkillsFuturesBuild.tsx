@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./SkillsFuturesBuild.module.css";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const SkillFuturesBuild = () => {
   return (
@@ -17,9 +17,20 @@ const SkillFuturesBuild = () => {
                 Interested in Starting a Career as a Real Estate Agent or
                 Mortgage Loan Officer?
               </p>
-              <Link href="/internship">
+              <TrackedCtaLink
+                href="/internship"
+                cta={{
+                  ctaId: 'homepage_internship',
+                  ctaIntent: 'career_navigation',
+                  ctaPosition: 'homepage_skills_futures',
+                  ctaComponent: 'skills_futures_build',
+                  ctaLabel: 'Learn about our internship',
+                  destination: '/internship',
+                  pageType: 'homepage',
+                }}
+              >
                 <Button buttonText="Learn about our internship" />
-              </Link>
+              </TrackedCtaLink>
             </div>
           </div>
         </div>

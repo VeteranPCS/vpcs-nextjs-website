@@ -29,6 +29,7 @@ import { formatDate } from "@/utils/helper";
 import { buildBreadcrumbList } from "@/lib/structured-data";
 import { SITE_URL } from "@/lib/siteUrl";
 import { buildContactCtaHref } from "@/lib/contactAgentUrl";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const BASE_URL = SITE_URL;
 
@@ -209,12 +210,25 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
             <FrequentlyAskedQuestion />
             <KeepInTouch />
             <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E5E7EB] bg-white/95 px-5 py-3 shadow-lg md:hidden">
-                <Link
+                <TrackedCtaLink
                     href={contactHref}
                     className="block min-h-11 rounded-custom bg-[#a81f23] px-5 py-3 text-center text-sm font-bold text-white"
+                    cta={{
+                        ctaId: 'blog_mobile_sticky_agent',
+                        ctaIntent: 'contact_agent',
+                        ctaPosition: 'mobile_sticky_footer',
+                        ctaComponent: 'blog_mobile_sticky_cta',
+                        ctaLabel,
+                        destination: contactHref,
+                        pageType: 'blog_post',
+                        stateSlug: bridgeState,
+                        contentSlug: slug,
+                        contentType: 'blog_post',
+                        partnerType: 'agent',
+                    }}
                 >
                     {ctaLabel}
-                </Link>
+                </TrackedCtaLink>
             </div>
         </>
     );

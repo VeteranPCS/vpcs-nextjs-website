@@ -28,6 +28,8 @@ describe('analytics privacy regressions', () => {
     expect(trackingProperties).toContain('zip_prefix: zipPrefix(formData.zipCode)');
     expect(trackingProperties).not.toMatch(/zip(?:Code|_code):/);
     expect(bahCalculator).not.toContain('bah_zip_code');
+    expect(bahCalculator).toContain("captureAnalyticsEvent('calculator_cta_clicked'");
+    expect(bahCalculator).toContain('bah_result_lender_cta');
   });
 
   it('routes first-time homebuyer guide downloads to their own server action', async () => {
@@ -44,6 +46,34 @@ describe('analytics privacy regressions', () => {
 
     expect(conciergeWidget).not.toContain('posthog');
     expect(conciergeWidget).toContain('queryMetrics(text)');
+    expect(conciergeWidget).toContain('queryMetrics(pendingSeed.openingMessage)');
     expect(conciergeWidget).not.toMatch(/\b(message_text|raw_text|query|search_query):\s*text\b/);
+  });
+
+  it('routes shared CTA wrappers through explicit tracked links', async () => {
+    const agentCta = await source('components/common/AgentCtaLink.tsx');
+    const lenderCta = await source('components/common/LenderCtaLink.tsx');
+    const stateMap = await source('components/homepage/StateMap.tsx');
+
+    expect(agentCta).toContain('TrackedCtaLink');
+    expect(lenderCta).toContain('TrackedCtaLink');
+    expect(stateMap).toContain('state_map_mobile_state');
+    expect(stateMap).toContain('state_map_state');
+  });
+
+  it('keeps server-owned PostHog events out of the client event union', async () => {
+    const clientAnalytics = await source('lib/analytics/client.ts');
+
+    expect(clientAnalytics).not.toContain("| 'concierge_tool_submitted'");
+    expect(clientAnalytics).not.toContain("| 'concierge_tool_completed'");
+    expect(clientAnalytics).not.toContain("| 'concierge_tool_failed'");
+    expect(clientAnalytics).not.toContain("| 'lead_conversion_created'");
+  });
+
+  it('adds safe submission ids to concierge tool completion telemetry', async () => {
+    const leadTools = await source('lib/ai/tools/lead-tools.ts');
+
+    expect(leadTools).toContain('function submissionIdFromResponse');
+    expect(leadTools).toContain('submission_id: submissionIdFromResponse(serverResponse)');
   });
 });

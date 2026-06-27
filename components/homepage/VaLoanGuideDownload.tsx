@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { vaLoanGuideForm } from "@/services/salesForcePostFormsService";
 import { sendGTMEvent } from "@next/third-parties/google";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 import { useConcierge } from "@/components/Concierge";
 import { featureFlags } from "@/lib/feature-flags";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
@@ -44,7 +44,7 @@ const VaLoanGuideDownload = () => {
         email: Yup.string().email('Invalid email').required('Email is required'),
     });
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormInputs>({
+    const { register, handleSubmit, getValues, formState: { errors }, reset } = useForm<FormInputs>({
         resolver: yupResolver(validationSchema),
         defaultValues: {
             name: '',
@@ -62,11 +62,6 @@ const VaLoanGuideDownload = () => {
             guide_id: 'va_loan_guide',
             form_id: 'va_loan_guide',
             has_email: Boolean(data.email),
-        });
-        trackFormSubmitAttempted('va_loan_guide', {
-            guide_id: 'va_loan_guide',
-            has_email: Boolean(data.email),
-            has_phone: false,
         });
         try {
             sendGTMEvent({ event: "conversion_download", content: "VA Loan Guide" });
@@ -117,6 +112,15 @@ const VaLoanGuideDownload = () => {
         trackFormValidationFailed('va_loan_guide', formErrors, { guide_id: 'va_loan_guide' });
     };
 
+    const trackSubmitAttempt = () => {
+        const values = getValues();
+        trackFormSubmitAttempted('va_loan_guide', {
+            guide_id: 'va_loan_guide',
+            has_email: Boolean(values.email),
+            has_phone: false,
+        });
+    };
+
     return (
         <div className="flex justify-center items-center py-4 bg-white">
             <div className="w-full max-w-[800px] bg-white rounded-2xl shadow-lg p-8">
@@ -133,7 +137,10 @@ const VaLoanGuideDownload = () => {
                 </div>
 
                 <form
-                    onSubmit={handleSubmit(onSubmitHandler, handleInvalidSubmit)}
+                    onSubmit={(event) => {
+                        trackSubmitAttempt();
+                        void handleSubmit(onSubmitHandler, handleInvalidSubmit)(event);
+                    }}
                     onFocus={() => trackFormStarted('va_loan_guide', { guide_id: 'va_loan_guide' })}
                     className="mb-6"
                 >
@@ -183,12 +190,23 @@ const VaLoanGuideDownload = () => {
                 </form>
 
                 <div className="w-full flex justify-center">
-                    <Link
+                    <TrackedCtaLink
                         className="w-auto px-8 bg-[#8B2D2D] text-white rounded-lg py-3 text-base font-medium hover:bg-[#722424]"
                         href="/contact-lender"
+                        cta={{
+                            ctaId: 'va_loan_guide_secondary_lender',
+                            ctaIntent: 'contact_lender',
+                            ctaPosition: 'guide_download_secondary',
+                            ctaComponent: 'va_loan_guide_download',
+                            ctaLabel: 'VA Loan Questions?',
+                            destination: '/contact-lender',
+                            pageType: 'homepage',
+                            guideId: 'va_loan_guide',
+                            partnerType: 'lender',
+                        }}
                     >
                         VA Loan Questions?
-                    </Link>
+                    </TrackedCtaLink>
                 </div>
             </div>
         </div>

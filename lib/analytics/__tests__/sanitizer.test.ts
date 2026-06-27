@@ -46,13 +46,15 @@ describe('analytics sanitizer', () => {
     });
   });
 
-  it('turns validation errors into field codes without contact fields', () => {
+  it('turns validation errors into safe field codes including contact field names', () => {
     expect(errorCodesFromErrors({
       email: { message: 'Invalid email' },
       phone: { message: 'Invalid phone' },
+      firstName: { message: 'Required' },
+      lastName: { message: 'Required' },
       currentBase: { message: 'Required' },
       state: { message: 'Required' },
-    })).toEqual(['currentbase', 'state']);
+    })).toEqual(['email', 'phone', 'firstname', 'lastname', 'currentbase', 'state']);
   });
 
   it('keeps only aggregate query and ZIP values for analytics', () => {
@@ -61,5 +63,39 @@ describe('analytics sanitizer', () => {
       query_word_count: 6,
     });
     expect(zipPrefix('80920-1234')).toBe('809');
+  });
+
+  it('drops exception/autocapture non-scalar property values without throwing', () => {
+    const clean = sanitizeAnalyticsProperties({
+      $lib: 'posthog-js',
+      source_page_path: '/pcs-resources?utm_campaign=telemetry_hardening_smoke',
+      $exception_list: [
+        { type: 'Error', value: 'Hydration failed' },
+        { type: 'TypeError', value: 'value.trim is not a function' },
+      ],
+      $exception_frames: [
+        { filename: 'components/example.tsx', line: 57, column: 14 },
+      ],
+      $sdk_debug_extensions: {
+        exception_autocapture: { enabled: true },
+      },
+      $active_feature_flags: ['concierge', { key: 'unsafe_object' }, 42, true],
+      first_touch_attribution: {
+        utm_source: 'codex',
+        landing_page_path: '/pcs-resources?email=alex@example.com',
+        nested_payload: { unsafe: true },
+      },
+    });
+
+    expect(clean.$lib).toBe('posthog-js');
+    expect(clean.source_page_path).toBe('/pcs-resources');
+    expect(clean.$exception_list).toBeUndefined();
+    expect(clean.$exception_frames).toBeUndefined();
+    expect(clean.$sdk_debug_extensions).toBeUndefined();
+    expect(clean.$active_feature_flags).toEqual(['concierge', 42, true]);
+    expect(clean.first_touch_attribution).toEqual({
+      utm_source: 'codex',
+      landing_page_path: '/pcs-resources',
+    });
   });
 });

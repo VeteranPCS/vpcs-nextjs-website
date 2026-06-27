@@ -32,11 +32,7 @@ export type AnalyticsEventName =
   | 'guide_download_started'
   | 'concierge_opened'
   | 'concierge_message_sent'
-  | 'concierge_tool_approval_responded'
-  | 'concierge_tool_submitted'
-  | 'concierge_tool_completed'
-  | 'concierge_tool_failed'
-  | 'lead_conversion_created';
+  | 'concierge_tool_approval_responded';
 
 const EVENT_STAGE: Record<AnalyticsEventName, JourneyStage> = {
   content_viewed: 'top',
@@ -56,10 +52,6 @@ const EVENT_STAGE: Record<AnalyticsEventName, JourneyStage> = {
   concierge_opened: 'mid',
   concierge_message_sent: 'mid',
   concierge_tool_approval_responded: 'mid',
-  concierge_tool_submitted: 'mid',
-  concierge_tool_completed: 'mid',
-  concierge_tool_failed: 'mid',
-  lead_conversion_created: 'bottom',
 };
 
 const startedForms = new Set<string>();
@@ -74,16 +66,22 @@ export function captureAnalyticsEvent(
   event: AnalyticsEventName,
   properties: AnalyticsProperties = {},
 ): void {
-  const context = getClientAnalyticsContext();
-  const props = sanitizeAnalyticsProperties({
-    analytics_schema_version: ANALYTICS_SCHEMA_VERSION,
-    journey_stage: EVENT_STAGE[event],
-    vpcs_visitor_id: context.vpcs_visitor_id,
-    source_page_path: context.source_page_path,
-    ...properties,
-  });
+  try {
+    const context = getClientAnalyticsContext();
+    const props = sanitizeAnalyticsProperties({
+      analytics_schema_version: ANALYTICS_SCHEMA_VERSION,
+      journey_stage: EVENT_STAGE[event],
+      vpcs_visitor_id: context.vpcs_visitor_id,
+      source_page_path: context.source_page_path,
+      ...properties,
+    });
 
-  posthog.capture(event, props);
+    posthog.capture(event, props);
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('PostHog client capture failed', event, error);
+    }
+  }
 }
 
 export function formTrackingPayload(): Record<string, unknown> {

@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const WhyVeteranPcs = () => {
   return (
@@ -113,9 +113,20 @@ const WhyVeteranPcs = () => {
               />
             </div>
             <div className="mx-auto justify-center text-center flex">
-              <Link href="/#state-map">
+              <TrackedCtaLink
+                href="/#state-map"
+                cta={{
+                  ctaId: 'homepage_why_find_agent',
+                  ctaIntent: 'state_map',
+                  ctaPosition: 'homepage_why_veteranpcs',
+                  ctaComponent: 'why_veteranpcs',
+                  ctaLabel: 'Find an Agent',
+                  destination: '/#state-map',
+                  pageType: 'homepage',
+                }}
+              >
                 <Button buttonText="Find an Agent" />
-              </Link>
+              </TrackedCtaLink>
             </div>
           </div>
         </div>

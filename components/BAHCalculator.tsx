@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { sendGTMEvent } from "@next/third-parties/google";
 import { captureAnalyticsEvent } from '@/lib/analytics/client';
 import { zipPrefix } from '@/lib/analytics/sanitizer';
+import { buildCtaProperties } from '@/lib/analytics/cta';
 
 interface FormData {
     zipCode: string;
@@ -344,7 +345,22 @@ export default function BAHCalculator() {
                             </div>
 
                             <div className="mt-6">
-                                <Link href="/contact-lender" className="w-full bg-blue-800 text-white py-3 px-6 rounded-lg hover:bg-blue-900 transition-colors font-semibold text-sm">
+                                <Link
+                                    href="/contact-lender"
+                                    className="w-full bg-blue-800 text-white py-3 px-6 rounded-lg hover:bg-blue-900 transition-colors font-semibold text-sm"
+                                    onClick={() => captureAnalyticsEvent('calculator_cta_clicked', buildCtaProperties({
+                                        ctaId: 'bah_result_lender_cta',
+                                        ctaIntent: 'contact_lender',
+                                        ctaPosition: 'bah_result',
+                                        ctaComponent: 'bah_calculator',
+                                        ctaLabel: 'Questions about VA Loan?',
+                                        destination: '/contact-lender',
+                                        pageType: 'calculator',
+                                        calculatorId: 'bah_calculator',
+                                        calculatorName: 'BAH Calculator',
+                                        partnerType: 'lender',
+                                    }))}
+                                >
                                     Questions about VA Loan?
                                 </Link>
                             </div>

@@ -4,6 +4,9 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import Button from "@/components/common/Button";
 import { sendGTMEvent } from "@next/third-parties/google";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
+import { trackCtaClicked } from "@/lib/analytics/client";
+import { buildCtaProperties } from "@/lib/analytics/cta";
 
 const StateMapSvg = dynamic(() => import("@/components/homepage/StateMapSvg"), {
   ssr: false,
@@ -71,12 +74,24 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
   const handleSendGtmEvent = useCallback((event: React.MouseEvent<SVGElement> | React.MouseEvent<HTMLAnchorElement>) => {
     const target = event.currentTarget as HTMLElement;
     const href = target.getAttribute("href");
-    const dataName = target.getAttribute("data-name");
+    const dataName = target.getAttribute("data-name")
+      || target.querySelector("[data-name]")?.getAttribute("data-name");
     sendGTMEvent({
       event: "map_interaction",
       state: href || dataName || "unknown", // Use `href` first, fallback to `data-name`, default to "unknown"
     });
-  }, []);
+    const isStateLink = Boolean(dataName);
+    trackCtaClicked(buildCtaProperties({
+      ctaId: isStateLink ? 'state_map_state' : 'state_map_primary_cta',
+      ctaIntent: isStateLink ? 'state_page' : 'contact_agent',
+      ctaPosition: isStateLink ? 'desktop_state_map' : 'state_map_footer',
+      ctaComponent: 'homepage_state_map',
+      ctaLabel: dataName || buttonText,
+      destination: href || buttonLink,
+      pageType: 'homepage',
+      stateSlug: isStateLink && href ? href.replace(/^\//, '') : undefined,
+    }));
+  }, [buttonLink, buttonText]);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -193,9 +208,23 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
                       </div>
                     ) : (
                       filteredStates.map((state) => (
-                        <a key={state.name} href={state.link} className="flex min-h-11 items-center justify-center border border-solid px-3 py-2 text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-primary">
+                        <TrackedCtaLink
+                          key={state.name}
+                          href={state.link}
+                          className="flex min-h-11 items-center justify-center border border-solid px-3 py-2 text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-primary"
+                          cta={{
+                            ctaId: 'state_map_mobile_state',
+                            ctaIntent: 'state_page',
+                            ctaPosition: 'mobile_state_dropdown',
+                            ctaComponent: 'homepage_state_map',
+                            ctaLabel: state.name,
+                            destination: state.link,
+                            pageType: 'homepage',
+                            stateSlug: state.link.replace(/^\//, ''),
+                          }}
+                        >
                           {state.name}
-                        </a>
+                        </TrackedCtaLink>
                       ))
                     )}
                   </div>

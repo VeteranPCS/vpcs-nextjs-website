@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
+import TrackedCtaLink from '@/components/common/TrackedCtaLink';
 
 export interface AgentListItem {
   id: string;
@@ -87,13 +87,24 @@ export default function AgentCard({ list, kind, onSelect }: Props) {
             >
               <div className="flex min-w-0 gap-3">
                 {item.profileHref ? (
-                  <Link
+                  <TrackedCtaLink
                     href={item.profileHref}
                     className="relative mt-0.5 h-14 w-14 shrink-0 overflow-hidden rounded-full bg-primary/10 text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red"
                     aria-label={`View ${item.name} on the ${item.stateName || 'state'} page`}
+                    cta={{
+                      ctaId: 'concierge_partner_profile_image',
+                      ctaIntent: 'partner_profile',
+                      ctaPosition: 'concierge_agent_card',
+                      ctaComponent: 'concierge_agent_card',
+                      ctaLabel: 'View profile',
+                      destination: item.profileHref,
+                      pageType: 'concierge',
+                      partnerType: kind,
+                      partnerSalesforceId: item.id,
+                    }}
                   >
                     {photo}
-                  </Link>
+                  </TrackedCtaLink>
                 ) : (
                   <div className="relative mt-0.5 flex h-14 w-14 shrink-0 overflow-hidden rounded-full bg-primary/10 text-primary">
                     {photo}
@@ -103,12 +114,23 @@ export default function AgentCard({ list, kind, onSelect }: Props) {
                 <div className="min-w-0 flex-1">
                   <div className="flex min-w-0 flex-col">
                     {item.profileHref ? (
-                      <Link
+                      <TrackedCtaLink
                         href={item.profileHref}
                         className="break-words text-sm font-semibold leading-snug text-primary underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red"
+                        cta={{
+                          ctaId: 'concierge_partner_profile_name',
+                          ctaIntent: 'partner_profile',
+                          ctaPosition: 'concierge_agent_card',
+                          ctaComponent: 'concierge_agent_card',
+                          ctaLabel: 'View profile',
+                          destination: item.profileHref,
+                          pageType: 'concierge',
+                          partnerType: kind,
+                          partnerSalesforceId: item.id,
+                        }}
                       >
                         {item.name}
-                      </Link>
+                      </TrackedCtaLink>
                     ) : (
                       <span className="break-words text-sm font-semibold leading-snug text-primary">
                         {item.name}
@@ -137,12 +159,23 @@ export default function AgentCard({ list, kind, onSelect }: Props) {
 
               <div className="flex flex-col gap-2">
                 {item.contactHref ? (
-                  <Link
+                  <TrackedCtaLink
                     href={item.contactHref}
                     className="inline-flex min-h-[44px] items-center justify-center rounded-md bg-accent-red px-3 py-2 text-center text-sm font-medium text-white motion-safe:transition-colors hover:bg-accent-red-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    cta={{
+                      ctaId: 'concierge_partner_contact',
+                      ctaIntent: kind === 'lender' ? 'contact_lender' : 'contact_agent',
+                      ctaPosition: 'concierge_agent_card',
+                      ctaComponent: 'concierge_agent_card',
+                      ctaLabel: 'Start intake',
+                      destination: item.contactHref,
+                      pageType: 'concierge',
+                      partnerType: kind,
+                      partnerSalesforceId: item.id,
+                    }}
                   >
                     {contactText}
-                  </Link>
+                  </TrackedCtaLink>
                 ) : onSelect ? (
                   <button
                     type="button"
@@ -153,12 +186,23 @@ export default function AgentCard({ list, kind, onSelect }: Props) {
                   </button>
                 ) : null}
                 {item.profileHref ? (
-                  <Link
+                  <TrackedCtaLink
                     href={item.profileHref}
                     className="inline-flex min-h-[36px] items-center justify-center rounded-md border border-gray-200 px-3 py-1.5 text-center text-xs font-medium text-primary motion-safe:transition-colors hover:bg-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red"
+                    cta={{
+                      ctaId: 'concierge_partner_profile_details',
+                      ctaIntent: 'partner_profile',
+                      ctaPosition: 'concierge_agent_card',
+                      ctaComponent: 'concierge_agent_card',
+                      ctaLabel: 'View details',
+                      destination: item.profileHref,
+                      pageType: 'concierge',
+                      partnerType: kind,
+                      partnerSalesforceId: item.id,
+                    }}
                   >
                     {profileText}
-                  </Link>
+                  </TrackedCtaLink>
                 ) : null}
               </div>
             </li>

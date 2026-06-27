@@ -3,7 +3,7 @@ import "@/app/globals.css";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import CitySelection from "./CitySelection";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 import { urlForImage } from "@/sanity/lib/image";
 import { Image as SanityImage } from 'sanity';
 
@@ -15,12 +15,16 @@ interface StatePageHeroSectionProps {
   stateName: string;
   stateImage: StateImage;
   cityList: string[];
+  stateSlug: string;
+  stateCode?: string;
 }
 
 const StatePageHeroSection = ({
   stateName,
   stateImage,
   cityList,
+  stateSlug,
+  stateCode,
 }: StatePageHeroSectionProps) => {
   const imageUrl = stateImage ? urlForImage(stateImage) : "/assets/South-Carolina-map.png";
 
@@ -41,9 +45,23 @@ const StatePageHeroSection = ({
               <CitySelection cityList={cityList} />
               <div className="mt-6">
                 <p className="text-[#292F6C]">Don&apos;t want to browse?</p>
-                <Link href="/contact-agent">
+                <TrackedCtaLink
+                  href="/contact-agent"
+                  cta={{
+                    ctaId: 'state_hero_find_agent',
+                    ctaIntent: 'contact_agent',
+                    ctaPosition: 'state_hero',
+                    ctaComponent: 'state_page_hero',
+                    ctaLabel: 'Find an agent for me',
+                    destination: '/contact-agent',
+                    pageType: 'state_page',
+                    stateCode,
+                    stateSlug,
+                    partnerType: 'agent',
+                  }}
+                >
                   <Button buttonText="Find an agent for me" />
-                </Link>
+                </TrackedCtaLink>
               </div>
             </div>
           </div>

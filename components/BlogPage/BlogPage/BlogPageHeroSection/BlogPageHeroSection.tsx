@@ -1,10 +1,10 @@
 import "@/app/globals.css";
 import classes from "./BlogPageHeroSection.module.css";
-import Link from "next/link";
 import { formatDate } from "@/utils/helper";
 import { excerpt } from "@/lib/blog/mdx";
 import type { BlogPost } from "@/lib/blog/types";
 import BlogSearchForm from "@/components/BlogPage/BlogSearchForm";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 type Props = { blog: BlogPost };
 
@@ -17,7 +17,21 @@ export default function BlogPageHeroSection({ blog }: Props) {
         style={{ backgroundImage: `url("${bg}")` }}
       >
         <div className="flex flex-col justify-center items-center">
-          <Link href={`/blog/${blog.slug}`} className="block">
+          <TrackedCtaLink
+            href={`/blog/${blog.slug}`}
+            className="block"
+            cta={{
+              ctaId: 'blog_landing_featured_post',
+              ctaIntent: 'content_navigation',
+              ctaPosition: 'blog_landing_hero',
+              ctaComponent: 'blog_page_hero',
+              ctaLabel: 'Featured guide',
+              destination: `/blog/${blog.slug}`,
+              pageType: 'blog_landing',
+              contentSlug: blog.slug,
+              contentType: 'blog_post',
+            }}
+          >
             <div>
               <div className="text-center">
                 {blog.categories?.[0] ? (
@@ -47,7 +61,7 @@ export default function BlogPageHeroSection({ blog }: Props) {
                 ) : null}
               </div>
             </div>
-          </Link>
+          </TrackedCtaLink>
           <div className="mt-8 w-full max-w-md px-5 md:px-0">
             <BlogSearchForm id="blog-hero-search-query" />
           </div>

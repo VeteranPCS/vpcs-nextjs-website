@@ -3,7 +3,7 @@ export const ANALYTICS_SCHEMA_VERSION = 1;
 export type JourneyStage = 'top' | 'mid' | 'bottom' | 'outcome';
 
 export type AnalyticsValue = string | number | boolean | null | undefined;
-export type AnalyticsProperties = Record<string, AnalyticsValue | AnalyticsValue[] | Record<string, AnalyticsValue>>;
+export type AnalyticsProperties = Record<string, unknown>;
 
 const BLOCKED_KEY_RE =
   /(^|_)(name|first_name|firstname|last_name|lastname|email|e_mail|phone|mobile|tel|street|address|captcha|message|comment|comments|free_text|payload|form_data|query|search_query|raw_text|text|zip_code|zipcode|zip)$/i;
@@ -28,6 +28,17 @@ const ALLOWED_ATTRIBUTION_KEYS = new Set([
   'referrer_domain',
   'landing_page_path',
   'captured_at',
+]);
+
+const SAFE_ERROR_CODE_FIELDS = new Set([
+  'email',
+  'phone',
+  'firstName',
+  'firstname',
+  'first_name',
+  'lastName',
+  'lastname',
+  'last_name',
 ]);
 
 function isBlockedKey(key: string): boolean {
@@ -90,9 +101,10 @@ export function hasPii(value: unknown): boolean {
     || UNSAFE_URL_RE.test(trimmed);
 }
 
-function cleanScalar(key: string, value: AnalyticsValue): AnalyticsValue {
+function cleanScalar(key: string, value: unknown): AnalyticsValue {
   if (value === undefined) return undefined;
   if (value === null || typeof value === 'number' || typeof value === 'boolean') return value;
+  if (typeof value !== 'string') return undefined;
 
   const trimmed = value.trim();
   if (!trimmed) return undefined;
@@ -153,7 +165,7 @@ export function sanitizeAnalyticsProperties(
 export function errorCodesFromErrors(errors: unknown): string[] {
   if (!errors || typeof errors !== 'object') return ['unknown'];
   return Object.keys(errors as Record<string, unknown>)
-    .filter((key) => !isBlockedKey(key))
+    .filter((key) => SAFE_ERROR_CODE_FIELDS.has(key) || !isBlockedKey(key))
     .map((key) => key.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase())
     .slice(0, 12);
 }

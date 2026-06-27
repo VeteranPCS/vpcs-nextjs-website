@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import AgentCtaLink from "@/components/common/AgentCtaLink";
+import LenderCtaLink from "@/components/common/LenderCtaLink";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,16 +39,27 @@ const Header = () => {
     <header className="fixed left-0 top-0 z-50 w-full bg-primary px-5 shadow-lg min-[1400px]:px-0">
       <div className="container mx-auto w-full">
         <nav className="flex min-h-[64px] justify-between lg:min-h-[80px]" aria-label="Primary navigation">
-          <Link className="flex w-[130px] shrink-0 items-center md:w-[190px] xl:w-[200px]" href="/">
+          <TrackedCtaLink
+            className="flex w-[130px] shrink-0 items-center md:w-[190px] xl:w-[200px]"
+            href="/"
+            onClick={isMenuOpen ? onMenuToggle : undefined}
+            cta={{
+              ctaId: 'header_logo',
+              ctaIntent: 'navigate_home',
+              ctaPosition: 'header_logo',
+              ctaComponent: 'site_header',
+              ctaLabel: 'VeteranPCS logo',
+              destination: '/',
+            }}
+          >
             <Image
               width={235}
               height={63}
               src="/icon/VeteranPCSlogo.svg"
               className="h-auto w-[200px] md:w-[205px] xl:w-[220px] 2xl:w-[235px]"
               alt="VeteranPCS logo"
-              onClick={isMenuOpen ? onMenuToggle : undefined}
             />
-          </Link>
+          </TrackedCtaLink>
           <div className="flex min-w-0 items-center lg:gap-5 xl:gap-7">
             <div
               id="primary-navigation"
@@ -58,68 +70,177 @@ const Header = () => {
                   <AgentCtaLink
                     className="inline-flex min-h-11 rounded-2xl bg-accent-red px-5 py-3 text-white transition-colors hover:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                     onClick={onMenuToggle}
+                    ctaId="header_mobile_find_agent"
+                    ctaPosition="mobile_primary_nav"
+                    ctaComponent="site_header"
                   >
                     Find an Agent
                   </AgentCtaLink>
                 </li>
                 <li className={navItemClass}>
-                  <Link className={navLinkClass} href="/about" onClick={onMenuToggle}>
+                  <TrackedCtaLink
+                    className={navLinkClass}
+                    href="/about"
+                    onClick={onMenuToggle}
+                    cta={{
+                      ctaId: 'header_about',
+                      ctaIntent: 'navigate',
+                      ctaPosition: 'primary_nav',
+                      ctaComponent: 'site_header',
+                      ctaLabel: 'About',
+                      destination: '/about',
+                    }}
+                  >
                     About
-                  </Link>
+                  </TrackedCtaLink>
                 </li>
                 <li className={navItemClass}>
-                  <Link className={navLinkClass} href="/how-it-works" onClick={onMenuToggle}>
+                  <TrackedCtaLink
+                    className={navLinkClass}
+                    href="/how-it-works"
+                    onClick={onMenuToggle}
+                    cta={{
+                      ctaId: 'header_how_it_works',
+                      ctaIntent: 'navigate',
+                      ctaPosition: 'primary_nav',
+                      ctaComponent: 'site_header',
+                      ctaLabel: 'How It Works',
+                      destination: '/how-it-works',
+                    }}
+                  >
                     How It Works
-                  </Link>
+                  </TrackedCtaLink>
                 </li>
                 <li className={navItemClass}>
-                  <Link className={navLinkClass} href="/impact" onClick={onMenuToggle}>
+                  <TrackedCtaLink
+                    className={navLinkClass}
+                    href="/impact"
+                    onClick={onMenuToggle}
+                    cta={{
+                      ctaId: 'header_impact',
+                      ctaIntent: 'navigate',
+                      ctaPosition: 'primary_nav',
+                      ctaComponent: 'site_header',
+                      ctaLabel: 'Impact',
+                      destination: '/impact',
+                    }}
+                  >
                     Impact
-                  </Link>
+                  </TrackedCtaLink>
                 </li>
                 <li className={navItemClass}>
-                  <Link className={navLinkClass} href="/blog" onClick={onMenuToggle}>
+                  <TrackedCtaLink
+                    className={navLinkClass}
+                    href="/blog"
+                    onClick={onMenuToggle}
+                    cta={{
+                      ctaId: 'header_blog',
+                      ctaIntent: 'navigate_content',
+                      ctaPosition: 'primary_nav',
+                      ctaComponent: 'site_header',
+                      ctaLabel: 'Blog',
+                      destination: '/blog',
+                    }}
+                  >
                     Blog
-                  </Link>
+                  </TrackedCtaLink>
                 </li>
                 <li className={navItemClass}>
-                  <Link className={navLinkClass} href="/pcs-resources" onClick={onMenuToggle}>
+                  <TrackedCtaLink
+                    className={navLinkClass}
+                    href="/pcs-resources"
+                    onClick={onMenuToggle}
+                    cta={{
+                      ctaId: 'header_pcs_resources',
+                      ctaIntent: 'navigate_content',
+                      ctaPosition: 'primary_nav',
+                      ctaComponent: 'site_header',
+                      ctaLabel: 'PCS Resources',
+                      destination: '/pcs-resources',
+                    }}
+                  >
                     PCS Resources
-                  </Link>
+                  </TrackedCtaLink>
                 </li>
                 <li className={navItemClass}>
-                  <Link className={navLinkClass} href="/contact-lender" onClick={onMenuToggle}>
+                  <LenderCtaLink
+                    className={navLinkClass}
+                    onClick={onMenuToggle}
+                    ctaId="header_find_lender"
+                    ctaPosition="primary_nav"
+                    ctaComponent="site_header"
+                  >
                     Find a Lender
-                  </Link>
+                  </LenderCtaLink>
                 </li>
                 <li className={navItemClass}>
-                  <Link className={navLinkClass} href="/contact" onClick={onMenuToggle}>
+                  <TrackedCtaLink
+                    className={navLinkClass}
+                    href="/contact"
+                    onClick={onMenuToggle}
+                    cta={{
+                      ctaId: 'header_contact',
+                      ctaIntent: 'contact_general',
+                      ctaPosition: 'primary_nav',
+                      ctaComponent: 'site_header',
+                      ctaLabel: 'Contact',
+                      destination: '/contact',
+                    }}
+                  >
                     Contact
-                  </Link>
+                  </TrackedCtaLink>
                 </li>
                 <li className={navItemClass}>
-                  <Link className={navLinkClass} href="/get-listed-agents" onClick={onMenuToggle}>
+                  <TrackedCtaLink
+                    className={navLinkClass}
+                    href="/get-listed-agents"
+                    onClick={onMenuToggle}
+                    cta={{
+                      ctaId: 'header_get_listed',
+                      ctaIntent: 'partner_recruiting',
+                      ctaPosition: 'primary_nav',
+                      ctaComponent: 'site_header',
+                      ctaLabel: 'Get Listed',
+                      destination: '/get-listed-agents',
+                    }}
+                  >
                     Get Listed
-                  </Link>
+                  </TrackedCtaLink>
                   <ul className="sub-menu">
                     <li className="px-10 py-3 text-white">
-                      <Link
+                      <TrackedCtaLink
                         className="text-base font-normal"
                         href="/get-listed-agents"
                         onClick={onMenuToggle}
+                        cta={{
+                          ctaId: 'header_get_listed_agents',
+                          ctaIntent: 'partner_recruiting_agent',
+                          ctaPosition: 'primary_nav_submenu',
+                          ctaComponent: 'site_header',
+                          ctaLabel: 'Get Listed Agents',
+                          destination: '/get-listed-agents',
+                        }}
                       >
                         Get Listed Agents
-                      </Link>
+                      </TrackedCtaLink>
                     </li>
 
                     <li className="px-10 py-3 text-white">
-                      <Link
+                      <TrackedCtaLink
                         className="text-base font-normal"
                         href="/get-listed-lenders"
                         onClick={onMenuToggle}
+                        cta={{
+                          ctaId: 'header_get_listed_lenders',
+                          ctaIntent: 'partner_recruiting_lender',
+                          ctaPosition: 'primary_nav_submenu',
+                          ctaComponent: 'site_header',
+                          ctaLabel: 'Get Listed Lenders',
+                          destination: '/get-listed-lenders',
+                        }}
                       >
                         Get Listed Lenders
-                      </Link>
+                      </TrackedCtaLink>
                     </li>
                   </ul>
                 </li>
@@ -128,6 +249,9 @@ const Header = () => {
             <div className="flex items-center gap-2">
               <AgentCtaLink
                 className="hidden min-h-11 shrink-0 items-center rounded-2xl bg-accent-red px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white min-[1400px]:inline-flex"
+                ctaId="header_desktop_find_agent"
+                ctaPosition="desktop_primary_cta"
+                ctaComponent="site_header"
               >
                 Find an Agent
               </AgentCtaLink>

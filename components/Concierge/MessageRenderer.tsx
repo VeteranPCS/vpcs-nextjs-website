@@ -14,7 +14,7 @@ import { SUCCESS_MESSAGE } from '@/lib/ai/tools/messages';
 interface Props {
   message: UIMessage;
   onSelectAgent?(item: AgentListItem): void;
-  onApprove?(id: string, approved: boolean): void;
+  onApprove?(id: string, approved: boolean, toolName?: string): void;
 }
 
 interface ToolEnvelope<T> {
@@ -66,10 +66,11 @@ function DeniedBubble() {
 
 interface ApprovalCardProps {
   approvalId: string;
-  onApprove?(id: string, approved: boolean): void;
+  toolName: string;
+  onApprove?(id: string, approved: boolean, toolName?: string): void;
 }
 
-function ApprovalCard({ approvalId, onApprove }: ApprovalCardProps) {
+function ApprovalCard({ approvalId, toolName, onApprove }: ApprovalCardProps) {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-3 flex flex-col gap-2">
       <p className="text-sm text-gray-900">
@@ -78,7 +79,7 @@ function ApprovalCard({ approvalId, onApprove }: ApprovalCardProps) {
       <div className="flex gap-2">
         <button
           type="button"
-          onClick={() => onApprove?.(approvalId, true)}
+          onClick={() => onApprove?.(approvalId, true, toolName)}
           disabled={!onApprove}
           className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-sm font-medium text-white motion-safe:transition-colors hover:bg-primary-hover disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red"
         >
@@ -86,7 +87,7 @@ function ApprovalCard({ approvalId, onApprove }: ApprovalCardProps) {
         </button>
         <button
           type="button"
-          onClick={() => onApprove?.(approvalId, false)}
+          onClick={() => onApprove?.(approvalId, false, toolName)}
           disabled={!onApprove}
           className="inline-flex h-9 items-center justify-center rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 motion-safe:transition-colors hover:bg-gray-50 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
@@ -166,6 +167,7 @@ export default function MessageRenderer({ message, onSelectAgent, onApprove }: P
                   <ApprovalCard
                     key={key}
                     approvalId={part.approval.id}
+                    toolName={toolName}
                     onApprove={onApprove}
                   />
                 );

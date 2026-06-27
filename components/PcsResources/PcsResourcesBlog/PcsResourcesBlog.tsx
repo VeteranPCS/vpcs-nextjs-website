@@ -1,10 +1,10 @@
 import "@/app/globals.css";
-import Link from "next/link";
 import classes from "./PcsResourcesBlog.module.css";
 import { formatDate } from "@/utils/helper";
 import { excerpt } from "@/lib/blog/mdx";
 import type { BlogPost } from "@/lib/blog/types";
 import { normalizeBlogComponentSlug } from "@/lib/blog/components";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 type Props = {
   blogList: BlogPost[];
@@ -24,9 +24,22 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
               {component}
             </h1>
           </div>
-          <Link href={categoryHref} className="text-[#292F6C] robot text-sm font-bold">
+          <TrackedCtaLink
+            href={categoryHref}
+            className="text-[#292F6C] robot text-sm font-bold"
+            cta={{
+              ctaId: 'pcs_resources_blog_view_all',
+              ctaIntent: 'content_navigation',
+              ctaPosition: 'pcs_resources_blog_header',
+              ctaComponent: 'pcs_resources_blog',
+              ctaLabel: 'View All',
+              destination: categoryHref,
+              pageType: 'pcs_resources',
+              contentType: 'blog_category',
+            }}
+          >
             View All
-          </Link>
+          </TrackedCtaLink>
         </div>
         <div
           className={`grid ${blogList.length === 1
@@ -39,11 +52,22 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
           {blogList.map((blog) => {
             const bg = blog.mainImage?.src ?? "/assets/blogctabgimage.png";
             return (
-              <Link
+              <TrackedCtaLink
                 href={blog.slug ? `/blog/${blog.slug}` : "/blog"}
                 key={blog.slug}
                 className={classes.blogimageone}
                 style={{ backgroundImage: `url("${bg}")` }}
+                cta={{
+                  ctaId: 'pcs_resources_blog_card',
+                  ctaIntent: 'content_navigation',
+                  ctaPosition: 'pcs_resources_blog_grid',
+                  ctaComponent: 'pcs_resources_blog',
+                  ctaLabel: 'Read guide',
+                  destination: blog.slug ? `/blog/${blog.slug}` : "/blog",
+                  pageType: 'pcs_resources',
+                  contentSlug: blog.slug,
+                  contentType: 'blog_post',
+                }}
               >
                 <div className="flex items-center absolute top-4 right-4 gap-2">
                   {blog.categories?.map((category) => (
@@ -66,7 +90,7 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
                     {excerpt(blog.content, 250)}
                   </p>
                 </div>
-              </Link>
+              </TrackedCtaLink>
             );
           })}
         </div>

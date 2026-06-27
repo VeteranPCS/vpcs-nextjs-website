@@ -14,7 +14,7 @@ import HelocAndHeloan from "./HelocAndHeloan";
 import VaDisability from "./VaDisability";
 import CreditImpact from "./CreditImpact";
 import CreditChanges from "./CreditChanges";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const RefinancingContent = () => {
   return (
@@ -56,7 +56,20 @@ const RefinancingContent = () => {
         <div className="my-4">
           <p className="text-[#000000] roboto lg:text-[23px] md:text-[23px] sm:text-[15px] text-[15px] md:font-medium sm:font-normal font-normal">
             Ready to explore your refinancing options?
-            <Link href="/contact-lender" className="text-[#348BE2]"> Connect with a VA loan expert</Link> today to see how much you could save.
+            <TrackedCtaLink
+              href="/contact-lender"
+              className="text-[#348BE2]"
+              cta={{
+                ctaId: 'refinancing_content_lender',
+                ctaIntent: 'contact_lender',
+                ctaPosition: 'refinancing_content_footer',
+                ctaComponent: 'refinancing_content',
+                ctaLabel: 'Connect with a VA loan expert',
+                destination: '/contact-lender',
+                pageType: 'refinancing',
+                partnerType: 'lender',
+              }}
+            > Connect with a VA loan expert</TrackedCtaLink> today to see how much you could save.
           </p>
         </div>
       </div>

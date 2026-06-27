@@ -1,12 +1,12 @@
 import "@/app/globals.css";
 import Image from "next/image";
-import Link from "next/link";
 import { formatDate } from "@/utils/helper";
 import { excerpt } from "@/lib/blog/mdx";
 import type { BlogPost } from "@/lib/blog/types";
 import { BLOG_COMPONENTS } from "@/lib/blog/components";
 import BlogSearchForm from "@/components/BlogPage/BlogSearchForm";
 import { BlogSearchTracker } from "@/components/Analytics/Trackers";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 type Props = {
   searchedBlog: BlogPost[];
@@ -28,11 +28,37 @@ export default function SearchBlog({ searchedBlog, query }: Props) {
             <BlogSearchForm id="blog-empty-search-query" defaultQuery={query} />
           </div>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link href="/blog" className="text-[#292F6C] font-bold">Back to all guides</Link>
+            <TrackedCtaLink
+              href="/blog"
+              className="text-[#292F6C] font-bold"
+              cta={{
+                ctaId: 'blog_search_no_results_all_guides',
+                ctaIntent: 'content_navigation',
+                ctaPosition: 'blog_search_no_results',
+                ctaComponent: 'blog_search',
+                ctaLabel: 'Back to all guides',
+                destination: '/blog',
+                pageType: 'blog_search',
+              }}
+            >Back to all guides</TrackedCtaLink>
             {BLOG_COMPONENTS.slice(0, 3).map((component) => (
-              <Link key={component.slug} href={`/blog/category/${component.slug}`} className="text-[#292F6C] underline">
+              <TrackedCtaLink
+                key={component.slug}
+                href={`/blog/category/${component.slug}`}
+                className="text-[#292F6C] underline"
+                cta={{
+                  ctaId: 'blog_search_no_results_category',
+                  ctaIntent: 'content_navigation',
+                  ctaPosition: 'blog_search_no_results',
+                  ctaComponent: 'blog_search',
+                  ctaLabel: component.label,
+                  destination: `/blog/category/${component.slug}`,
+                  pageType: 'blog_search',
+                  contentType: 'blog_category',
+                }}
+              >
                 {component.label}
-              </Link>
+              </TrackedCtaLink>
             ))}
           </div>
         </div>
@@ -48,9 +74,21 @@ export default function SearchBlog({ searchedBlog, query }: Props) {
           {searchedBlog.length} result{searchedBlog.length === 1 ? '' : 's'}
           {trimmedQuery ? ` for "${trimmedQuery}"` : ''}
         </h1>
-        <Link href="/blog" className="mt-4 inline-block text-[#292F6C] font-bold">
+        <TrackedCtaLink
+          href="/blog"
+          className="mt-4 inline-block text-[#292F6C] font-bold"
+          cta={{
+            ctaId: 'blog_search_results_all_guides',
+            ctaIntent: 'content_navigation',
+            ctaPosition: 'blog_search_results_header',
+            ctaComponent: 'blog_search',
+            ctaLabel: 'Back to all guides',
+            destination: '/blog',
+            pageType: 'blog_search',
+          }}
+        >
           Back to all guides
-        </Link>
+        </TrackedCtaLink>
       </div>
       <div className="flex flex-wrap justify-start gap-10 my-10">
         <div className="lg:w-3/5 sm:w-full w-full xl:mr-14 lg:mr-5 md:mr-10 ">
@@ -59,7 +97,20 @@ export default function SearchBlog({ searchedBlog, query }: Props) {
             const heroAlt = blog.mainImage?.alt ?? "Blog image";
             return (
               <div className="my-10" key={blog.slug}>
-                <Link href={`/blog/${blog.slug}`}>
+                <TrackedCtaLink
+                  href={`/blog/${blog.slug}`}
+                  cta={{
+                    ctaId: 'blog_search_result_image',
+                    ctaIntent: 'content_navigation',
+                    ctaPosition: 'blog_search_results',
+                    ctaComponent: 'blog_search_result',
+                    ctaLabel: 'Search result image',
+                    destination: `/blog/${blog.slug}`,
+                    pageType: 'blog_search',
+                    contentSlug: blog.slug,
+                    contentType: 'blog_post',
+                  }}
+                >
                   {heroSrc ? (
                     <Image
                       src={heroSrc}
@@ -69,14 +120,25 @@ export default function SearchBlog({ searchedBlog, query }: Props) {
                       className="w-full h-full object-cover"
                     />
                   ) : null}
-                </Link>
+                </TrackedCtaLink>
                 <div className="mt-5">
-                  <a
+                  <TrackedCtaLink
                     href={`/blog/${blog.slug}`}
                     className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-[20px] tahoma lg:block md:block"
+                    cta={{
+                      ctaId: 'blog_search_result_title',
+                      ctaIntent: 'content_navigation',
+                      ctaPosition: 'blog_search_results',
+                      ctaComponent: 'blog_search_result',
+                      ctaLabel: 'Search result title',
+                      destination: `/blog/${blog.slug}`,
+                      pageType: 'blog_search',
+                      contentSlug: blog.slug,
+                      contentType: 'blog_post',
+                    }}
                   >
                     {blog.title}
-                  </a>
+                  </TrackedCtaLink>
                   <p className="text-[#000000] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[13px] mt-5">
                     {formatDate(blog.publishedAt)}
                   </p>

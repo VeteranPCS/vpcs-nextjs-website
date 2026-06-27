@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import ReviewTestimonialSlider from "@/components/homepage/ReviewTestimonial/ReviewTestimonialSlider";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 interface Reviewer {
   profilePhotoUrl: string;
@@ -53,9 +53,20 @@ const ReviewTestimonial: React.FC<ReviewTestimonialProps> = ({
         </div>
 
         <div className="flex justify-center mt-12">
-          <Link href="/stories">
+          <TrackedCtaLink
+            href="/stories"
+            cta={{
+              ctaId: 'homepage_success_stories',
+              ctaIntent: 'stories_navigation',
+              ctaPosition: 'homepage_reviews',
+              ctaComponent: 'review_testimonial',
+              ctaLabel: 'More success stories',
+              destination: '/stories',
+              pageType: 'homepage',
+            }}
+          >
             <Button buttonText="More success stories" />
-          </Link>
+          </TrackedCtaLink>
         </div>
       </div>
     </div>

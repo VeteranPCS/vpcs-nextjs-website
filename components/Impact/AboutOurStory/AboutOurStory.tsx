@@ -6,7 +6,7 @@ import classes from "./AboutOurStory.module.css";
 import Image from "next/image";
 import impactService from "@/services/impactService";
 import SupportContent from "@/components/homepage/FamilySupport/SupportContent";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
@@ -92,9 +92,21 @@ const FamilySupport = async () => {
                 ))}
               </p>
             </div>
-            <Link href="/about" className="sm:mt-0 mt-16">
+            <TrackedCtaLink
+              href="/about"
+              className="sm:mt-0 mt-16"
+              cta={{
+                ctaId: 'impact_about_our_story',
+                ctaIntent: 'about_navigation',
+                ctaPosition: 'impact_our_story',
+                ctaComponent: 'impact_about_our_story',
+                ctaLabel: storyDetails?.buttonText || 'OUR STORY',
+                destination: '/about',
+                pageType: 'impact',
+              }}
+            >
               <Button buttonText={storyDetails?.buttonText || "OUR STORY"} />
-            </Link>
+            </TrackedCtaLink>
           </div>
         </div>
       </div>

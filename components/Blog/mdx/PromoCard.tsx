@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import Button from '@/components/common/Button';
+import TrackedCtaLink from '@/components/common/TrackedCtaLink';
 
 type Props = {
   headline: string;
@@ -36,9 +36,20 @@ export default function PromoCard({
       ) : null}
       <div className="flex-1 text-center md:text-left">
         <h3 className="tahoma text-xl font-bold text-[#212529] mb-3">{headline}</h3>
-        <Link href={href}>
+        <TrackedCtaLink
+          href={href}
+          cta={{
+            ctaId: 'blog_mdx_promo_card',
+            ctaIntent: 'content_or_offer_navigation',
+            ctaPosition: 'mdx_body',
+            ctaComponent: 'blog_mdx_promo_card',
+            ctaLabel: cta,
+            destination: href,
+            pageType: 'blog_post',
+          }}
+        >
           <Button buttonText={cta} divClassName="!py-0" />
-        </Link>
+        </TrackedCtaLink>
       </div>
     </div>
   );

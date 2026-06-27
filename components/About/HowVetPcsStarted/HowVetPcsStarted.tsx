@@ -3,7 +3,7 @@ import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
 import aboutService from "@/services/aboutService";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 interface ImageAsset {
   image_url?: string;
@@ -66,11 +66,23 @@ const HowVetPcsStarted = async () => {
                 </p>
               ))}
             </div>
-            <Link href="/how-it-works" className="flex justify-center">
+            <TrackedCtaLink
+              href="/how-it-works"
+              className="flex justify-center"
+              cta={{
+                ctaId: 'about_how_started_how_it_works',
+                ctaIntent: 'how_it_works_navigation',
+                ctaPosition: 'about_how_started',
+                ctaComponent: 'how_vetpcs_started',
+                ctaLabel: pageData.buttonText || 'How It Works',
+                destination: '/how-it-works',
+                pageType: 'about',
+              }}
+            >
               <Button
                 buttonText={pageData.buttonText || "Default Button"}
               />
-            </Link>
+            </TrackedCtaLink>
           </div>
         </div>
       </div>

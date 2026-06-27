@@ -27,6 +27,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
     control,
     register,
     handleSubmit,
+    getValues,
     watch,
     reset,
     setValue,
@@ -68,11 +69,6 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
 
   const handleFormSubmit: SubmitHandler<ContactAgentFormData> = async (data) => {
     setIsSubmitting(true);
-    trackFormSubmitAttempted('contact_agent', {
-      has_email: Boolean(data.email),
-      has_phone: Boolean(data.phone),
-      state_code: data.state,
-    });
     try {
       const response = await onSubmit({ ...data, ...getSpamFields() });
       if (response?.success || response?.redirectUrl) {
@@ -93,6 +89,15 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
     trackFormValidationFailed('contact_agent', formErrors);
   };
 
+  const trackSubmitAttempt = () => {
+    const values = getValues();
+    trackFormSubmitAttempted('contact_agent', {
+      has_email: Boolean(values.email),
+      has_phone: Boolean(values.phone),
+      state_code: values.state,
+    });
+  };
+
   const [agentName, setAgentName] = useState('Us');
 
   useEffect(() => {
@@ -106,7 +111,10 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form
-          onSubmit={handleSubmit(handleFormSubmit, handleInvalidSubmit)}
+          onSubmit={(event) => {
+            trackSubmitAttempt();
+            void handleSubmit(handleFormSubmit, handleInvalidSubmit)(event);
+          }}
           onFocus={() => trackFormStarted('contact_agent')}
         >
           <HoneypotField ref={honeypotRef} />

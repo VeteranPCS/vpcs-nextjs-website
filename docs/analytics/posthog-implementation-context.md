@@ -1,11 +1,11 @@
 # VeteranPCS PostHog Implementation Context
 
-**Date:** 2026-06-24
+**Date:** 2026-06-26
 **Purpose:** Keep only the durable context needed to plan and extend VeteranPCS funnel telemetry. This is not the event taxonomy reference.
 
-**Status:** App-side PostHog telemetry, privacy sanitization, Customer Web-to-Lead attribution fields, and server-confirmed accepted-lead events are implemented on `main` and verified in production data. Salesforce Lead-to-Opportunity mappings and read-only FLS are configured, but record-level Opportunity propagation still needs the first attributed Lead conversion to verify. The Salesforce Opportunity outcome webhook is a later phase.
+**Status:** App-side PostHog telemetry, privacy sanitization, Customer Web-to-Lead attribution fields, server-confirmed accepted-lead events, and the explicit CTA hardening pass are implemented in the app code. Salesforce Lead-to-Opportunity mappings and read-only FLS are configured, but record-level Opportunity propagation still needs the first attributed Lead conversion to verify. The Salesforce Opportunity outcome webhook is a later phase.
 
-For the current event taxonomy, properties, PostHog queries, Salesforce joins, and GA/GTM comparator notes, see [telemetry-taxonomy.md](telemetry-taxonomy.md).
+For the current event taxonomy, properties, PostHog queries, Salesforce joins, and GA/GTM comparator notes, see [telemetry-taxonomy.md](telemetry-taxonomy.md). For the post-implementation coverage gaps and hardening sequence, see [telemetry-hardening-audit.md](telemetry-hardening-audit.md).
 
 ## Measurement Goal
 
@@ -34,15 +34,19 @@ PostHog is the primary system for new web telemetry and Salesforce outcome attri
 
 - PostHog client initialization and privacy controls live in `instrumentation-client.ts`.
 - The client analytics wrapper lives in `lib/analytics/client.ts`; the server-only wrapper lives in `lib/analytics/server.ts`.
+- Reusable CTA property construction lives in `lib/analytics/cta.ts`; tracked links live in `components/common/TrackedCtaLink.tsx`, `components/common/AgentCtaLink.tsx`, and `components/common/LenderCtaLink.tsx`.
 - `vpcs_visitor_id`, first-touch attribution, last-touch attribution, and safe pre-conversion counters live in `lib/analytics/visitor.ts`.
 - Sanitization rules live in `lib/analytics/sanitizer.ts`. Future telemetry changes should add tests there when introducing user-input-derived properties.
 - Customer Web-to-Lead forms now append only the approved additive Salesforce fields for visitor id and submission id.
 - `lead_conversion_created` is the canonical server-confirmed accepted-lead event. GA4/GTM conversion/download events are comparator signals and must not be treated as Salesforce-accepted conversions.
 - The shared guide download component now routes first-time homebuyer guide submissions through the first-time homebuyer action/source.
+- Customer forms emit `form_submit_attempted` before client validation so invalid submit attempts are counted.
 - BAH analytics uses `zip_prefix`, not full ZIP.
 - Direct email-keyed PostHog identifies/captures were removed from the Customer lead flow.
-- Contact Lender success behavior still has redirect/message nuance; preserve successful user behavior when changing analytics.
-- Concierge lead tools thread visitor/attribution context into the shared post functions.
+- Contact Lender success handling accepts either redirect-style responses or message/submission-id accepted responses, then redirects successful message-only submissions to `/thank-you`.
+- Concierge lead tools thread visitor/attribution context into the shared post functions and include safe `submission_id` values on completed tool telemetry when available.
+- Concierge open, message, and approval telemetry is explicit for launcher, seeded CTA, seeded message, manual message, agent-card selection, and tool approval paths. Do not send raw messages or prompts.
+- Server PostHog delivery failures are logged through the logging service with event/distinct-id context only; payload contents must not be logged.
 - The existing Salesforce revalidate route is not an acceptable pattern for money/outcome webhooks.
 - Record-level Lead-to-Opportunity attribution copying still needs live verification after an attributed Customer Lead is converted.
 
@@ -138,14 +142,15 @@ Use stable snake_case ids and controlled enums where possible:
 - `guide_id`
 - `state_code`, `state_slug`
 - `partner_type`, `partner_salesforce_id`
-- `cta_id`, `cta_intent`, `cta_position`, `cta_component`, `destination_path`
+- `cta_id`, `cta_intent`, `cta_position`, `cta_component`, `cta_location`, `cta_label`, `page_type`, `destination_path`
+- `content_slug`, `content_type`, `calculator_id`, `calculator_name`, `input_origin`, `concierge_topic` where applicable
 - `has_email`, `has_phone`
 - first-touch and last-touch attribution snapshots on `lead_conversion_created`
 - conversion context counters when safely available: `conversion_lag_seconds`, `pageview_count_before_conversion`, `cta_click_count_before_conversion`, `form_attempt_count_before_conversion`
 
 Never derive ids from user-entered text. For blog search, do not send raw query text; send safe derived properties such as `query_length`, `query_word_count`, `result_count`, `result_bucket`, `matched_state_code`, and controlled `matched_topic` only.
 
-Click taxonomy decision: use `cta_clicked` as the canonical event for partner cards, state CTAs, blog CTAs, popup CTAs, and generic contact links. Distinguish with `cta_id`, `cta_intent`, `cta_position`, `cta_component`, `partner_type`, `partner_salesforce_id`, `state_code`, `state_slug`, and `destination_path`. Do not add dedicated `agent_card_clicked`, `lender_card_clicked`, or `contact_click` events unless a future reporting requirement cannot be handled with `cta_clicked` properties.
+Click taxonomy decision: use `cta_clicked` as the canonical event for partner cards, state CTAs, blog CTAs, popup CTAs, and generic contact links. Distinguish with `cta_id`, `cta_intent`, `cta_position`, `cta_component`, `cta_location`, `cta_label`, `page_type`, `partner_type`, `partner_salesforce_id`, `state_code`, `state_slug`, `content_slug`, `content_type`, and `destination_path`. Do not add dedicated `agent_card_clicked`, `lender_card_clicked`, or `contact_click` events unless a future reporting requirement cannot be handled with `cta_clicked` properties.
 
 ## Resolved Salesforce Attribution Setup
 
@@ -196,8 +201,11 @@ Before implementing the closed-loop outcome webhook, confirm:
 - Test future server logs do not include raw PII/free text.
 - Test failed or abandoned submissions do not emit canonical conversions.
 - Test form failure telemetry uses safe `failure_stage` and `error_codes`, never raw messages.
+- Test invalid submissions emit both `form_submit_attempted` and `form_validation_failed`.
 - Test BAH telemetry does not include full ZIP.
 - Test concierge telemetry excludes raw messages/contact details.
+- Test reusable CTA telemetry sends path-only destinations and no raw query strings.
+- Test server PostHog delivery failures log safely without throwing.
 - Test GA4 comparator events are not treated as source-of-truth conversions.
 - Later webhook phase: test bad HMAC, stale timestamp, duplicate delivery, Redis unavailable/error, PostHog delivery failure, non-Customer Opportunity, stale `SystemModstamp`, and revenue/date corrections.
 - Run `npm run lint`, `npm run type-check`, `npm run build`, and `npm test` for touched `lib/**`, `services/**`, forms, server actions, or webhook routes.

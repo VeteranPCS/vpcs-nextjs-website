@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { homebuyerGuideForm } from "@/services/salesForcePostFormsService";
 import { sendGTMEvent } from "@next/third-parties/google";
 import Image from "next/image";
-import Link from "next/link";
+import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 import {
     captureAnalyticsEvent,
@@ -34,7 +34,7 @@ const HomebuyerGuideDownload = () => {
         email: Yup.string().email('Invalid email').required('Email is required'),
     });
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormInputs>({
+    const { register, handleSubmit, getValues, formState: { errors }, reset } = useForm<FormInputs>({
         resolver: yupResolver(validationSchema),
         defaultValues: {
             name: '',
@@ -52,11 +52,6 @@ const HomebuyerGuideDownload = () => {
             guide_id: 'first_time_homebuyer_guide',
             form_id: 'first_time_homebuyer_guide',
             has_email: Boolean(data.email),
-        });
-        trackFormSubmitAttempted('first_time_homebuyer_guide', {
-            guide_id: 'first_time_homebuyer_guide',
-            has_email: Boolean(data.email),
-            has_phone: false,
         });
         try {
             sendGTMEvent({ event: "conversion_download", content: "First Time Home Buyer Guide" });
@@ -109,6 +104,15 @@ const HomebuyerGuideDownload = () => {
         });
     };
 
+    const trackSubmitAttempt = () => {
+        const values = getValues();
+        trackFormSubmitAttempted('first_time_homebuyer_guide', {
+            guide_id: 'first_time_homebuyer_guide',
+            has_email: Boolean(values.email),
+            has_phone: false,
+        });
+    };
+
     return (
         <div className="flex justify-center items-center py-4 bg-white">
             <div className="w-full max-w-[800px] bg-white rounded-2xl shadow-lg p-8">
@@ -125,7 +129,10 @@ const HomebuyerGuideDownload = () => {
                 </div>
 
                 <form
-                    onSubmit={handleSubmit(onSubmitHandler, handleInvalidSubmit)}
+                    onSubmit={(event) => {
+                        trackSubmitAttempt();
+                        void handleSubmit(onSubmitHandler, handleInvalidSubmit)(event);
+                    }}
                     onFocus={() => trackFormStarted('first_time_homebuyer_guide', {
                         guide_id: 'first_time_homebuyer_guide',
                     })}
@@ -165,12 +172,23 @@ const HomebuyerGuideDownload = () => {
                 </form>
 
                 <div className="w-full flex justify-center">
-                    <Link
+                    <TrackedCtaLink
                         className="w-auto px-8 bg-[#8B2D2D] text-white rounded-lg py-3 text-base font-medium hover:bg-[#722424]"
                         href="/contact-agent"
+                        cta={{
+                            ctaId: 'homebuyer_guide_secondary_agent',
+                            ctaIntent: 'contact_agent',
+                            ctaPosition: 'guide_download_secondary',
+                            ctaComponent: 'homebuyer_guide_download',
+                            ctaLabel: 'Contact me with an agent!',
+                            destination: '/contact-agent',
+                            pageType: 'homepage',
+                            guideId: 'first_time_homebuyer_guide',
+                            partnerType: 'agent',
+                        }}
                     >
                         Contact me with an agent!
-                    </Link>
+                    </TrackedCtaLink>
                 </div>
             </div>
         </div>

@@ -173,6 +173,8 @@ export default async function StatePage(props: { params: Promise<{ state: string
         stateName={state_data?.state_name || 'Unknown'}
         stateImage={state_data?.state_map}
         cityList={Object.keys(formatted_data).sort()}
+        stateSlug={state}
+        stateCode={state_code}
       />
       <StatePageHeroSecondSection
         stateName={state_data?.state_name || 'Unknown'}
@@ -184,13 +186,15 @@ export default async function StatePage(props: { params: Promise<{ state: string
       <StatePageRelatedGuides
         stateName={stateName}
         guides={guidePosts}
+        stateSlug={state}
+        stateCode={state_code}
       />
 
       {Object.entries(formatted_data).sort().map(([cityName, agents]: [string, any[]]) => (
         <StatePageCityAgents key={cityName} city={cityName} agent_data={agents} state={state} />
       ))}
 
-      <StatePageLetFindAgent />
+      <StatePageLetFindAgent stateSlug={state} stateCode={state_code} />
       <StatePageWhyChooseVetpcs cityName={state_data?.state_name || 'Unknown'} />
       <FrequentlyAskedQuestion />
       <KeepInTouch />
