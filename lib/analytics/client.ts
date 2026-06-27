@@ -66,16 +66,22 @@ export function captureAnalyticsEvent(
   event: AnalyticsEventName,
   properties: AnalyticsProperties = {},
 ): void {
-  const context = getClientAnalyticsContext();
-  const props = sanitizeAnalyticsProperties({
-    analytics_schema_version: ANALYTICS_SCHEMA_VERSION,
-    journey_stage: EVENT_STAGE[event],
-    vpcs_visitor_id: context.vpcs_visitor_id,
-    source_page_path: context.source_page_path,
-    ...properties,
-  });
+  try {
+    const context = getClientAnalyticsContext();
+    const props = sanitizeAnalyticsProperties({
+      analytics_schema_version: ANALYTICS_SCHEMA_VERSION,
+      journey_stage: EVENT_STAGE[event],
+      vpcs_visitor_id: context.vpcs_visitor_id,
+      source_page_path: context.source_page_path,
+      ...properties,
+    });
 
-  posthog.capture(event, props);
+    posthog.capture(event, props);
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('PostHog client capture failed', event, error);
+    }
+  }
 }
 
 export function formTrackingPayload(): Record<string, unknown> {
