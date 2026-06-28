@@ -61,6 +61,43 @@ describe('analytics privacy regressions', () => {
     expect(stateMap).toContain('state_map_state');
   });
 
+  it('does not treat agent finder popup impressions as CTA clicks', async () => {
+    const agentFinderPopup = await source('components/AgentFinderPopup/AgentFinderPopup.tsx');
+
+    expect(agentFinderPopup).toContain('agent_finder_popup_shown');
+    expect(agentFinderPopup).not.toContain('agent_finder_popup_viewed');
+    expect(agentFinderPopup).toContain('agent_finder_popup_submit');
+    expect(agentFinderPopup).not.toContain("captureAnalyticsEvent('cta_clicked'");
+  });
+
+  it('keeps calculator CTA payloads complete', async () => {
+    const movingBonus = await source('components/PcsResources/MovingBonusCalculator/MovingBonusCalculator.tsx');
+    const vaLoanCalculator = await source('app/(site)/va-loan-calculator/page.tsx');
+
+    expect(movingBonus).toContain("captureAnalyticsEvent('calculator_cta_clicked'");
+    expect(movingBonus).toContain("calculator_id: 'moving_bonus'");
+    expect(movingBonus).toContain("calculator_name: 'Moving Bonus Calculator'");
+    expect(vaLoanCalculator).toContain("captureAnalyticsEvent('calculator_cta_clicked'");
+    expect(vaLoanCalculator).toContain("calculator_id: 'va_loan_calculator'");
+    expect(vaLoanCalculator).toContain("calculator_name: 'VA Loan Calculator'");
+    expect(vaLoanCalculator).not.toContain("calculator_id: 'va_loan'");
+  });
+
+  it('keeps guide download telemetry wired on all guide surfaces', async () => {
+    const guideSources = await Promise.all([
+      source('components/common/DownloadGuideComponent.tsx'),
+      source('components/homepage/VaLoanGuideDownload.tsx'),
+      source('components/homepage/VeteranPCSWorksComp/HomebuyerGuideDownload.tsx'),
+      source('components/PcsResources/PcsResourcesVaLoanGuide/PcsResourcesVaLoanGuide.tsx'),
+    ]);
+
+    for (const guideSource of guideSources) {
+      expect(guideSource).toContain("captureAnalyticsEvent('guide_download_requested'");
+      expect(guideSource).toContain("captureAnalyticsEvent('guide_download_started'");
+      expect(guideSource).toContain('formTrackingPayload()');
+    }
+  });
+
   it('keeps server-owned PostHog events out of the client event union', async () => {
     const clientAnalytics = await source('lib/analytics/client.ts');
 

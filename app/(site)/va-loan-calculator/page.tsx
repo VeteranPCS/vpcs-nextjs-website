@@ -476,7 +476,8 @@ export default function VaLoanCalculatorPage() {
                             <Link
                                 href="/contact-lender"
                                 onClick={() => captureAnalyticsEvent('calculator_cta_clicked', {
-                                    calculator_id: 'va_loan',
+                                    calculator_id: 'va_loan_calculator',
+                                    calculator_name: 'VA Loan Calculator',
                                     cta_id: 'va_loan_custom_quote',
                                     cta_intent: 'contact_lender',
                                     cta_position: 'calculator',

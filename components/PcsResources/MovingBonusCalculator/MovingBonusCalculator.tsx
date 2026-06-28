@@ -129,6 +129,7 @@ const MovingBonusCalculator = () => {
         });
         captureAnalyticsEvent('calculator_cta_clicked', {
             calculator_id: 'moving_bonus',
+            calculator_name: 'Moving Bonus Calculator',
             cta_id: 'moving_bonus_find_agent',
             cta_intent: 'contact_agent',
             cta_position: 'calculator',
