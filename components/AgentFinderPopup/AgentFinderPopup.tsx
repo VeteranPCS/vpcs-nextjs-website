@@ -7,7 +7,7 @@ import { sendGTMEvent } from "@next/third-parties/google";
 import type { StateList } from '@/services/stateService';
 import { clientAreaService, type AreaAssignment } from '@/services/clientAreaService';
 import { clientStateService } from '@/services/clientStateService';
-import { captureAnalyticsEvent, trackCtaClicked } from '@/lib/analytics/client';
+import { trackCtaClicked } from '@/lib/analytics/client';
 import './AgentFinderPopup.css';
 
 
@@ -101,12 +101,6 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
             sendGTMEvent({
                 event: "agent_finder_popup_shown",
                 trigger_type: "scroll_trigger", // You could make this dynamic if needed
-            });
-            captureAnalyticsEvent('cta_clicked', {
-                cta_id: 'agent_finder_popup_viewed',
-                cta_intent: 'agent_finder_popup',
-                cta_position: 'scroll_trigger',
-                cta_component: 'agent_finder_popup',
             });
         }
     }, [isVisible]);

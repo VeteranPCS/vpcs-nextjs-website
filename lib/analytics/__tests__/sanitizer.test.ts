@@ -65,6 +65,20 @@ describe('analytics sanitizer', () => {
     expect(zipPrefix('80920-1234')).toBe('809');
   });
 
+  it('keeps controlled taxonomy name keys without allowing person names', () => {
+    const clean = sanitizeAnalyticsProperties({
+      name: 'Alex Example',
+      firstName: 'Alex',
+      calculator_name: 'VA Loan Calculator',
+      tool_name: 'submitLenderRequest',
+    });
+
+    expect(clean).not.toHaveProperty('name');
+    expect(clean).not.toHaveProperty('firstName');
+    expect(clean.calculator_name).toBe('VA Loan Calculator');
+    expect(clean.tool_name).toBe('submitLenderRequest');
+  });
+
   it('drops exception/autocapture non-scalar property values without throwing', () => {
     const clean = sanitizeAnalyticsProperties({
       $lib: 'posthog-js',

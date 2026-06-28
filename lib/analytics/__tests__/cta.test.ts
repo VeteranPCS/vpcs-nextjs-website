@@ -44,4 +44,23 @@ describe('CTA analytics helpers', () => {
     expect(JSON.stringify(clean)).not.toContain('alex@example.com');
     expect(JSON.stringify(clean)).not.toContain('?email=');
   });
+
+  it('keeps calculator CTA context complete', () => {
+    const clean = sanitizeAnalyticsProperties(buildCtaProperties({
+      ctaId: 'test_calculator_cta',
+      ctaIntent: 'contact_lender',
+      ctaPosition: 'calculator_result',
+      ctaComponent: 'test_calculator',
+      destination: '/contact-lender?loan=va',
+      calculatorId: 'va_loan_calculator',
+      calculatorName: 'VA Loan Calculator',
+    }));
+
+    expect(clean).toMatchObject({
+      cta_id: 'test_calculator_cta',
+      calculator_id: 'va_loan_calculator',
+      calculator_name: 'VA Loan Calculator',
+      destination_path: '/contact-lender',
+    });
+  });
 });

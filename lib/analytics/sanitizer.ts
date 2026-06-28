@@ -7,7 +7,13 @@ export type AnalyticsProperties = Record<string, unknown>;
 
 const BLOCKED_KEY_RE =
   /(^|_)(name|first_name|firstname|last_name|lastname|email|e_mail|phone|mobile|tel|street|address|captcha|message|comment|comments|free_text|payload|form_data|query|search_query|raw_text|text|zip_code|zipcode|zip)$/i;
-const SAFE_CONTACT_FLAG_KEYS = new Set(['has_name', 'has_email', 'has_phone']);
+const SAFE_BLOCKED_KEY_EXCEPTIONS = new Set([
+  'has_name',
+  'has_email',
+  'has_phone',
+  'calculator_name',
+  'tool_name',
+]);
 
 const EMAIL_RE = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 const LONG_PHONE_RE = /(?:\+?1[\s.-]?)?(?:\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}/;
@@ -42,7 +48,7 @@ const SAFE_ERROR_CODE_FIELDS = new Set([
 ]);
 
 function isBlockedKey(key: string): boolean {
-  return !SAFE_CONTACT_FLAG_KEYS.has(key) && BLOCKED_KEY_RE.test(key);
+  return !SAFE_BLOCKED_KEY_EXCEPTIONS.has(key) && BLOCKED_KEY_RE.test(key);
 }
 
 export function safePath(value: unknown): string | undefined {
