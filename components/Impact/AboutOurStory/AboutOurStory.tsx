@@ -80,7 +80,7 @@ const FamilySupport = async () => {
               <h1 className="text-white poppins lg:text-[35px] md:text-[35px] sm:text-[31px] text-[31px] font-bold mt-5 md:text-left sm:text-center text-center sm:px-0 px-0">
                 {storyDetails?.header}
               </h1>
-              <p className="text-white roboto lg:text-[16px] md:text-[16px] sm:text-[16px] text-[16px] font-medium mt-4 lg:w-[500px] md:w-[500px] sm:w-full w-full">
+              <div className="text-white roboto lg:text-[16px] md:text-[16px] sm:text-[16px] text-[16px] font-medium mt-4 lg:w-[500px] md:w-[500px] sm:w-full w-full">
                 {storyDetails?.description?.map((point, index) => (
                   <SupportContent
                     key={point._id || index}
@@ -90,7 +90,7 @@ const FamilySupport = async () => {
                     }}
                   />
                 ))}
-              </p>
+              </div>
             </div>
             <TrackedCtaLink
               href="/about"

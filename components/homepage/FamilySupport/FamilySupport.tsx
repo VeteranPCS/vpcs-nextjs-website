@@ -90,7 +90,7 @@ const FamilySupport = async ({ link, component_slug }: { link: string, component
                     src="/icon/checkred.svg"
                     alt=""
                   />
-                  <h6 className="text-white roboto lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] font-medium leading-[41px]">
+                  <div className="text-white roboto lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] font-medium leading-[41px]">
                     <SupportContent
                       key={point._id || index}
                       block={{
@@ -98,7 +98,7 @@ const FamilySupport = async ({ link, component_slug }: { link: string, component
                         style: validateBlockStyle(point.style || "normal"),
                       }}
                     />
-                  </h6>
+                  </div>
                 </div>
               ))}
             </div>
