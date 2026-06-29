@@ -1,8 +1,6 @@
 name: GA4 bi-weekly ingest
 
 on:
-  schedule:
-    - cron: '30 10 1,15 * *' # 1st and 15th of each month, 10:30 UTC (offset 30m from GSC ingest)
   workflow_dispatch:
 
 permissions:

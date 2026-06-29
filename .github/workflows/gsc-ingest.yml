@@ -1,8 +1,6 @@
 name: GSC bi-weekly ingest
 
 on:
-  schedule:
-    - cron: '0 10 1,15 * *' # 1st and 15th of each month, 10:00 UTC (after ~2-day GSC lag)
   workflow_dispatch:
 
 permissions:
