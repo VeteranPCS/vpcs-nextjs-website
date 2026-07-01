@@ -4,6 +4,32 @@
 
 VeteranPCS is a NextJS-based web application designed to connect military personnel, veterans, and their families with real estate agents and mortgage lenders during Permanent Change of Station (PCS) moves. The platform integrates with Salesforce for CRM, Sanity for content management, Slack for notifications, OpenPhone for SMS messaging, and Google Business Profile for reviews.
 
+## Maintenance Scripts
+
+### Update Sanity state images
+
+Use `scripts/update-state-images-from-folder.mjs` to replace `state_list.state_map` images in Sanity from a local folder of state-named image files. The script matches files to Sanity states by filename, skips images that are already current, and defaults to dry-run mode.
+
+Required local env:
+
+```bash
+SANITY_STATE_UPDATE_TOKEN="write-capable Sanity project token"
+```
+
+Example dry-run:
+
+```bash
+node --env-file=.env.local scripts/update-state-images-from-folder.mjs --folder=/path/to/updated-states
+```
+
+Apply the updates:
+
+```bash
+node --env-file=.env.local scripts/update-state-images-from-folder.mjs --folder=/path/to/updated-states --apply
+```
+
+Image filenames should match `state_name` values in Sanity, such as `Alaska.webp`, `New Hampshire.webp`, or `utah.webp`.
+
 ## API Routes
 
 ### Endpoint: `/api/v1/areas`
