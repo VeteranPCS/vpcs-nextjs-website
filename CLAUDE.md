@@ -8,7 +8,7 @@ Operational guide for Claude (and any other AI assistant) working in this repo. 
 
 VeteranPCS is a Next.js site that connects active-duty service members, veterans, and military spouses doing a PCS (Permanent Change of Station) move to vetted, military-experienced real estate agents and VA-loan lenders. The site is read-mostly marketing surface (state pages, blog) plus form-driven lead capture; Phase 2 is layering an LLM concierge on top of that.
 
-- Source of truth for agents/lenders/customers/deals: **Salesforce** (Person Account model with `__pc` custom fields; Customer `RecordTypeId = '0124x000000Z7G3AAK'`).
+- Source of truth for agents/lenders/customers/deals: **Salesforce** (Person Account model with `__pc` custom fields). Person-Account customers are identified by the `isAgent__pc` / `isLender__pc` / `isCustomer__pc` booleans, **not** by an Account record-type filter. (`0124x000000Z7G3AAK` is the **Opportunity** "Customer" record type, used only in Opportunity queries.)
 - Source of truth for marketing content (states, blog, headshots, copy): **Sanity CMS** + `public/images/`.
 - Lead intake: server actions → Salesforce REST + Slack notification + OpenPhone SMS.
 
@@ -21,7 +21,7 @@ VeteranPCS is a Next.js site that connects active-duty service members, veterans
 - **Telemetry:** PostHog is the primary funnel telemetry source; GA/GTM is a comparator. Taxonomy and troubleshooting live in `docs/analytics/telemetry-taxonomy.md`.
 - **Rate limit + bot defense:** `@upstash/ratelimit` + Upstash Redis, `botid` (Vercel BotID), both applied in `app/api/chat/route.ts`.
 - **Notifications:** Slack webhook (`actions/sendToSlack.ts`), OpenPhone SMS (`actions/sendOpenPhoneMessage.ts`). No Resend on this branch.
-- **Test runner:** Vitest 3 (Node env, `**/__tests__/**/*.test.ts`). Pre-commit does NOT run tests yet — run `npm test` before pushing AI-touching changes.
+- **Test runner:** Vitest 4 (Node env, `**/__tests__/**/*.test.ts`). Pre-commit does NOT run tests yet — run `npm test` before pushing AI-touching changes.
 - **Hosting:** Vercel. Use `vercel env` for env management. Prefer Fluid Compute defaults; do not assume edge runtime.
 
 ## Commands
@@ -34,6 +34,7 @@ VeteranPCS is a Next.js site that connects active-duty service members, veterans
 | `npm run type-check` | `tsc --noEmit` (pre-commit) |
 | `npm test` | Vitest one-shot |
 | `npm run test:watch` | Vitest watch mode |
+| `npm run eval` | Concierge eval suites (`vitest run -c vitest.eval.config.ts`); on-demand, not in `npm test` |
 
 Pre-commit hook (`.husky/pre-commit`) runs `lint && type-check && build`. **It does not run tests** — run `npm test` manually for AI/scraper changes. Never use `--no-verify` to bypass it unless the user explicitly asks.
 
@@ -47,26 +48,29 @@ app/
   studio/              Sanity Studio
   api/
     chat/              concierge streaming endpoint (Phase 2)
-    v1/                public REST: areas, bah, impact, revalidate
+    v1/                public REST: areas, bah, impact, media-accounts, revalidate, states
     mcp/               MCP server entry
 lib/
   ai/                  concierge: models.ts, session.ts, system-prompt.ts, tools/
   bah-scraper.ts       DTMO BAH lookup (see "BAH year format" gotcha)
   feature-flags.ts     NEXT_PUBLIC_CONCIERGE_ENABLED + future gates
-  email.ts             (legacy on other branches; not wired here)
 services/
   stateService.tsx     Sanity state list + Salesforce agent/lender fetch
   agentService.tsx     agent detail
   api.tsx              SOQL builder + REST wrappers
   salesForceTokenService.tsx
-  loggingService.tsx
+  loggingService.ts
 actions/               server actions (Slack, OpenPhone, form submits)
 components/
   Concierge/           Phase 2 widget (Provider, Widget, MessageRenderer, cards)
-  Forms/               lead-capture forms
+  ContactAgents/       agent lead-capture form
+  ContactLender/       lender lead-capture form
+  GetListedAgents/     agent get-listed form
+  GetListedLenders/    lender get-listed form
+  Internship/          internship application form
 sanity/                Studio config + schemas
 scripts/               Node scripts (audits, ingest, headshot classify, etc.)
-emails/                React Email templates (other branches; unused here)
+evals/                 on-demand concierge eval suites (npm run eval)
 docs/
   ai-first/PROJECT.md  AI-first journal — read this for current goals/status
   analytics/           PostHog taxonomy, GA/GTM comparator, Salesforce joins
@@ -78,7 +82,7 @@ docs/
 
 ### Salesforce / SOQL
 
-- Customer queries **must** filter `WHERE RecordTypeId = '0124x000000Z7G3AAK'`. Person Account fields use the `__pc` suffix (`Current_location__pc`, `Military_Status__pc`, `Have_you_personally_PCS_d__pc`, etc.).
+- Person-Account customers are identified by the boolean flags `isAgent__pc` / `isLender__pc` / `isCustomer__pc`, **not** by an Account record-type filter. (`0124x000000Z7G3AAK` is the **Opportunity** "Customer" record type, used only in Opportunity queries — see `services/salesforceImpactService.tsx`, `FROM Opportunity`.) Person Account fields use the `__pc` suffix (`Current_location__pc`, `Military_Status__pc`, `Have_you_personally_PCS_d__pc`, etc.).
 - Role flags are booleans: `isAgent__pc`, `isLender__pc`, `isCustomer__pc`.
 - License-state filters use **2-letter codes**, not full names: `State_s_Licensed_in__pc LIKE '%TX%' OR Other_States__pc INCLUDES ('TX')`.
 - `stateService.fetchAgentsListByState` / `fetchLendersListByState` expect a 2-letter state code (`short_name`), **not** the full state name or slug. They accept an optional `{ requireHeadshot?: boolean }`; the concierge tools pass `false` so the LLM still gets matches when a headshot is missing, while SSR pages keep the `true` default.
@@ -109,9 +113,13 @@ docs/
 - Lead-capture forms write to **both** the Salesforce Person Account (Customer record type) and the appropriate Opportunity. `destination_city` and `current_location` mappings are documented in auto-memory; ask before changing them.
 - Default blog byline is `VeteranPCS`, never `The VeteranPCS Team`.
 
-### Env vars
+### Middleware (proxy.ts)
 
-The current `ai/phase-2-concierge` branch uses:
+- Next.js 16 middleware lives at the repo-root file `proxy.ts` (exporting `proxy`), **not** `middleware.ts`. Don't create a `middleware.ts` — Next won't pick it up here; edit `proxy.ts` instead.
+
+### Env vars (on `main`)
+
+The env vars used on `main`:
 
 - Salesforce: `SALESFORCE_CLIENT_ID`, `SALESFORCE_CLIENT_SECRET`, `SALESFORCE_USERNAME`, `SALESFORCE_PASSWORD`, `SALESFORCE_TOKEN`, `SALESFORCE_LOGIN_BASE_URL`, `SALESFORCE_API_VERSION`, `VPCS_SALESFORCE_BASE_URL`, `SALESFORCE_WEBHOOK_SECRET`
 - Sanity: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_API_VERSION`, `NEXT_PUBLIC_SANITY_API_TOKEN`, `SANITY_REVALIDATE_KEY`
@@ -119,7 +127,7 @@ The current `ai/phase-2-concierge` branch uses:
 - **Rate limit / bot:** Upstash Redis REST env can use either the canonical pair `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` or the Vercel integration pair `UPSTASH_REDIS_REST_KV_REST_API_URL` / `UPSTASH_REDIS_REST_KV_REST_API_TOKEN` (resolved in `lib/upstash-env.ts`). The app intentionally does **not** use read-only token or Redis-protocol URL vars for write paths. `LEAD_SPAM_ENFORCED` (`LEAD_SPAM_ENFORCED='0'` is the kill-switch that disables lead-spam quarantine — any other value or unset = enforced). BotID is auto-wired on Vercel and now guards **only** the concierge chat route (`/api/chat`), not the lead forms. `BOTID_FORMS_ENFORCED` is retired.
 - **Guardrails:** `GUARDRAILS_ENFORCED` (`'0'` = disable all concierge input guardrails; any other value or unset = enforced). Mirrors `LEAD_SPAM_ENFORCED`. Guardrails run in `app/api/chat/route.ts` via `lib/ai/guardrails/evaluateInput`.
 - Notifications: `SLACK_WEBHOOK_URL`, `OPEN_PHONE_API_KEY`, `OPEN_PHONE_FROM_NUMBER`, plus per-partner `*_PHONE_NUMBER`
-- Misc: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID`, Google Reviews / GA4 / GSC creds
+- Misc: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID`, Google Reviews creds
 
 No `RESEND_*` keys on this branch — transactional email is off here. Don't add Resend-based code without checking PROJECT.md first.
 

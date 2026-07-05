@@ -130,7 +130,7 @@ Add to `lib/ai/models.ts`:
 
 ```ts
 export const MODELS = {
-  chat: 'anthropic/claude-sonnet-4-6',
+  chat: 'anthropic/claude-sonnet-4.6',
   guardrail: 'anthropic/claude-haiku-4-5',  // Tier 1 classifier
   judge: 'anthropic/claude-haiku-4-5',      // eval LLM-as-judge
 } as const;
