@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    # Per-PR + push-to-main gate. Skipped on manual (eval-only) runs.
+    if: github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      # Public Sanity identifiers, provided as repo Actions variables. The
+      # production build reads these at build time; no secrets are required
+      # because the concierge (AI Gateway) is flag-gated off in CI.
+      NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+      NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Type-check
+        run: npm run type-check
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm test
+      - name: Content lint (banned byline)
+        run: npm run lint:content
+      - name: Model id consistency (CLAUDE.md vs lib/ai/models.ts)
+        run: |
+          MODEL_ID=$(grep -oE "anthropic/claude-[a-z0-9.-]+" lib/ai/models.ts | head -1)
+          if [ -z "$MODEL_ID" ]; then
+            echo "::error::could not extract a model id from lib/ai/models.ts"
+            exit 1
+          fi
+          echo "models.ts model id: $MODEL_ID"
+          if ! grep -qF "$MODEL_ID" CLAUDE.md; then
+            echo "::error::CLAUDE.md does not reference model id '$MODEL_ID' from lib/ai/models.ts"
+            exit 1
+          fi
+          echo "OK: CLAUDE.md references $MODEL_ID"
+
+  eval:
+    # Concierge evals hit the live AI Gateway, so they are manual-only
+    # (workflow_dispatch) and never block a PR.
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+      NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
+      AI_GATEWAY_API_KEY: ${{ secrets.AI_GATEWAY_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run concierge evals
+        run: npm run eval
