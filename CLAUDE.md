@@ -18,6 +18,7 @@ VeteranPCS is a Next.js site that connects active-duty service members, veterans
 - **CMS:** Sanity (`next-sanity`, GROQ). Studio mounted at `/studio`.
 - **CRM:** Salesforce REST (SOQL); token retrieval via `services/salesForceTokenService.tsx`, queries via `services/api.tsx` + `services/stateService.tsx`.
 - **AI:** Vercel AI SDK v6 (`ai`, `@ai-sdk/react`) routed through **Vercel AI Gateway** (model id `anthropic/claude-sonnet-4.6` in `lib/ai/models.ts`). No direct provider SDK is wired up — use the Gateway.
+- **Telemetry:** PostHog is the primary funnel telemetry source; GA/GTM is a comparator. Taxonomy and troubleshooting live in `docs/analytics/telemetry-taxonomy.md`.
 - **Rate limit + bot defense:** `@upstash/ratelimit` + Upstash Redis, `botid` (Vercel BotID), both applied in `app/api/chat/route.ts`.
 - **Notifications:** Slack webhook (`actions/sendToSlack.ts`), OpenPhone SMS (`actions/sendOpenPhoneMessage.ts`). No Resend on this branch.
 - **Test runner:** Vitest 3 (Node env, `**/__tests__/**/*.test.ts`). Pre-commit does NOT run tests yet — run `npm test` before pushing AI-touching changes.
@@ -68,8 +69,9 @@ scripts/               Node scripts (audits, ingest, headshot classify, etc.)
 emails/                React Email templates (other branches; unused here)
 docs/
   ai-first/PROJECT.md  AI-first journal — read this for current goals/status
+  analytics/           PostHog taxonomy, GA/GTM comparator, Salesforce joins
   REVERSION-PLAN.md    why we stayed on Salesforce (vs. the Attio migration)
-  salesforce-schema/   Salesforce field reference
+  salesforce-schema/   Salesforce field reference (committed .md summaries; raw/ dumps gitignored)
 ```
 
 ## Conventions and gotchas
@@ -80,7 +82,8 @@ docs/
 - Role flags are booleans: `isAgent__pc`, `isLender__pc`, `isCustomer__pc`.
 - License-state filters use **2-letter codes**, not full names: `State_s_Licensed_in__pc LIKE '%TX%' OR Other_States__pc INCLUDES ('TX')`.
 - `stateService.fetchAgentsListByState` / `fetchLendersListByState` expect a 2-letter state code (`short_name`), **not** the full state name or slug. They accept an optional `{ requireHeadshot?: boolean }`; the concierge tools pass `false` so the LLM still gets matches when a headshot is missing, while SSR pages keep the `true` default.
-- Scripts that talk to Salesforce use **inline API helpers** (not `import { attio }`-style top-level imports) so env vars are read after `dotenv` runs.
+- Scripts that talk to Salesforce use **inline API helpers** (not top-level module imports) so env vars are read after `dotenv` runs.
+- Schema reference: use the committed `.md` summaries in `docs/salesforce-schema/`. The deeper `raw/` dumps (`sobjects.json`, `*-describe.json`) are **gitignored** — not present in a fresh clone. Regenerate them (and refresh the `.md` summaries) with `node --env-file=.env.local scripts/recon-salesforce.mjs` (needs the Salesforce env vars). If present, **never `Read` them whole** — `sobjects.json` is ~1.35 MB (~350K tokens) and will blow the context window; grep or jq them instead.
 
 ### Sanity
 
@@ -113,7 +116,7 @@ The current `ai/phase-2-concierge` branch uses:
 - Salesforce: `SALESFORCE_CLIENT_ID`, `SALESFORCE_CLIENT_SECRET`, `SALESFORCE_USERNAME`, `SALESFORCE_PASSWORD`, `SALESFORCE_TOKEN`, `SALESFORCE_LOGIN_BASE_URL`, `SALESFORCE_API_VERSION`, `VPCS_SALESFORCE_BASE_URL`, `SALESFORCE_WEBHOOK_SECRET`
 - Sanity: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_API_VERSION`, `NEXT_PUBLIC_SANITY_API_TOKEN`, `SANITY_REVALIDATE_KEY`
 - AI: `AI_GATEWAY_API_KEY` (Vercel AI Gateway), `NEXT_PUBLIC_CONCIERGE_ENABLED`
-- **Rate limit / bot:** `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `LEAD_SPAM_ENFORCED` (`LEAD_SPAM_ENFORCED='0'` is the kill-switch that disables lead-spam quarantine — any other value or unset = enforced). BotID is auto-wired on Vercel and now guards **only** the concierge chat route (`/api/chat`), not the lead forms. `BOTID_FORMS_ENFORCED` is retired.
+- **Rate limit / bot:** Upstash Redis REST env can use either the canonical pair `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` or the Vercel integration pair `UPSTASH_REDIS_REST_KV_REST_API_URL` / `UPSTASH_REDIS_REST_KV_REST_API_TOKEN` (resolved in `lib/upstash-env.ts`). The app intentionally does **not** use read-only token or Redis-protocol URL vars for write paths. `LEAD_SPAM_ENFORCED` (`LEAD_SPAM_ENFORCED='0'` is the kill-switch that disables lead-spam quarantine — any other value or unset = enforced). BotID is auto-wired on Vercel and now guards **only** the concierge chat route (`/api/chat`), not the lead forms. `BOTID_FORMS_ENFORCED` is retired.
 - **Guardrails:** `GUARDRAILS_ENFORCED` (`'0'` = disable all concierge input guardrails; any other value or unset = enforced). Mirrors `LEAD_SPAM_ENFORCED`. Guardrails run in `app/api/chat/route.ts` via `lib/ai/guardrails/evaluateInput`.
 - Notifications: `SLACK_WEBHOOK_URL`, `OPEN_PHONE_API_KEY`, `OPEN_PHONE_FROM_NUMBER`, plus per-partner `*_PHONE_NUMBER`
 - Misc: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID`, Google Reviews / GA4 / GSC creds
