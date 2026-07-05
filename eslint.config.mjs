@@ -15,6 +15,8 @@ export default defineConfig([
         // These flag pre-existing valid patterns as errors. Refactoring the
         // 17+ flagged sites is out of scope for the Next 14 → 16 upgrade.
         // Re-enable as a separate follow-up once React Compiler adoption is planned.
+        // TODO(https://github.com/VeteranPCS/vpcs-nextjs-website/issues/149):
+        // re-enable these four rules once the ~17 flagged sites are fixed.
         rules: {
             "react-hooks/immutability": "off",
             "react-hooks/set-state-in-effect": "off",
