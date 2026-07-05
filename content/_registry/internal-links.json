@@ -1,6 +1,6 @@
 {
-  "contentHash": "8ac2128b6da63bc0f057e234d59f0b59b7ab9677b9c69815d387ce0aad922ce4",
-  "totalPosts": 324,
+  "contentHash": "bf33fe6de908149cc24511aa157a5364b9902675bc23c6be4d71c47fdd90b769",
+  "totalPosts": 332,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -91,6 +91,7 @@
       "excellence-in-education-castle-rock-s-premier-school-system",
       "florida-schools-military-children-guide",
       "greater-phoenix-valley-a-guide-for-military-veterans",
+      "house-hunting-leave-pcs-guide",
       "how-expensive-is-castle-rock",
       "how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado",
       "how-to-choose-the-right-real-estate-agent-for-your-military-pcs-move",
@@ -136,9 +137,11 @@
       "pcs-to-naval-station-norfolk-2026-guide",
       "pcs-to-nellis-afb-las-vegas-2026-guide",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
+      "pcs-to-north-carolina-military-buyers-guide",
       "pcs-to-schofield-barracks-2026-guide",
       "pcs-to-travis-afb-fairfield-2026-guide",
       "pcs-to-wright-patterson-afb-dayton-2026-guide",
+      "pcs-to-your-first-duty-station-guide",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "pcsing-oconus-what-do-i-do-with-my-home",
       "pcsing-to-camp-lejeune-2026-onslow-county-guide",
@@ -153,9 +156,11 @@
       "prepare-to-pcs-what-military-movers-wont-pack-in-2024",
       "preparing-for-an-overseas-pcs-a-guide-for-military-families",
       "preparing-to-pcs-what-you-need-to-know",
+      "rent-or-sell-your-home-when-you-pcs",
       "settling-down-pcsing-to-birmingham-alabama-with-the-military",
       "should-active-duty-military-buy-a-home-in-hawaii",
       "strategic-refinancing-for-luxury-homeowners-in-castle-rock-co",
+      "temporary-lodging-expense-tle-pcs-guide",
       "tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state",
       "the-complete-guide-to-luxury-new-home-builders-in-castle-rock-colorado",
       "the-importance-of-working-with-a-real-estate-broker-when-buying-a-new-construction-home",
@@ -192,6 +197,7 @@
       "best-places-to-live-near-ft-gordon-augusta-georgia",
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
+      "military-bases-near-me-how-to-find-bases-by-state",
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-aberdeen-proving-ground-2026-guide",
       "pcs-to-air-force-academy-colorado-springs-2026-guide",
@@ -314,6 +320,7 @@
     ],
     "VA Loan Help": [
       "2026-va-loan-limits-explained-for-military-homebuyers",
+      "buying-a-duplex-with-a-va-loan",
       "can-you-use-the-va-loan-more-than-once",
       "complete-guide-to-buying-your-first-home-with-a-va-loan",
       "does-the-va-loan-always-have-the-best-rate",
@@ -331,6 +338,7 @@
       "va-loan-assumptions-the-hidden-entitlement-rule-that-trips-up-military-homebuyers",
       "va-loan-assumptions-what-military-families-must-know",
       "va-loan-calculator-mistakes",
+      "va-loan-credit-score-requirements",
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
       "va-loan-huntsville-madison-county-2026",
@@ -431,6 +439,7 @@
       "excellence-in-education-castle-rock-s-premier-school-system",
       "florida-schools-military-children-guide",
       "greater-phoenix-valley-a-guide-for-military-veterans",
+      "house-hunting-leave-pcs-guide",
       "how-expensive-is-castle-rock",
       "how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado",
       "how-to-choose-the-right-real-estate-agent-for-your-military-pcs-move",
@@ -476,9 +485,11 @@
       "pcs-to-naval-station-norfolk-2026-guide",
       "pcs-to-nellis-afb-las-vegas-2026-guide",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
+      "pcs-to-north-carolina-military-buyers-guide",
       "pcs-to-schofield-barracks-2026-guide",
       "pcs-to-travis-afb-fairfield-2026-guide",
       "pcs-to-wright-patterson-afb-dayton-2026-guide",
+      "pcs-to-your-first-duty-station-guide",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "pcsing-oconus-what-do-i-do-with-my-home",
       "pcsing-to-camp-lejeune-2026-onslow-county-guide",
@@ -493,9 +504,11 @@
       "prepare-to-pcs-what-military-movers-wont-pack-in-2024",
       "preparing-for-an-overseas-pcs-a-guide-for-military-families",
       "preparing-to-pcs-what-you-need-to-know",
+      "rent-or-sell-your-home-when-you-pcs",
       "settling-down-pcsing-to-birmingham-alabama-with-the-military",
       "should-active-duty-military-buy-a-home-in-hawaii",
       "strategic-refinancing-for-luxury-homeowners-in-castle-rock-co",
+      "temporary-lodging-expense-tle-pcs-guide",
       "tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state",
       "the-complete-guide-to-luxury-new-home-builders-in-castle-rock-colorado",
       "the-importance-of-working-with-a-real-estate-broker-when-buying-a-new-construction-home",
@@ -532,6 +545,7 @@
       "best-places-to-live-near-ft-gordon-augusta-georgia",
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
+      "military-bases-near-me-how-to-find-bases-by-state",
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-aberdeen-proving-ground-2026-guide",
       "pcs-to-air-force-academy-colorado-springs-2026-guide",
@@ -654,6 +668,7 @@
     ],
     "va-loan-help": [
       "2026-va-loan-limits-explained-for-military-homebuyers",
+      "buying-a-duplex-with-a-va-loan",
       "can-you-use-the-va-loan-more-than-once",
       "complete-guide-to-buying-your-first-home-with-a-va-loan",
       "does-the-va-loan-always-have-the-best-rate",
@@ -671,6 +686,7 @@
       "va-loan-assumptions-the-hidden-entitlement-rule-that-trips-up-military-homebuyers",
       "va-loan-assumptions-what-military-families-must-know",
       "va-loan-calculator-mistakes",
+      "va-loan-credit-score-requirements",
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
       "va-loan-huntsville-madison-county-2026",
@@ -901,6 +917,7 @@
       "north-carolina-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-bragg-2026-guide",
       "pcs-to-mcas-cherry-point-2026-guide",
+      "pcs-to-north-carolina-military-buyers-guide",
       "pcs-to-seymour-johnson-afb-goldsboro-2026-guide",
       "pcsing-to-camp-lejeune-2026-onslow-county-guide",
       "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
@@ -1013,11 +1030,11 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 229,
+    "resolved": 230,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 205,
-      "slug-heuristic": 21,
+      "frontmatter-state-slug": 207,
+      "slug-heuristic": 20,
       "state-map-post": 1
     },
     "unmappedHighIntent": [
@@ -1028,15 +1045,18 @@
       "choosing-the-best-relocation-method-for-your-pcs",
       "florida-cost-of-living-military-bases-bah",
       "fun-family-and-date-night-activities-near-tinker-afb",
+      "house-hunting-leave-pcs-guide",
       "how-to-choose-the-right-real-estate-agent-for-your-military-pcs-move",
       "huntsville-redstone-bah-2026-buy-vs-rent",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "military-bases-near-me-how-to-find-bases-by-state",
       "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcs-moves-buying-or-selling-during-relocation",
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-bremerton-naval-base-kitsap-2026-guide",
       "pcs-to-kitsap-county-five-things-military-families",
+      "pcs-to-your-first-duty-station-guide",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "percheron-colorado-springs-master-planned-community-near-colorado-military-bases",
@@ -1045,6 +1065,8 @@
       "prepare-to-pcs-what-military-movers-wont-pack-in-2024",
       "preparing-for-an-overseas-pcs-a-guide-for-military-families",
       "preparing-to-pcs-what-you-need-to-know",
+      "rent-or-sell-your-home-when-you-pcs",
+      "temporary-lodging-expense-tle-pcs-guide",
       "the-ultimate-pcs-binder-guide-get-organized-for-your-move",
       "the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel",
       "things-to-do-near-fort-riley-a-local-guide",
@@ -1800,6 +1822,36 @@
         "Current Market Recommendations",
         "Building Long-Term Military Wealth",
         "Plan Your PCS to North Carolina"
+      ]
+    },
+    {
+      "slug": "buying-a-duplex-with-a-va-loan",
+      "title": "Buying a Duplex With a VA Loan: House Hacking for Military Families",
+      "url": "/blog/buying-a-duplex-with-a-va-loan",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "VA Loan Help"
+      ],
+      "description": "The VA loan covers duplexes, triplexes, and fourplexes as long as you live in one unit. Here are the occupancy, rental income, and entitlement rules for 2026.",
+      "publishedAt": "2026-07-22T09:00:00.000Z",
+      "updatedAt": "2026-07-05T00:00:00.000Z",
+      "primaryKeyword": "buying a duplex with a va loan",
+      "secondaryKeywords": [
+        "house hacking with a va loan",
+        "va loan duplex",
+        "va loan multi unit property",
+        "va loan rental income"
+      ],
+      "h2Outline": [
+        "The Core Rule: You Must Live There",
+        "Can Rental Income Help You Qualify?",
+        "How Much Can You Borrow?",
+        "What to Watch Before You Offer",
+        "Frequently Asked Questions",
+        "Turn Your Next PCS Into an Asset"
       ]
     },
     {
@@ -2687,6 +2739,36 @@
       ]
     },
     {
+      "slug": "house-hunting-leave-pcs-guide",
+      "title": "House Hunting Leave: How to Use Permissive TDY Before Your PCS",
+      "url": "/blog/house-hunting-leave-pcs-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "PCS Help"
+      ],
+      "description": "Most service members can request up to 10 days of permissive TDY to house hunt before a PCS, without being charged leave. Here is how to ask for it and make every day count.",
+      "publishedAt": "2026-07-23T09:00:00.000Z",
+      "updatedAt": "2026-07-05T00:00:00.000Z",
+      "primaryKeyword": "house hunting leave",
+      "secondaryKeywords": [
+        "house hunting trip pcs",
+        "military house hunting leave rules",
+        "permissive tdy house hunting",
+        "ptdy for pcs"
+      ],
+      "h2Outline": [
+        "What House Hunting Leave Is (and Is Not)",
+        "House Hunting Leave vs. the Allowances That Pay You",
+        "How to Request It",
+        "Making 10 Days Count",
+        "Frequently Asked Questions",
+        "Land the Home Before You Land at the Base"
+      ]
+    },
+    {
       "slug": "how-does-a-0-down-va-loan-work",
       "title": "How Does a $0 Down VA Loan Work?",
       "url": "/blog/how-does-a-0-down-va-loan-work",
@@ -3398,6 +3480,38 @@
         "Military Pay and Michigan State Income Tax",
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "military-bases-near-me-how-to-find-bases-by-state",
+      "title": "Military Bases Near Me: How to Find Bases by State",
+      "url": "/blog/military-bases-near-me-how-to-find-bases-by-state",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A plain-language guide to finding military bases near you, by state and branch, with official tools and tips for planning a PCS move to a new installation.",
+      "publishedAt": "2026-07-06T09:00:00.000Z",
+      "updatedAt": "2026-06-28T00:00:00.000Z",
+      "primaryKeyword": "military bases near me",
+      "secondaryKeywords": [
+        "army bases near me",
+        "find a military base",
+        "list of military bases",
+        "military bases by state",
+        "military installations"
+      ],
+      "h2Outline": [
+        "The Fastest Way to Find Military Bases Near You",
+        "Finding Military Bases by State",
+        "Finding Bases by Branch of Service",
+        "What to Do Once You Know Your Next Base",
+        "A Note on Searching Smart",
         "Frequently Asked Questions"
       ]
     },
@@ -7066,6 +7180,39 @@
       ]
     },
     {
+      "slug": "pcs-to-north-carolina-military-buyers-guide",
+      "title": "PCS to North Carolina: A Military Buyer Guide for 2026",
+      "url": "/blog/pcs-to-north-carolina-military-buyers-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": "north-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "US Military Bases"
+      ],
+      "description": "A 2026 guide for military families PCSing to North Carolina, covering the major bases, BAH, home prices near each, and veteran property tax breaks.",
+      "publishedAt": "2026-07-09T09:00:00.000Z",
+      "updatedAt": "2026-06-28T00:00:00.000Z",
+      "primaryKeyword": "pcs to north carolina",
+      "secondaryKeywords": [
+        "buying a home north carolina military",
+        "military friendly north carolina",
+        "moving to north carolina military",
+        "north carolina bah",
+        "north carolina military bases"
+      ],
+      "h2Outline": [
+        "North Carolina's Major Military Bases",
+        "How Far Your Housing Pay Goes",
+        "Home Prices Near North Carolina Bases",
+        "Veteran Tax Breaks in North Carolina",
+        "Buying With Your VA Loan",
+        "Plan Your Move to North Carolina",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "pcs-to-patrick-sfb-cocoa-beach-2026-guide",
       "title": "PCS to Patrick Space Force Base: A 2026 Guide for Military Families on the Space Coast",
       "url": "/blog/pcs-to-patrick-sfb-cocoa-beach-2026-guide",
@@ -7714,6 +7861,37 @@
       ]
     },
     {
+      "slug": "pcs-to-your-first-duty-station-guide",
+      "title": "PCS to Your First Duty Station: A New Service Member Guide",
+      "url": "/blog/pcs-to-your-first-duty-station-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "PCS Help"
+      ],
+      "description": "A plain-language guide for new service members PCSing to a first duty station, covering orders, entitlements, housing pay, and how to plan a smooth move.",
+      "publishedAt": "2026-07-07T09:00:00.000Z",
+      "updatedAt": "2026-06-28T00:00:00.000Z",
+      "primaryKeyword": "first duty station",
+      "secondaryKeywords": [
+        "first pcs move",
+        "moving to first duty station",
+        "new service member move",
+        "pcs entitlements",
+        "pcs to first duty station"
+      ],
+      "h2Outline": [
+        "Start With Your Orders and Your Sponsor",
+        "Understand Your PCS Entitlements",
+        "Decide Where You Will Live",
+        "Build a Simple Timeline",
+        "You Do Not Have to Figure It Out Alone",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "title": "PCS with Kids: 10 Sanity-Saving Tips Every Military Family Needs to Know",
       "url": "/blog/pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
@@ -8222,6 +8400,37 @@
       ]
     },
     {
+      "slug": "rent-or-sell-your-home-when-you-pcs",
+      "title": "Rent or Sell Your Home When You PCS? How to Decide in 2026",
+      "url": "/blog/rent-or-sell-your-home-when-you-pcs",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "PCS Help",
+        "Real Estate Insights"
+      ],
+      "description": "PCS orders force a choice: become a long-distance landlord or sell and take your equity with you. This guide walks through the cash flow, tax, and VA entitlement math.",
+      "publishedAt": "2026-07-24T09:00:00.000Z",
+      "updatedAt": "2026-07-05T00:00:00.000Z",
+      "primaryKeyword": "rent or sell your home when you pcs",
+      "secondaryKeywords": [
+        "military landlord pcs",
+        "renting out your house when you pcs",
+        "selling a house before a pcs move",
+        "should i rent or sell my house military"
+      ],
+      "h2Outline": [
+        "Check 1: The Monthly Cash Flow Math",
+        "Check 2: The Military Tax Advantage Most Owners Miss",
+        "Check 3: Your VA Entitlement at the Next Duty Station",
+        "Check 4: Do You Actually Want Tenants?",
+        "Frequently Asked Questions",
+        "Make the Call With Real Numbers"
+      ]
+    },
+    {
       "slug": "rhode-island-veteran-property-tax-exemptions-2026",
       "title": "Rhode Island Military & Veteran Property Tax Exemptions (2026)",
       "url": "/blog/rhode-island-veteran-property-tax-exemptions-2026",
@@ -8501,6 +8710,38 @@
       ]
     },
     {
+      "slug": "temporary-lodging-expense-tle-pcs-guide",
+      "title": "Temporary Lodging Expense (TLE): A PCS Money Guide",
+      "url": "/blog/temporary-lodging-expense-tle-pcs-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "A plain-language guide to Temporary Lodging Expense (TLE) for CONUS PCS moves, covering what it pays, the 21-day limit, and how it differs from TLA overseas.",
+      "publishedAt": "2026-07-08T09:00:00.000Z",
+      "updatedAt": "2026-06-28T00:00:00.000Z",
+      "primaryKeyword": "temporary lodging expense",
+      "secondaryKeywords": [
+        "pcs lodging reimbursement",
+        "temporary lodging allowance",
+        "tle days conus",
+        "tle pcs",
+        "what is tle military"
+      ],
+      "h2Outline": [
+        "What Temporary Lodging Expense Covers",
+        "How Many Days of TLE You Get",
+        "How TLE Is Calculated",
+        "TLE Versus TLA: Stateside Versus Overseas",
+        "Where TLE Fits in Your PCS Budget",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state",
       "title": "Tennessee Military Bases: Your Complete PCS Guide to the Volunteer State",
       "url": "/blog/tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state",
@@ -8733,7 +8974,7 @@
       ],
       "description": "A Permanent Change of Station (PCS) move is one of the most significant transitions for active duty military personnel and their families. Whether you are relocating within the United States or moving overseas, planning ahead is essentia...",
       "publishedAt": "2024-05-09T18:45:35.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "updatedAt": "2026-06-28T00:00:00.000Z",
       "primaryKeyword": "pcs checklist",
       "secondaryKeywords": [
         "active duty pcs move",
@@ -9341,6 +9582,36 @@
         "Making Informed Decisions for Your Military Family",
         "Your Next Steps",
         "Keep Learning About Your VA Loan"
+      ]
+    },
+    {
+      "slug": "va-loan-credit-score-requirements",
+      "title": "VA Loan Credit Score Requirements: What Lenders Look For in 2026",
+      "url": "/blog/va-loan-credit-score-requirements",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "VA Loan Help"
+      ],
+      "description": "The VA itself has no minimum credit score. This guide explains the score floors lenders actually use in 2026, and what to do if your credit needs work before you buy.",
+      "publishedAt": "2026-07-21T09:00:00.000Z",
+      "updatedAt": "2026-07-05T00:00:00.000Z",
+      "primaryKeyword": "va loan credit score requirements",
+      "secondaryKeywords": [
+        "minimum credit score for va loan",
+        "va loan credit score 2026",
+        "va loan with bad credit",
+        "what credit score do i need for a va loan"
+      ],
+      "h2Outline": [
+        "How VA Loan Credit Score Requirements Actually Work",
+        "What Lenders Review Besides Your Score",
+        "What If Your Score Is Below 620?",
+        "Why the VA Loan Is Still Worth It at Any Score",
+        "Frequently Asked Questions",
+        "Talk to Someone Who Sees Files Like Yours Every Week"
       ]
     },
     {
@@ -10606,13 +10877,13 @@
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
       "stateSlug": "new-mexico",
-      "stateSource": "slug-heuristic",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "US Military Bases"
       ],
-      "description": "New Mexico has a long and rich military history, playing a crucial role in nuclear weapons development, aerospace testing, and special operations. The state was home to key facilities of the Manhattan Project, where the world's first ato...",
+      "description": "A 2026 guide to the four major military installations in New Mexico, what each base does, and what military families should know before a PCS to the Land of Enchantment.",
       "publishedAt": "2023-07-25T17:25:11.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-07-05T00:00:00.000Z",
       "primaryKeyword": "new mexico military bases",
       "secondaryKeywords": [
         "air force base in new mexico",
@@ -10626,7 +10897,9 @@
         "2. Holloman Air Force Base",
         "3. Kirtland Air Force Base",
         "4. White Sands Missile Range (WSMR)",
-        "Moving to New Mexico? We Can Help!"
+        "PCS Tips for New Mexico",
+        "Frequently Asked Questions",
+        "Moving to New Mexico? We Can Help"
       ]
     },
     {
