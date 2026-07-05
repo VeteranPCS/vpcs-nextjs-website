@@ -55,5 +55,9 @@ docs/migration
 # blog update raw audit dumps (recon)
 /docs/blog-updates/raw
 
+# retired GA4/GSC ingest registries — analytics pull lives in the local
+# vpcs-weekly-analytics Mac task, never committed to the repo
+/content/_registry/*-performance.json
+
 # AI-first project journal — local only
 docs/ai-first/
