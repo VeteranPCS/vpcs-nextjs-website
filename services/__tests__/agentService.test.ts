@@ -42,7 +42,7 @@ describe('agentService.getAgentState', () => {
     const result = await agentService.getAgentState('001ABCDEFGHIJKL');
 
     expect(mockedApi).toHaveBeenCalledTimes(1);
-    const endpoint = mockedApi.mock.calls[0][0].endpoint as string;
+    const endpoint = mockedApi.mock.calls[0]![0].endpoint as string;
     const soql = decodeURIComponent(endpoint);
     expect(soql).toContain("AccountId_15__c = '001ABCDEFGHIJKL'");
     // 'TX' resolves to a single mapped state; exact slug value is incidental here.

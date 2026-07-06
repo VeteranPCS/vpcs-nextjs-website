@@ -26,6 +26,6 @@ export function getStateForBlog(slug: string): string | null {
 export function getStateDisplayName(slug: string): string {
   return slug
     .split('-')
-    .map((part) => (part === 'dc' ? 'D.C.' : part[0].toUpperCase() + part.slice(1)))
+    .map((part) => (part === 'dc' ? 'D.C.' : part.charAt(0).toUpperCase() + part.slice(1)))
     .join(' ');
 }

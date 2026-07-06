@@ -12,6 +12,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "eval": "vitest run -c vitest.eval.config.ts",
+    "typegen:extract": "sanity schema extract",
+    "typegen:generate": "sanity typegen generate",
+    "typegen": "npm run typegen:extract && npm run typegen:generate",
     "prepare": "husky install"
   },
   "dependencies": {

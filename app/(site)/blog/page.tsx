@@ -59,7 +59,7 @@ export default async function Home() {
 
   return (
     <>
-      <BlogPageHeroSection blog={blogs[0]} />
+      <BlogPageHeroSection blog={blogs[0]!} />
       {orderedGroups.map(([component, blogsList], index) => (
         index === 0 && <BlogMovingPcsingBlogPostSection key={component} blogList={blogsList.slice(0, 9)} component={component} categories_list={categories_list} />
       ))}

@@ -19,7 +19,7 @@ const SuccessStories = async () => {
 
   const generateHTML = (description: ChildrenProps[]) => {
     return description.map((item) => {
-      const text = item.children[0].text;
+      const text = item.children[0]?.text;
       return (
         <h6 key={item._key} className="text-[#000000] text-[18px] font-medium m-0 p-0">
           {text}

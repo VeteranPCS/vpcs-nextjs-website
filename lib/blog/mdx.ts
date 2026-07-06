@@ -173,7 +173,7 @@ export function extractTocHeadings(mdx: string): TocHeading[] {
     .map((line) => /^##\s+(?!#)(.+)$/.exec(line))
     .filter((match): match is RegExpExecArray => Boolean(match))
     .map((match) => {
-      const text = match[1].replace(/[*_`]+/g, '').trim();
+      const text = match[1]!.replace(/[*_`]+/g, '').trim();
       const baseId = slugifyHeading(text);
       const count = (counts.get(baseId) ?? 0) + 1;
       counts.set(baseId, count);

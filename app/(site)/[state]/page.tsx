@@ -10,7 +10,7 @@ import StatePageWhyChooseVetpcs from "@/components/StatePage/StatePageWhyChooseV
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import { StatePageViewedTracker } from "@/components/Analytics/Trackers";
-import stateService, { StateList as StateList, AgentsData, LendersData, Lenders } from "@/services/stateService";
+import stateService, { StateDetails, AgentsData, LendersData, Lenders } from "@/services/stateService";
 import {
   buildStateLocalBusiness,
   buildAgentItemList,
@@ -83,7 +83,7 @@ export async function generateMetadata(props: { params: Promise<{ state: string 
 
 export default async function StatePage(props: { params: Promise<{ state: string }> }) {
   const { state } = await props.params;
-  let state_data: StateList | null = null;
+  let state_data: StateDetails | null = null;
   let agents_data: AgentsData | [] = [];
   let lenders_data: LendersData | [] = [];
   let formatted_data: StateAgentGroups = {};
@@ -91,7 +91,7 @@ export default async function StatePage(props: { params: Promise<{ state: string
 
   try {
     state_data = await stateService.fetchStateDetails(state);
-    state_code = state_data?.short_name;
+    state_code = state_data?.short_name ?? '';
   } catch (error) {
     console.error("Error fetching State Data", error);
   }

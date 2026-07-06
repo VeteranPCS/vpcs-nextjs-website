@@ -13,6 +13,8 @@ import { logError } from '@/services/loggingService';
 
 const EVENT_STAGE = {
   lead_conversion_created: 'bottom',
+  lead_owner_routing_failed: 'bottom',
+  lead_notification_failed: 'bottom',
   concierge_tool_submitted: 'mid',
   concierge_tool_completed: 'mid',
   concierge_tool_failed: 'mid',

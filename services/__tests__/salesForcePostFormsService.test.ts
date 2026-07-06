@@ -18,7 +18,7 @@ import {
   buildLenderLeadParams,
 } from '@/services/salesforceLeadParams';
 import { logError } from '@/services/loggingService';
-import { captureLeadConversionCreated } from '@/lib/analytics/server';
+import { captureLeadConversionCreated, captureServerAnalyticsEvent } from '@/lib/analytics/server';
 import { evaluateLeadSpam } from '@/lib/spam-protection';
 import { updateSubmissionStatus } from '@/services/formTrackingService';
 
@@ -99,7 +99,13 @@ vi.mock('@/services/formTrackingService', () => ({
 
 const queryString = '?form=agent&fn=Jason&id=0014x00000HWTqI&state=colorado';
 
-function qaPayload() {
+// The lead-param builders type `formData` as a flat `Record<string, string | undefined>`.
+// These fixtures also carry the analytics passthrough fields (`form_rendered_at`, the
+// `*_count_before_conversion` counters) as real numbers, matching what the client sends on the
+// wire. Assert the builder-facing shape via one type-only cast so the static type matches the
+// builder param while the runtime values stay numeric — the number→string coercion path in the
+// builders/attribution helper is still exercised exactly as in production.
+function qaPayload(): Record<string, string | undefined> {
   return {
     firstName: 'QA',
     lastName: 'Concierge Test',
@@ -117,10 +123,10 @@ function qaPayload() {
     pageview_count_before_conversion: 3,
     cta_click_count_before_conversion: 1,
     form_attempt_count_before_conversion: 1,
-  };
+  } as unknown as Record<string, string | undefined>;
 }
 
-function lenderPayload() {
+function lenderPayload(): Record<string, string | undefined> {
   return {
     firstName: 'QA',
     lastName: 'Lender Test',
@@ -133,7 +139,7 @@ function lenderPayload() {
     company_website: '',
     form_rendered_at: Date.now() - 5_000,
     vpcs_visitor_id: 'vpcs_test_lender_1234567890',
-  };
+  } as unknown as Record<string, string | undefined>;
 }
 
 function mockSalesforceResponse(body: string, init?: ResponseInit) {
@@ -435,6 +441,18 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
       }),
       expect.any(Error),
     );
+    expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'lead_owner_routing_failed',
+        distinctId: 'submission-test-id',
+        properties: expect.objectContaining({
+          submission_id: 'submission-test-id',
+          lead_source: 'Contact Agent',
+          state_code: 'CO',
+          state_slug: 'colorado',
+        }),
+      }),
+    );
   });
 
   it('does not retry Salesforce when Slack returns a failed result after Salesforce accepts', async () => {
@@ -457,6 +475,52 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
       expect.objectContaining({ submissionId: 'submission-test-id', error: 'invalid_webhook' }),
       expect.any(Error),
     );
+    expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'lead_notification_failed',
+        distinctId: 'submission-test-id',
+        properties: expect.objectContaining({
+          submission_id: 'submission-test-id',
+          channel: 'Slack',
+          failure_detail: 'ok=false',
+        }),
+      }),
+    );
+  });
+
+  it('surfaces a rejected Slack notification to PostHog without failing the submission', async () => {
+    vi.mocked(sendToSlack).mockRejectedValueOnce(new Error('network down'));
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    const result = await contactAgentPostForm(qaPayload(), queryString);
+
+    expect(result).toEqual({
+      message: 'Form submitted successfully!',
+      submissionId: 'submission-test-id',
+    });
+    expect(logError).toHaveBeenCalledWith(
+      'Slack notification failed',
+      expect.objectContaining({ submissionId: 'submission-test-id' }),
+      expect.any(Error),
+    );
+    expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'lead_notification_failed',
+        properties: expect.objectContaining({ channel: 'Slack', failure_detail: 'rejected' }),
+      }),
+    );
+  });
+
+  it('does not emit a failure event to PostHog when notifications all succeed', async () => {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    await contactAgentPostForm(qaPayload(), queryString);
+
+    expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
   });
 
   it('rejects an explicit Salesforce error response without retrying or notifying', async () => {
@@ -963,6 +1027,10 @@ describe('characterization: observable contract for the seven simpler forms', ()
     accept200();
     const result = await GetListedAgentsPostForm({
       firstName: 'Test', lastName: 'Agent', email: 'agent@example.com', phone: '8035550100',
+      // The get-listed Slack message is sourced from `tellusMore` (the form's free-text field),
+      // NOT `additionalComments`. Sending a distinct value in each pins that routing.
+      tellusMore: 'I have served military families for 10 years.',
+      additionalComments: 'internal note that must not reach Slack',
     });
 
     expect(result).toEqual({ message: 'Form submitted successfully!' });
@@ -972,7 +1040,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
       name: 'Test Agent',
       email: 'agent@example.com',
       phoneNumber: '8035550100',
-      message: '',
+      message: 'I have served military families for 10 years.',
     });
     expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
@@ -983,6 +1051,10 @@ describe('characterization: observable contract for the seven simpler forms', ()
     accept200();
     const result = await GetListedLendersPostForm({
       firstName: 'Test', lastName: 'Lender', email: 'lender@example.com', phone: '8035550100',
+      // The get-listed Slack message is sourced from `tellusMore` (the form's free-text field),
+      // NOT `additionalComments`. Sending a distinct value in each pins that routing.
+      tellusMore: 'VA-focused lender, 500+ closed loans.',
+      additionalComments: 'internal note that must not reach Slack',
     });
 
     expect(result).toEqual({ message: 'Form submitted successfully!' });
@@ -992,7 +1064,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
       name: 'Test Lender',
       email: 'lender@example.com',
       phoneNumber: '8035550100',
-      message: '',
+      message: 'VA-focused lender, 500+ closed loans.',
     });
     expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();

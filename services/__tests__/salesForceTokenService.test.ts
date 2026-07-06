@@ -59,7 +59,7 @@ describe('getSalesforceToken', () => {
 
     await getSalesforceToken();
 
-    const arg = salesForceTokenAPI.mock.calls[0][0];
+    const arg = salesForceTokenAPI.mock.calls[0]![0];
 
     // Credentials must NOT ride on the URL query string (proxy/log leak).
     expect(arg.endpoint).toBe('https://login.salesforce.test/services/oauth2/token');

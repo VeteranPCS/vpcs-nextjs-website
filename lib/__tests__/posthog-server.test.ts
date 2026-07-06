@@ -44,6 +44,6 @@ describe('PostHog server delivery', () => {
       { distinctId: 'vpcs_test', event: 'lead_conversion_created' },
       error,
     );
-    expect(mocks.logError.mock.calls[0][1]).not.toHaveProperty('properties');
+    expect(mocks.logError.mock.calls[0]![1]).not.toHaveProperty('properties');
   });
 });

@@ -117,6 +117,12 @@ docs/
 
 - Next.js 16 middleware lives at the repo-root file `proxy.ts` (exporting `proxy`), **not** `middleware.ts`. Don't create a `middleware.ts` — Next won't pick it up here; edit `proxy.ts` instead.
 
+### TypeScript & code placement
+
+- **`noUncheckedIndexedAccess` is on.** Array/record index access (`arr[i]`, `obj[key]`) is typed `T | undefined`. Handle the `undefined` in priority order: (1) restructure so it can't arise (`str.charAt(i)` over `str[i]`, `map[k] ??= []`, iterate `Object.values(map)`); (2) guard (`if (!x) return …`) or default (`?? fallback`) when it's genuinely reachable; (3) assert with `!` **only** where control flow proves the index is in-bounds (immediately after a `.length` check, inside a bounded `for` loop, a mandatory regex capture group, or a `toHaveBeenCalledTimes(n)` in tests) — and leave a one-line why. Never `!` to silence a genuinely-possible `undefined`; that reintroduces the silent-failure class this flag exists to catch.
+- **Where shared code goes:** framework-agnostic helpers and pure functions live in `lib/`, grouped by feature (`lib/ai/`, `lib/blog/`, `lib/bah/`); external-system access (Salesforce, Sanity) lives in `services/`. Don't add a top-level `utils/` or `constants/` catch-all — colocate with the feature that owns it.
+- **`.ts` vs `.tsx`:** new files with no JSX get a `.ts` extension; reserve `.tsx` for modules that return JSX. This is a going-forward rule for **new files only** — do not mass-rename the existing JSX-free `.tsx` files (e.g. `services/*.tsx`).
+
 ### Env vars (on `main`)
 
 The env vars used on `main`:

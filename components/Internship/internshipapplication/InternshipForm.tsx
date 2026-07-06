@@ -55,6 +55,7 @@ const schema = yup.object().shape({
         .test("valid-date", "Please enter a valid date", (value) => {
             if (!value) return false;
             const [month, day, year] = value.split("/").map(Number);
+            if (month === undefined || day === undefined || year === undefined) return false;
             const date = new Date(year, month - 1, day);
             return date instanceof Date && !isNaN(date.getTime()) &&
                 date.getMonth() === month - 1 &&
@@ -64,6 +65,7 @@ const schema = yup.object().shape({
         .test("future-date", "Start date must be in the future", (value) => {
             if (!value) return false;
             const [month, day, year] = value.split("/").map(Number);
+            if (month === undefined || day === undefined || year === undefined) return false;
             const inputDate = new Date(year, month - 1, day);
             const today = new Date();
             today.setHours(0, 0, 0, 0); // Reset time to start of day for fair comparison

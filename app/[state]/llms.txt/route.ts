@@ -58,7 +58,7 @@ export async function GET(
   if (!stateDetail) return new Response('Not found', { status: 404 });
 
   const stateName = stateDetail.state_name;
-  const shortName = stateDetail.short_name;
+  const shortName = stateDetail.short_name ?? '';
   const slug = stateDetail.state_slug?.current ?? state;
   const pageUrl = `${BASE_URL}/${slug}`;
 

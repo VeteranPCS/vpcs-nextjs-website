@@ -4,16 +4,11 @@ import Image from "next/image";
 import Button from "@/components/common/Button";
 import CitySelection from "./CitySelection";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";
-import { urlForImage } from "@/sanity/lib/image";
-import { Image as SanityImage } from 'sanity';
-
-interface StateImage extends SanityImage {
-  alt: string;
-}
+import type { StateDetails } from "@/services/stateService";
 
 interface StatePageHeroSectionProps {
   stateName: string;
-  stateImage: StateImage;
+  stateImage: StateDetails['state_map'];
   cityList: string[];
   stateSlug: string;
   stateCode?: string;
@@ -26,7 +21,9 @@ const StatePageHeroSection = ({
   stateSlug,
   stateCode,
 }: StatePageHeroSectionProps) => {
-  const imageUrl = stateImage ? urlForImage(stateImage) : "/assets/South-Carolina-map.png";
+  // fetchStateDetails pre-computes the CDN URL onto asset.image_url, so read it directly
+  // instead of re-running urlForImage on the projected (loosely-typed) image object.
+  const imageUrl = stateImage?.asset?.image_url || "/assets/South-Carolina-map.png";
 
   return (
     <div className="py-12 px-5 bg-[#BABABA]">

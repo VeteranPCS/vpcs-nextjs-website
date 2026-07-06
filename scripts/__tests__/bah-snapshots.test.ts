@@ -38,7 +38,7 @@ describe('build-bah-snapshots', () => {
     expect(snapshot.sourceYear).toBe('2025');
     expect(snapshot.generatedAt).toBe('2026-06-19T00:00:00.000Z');
     expect(snapshot.ranks.map((rank) => rank.rank)).toEqual(['E-5', 'E-6']);
-    expect(snapshot.ranks[0].withDependents).toBe(1773);
+    expect(snapshot.ranks[0]!.withDependents).toBe(1773);
   });
 
   it('rejects an unexpected MHA code before writing a snapshot', async () => {

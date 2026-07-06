@@ -40,7 +40,7 @@ async function HowItWorkHeroSection() {
           <div className="items-start justify-between gap-4">
             <div className="mx-auto text-left w-full sm:order-2 order-2 lg:order-none md:order-none">
               <h1 className="text-white lg:text-[52px] md:text-[52px] sm:text-[32px] text-[32px] poppins leading-[1.3] tahoma">
-                {overviewSection.component_header[0].children.map((child) =>
+                {overviewSection.component_header[0]?.children.map((child) =>
                   child.marks.includes("strong") ? (
                     <span key={child._key} className="font-bold">
                       {child.text}

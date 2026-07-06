@@ -30,7 +30,7 @@ export interface FormSubmissionRecord {
  */
 export async function trackFormSubmission(
     formType: string,
-    formData: any,
+    formData: Record<string, unknown>,
     status: FormSubmissionStatus = FormSubmissionStatus.PENDING,
     response?: Response | any,
     error?: Error

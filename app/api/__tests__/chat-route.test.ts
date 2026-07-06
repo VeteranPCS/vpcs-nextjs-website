@@ -250,7 +250,7 @@ describe('POST /api/chat — cookie-drop-proof budget', () => {
 
     await post();
 
-    const onFinish = vi.mocked(streamText).mock.calls[0][0].onFinish as (
+    const onFinish = vi.mocked(streamText).mock.calls[0]![0].onFinish as (
       arg: { usage?: { totalTokens?: number }; totalUsage?: { totalTokens?: number } },
     ) => Promise<void>;
     await onFinish({ totalUsage: { totalTokens: 1234 } });
@@ -284,7 +284,7 @@ describe('POST /api/chat — assistant text is scanned and stripped', () => {
 
     expect(stripAssistantMessageParts).toHaveBeenCalledWith(messages);
     // The stripped transcript — not the raw messages — is what reaches the model.
-    const stripped = vi.mocked(stripAssistantMessageParts).mock.results[0].value;
+    const stripped = vi.mocked(stripAssistantMessageParts).mock.results[0]!.value;
     expect(convertToModelMessages).toHaveBeenCalledWith(stripped);
   });
 

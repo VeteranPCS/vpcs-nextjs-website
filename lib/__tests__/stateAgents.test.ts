@@ -64,10 +64,10 @@ describe('state agent helpers', () => {
 
     const grouped = groupAgentsByAreaForState(agents, 'north-carolina');
     expect(Object.keys(grouped)).toEqual(['Fort Liberty']);
-    expect(grouped['Fort Liberty'].map((entry) => entry.FirstName)).toEqual(['Higher', 'Lower']);
+    expect(grouped['Fort Liberty']!.map((entry) => entry.FirstName)).toEqual(['Higher', 'Lower']);
     expect(areaSlugFromName('Fort Liberty')).toBe('fort-liberty');
     expect(topAgentForArea(agents, 'NC', 'fort-liberty')?.FirstName).toBe('Higher');
-    expect(buildAgentContactHref(agents[1], 'North Carolina')).toBe(
+    expect(buildAgentContactHref(agents[1]!, 'North Carolina')).toBe(
       '/contact-agent?form=agent&fn=Higher&id=001HIGHER&state=north-carolina',
     );
   });

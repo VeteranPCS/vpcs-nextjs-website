@@ -58,7 +58,7 @@ export const logDebug = (message: string, data?: any) => log(LogLevel.DEBUG, mes
 // Specific logging for Salesforce form submissions
 export function logFormSubmission(
     formType: string,
-    formData: any,
+    formData: Record<string, unknown>,
     success: boolean,
     responseData?: any,
     error?: any

@@ -80,8 +80,8 @@ describe('mcpErrorResult (no error.message passthrough)', () => {
   it('logs the real error server-side but returns a generic message', () => {
     const real = new Error('SOQL failed: SELECT Secret__c FROM Account WHERE Id=...');
     const result = mcpErrorResult(real);
-    expect(result.content[0].text).toBe('Error: unable to complete the request.');
-    expect(result.content[0].text).not.toContain('SOQL');
+    expect(result.content[0]!.text).toBe('Error: unable to complete the request.');
+    expect(result.content[0]!.text).not.toContain('SOQL');
     expect(logError).toHaveBeenCalledWith('MCP tool error', undefined, real);
   });
 });

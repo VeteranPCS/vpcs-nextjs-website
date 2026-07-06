@@ -121,7 +121,7 @@ describe('getAgentsForState', () => {
     expect(res.data.stateName).toBe('Texas');
     expect(res.data.stateSlug).toBe('texas');
     expect(res.data.agents.length).toBe(2);
-    expect(res.data.agents[0].name).toBe('Jane Doe');
+    expect(res.data.agents[0]!.name).toBe('Jane Doe');
   });
 
   it('passes short_name (TX) to fetchAgentsListByState, not the full state name', async () => {

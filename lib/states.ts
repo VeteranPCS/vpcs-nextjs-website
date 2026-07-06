@@ -82,7 +82,7 @@ export function normalizeStateCode(value: string | null | undefined): string | n
 
 export function normalizeStateSlug(value: string | null | undefined): string | null {
   const code = normalizeStateCode(value);
-  return code ? STATE_ABBR_TO_SLUG[code] : null;
+  return code ? STATE_ABBR_TO_SLUG[code] ?? null : null;
 }
 
 export function formatStateLabel(value: string | null | undefined): string {

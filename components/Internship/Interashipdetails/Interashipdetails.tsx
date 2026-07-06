@@ -60,7 +60,7 @@ const Interashipdetails = async () => {
                     key={item._key}
                     className="text-[#000000] roboto lg:text-lg md:text-lg sm:text-sm text-sm font-medium list-disc"
                   >
-                    {item.children[0].text}
+                    {item.children[0]?.text}
                   </li>
                 ))}
               </ul>

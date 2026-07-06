@@ -22,6 +22,7 @@ import { SF_ORG_ID, SF_RECORD_TYPE } from '@/lib/salesforce/ids';
 import {
     appendSalesforceAttributionParams,
     captureLeadConversionCreated,
+    captureServerAnalyticsEvent,
 } from '@/lib/analytics/server';
 import {
     parseLeadForm,
@@ -274,7 +275,10 @@ type SpamEvaluation = Awaited<ReturnType<typeof evaluateLeadSpam>>;
  * and `agentInfo`; the other families leave them at their empty defaults and never read them.
  */
 interface WebToLeadContext {
-    formData: any;
+    // Validated payload as the body/Slack/SMS builders consume it: a flat string map. Real
+    // payloads also carry non-string passthrough (analytics counters, an `otherStates` array);
+    // those flow through untouched and are handled by the `Array.isArray` guards where read.
+    formData: Record<string, string | undefined>;
     spam: SpamEvaluation;
     submissionId: string;
     paramsObj: Record<string, string>;
@@ -326,7 +330,7 @@ function defineWebToLeadConfig<TResult>(config: WebToLeadConfig<TResult>): WebTo
 // characterization suite pins these ordered bodies byte-for-byte, so insertion order is
 // load-bearing (internship uniquely emits `recordType` BEFORE `retURL`).
 
-function buildGetListedAgentsParams(formData: any): URLSearchParams {
+function buildGetListedAgentsParams(formData: Record<string, string | undefined>): URLSearchParams {
     return new URLSearchParams({
         oid: SF_ORG_ID,
         retURL: `${BASE_URL}/thank-you`,
@@ -362,7 +366,7 @@ function buildGetListedAgentsParams(formData: any): URLSearchParams {
     });
 }
 
-function buildGetListedLendersParams(formData: any): URLSearchParams {
+function buildGetListedLendersParams(formData: Record<string, string | undefined>): URLSearchParams {
     return new URLSearchParams({
         oid: SF_ORG_ID,
         retURL: `${BASE_URL}/thank-you`,
@@ -395,7 +399,7 @@ function buildGetListedLendersParams(formData: any): URLSearchParams {
     });
 }
 
-function buildKeepInTouchParams(formData: any, submissionId: string): URLSearchParams {
+function buildKeepInTouchParams(formData: Record<string, string | undefined>, submissionId: string): URLSearchParams {
     const params = new URLSearchParams({
         oid: SF_ORG_ID,
         retURL: `${BASE_URL}/thank-you`,
@@ -410,7 +414,7 @@ function buildKeepInTouchParams(formData: any, submissionId: string): URLSearchP
     return appendSalesforceAttributionParams(params, formData, submissionId);
 }
 
-function buildContactParams(formData: any, submissionId: string): URLSearchParams {
+function buildContactParams(formData: Record<string, string | undefined>, submissionId: string): URLSearchParams {
     const params = new URLSearchParams({
         oid: SF_ORG_ID,
         retURL: `${BASE_URL}/thank-you`,
@@ -426,7 +430,7 @@ function buildContactParams(formData: any, submissionId: string): URLSearchParam
     return appendSalesforceAttributionParams(params, formData, submissionId);
 }
 
-function buildVaLoanGuideParams(formData: any, submissionId: string): URLSearchParams {
+function buildVaLoanGuideParams(formData: Record<string, string | undefined>, submissionId: string): URLSearchParams {
     const params = new URLSearchParams({
         oid: SF_ORG_ID,
         retURL: `${BASE_URL}/thank-you`,
@@ -441,7 +445,7 @@ function buildVaLoanGuideParams(formData: any, submissionId: string): URLSearchP
     return appendSalesforceAttributionParams(params, formData, submissionId);
 }
 
-function buildHomebuyerGuideParams(formData: any, submissionId: string): URLSearchParams {
+function buildHomebuyerGuideParams(formData: Record<string, string | undefined>, submissionId: string): URLSearchParams {
     const params = new URLSearchParams({
         oid: SF_ORG_ID,
         retURL: `${BASE_URL}/thank-you`,
@@ -456,7 +460,7 @@ function buildHomebuyerGuideParams(formData: any, submissionId: string): URLSear
     return appendSalesforceAttributionParams(params, formData, submissionId);
 }
 
-function buildInternshipParams(formData: any): URLSearchParams {
+function buildInternshipParams(formData: Record<string, string | undefined>): URLSearchParams {
     return new URLSearchParams({
         oid: SF_ORG_ID,
         recordType: SF_RECORD_TYPE.INTERNSHIP_LEAD,
@@ -496,7 +500,7 @@ function buildContactPartnerSms(ctx: WebToLeadContext): Parameters<typeof sendOp
         content: `New Lead From VeteranPCS:
 ${formData.firstName} ${formData.lastName}
 Email: ${formData.email}
-Phone: ${formatPhoneNumberForDisplay(formData.phone)}
+Phone: ${formatPhoneNumberForDisplay(formData.phone!)}
 Destination State: ${effectiveState!.label}
 ${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
 ${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
@@ -530,10 +534,16 @@ async function dispatchNotifications(params: {
         notificationTasks.map((task) => task.promise),
     );
 
+    // Failed channels collected here, then surfaced to PostHog after the (sync) logging pass.
+    const failedNotifications: Array<{ channel: string; detail: string }> = [];
+
     notificationResults.forEach((result, index) => {
-        const task = notificationTasks[index];
+        // index is bounded by notificationResults, which is notificationTasks.map(...)
+        // (identical length), so this element is always present.
+        const task = notificationTasks[index]!;
         if (result.status === 'rejected') {
             logError(`${task.name} notification failed`, { submissionId }, result.reason);
+            failedNotifications.push({ channel: task.name, detail: 'rejected' });
             return;
         }
 
@@ -545,12 +555,33 @@ async function dispatchNotifications(params: {
                     { submissionId, error: slackResult?.error },
                     new Error(`Slack returned ok=${String(slackResult?.ok)}`),
                 );
+                failedNotifications.push({ channel: 'Slack', detail: `ok=${String(slackResult?.ok)}` });
                 return;
             }
         }
 
         logInfo(`${task.name} notification accepted`, { submissionId });
     });
+
+    // Route lead-critical notification failures to PostHog so an accepted lead that never
+    // reached the team/partner is a queryable funnel drop. Awaited (not fire-and-forget) so
+    // the event flushes before the serverless invocation ends; wrapped so a capture failure
+    // can't turn a logged notification hiccup into a thrown request error.
+    for (const failure of failedNotifications) {
+        try {
+            await captureServerAnalyticsEvent({
+                event: 'lead_notification_failed',
+                distinctId: submissionId,
+                properties: {
+                    submission_id: submissionId,
+                    channel: failure.channel,
+                    failure_detail: failure.detail,
+                },
+            });
+        } catch (captureError) {
+            logError('PostHog lead_notification_failed capture failed', { submissionId }, captureError);
+        }
+    }
 }
 
 /**
@@ -559,7 +590,7 @@ async function dispatchNotifications(params: {
  */
 async function submitWebToLead<TResult>(
     config: WebToLeadConfig<TResult>,
-    formData: any,
+    rawFormData: unknown,
     runtime?: { queryString?: string; options?: InternalCallOptions },
 ): Promise<TResult> {
     const options = runtime?.options;
@@ -567,7 +598,8 @@ async function submitWebToLead<TResult>(
 
     const submissionId = await trackFormSubmission(
         config.formType,
-        formData,
+        // Pre-validation, untrusted payload — logged only via truthiness checks.
+        rawFormData as Record<string, unknown>,
         FormSubmissionStatus.PENDING,
     );
 
@@ -576,12 +608,16 @@ async function submitWebToLead<TResult>(
     try {
         // Validate and normalize the payload before processing. Invalid data is a HARD
         // reject here — never written to Salesforce.
-        const validation = parseLeadForm(config.schema, formData);
+        const validation = parseLeadForm(config.schema, rawFormData);
         if (!validation.ok) {
             logError(`Invalid ${config.formType} submission`, { submissionId, errors: validation.errors });
             throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
         }
-        formData = validation.data;
+        // Trust boundary: zod has validated and normalized the payload. The config's schema
+        // erases to `z.ZodTypeAny`, so `validation.data` is untyped here — assert the flat
+        // string-map view the downstream builders/sinks consume. Non-string passthrough values
+        // (analytics counters, an `otherStates` array) still flow through untouched.
+        const formData: Record<string, string | undefined> = validation.data as Record<string, string | undefined>;
 
         // Family A: parse the query string, derive the effective state (hard reject if
         // missing), and resolve the Lead owner for routing.
@@ -714,6 +750,24 @@ async function submitWebToLead<TResult>(
                     adminName: leadOwner.adminName,
                     ownerId: leadOwner.ownerId,
                 }, ownerRoutingError);
+
+                // Surface this lead-critical failure to PostHog so "accepted but never routed"
+                // is a queryable funnel drop, not just a log line. Wrapped so a capture hiccup
+                // can't undo the guarantee that routing failures never cost a successful submit.
+                try {
+                    await captureServerAnalyticsEvent({
+                        event: 'lead_owner_routing_failed',
+                        distinctId: submissionId,
+                        properties: {
+                            submission_id: submissionId,
+                            lead_source: config.location.leadSource,
+                            state_code: effectiveState!.code,
+                            state_slug: effectiveState!.slug,
+                        },
+                    });
+                } catch (captureError) {
+                    logError('PostHog lead_owner_routing_failed capture failed', { submissionId }, captureError);
+                }
             }
         }
 
@@ -802,7 +856,7 @@ const contactAgentConfig = defineWebToLeadConfig({
         redirectUrl ? { redirectUrl, submissionId } : { message: 'Form submitted successfully!', submissionId },
 });
 
-export async function contactAgentPostForm(formData: any, queryString: string, options?: InternalCallOptions) {
+export async function contactAgentPostForm(formData: unknown, queryString: string, options?: InternalCallOptions) {
     return submitWebToLead(contactAgentConfig, formData, { queryString, options });
 }
 
@@ -842,7 +896,7 @@ const contactLenderConfig = defineWebToLeadConfig({
         redirectUrl ? { redirectUrl, submissionId } : { message: 'Form submitted successfully!', submissionId },
 });
 
-export async function contactLenderPostForm(formData: any, fullQueryString: string, options?: InternalCallOptions) {
+export async function contactLenderPostForm(formData: unknown, fullQueryString: string, options?: InternalCallOptions) {
     return submitWebToLead(contactLenderConfig, formData, { queryString: fullQueryString, options });
 }
 
@@ -857,13 +911,13 @@ const getListedAgentsConfig = defineWebToLeadConfig({
         name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
         email: ctx.formData.email || "",
         phoneNumber: ctx.formData.phone || "",
-        message: ctx.formData.additionalComments || "",
+        message: ctx.formData.tellusMore || "",
     }),
     buildResult: (redirectUrl) =>
         redirectUrl ? { redirectUrl } : { message: 'Form submitted successfully!' },
 });
 
-export async function GetListedAgentsPostForm(formData: any, options?: InternalCallOptions) {
+export async function GetListedAgentsPostForm(formData: unknown, options?: InternalCallOptions) {
     return submitWebToLead(getListedAgentsConfig, formData, { options });
 }
 
@@ -878,13 +932,13 @@ const getListedLendersConfig = defineWebToLeadConfig({
         name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
         email: ctx.formData.email || "",
         phoneNumber: ctx.formData.phone || "",
-        message: ctx.formData.additionalComments || "",
+        message: ctx.formData.tellusMore || "",
     }),
     buildResult: (redirectUrl) =>
         redirectUrl ? { redirectUrl } : { message: 'Form submitted successfully!' },
 });
 
-export async function GetListedLendersPostForm(formData: any, options?: InternalCallOptions) {
+export async function GetListedLendersPostForm(formData: unknown, options?: InternalCallOptions) {
     return submitWebToLead(getListedLendersConfig, formData, { options });
 }
 
@@ -908,7 +962,7 @@ const keepInTouchConfig = defineWebToLeadConfig({
         ({ success: true, message: 'Form submitted successfully!', submissionId }),
 });
 
-export async function KeepInTouchForm(formData: any, options?: InternalCallOptions) {
+export async function KeepInTouchForm(formData: unknown, options?: InternalCallOptions) {
     return submitWebToLead(keepInTouchConfig, formData, { options });
 }
 
@@ -933,7 +987,7 @@ const contactConfig = defineWebToLeadConfig({
         ({ success: true, message: 'Form submitted successfully!', submissionId }),
 });
 
-export async function contactPostForm(formData: any, options?: InternalCallOptions) {
+export async function contactPostForm(formData: unknown, options?: InternalCallOptions) {
     return submitWebToLead(contactConfig, formData, { options });
 }
 
@@ -958,7 +1012,7 @@ const vaLoanGuideConfig = defineWebToLeadConfig({
         ({ success: true, message: 'Form submitted successfully!', submissionId }),
 });
 
-export async function vaLoanGuideForm(formData: any, options?: InternalCallOptions) {
+export async function vaLoanGuideForm(formData: unknown, options?: InternalCallOptions) {
     return submitWebToLead(vaLoanGuideConfig, formData, { options });
 }
 
@@ -983,7 +1037,7 @@ const homebuyerGuideConfig = defineWebToLeadConfig({
         ({ success: true, message: 'Form submitted successfully!', submissionId }),
 });
 
-export async function homebuyerGuideForm(formData: any, options?: InternalCallOptions) {
+export async function homebuyerGuideForm(formData: unknown, options?: InternalCallOptions) {
     return submitWebToLead(homebuyerGuideConfig, formData, { options });
 }
 
@@ -1004,6 +1058,6 @@ const internshipConfig = defineWebToLeadConfig({
         redirectUrl ? { redirectUrl } : { message: 'Form submitted successfully!' },
 });
 
-export async function internshipFormSubmission(formData: any, options?: InternalCallOptions) {
+export async function internshipFormSubmission(formData: unknown, options?: InternalCallOptions) {
     return submitWebToLead(internshipConfig, formData, { options });
 }
