@@ -46,11 +46,11 @@
 
 ## Phase 0 — Worktree, harness, baseline (no PR)
 
-- [ ] `git fetch origin && git status` — verify main tree state, note `origin/main` HEAD (auto-blog automation may have moved it).
-- [ ] Worktree: `git worktree add ../vpcs-responsive-p1 -b fix/responsive-p1-critical origin/main` — all Phase 1 work happens there (each later phase gets its own worktree branched from the previous phase's branch; worktrees removed after their PR merges).
+- [x] `git fetch origin && git status` — verify main tree state, note `origin/main` HEAD (auto-blog automation may have moved it).
+- [x] Worktree: `git worktree add ../vpcs-responsive-p1 -b fix/responsive-p1-critical origin/main` — all Phase 1 work happens there (each later phase gets its own worktree branched from the previous phase's branch; worktrees removed after their PR merges).
 - [x] **Plan persisted in the repo:** this file was committed to main on 2026-07-06 — it is canonical; check its boxes off (and commit the checkbox updates on the phase branches) as tasks complete.
-- [ ] Start dev server from the worktree; run baseline probe (mask-off) + screenshot sweep across all 11 pages × 6 viewports (validation subagent). Save to scratchpad.
-- [ ] Re-verify H5 (PcsResourcesHowDoesWorkIt `w-[400px]`) live at 375px — the production probe didn't reproduce it; confirm against local before fixing.
+- [x] Start dev server from the worktree; run baseline probe (mask-off) + screenshot sweep across all 11 pages × 6 viewports (validation subagent). Save to scratchpad.
+- [x] (CONFIRMED 2026-07-06: renders 400px wide at 375px viewport, right edge 400px — T1.6 proceeds) Re-verify H5 (PcsResourcesHowDoesWorkIt `w-[400px]`) live at 375px — the production probe didn't reproduce it; confirm against local before fixing.
 
 ## Phase 1 — PR 1: Critical + dead controls + smallest-text fixes
 
