@@ -1,6 +1,5 @@
 import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
-import { RequestType, salesForceAPI, salesForceImageAPI } from '@/services/api';
-import { getSalesforceToken } from '@/services/salesForceTokenService';
+import { RequestType, salesForceAPIWithRefresh, salesForceImageAPI } from '@/services/api';
 import { escapeSoqlLiteral, isStateCode } from '@/services/soql';
 import { logDebug, logError } from '@/services/loggingService';
 import { client } from '@/sanity/lib/client';
@@ -136,11 +135,9 @@ async function runStateLicensedQuery<T extends { AccountId_15__c: string }>(
     headshotRole: 'agents' | 'lenders';
     requireHeadshot: boolean;
     label: string;
-    // Re-run the public function after a token refresh (preserves its options).
-    retry: () => Promise<{ totalSize: number; done: boolean; records: T[] }>;
   },
 ): Promise<{ totalSize: number; done: boolean; records: T[] }> {
-  const { state, selectClause, roleFlag, headshotRole, requireHeadshot, label, retry } = params;
+  const { state, selectClause, roleFlag, headshotRole, requireHeadshot, label } = params;
 
   // Primary gate: only accept a 2-letter state code. Invalid input never
   // reaches the query builder. SSR pages rely on the empty-list path, so we
@@ -163,7 +160,7 @@ async function runStateLicensedQuery<T extends { AccountId_15__c: string }>(
           OR Other_States__pc INCLUDES ('${safeState}'))
   `.replace(/\s+/g, ' ').trim();
 
-  const response = await salesForceAPI({
+  const response = await salesForceAPIWithRefresh({
     endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
     type: RequestType.GET,
   });
@@ -179,15 +176,6 @@ async function runStateLicensedQuery<T extends { AccountId_15__c: string }>(
     const records = resolved.filter((record): record is T => record !== null);
 
     return { ...response.data, records };
-  } else if (response?.status === 401) {
-    // Token expired: Refresh and retry
-    try {
-      await getSalesforceToken(); // Refresh token
-      return await retry(); // Retry the request
-    } catch (tokenError) {
-      console.error('Failed to refresh token:', tokenError);
-      throw tokenError;
-    }
   } else {
     throw new Error('Failed to fetch State Based Agent List');
   }
@@ -252,7 +240,6 @@ const stateService = {
         headshotRole: 'agents',
         requireHeadshot,
         label: 'fetchAgentsListByState',
-        retry: () => stateService.fetchAgentsListByState(state, options),
       });
       return result as AgentsData;
     } catch (error: any) {
@@ -276,7 +263,6 @@ const stateService = {
         headshotRole: 'lenders',
         requireHeadshot,
         label: 'fetchLendersListByState',
-        retry: () => stateService.fetchLendersListByState(state, options),
       });
       return result as LendersData;
     } catch (error: any) {
@@ -309,7 +295,7 @@ const stateService = {
           AND Active_on_Website__pc = true
       `.replace(/\s+/g, ' ').trim();
 
-      const response = await salesForceAPI({
+      const response = await salesForceAPIWithRefresh({
         endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
         type: RequestType.GET,
       });
@@ -317,15 +303,6 @@ const stateService = {
       if (response?.status === 200 && response.data.records.length > 0) {
         const agent = response.data.records[0];
         return agent as Agent;
-      } else if (response?.status === 401) {
-        // Token expired: Refresh and retry
-        try {
-          await getSalesforceToken(); // Refresh token
-          return await stateService.fetchAgentById(agentId); // Retry the request
-        } catch (tokenError) {
-          console.error("Failed to refresh token:", tokenError);
-          throw tokenError;
-        }
       }
 
       return null;

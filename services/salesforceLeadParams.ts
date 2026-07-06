@@ -1,4 +1,5 @@
 import { appendSalesforceAttributionParams } from '@/lib/analytics/server';
+import { SF_ORG_ID, SF_RECORD_TYPE } from '@/lib/salesforce/ids';
 
 export function buildAgentLeadParams(
     formData: any,
@@ -8,10 +9,10 @@ export function buildAgentLeadParams(
     submissionId?: string,
 ): URLSearchParams {
     const params = new URLSearchParams({
-        oid: "00D4x000003yaV2",
+        oid: SF_ORG_ID,
         retURL: `${baseUrl}/thank-you`,
         "00N4x00000Lsn28": paramsObj.id || "",
-        recordType: "0124x000000Z5yD",
+        recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
         lead_source: "Contact Agent",
         "00N4x00000Lsr0G": "true",
         country_code: "US",
@@ -51,10 +52,10 @@ export function buildLenderLeadParams(
     submissionId?: string,
 ): URLSearchParams {
     const params = new URLSearchParams({
-        oid: "00D4x000003yaV2",
+        oid: SF_ORG_ID,
         retURL: `${baseUrl}/thank-you`,
         "00N4x00000QPJUT": paramsObj.id || "",
-        recordType: "0124x000000Z5yD",
+        recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
         lead_source: "Contact Lender",
         "00N4x00000Lsr0G": "true",
         country_code: "US",

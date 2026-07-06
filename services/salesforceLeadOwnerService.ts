@@ -1,13 +1,13 @@
 import 'server-only';
 
 import { SALESFORCE_API_VERSION, SALESFORCE_BASE_URL } from '@/constants/api';
-import { RequestType, salesForceAPI } from '@/services/api';
-import { getSalesforceToken } from '@/services/salesForceTokenService';
+import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { getLeadOwnerForState, type SalesforceLeadOwner } from '@/services/salesforceLeadOwnerRouting';
 import { logError, logInfo } from '@/services/loggingService';
 import { escapeSoqlLiteral } from '@/services/soql';
+import { SF_RECORD_TYPE } from '@/lib/salesforce/ids';
 
-const CUSTOMER_LEAD_RECORD_TYPE_ID = '0124x000000Z5yDAAS';
+const CUSTOMER_LEAD_RECORD_TYPE_ID = SF_RECORD_TYPE.CUSTOMER_LEAD;
 const WEB_FORM_URL_MAX_LENGTH = 255;
 const LEAD_LOOKUP_TIMEOUT_MS = process.env.NODE_ENV === 'test' ? 0 : 12_000;
 const LEAD_LOOKUP_INTERVAL_MS = process.env.NODE_ENV === 'test' ? 0 : 750;
@@ -234,7 +234,7 @@ async function patchLeadOwner(
     owner: SalesforceLeadOwner,
     submissionId: string,
 ): Promise<void> {
-    const response = await runSalesforceRequestWithRefresh({
+    const response = await salesForceAPIWithRefresh({
         endpoint: salesforceEndpoint(`/sobjects/Lead/${encodeURIComponent(leadId)}`),
         type: RequestType.PATCH,
         data: { OwnerId: owner.ownerId },
@@ -256,7 +256,7 @@ async function patchLeadOwner(
 }
 
 async function runSalesforceQuery<T>(soql: string): Promise<T[]> {
-    const response = await runSalesforceRequestWithRefresh({
+    const response = await salesForceAPIWithRefresh({
         endpoint: salesforceEndpoint(`/query?q=${encodeURIComponent(soql)}`),
         type: RequestType.GET,
     });
@@ -266,22 +266,6 @@ async function runSalesforceQuery<T>(soql: string): Promise<T[]> {
     }
 
     return response.data?.records ?? [];
-}
-
-async function runSalesforceRequestWithRefresh(params: {
-    endpoint: string;
-    type: RequestType;
-    data?: unknown;
-    customHeader?: Record<string, string>;
-}) {
-    let response = await salesForceAPI(params);
-
-    if (response?.status === 401) {
-        await getSalesforceToken();
-        response = await salesForceAPI(params);
-    }
-
-    return response;
 }
 
 function salesforceEndpoint(path: string): string {

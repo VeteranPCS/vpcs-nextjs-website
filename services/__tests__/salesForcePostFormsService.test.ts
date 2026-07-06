@@ -5,6 +5,13 @@ import { routeSalesforceLeadOwner } from '@/services/salesforceLeadOwnerService'
 import {
   contactAgentPostForm,
   contactLenderPostForm,
+  GetListedAgentsPostForm,
+  GetListedLendersPostForm,
+  KeepInTouchForm,
+  contactPostForm,
+  vaLoanGuideForm,
+  homebuyerGuideForm,
+  internshipFormSubmission,
 } from '@/services/salesForcePostFormsService';
 import {
   buildAgentLeadParams,
@@ -13,6 +20,7 @@ import {
 import { logError } from '@/services/loggingService';
 import { captureLeadConversionCreated } from '@/lib/analytics/server';
 import { evaluateLeadSpam } from '@/lib/spam-protection';
+import { updateSubmissionStatus } from '@/services/formTrackingService';
 
 vi.mock('server-only', () => ({}));
 
@@ -507,5 +515,680 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).not.toHaveBeenCalled();
     expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * Characterization tests for the SEVEN Web-to-Lead functions that previously had ZERO
+ * posted-body coverage. Each pins the FULL ordered [key, value] list of the URLSearchParams
+ * body sent to Salesforce, byte-for-byte, so an upcoming refactor that unifies these
+ * functions can be proven byte-identical. Insertion order is load-bearing.
+ *
+ * Note on `retURL` / `00N4x00000QQ1LB`: `BASE_URL` is captured at module load from
+ * `process.env.NEXT_PUBLIC_API_BASE_URL`, which is unset in the Vitest env, so the template
+ * literals render the literal string "undefined" (e.g. "undefined/thank-you"). That is the
+ * current, real posted value in this environment and is what we pin here.
+ */
+describe('characterization: uncovered Web-to-Lead posted bodies', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal('fetch', vi.fn());
+    process.env.NEXT_PUBLIC_API_BASE_URL = 'https://www.veteranpcs.com';
+    process.env.OPEN_PHONE_FROM_NUMBER = '+17194153014';
+  });
+
+  it('GetListedAgentsPostForm posts an exact ordered body with no attribution params', async () => {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    await GetListedAgentsPostForm({
+      firstName: 'Test',
+      lastName: 'Agent',
+      email: 'agent@example.com',
+      phone: '8035550100',
+      status_select: 'Veteran',
+      branch_select: 'Army',
+      discharge_status: 'Honorable',
+      state: 'CO',
+      city: 'Colorado Springs',
+      primaryState: 'CO',
+      otherStates: ['TX', 'FL'],
+      licenseNumber: 'LIC123',
+      brokerageName: 'Test Brokerage',
+      managingBrokerName: 'Broker Boss',
+      managingBrokerPhone: '8035550111',
+      managingBrokerEmail: 'broker@example.com',
+      citiesServiced: 'Denver, Aurora',
+      basesServiced: 'Fort Carson',
+      personallyPCS: 'Yes',
+      leadAcceptance: 'Agree',
+      howDidYouHear: 'Google',
+      tellusMore: 'More info here',
+    });
+
+    const body = salesforceBody();
+    expect([...body.entries()]).toEqual([
+      ['oid', '00D4x000003yaV2'],
+      ['retURL', 'undefined/thank-you'],
+      ['recordType', '0124x000000Z5yI'],
+      ['lead_source', 'Agent Listing Request'],
+      ['00N4x00000Lsr0G', 'true'],
+      ['country_code', 'US'],
+      ['00N4x00000QQ1LB', 'undefined/get-listed-agents'],
+      ['first_name', 'Test'],
+      ['last_name', 'Agent'],
+      ['email', 'agent@example.com'],
+      ['mobile', '8035550100'],
+      ['00N4x00000LsnP2', 'Veteran'],
+      ['00N4x00000LsnOx', 'Army'],
+      ['00N4x00000QQ0Vz', 'Honorable'],
+      ['state_code', 'CO'],
+      ['city', 'Colorado Springs'],
+      ['00N4x00000LpcBo', 'CO'],
+      ['00N4x00000QPIOt', 'TX;FL'],
+      ['00N4x00000LpcCm', 'LIC123'],
+      ['00N4x00000LpcCr', 'Test Brokerage'],
+      ['00N4x00000c4kPN', 'Broker Boss'],
+      ['00N4x00000c4kPS', '8035550111'],
+      ['00N4x00000c4kPX', 'broker@example.com'],
+      ['00N4x00000LsqCV', 'Denver, Aurora'],
+      ['00N4x00000LsqCa', 'Fort Carson'],
+      ['00N4x00000LpcDQ', 'Yes'],
+      ['00N4x00000LpcDV', 'Agree'],
+      ['00N4x00000QPksj', 'Google'],
+      ['00N4x00000QPS7V', 'More info here'],
+      ['g-recaptcha-response', ''],
+      ['captcha_settings', ''],
+    ]);
+
+    expect(body.get('oid')).toBe('00D4x000003yaV2');
+    expect(body.get('recordType')).toBe('0124x000000Z5yI');
+    expect(body.get('lead_source')).toBe('Agent Listing Request');
+    expect(body.has('retURL')).toBe(true);
+    const keys = [...body.keys()];
+    expect(keys.slice(-2)).toEqual(['g-recaptcha-response', 'captcha_settings']);
+    expect(keys).not.toContain('00NRg00000PjSD3MAN');
+    expect(keys).not.toContain('00NRg00000PjSEfMAN');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('GetListedLendersPostForm posts an exact ordered body with no attribution params', async () => {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    await GetListedLendersPostForm({
+      firstName: 'Test',
+      lastName: 'Lender',
+      email: 'lender@example.com',
+      phone: '8035550100',
+      status_select: 'Veteran',
+      branch_select: 'Navy',
+      discharge_status: 'Honorable',
+      primaryState: 'TX',
+      otherStates: ['CA', 'NV'],
+      localCities: 'Austin, Dallas',
+      nmlsId: 'NMLS999',
+      name: 'Test Lender Co',
+      street: '123 Main St',
+      state: 'TX',
+      city: 'Austin',
+      zip: '78701',
+      companyNMLSId: 'CNMLS888',
+      howDidYouHear: 'Referral',
+      tellusMore: 'Lender details',
+    });
+
+    const body = salesforceBody();
+    expect([...body.entries()]).toEqual([
+      ['oid', '00D4x000003yaV2'],
+      ['retURL', 'undefined/thank-you'],
+      ['recordType', '0124x000000ZGGU'],
+      ['lead_source', 'Lender Listing Request'],
+      ['00N4x00000Lsr0G', 'true'],
+      ['country_code', 'US'],
+      ['00N4x00000QQ1LB', 'undefined/get-listed-lenders'],
+      ['first_name', 'Test'],
+      ['last_name', 'Lender'],
+      ['email', 'lender@example.com'],
+      ['mobile', '8035550100'],
+      ['00N4x00000LsnP2', 'Veteran'],
+      ['00N4x00000LsnOx', 'Navy'],
+      ['00N4x00000QQ0Vz', 'Honorable'],
+      ['00N4x00000LpcBo', 'TX'],
+      ['00N4x00000QPIOt', 'CA;NV'],
+      ['00N4x00000LsqCV', 'Austin, Dallas'],
+      ['00N4x00000QPIOZ', 'NMLS999'],
+      ['00N4x00000LpcCr', 'Test Lender Co'],
+      ['street', '123 Main St'],
+      ['state_code', 'TX'],
+      ['city', 'Austin'],
+      ['zip', '78701'],
+      ['00N4x00000QPIOe', 'CNMLS888'],
+      ['00N4x00000QPksj', 'Referral'],
+      ['00N4x00000QPS7V', 'Lender details'],
+      ['g-recaptcha-response', ''],
+      ['captcha_settings', ''],
+    ]);
+
+    expect(body.get('oid')).toBe('00D4x000003yaV2');
+    expect(body.get('recordType')).toBe('0124x000000ZGGU');
+    expect(body.get('lead_source')).toBe('Lender Listing Request');
+    expect(body.has('retURL')).toBe(true);
+    const keys = [...body.keys()];
+    expect(keys.slice(-2)).toEqual(['g-recaptcha-response', 'captcha_settings']);
+    expect(keys).not.toContain('00NRg00000PjSD3MAN');
+    expect(keys).not.toContain('00NRg00000PjSEfMAN');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('KeepInTouchForm posts an exact ordered body ending with the two attribution field ids', async () => {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    await KeepInTouchForm({
+      firstName: 'Test',
+      lastName: 'Keep',
+      email: 'keep@example.com',
+      phone: '8035550100',
+      vpcs_visitor_id: 'vpcs_test_visitor_1234567890',
+    });
+
+    const body = salesforceBody();
+    expect([...body.entries()]).toEqual([
+      ['oid', '00D4x000003yaV2'],
+      ['retURL', 'undefined/thank-you'],
+      ['recordType', '0124x000000Z5yD'],
+      ['lead_source', 'Keep in Touch'],
+      ['first_name', 'Test'],
+      ['last_name', 'Keep'],
+      ['email', 'keep@example.com'],
+      ['g-recaptcha-response', ''],
+      ['captcha_settings', ''],
+      ['00NRg00000PjSD3MAN', 'vpcs_test_visitor_1234567890'],
+      ['00NRg00000PjSEfMAN', 'submission-test-id'],
+    ]);
+
+    expect(body.get('oid')).toBe('00D4x000003yaV2');
+    expect(body.get('recordType')).toBe('0124x000000Z5yD');
+    expect(body.get('lead_source')).toBe('Keep in Touch');
+    expect(body.has('retURL')).toBe(true);
+    const keys = [...body.keys()];
+    expect(keys.slice(-4)).toEqual([
+      'g-recaptcha-response',
+      'captcha_settings',
+      '00NRg00000PjSD3MAN',
+      '00NRg00000PjSEfMAN',
+    ]);
+    expect(body.get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
+    expect(body.get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('contactPostForm posts an exact ordered body ending with the two attribution field ids', async () => {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    await contactPostForm({
+      firstName: 'Test',
+      lastName: 'Contact',
+      email: 'contact@example.com',
+      phone: '8035550100',
+      additionalComments: 'A contact message',
+      vpcs_visitor_id: 'vpcs_test_visitor_1234567890',
+    });
+
+    const body = salesforceBody();
+    expect([...body.entries()]).toEqual([
+      ['oid', '00D4x000003yaV2'],
+      ['retURL', 'undefined/thank-you'],
+      ['recordType', '0124x000000Z5yD'],
+      ['lead_source', 'Contact Form'],
+      ['first_name', 'Test'],
+      ['last_name', 'Contact'],
+      ['email', 'contact@example.com'],
+      ['00N4x00000bfgFA', 'A contact message'],
+      ['g-recaptcha-response', ''],
+      ['captcha_settings', ''],
+      ['00NRg00000PjSD3MAN', 'vpcs_test_visitor_1234567890'],
+      ['00NRg00000PjSEfMAN', 'submission-test-id'],
+    ]);
+
+    expect(body.get('oid')).toBe('00D4x000003yaV2');
+    expect(body.get('recordType')).toBe('0124x000000Z5yD');
+    expect(body.get('lead_source')).toBe('Contact Form');
+    expect(body.has('retURL')).toBe(true);
+    const keys = [...body.keys()];
+    expect(keys.slice(-4)).toEqual([
+      'g-recaptcha-response',
+      'captcha_settings',
+      '00NRg00000PjSD3MAN',
+      '00NRg00000PjSEfMAN',
+    ]);
+    expect(body.get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
+    expect(body.get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('vaLoanGuideForm posts an exact ordered body ending with the two attribution field ids', async () => {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    await vaLoanGuideForm({
+      firstName: 'Test',
+      lastName: 'Va',
+      email: 'va@example.com',
+      phone: '8035550100',
+      vpcs_visitor_id: 'vpcs_test_visitor_1234567890',
+    });
+
+    const body = salesforceBody();
+    expect([...body.entries()]).toEqual([
+      ['oid', '00D4x000003yaV2'],
+      ['retURL', 'undefined/thank-you'],
+      ['recordType', '0124x000000Z5yD'],
+      ['lead_source', 'VA Loan Guide'],
+      ['first_name', 'Test'],
+      ['last_name', 'Va'],
+      ['email', 'va@example.com'],
+      ['g-recaptcha-response', ''],
+      ['captcha_settings', ''],
+      ['00NRg00000PjSD3MAN', 'vpcs_test_visitor_1234567890'],
+      ['00NRg00000PjSEfMAN', 'submission-test-id'],
+    ]);
+
+    expect(body.get('oid')).toBe('00D4x000003yaV2');
+    expect(body.get('recordType')).toBe('0124x000000Z5yD');
+    expect(body.get('lead_source')).toBe('VA Loan Guide');
+    expect(body.has('retURL')).toBe(true);
+    const keys = [...body.keys()];
+    expect(keys.slice(-4)).toEqual([
+      'g-recaptcha-response',
+      'captcha_settings',
+      '00NRg00000PjSD3MAN',
+      '00NRg00000PjSEfMAN',
+    ]);
+    expect(body.get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
+    expect(body.get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('homebuyerGuideForm posts an exact ordered body ending with the two attribution field ids', async () => {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    await homebuyerGuideForm({
+      firstName: 'Test',
+      lastName: 'Home',
+      email: 'home@example.com',
+      phone: '8035550100',
+      vpcs_visitor_id: 'vpcs_test_visitor_1234567890',
+    });
+
+    const body = salesforceBody();
+    expect([...body.entries()]).toEqual([
+      ['oid', '00D4x000003yaV2'],
+      ['retURL', 'undefined/thank-you'],
+      ['recordType', '0124x000000Z5yD'],
+      ['lead_source', 'First Time Home Buyer Guide'],
+      ['first_name', 'Test'],
+      ['last_name', 'Home'],
+      ['email', 'home@example.com'],
+      ['g-recaptcha-response', ''],
+      ['captcha_settings', ''],
+      ['00NRg00000PjSD3MAN', 'vpcs_test_visitor_1234567890'],
+      ['00NRg00000PjSEfMAN', 'submission-test-id'],
+    ]);
+
+    expect(body.get('oid')).toBe('00D4x000003yaV2');
+    expect(body.get('recordType')).toBe('0124x000000Z5yD');
+    expect(body.get('lead_source')).toBe('First Time Home Buyer Guide');
+    expect(body.has('retURL')).toBe(true);
+    const keys = [...body.keys()];
+    expect(keys.slice(-4)).toEqual([
+      'g-recaptcha-response',
+      'captcha_settings',
+      '00NRg00000PjSD3MAN',
+      '00NRg00000PjSEfMAN',
+    ]);
+    expect(body.get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
+    expect(body.get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('internshipFormSubmission posts an exact ordered body (recordType before retURL) with no attribution params', async () => {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    await internshipFormSubmission({
+      first_name: 'Test',
+      last_name: 'Intern',
+      email: 'intern@example.com',
+      mobile: '8035550100',
+      '00N4x00000LsnP2': 'Veteran',
+      '00N4x00000LsnOx': 'Army',
+      '00N4x00000QQ0Vz': ['Honorable'],
+      state_code: 'CO',
+      city: 'Colorado Springs',
+      base: 'Fort Carson',
+      '00N4x00000QPK7L': 'School',
+      '00N4x00000LspV2': 'Field One',
+      '00N4x00000LspUi': 'Field Two',
+      '00N4x00000QPLQY': 'Long answer Y',
+      '00N4x00000QPLQd': 'Long answer d',
+      '00N4x00000QPksj': 'Google',
+      '00N4x00000QPS7V': 'Why I want this internship',
+    });
+
+    const body = salesforceBody();
+    // NOTE: this form uniquely emits `recordType` BEFORE `retURL` (all other forms put
+    // `retURL` second). It also maps the `00N4x00000QQ0Vz` array input to its first element.
+    expect([...body.entries()]).toEqual([
+      ['oid', '00D4x000003yaV2'],
+      ['recordType', '0124x000000ZGKv'],
+      ['retURL', 'undefined/thank-you'],
+      ['lead_source', 'Internship Application'],
+      ['00N4x00000Lsr0G', 'true'],
+      ['country_code', 'US'],
+      ['first_name', 'Test'],
+      ['last_name', 'Intern'],
+      ['email', 'intern@example.com'],
+      ['mobile', '8035550100'],
+      ['00N4x00000LsnP2', 'Veteran'],
+      ['00N4x00000LsnOx', 'Army'],
+      ['00N4x00000QQ0Vz', 'Honorable'],
+      ['state_code', 'CO'],
+      ['city', 'Colorado Springs'],
+      ['base', 'Fort Carson'],
+      ['00N4x00000QPK7L', 'School'],
+      ['00N4x00000LspV2', 'Field One'],
+      ['00N4x00000LspUi', 'Field Two'],
+      ['00N4x00000QPLQY', 'Long answer Y'],
+      ['00N4x00000QPLQd', 'Long answer d'],
+      ['00N4x00000QPksj', 'Google'],
+      ['00N4x00000QPS7V', 'Why I want this internship'],
+      ['g-recaptcha-response', ''],
+      ['captcha_settings', ''],
+    ]);
+
+    expect(body.get('oid')).toBe('00D4x000003yaV2');
+    expect(body.get('recordType')).toBe('0124x000000ZGKv');
+    expect(body.get('lead_source')).toBe('Internship Application');
+    expect(body.has('retURL')).toBe(true);
+    const keys = [...body.keys()];
+    expect(keys.slice(-2)).toEqual(['g-recaptcha-response', 'captcha_settings']);
+    expect(keys).not.toContain('00NRg00000PjSD3MAN');
+    expect(keys).not.toContain('00NRg00000PjSEfMAN');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+});
+
+/**
+ * Observable-contract characterization for the seven simpler forms (everything the
+ * committed body-only tests above do NOT pin): return shape to the caller, the exact
+ * Slack payload, the success `updateSubmissionStatus` call, whether lead-conversion
+ * analytics fire, and that OpenPhone SMS never fires for a non-agent/lender form.
+ * Together with the byte-exact body tests above and the contactAgent/contactLender
+ * behavioral suite, this freezes contract axes (b)-(f) for all nine forms before the
+ * `submitWebToLead` consolidation, so the refactor can be proven behavior-preserving.
+ *
+ * One axis is deliberately NOT frozen here: the notification-failure *handling* idiom.
+ * The consolidation's single sanctioned delta is to fold contactAgent's
+ * Promise.allSettled + Slack `ok` inspection into the shared path so a failed Slack
+ * post is logged instead of silently discarded. These tests keep Slack on its default
+ * ok:true mock, so they pin dispatch + payload (which stay identical) without pinning
+ * the pre-refactor `.catch()` mechanism (which is allowed to change).
+ */
+describe('characterization: observable contract for the seven simpler forms', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal('fetch', vi.fn());
+    process.env.NEXT_PUBLIC_API_BASE_URL = 'https://www.veteranpcs.com';
+    process.env.OPEN_PHONE_FROM_NUMBER = '+17194153014';
+  });
+
+  function accept200() {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+  }
+
+  it('GetListedAgentsPostForm: {message} return, exact Slack payload, no OpenPhone, no capture', async () => {
+    accept200();
+    const result = await GetListedAgentsPostForm({
+      firstName: 'Test', lastName: 'Agent', email: 'agent@example.com', phone: '8035550100',
+    });
+
+    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New Agent Listing Request',
+      name: 'Test Agent',
+      email: 'agent@example.com',
+      phoneNumber: '8035550100',
+      message: '',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('GetListedLendersPostForm: {message} return, exact Slack payload, no OpenPhone, no capture', async () => {
+    accept200();
+    const result = await GetListedLendersPostForm({
+      firstName: 'Test', lastName: 'Lender', email: 'lender@example.com', phone: '8035550100',
+    });
+
+    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New Lender Listing Request',
+      name: 'Test Lender',
+      email: 'lender@example.com',
+      phoneNumber: '8035550100',
+      message: '',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('internshipFormSubmission: {message} return, empty Slack message, no OpenPhone, no capture', async () => {
+    accept200();
+    const result = await internshipFormSubmission({
+      first_name: 'Test', last_name: 'Intern', email: 'intern@example.com', mobile: '8035550100',
+    });
+
+    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New Internship Submission',
+      name: 'Test Intern',
+      email: 'intern@example.com',
+      phoneNumber: '8035550100',
+      message: '',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('KeepInTouchForm: {success,message,submissionId} return, Slack payload, capture keep_in_touch', async () => {
+    accept200();
+    const result = await KeepInTouchForm({
+      firstName: 'Test', lastName: 'Keep', email: 'keep@example.com', phone: '8035550100',
+    });
+
+    expect(result).toEqual({
+      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New Keep In Touch Submission',
+      name: 'Test Keep',
+      email: 'keep@example.com',
+      phoneNumber: '8035550100',
+      message: '',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).toHaveBeenCalledWith(
+      expect.objectContaining({
+        formId: 'keep_in_touch',
+        leadSource: 'Keep in Touch',
+        submissionId: 'submission-test-id',
+      }),
+    );
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('contactPostForm: {success,...} return, Slack message carries the comment, capture contact_form', async () => {
+    accept200();
+    const result = await contactPostForm({
+      firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
+      additionalComments: 'A contact message',
+    });
+
+    expect(result).toEqual({
+      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New Contact Form Submission',
+      name: 'Test Contact',
+      email: 'contact@example.com',
+      phoneNumber: '8035550100',
+      message: 'A contact message',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).toHaveBeenCalledWith(
+      expect.objectContaining({
+        formId: 'contact_form',
+        leadSource: 'Contact Form',
+        submissionId: 'submission-test-id',
+      }),
+    );
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('vaLoanGuideForm: {success,...} return, Slack payload, capture with guideId', async () => {
+    accept200();
+    const result = await vaLoanGuideForm({
+      firstName: 'Test', lastName: 'Va', email: 'va@example.com', phone: '8035550100',
+    });
+
+    expect(result).toEqual({
+      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New VA Loan Guide Download',
+      name: 'Test Va',
+      email: 'va@example.com',
+      phoneNumber: '8035550100',
+      message: '',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).toHaveBeenCalledWith(
+      expect.objectContaining({
+        formId: 'va_loan_guide',
+        leadSource: 'VA Loan Guide',
+        submissionId: 'submission-test-id',
+        guideId: 'va_loan_guide',
+      }),
+    );
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('homebuyerGuideForm: {success,...} return, Slack payload, capture with guideId', async () => {
+    accept200();
+    const result = await homebuyerGuideForm({
+      firstName: 'Test', lastName: 'Home', email: 'home@example.com', phone: '8035550100',
+    });
+
+    expect(result).toEqual({
+      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New First Time Home Buyer Guide Download',
+      name: 'Test Home',
+      email: 'home@example.com',
+      phoneNumber: '8035550100',
+      message: '',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).toHaveBeenCalledWith(
+      expect.objectContaining({
+        formId: 'first_time_homebuyer_guide',
+        leadSource: 'First Time Home Buyer Guide',
+        submissionId: 'submission-test-id',
+        guideId: 'first_time_homebuyer_guide',
+      }),
+    );
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('spam-quarantined contactPostForm: tags the comment, still returns success, suppresses capture', async () => {
+    vi.mocked(evaluateLeadSpam).mockResolvedValueOnce({ quarantine: true, reasons: ['honeypot'] });
+    accept200();
+
+    const result = await contactPostForm({
+      firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
+      additionalComments: 'A contact message',
+    });
+
+    expect(result).toEqual({
+      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+    // Free-text field is tagged in the posted body and echoed into the Slack message.
+    expect(salesforceBody().get('00N4x00000bfgFA')).toBe('[SPAM-SUSPECTED] A contact message');
+    expect(sendToSlack).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headerText: '⚠️ SPAM-SUSPECTED — 🔔 New Contact Form Submission',
+        message: '[SPAM-SUSPECTED] A contact message',
+      }),
+    );
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+  });
+
+  it('spam-quarantined GetListedAgentsPostForm: tags tellusMore in the body, still submits', async () => {
+    vi.mocked(evaluateLeadSpam).mockResolvedValueOnce({ quarantine: true, reasons: ['honeypot'] });
+    accept200();
+
+    const result = await GetListedAgentsPostForm({
+      firstName: 'Test', lastName: 'Agent', email: 'agent@example.com', phone: '8035550100',
+      tellusMore: 'More info here',
+    });
+
+    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(salesforceBody().get('00N4x00000QPS7V')).toBe('[SPAM-SUSPECTED] More info here');
+    expect(sendToSlack).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headerText: '⚠️ SPAM-SUSPECTED — 🔔 New Agent Listing Request',
+      }),
+    );
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('contactPostForm on a Salesforce HTTP error: throws, no Slack, marks FAILURE', async () => {
+    mockSalesforceResponse('server error', { status: 500, statusText: 'Internal Server Error' });
+
+    await expect(
+      contactPostForm({
+        firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
+        additionalComments: 'A contact message',
+      }),
+    ).rejects.toThrow('Failed to submit form');
+
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(
+      vi.mocked(updateSubmissionStatus).mock.calls.some((call) => call[1] === 'FAILURE'),
+    ).toBe(true);
   });
 });

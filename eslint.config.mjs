@@ -24,4 +24,14 @@ export default defineConfig([
             "react-hooks/purity": "off",
         },
     },
+    {
+        files: ['**/*.{ts,tsx}'],
+        ignores: ['lib/salesforce/ids.ts', 'scripts/**', '**/__tests__/**', '**/*.test.{ts,tsx}'],
+        rules: {
+            'no-restricted-syntax': ['error', {
+                selector: "Literal[value=/^(00D|0124|005)[A-Za-z0-9]{7,}$/]",
+                message: 'Hardcoded Salesforce id. Import SF_ORG_ID / SF_RECORD_TYPE / SF_LEAD_OWNER from @/lib/salesforce/ids instead.',
+            }],
+        },
+    },
 ]);
