@@ -18,6 +18,7 @@ import {
     buildAgentLeadParams,
     buildLenderLeadParams,
 } from '@/services/salesforceLeadParams';
+import { SF_ORG_ID, SF_RECORD_TYPE } from '@/lib/salesforce/ids';
 import {
     appendSalesforceAttributionParams,
     captureLeadConversionCreated,
@@ -536,9 +537,9 @@ export async function GetListedAgentsPostForm(formData: any, options?: InternalC
         }
 
         const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
+            oid: SF_ORG_ID,
             retURL: `${BASE_URL}/thank-you`,
-            recordType: "0124x000000Z5yI",
+            recordType: SF_RECORD_TYPE.AGENT_LISTING_LEAD,
             lead_source: "Agent Listing Request",
             "00N4x00000Lsr0G": "true",
             country_code: "US",
@@ -677,9 +678,9 @@ export async function GetListedLendersPostForm(formData: any, options?: Internal
         }
 
         const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
+            oid: SF_ORG_ID,
             retURL: `${BASE_URL}/thank-you`,
-            recordType: "0124x000000ZGGU",
+            recordType: SF_RECORD_TYPE.LENDER_LISTING_LEAD,
             lead_source: "Lender Listing Request",
             "00N4x00000Lsr0G": "true",
             country_code: "US",
@@ -813,9 +814,9 @@ export async function KeepInTouchForm(formData: any, options?: InternalCallOptio
         }
 
         const keepInTouchParams = new URLSearchParams({
-            oid: "00D4x000003yaV2",
+            oid: SF_ORG_ID,
             retURL: `${BASE_URL}/thank-you`,
-            recordType: "0124x000000Z5yD",
+            recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
             lead_source: "Keep in Touch",
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
@@ -1144,9 +1145,9 @@ export async function contactPostForm(formData: any, options?: InternalCallOptio
         }
 
         const contactParams = new URLSearchParams({
-            oid: "00D4x000003yaV2",
+            oid: SF_ORG_ID,
             retURL: `${BASE_URL}/thank-you`,
-            recordType: "0124x000000Z5yD",
+            recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
             lead_source: "Contact Form",
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
@@ -1266,9 +1267,9 @@ export async function vaLoanGuideForm(formData: any, options?: InternalCallOptio
         }
 
         const vaLoanGuideParams = new URLSearchParams({
-            oid: "00D4x000003yaV2",
+            oid: SF_ORG_ID,
             retURL: `${BASE_URL}/thank-you`,
-            recordType: "0124x000000Z5yD",
+            recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
             lead_source: "VA Loan Guide",
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
@@ -1388,9 +1389,9 @@ export async function homebuyerGuideForm(formData: any, options?: InternalCallOp
         }
 
         const homebuyerGuideParams = new URLSearchParams({
-            oid: "00D4x000003yaV2",
+            oid: SF_ORG_ID,
             retURL: `${BASE_URL}/thank-you`,
-            recordType: "0124x000000Z5yD",
+            recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
             lead_source: "First Time Home Buyer Guide",
             first_name: formData.firstName || "",
             last_name: formData.lastName || "",
@@ -1512,8 +1513,8 @@ export async function internshipFormSubmission(formData: any, options?: Internal
         }
 
         const formBody = new URLSearchParams({
-            oid: "00D4x000003yaV2",
-            recordType: "0124x000000ZGKv",
+            oid: SF_ORG_ID,
+            recordType: SF_RECORD_TYPE.INTERNSHIP_LEAD,
             retURL: `${BASE_URL}/thank-you`,
             lead_source: "Internship Application",
             "00N4x00000Lsr0G": "true",

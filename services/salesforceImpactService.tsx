@@ -1,9 +1,10 @@
 import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
 import { RequestType, salesForceAPI } from '@/services/api';
 import { getSalesforceToken } from '@/services/salesForceTokenService';
+import { SF_RECORD_TYPE } from '@/lib/salesforce/ids';
 
 // RecordTypeId for Opportunity records we're querying
-const OPPORTUNITY_RECORD_TYPE_ID = '0124x000000Z7G3AAK';
+const OPPORTUNITY_RECORD_TYPE_ID = SF_RECORD_TYPE.CUSTOMER_OPPORTUNITY;
 
 // The SOQL query to get aggregate sums
 const IMPACT_QUERY = `

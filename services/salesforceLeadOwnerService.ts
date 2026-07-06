@@ -6,8 +6,9 @@ import { getSalesforceToken } from '@/services/salesForceTokenService';
 import { getLeadOwnerForState, type SalesforceLeadOwner } from '@/services/salesforceLeadOwnerRouting';
 import { logError, logInfo } from '@/services/loggingService';
 import { escapeSoqlLiteral } from '@/services/soql';
+import { SF_RECORD_TYPE } from '@/lib/salesforce/ids';
 
-const CUSTOMER_LEAD_RECORD_TYPE_ID = '0124x000000Z5yDAAS';
+const CUSTOMER_LEAD_RECORD_TYPE_ID = SF_RECORD_TYPE.CUSTOMER_LEAD;
 const WEB_FORM_URL_MAX_LENGTH = 255;
 const LEAD_LOOKUP_TIMEOUT_MS = process.env.NODE_ENV === 'test' ? 0 : 12_000;
 const LEAD_LOOKUP_INTERVAL_MS = process.env.NODE_ENV === 'test' ? 0 : 750;

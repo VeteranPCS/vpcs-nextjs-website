@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { getAdminRoutingForState, type AdminKey } from '@/services/stateRoutingService';
+import { SF_LEAD_OWNER } from '@/lib/salesforce/ids';
 
 type SalesforceLeadOwnerConfig = {
     ownerId: string;
@@ -9,19 +10,19 @@ type SalesforceLeadOwnerConfig = {
 
 const SALESFORCE_LEAD_OWNERS_BY_ADMIN: Record<AdminKey, SalesforceLeadOwnerConfig> = {
     BETH: {
-        ownerId: '0054x000005GsUvAAK',
+        ownerId: SF_LEAD_OWNER.BETH,
         ownerName: 'Beth Soldner',
     },
     JESSICA: {
-        ownerId: '005Rg000004hWojIAE',
+        ownerId: SF_LEAD_OWNER.JESSICA,
         ownerName: 'Jessica Brown',
     },
     STEPHANIE: {
-        ownerId: '0054x0000082vHgAAI',
+        ownerId: SF_LEAD_OWNER.STEPHANIE,
         ownerName: 'Stephanie Guree',
     },
     TARA: {
-        ownerId: '005Rg00000BAN0DIAX',
+        ownerId: SF_LEAD_OWNER.TARA,
         ownerName: 'Tara Gould',
     },
 };
