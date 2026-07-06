@@ -18,7 +18,7 @@ import {
   buildLenderLeadParams,
 } from '@/services/salesforceLeadParams';
 import { logError } from '@/services/loggingService';
-import { captureLeadConversionCreated } from '@/lib/analytics/server';
+import { captureLeadConversionCreated, captureServerAnalyticsEvent } from '@/lib/analytics/server';
 import { evaluateLeadSpam } from '@/lib/spam-protection';
 import { updateSubmissionStatus } from '@/services/formTrackingService';
 
@@ -441,6 +441,18 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
       }),
       expect.any(Error),
     );
+    expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'lead_owner_routing_failed',
+        distinctId: 'submission-test-id',
+        properties: expect.objectContaining({
+          submission_id: 'submission-test-id',
+          lead_source: 'Contact Agent',
+          state_code: 'CO',
+          state_slug: 'colorado',
+        }),
+      }),
+    );
   });
 
   it('does not retry Salesforce when Slack returns a failed result after Salesforce accepts', async () => {
@@ -463,6 +475,52 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
       expect.objectContaining({ submissionId: 'submission-test-id', error: 'invalid_webhook' }),
       expect.any(Error),
     );
+    expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'lead_notification_failed',
+        distinctId: 'submission-test-id',
+        properties: expect.objectContaining({
+          submission_id: 'submission-test-id',
+          channel: 'Slack',
+          failure_detail: 'ok=false',
+        }),
+      }),
+    );
+  });
+
+  it('surfaces a rejected Slack notification to PostHog without failing the submission', async () => {
+    vi.mocked(sendToSlack).mockRejectedValueOnce(new Error('network down'));
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    const result = await contactAgentPostForm(qaPayload(), queryString);
+
+    expect(result).toEqual({
+      message: 'Form submitted successfully!',
+      submissionId: 'submission-test-id',
+    });
+    expect(logError).toHaveBeenCalledWith(
+      'Slack notification failed',
+      expect.objectContaining({ submissionId: 'submission-test-id' }),
+      expect.any(Error),
+    );
+    expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'lead_notification_failed',
+        properties: expect.objectContaining({ channel: 'Slack', failure_detail: 'rejected' }),
+      }),
+    );
+  });
+
+  it('does not emit a failure event to PostHog when notifications all succeed', async () => {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+
+    await contactAgentPostForm(qaPayload(), queryString);
+
+    expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
   });
 
   it('rejects an explicit Salesforce error response without retrying or notifying', async () => {

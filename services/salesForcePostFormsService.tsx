@@ -22,6 +22,7 @@ import { SF_ORG_ID, SF_RECORD_TYPE } from '@/lib/salesforce/ids';
 import {
     appendSalesforceAttributionParams,
     captureLeadConversionCreated,
+    captureServerAnalyticsEvent,
 } from '@/lib/analytics/server';
 import {
     parseLeadForm,
@@ -533,10 +534,14 @@ async function dispatchNotifications(params: {
         notificationTasks.map((task) => task.promise),
     );
 
+    // Failed channels collected here, then surfaced to PostHog after the (sync) logging pass.
+    const failedNotifications: Array<{ channel: string; detail: string }> = [];
+
     notificationResults.forEach((result, index) => {
         const task = notificationTasks[index];
         if (result.status === 'rejected') {
             logError(`${task.name} notification failed`, { submissionId }, result.reason);
+            failedNotifications.push({ channel: task.name, detail: 'rejected' });
             return;
         }
 
@@ -548,12 +553,33 @@ async function dispatchNotifications(params: {
                     { submissionId, error: slackResult?.error },
                     new Error(`Slack returned ok=${String(slackResult?.ok)}`),
                 );
+                failedNotifications.push({ channel: 'Slack', detail: `ok=${String(slackResult?.ok)}` });
                 return;
             }
         }
 
         logInfo(`${task.name} notification accepted`, { submissionId });
     });
+
+    // Route lead-critical notification failures to PostHog so an accepted lead that never
+    // reached the team/partner is a queryable funnel drop. Awaited (not fire-and-forget) so
+    // the event flushes before the serverless invocation ends; wrapped so a capture failure
+    // can't turn a logged notification hiccup into a thrown request error.
+    for (const failure of failedNotifications) {
+        try {
+            await captureServerAnalyticsEvent({
+                event: 'lead_notification_failed',
+                distinctId: submissionId,
+                properties: {
+                    submission_id: submissionId,
+                    channel: failure.channel,
+                    failure_detail: failure.detail,
+                },
+            });
+        } catch (captureError) {
+            logError('PostHog lead_notification_failed capture failed', { submissionId }, captureError);
+        }
+    }
 }
 
 /**
@@ -722,6 +748,24 @@ async function submitWebToLead<TResult>(
                     adminName: leadOwner.adminName,
                     ownerId: leadOwner.ownerId,
                 }, ownerRoutingError);
+
+                // Surface this lead-critical failure to PostHog so "accepted but never routed"
+                // is a queryable funnel drop, not just a log line. Wrapped so a capture hiccup
+                // can't undo the guarantee that routing failures never cost a successful submit.
+                try {
+                    await captureServerAnalyticsEvent({
+                        event: 'lead_owner_routing_failed',
+                        distinctId: submissionId,
+                        properties: {
+                            submission_id: submissionId,
+                            lead_source: config.location.leadSource,
+                            state_code: effectiveState!.code,
+                            state_slug: effectiveState!.slug,
+                        },
+                    });
+                } catch (captureError) {
+                    logError('PostHog lead_owner_routing_failed capture failed', { submissionId }, captureError);
+                }
             }
         }
 

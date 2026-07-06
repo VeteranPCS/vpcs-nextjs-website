@@ -1,6 +1,7 @@
 import { EventEmitter } from "node:events";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { getSalesforceToken } from "@/services/salesForceTokenService";
+import { logError } from "@/services/loggingService";
 
 // Next spawns fresh worker processes for static generation — globals set in
 // next.config.mjs don't reach them. Raise the listener ceiling here so the
@@ -65,7 +66,15 @@ export const api = async ({
     try {
         res = await axios(config);
     } catch (err: any) {
-        res = err.response;
+        if (err?.response) {
+            // HTTP error response (4xx/5xx): return it so callers can inspect .status.
+            res = err.response;
+        } else {
+            // Network error (no HTTP response): log the real cause and rethrow it wrapped so
+            // callers' existing catch/fallback paths still fire, but the cause is preserved.
+            logError('api network error', { endpoint: config.url, method: type }, err);
+            throw new Error('api request failed', { cause: err });
+        }
     }
 
     return res;  // Return the response or error
@@ -96,7 +105,15 @@ export const salesForceAPI = async ({
     try {
         res = await axios(config);
     } catch (err: any) {
-        res = err.response;
+        if (err?.response) {
+            // HTTP error response (4xx/5xx): return it so callers can inspect .status
+            // (salesForceAPIWithRefresh reads .status === 401 to trigger a single retry).
+            res = err.response;
+        } else {
+            // Network error (no HTTP response): log the real cause and rethrow it wrapped.
+            logError('salesForceAPI network error', { endpoint: config.url, method: type }, err);
+            throw new Error('salesForceAPI request failed', { cause: err });
+        }
     }
 
     return res;  // Return the response or error
@@ -140,7 +157,14 @@ export const salesForceImageAPI = async ({
     try {
         res = await axios(config);
     } catch (err: any) {
-        res = err.response;
+        if (err?.response) {
+            // HTTP error response (4xx/5xx): return it so callers can inspect .status.
+            res = err.response;
+        } else {
+            // Network error (no HTTP response): log the real cause and rethrow it wrapped.
+            logError('salesForceImageAPI network error', { endpoint: config.url, method: type }, err);
+            throw new Error('salesForceImageAPI request failed', { cause: err });
+        }
     }
 
     return res;  // Return the response or error
@@ -169,7 +193,16 @@ export const salesForceTokenAPI = async ({
     try {
         res = await axios(config);
     } catch (err: any) {
-        res = err.response;
+        if (err?.response) {
+            // HTTP error response (4xx/5xx): return it so callers can inspect .status.
+            res = err.response;
+        } else {
+            // Network error (no HTTP response): log the real cause and rethrow it wrapped.
+            // logError only extracts message/name/code/stack — the credentialed request body
+            // (err.config.data) is never logged, so this does not leak the OAuth grant.
+            logError('salesForceTokenAPI network error', { endpoint: config.url, method: type }, err);
+            throw new Error('salesForceTokenAPI request failed', { cause: err });
+        }
     }
 
     return res;  // Return the response or error
