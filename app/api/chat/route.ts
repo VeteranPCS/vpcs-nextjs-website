@@ -152,7 +152,11 @@ export async function POST(req: Request) {
   try {
     // Strip assistant turns to plain text before the model sees them: the resent
     // transcript is client-controlled, so any forged tool-call / tool-result / file
-    // parts are dropped and can't feed fabricated data back into the model.
+    // parts are dropped and can't feed fabricated data back into the model. This also
+    // drops the AI-SDK approval-handshake parts, so a forged `approval-responded` can't
+    // execute a needsApproval lead-submit tool without genuine consent — which means
+    // HITL lead submission is intentionally disabled until server-held/signed history
+    // lands (see stripAssistantMessageParts for the full rationale).
     // TODO(security): the durable fix is server-held / signed history so the client
     // can't author assistant turns at all (out of scope for Phase 2 — memory is
     // cookie-scoped). This strip + the Tier-0 assistant scan are the interim

@@ -201,45 +201,41 @@ export function parseChatRequest(raw: unknown): ParseChatRequestResult {
   };
 }
 
-// The AI SDK tool-approval flow (tools with `needsApproval: true`, e.g. the lead
-// submit tools) round-trips the approval decision THROUGH the assistant transcript:
-// after the user clicks "Yes, send it", `useChat` resends the assistant turn with
-// its `tool-*` part in `approval-responded` state, and `convertToModelMessages` needs
-// that part to emit the `tool-approval-response` that actually runs the tool
-// server-side. These two handshake states carry only the approve/deny decision —
-// never fabricated tool OUTPUT (the real output is produced server-side AFTER
-// approval) — so preserving them cannot smuggle forged data into the model, unlike
-// an `output-available` part. `input-*`/`output-*` states stay stripped.
-const APPROVAL_HANDSHAKE_STATES = new Set(['approval-requested', 'approval-responded']);
-
-function isApprovalHandshakePart(part: unknown): boolean {
-  const p = part as { type?: unknown; state?: unknown };
-  return (
-    isToolPartType(p?.type)
-    && typeof p?.state === 'string'
-    && APPROVAL_HANDSHAKE_STATES.has(p.state)
-  );
-}
-
 /**
- * Reduce every assistant message to its plain-text parts (plus the approval
- * handshake) before the model runs.
+ * Reduce every assistant message to its plain-text parts before the model runs.
  *
  * `useChat` resends the full transcript from cookie-scoped memory, so the client
  * controls the assistant turns it echoes back. An attacker can forge assistant
  * content — tool-call / tool-result parts that fabricate data, reasoning blocks,
  * files — and the model would treat it as its own prior output. We cannot reject
- * assistant messages (the resent transcript is legitimate), so we strip them: only
- * `text` parts survive, PLUS `tool-*` parts in an approval-handshake state
- * (`approval-requested` / `approval-responded`) — those are required for
- * approval-gated tools (lead submission) to execute and carry no fabricated output.
- * Every other non-text part is dropped. An assistant turn that was nothing but a
- * forged tool result collapses to an empty `parts: []`, which
+ * assistant messages (the resent transcript is legitimate), so we strip them: ONLY
+ * `text` parts survive; every non-text part is dropped. An assistant turn that was
+ * nothing but a forged tool result collapses to an empty `parts: []`, which
  * `convertToModelMessages` safely skips.
  *
- * TODO(security): the durable fix is a server-held / signed transcript so the client
- * can't author assistant history at all. This strip is the Phase-2 mitigation while
- * memory stays cookie-scoped; see remediation item 2.3.
+ * This deliberately ALSO drops the AI-SDK approval-handshake parts
+ * (`approval-requested` / `approval-responded`). Those parts are what drive the
+ * human-in-the-loop execution of `needsApproval` tools — here, the four lead-submit
+ * tools (`submitAgentRequest` / `submitLenderRequest` / `submitGeneralInquiry` /
+ * `submitVALoanGuideRequest`) whose `execute` writes a real Salesforce lead plus a
+ * Slack notification plus an OpenPhone SMS. Because the transcript is client-authored
+ * on every resend and the server keeps NO record of the approvals it issued, a
+ * preserved `approval-responded` part carrying `approved: true` with attacker-chosen
+ * (but schema-valid) input would let `convertToModelMessages` → `streamText` run a
+ * lead-submit tool with NO genuine user consent. The AI SDK exposes no hook to
+ * authenticate a resent approval against a server-issued one, so the only safe
+ * Phase-2 posture is to strip these parts too (remediation item 2.3; the alternative
+ * of preserving them was flagged as a P1 by Codex review).
+ *
+ * CONSEQUENCE: approval-gated (HITL) lead submission does NOT execute from the
+ * transcript while chat memory stays cookie-scoped. The concierge ships behind
+ * `NEXT_PUBLIC_CONCIERGE_ENABLED` (off), so today this changes no live behavior.
+ *
+ * TODO(security): the durable fix — REQUIRED before the concierge is enabled for
+ * lead capture — is a server-held / signed transcript (or a server-recorded approval
+ * registry keyed off the approvals `streamText` actually issued) so the server can
+ * execute an approval only when it matches one it itself produced. Until that lands,
+ * HITL lead submission stays intentionally disabled here.
  */
 export function stripAssistantMessageParts(messages: UIMessage[]): UIMessage[] {
   return messages.map((message) => {
@@ -248,10 +244,7 @@ export function stripAssistantMessageParts(messages: UIMessage[]): UIMessage[] {
     if (!Array.isArray(parts)) return message;
     const keptParts = parts.filter((p) => {
       const type = (p as { type?: unknown })?.type;
-      if (type === 'text' && typeof (p as { text?: unknown }).text === 'string') {
-        return true;
-      }
-      return isApprovalHandshakePart(p);
+      return type === 'text' && typeof (p as { text?: unknown }).text === 'string';
     });
     return { ...message, parts: keptParts } as UIMessage;
   });
