@@ -1,8 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server";
+import crypto from "node:crypto";
 import agentService from "@/services/agentService";
 import { revalidatePath } from "next/cache";
 
-// Utility function to verify Salesforce signature (if using HMAC-based verification)
+// Verify the shared secret the Salesforce webhook sends in X-Salesforce-Signature.
+// NOTE: this is still a shared-secret compare, not a true request signature. Full
+// HMAC request signing is BLOCKED on the Salesforce sender being changed to HMAC
+// the payload (external dependency) — tracked as a follow-up. What we CAN harden
+// now is the compare itself: use crypto.timingSafeEqual so an attacker can't use
+// response-timing to recover the secret byte by byte.
 function verifySalesforceSignature(req: NextRequest): boolean {
     const salesforceSignature = req.headers.get("X-Salesforce-Signature");
     const expectedSecret = process.env.SALESFORCE_WEBHOOK_SECRET;
@@ -11,8 +17,17 @@ function verifySalesforceSignature(req: NextRequest): boolean {
         return false;
     }
 
-    // Compare signatures (consider using HMAC validation if Salesforce sends a hash)
-    return salesforceSignature === expectedSecret;
+    const provided = Buffer.from(salesforceSignature);
+    const expected = Buffer.from(expectedSecret);
+
+    // timingSafeEqual throws on unequal-length buffers, so guard length first.
+    // A length mismatch is already a non-match, so returning false here leaks
+    // only the length, not the contents.
+    if (provided.length !== expected.length) {
+        return false;
+    }
+
+    return crypto.timingSafeEqual(provided, expected);
 }
 
 function convertStateNameToPathName(state: string): string {
