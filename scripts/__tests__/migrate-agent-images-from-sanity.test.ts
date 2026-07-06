@@ -38,7 +38,7 @@ describe('migrate-agent-images-from-sanity', () => {
       active: true,
     });
     expect(classifications.has('0014x00000IFGix')).toBe(false);
-    expect(sfQuery.mock.calls[0][2]).toContain('Name');
+    expect(sfQuery.mock.calls[0]![2]).toContain('Name');
   });
 
   it('does not collapse case-distinct 15-character Salesforce IDs', () => {

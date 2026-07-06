@@ -96,7 +96,7 @@ export async function getCashBackAmount(): Promise<string> {
         const data = await fetchImpactData();
 
         if (data.records && data.records.length > 0) {
-            const amount = data.records[0].expr0 || 0;
+            const amount = data.records[0]!.expr0 || 0;
             return formatAsUSD(amount);
         }
 
@@ -118,7 +118,7 @@ export async function getCharityAmount(): Promise<string> {
         const data = await fetchImpactData();
 
         if (data.records && data.records.length > 0) {
-            const amount = data.records[0].expr1 || 0;
+            const amount = data.records[0]!.expr1 || 0;
             return formatAsUSD(amount);
         }
 
@@ -140,7 +140,7 @@ export async function getTotalVolumeSold(): Promise<string> {
         const data = await fetchImpactData();
 
         if (data.records && data.records.length > 0) {
-            const amount = data.records[0].expr2 || 0;
+            const amount = data.records[0]!.expr2 || 0;
             return formatAsMillions(amount);
         }
 
@@ -166,7 +166,7 @@ export async function getAllImpactMetrics(): Promise<{
         const data = await fetchImpactData();
 
         if (data.records && data.records.length > 0) {
-            const record = data.records[0];
+            const record = data.records[0]!;
             return {
                 cashBackAmount: formatAsUSD(record.expr0 || 0),
                 charityAmount: formatAsUSD(record.expr1 || 0),

@@ -192,7 +192,7 @@ async function findUniqueLead(
         throw new Error(`Ambiguous Salesforce Lead lookup for submission ${submissionId} using ${lookupType}`);
     }
 
-    return records[0];
+    return records[0]!;
 }
 
 async function fetchLeadOwner(leadId: string): Promise<SalesforceLeadRecord> {

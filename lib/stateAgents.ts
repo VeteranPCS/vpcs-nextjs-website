@@ -62,16 +62,16 @@ export function groupAgentsByAreaForState(
       }));
 
     for (const area of areasInState) {
-      if (!groups[area.name]) groups[area.name] = [];
-      groups[area.name].push({
+      const bucket = (groups[area.name] ??= []);
+      bucket.push({
         ...agent,
         cityScore: area.score,
       });
     }
   }
 
-  for (const city of Object.keys(groups)) {
-    groups[city].sort((a, b) => (b.cityScore ?? 0) - (a.cityScore ?? 0));
+  for (const bucket of Object.values(groups)) {
+    bucket.sort((a, b) => (b.cityScore ?? 0) - (a.cityScore ?? 0));
   }
 
   return groups;

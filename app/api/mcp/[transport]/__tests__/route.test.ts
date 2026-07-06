@@ -72,14 +72,14 @@ describe('MCP route — auth (withMcpAuth required:true)', () => {
   it.each(['GET', 'POST', 'DELETE'])('401s a bad bearer on %s', async (method) => {
     vi.stubEnv('MCP_ENABLED', '1');
     vi.stubEnv('MCP_AUTH_TOKEN', 'secret');
-    const res = await handlers[method](mcpReq(method, { Authorization: 'Bearer wrong-token' }));
+    const res = await handlers[method]!(mcpReq(method, { Authorization: 'Bearer wrong-token' }));
     expect(res.status).toBe(401);
   });
 
   it.each(['GET', 'POST', 'DELETE'])('401s a missing bearer on %s (fail-closed, not open)', async (method) => {
     vi.stubEnv('MCP_ENABLED', '1');
     vi.stubEnv('MCP_AUTH_TOKEN', 'secret');
-    const res = await handlers[method](mcpReq(method));
+    const res = await handlers[method]!(mcpReq(method));
     expect(res.status).toBe(401);
   });
 });

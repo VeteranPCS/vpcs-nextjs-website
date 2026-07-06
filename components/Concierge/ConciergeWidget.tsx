@@ -196,12 +196,12 @@ export default function ConciergeWidget() {
       if (event.shiftKey) {
         if (active === first || !root.contains(active)) {
           event.preventDefault();
-          last.focus();
+          last?.focus();
         }
       } else {
         if (active === last) {
           event.preventDefault();
-          first.focus();
+          first?.focus();
         }
       }
     }

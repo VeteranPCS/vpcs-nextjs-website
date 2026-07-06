@@ -165,7 +165,7 @@ export function routeResolvedDestination(
     };
   }
 
-  const selected = routed[0];
+  const selected = routed[0]!; // routed.length === 0 handled above, so index 0 is in-bounds
   const caveat = buildCoverageCaveat(destination, selected);
   return {
     destination,

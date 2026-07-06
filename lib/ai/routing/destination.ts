@@ -178,7 +178,7 @@ function parseCityState(input: string, stateHint?: string): ParsedCityState | nu
   const stateCodeMatch = input.match(/^(.+?)\s+([A-Za-z]{2})$/);
   if (stateCodeMatch) {
     const maybeState = findRoutingState(stateCodeMatch[2]);
-    if (maybeState) return { city: stateCodeMatch[1].trim(), state: maybeState };
+    if (maybeState) return { city: stateCodeMatch[1]!.trim(), state: maybeState };
   }
 
   const normalizedInput = normalizeSearchText(input);

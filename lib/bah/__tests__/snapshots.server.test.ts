@@ -44,7 +44,7 @@ describe('readBahSnapshot', () => {
     const snapshot = readBahSnapshot('Fort Test', '2025', root);
 
     expect(snapshot?.baseName).toBe('Fort Test');
-    expect(snapshot?.ranks[0].rank).toBe('E-5');
+    expect(snapshot?.ranks[0]!.rank).toBe('E-5');
   });
 
   it('returns null for missing and malformed snapshots', () => {

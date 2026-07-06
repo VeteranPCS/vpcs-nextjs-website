@@ -26,7 +26,7 @@ export interface EvaluateLeadSpamArgs {
  */
 export function ipFromHeaders(h: Pick<Headers, 'get'>): string {
   const forwarded = h.get('x-forwarded-for');
-  if (forwarded) return forwarded.split(',')[0].trim();
+  if (forwarded) return forwarded.split(',')[0]!.trim();
   const realIp = h.get('x-real-ip');
   if (realIp) return realIp.trim();
   return 'anonymous';

@@ -76,7 +76,7 @@ describe('routeResolvedDestination', () => {
 
   it('adds a human-confirmation caveat when nearest active coverage is far away', () => {
     const res = routeResolvedDestination(resolveDestinationLocation('Boulder, CO'), [
-      coloradoAreas[0],
+      coloradoAreas[0]!,
     ]);
 
     expect(res.selectedCoverageArea?.areaName).toBe('Colorado Springs');

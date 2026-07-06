@@ -538,7 +538,9 @@ async function dispatchNotifications(params: {
     const failedNotifications: Array<{ channel: string; detail: string }> = [];
 
     notificationResults.forEach((result, index) => {
-        const task = notificationTasks[index];
+        // index is bounded by notificationResults, which is notificationTasks.map(...)
+        // (identical length), so this element is always present.
+        const task = notificationTasks[index]!;
         if (result.status === 'rejected') {
             logError(`${task.name} notification failed`, { submissionId }, result.reason);
             failedNotifications.push({ channel: task.name, detail: 'rejected' });

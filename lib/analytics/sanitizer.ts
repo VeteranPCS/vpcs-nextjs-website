@@ -61,7 +61,7 @@ export function safePath(value: unknown): string | undefined {
       : new URL(value, 'https://www.veteranpcs.com');
     return url.pathname || '/';
   } catch {
-    const [path] = value.split(/[?#]/);
+    const [path = ''] = value.split(/[?#]/);
     if (!path.startsWith('/')) return undefined;
     return path || '/';
   }

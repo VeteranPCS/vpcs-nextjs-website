@@ -49,7 +49,7 @@ function joinTextParts(m: UIMessage): string {
 /** Concatenate the text parts of the most recent user message. */
 export function extractLatestUserText(messages: UIMessage[]): string {
   for (let i = messages.length - 1; i >= 0; i--) {
-    const m = messages[i];
+    const m = messages[i]!; // loop bound (0 <= i < length) keeps this index in-bounds
     if (m.role !== 'user') continue;
     const text = joinTextParts(m);
     if (text) return text;
