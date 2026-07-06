@@ -4,7 +4,25 @@ import { escapeSoqlLiteral, isStateCode } from '@/services/soql';
 import { logDebug, logError } from '@/services/loggingService';
 import { client } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
-import { Image } from 'sanity';
+import { defineQuery } from 'next-sanity';
+import type {
+  STATE_LIST_QUERYResult,
+  STATE_DETAILS_QUERYResult,
+} from '@/sanity.types';
+
+// GROQ queries wrapped in defineQuery so `sanity typegen` derives their result types
+// (STATE_LIST_QUERYResult, etc.) from the projection. The generated types are consumed
+// below, so dropping a field from a projection is caught by type-check instead of silently
+// diverging from the hand-written interface (the bug this replaces).
+const STATE_LIST_QUERY = defineQuery(
+  `*[_type == "state_list"]{ _id, _updatedAt, state_slug, short_name, state_name }`,
+);
+const STATE_DETAILS_QUERY = defineQuery(
+  `*[_type == "state_list" && state_slug.current == $state][0]`,
+);
+const STATE_IMAGE_QUERY = defineQuery(
+  `*[_type == "state_list" && state_slug.current == $state][0]{ state_map }`,
+);
 
 // Dynamic node:fs import keeps these calls out of client bundles that
 // transitively import this module. Only ever runs server-side.
@@ -20,32 +38,28 @@ async function resolveHeadshot(
   return fs.existsSync(path.join(process.cwd(), 'public', rel)) ? rel : null;
 }
 
-interface StateMap extends Image {
-  _type: 'image';
-  alt: string;
-  asset: {
-    _ref: string;
-    _type: 'reference'
-    image_url: string;
-  };
-}
+// One fully-populated row of the state-list projection. fetchStateList filters out rows
+// missing a slug / short_name / state_name (incomplete Sanity docs never reach the UI), so
+// the public type presents those fields as non-null. Built from the generated projection via
+// a mapped type, so dropping a field from STATE_LIST_QUERY shrinks StateList and breaks
+// type-check at whichever consumer reads it (the drift the hand-written interface hid).
+type StateListRow = STATE_LIST_QUERYResult[number];
+export type StateList = { [K in keyof StateListRow]-?: NonNullable<StateListRow[K]> } & {
+  state_slug: { _type: 'slug'; current: string };
+};
 
-interface StateSlug {
-  current: string;
-  _type: 'slug';
-}
-
-export interface StateList {
-  short_name: string;
-  _id: string;
-  _updatedAt: string;
-  state_map: StateMap;
-  state_name: string;
-  _createdAt: string;
-  _rev: string;
-  _type: 'state_list';
-  state_slug: StateSlug;
-}
+// fetchStateDetails returns the full state_list document with a runtime-synthesized
+// `image_url` grafted onto state_map.asset (via urlForImage), so model that explicitly on
+// top of the generated document type.
+type StateDetailDoc = NonNullable<STATE_DETAILS_QUERYResult>;
+type StateDetailMap = NonNullable<StateDetailDoc['state_map']>;
+export type StateDetails = Omit<StateDetailDoc, 'state_map'> & {
+  state_map:
+    | (Omit<StateDetailMap, 'asset'> & {
+        asset: Partial<NonNullable<StateDetailMap['asset']>> & { image_url: string };
+      })
+    | null;
+};
 
 export interface Agent {
   Name: string;
@@ -184,10 +198,16 @@ async function runStateLicensedQuery<T extends { AccountId_15__c: string }>(
 const stateService = {
   fetchStateList: async (): Promise<StateList[]> => {
     try {
-      const response = await client.fetch(`*[_type == "state_list"]{ state_slug, short_name, state_name }`)
+      const response = await client.fetch(STATE_LIST_QUERY)
       if (response) {
         const seen = new Set<string>();
-        return (response as StateList[]).filter((state) => {
+        // Drop rows an incomplete Sanity doc would produce (no slug/short_name/state_name):
+        // they can't render a state page or link anyway. The predicate narrows the element
+        // type to the non-null StateList, so every consumer of the list is spared per-field
+        // null guards.
+        return response.filter((state): state is StateList => {
+          const slug = state.state_slug?.current;
+          if (!slug || !state.short_name || !state.state_name) return false;
           if (seen.has(state.short_name)) return false;
           seen.add(state.short_name);
           return true;
@@ -200,21 +220,26 @@ const stateService = {
       throw error;
     }
   },
-  fetchStateDetails: async (state: string): Promise<StateList> => {
+  fetchStateDetails: async (state: string): Promise<StateDetails> => {
     try {
-      const state_detail = await client.fetch<StateList>(`*[_type == "state_list" && state_slug.current == $state][0]`, { state: state });
+      const state_detail = await client.fetch(STATE_DETAILS_QUERY, { state: state });
 
       if (state_detail) {
+        // urlForImage only needs the asset reference (it reads asset._ref); passing the
+        // whole image object would drag in the generated crop/hotspot types, whose fields
+        // are all-optional and don't satisfy sanity's stricter Image. Matches the
+        // urlForImage(x.asset) idiom used across the other services.
+        const asset = state_detail.state_map?.asset;
         return {
           ...state_detail,
           state_map: state_detail.state_map ? {
             ...state_detail.state_map,
             asset: {
               ...state_detail.state_map.asset,
-              image_url: urlForImage(state_detail.state_map)
+              image_url: asset ? urlForImage(asset) : ''
             }
           } : null
-        } as StateList;
+        };
       } else {
         throw new Error('Failed to fetch State Details');
       }
@@ -272,11 +297,12 @@ const stateService = {
   },
   fetchStateImage: async (state_slug: string): Promise<string> => {
     try {
-      const state_map = await client.fetch(`*[_type == "state_list" && state_slug.current == $state][0] { state_map }`, { state: state_slug });
-      if (!state_map?.state_map) {
+      const state_map = await client.fetch(STATE_IMAGE_QUERY, { state: state_slug });
+      const asset = state_map?.state_map?.asset;
+      if (!asset) {
         throw new Error('No state map found');
       }
-      return urlForImage(state_map.state_map);
+      return urlForImage(asset);
     } catch (error: any) {
       console.error('Error fetching State Image:', error);
       throw error;

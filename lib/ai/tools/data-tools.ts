@@ -2,6 +2,7 @@ import { tool } from 'ai';
 import { z } from 'zod';
 import stateService, {
   type StateList,
+  type StateDetails,
 } from '@/services/stateService';
 import { logError, logInfo } from '@/services/loggingService';
 import { stateInputSchema, type ToolResult } from '@/lib/ai/tools/types';
@@ -75,7 +76,7 @@ const getStateDetailsTool = tool({
   description:
     'Get details for a single US state by slug ("texas") or name ("Texas"). Use this when the user names a state and you need its Sanity record (display name, image, etc.).',
   inputSchema: stateInputSchema,
-  execute: async ({ state }): Promise<ToolResult<{ state: StateList }>> => {
+  execute: async ({ state }): Promise<ToolResult<{ state: StateDetails }>> => {
     try {
       const { state: matched } = await normalizeStateInput(state);
       if (!matched) {

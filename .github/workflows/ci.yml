@@ -33,6 +33,14 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+      - name: Sanity typegen drift check
+        # Regenerate the Sanity schema + GROQ result types and fail if they differ
+        # from what's committed. Catches a projection edit that wasn't paired with
+        # `npm run typegen` (the state_name-drop bug class) — a stale query string no
+        # longer maps to a generated type, so type-check alone can miss it.
+        run: |
+          npm run typegen
+          git diff --exit-code -- sanity.types.ts schema.json
       - name: Lint
         run: npm run lint
       - name: Type-check
