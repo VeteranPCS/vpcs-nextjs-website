@@ -131,7 +131,7 @@ export const mdxComponents: MDXComponents = {
           alt={alt ?? ''}
           width={800}
           height={450}
-          sizes="(min-width: 1280px) 800px, 100vw"
+          sizes="(min-width: 1536px) 1200px, (min-width: 1280px) 990px, 100vw"
           className="w-full h-auto rounded-xl object-cover my-6"
           {...rest}
         />
