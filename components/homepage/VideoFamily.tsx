@@ -55,11 +55,19 @@ const FamilyVideo = () => {
           return;
         }
         if (entry.isIntersecting) {
-          video.play().catch(() => {
-            // Autoplay blocked (e.g. iOS Low Power Mode) — fall back to
-            // showing the poster with manual playback controls.
-            autoplayFailedRef.current = true;
-            setShowControls(true);
+          video.play().catch((error: unknown) => {
+            // A pending play() can be interrupted by our own pause() call
+            // (e.g. scrolling quickly past the video) — that rejects with a
+            // benign AbortError, not a real autoplay denial. Only fall back
+            // to manual controls when the browser actually blocked autoplay
+            // (e.g. iOS Low Power Mode).
+            if (
+              error instanceof DOMException &&
+              (error.name === 'NotAllowedError' || error.name === 'NotSupportedError')
+            ) {
+              autoplayFailedRef.current = true;
+              setShowControls(true);
+            }
           });
         } else {
           video.pause();
