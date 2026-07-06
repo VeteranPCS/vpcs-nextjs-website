@@ -46,6 +46,16 @@ interface ApiParams {
     customHeader?: CustomHeaders;
 }
 
+// A Salesforce query endpoint carries its SOQL in the query string, which can include a
+// customer email in a WHERE clause. Because the URL is percent-encoded (`%40`), the log
+// sanitizer's email regex never matches it, so log only the path — enough to identify the
+// failing call without leaking PII into logs.
+const logSafeEndpoint = (url: string | undefined): string | undefined => {
+    if (!url) return url;
+    const queryStart = url.indexOf('?');
+    return queryStart === -1 ? url : url.slice(0, queryStart);
+};
+
 // ***** start - Api function for calling any type of APIs *****
 export const api = async ({
     endpoint,
@@ -72,7 +82,7 @@ export const api = async ({
         } else {
             // Network error (no HTTP response): log the real cause and rethrow it wrapped so
             // callers' existing catch/fallback paths still fire, but the cause is preserved.
-            logError('api network error', { endpoint: config.url, method: type }, err);
+            logError('api network error', { endpoint: logSafeEndpoint(config.url), method: type }, err);
             throw new Error('api request failed', { cause: err });
         }
     }
@@ -111,7 +121,7 @@ export const salesForceAPI = async ({
             res = err.response;
         } else {
             // Network error (no HTTP response): log the real cause and rethrow it wrapped.
-            logError('salesForceAPI network error', { endpoint: config.url, method: type }, err);
+            logError('salesForceAPI network error', { endpoint: logSafeEndpoint(config.url), method: type }, err);
             throw new Error('salesForceAPI request failed', { cause: err });
         }
     }

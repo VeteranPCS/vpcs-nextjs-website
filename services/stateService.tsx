@@ -225,18 +225,17 @@ const stateService = {
       const state_detail = await client.fetch(STATE_DETAILS_QUERY, { state: state });
 
       if (state_detail) {
-        // urlForImage only needs the asset reference (it reads asset._ref); passing the
-        // whole image object would drag in the generated crop/hotspot types, whose fields
-        // are all-optional and don't satisfy sanity's stricter Image. Matches the
-        // urlForImage(x.asset) idiom used across the other services.
-        const asset = state_detail.state_map?.asset;
+        // Pass the whole image object (not just its asset) to urlForImage so it honors the
+        // editor-configured crop/hotspot on the Sanity image; guard on asset presence so an
+        // image with no uploaded file yields '' rather than a broken URL.
+        const state_map = state_detail.state_map;
         return {
           ...state_detail,
-          state_map: state_detail.state_map ? {
-            ...state_detail.state_map,
+          state_map: state_map ? {
+            ...state_map,
             asset: {
-              ...state_detail.state_map.asset,
-              image_url: asset ? urlForImage(asset) : ''
+              ...state_map.asset,
+              image_url: state_map.asset ? urlForImage(state_map) : ''
             }
           } : null
         };
@@ -297,12 +296,13 @@ const stateService = {
   },
   fetchStateImage: async (state_slug: string): Promise<string> => {
     try {
-      const state_map = await client.fetch(STATE_IMAGE_QUERY, { state: state_slug });
-      const asset = state_map?.state_map?.asset;
-      if (!asset) {
+      const result = await client.fetch(STATE_IMAGE_QUERY, { state: state_slug });
+      const image = result?.state_map;
+      if (!image?.asset) {
         throw new Error('No state map found');
       }
-      return urlForImage(asset);
+      // Pass the full image object so urlForImage honors crop/hotspot (see fetchStateDetails).
+      return urlForImage(image);
     } catch (error: any) {
       console.error('Error fetching State Image:', error);
       throw error;
