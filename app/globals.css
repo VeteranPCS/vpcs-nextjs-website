@@ -70,21 +70,9 @@ select option:not([value=""]) {
   @apply z-nav top-nav-submenu left-0 absolute opacity-0 invisible transition-visibility duration-450;
 }
 
-@media screen and (max-width: 992px) {
-  .nav .sub-menu {
-    @apply -left-[170px];
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .nav .sub-menu {
-    @apply -left-[150px];
-  }
-}
-
-.nav li:hover>.sub-menu,
-.nav li:focus-within>.sub-menu,
-.nav .sub-menu:hover {
+/* Submenu opens via controlled React state (data-submenu-open) — the
+   desktop-only chevron toggle in components/Header.tsx sets this attribute. */
+.nav li[data-submenu-open="true"]>.sub-menu {
   @apply opacity-100 visible transition-visibility duration-300;
 }
 

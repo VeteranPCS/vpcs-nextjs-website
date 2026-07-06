@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import AgentCtaLink from "@/components/common/AgentCtaLink";
 import LenderCtaLink from "@/components/common/LenderCtaLink";
@@ -7,7 +8,10 @@ import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   const [cashBackAmount, setCashBackAmount] = useState("$500,000");
+  const submenuRef = useRef<HTMLLIElement>(null);
+  const pathname = usePathname();
   const navItemClass =
     "relative max-w-fit whitespace-nowrap pr-3 py-1 text-sm after:absolute after:bottom-0 after:left-0 after:h-1 after:w-0 after:bg-accent-red after:transition-all after:duration-300 hover:after:w-full focus-within:after:w-full min-[1400px]:pr-0 min-[1400px]:text-base";
   const navLinkClass =
@@ -30,6 +34,30 @@ const Header = () => {
 
     fetchMetrics();
   }, []);
+
+  // Close the Get Listed submenu on route change.
+  useEffect(() => {
+    setIsSubmenuOpen(false);
+  }, [pathname]);
+
+  // Close the Get Listed submenu on Escape or outside click (only while open).
+  useEffect(() => {
+    if (!isSubmenuOpen) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsSubmenuOpen(false);
+    };
+    const handlePointerDown = (event: PointerEvent) => {
+      if (submenuRef.current && !submenuRef.current.contains(event.target as Node)) {
+        setIsSubmenuOpen(false);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [isSubmenuOpen]);
 
   const onMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -63,7 +91,7 @@ const Header = () => {
           <div className="flex min-w-0 items-center lg:gap-5 xl:gap-7">
             <div
               id="primary-navigation"
-              className={`navLinks absolute top-full bg-primary px-5 py-5 min-[1400px]:static min-[1400px]:flex min-[1400px]:h-auto min-[1400px]:w-auto min-[1400px]:min-w-0 min-[1400px]:items-center min-[1400px]:bg-transparent min-[1400px]:px-0 min-[1400px]:py-0 ${isMenuOpen ? "left-0 flex h-[calc(100vh-64px)] w-[min(86vw,340px)] lg:h-[calc(100vh-80px)]" : "hidden"}`}
+              className={`navLinks absolute top-full bg-primary px-5 py-5 min-[1400px]:static min-[1400px]:flex min-[1400px]:h-auto min-[1400px]:w-auto min-[1400px]:min-w-0 min-[1400px]:items-center min-[1400px]:bg-transparent min-[1400px]:px-0 min-[1400px]:py-0 ${isMenuOpen ? "left-0 flex w-[min(86vw,340px)] max-h-[calc(100vh-64px)] supports-[height:100dvh]:max-h-[calc(100dvh-64px)] lg:max-h-[calc(100vh-80px)] lg:supports-[height:100dvh]:max-h-[calc(100dvh-80px)] overflow-y-auto" : "hidden"}`}
             >
               <ul className="menu nav flex flex-col gap-6 min-[1400px]:flex-row min-[1400px]:items-center min-[1400px]:gap-8">
                 <li className="min-[1400px]:hidden">
@@ -190,28 +218,95 @@ const Header = () => {
                     Contact
                   </TrackedCtaLink>
                 </li>
-                <li className={navItemClass}>
+                {/* Get Listed — plain inline items in the mobile drawer */}
+                <li className={`min-[1400px]:hidden ${navItemClass}`}>
                   <TrackedCtaLink
                     className={navLinkClass}
                     href="/get-listed-agents"
                     onClick={onMenuToggle}
                     cta={{
-                      ctaId: 'header_get_listed',
-                      ctaIntent: 'partner_recruiting',
-                      ctaPosition: 'primary_nav',
+                      ctaId: 'header_mobile_get_listed_agents',
+                      ctaIntent: 'partner_recruiting_agent',
+                      ctaPosition: 'mobile_primary_nav',
                       ctaComponent: 'site_header',
-                      ctaLabel: 'Get Listed',
+                      ctaLabel: 'Get Listed Agents',
                       destination: '/get-listed-agents',
                     }}
                   >
-                    Get Listed
+                    Get Listed Agents
                   </TrackedCtaLink>
-                  <ul className="sub-menu">
+                </li>
+                <li className={`min-[1400px]:hidden ${navItemClass}`}>
+                  <TrackedCtaLink
+                    className={navLinkClass}
+                    href="/get-listed-lenders"
+                    onClick={onMenuToggle}
+                    cta={{
+                      ctaId: 'header_mobile_get_listed_lenders',
+                      ctaIntent: 'partner_recruiting_lender',
+                      ctaPosition: 'mobile_primary_nav',
+                      ctaComponent: 'site_header',
+                      ctaLabel: 'Get Listed Lenders',
+                      destination: '/get-listed-lenders',
+                    }}
+                  >
+                    Get Listed Lenders
+                  </TrackedCtaLink>
+                </li>
+                {/* Get Listed — desktop split control: parent link + submenu toggle */}
+                <li
+                  ref={submenuRef}
+                  data-submenu-open={isSubmenuOpen}
+                  className={`hidden min-[1400px]:block ${navItemClass}`}
+                >
+                  <div className="flex items-center">
+                    <TrackedCtaLink
+                      className={navLinkClass}
+                      href="/get-listed-agents"
+                      cta={{
+                        ctaId: 'header_get_listed',
+                        ctaIntent: 'partner_recruiting',
+                        ctaPosition: 'primary_nav',
+                        ctaComponent: 'site_header',
+                        ctaLabel: 'Get Listed',
+                        destination: '/get-listed-agents',
+                      }}
+                    >
+                      Get Listed
+                    </TrackedCtaLink>
+                    <button
+                      type="button"
+                      onClick={() => setIsSubmenuOpen((open) => !open)}
+                      aria-expanded={isSubmenuOpen}
+                      aria-controls="get-listed-submenu"
+                      aria-label="Toggle Get Listed submenu"
+                      className="ml-1 inline-flex min-h-11 min-w-11 items-center justify-center text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        aria-hidden="true"
+                        className={`transition-transform duration-200 ${isSubmenuOpen ? "rotate-180" : ""}`}
+                      >
+                        <path
+                          d="M5 8L10 13L15 8"
+                          stroke="#FFFFFF"
+                          strokeWidth={2}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <ul className="sub-menu" id="get-listed-submenu">
                     <li className="px-10 py-3 text-white">
                       <TrackedCtaLink
                         className="text-base font-normal"
                         href="/get-listed-agents"
-                        onClick={onMenuToggle}
+                        onClick={() => setIsSubmenuOpen(false)}
                         cta={{
                           ctaId: 'header_get_listed_agents',
                           ctaIntent: 'partner_recruiting_agent',
@@ -229,7 +324,7 @@ const Header = () => {
                       <TrackedCtaLink
                         className="text-base font-normal"
                         href="/get-listed-lenders"
-                        onClick={onMenuToggle}
+                        onClick={() => setIsSubmenuOpen(false)}
                         cta={{
                           ctaId: 'header_get_listed_lenders',
                           ctaIntent: 'partner_recruiting_lender',
