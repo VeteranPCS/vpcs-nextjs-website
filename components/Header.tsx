@@ -36,9 +36,10 @@ const Header = () => {
     fetchMetrics();
   }, []);
 
-  // Close the Get Listed submenu on route change.
+  // Close the Get Listed submenu and the mobile drawer on route change.
   useEffect(() => {
     setIsSubmenuOpen(false);
+    setIsMenuOpen(false);
   }, [pathname]);
 
   // Close the Get Listed submenu on Escape or outside click (only while open).
