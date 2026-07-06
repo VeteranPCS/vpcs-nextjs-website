@@ -20,6 +20,7 @@ import {
 import { logError } from '@/services/loggingService';
 import { captureLeadConversionCreated } from '@/lib/analytics/server';
 import { evaluateLeadSpam } from '@/lib/spam-protection';
+import { updateSubmissionStatus } from '@/services/formTrackingService';
 
 vi.mock('server-only', () => ({}));
 
@@ -925,5 +926,269 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
     expect(keys).not.toContain('00NRg00000PjSD3MAN');
     expect(keys).not.toContain('00NRg00000PjSEfMAN');
     expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+});
+
+/**
+ * Observable-contract characterization for the seven simpler forms (everything the
+ * committed body-only tests above do NOT pin): return shape to the caller, the exact
+ * Slack payload, the success `updateSubmissionStatus` call, whether lead-conversion
+ * analytics fire, and that OpenPhone SMS never fires for a non-agent/lender form.
+ * Together with the byte-exact body tests above and the contactAgent/contactLender
+ * behavioral suite, this freezes contract axes (b)-(f) for all nine forms before the
+ * `submitWebToLead` consolidation, so the refactor can be proven behavior-preserving.
+ *
+ * One axis is deliberately NOT frozen here: the notification-failure *handling* idiom.
+ * The consolidation's single sanctioned delta is to fold contactAgent's
+ * Promise.allSettled + Slack `ok` inspection into the shared path so a failed Slack
+ * post is logged instead of silently discarded. These tests keep Slack on its default
+ * ok:true mock, so they pin dispatch + payload (which stay identical) without pinning
+ * the pre-refactor `.catch()` mechanism (which is allowed to change).
+ */
+describe('characterization: observable contract for the seven simpler forms', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal('fetch', vi.fn());
+    process.env.NEXT_PUBLIC_API_BASE_URL = 'https://www.veteranpcs.com';
+    process.env.OPEN_PHONE_FROM_NUMBER = '+17194153014';
+  });
+
+  function accept200() {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+  }
+
+  it('GetListedAgentsPostForm: {message} return, exact Slack payload, no OpenPhone, no capture', async () => {
+    accept200();
+    const result = await GetListedAgentsPostForm({
+      firstName: 'Test', lastName: 'Agent', email: 'agent@example.com', phone: '8035550100',
+    });
+
+    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New Agent Listing Request',
+      name: 'Test Agent',
+      email: 'agent@example.com',
+      phoneNumber: '8035550100',
+      message: '',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('GetListedLendersPostForm: {message} return, exact Slack payload, no OpenPhone, no capture', async () => {
+    accept200();
+    const result = await GetListedLendersPostForm({
+      firstName: 'Test', lastName: 'Lender', email: 'lender@example.com', phone: '8035550100',
+    });
+
+    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New Lender Listing Request',
+      name: 'Test Lender',
+      email: 'lender@example.com',
+      phoneNumber: '8035550100',
+      message: '',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('internshipFormSubmission: {message} return, empty Slack message, no OpenPhone, no capture', async () => {
+    accept200();
+    const result = await internshipFormSubmission({
+      first_name: 'Test', last_name: 'Intern', email: 'intern@example.com', mobile: '8035550100',
+    });
+
+    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New Internship Submission',
+      name: 'Test Intern',
+      email: 'intern@example.com',
+      phoneNumber: '8035550100',
+      message: '',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('KeepInTouchForm: {success,message,submissionId} return, Slack payload, capture keep_in_touch', async () => {
+    accept200();
+    const result = await KeepInTouchForm({
+      firstName: 'Test', lastName: 'Keep', email: 'keep@example.com', phone: '8035550100',
+    });
+
+    expect(result).toEqual({
+      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New Keep In Touch Submission',
+      name: 'Test Keep',
+      email: 'keep@example.com',
+      phoneNumber: '8035550100',
+      message: '',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).toHaveBeenCalledWith(
+      expect.objectContaining({
+        formId: 'keep_in_touch',
+        leadSource: 'Keep in Touch',
+        submissionId: 'submission-test-id',
+      }),
+    );
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('contactPostForm: {success,...} return, Slack message carries the comment, capture contact_form', async () => {
+    accept200();
+    const result = await contactPostForm({
+      firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
+      additionalComments: 'A contact message',
+    });
+
+    expect(result).toEqual({
+      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New Contact Form Submission',
+      name: 'Test Contact',
+      email: 'contact@example.com',
+      phoneNumber: '8035550100',
+      message: 'A contact message',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).toHaveBeenCalledWith(
+      expect.objectContaining({
+        formId: 'contact_form',
+        leadSource: 'Contact Form',
+        submissionId: 'submission-test-id',
+      }),
+    );
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('vaLoanGuideForm: {success,...} return, Slack payload, capture with guideId', async () => {
+    accept200();
+    const result = await vaLoanGuideForm({
+      firstName: 'Test', lastName: 'Va', email: 'va@example.com', phone: '8035550100',
+    });
+
+    expect(result).toEqual({
+      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New VA Loan Guide Download',
+      name: 'Test Va',
+      email: 'va@example.com',
+      phoneNumber: '8035550100',
+      message: '',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).toHaveBeenCalledWith(
+      expect.objectContaining({
+        formId: 'va_loan_guide',
+        leadSource: 'VA Loan Guide',
+        submissionId: 'submission-test-id',
+        guideId: 'va_loan_guide',
+      }),
+    );
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('homebuyerGuideForm: {success,...} return, Slack payload, capture with guideId', async () => {
+    accept200();
+    const result = await homebuyerGuideForm({
+      firstName: 'Test', lastName: 'Home', email: 'home@example.com', phone: '8035550100',
+    });
+
+    expect(result).toEqual({
+      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+    expect(sendToSlack).toHaveBeenCalledWith({
+      headerText: '🔔 New First Time Home Buyer Guide Download',
+      name: 'Test Home',
+      email: 'home@example.com',
+      phoneNumber: '8035550100',
+      message: '',
+    });
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).toHaveBeenCalledWith(
+      expect.objectContaining({
+        formId: 'first_time_homebuyer_guide',
+        leadSource: 'First Time Home Buyer Guide',
+        submissionId: 'submission-test-id',
+        guideId: 'first_time_homebuyer_guide',
+      }),
+    );
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+  });
+
+  it('spam-quarantined contactPostForm: tags the comment, still returns success, suppresses capture', async () => {
+    vi.mocked(evaluateLeadSpam).mockResolvedValueOnce({ quarantine: true, reasons: ['honeypot'] });
+    accept200();
+
+    const result = await contactPostForm({
+      firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
+      additionalComments: 'A contact message',
+    });
+
+    expect(result).toEqual({
+      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+    // Free-text field is tagged in the posted body and echoed into the Slack message.
+    expect(salesforceBody().get('00N4x00000bfgFA')).toBe('[SPAM-SUSPECTED] A contact message');
+    expect(sendToSlack).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headerText: '⚠️ SPAM-SUSPECTED — 🔔 New Contact Form Submission',
+        message: '[SPAM-SUSPECTED] A contact message',
+      }),
+    );
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+  });
+
+  it('spam-quarantined GetListedAgentsPostForm: tags tellusMore in the body, still submits', async () => {
+    vi.mocked(evaluateLeadSpam).mockResolvedValueOnce({ quarantine: true, reasons: ['honeypot'] });
+    accept200();
+
+    const result = await GetListedAgentsPostForm({
+      firstName: 'Test', lastName: 'Agent', email: 'agent@example.com', phone: '8035550100',
+      tellusMore: 'More info here',
+    });
+
+    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(salesforceBody().get('00N4x00000QPS7V')).toBe('[SPAM-SUSPECTED] More info here');
+    expect(sendToSlack).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headerText: '⚠️ SPAM-SUSPECTED — 🔔 New Agent Listing Request',
+      }),
+    );
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('contactPostForm on a Salesforce HTTP error: throws, no Slack, marks FAILURE', async () => {
+    mockSalesforceResponse('server error', { status: 500, statusText: 'Internal Server Error' });
+
+    await expect(
+      contactPostForm({
+        firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
+        additionalComments: 'A contact message',
+      }),
+    ).rejects.toThrow('Failed to submit form');
+
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(
+      vi.mocked(updateSubmissionStatus).mock.calls.some((call) => call[1] === 'FAILURE'),
+    ).toBe(true);
   });
 });
