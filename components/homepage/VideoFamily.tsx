@@ -17,6 +17,7 @@ const FamilyVideo = () => {
   });
   const videoRef = useRef<HTMLVideoElement>(null);
   const [showControls, setShowControls] = useState(false);
+  const autoplayFailedRef = useRef(false);
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -47,10 +48,17 @@ const FamilyVideo = () => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry) return;
+        if (autoplayFailedRef.current) {
+          // Autoplay already failed once — the user is now in control via
+          // the native controls, so don't fight them with further
+          // play()/pause() calls as the video scrolls in and out of view.
+          return;
+        }
         if (entry.isIntersecting) {
           video.play().catch(() => {
             // Autoplay blocked (e.g. iOS Low Power Mode) — fall back to
             // showing the poster with manual playback controls.
+            autoplayFailedRef.current = true;
             setShowControls(true);
           });
         } else {
