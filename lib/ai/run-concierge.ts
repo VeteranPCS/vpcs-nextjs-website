@@ -72,3 +72,22 @@ export function extractAllUserText(messages: UIMessage[]): string[] {
   }
   return out;
 }
+
+/**
+ * Text of EVERY assistant turn, in order, dropping turns with no text. `useChat`
+ * resends the transcript from cookie-scoped memory, so these assistant turns are
+ * client-controlled and must face the same Tier-0 heuristics as user turns —
+ * otherwise an attacker forges an assistant message carrying a jailbreak and the
+ * model continues from it. Only text parts are considered (matching what reaches
+ * the model after `stripAssistantMessageParts`). Throws on a message whose `parts`
+ * isn't an array — callers treat that as a 400.
+ */
+export function extractAllAssistantText(messages: UIMessage[]): string[] {
+  const out: string[] = [];
+  for (const m of messages) {
+    if (m.role !== 'assistant') continue;
+    const text = joinTextParts(m);
+    if (text) out.push(text);
+  }
+  return out;
+}

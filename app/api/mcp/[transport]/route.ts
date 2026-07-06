@@ -1,14 +1,17 @@
-import { createMcpHandler } from 'mcp-handler';
+import { createMcpHandler, withMcpAuth } from 'mcp-handler';
 import { z } from 'zod';
 import stateService from '@/services/stateService';
 import { getBlogBySlug, searchBlogs } from '@/lib/blog/mdx';
+import { mcpLimiter } from '@/lib/rate-limit';
+import { ipFromHeaders } from '@/lib/spam-protection';
+import { mcpEnabled, mcpMisconfigured, mcpErrorResult, verifyMcpToken } from '@/lib/mcp/auth';
+import { logError } from '@/services/loggingService';
 
+// node:crypto (timingSafeEqual, via lib/mcp/auth) requires the Node runtime.
+export const runtime = 'nodejs';
 export const maxDuration = 60;
 
-function errorResult(error: unknown) {
-  const message = error instanceof Error ? error.message : String(error);
-  return { content: [{ type: 'text' as const, text: `Error: ${message}` }] };
-}
+const errorResult = mcpErrorResult;
 
 function jsonResult(data: unknown) {
   return { content: [{ type: 'text' as const, text: JSON.stringify(data, null, 2) }] };
@@ -149,4 +152,38 @@ const handler = createMcpHandler(
   { basePath: '/api/mcp' },
 );
 
-export { handler as GET, handler as POST, handler as DELETE };
+// withMcpAuth's default is `required: false` (fail-OPEN). We MUST pass an explicit
+// `required: true` so a missing/invalid bearer becomes a 401 instead of an
+// unauthenticated pass-through. verifyMcpToken constant-time-compares against
+// MCP_AUTH_TOKEN and returns undefined on any mismatch.
+const authedHandler = withMcpAuth(
+  handler,
+  (_req, bearer) => verifyMcpToken(bearer),
+  { required: true },
+);
+
+// Route entry: flag gate -> fail-closed misconfig guard -> IP rate-limit -> auth.
+async function guardedHandler(req: Request): Promise<Response> {
+  if (!mcpEnabled()) {
+    return new Response('Not found', { status: 404 });
+  }
+
+  if (mcpMisconfigured()) {
+    logError('MCP: MCP_ENABLED is on but MCP_AUTH_TOKEN is unset — failing closed');
+    return new Response('MCP is temporarily unavailable.', { status: 503 });
+  }
+
+  const ip = ipFromHeaders(req.headers);
+  const limit = await mcpLimiter.limit(ip);
+  if (!limit.success) {
+    const retryAfter = Math.max(1, Math.ceil((limit.reset - Date.now()) / 1000));
+    return new Response('Too many requests', {
+      status: 429,
+      headers: { 'Retry-After': String(retryAfter) },
+    });
+  }
+
+  return authedHandler(req);
+}
+
+export { guardedHandler as GET, guardedHandler as POST, guardedHandler as DELETE };
