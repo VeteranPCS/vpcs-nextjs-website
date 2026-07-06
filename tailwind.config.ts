@@ -46,6 +46,7 @@ const config: Config = {
         'nav': '9999',
         'loader': '1000',
         'concierge': '8000',
+        'concierge-panel': '10000',
       },
       transitionProperty: {
         'visibility': 'visibility, opacity',

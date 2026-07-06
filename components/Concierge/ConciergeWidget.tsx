@@ -354,7 +354,7 @@ export default function ConciergeWidget() {
           role="dialog"
           aria-modal="true"
           aria-label={PANEL_TITLE}
-          className="fixed z-concierge bg-white shadow-2xl flex flex-col inset-0 sm:inset-auto sm:right-6 sm:bottom-20 sm:h-[min(560px,calc(100dvh-6rem))] sm:w-[380px] sm:rounded-xl overflow-hidden border border-gray-200"
+          className="fixed z-concierge-panel bg-white shadow-2xl flex flex-col inset-0 sm:inset-auto sm:right-6 sm:bottom-20 sm:h-[min(560px,calc(100dvh-6rem))] sm:w-[380px] sm:rounded-xl overflow-hidden border border-gray-200"
         >
           {/* Header */}
           <div className="bg-primary text-white px-4 py-3 flex items-center justify-between">
