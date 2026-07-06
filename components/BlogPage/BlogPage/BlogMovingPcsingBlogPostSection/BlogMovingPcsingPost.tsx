@@ -35,6 +35,7 @@ export default function BlogMovingPcsingPost({ blogDetails }: Props) {
               alt={heroAlt}
               width={310}
               height={280}
+              sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 100vw"
               className="w-full h-[280px] object-cover"
             />
             <div className="absolute inset-0 flex items-center justify-center">
