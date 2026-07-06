@@ -76,9 +76,26 @@ describe('POST /api/v1/bah — year validation', () => {
     expect(res.status).toBe(400);
   });
 
-  it('400s a non-4-digit year', async () => {
-    const res = await post({ year: '25', zipCode: '92101', rank: 'e1' });
+  it('accepts the 2-digit year the calculator UI sends and scrapes', async () => {
+    // components/BAHCalculator.tsx posts a 2-digit year (e.g. "26"); the scraper
+    // accepts it verbatim, so the route must not reject it.
+    const twoDigit = String(currentYear).slice(-2);
+    const res = await post({ year: twoDigit, zipCode: '92101', rank: 'e1' });
+    expect(res.status).toBe(200);
+    expect(extractBAHData).toHaveBeenCalledWith(twoDigit, '92101', 'e1');
+  });
+
+  it('400s a 2-digit year outside the window without scraping', async () => {
+    // "00" normalizes to 2000, far outside current ± 1.
+    const res = await post({ year: '00', zipCode: '92101', rank: 'e1' });
     expect(res.status).toBe(400);
+    expect(extractBAHData).not.toHaveBeenCalled();
+  });
+
+  it('400s a year that is neither 2 nor 4 digits without scraping', async () => {
+    const res = await post({ year: '202', zipCode: '92101', rank: 'e1' });
+    expect(res.status).toBe(400);
+    expect(extractBAHData).not.toHaveBeenCalled();
   });
 });
 

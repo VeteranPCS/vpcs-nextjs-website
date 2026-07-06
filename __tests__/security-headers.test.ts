@@ -83,6 +83,12 @@ describe('Content-Security-Policy (enforced)', () => {
     expect(csp).toContain('https://veteranpcs.my.salesforce.com');
     expect(csp).toContain('https://lh3.googleusercontent.com');
     expect(csp).toContain('https://www.youtube-nocookie.com');
+    // GTM-injected third-party tags allowlisted so production tracking keeps working
+    // (Microsoft Clarity, Ahrefs, Google Ads / DoubleClick).
+    expect(csp).toContain('https://www.clarity.ms');
+    expect(csp).toContain('https://analytics.ahrefs.com');
+    expect(csp).toContain('https://www.googleadservices.com');
+    expect(csp).toContain('https://*.doubleclick.net');
     // the tighter site policy must NOT carry the Studio-only escape hatch
     expect(csp).not.toContain("'unsafe-eval'");
   });

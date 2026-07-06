@@ -9,18 +9,28 @@ import { withBotId } from 'botid/next/config';
 // emotion/MUI, styled-components, AOS); a nonce cannot cover those cleanly here.
 // Salesforce/Slack/OpenPhone/Anthropic are server-side only, so they are not
 // listed in connect-src (the browser only ever talks to first-party endpoints).
+//
+// GTM is a tag LOADER: it injects third-party tags at runtime that a static
+// allowlist can't infer. The tags live on production today — Microsoft Clarity
+// (*.clarity.ms), Ahrefs Analytics (analytics.ahrefs.com) and the Google Ads /
+// DoubleClick conversion + remarketing stack — so they are allowlisted here to
+// avoid breaking anything that works now. The doubleclick.net / googlesyndication
+// families are wildcarded ONLY in the non-script directives (they can't execute
+// code there); script-src stays pinned to specific origins. Vercel's preview
+// toolbar (vercel.live) is intentionally NOT listed — it is preview-only, not a
+// production dependency.
 const siteCsp = `
   default-src 'self';
   base-uri 'self';
   object-src 'none';
   form-action 'self';
   frame-ancestors 'self';
-  script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://va.vercel-scripts.com https://us-assets.i.posthog.com;
+  script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://va.vercel-scripts.com https://us-assets.i.posthog.com https://www.clarity.ms https://*.clarity.ms https://analytics.ahrefs.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://adservice.google.com;
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob: https://cdn.sanity.io https://veteranpcs.my.salesforce.com https://lh3.googleusercontent.com https://www.googletagmanager.com https://www.google-analytics.com;
+  img-src 'self' data: blob: https://cdn.sanity.io https://veteranpcs.my.salesforce.com https://lh3.googleusercontent.com https://www.googletagmanager.com https://www.google-analytics.com https://*.clarity.ms https://www.google.com https://*.doubleclick.net https://*.g.doubleclick.net https://pagead2.googlesyndication.com https://www.googleadservices.com;
   font-src 'self' data:;
-  connect-src 'self' https://us.i.posthog.com https://us-assets.i.posthog.com https://us.posthog.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://vitals.vercel-insights.com;
-  frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com;
+  connect-src 'self' https://us.i.posthog.com https://us-assets.i.posthog.com https://us.posthog.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://vitals.vercel-insights.com https://*.clarity.ms https://analytics.ahrefs.com https://www.google.com https://*.doubleclick.net https://*.g.doubleclick.net https://www.googleadservices.com https://pagead2.googlesyndication.com https://ade.googlesyndication.com https://cct.google;
+  frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com https://*.doubleclick.net https://*.g.doubleclick.net https://www.googleadservices.com https://www.google.com;
   worker-src 'self' blob:;
   upgrade-insecure-requests;
 `;

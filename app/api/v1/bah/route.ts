@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { extractBAHData, RANK_MAPPING, BAHData } from '@/lib/bah-scraper';
+import { toFourDigitYear } from '@/lib/bah-scraper-core.mjs';
 import { bahLimiter } from '@/lib/rate-limit';
 import { ipFromHeaders } from '@/lib/spam-protection';
 
@@ -18,14 +19,15 @@ interface BAHResponse {
 }
 
 /**
- * `year` reaches the DTMO scraper (which converts it to the 2-digit wire format),
- * so it must be a plain 4-digit calendar year — this both rejects injection
- * payloads (e.g. `2025 OR 1=1`) and bounds the value to years DTMO actually
- * publishes. Allowed window is the current year ± 1.
+ * The BAH calculator UI sends a 2-digit calendar year (e.g. `"26"`), and the DTMO
+ * scraper also accepts a 4-digit year (it converts to the 2-digit wire format
+ * itself via `toDtmoYear`). Accept EITHER exact shape and reject everything else,
+ * which still blocks injection payloads (e.g. `2026 OR 1=1`). Bound the normalized
+ * 4-digit value to the window DTMO actually publishes: the current year ± 1.
  */
 function isValidBahYear(year: string): boolean {
-    if (!/^\d{4}$/.test(year)) return false;
-    const value = Number(year);
+    if (!/^(\d{2}|\d{4})$/.test(year)) return false;
+    const value = Number(toFourDigitYear(year));
     const current = new Date().getFullYear();
     return value >= current - 1 && value <= current + 1;
 }

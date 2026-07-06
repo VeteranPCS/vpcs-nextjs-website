@@ -201,16 +201,40 @@ export function parseChatRequest(raw: unknown): ParseChatRequestResult {
   };
 }
 
+// The AI SDK tool-approval flow (tools with `needsApproval: true`, e.g. the lead
+// submit tools) round-trips the approval decision THROUGH the assistant transcript:
+// after the user clicks "Yes, send it", `useChat` resends the assistant turn with
+// its `tool-*` part in `approval-responded` state, and `convertToModelMessages` needs
+// that part to emit the `tool-approval-response` that actually runs the tool
+// server-side. These two handshake states carry only the approve/deny decision —
+// never fabricated tool OUTPUT (the real output is produced server-side AFTER
+// approval) — so preserving them cannot smuggle forged data into the model, unlike
+// an `output-available` part. `input-*`/`output-*` states stay stripped.
+const APPROVAL_HANDSHAKE_STATES = new Set(['approval-requested', 'approval-responded']);
+
+function isApprovalHandshakePart(part: unknown): boolean {
+  const p = part as { type?: unknown; state?: unknown };
+  return (
+    isToolPartType(p?.type)
+    && typeof p?.state === 'string'
+    && APPROVAL_HANDSHAKE_STATES.has(p.state)
+  );
+}
+
 /**
- * Reduce every assistant message to its plain-text parts before the model runs.
+ * Reduce every assistant message to its plain-text parts (plus the approval
+ * handshake) before the model runs.
  *
  * `useChat` resends the full transcript from cookie-scoped memory, so the client
  * controls the assistant turns it echoes back. An attacker can forge assistant
  * content — tool-call / tool-result parts that fabricate data, reasoning blocks,
  * files — and the model would treat it as its own prior output. We cannot reject
  * assistant messages (the resent transcript is legitimate), so we strip them: only
- * `text` parts survive; every non-text part is dropped. An assistant turn that was
- * nothing but a tool call collapses to an empty `parts: []`, which
+ * `text` parts survive, PLUS `tool-*` parts in an approval-handshake state
+ * (`approval-requested` / `approval-responded`) — those are required for
+ * approval-gated tools (lead submission) to execute and carry no fabricated output.
+ * Every other non-text part is dropped. An assistant turn that was nothing but a
+ * forged tool result collapses to an empty `parts: []`, which
  * `convertToModelMessages` safely skips.
  *
  * TODO(security): the durable fix is a server-held / signed transcript so the client
@@ -222,11 +246,13 @@ export function stripAssistantMessageParts(messages: UIMessage[]): UIMessage[] {
     if (message.role !== 'assistant') return message;
     const parts = (message as { parts?: unknown }).parts;
     if (!Array.isArray(parts)) return message;
-    const textParts = parts.filter(
-      (p) =>
-        (p as { type?: unknown })?.type === 'text'
-        && typeof (p as { text?: unknown }).text === 'string',
-    );
-    return { ...message, parts: textParts } as UIMessage;
+    const keptParts = parts.filter((p) => {
+      const type = (p as { type?: unknown })?.type;
+      if (type === 'text' && typeof (p as { text?: unknown }).text === 'string') {
+        return true;
+      }
+      return isApprovalHandshakePart(p);
+    });
+    return { ...message, parts: keptParts } as UIMessage;
   });
 }
