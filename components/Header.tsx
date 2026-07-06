@@ -68,11 +68,11 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed left-0 top-0 z-50 w-full bg-primary px-5 shadow-lg min-[1400px]:px-0">
+    <header className="fixed left-0 top-0 z-nav w-full bg-primary px-5 shadow-lg min-[1400px]:px-0">
       <div className="container mx-auto w-full">
         <nav className="flex min-h-[64px] justify-between lg:min-h-[80px]" aria-label="Primary navigation">
           <TrackedCtaLink
-            className="flex w-[130px] shrink-0 items-center md:w-[190px] xl:w-[200px]"
+            className="flex w-[130px] shrink-0 items-center md:w-[205px] xl:w-[220px] 2xl:w-[235px]"
             href="/"
             onClick={isMenuOpen ? onMenuToggle : undefined}
             cta={{
@@ -88,7 +88,7 @@ const Header = () => {
               width={235}
               height={63}
               src="/icon/VeteranPCSlogo.svg"
-              className="h-auto w-[200px] md:w-[205px] xl:w-[220px] 2xl:w-[235px]"
+              className="w-full h-auto"
               alt="VeteranPCS logo"
             />
           </TrackedCtaLink>
@@ -98,7 +98,7 @@ const Header = () => {
               className={`navLinks absolute top-full bg-primary px-5 py-5 min-[1400px]:static min-[1400px]:flex min-[1400px]:h-auto min-[1400px]:w-auto min-[1400px]:min-w-0 min-[1400px]:items-center min-[1400px]:bg-transparent min-[1400px]:px-0 min-[1400px]:py-0 ${isMenuOpen ? "left-0 flex w-[min(86vw,340px)] max-h-[calc(100vh-64px)] supports-[height:100dvh]:max-h-[calc(100dvh-64px)] lg:max-h-[calc(100vh-80px)] lg:supports-[height:100dvh]:max-h-[calc(100dvh-80px)] overflow-y-auto" : "hidden"}`}
             >
               <ul className="menu nav flex flex-col gap-6 min-[1400px]:flex-row min-[1400px]:items-center min-[1400px]:gap-8">
-                <li className="min-[1400px]:hidden">
+                <li className="lg:hidden">
                   <AgentCtaLink
                     className="inline-flex min-h-11 rounded-2xl bg-accent-red px-5 py-3 text-white transition-colors hover:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                     onClick={onMenuToggle}
@@ -348,7 +348,7 @@ const Header = () => {
             </div>
             <div className="flex items-center gap-2">
               <AgentCtaLink
-                className="hidden min-h-11 shrink-0 items-center rounded-2xl bg-accent-red px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white min-[1400px]:inline-flex"
+                className="hidden min-h-11 shrink-0 items-center rounded-2xl bg-accent-red px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex"
                 ctaId="header_desktop_find_agent"
                 ctaPosition="desktop_primary_cta"
                 ctaComponent="site_header"
