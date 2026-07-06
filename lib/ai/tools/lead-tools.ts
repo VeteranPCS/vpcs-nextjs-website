@@ -25,7 +25,7 @@ interface LeadSuccess {
 }
 
 const SUBMIT_REQUIRED =
-  'Required: first name, last name, email, phone. The SDK-level approval gate handles confirmation — emit the call when the user has provided the required fields.';
+  'Required: first name, last name, email, phone. Confirm with the user in plain words first and wait for a yes, then emit the call; the SDK-level approval card is the final gate shown before anything is sent.';
 
 function errorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;

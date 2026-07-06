@@ -32,7 +32,7 @@ import { MODELS } from '@/lib/ai/models';
 
 describe('MODELS', () => {
   it('exposes chat, guardrail, and judge model ids', () => {
-    expect(MODELS.chat).toBe('anthropic/claude-sonnet-4-6');
+    expect(MODELS.chat).toBe('anthropic/claude-sonnet-4.6');
     expect(MODELS.guardrail).toBe('anthropic/claude-haiku-4-5');
     expect(MODELS.judge).toBe('anthropic/claude-haiku-4-5');
   });
@@ -50,7 +50,7 @@ Replace the contents of `lib/ai/models.ts`:
 
 ```ts
 export const MODELS = {
-  chat: 'anthropic/claude-sonnet-4-6',
+  chat: 'anthropic/claude-sonnet-4.6',
   guardrail: 'anthropic/claude-haiku-4-5', // Tier-1 input classifier
   judge: 'anthropic/claude-haiku-4-5', // eval LLM-as-judge
 } as const;
@@ -102,7 +102,7 @@ import type { UIMessage } from 'ai';
 describe('buildConciergeConfig', () => {
   it('uses the chat model and brand-voice system prompt by default', () => {
     const config = buildConciergeConfig();
-    expect(config.model).toBe('anthropic/claude-sonnet-4-6');
+    expect(config.model).toBe('anthropic/claude-sonnet-4.6');
     expect(config.system).toContain('VeteranPCS Concierge');
     expect(config.tools).toHaveProperty('getAgentsForState');
     expect(config.stopWhen).toBeDefined();

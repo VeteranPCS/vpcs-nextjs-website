@@ -15,6 +15,8 @@
 // Process exit:
 //   0 - clean (no findings) OR --strict not set
 //   1 - findings present AND --strict set (use in CI)
+//   1 - a banned byline ("The VeteranPCS Team") appears in body copy — ALWAYS,
+//       even without --strict. This is the `npm run lint:content` hard gate.
 
 import {
   mkdirSync,
@@ -61,6 +63,15 @@ const REDIRECTED_PREFIXES = [
 // Person-name shape we can resolve via lib/blog/authors.ts:querySalesforceByName.
 // Roughly: "First Last" or "First Middle Last" - no &, no commas, each word capitalized.
 const PERSON_NAME_RE = /^[A-Z][A-Za-z'’-]+(?: [A-Z][A-Za-z'’-]+){1,3}$/;
+
+// The default byline is "VeteranPCS", never "the VeteranPCS Team". The phrase is
+// banned in body copy as well as bylines, in any casing ("The VeteranPCS Team",
+// "reviewed by the VeteranPCS team", etc.). Matched case-insensitively. The trailing
+// (?![a-z]) keeps the verb phrase "VeteranPCS teams up ..." (plural) from matching
+// while still catching markdown-italic sign-offs like "_From the VeteranPCS Team_"
+// (a trailing \b would fail there, since "_" is a word char). Unlike the editorial
+// bands above, a hit here fails `npm run lint:content` unconditionally (see main()).
+const BANNED_BYLINE_RE = /VeteranPCS team(?![a-z])/i;
 
 function readPosts() {
   if (!existsSync(CONTENT_DIR)) return [];
@@ -123,6 +134,18 @@ function findRedirectedLinks(md) {
       hits.push(href);
     }
   }
+  return hits;
+}
+
+function findBannedBylines(md) {
+  // Scan raw body copy (not fence-stripped) so a banned byline anywhere counts.
+  const lines = md.split('\n');
+  const hits = [];
+  lines.forEach((line, idx) => {
+    if (BANNED_BYLINE_RE.test(line)) {
+      hits.push({ line: idx + 1, text: line.trim().slice(0, 100) });
+    }
+  });
   return hits;
 }
 
@@ -213,6 +236,18 @@ function evaluatePost(post) {
       severity: 'low',
       detail: `${redirected.length} link${redirected.length === 1 ? '' : 's'} to redirected blog paths (each adds a 301 hop)`,
       hits: redirected.slice(0, 5),
+    });
+  }
+
+  // 8. Banned byline in body copy - default byline is "VeteranPCS", never
+  //    "The VeteranPCS Team". Hard CI gate (see main()).
+  const bannedBylines = findBannedBylines(md);
+  if (bannedBylines.length > 0) {
+    findings.push({
+      kind: 'banned-byline',
+      severity: 'high',
+      detail: `${bannedBylines.length} banned byline reference${bannedBylines.length === 1 ? '' : 's'} in body copy (use "VeteranPCS", never "The VeteranPCS Team")`,
+      hits: bannedBylines.slice(0, 3),
     });
   }
 
@@ -340,6 +375,18 @@ function main() {
     `Summary: ${report.postsWithFindings}/${report.postsScanned} posts have findings ` +
       `(high:${report.totals.severity.high} med:${report.totals.severity.medium} low:${report.totals.severity.low})`,
   );
+
+  // Banned bylines are a hard gate: they fail even without --strict, so
+  // `npm run lint:content` (no flag) blocks them in CI while other editorial
+  // findings stay advisory unless --strict is passed.
+  const hasBannedByline = allFindings.some((f) => f.kind === 'banned-byline');
+  if (hasBannedByline) {
+    console.error(
+      'ERROR: banned byline "The VeteranPCS Team" found in body copy. ' +
+        'The default byline is "VeteranPCS". Fix before merging.',
+    );
+    process.exitCode = 1;
+  }
 
   if (args.strict && allFindings.length > 0) process.exitCode = 1;
 }
