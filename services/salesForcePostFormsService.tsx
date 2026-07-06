@@ -263,108 +263,425 @@ async function captureAcceptedCustomerLead(args: {
     });
 }
 
-export async function contactAgentPostForm(formData: any, queryString: string, options?: InternalCallOptions) {
-    // Start tracking the submission
-    const submissionId = await trackFormSubmission(
-        'contactAgent',
-        formData,
-        FormSubmissionStatus.PENDING
+const SALESFORCE_WEB_TO_LEAD_URL =
+    "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8";
+
+type SpamEvaluation = Awaited<ReturnType<typeof evaluateLeadSpam>>;
+
+/**
+ * Shared runtime context handed to every Web-to-Lead config callback. Only Family A
+ * (contact-agent / contact-lender) populates `paramsObj`, `webFormUrl`, `effectiveState`,
+ * and `agentInfo`; the other families leave them at their empty defaults and never read them.
+ */
+interface WebToLeadContext {
+    formData: any;
+    spam: SpamEvaluation;
+    submissionId: string;
+    paramsObj: Record<string, string>;
+    webFormUrl: string;
+    effectiveState: EffectiveLeadState | null;
+    agentInfo: any;
+}
+
+/**
+ * Family A extras: query-string parsing, state derivation, Lead-owner routing, an agent
+ * fetch, and a partner OpenPhone SMS. Present only on the two contact-partner configs.
+ */
+interface WebToLeadLocation {
+    partner: 'agent' | 'lender';
+    path: 'contact-agent' | 'contact-lender';
+    leadSource: 'Contact Agent' | 'Contact Lender';
+    buildSms: (ctx: WebToLeadContext) => Parameters<typeof sendOpenPhoneMessage>[0];
+}
+
+interface WebToLeadCapture {
+    formId: string;
+    leadSource: string;
+    guideId?: string;
+    partnerType?: 'agent' | 'lender';
+}
+
+interface WebToLeadConfig<TResult> {
+    formType: string;
+    processingMessage: string;
+    schema: Parameters<typeof parseLeadForm>[0];
+    spamFreeTextField?: string;
+    location?: WebToLeadLocation;
+    buildParams: (ctx: WebToLeadContext) => URLSearchParams;
+    buildSlack: (ctx: WebToLeadContext) => Parameters<typeof sendToSlack>[0];
+    capture?: WebToLeadCapture;
+    buildResult: (redirectUrl: string | undefined, submissionId: string) => TResult;
+}
+
+/**
+ * Identity helper: returns the config unchanged but gives each callback its contextual
+ * parameter types and infers `TResult` from `buildResult`.
+ */
+function defineWebToLeadConfig<TResult>(config: WebToLeadConfig<TResult>): WebToLeadConfig<TResult> {
+    return config;
+}
+
+// ── Inline Web-to-Lead body builders (Families B & C) ───────────────────────────────
+// Each preserves the exact field insertion order of the original inline block. The
+// characterization suite pins these ordered bodies byte-for-byte, so insertion order is
+// load-bearing (internship uniquely emits `recordType` BEFORE `retURL`).
+
+function buildGetListedAgentsParams(formData: any): URLSearchParams {
+    return new URLSearchParams({
+        oid: SF_ORG_ID,
+        retURL: `${BASE_URL}/thank-you`,
+        recordType: SF_RECORD_TYPE.AGENT_LISTING_LEAD,
+        lead_source: "Agent Listing Request",
+        "00N4x00000Lsr0G": "true",
+        country_code: "US",
+        "00N4x00000QQ1LB": `${BASE_URL}/get-listed-agents`,
+        first_name: formData.firstName || "",
+        last_name: formData.lastName || "",
+        email: formData.email || "",
+        mobile: formData.phone || "",
+        "00N4x00000LsnP2": formData.status_select || "",
+        "00N4x00000LsnOx": formData.branch_select || "",
+        "00N4x00000QQ0Vz": formData.discharge_status || "",
+        "state_code": formData.state || "",
+        "city": formData.city || "",
+        "00N4x00000LpcBo": formData.primaryState || "",
+        "00N4x00000QPIOt": Array.isArray(formData.otherStates) ? formData.otherStates.join(';') : formData.otherStates || "",
+        "00N4x00000LpcCm": formData.licenseNumber || "",
+        "00N4x00000LpcCr": formData.brokerageName || "",
+        "00N4x00000c4kPN": formData.managingBrokerName || "",
+        "00N4x00000c4kPS": formData.managingBrokerPhone || "",
+        "00N4x00000c4kPX": formData.managingBrokerEmail || "",
+        "00N4x00000LsqCV": formData.citiesServiced || "",
+        "00N4x00000LsqCa": formData.basesServiced || "",
+        "00N4x00000LpcDQ": formData.personallyPCS || "",
+        "00N4x00000LpcDV": formData.leadAcceptance || "",
+        "00N4x00000QPksj": formData.howDidYouHear || "",
+        "00N4x00000QPS7V": formData.tellusMore || "",
+        "g-recaptcha-response": "",
+        "captcha_settings": "",
+    });
+}
+
+function buildGetListedLendersParams(formData: any): URLSearchParams {
+    return new URLSearchParams({
+        oid: SF_ORG_ID,
+        retURL: `${BASE_URL}/thank-you`,
+        recordType: SF_RECORD_TYPE.LENDER_LISTING_LEAD,
+        lead_source: "Lender Listing Request",
+        "00N4x00000Lsr0G": "true",
+        country_code: "US",
+        "00N4x00000QQ1LB": `${BASE_URL}/get-listed-lenders`,
+        first_name: formData.firstName || "",
+        last_name: formData.lastName || "",
+        email: formData.email || "",
+        mobile: formData.phone || "",
+        "00N4x00000LsnP2": formData.status_select || "",
+        "00N4x00000LsnOx": formData.branch_select || "",
+        "00N4x00000QQ0Vz": formData.discharge_status || "",
+        "00N4x00000LpcBo": formData.primaryState || "",
+        "00N4x00000QPIOt": Array.isArray(formData.otherStates) ? formData.otherStates.join(';') : formData.otherStates || "",
+        "00N4x00000LsqCV": formData.localCities || "",
+        "00N4x00000QPIOZ": formData.nmlsId || "",
+        "00N4x00000LpcCr": formData.name || "",
+        "street": formData.street || "",
+        "state_code": formData.state || "",
+        "city": formData.city || "",
+        "zip": formData.zip || "",
+        "00N4x00000QPIOe": formData.companyNMLSId || "",
+        "00N4x00000QPksj": formData.howDidYouHear || "",
+        "00N4x00000QPS7V": formData.tellusMore || "",
+        "g-recaptcha-response": "",
+        "captcha_settings": "",
+    });
+}
+
+function buildKeepInTouchParams(formData: any, submissionId: string): URLSearchParams {
+    const params = new URLSearchParams({
+        oid: SF_ORG_ID,
+        retURL: `${BASE_URL}/thank-you`,
+        recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
+        lead_source: "Keep in Touch",
+        first_name: formData.firstName || "",
+        last_name: formData.lastName || "",
+        email: formData.email || "",
+        "g-recaptcha-response": "",
+        "captcha_settings": "",
+    });
+    return appendSalesforceAttributionParams(params, formData, submissionId);
+}
+
+function buildContactParams(formData: any, submissionId: string): URLSearchParams {
+    const params = new URLSearchParams({
+        oid: SF_ORG_ID,
+        retURL: `${BASE_URL}/thank-you`,
+        recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
+        lead_source: "Contact Form",
+        first_name: formData.firstName || "",
+        last_name: formData.lastName || "",
+        email: formData.email || "",
+        "00N4x00000bfgFA": formData.additionalComments || "",
+        "g-recaptcha-response": "",
+        "captcha_settings": "",
+    });
+    return appendSalesforceAttributionParams(params, formData, submissionId);
+}
+
+function buildVaLoanGuideParams(formData: any, submissionId: string): URLSearchParams {
+    const params = new URLSearchParams({
+        oid: SF_ORG_ID,
+        retURL: `${BASE_URL}/thank-you`,
+        recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
+        lead_source: "VA Loan Guide",
+        first_name: formData.firstName || "",
+        last_name: formData.lastName || "",
+        email: formData.email || "",
+        "g-recaptcha-response": "",
+        "captcha_settings": "",
+    });
+    return appendSalesforceAttributionParams(params, formData, submissionId);
+}
+
+function buildHomebuyerGuideParams(formData: any, submissionId: string): URLSearchParams {
+    const params = new URLSearchParams({
+        oid: SF_ORG_ID,
+        retURL: `${BASE_URL}/thank-you`,
+        recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
+        lead_source: "First Time Home Buyer Guide",
+        first_name: formData.firstName || "",
+        last_name: formData.lastName || "",
+        email: formData.email || "",
+        "g-recaptcha-response": "",
+        "captcha_settings": "",
+    });
+    return appendSalesforceAttributionParams(params, formData, submissionId);
+}
+
+function buildInternshipParams(formData: any): URLSearchParams {
+    return new URLSearchParams({
+        oid: SF_ORG_ID,
+        recordType: SF_RECORD_TYPE.INTERNSHIP_LEAD,
+        retURL: `${BASE_URL}/thank-you`,
+        lead_source: "Internship Application",
+        "00N4x00000Lsr0G": "true",
+        country_code: "US",
+        first_name: formData.first_name || "",
+        last_name: formData.last_name || "",
+        email: formData.email || "",
+        mobile: formData.mobile || "",
+        "00N4x00000LsnP2": formData["00N4x00000LsnP2"] || "",
+        "00N4x00000LsnOx": formData["00N4x00000LsnOx"] || "",
+        "00N4x00000QQ0Vz": Array.isArray(formData["00N4x00000QQ0Vz"]) ? formData["00N4x00000QQ0Vz"][0] : formData["00N4x00000QQ0Vz"] || "",
+        state_code: formData.state_code || "",
+        city: formData.city || "",
+        base: formData.base || "",
+        "00N4x00000QPK7L": formData["00N4x00000QPK7L"] || "",
+        "00N4x00000LspV2": formData["00N4x00000LspV2"] || "",
+        "00N4x00000LspUi": formData["00N4x00000LspUi"] || "",
+        "00N4x00000QPLQY": formData["00N4x00000QPLQY"] || "",
+        "00N4x00000QPLQd": formData["00N4x00000QPLQd"] || "",
+        "00N4x00000QPksj": formData["00N4x00000QPksj"] || "",
+        "00N4x00000QPS7V": formData["00N4x00000QPS7V"] || "",
+        "g-recaptcha-response": "",
+        "captcha_settings": "",
+    });
+}
+
+/**
+ * Family A partner SMS. The contact-agent and contact-lender templates are identical,
+ * so both configs share this single builder.
+ */
+function buildContactPartnerSms(ctx: WebToLeadContext): Parameters<typeof sendOpenPhoneMessage>[0] {
+    const { formData, effectiveState, agentInfo } = ctx;
+    return {
+        content: `New Lead From VeteranPCS:
+${formData.firstName} ${formData.lastName}
+Email: ${formData.email}
+Phone: ${formatPhoneNumberForDisplay(formData.phone)}
+Destination State: ${effectiveState!.label}
+${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
+${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
+${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
+        from: getAdminPhoneNumberForState(effectiveState!.slug),
+        to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)],
+    };
+}
+
+/**
+ * Shared notification path for all nine forms. Slack is dispatched first, then (Family A
+ * only, and only when not spam-quarantined) the partner OpenPhone SMS. A rejected promise
+ * or a Slack `ok !== true` result is logged uniformly instead of being swallowed.
+ */
+async function dispatchNotifications(params: {
+    submissionId: string;
+    slackArg: Parameters<typeof sendToSlack>[0];
+    smsArg?: Parameters<typeof sendOpenPhoneMessage>[0];
+}): Promise<void> {
+    const { submissionId, slackArg, smsArg } = params;
+
+    const notificationTasks: Array<{ name: 'Slack' | 'OpenPhone'; promise: Promise<unknown> }> = [
+        { name: 'Slack', promise: sendToSlack(slackArg) },
+    ];
+
+    if (smsArg) {
+        notificationTasks.push({ name: 'OpenPhone', promise: sendOpenPhoneMessage(smsArg) });
+    }
+
+    const notificationResults = await Promise.allSettled(
+        notificationTasks.map((task) => task.promise),
     );
 
-    logInfo('Processing contact agent form submission', {
-        submissionId,
-        agent_id: new URLSearchParams(queryString).get('id')
+    notificationResults.forEach((result, index) => {
+        const task = notificationTasks[index];
+        if (result.status === 'rejected') {
+            logError(`${task.name} notification failed`, { submissionId }, result.reason);
+            return;
+        }
+
+        if (task.name === 'Slack') {
+            const slackResult = result.value as { ok?: boolean; error?: unknown };
+            if (slackResult?.ok !== true) {
+                logError(
+                    'Slack notification failed',
+                    { submissionId, error: slackResult?.error },
+                    new Error(`Slack returned ok=${String(slackResult?.ok)}`),
+                );
+                return;
+            }
+        }
+
+        logInfo(`${task.name} notification accepted`, { submissionId });
     });
+}
+
+/**
+ * Single Web-to-Lead submission engine shared by all nine lead forms. The nine exports
+ * are thin wrappers around this: their differences live entirely in the config they pass.
+ */
+async function submitWebToLead<TResult>(
+    config: WebToLeadConfig<TResult>,
+    formData: any,
+    runtime?: { queryString?: string; options?: InternalCallOptions },
+): Promise<TResult> {
+    const options = runtime?.options;
+    const queryString = runtime?.queryString ?? '';
+
+    const submissionId = await trackFormSubmission(
+        config.formType,
+        formData,
+        FormSubmissionStatus.PENDING,
+    );
+
+    logInfo(config.processingMessage, { submissionId });
 
     try {
-        // Validate and normalize the payload before processing. Invalid data (no usable
-        // email or phone, etc.) is a HARD reject below — never written to Salesforce.
-        const validation = parseLeadForm(contactAgentSchema, formData);
+        // Validate and normalize the payload before processing. Invalid data is a HARD
+        // reject here — never written to Salesforce.
+        const validation = parseLeadForm(config.schema, formData);
         if (!validation.ok) {
-            logError('Invalid contactAgent submission', { submissionId, errors: validation.errors });
+            logError(`Invalid ${config.formType} submission`, { submissionId, errors: validation.errors });
             throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
         }
         formData = validation.data;
 
-        const paramsObj: { [key: string]: string } = {};
-        new URLSearchParams(queryString).forEach((value, key) => {
-            paramsObj[key] = value;
-        });
-
-        const effectiveState = getEffectiveLeadState(formData.state, paramsObj.state);
-        if (!effectiveState) {
-            logError('Invalid contactAgent state', {
-                submissionId,
-                formState: formData.state,
-                queryState: paramsObj.state,
+        // Family A: parse the query string, derive the effective state (hard reject if
+        // missing), and resolve the Lead owner for routing.
+        let paramsObj: Record<string, string> = {};
+        let effectiveState: EffectiveLeadState | null = null;
+        let leadOwner: ReturnType<typeof getLeadOwnerForState> | null = null;
+        if (config.location) {
+            new URLSearchParams(queryString).forEach((value, key) => {
+                paramsObj[key] = value;
             });
-            throw new Error('Invalid form data: state is required.');
-        }
-        formData.state = effectiveState.code;
-        const leadOwner = getLeadOwnerForState(effectiveState.slug);
 
-        // Soft-quarantine spam-suspected leads: still written to Salesforce, but tagged so the
-        // team can filter them and partner SMS is suppressed below. Never drop a real lead.
+            effectiveState = getEffectiveLeadState(formData.state, paramsObj.state);
+            if (!effectiveState) {
+                logError(`Invalid ${config.formType} state`, {
+                    submissionId,
+                    formState: formData.state,
+                    queryState: paramsObj.state,
+                });
+                throw new Error('Invalid form data: state is required.');
+            }
+            formData.state = effectiveState.code;
+            leadOwner = getLeadOwnerForState(effectiveState.slug);
+        }
+
+        // Soft-quarantine spam-suspected leads: still written to Salesforce, but tagged so
+        // the team can filter them and partner SMS is suppressed below. Never drop a real lead.
         const spam = await evaluateLeadSpam({
             email: formData.email,
-            freeText: formData.additionalComments,
+            ...(config.spamFreeTextField ? { freeText: formData[config.spamFreeTextField] } : {}),
             honeypot: formData[HP_FIELD],
             renderedAt: formData[TS_FIELD],
             options,
         });
         if (spam.quarantine) {
-            logError('Spam-suspected submission', { submissionId, form: 'contactAgent', reasons: spam.reasons });
-            formData.additionalComments = tagSpamSuspected(formData.additionalComments);
-        }
-
-        // Fetch agent information if ID is provided
-        let agentInfo = null;
-        if (paramsObj.id) {
-            try {
-                agentInfo = await stateService.fetchAgentById(paramsObj.id);
-                logDebug('Agent information fetched successfully', {
-                    agent_id: paramsObj.id,
-                    submissionId
-                });
-            } catch (error) {
-                logError('Error fetching agent information', {
-                    agent_id: paramsObj.id,
-                    submissionId
-                }, error);
+            logError('Spam-suspected submission', { submissionId, form: config.formType, reasons: spam.reasons });
+            if (config.spamFreeTextField) {
+                formData[config.spamFreeTextField] = tagSpamSuspected(formData[config.spamFreeTextField]);
             }
         }
 
-        const webFormUrl = appendLeadOwnerSubmissionMarker(
-            `${BASE_URL}/contact-agent${queryString}`,
+        // Family A: fetch partner (agent/lender) information if an id is provided.
+        let agentInfo: any = null;
+        let webFormUrl = '';
+        if (config.location) {
+            if (paramsObj.id) {
+                try {
+                    agentInfo = await stateService.fetchAgentById(paramsObj.id);
+                    logDebug('Partner information fetched successfully', {
+                        partner_id: paramsObj.id,
+                        submissionId,
+                    });
+                } catch (error) {
+                    logError('Error fetching partner information', {
+                        partner_id: paramsObj.id,
+                        submissionId,
+                    }, error);
+                }
+            }
+
+            webFormUrl = appendLeadOwnerSubmissionMarker(
+                `${BASE_URL}/${config.location.path}${queryString}`,
+                submissionId,
+            );
+        }
+
+        const ctx: WebToLeadContext = {
+            formData,
+            spam,
             submissionId,
-        );
-        const formBody = buildAgentLeadParams(formData, paramsObj, webFormUrl, BASE_URL, submissionId).toString();
+            paramsObj,
+            webFormUrl,
+            effectiveState,
+            agentInfo,
+        };
+
+        const formBody = config.buildParams(ctx).toString();
 
         logDebug('Sending form data to Salesforce Web-to-Lead', {
             submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
+            url: SALESFORCE_WEB_TO_LEAD_URL,
         });
 
         const submissionStartedAt = new Date();
         const submissionResult = await submitToSalesforceWebToLead(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
+            SALESFORCE_WEB_TO_LEAD_URL,
             formBody,
-            submissionId
+            submissionId,
         );
 
         if (!submissionResult.success) {
-            // Track the failure
             await updateSubmissionStatus(
                 submissionId,
                 FormSubmissionStatus.FAILURE,
                 submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
+                submissionResult.error || new Error('Salesforce submission failed'),
             );
 
             logError('Salesforce Web-to-Lead submission failed', {
                 submissionId,
-                error: submissionResult.error?.message
+                error: submissionResult.error?.message,
             }, submissionResult.error);
 
             throw submissionResult.error || new Error('Failed to submit form to Salesforce');
@@ -372,1245 +689,321 @@ export async function contactAgentPostForm(formData: any, queryString: string, o
 
         const { response, redirectUrl } = submissionResult;
 
-        try {
-            await routeSalesforceLeadOwner({
-                submissionId,
-                submissionStartedAt,
-                leadSource: 'Contact Agent',
-                destinationStateCode: effectiveState.code,
-                destinationStateSlug: effectiveState.slug,
-                email: formData.email,
-                selectedAgentId: paramsObj.id || null,
-                owner: leadOwner,
-            });
-        } catch (ownerRoutingError) {
-            logError('Salesforce Lead owner routing failed after Web-to-Lead acceptance', {
-                submissionId,
-                leadSource: 'Contact Agent',
-                destinationStateCode: effectiveState.code,
-                destinationStateSlug: effectiveState.slug,
-                adminName: leadOwner.adminName,
-                ownerId: leadOwner.ownerId,
-            }, ownerRoutingError);
-        }
-
-        const notificationTasks: Array<{ name: 'Slack' | 'OpenPhone'; promise: Promise<unknown> }> = [
-            {
-                name: 'Slack',
-                promise: sendToSlack({
-                    headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Agent Lead' : '🔔 New Agent Lead',
-                    name: `${formData.firstName} ${formData.lastName}` || "",
-                    email: formData.email || "",
-                    phoneNumber: formData.phone || "",
-                    state: effectiveState.label,
-                    message: formData.additionalComments || "",
-                    agentInfo: agentInfo ? {
-                        name: agentInfo.Name || "",
-                        email: agentInfo.PersonEmail || "",
-                        phoneNumber: agentInfo.PersonMobilePhone || "",
-                        brokerage: agentInfo.Brokerage_Name__pc,
-                    } : undefined
-                }),
-            },
-        ];
-
-        // Suppress partner SMS for spam-suspected leads so spammers can't trigger partner outreach.
-        if (!spam.quarantine) {
-            notificationTasks.push({
-                name: 'OpenPhone',
-                promise: sendOpenPhoneMessage({
-                    content: `New Lead From VeteranPCS:
-${formData.firstName} ${formData.lastName}
-Email: ${formData.email}
-Phone: ${formatPhoneNumberForDisplay(formData.phone)}
-Destination State: ${effectiveState.label}
-${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
-${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
-${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
-                    from: getAdminPhoneNumberForState(effectiveState.slug),
-                    to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
-                }),
-            });
-        }
-
-        const notificationResults = await Promise.allSettled(
-            notificationTasks.map((task) => task.promise)
-        );
-
-        notificationResults.forEach((result, index) => {
-            const task = notificationTasks[index];
-            if (result.status === 'rejected') {
-                logError(`${task.name} notification failed`, { submissionId }, result.reason);
-                return;
+        // Family A: post-acceptance Lead-owner routing. Its failure is LOGGED, not thrown,
+        // so a routing hiccup never costs the visitor a successful submission.
+        if (config.location && leadOwner) {
+            try {
+                await routeSalesforceLeadOwner({
+                    submissionId,
+                    submissionStartedAt,
+                    leadSource: config.location.leadSource,
+                    destinationStateCode: effectiveState!.code,
+                    destinationStateSlug: effectiveState!.slug,
+                    email: formData.email,
+                    ...(config.location.partner === 'agent'
+                        ? { selectedAgentId: paramsObj.id || null }
+                        : { selectedLenderId: paramsObj.id || null }),
+                    owner: leadOwner,
+                });
+            } catch (ownerRoutingError) {
+                logError('Salesforce Lead owner routing failed after Web-to-Lead acceptance', {
+                    submissionId,
+                    leadSource: config.location.leadSource,
+                    destinationStateCode: effectiveState!.code,
+                    destinationStateSlug: effectiveState!.slug,
+                    adminName: leadOwner.adminName,
+                    ownerId: leadOwner.ownerId,
+                }, ownerRoutingError);
             }
+        }
 
-            if (task.name === 'Slack') {
-                const slackResult = result.value as { ok?: boolean; error?: unknown };
-                if (slackResult?.ok !== true) {
-                    logError(
-                        'Slack notification failed',
-                        { submissionId, error: slackResult?.error },
-                        new Error(`Slack returned ok=${String(slackResult?.ok)}`)
-                    );
-                    return;
-                }
-            }
-
-            logInfo(`${task.name} notification accepted`, { submissionId });
+        // Notifications: Slack always; partner SMS only for Family A, suppressed for spam.
+        await dispatchNotifications({
+            submissionId,
+            slackArg: config.buildSlack(ctx),
+            smsArg: config.location && !spam.quarantine ? config.location.buildSms(ctx) : undefined,
         });
 
-        // At this point, we know the submission was successful based on our enhanced validation
-        // Track the successful submission
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.SUCCESS,
-            response
+            response,
         );
 
-        await captureAcceptedCustomerLead({
-            spamQuarantined: spam.quarantine,
-            formId: 'contact_agent',
-            leadSource: 'Contact Agent',
-            submissionId,
-            formData,
-            stateCode: effectiveState.code,
-            stateSlug: effectiveState.slug,
-            partnerType: 'agent',
-            partnerSalesforceId: paramsObj.id || null,
-        });
-
-        if (redirectUrl) {
-            logInfo('Form submitted successfully with redirect URL', {
+        if (config.capture) {
+            await captureAcceptedCustomerLead({
+                spamQuarantined: spam.quarantine,
+                formId: config.capture.formId,
+                leadSource: config.capture.leadSource,
                 submissionId,
-                redirectUrl
+                formData,
+                ...(config.location
+                    ? {
+                        stateCode: effectiveState?.code,
+                        stateSlug: effectiveState?.slug,
+                        partnerType: config.capture.partnerType,
+                        partnerSalesforceId: paramsObj.id || null,
+                    }
+                    : {}),
+                ...(config.capture.guideId ? { guideId: config.capture.guideId } : {}),
             });
-            return { redirectUrl, submissionId };
         }
 
-        logInfo('Form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!', submissionId };
+        logInfo('Form submitted successfully', { submissionId, hasRedirectUrl: !!redirectUrl });
+        return config.buildResult(redirectUrl, submissionId);
     } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
         await updateSubmissionStatus(
             submissionId,
             FormSubmissionStatus.FAILURE,
             null,
-            error instanceof Error ? error : new Error('Unknown error')
+            error instanceof Error ? error : new Error('Unknown error'),
         );
 
-        logError('Error in contactAgentPostForm', { submissionId }, error);
+        logError(`Error in ${config.formType} submission`, { submissionId }, error);
         throw new Error('Failed to submit form');
     }
 }
 
-export async function GetListedAgentsPostForm(formData: any, options?: InternalCallOptions) {
-    // Start tracking the submission
-    const submissionId = await trackFormSubmission(
-        'getListedAgents',
-        formData,
-        FormSubmissionStatus.PENDING
-    );
+// ── Per-form configs + thin wrappers (nine exports, signatures unchanged) ────────────
 
-    logInfo('Processing agent listing form submission', { submissionId });
+const contactAgentConfig = defineWebToLeadConfig({
+    formType: 'contactAgent',
+    processingMessage: 'Processing contact agent form submission',
+    schema: contactAgentSchema,
+    spamFreeTextField: 'additionalComments',
+    location: {
+        partner: 'agent',
+        path: 'contact-agent',
+        leadSource: 'Contact Agent',
+        buildSms: buildContactPartnerSms,
+    },
+    buildParams: (ctx) =>
+        buildAgentLeadParams(ctx.formData, ctx.paramsObj, ctx.webFormUrl, BASE_URL, ctx.submissionId),
+    buildSlack: (ctx) => ({
+        headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Agent Lead' : '🔔 New Agent Lead',
+        name: `${ctx.formData.firstName} ${ctx.formData.lastName}` || "",
+        email: ctx.formData.email || "",
+        phoneNumber: ctx.formData.phone || "",
+        state: ctx.effectiveState!.label,
+        message: ctx.formData.additionalComments || "",
+        agentInfo: ctx.agentInfo ? {
+            name: ctx.agentInfo.Name || "",
+            email: ctx.agentInfo.PersonEmail || "",
+            phoneNumber: ctx.agentInfo.PersonMobilePhone || "",
+            brokerage: ctx.agentInfo.Brokerage_Name__pc,
+        } : undefined,
+    }),
+    capture: {
+        formId: 'contact_agent',
+        leadSource: 'Contact Agent',
+        partnerType: 'agent',
+    },
+    buildResult: (redirectUrl, submissionId) =>
+        redirectUrl ? { redirectUrl, submissionId } : { message: 'Form submitted successfully!', submissionId },
+});
 
-    try {
-        // Validate and normalize the payload before processing (HARD reject on invalid data).
-        const validation = parseLeadForm(getListedAgentsSchema, formData);
-        if (!validation.ok) {
-            logError('Invalid getListedAgents submission', { submissionId, errors: validation.errors });
-            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
-        }
-        formData = validation.data;
-
-        // Soft-quarantine spam-suspected leads: written to Salesforce but tagged on the free-text field.
-        const spam = await evaluateLeadSpam({
-            email: formData.email,
-            freeText: formData.tellusMore,
-            honeypot: formData[HP_FIELD],
-            renderedAt: formData[TS_FIELD],
-            options,
-        });
-        if (spam.quarantine) {
-            logError('Spam-suspected submission', { submissionId, form: 'getListedAgents', reasons: spam.reasons });
-            formData.tellusMore = tagSpamSuspected(formData.tellusMore);
-        }
-
-        const formBody = new URLSearchParams({
-            oid: SF_ORG_ID,
-            retURL: `${BASE_URL}/thank-you`,
-            recordType: SF_RECORD_TYPE.AGENT_LISTING_LEAD,
-            lead_source: "Agent Listing Request",
-            "00N4x00000Lsr0G": "true",
-            country_code: "US",
-            "00N4x00000QQ1LB": `${BASE_URL}/get-listed-agents`,
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            mobile: formData.phone || "",
-            "00N4x00000LsnP2": formData.status_select || "",
-            "00N4x00000LsnOx": formData.branch_select || "",
-            "00N4x00000QQ0Vz": formData.discharge_status || "",
-            "state_code": formData.state || "",
-            "city": formData.city || "",
-            "00N4x00000LpcBo": formData.primaryState || "",
-            "00N4x00000QPIOt": Array.isArray(formData.otherStates) ? formData.otherStates.join(';') : formData.otherStates || "",
-            "00N4x00000LpcCm": formData.licenseNumber || "",
-            "00N4x00000LpcCr": formData.brokerageName || "",
-            "00N4x00000c4kPN": formData.managingBrokerName || "",
-            "00N4x00000c4kPS": formData.managingBrokerPhone || "",
-            "00N4x00000c4kPX": formData.managingBrokerEmail || "",
-            "00N4x00000LsqCV": formData.citiesServiced || "",
-            "00N4x00000LsqCa": formData.basesServiced || "",
-            "00N4x00000LpcDQ": formData.personallyPCS || "",
-            "00N4x00000LpcDV": formData.leadAcceptance || "",
-            "00N4x00000QPksj": formData.howDidYouHear || "",
-            "00N4x00000QPS7V": formData.tellusMore || "",
-            "g-recaptcha-response": "",
-            "captcha_settings": "",
-        }).toString();
-
-        logDebug('Sending agent listing data to Salesforce Web-to-Lead', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
-        });
-
-        const submissionResult = await submitToSalesforceWebToLead(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('Agent listing Salesforce Web-to-Lead submission failed', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit agent listing to Salesforce');
-        }
-
-        const { response, redirectUrl } = submissionResult;
-
-        await Promise.all([
-            sendToSlack({
-                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Agent Listing Request' : '🔔 New Agent Listing Request',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-            })
-        ]).catch(error => {
-            logError('Error sending agent listing notifications', { submissionId }, error);
-        });
-
-        // Track the successful submission
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            response
-        );
-
-        if (redirectUrl) {
-            logInfo('Agent listing form submitted with redirect URL', {
-                submissionId,
-                redirectUrl
-            });
-            return { redirectUrl };
-        }
-
-        logInfo('Agent listing form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!' };
-    } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in GetListedAgentsPostForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
+export async function contactAgentPostForm(formData: any, queryString: string, options?: InternalCallOptions) {
+    return submitWebToLead(contactAgentConfig, formData, { queryString, options });
 }
 
-export async function GetListedLendersPostForm(formData: any, options?: InternalCallOptions) {
-    // Start tracking the submission
-    const submissionId = await trackFormSubmission(
-        'getListedLenders',
-        formData,
-        FormSubmissionStatus.PENDING
-    );
-
-    logInfo('Processing lender listing form submission', { submissionId });
-
-    try {
-        // Validate and normalize the payload before processing (HARD reject on invalid data).
-        const validation = parseLeadForm(getListedLendersSchema, formData);
-        if (!validation.ok) {
-            logError('Invalid getListedLenders submission', { submissionId, errors: validation.errors });
-            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
-        }
-        formData = validation.data;
-
-        // Soft-quarantine spam-suspected leads: written to Salesforce but tagged on the free-text field.
-        const spam = await evaluateLeadSpam({
-            email: formData.email,
-            freeText: formData.tellusMore,
-            honeypot: formData[HP_FIELD],
-            renderedAt: formData[TS_FIELD],
-            options,
-        });
-        if (spam.quarantine) {
-            logError('Spam-suspected submission', { submissionId, form: 'getListedLenders', reasons: spam.reasons });
-            formData.tellusMore = tagSpamSuspected(formData.tellusMore);
-        }
-
-        const formBody = new URLSearchParams({
-            oid: SF_ORG_ID,
-            retURL: `${BASE_URL}/thank-you`,
-            recordType: SF_RECORD_TYPE.LENDER_LISTING_LEAD,
-            lead_source: "Lender Listing Request",
-            "00N4x00000Lsr0G": "true",
-            country_code: "US",
-            "00N4x00000QQ1LB": `${BASE_URL}/get-listed-lenders`,
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            mobile: formData.phone || "",
-            "00N4x00000LsnP2": formData.status_select || "",
-            "00N4x00000LsnOx": formData.branch_select || "",
-            "00N4x00000QQ0Vz": formData.discharge_status || "",
-            "00N4x00000LpcBo": formData.primaryState || "",
-            "00N4x00000QPIOt": Array.isArray(formData.otherStates) ? formData.otherStates.join(';') : formData.otherStates || "",
-            "00N4x00000LsqCV": formData.localCities || "",
-            "00N4x00000QPIOZ": formData.nmlsId || "",
-            "00N4x00000LpcCr": formData.name || "",
-            "street": formData.street || "",
-            "state_code": formData.state || "",
-            "city": formData.city || "",
-            "zip": formData.zip || "",
-            "00N4x00000QPIOe": formData.companyNMLSId || "",
-            "00N4x00000QPksj": formData.howDidYouHear || "",
-            "00N4x00000QPS7V": formData.tellusMore || "",
-            "g-recaptcha-response": "",
-            "captcha_settings": "",
-        }).toString();
-
-        logDebug('Sending lender listing data to Salesforce Web-to-Lead', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
-        });
-
-        const submissionResult = await submitToSalesforceWebToLead(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('Lender listing Salesforce Web-to-Lead submission failed', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit lender listing to Salesforce');
-        }
-
-        const { response, redirectUrl } = submissionResult;
-
-        await Promise.all([
-            sendToSlack({
-                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Lender Listing Request' : '🔔 New Lender Listing Request',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-            })
-        ]).catch(error => {
-            logError('Error sending lender listing notifications', { submissionId }, error);
-        });
-
-        // Track the successful submission
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            response
-        );
-
-        if (redirectUrl) {
-            logInfo('Lender listing form submitted with redirect URL', {
-                submissionId,
-                redirectUrl
-            });
-            return { redirectUrl };
-        }
-
-        logInfo('Lender listing form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!' };
-    } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in GetListedLendersPostForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
-}
-
-export async function KeepInTouchForm(formData: any, options?: InternalCallOptions) {
-    // Start tracking the submission
-    const submissionId = await trackFormSubmission(
-        'keepInTouch',
-        formData,
-        FormSubmissionStatus.PENDING
-    );
-
-    logInfo('Processing keep in touch form submission', { submissionId });
-
-    try {
-        // Validate and normalize the payload before processing (HARD reject on invalid data).
-        const validation = parseLeadForm(simpleLeadSchema, formData);
-        if (!validation.ok) {
-            logError('Invalid keepInTouch submission', { submissionId, errors: validation.errors });
-            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
-        }
-        formData = validation.data;
-
-        // No free-text field on this form — the flagged Slack header below is the spam signal.
-        const spam = await evaluateLeadSpam({
-            email: formData.email,
-            honeypot: formData[HP_FIELD],
-            renderedAt: formData[TS_FIELD],
-            options,
-        });
-        if (spam.quarantine) {
-            logError('Spam-suspected submission', { submissionId, form: 'keepInTouch', reasons: spam.reasons });
-        }
-
-        const keepInTouchParams = new URLSearchParams({
-            oid: SF_ORG_ID,
-            retURL: `${BASE_URL}/thank-you`,
-            recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
-            lead_source: "Keep in Touch",
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            "g-recaptcha-response": "",
-            "captcha_settings": "",
-        });
-        const formBody = appendSalesforceAttributionParams(
-            keepInTouchParams,
-            formData,
-            submissionId,
-        ).toString();
-
-        logDebug('Sending keep in touch data to Salesforce Web-to-Lead', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
-        });
-
-        const submissionResult = await submitToSalesforceWebToLead(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('Keep in touch Salesforce Web-to-Lead submission failed', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit keep in touch form to Salesforce');
-        }
-
-        const { response, redirectUrl } = submissionResult;
-
-        await Promise.all([
-            sendToSlack({
-                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Keep In Touch Submission' : '🔔 New Keep In Touch Submission',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-            })
-        ]).catch(error => {
-            logError('Error sending keep in touch notifications', { submissionId }, error);
-        });
-
-        // Track the successful submission
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            response
-        );
-
-        await captureAcceptedCustomerLead({
-            spamQuarantined: spam.quarantine,
-            formId: 'keep_in_touch',
-            leadSource: 'Keep in Touch',
-            submissionId,
-            formData,
-        });
-
-        logInfo('Keep in touch form submitted successfully', { submissionId });
-        return { success: true, message: 'Form submitted successfully!', submissionId };
-    } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in KeepInTouchForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
-}
+const contactLenderConfig = defineWebToLeadConfig({
+    formType: 'contactLender',
+    processingMessage: 'Processing contact lender form submission',
+    schema: contactLenderSchema,
+    spamFreeTextField: 'additionalComments',
+    location: {
+        partner: 'lender',
+        path: 'contact-lender',
+        leadSource: 'Contact Lender',
+        buildSms: buildContactPartnerSms,
+    },
+    buildParams: (ctx) =>
+        buildLenderLeadParams(ctx.formData, ctx.paramsObj, ctx.webFormUrl, BASE_URL, ctx.submissionId),
+    buildSlack: (ctx) => ({
+        headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Lender Lead' : '🔔 New Lender Lead',
+        name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
+        email: ctx.formData.email || "",
+        phoneNumber: ctx.formData.phone || "",
+        state: ctx.effectiveState!.label,
+        message: ctx.formData.additionalComments || "",
+        agentInfo: ctx.agentInfo ? {
+            name: ctx.agentInfo.Name || "",
+            email: ctx.agentInfo.PersonEmail || "",
+            phoneNumber: ctx.agentInfo.PersonMobilePhone || "",
+            brokerage: ctx.agentInfo.Brokerage_Name__pc,
+        } : undefined,
+    }),
+    capture: {
+        formId: 'contact_lender',
+        leadSource: 'Contact Lender',
+        partnerType: 'lender',
+    },
+    buildResult: (redirectUrl, submissionId) =>
+        redirectUrl ? { redirectUrl, submissionId } : { message: 'Form submitted successfully!', submissionId },
+});
 
 export async function contactLenderPostForm(formData: any, fullQueryString: string, options?: InternalCallOptions) {
-    // Start tracking the submission
-    const submissionId = await trackFormSubmission(
-        'contactLender',
-        formData,
-        FormSubmissionStatus.PENDING
-    );
-
-    logInfo('Processing contact lender form submission', {
-        submissionId,
-        lender_id: new URLSearchParams(fullQueryString).get('id')
-    });
-
-    try {
-        // Validate and normalize the payload before processing. Invalid data (no usable
-        // email or phone, etc.) is a HARD reject below — never written to Salesforce.
-        const validation = parseLeadForm(contactLenderSchema, formData);
-        if (!validation.ok) {
-            logError('Invalid contactLender submission', { submissionId, errors: validation.errors });
-            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
-        }
-        formData = validation.data;
-
-        const paramsObj: { [key: string]: string } = {};
-        new URLSearchParams(fullQueryString).forEach((value, key) => {
-            paramsObj[key] = value;
-        });
-
-        const effectiveState = getEffectiveLeadState(formData.state, paramsObj.state);
-        if (!effectiveState) {
-            logError('Invalid contactLender state', {
-                submissionId,
-                formState: formData.state,
-                queryState: paramsObj.state,
-            });
-            throw new Error('Invalid form data: state is required.');
-        }
-        formData.state = effectiveState.code;
-        const leadOwner = getLeadOwnerForState(effectiveState.slug);
-
-        // Soft-quarantine spam-suspected leads: tagged in Salesforce, partner SMS suppressed below.
-        const spam = await evaluateLeadSpam({
-            email: formData.email,
-            freeText: formData.additionalComments,
-            honeypot: formData[HP_FIELD],
-            renderedAt: formData[TS_FIELD],
-            options,
-        });
-        if (spam.quarantine) {
-            logError('Spam-suspected submission', { submissionId, form: 'contactLender', reasons: spam.reasons });
-            formData.additionalComments = tagSpamSuspected(formData.additionalComments);
-        }
-
-        // Fetch agent information if ID is provided
-        let agentInfo = null;
-        if (paramsObj.id) {
-            try {
-                agentInfo = await stateService.fetchAgentById(paramsObj.id);
-                logDebug('Lender information fetched successfully', {
-                    lender_id: paramsObj.id,
-                    submissionId
-                });
-            } catch (error) {
-                logError('Error fetching lender information', {
-                    lender_id: paramsObj.id,
-                    submissionId
-                }, error);
-            }
-        }
-
-        const webFormUrl = appendLeadOwnerSubmissionMarker(
-            `${BASE_URL}/contact-lender${fullQueryString}`,
-            submissionId,
-        );
-        const formBody = buildLenderLeadParams(formData, paramsObj, webFormUrl, BASE_URL, submissionId).toString();
-
-        logDebug('Sending lender form data to Salesforce Web-to-Lead', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
-        });
-
-        const submissionStartedAt = new Date();
-        const submissionResult = await submitToSalesforceWebToLead(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('Lender form Salesforce Web-to-Lead submission failed', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit lender form to Salesforce');
-        }
-
-        const { response, redirectUrl } = submissionResult;
-
-        try {
-            await routeSalesforceLeadOwner({
-                submissionId,
-                submissionStartedAt,
-                leadSource: 'Contact Lender',
-                destinationStateCode: effectiveState.code,
-                destinationStateSlug: effectiveState.slug,
-                email: formData.email,
-                selectedLenderId: paramsObj.id || null,
-                owner: leadOwner,
-            });
-        } catch (ownerRoutingError) {
-            logError('Salesforce Lead owner routing failed after Web-to-Lead acceptance', {
-                submissionId,
-                leadSource: 'Contact Lender',
-                destinationStateCode: effectiveState.code,
-                destinationStateSlug: effectiveState.slug,
-                adminName: leadOwner.adminName,
-                ownerId: leadOwner.ownerId,
-            }, ownerRoutingError);
-        }
-
-        // Fire and forget notifications - don't await them
-        await Promise.all([
-            sendToSlack({
-                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Lender Lead' : '🔔 New Lender Lead',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                state: effectiveState.label,
-                message: formData.additionalComments || "",
-                agentInfo: agentInfo ? {
-                    name: agentInfo.Name || "",
-                    email: agentInfo.PersonEmail || "",
-                    phoneNumber: agentInfo.PersonMobilePhone || "",
-                    brokerage: agentInfo.Brokerage_Name__pc,
-                } : undefined
-            }),
-            // Suppress partner SMS for spam-suspected leads so spammers can't trigger partner outreach.
-            ...(spam.quarantine ? [] : [sendOpenPhoneMessage({
-                content: `New Lead From VeteranPCS:
-${formData.firstName} ${formData.lastName}
-Email: ${formData.email}
-Phone: ${formatPhoneNumberForDisplay(formData.phone)}
-Destination State: ${effectiveState.label}
-${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
-${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
-${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
-                from: getAdminPhoneNumberForState(effectiveState.slug),
-                to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)]
-            })]),
-        ]).catch(error => {
-            // Log any errors but don't block the main flow
-            logError('Error sending lender notifications', { submissionId }, error);
-        });
-
-        // Track the successful submission
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            response
-        );
-
-        await captureAcceptedCustomerLead({
-            spamQuarantined: spam.quarantine,
-            formId: 'contact_lender',
-            leadSource: 'Contact Lender',
-            submissionId,
-            formData,
-            stateCode: effectiveState.code,
-            stateSlug: effectiveState.slug,
-            partnerType: 'lender',
-            partnerSalesforceId: paramsObj.id || null,
-        });
-
-        if (redirectUrl) {
-            logInfo('Lender form submitted successfully with redirect URL', {
-                submissionId,
-                redirectUrl
-            });
-            return { redirectUrl, submissionId };
-        }
-
-        logInfo('Lender form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!', submissionId };
-    } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in contactLenderPostForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
+    return submitWebToLead(contactLenderConfig, formData, { queryString: fullQueryString, options });
 }
+
+const getListedAgentsConfig = defineWebToLeadConfig({
+    formType: 'getListedAgents',
+    processingMessage: 'Processing agent listing form submission',
+    schema: getListedAgentsSchema,
+    spamFreeTextField: 'tellusMore',
+    buildParams: (ctx) => buildGetListedAgentsParams(ctx.formData),
+    buildSlack: (ctx) => ({
+        headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Agent Listing Request' : '🔔 New Agent Listing Request',
+        name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
+        email: ctx.formData.email || "",
+        phoneNumber: ctx.formData.phone || "",
+        message: ctx.formData.additionalComments || "",
+    }),
+    buildResult: (redirectUrl) =>
+        redirectUrl ? { redirectUrl } : { message: 'Form submitted successfully!' },
+});
+
+export async function GetListedAgentsPostForm(formData: any, options?: InternalCallOptions) {
+    return submitWebToLead(getListedAgentsConfig, formData, { options });
+}
+
+const getListedLendersConfig = defineWebToLeadConfig({
+    formType: 'getListedLenders',
+    processingMessage: 'Processing lender listing form submission',
+    schema: getListedLendersSchema,
+    spamFreeTextField: 'tellusMore',
+    buildParams: (ctx) => buildGetListedLendersParams(ctx.formData),
+    buildSlack: (ctx) => ({
+        headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Lender Listing Request' : '🔔 New Lender Listing Request',
+        name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
+        email: ctx.formData.email || "",
+        phoneNumber: ctx.formData.phone || "",
+        message: ctx.formData.additionalComments || "",
+    }),
+    buildResult: (redirectUrl) =>
+        redirectUrl ? { redirectUrl } : { message: 'Form submitted successfully!' },
+});
+
+export async function GetListedLendersPostForm(formData: any, options?: InternalCallOptions) {
+    return submitWebToLead(getListedLendersConfig, formData, { options });
+}
+
+const keepInTouchConfig = defineWebToLeadConfig({
+    formType: 'keepInTouch',
+    processingMessage: 'Processing keep in touch form submission',
+    schema: simpleLeadSchema,
+    buildParams: (ctx) => buildKeepInTouchParams(ctx.formData, ctx.submissionId),
+    buildSlack: (ctx) => ({
+        headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Keep In Touch Submission' : '🔔 New Keep In Touch Submission',
+        name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
+        email: ctx.formData.email || "",
+        phoneNumber: ctx.formData.phone || "",
+        message: ctx.formData.additionalComments || "",
+    }),
+    capture: {
+        formId: 'keep_in_touch',
+        leadSource: 'Keep in Touch',
+    },
+    buildResult: (_redirectUrl, submissionId) =>
+        ({ success: true, message: 'Form submitted successfully!', submissionId }),
+});
+
+export async function KeepInTouchForm(formData: any, options?: InternalCallOptions) {
+    return submitWebToLead(keepInTouchConfig, formData, { options });
+}
+
+const contactConfig = defineWebToLeadConfig({
+    formType: 'contact',
+    processingMessage: 'Processing contact form submission',
+    schema: simpleLeadSchema,
+    spamFreeTextField: 'additionalComments',
+    buildParams: (ctx) => buildContactParams(ctx.formData, ctx.submissionId),
+    buildSlack: (ctx) => ({
+        headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Contact Form Submission' : '🔔 New Contact Form Submission',
+        name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
+        email: ctx.formData.email || "",
+        phoneNumber: ctx.formData.phone || "",
+        message: ctx.formData.additionalComments || "",
+    }),
+    capture: {
+        formId: 'contact_form',
+        leadSource: 'Contact Form',
+    },
+    buildResult: (_redirectUrl, submissionId) =>
+        ({ success: true, message: 'Form submitted successfully!', submissionId }),
+});
 
 export async function contactPostForm(formData: any, options?: InternalCallOptions) {
-    // Start tracking the submission
-    const submissionId = await trackFormSubmission(
-        'contact',
-        formData,
-        FormSubmissionStatus.PENDING
-    );
-
-    logInfo('Processing contact form submission', { submissionId });
-
-    try {
-        // Validate and normalize the payload before processing (HARD reject on invalid data).
-        const validation = parseLeadForm(simpleLeadSchema, formData);
-        if (!validation.ok) {
-            logError('Invalid contact submission', { submissionId, errors: validation.errors });
-            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
-        }
-        formData = validation.data;
-
-        // Soft-quarantine spam-suspected leads: written to Salesforce but tagged on the free-text field.
-        const spam = await evaluateLeadSpam({
-            email: formData.email,
-            freeText: formData.additionalComments,
-            honeypot: formData[HP_FIELD],
-            renderedAt: formData[TS_FIELD],
-            options,
-        });
-        if (spam.quarantine) {
-            logError('Spam-suspected submission', { submissionId, form: 'contact', reasons: spam.reasons });
-            formData.additionalComments = tagSpamSuspected(formData.additionalComments);
-        }
-
-        const contactParams = new URLSearchParams({
-            oid: SF_ORG_ID,
-            retURL: `${BASE_URL}/thank-you`,
-            recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
-            lead_source: "Contact Form",
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            "00N4x00000bfgFA": formData.additionalComments || "",
-            "g-recaptcha-response": "",
-            "captcha_settings": "",
-        });
-        const formBody = appendSalesforceAttributionParams(
-            contactParams,
-            formData,
-            submissionId,
-        ).toString();
-
-        logDebug('Sending contact form data to Salesforce Web-to-Lead', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
-        });
-
-        const submissionResult = await submitToSalesforceWebToLead(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('Contact form Salesforce Web-to-Lead submission failed', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit contact form to Salesforce');
-        }
-
-        const { response, redirectUrl } = submissionResult;
-
-        await Promise.all([
-            sendToSlack({
-                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Contact Form Submission' : '🔔 New Contact Form Submission',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-            })
-        ]).catch(error => {
-            logError('Error sending contact form notifications', { submissionId }, error);
-        });
-
-        // Track the successful submission
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            response
-        );
-
-        await captureAcceptedCustomerLead({
-            spamQuarantined: spam.quarantine,
-            formId: 'contact_form',
-            leadSource: 'Contact Form',
-            submissionId,
-            formData,
-        });
-
-        logInfo('Contact form submitted successfully', { submissionId });
-        return { success: true, message: 'Form submitted successfully!', submissionId };
-    } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in contactPostForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
+    return submitWebToLead(contactConfig, formData, { options });
 }
+
+const vaLoanGuideConfig = defineWebToLeadConfig({
+    formType: 'vaLoanGuide',
+    processingMessage: 'Processing VA loan guide form submission',
+    schema: simpleLeadSchema,
+    buildParams: (ctx) => buildVaLoanGuideParams(ctx.formData, ctx.submissionId),
+    buildSlack: (ctx) => ({
+        headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New VA Loan Guide Download' : '🔔 New VA Loan Guide Download',
+        name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
+        email: ctx.formData.email || "",
+        phoneNumber: ctx.formData.phone || "",
+        message: ctx.formData.additionalComments || "",
+    }),
+    capture: {
+        formId: 'va_loan_guide',
+        leadSource: 'VA Loan Guide',
+        guideId: 'va_loan_guide',
+    },
+    buildResult: (_redirectUrl, submissionId) =>
+        ({ success: true, message: 'Form submitted successfully!', submissionId }),
+});
 
 export async function vaLoanGuideForm(formData: any, options?: InternalCallOptions) {
-    // Start tracking the submission
-    const submissionId = await trackFormSubmission(
-        'vaLoanGuide',
-        formData,
-        FormSubmissionStatus.PENDING
-    );
-
-    logInfo('Processing VA loan guide form submission', { submissionId });
-
-    try {
-        // Validate and normalize the payload before processing (HARD reject on invalid data).
-        const validation = parseLeadForm(simpleLeadSchema, formData);
-        if (!validation.ok) {
-            logError('Invalid vaLoanGuide submission', { submissionId, errors: validation.errors });
-            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
-        }
-        formData = validation.data;
-
-        // No free-text field on this form — the flagged Slack header below is the spam signal.
-        const spam = await evaluateLeadSpam({
-            email: formData.email,
-            honeypot: formData[HP_FIELD],
-            renderedAt: formData[TS_FIELD],
-            options,
-        });
-        if (spam.quarantine) {
-            logError('Spam-suspected submission', { submissionId, form: 'vaLoanGuide', reasons: spam.reasons });
-        }
-
-        const vaLoanGuideParams = new URLSearchParams({
-            oid: SF_ORG_ID,
-            retURL: `${BASE_URL}/thank-you`,
-            recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
-            lead_source: "VA Loan Guide",
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            "g-recaptcha-response": "",
-            "captcha_settings": "",
-        });
-        const formBody = appendSalesforceAttributionParams(
-            vaLoanGuideParams,
-            formData,
-            submissionId,
-        ).toString();
-
-        logDebug('Sending VA loan guide data to Salesforce Web-to-Lead', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
-        });
-
-        const submissionResult = await submitToSalesforceWebToLead(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('VA loan guide Salesforce Web-to-Lead submission failed', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit VA loan guide form to Salesforce');
-        }
-
-        const { response, redirectUrl } = submissionResult;
-
-        await Promise.all([
-            sendToSlack({
-                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New VA Loan Guide Download' : '🔔 New VA Loan Guide Download',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-            })
-        ]).catch(error => {
-            logError('Error sending VA loan guide notifications', { submissionId }, error);
-        });
-
-        // Track the successful submission
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            response
-        );
-
-        await captureAcceptedCustomerLead({
-            spamQuarantined: spam.quarantine,
-            formId: 'va_loan_guide',
-            leadSource: 'VA Loan Guide',
-            submissionId,
-            formData,
-            guideId: 'va_loan_guide',
-        });
-
-        logInfo('VA loan guide form submitted successfully', { submissionId });
-        return { success: true, message: 'Form submitted successfully!', submissionId };
-    } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in vaLoanGuideForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
+    return submitWebToLead(vaLoanGuideConfig, formData, { options });
 }
+
+const homebuyerGuideConfig = defineWebToLeadConfig({
+    formType: 'homebuyerGuide',
+    processingMessage: 'Processing first time home buyer guide form submission',
+    schema: simpleLeadSchema,
+    buildParams: (ctx) => buildHomebuyerGuideParams(ctx.formData, ctx.submissionId),
+    buildSlack: (ctx) => ({
+        headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New First Time Home Buyer Guide Download' : '🔔 New First Time Home Buyer Guide Download',
+        name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
+        email: ctx.formData.email || "",
+        phoneNumber: ctx.formData.phone || "",
+        message: ctx.formData.additionalComments || "",
+    }),
+    capture: {
+        formId: 'first_time_homebuyer_guide',
+        leadSource: 'First Time Home Buyer Guide',
+        guideId: 'first_time_homebuyer_guide',
+    },
+    buildResult: (_redirectUrl, submissionId) =>
+        ({ success: true, message: 'Form submitted successfully!', submissionId }),
+});
 
 export async function homebuyerGuideForm(formData: any, options?: InternalCallOptions) {
-    // Start tracking the submission
-    const submissionId = await trackFormSubmission(
-        'homebuyerGuide',
-        formData,
-        FormSubmissionStatus.PENDING
-    );
-
-    logInfo('Processing first time home buyer guide form submission', { submissionId });
-
-    try {
-        // Validate and normalize the payload before processing (HARD reject on invalid data).
-        const validation = parseLeadForm(simpleLeadSchema, formData);
-        if (!validation.ok) {
-            logError('Invalid homebuyerGuide submission', { submissionId, errors: validation.errors });
-            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
-        }
-        formData = validation.data;
-
-        // No free-text field on this form — the flagged Slack header below is the spam signal.
-        const spam = await evaluateLeadSpam({
-            email: formData.email,
-            honeypot: formData[HP_FIELD],
-            renderedAt: formData[TS_FIELD],
-            options,
-        });
-        if (spam.quarantine) {
-            logError('Spam-suspected submission', { submissionId, form: 'homebuyerGuide', reasons: spam.reasons });
-        }
-
-        const homebuyerGuideParams = new URLSearchParams({
-            oid: SF_ORG_ID,
-            retURL: `${BASE_URL}/thank-you`,
-            recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
-            lead_source: "First Time Home Buyer Guide",
-            first_name: formData.firstName || "",
-            last_name: formData.lastName || "",
-            email: formData.email || "",
-            "g-recaptcha-response": "",
-            "captcha_settings": "",
-        });
-        const formBody = appendSalesforceAttributionParams(
-            homebuyerGuideParams,
-            formData,
-            submissionId,
-        ).toString();
-
-        logDebug('Sending first time home buyer guide data to Salesforce Web-to-Lead', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
-        });
-
-        const submissionResult = await submitToSalesforceWebToLead(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('First time home buyer guide submission failed', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit first time home buyer guide form to Salesforce');
-        }
-
-        const { response, responseText, redirectUrl } = submissionResult;
-
-        await Promise.all([
-            sendToSlack({
-                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New First Time Home Buyer Guide Download' : '🔔 New First Time Home Buyer Guide Download',
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email || "",
-                phoneNumber: formData.phone || "",
-                message: formData.additionalComments || "",
-            })
-        ]).catch(error => {
-            logError('Error sending first time home buyer guide notifications', { submissionId }, error);
-        });
-
-        // Track the successful submission
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            response
-        );
-
-        await captureAcceptedCustomerLead({
-            spamQuarantined: spam.quarantine,
-            formId: 'first_time_homebuyer_guide',
-            leadSource: 'First Time Home Buyer Guide',
-            submissionId,
-            formData,
-            guideId: 'first_time_homebuyer_guide',
-        });
-
-        logInfo('First time home buyer guide form submitted successfully', { submissionId });
-        return { success: true, message: 'Form submitted successfully!', submissionId };
-    } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in homebuyerGuideForm', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
+    return submitWebToLead(homebuyerGuideConfig, formData, { options });
 }
 
+const internshipConfig = defineWebToLeadConfig({
+    formType: 'internship',
+    processingMessage: 'Processing internship form submission',
+    schema: internshipSchema,
+    spamFreeTextField: '00N4x00000QPS7V',
+    buildParams: (ctx) => buildInternshipParams(ctx.formData),
+    buildSlack: (ctx) => ({
+        headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Internship Submission' : '🔔 New Internship Submission',
+        name: `${ctx.formData.first_name} ${ctx.formData.last_name}`,
+        email: ctx.formData.email || "",
+        phoneNumber: ctx.formData.mobile || "",
+        message: "",
+    }),
+    buildResult: (redirectUrl) =>
+        redirectUrl ? { redirectUrl } : { message: 'Form submitted successfully!' },
+});
+
 export async function internshipFormSubmission(formData: any, options?: InternalCallOptions) {
-    // Start tracking the submission
-    const submissionId = await trackFormSubmission(
-        'internship',
-        formData,
-        FormSubmissionStatus.PENDING
-    );
-
-    logInfo('Processing internship form submission', { submissionId });
-
-    try {
-        // Validate and normalize the payload before processing (HARD reject on invalid data).
-        const validation = parseLeadForm(internshipSchema, formData);
-        if (!validation.ok) {
-            logError('Invalid internship submission', { submissionId, errors: validation.errors });
-            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
-        }
-        formData = validation.data;
-
-        // Soft-quarantine spam-suspected leads: written to Salesforce but tagged on the free-text field.
-        const spam = await evaluateLeadSpam({
-            email: formData.email,
-            freeText: formData['00N4x00000QPS7V'],
-            honeypot: formData[HP_FIELD],
-            renderedAt: formData[TS_FIELD],
-            options,
-        });
-        if (spam.quarantine) {
-            logError('Spam-suspected submission', { submissionId, form: 'internship', reasons: spam.reasons });
-            formData['00N4x00000QPS7V'] = tagSpamSuspected(formData['00N4x00000QPS7V']);
-        }
-
-        const formBody = new URLSearchParams({
-            oid: SF_ORG_ID,
-            recordType: SF_RECORD_TYPE.INTERNSHIP_LEAD,
-            retURL: `${BASE_URL}/thank-you`,
-            lead_source: "Internship Application",
-            "00N4x00000Lsr0G": "true",
-            country_code: "US",
-            first_name: formData.first_name || "",
-            last_name: formData.last_name || "",
-            email: formData.email || "",
-            mobile: formData.mobile || "",
-            "00N4x00000LsnP2": formData["00N4x00000LsnP2"] || "",
-            "00N4x00000LsnOx": formData["00N4x00000LsnOx"] || "",
-            "00N4x00000QQ0Vz": Array.isArray(formData["00N4x00000QQ0Vz"]) ? formData["00N4x00000QQ0Vz"][0] : formData["00N4x00000QQ0Vz"] || "",
-            state_code: formData.state_code || "",
-            city: formData.city || "",
-            base: formData.base || "",
-            "00N4x00000QPK7L": formData["00N4x00000QPK7L"] || "",
-            "00N4x00000LspV2": formData["00N4x00000LspV2"] || "",
-            "00N4x00000LspUi": formData["00N4x00000LspUi"] || "",
-            "00N4x00000QPLQY": formData["00N4x00000QPLQY"] || "",
-            "00N4x00000QPLQd": formData["00N4x00000QPLQd"] || "",
-            "00N4x00000QPksj": formData["00N4x00000QPksj"] || "",
-            "00N4x00000QPS7V": formData["00N4x00000QPS7V"] || "",
-            "g-recaptcha-response": "",
-            "captcha_settings": "",
-        }).toString();
-
-        logDebug('Sending internship form data to Salesforce Web-to-Lead', {
-            submissionId,
-            url: "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formKeys: Object.keys(Object.fromEntries(new URLSearchParams(formBody)))
-        });
-
-        const submissionResult = await submitToSalesforceWebToLead(
-            "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
-            formBody,
-            submissionId
-        );
-
-        if (!submissionResult.success) {
-            // Track the failure
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed')
-            );
-
-            logError('Internship form Salesforce Web-to-Lead submission failed', {
-                submissionId,
-                error: submissionResult.error?.message
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit internship form to Salesforce');
-        }
-
-        const { response, redirectUrl } = submissionResult;
-
-        await Promise.all([
-            sendToSlack({
-                headerText: spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Internship Submission' : '🔔 New Internship Submission',
-                name: `${formData.first_name} ${formData.last_name}`,
-                email: formData.email || "",
-                phoneNumber: formData.mobile || "",
-                message: "",
-            })
-        ]).catch(error => {
-            logError('Error sending internship notifications', { submissionId }, error);
-        });
-
-        // Track the successful submission
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            response
-        );
-
-        if (redirectUrl) {
-            logInfo('Internship form submitted with redirect URL', {
-                submissionId,
-                redirectUrl
-            });
-            return { redirectUrl };
-        }
-
-        logInfo('Internship form submitted successfully', { submissionId });
-        return { message: 'Form submitted successfully!' };
-    } catch (error) {
-        // If this is an unknown error that wasn't caught earlier,
-        // make sure to update the submission status
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error')
-        );
-
-        logError('Error in internshipFormSubmission', { submissionId }, error);
-        throw new Error('Failed to submit form');
-    }
+    return submitWebToLead(internshipConfig, formData, { options });
 }
