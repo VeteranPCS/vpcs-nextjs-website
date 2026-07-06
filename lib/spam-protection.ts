@@ -19,14 +19,22 @@ export interface EvaluateLeadSpamArgs {
   options?: InternalCallOptions;
 }
 
-/** Derive the caller's IP from request headers. Falls back to 'anonymous'. */
-async function callerIp(): Promise<string> {
-  const h = await headers();
+/**
+ * Extract the client IP from a Headers-like object. Pure and request-agnostic so
+ * routes that already hold a `Request` (MCP, BAH) can reuse the same derivation as
+ * the ambient-header `callerIp()`. Falls back to 'anonymous'.
+ */
+export function ipFromHeaders(h: Pick<Headers, 'get'>): string {
   const forwarded = h.get('x-forwarded-for');
   if (forwarded) return forwarded.split(',')[0].trim();
   const realIp = h.get('x-real-ip');
   if (realIp) return realIp.trim();
   return 'anonymous';
+}
+
+/** Derive the caller's IP from the ambient request headers. Falls back to 'anonymous'. */
+export async function callerIp(): Promise<string> {
+  return ipFromHeaders(await headers());
 }
 
 /**

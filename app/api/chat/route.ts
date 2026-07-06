@@ -3,11 +3,16 @@ import {
   streamText,
 } from 'ai';
 import { checkBotId } from 'botid/server';
-import { buildConciergeConfig, extractAllUserText } from '@/lib/ai/run-concierge';
-import { parseChatRequest } from '@/lib/ai/chat-validation';
+import {
+  buildConciergeConfig,
+  extractAllUserText,
+  extractAllAssistantText,
+} from '@/lib/ai/run-concierge';
+import { parseChatRequest, stripAssistantMessageParts } from '@/lib/ai/chat-validation';
 import { getOrCreateSessionId } from '@/lib/ai/session';
 import { featureFlags } from '@/lib/feature-flags';
-import { chatLimiter } from '@/lib/rate-limit';
+import { chatLimiter, chatIpLimiter } from '@/lib/rate-limit';
+import { callerIp } from '@/lib/spam-protection';
 import { evaluateInput } from '@/lib/ai/guardrails';
 import { runHeuristics } from '@/lib/ai/guardrails/heuristics';
 import { buildBlockedResponse } from '@/lib/ai/guardrails/responses';
@@ -67,12 +72,20 @@ export async function POST(req: Request) {
   }
 
   const { sessionId } = await getOrCreateSessionId();
+  const ip = await callerIp();
 
   const headerVisitorId = req.headers.get('x-vpcs-visitor-id')?.trim();
 
-  const limit = await chatLimiter.limit(sessionId);
-  if (!limit.success) {
-    const retryAfter = Math.max(1, Math.ceil((limit.reset - Date.now()) / 1000));
+  // Rate-limit on BOTH the session bucket AND the IP bucket. The session bucket is
+  // keyed by the client-droppable cookie; without the IP bucket a caller resets the
+  // limit just by clearing the cookie. Fail if EITHER bucket is exhausted.
+  const [sessionLimit, ipLimit] = await Promise.all([
+    chatLimiter.limit(sessionId),
+    chatIpLimiter.limit(ip),
+  ]);
+  if (!sessionLimit.success || !ipLimit.success) {
+    const reset = Math.max(sessionLimit.reset, ipLimit.reset);
+    const retryAfter = Math.max(1, Math.ceil((reset - Date.now()) / 1000));
     return new Response('Too many requests', {
       status: 429,
       headers: { 'Retry-After': String(retryAfter) },
@@ -98,38 +111,53 @@ export async function POST(req: Request) {
     || (headerVisitorId?.startsWith('vpcs_') ? headerVisitorId : undefined)
     || sessionId;
 
-  // Pull the text of every user turn first. Malformed `parts` (e.g. a client
-  // sending a non-array) throws here and is caught as a 400 — rather than later
-  // surfacing as an unhandled 500 from convertToModelMessages.
+  // Pull the text of every user AND assistant turn first. Malformed `parts` (e.g. a
+  // client sending a non-array) throws here and is caught as a 400 — rather than
+  // later surfacing as an unhandled 500 from convertToModelMessages. Assistant turns
+  // are client-controlled (useChat resends the cookie-scoped transcript), so they
+  // must be scanned too — see the Tier-0 loop below.
   let userTurns: string[];
+  let assistantTurns: string[];
   try {
     userTurns = extractAllUserText(messages);
+    assistantTurns = extractAllAssistantText(messages);
   } catch (error) {
-    logError('Concierge: failed to read user message text', undefined, error);
+    logError('Concierge: failed to read message text', undefined, error);
     return new Response('Invalid request', { status: 400 });
   }
 
-  // Tier-0 heuristics scan EVERY user turn, not just the latest, so a multi-turn
-  // injection can't smuggle its payload into an earlier message. Honors the
-  // kill-switch so GUARDRAILS_ENFORCED=0 disables this pass too.
+  // Tier-0 heuristics scan EVERY user turn AND every assistant turn, not just the
+  // latest, so a multi-turn injection can't smuggle its payload into an earlier
+  // message — and a client can't forge an assistant turn that carries a jailbreak
+  // the model would continue from. Honors the kill-switch so GUARDRAILS_ENFORCED=0
+  // disables this pass too.
   if (guardrailsEnforced()) {
-    for (const turn of userTurns) {
+    for (const turn of [...userTurns, ...assistantTurns]) {
       if (runHeuristics(turn)?.action === 'block') {
         return buildBlockedResponse(REFUSAL_MESSAGE, sessionId);
       }
     }
   }
 
-  // Tier-1 classifier (+ token budget) inspects the latest user input only.
+  // Tier-1 classifier (+ token budget) inspects the latest user input only. Passing
+  // `ip` makes the budget cookie-drop-proof: it's checked against both the session
+  // and the IP bucket BEFORE the model runs.
   // Intentionally outside the try-block: evaluateInput fails open at every leaf, so it
   // never throws; a block must reach buildBlockedResponse, not the catch's 500 handler.
-  const decision = await evaluateInput(userTurns.at(-1) ?? '', { sessionId });
+  const decision = await evaluateInput(userTurns.at(-1) ?? '', { sessionId, ip });
   if (decision.action === 'block') {
     return buildBlockedResponse(REFUSAL_MESSAGE, sessionId);
   }
 
   try {
-    const modelMessages = await convertToModelMessages(messages);
+    // Strip assistant turns to plain text before the model sees them: the resent
+    // transcript is client-controlled, so any forged tool-call / tool-result / file
+    // parts are dropped and can't feed fabricated data back into the model.
+    // TODO(security): the durable fix is server-held / signed history so the client
+    // can't author assistant turns at all (out of scope for Phase 2 — memory is
+    // cookie-scoped). This strip + the Tier-0 assistant scan are the interim
+    // mitigation for remediation item 2.3.
+    const modelMessages = await convertToModelMessages(stripAssistantMessageParts(messages));
     const sourcePagePath = typeof analyticsContext?.source_page_path === 'string'
       ? analyticsContext.source_page_path
       : undefined;
@@ -146,7 +174,12 @@ export async function POST(req: Request) {
       experimental_telemetry: { isEnabled: false },
       onFinish: async ({ usage, totalUsage }) => {
         const tokens = totalUsage?.totalTokens ?? usage?.totalTokens ?? 0;
-        await addSessionTokens(sessionId, tokens);
+        // Increment BOTH the session and IP token tallies so the IP budget is a real
+        // ceiling that a cookie drop can't reset (mirrors the dual budget check above).
+        await Promise.all([
+          addSessionTokens(sessionId, tokens),
+          addSessionTokens(ip, tokens),
+        ]);
         await captureServerAnalyticsEvent({
           event: 'concierge_chat_completed',
           distinctId: visitorId,

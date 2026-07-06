@@ -29,6 +29,23 @@ const CONTROL_CHARS = /[\u0000-\u001F\u007F-\u009F]+/g;
 // can't pad/obfuscate or smuggle content into the system prompt.
 const ZERO_WIDTH_CHARS = /[\u200B-\u200D\u2060\uFEFF]/g;
 
+// The AI SDK marks a UIMessage part as a tool part when its `type` starts with
+// `tool-` (`tool-call`, `tool-result`, `tool-<name>`, ...) or equals `dynamic-tool`
+// (see ai's `isToolUIPart`/`isDynamicToolUIPart`). A browser user turn never
+// legitimately carries these — a client that sends one is trying to forge a tool
+// call/result and smuggle fabricated data (e.g. a bogus BAH rate) into the model
+// context — so we reject the whole request. Assistant turns are handled separately
+// (stripped, not rejected) because `useChat` resends prior tool calls verbatim.
+function isToolPartType(type: unknown): boolean {
+  return typeof type === 'string' && (type.startsWith('tool-') || type === 'dynamic-tool');
+}
+
+function hasToolPart(message: unknown): boolean {
+  const parts = (message as { parts?: unknown })?.parts;
+  if (!Array.isArray(parts)) return false;
+  return parts.some((p) => isToolPartType((p as { type?: unknown })?.type));
+}
+
 // Per-message schema. `role` is restricted to the values a browser chat client may
 // legitimately send. The system prompt is set server-side via `buildSystemPrompt`, so a
 // client-supplied `system` (or any other) role is a prompt-injection vector — and the AI
@@ -39,7 +56,15 @@ const messageSchema = z
   .object({
     role: z.enum(['user', 'assistant']),
   })
-  .loose();
+  .loose()
+  .superRefine((message, ctx) => {
+    if (message.role === 'user' && hasToolPart(message)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'user messages must not contain tool parts',
+      });
+    }
+  });
 
 const pageContextSchema = z
   .object({
@@ -174,4 +199,34 @@ export function parseChatRequest(raw: unknown): ParseChatRequestResult {
       analyticsContext: sanitizeAnalyticsContext(result.data.analyticsContext),
     },
   };
+}
+
+/**
+ * Reduce every assistant message to its plain-text parts before the model runs.
+ *
+ * `useChat` resends the full transcript from cookie-scoped memory, so the client
+ * controls the assistant turns it echoes back. An attacker can forge assistant
+ * content — tool-call / tool-result parts that fabricate data, reasoning blocks,
+ * files — and the model would treat it as its own prior output. We cannot reject
+ * assistant messages (the resent transcript is legitimate), so we strip them: only
+ * `text` parts survive; every non-text part is dropped. An assistant turn that was
+ * nothing but a tool call collapses to an empty `parts: []`, which
+ * `convertToModelMessages` safely skips.
+ *
+ * TODO(security): the durable fix is a server-held / signed transcript so the client
+ * can't author assistant history at all. This strip is the Phase-2 mitigation while
+ * memory stays cookie-scoped; see remediation item 2.3.
+ */
+export function stripAssistantMessageParts(messages: UIMessage[]): UIMessage[] {
+  return messages.map((message) => {
+    if (message.role !== 'assistant') return message;
+    const parts = (message as { parts?: unknown }).parts;
+    if (!Array.isArray(parts)) return message;
+    const textParts = parts.filter(
+      (p) =>
+        (p as { type?: unknown })?.type === 'text'
+        && typeof (p as { text?: unknown }).text === 'string',
+    );
+    return { ...message, parts: textParts } as UIMessage;
+  });
 }

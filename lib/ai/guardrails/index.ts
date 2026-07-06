@@ -9,6 +9,12 @@ export type { GuardrailDecision } from '@/lib/ai/guardrails/types';
 
 export interface GuardrailContext {
   sessionId: string;
+  /**
+   * Caller IP. When present, the daily token budget is enforced against BOTH the
+   * session bucket and the IP bucket, so dropping the session cookie can't reset a
+   * caller's spend. Optional so non-request callers (evals) can omit it.
+   */
+  ip?: string;
 }
 
 /**
@@ -26,7 +32,12 @@ export async function evaluateInput(
     return { action: 'allow', category: 'clean', tier: 0, reason: 'guardrails-disabled' };
   }
 
-  if (await isOverBudget(ctx.sessionId)) {
+  // Budget is cookie-drop-proof: block when EITHER the session OR the IP is over the
+  // daily cap. The two live in the same `concierge:tokens:` namespace but never
+  // collide (UUID sessions vs IP strings). Session and IP shapes differ.
+  const overSession = await isOverBudget(ctx.sessionId);
+  const overIp = ctx.ip ? await isOverBudget(ctx.ip) : false;
+  if (overSession || overIp) {
     return log({ action: 'block', category: 'budget', tier: 0, reason: 'daily token budget exceeded' }, ctx);
   }
 
