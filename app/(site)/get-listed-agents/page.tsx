@@ -100,7 +100,7 @@ export default function GetListedAgentsPage() {
             />
           </div>
           <div>
-            <Link href="/">
+            <Link href="/" aria-label="Close and return to homepage">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="48"

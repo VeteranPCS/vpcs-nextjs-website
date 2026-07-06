@@ -11,6 +11,7 @@ const Header = () => {
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   const [cashBackAmount, setCashBackAmount] = useState("$500,000");
   const submenuRef = useRef<HTMLLIElement>(null);
+  const submenuToggleRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
   const navItemClass =
     "relative max-w-fit whitespace-nowrap pr-3 py-1 text-sm after:absolute after:bottom-0 after:left-0 after:h-1 after:w-0 after:bg-accent-red after:transition-all after:duration-300 hover:after:w-full focus-within:after:w-full min-[1400px]:pr-0 min-[1400px]:text-base";
@@ -44,7 +45,10 @@ const Header = () => {
   useEffect(() => {
     if (!isSubmenuOpen) return;
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsSubmenuOpen(false);
+      if (event.key === "Escape") {
+        setIsSubmenuOpen(false);
+        submenuToggleRef.current?.focus();
+      }
     };
     const handlePointerDown = (event: PointerEvent) => {
       if (submenuRef.current && !submenuRef.current.contains(event.target as Node)) {
@@ -275,6 +279,7 @@ const Header = () => {
                       Get Listed
                     </TrackedCtaLink>
                     <button
+                      ref={submenuToggleRef}
                       type="button"
                       onClick={() => setIsSubmenuOpen((open) => !open)}
                       aria-expanded={isSubmenuOpen}
