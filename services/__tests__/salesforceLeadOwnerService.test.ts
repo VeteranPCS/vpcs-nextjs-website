@@ -163,9 +163,12 @@ describe('salesforceLeadOwnerService', () => {
   });
 
   it('does not patch when lookup finds no Lead', async () => {
-    vi.mocked(salesForceAPIWithRefresh)
-      .mockResolvedValueOnce(queryResponse([]) as any)
-      .mockResolvedValueOnce(queryResponse([]) as any);
+    // Every lookup returns empty. Use a persistent default rather than a fixed pair of
+    // `...Once` values: with LEAD_LOOKUP_TIMEOUT_MS=0 the poll loop in findCreatedLead runs
+    // one or two passes depending on sub-millisecond timing, so pinning an exact call count
+    // made this test flaky (a third, unstubbed call returned undefined → "status unknown").
+    // A default keeps the assertion deterministic no matter how many empty polls occur.
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValue(queryResponse([]) as any);
 
     await expect(routeSalesforceLeadOwner(routeParams())).rejects.toThrow(
       'Unable to locate unique Salesforce Lead',
