@@ -132,8 +132,20 @@ export async function POST(req: Request) {
   // the model would continue from. Honors the kill-switch so GUARDRAILS_ENFORCED=0
   // disables this pass too.
   if (guardrailsEnforced()) {
-    for (const turn of [...userTurns, ...assistantTurns]) {
+    // User turns get the full check, including the MAX_INPUT_CHARS size cap that bounds
+    // per-message token cost.
+    for (const turn of userTurns) {
       if (runHeuristics(turn)?.action === 'block') {
+        return buildBlockedResponse(REFUSAL_MESSAGE, sessionId);
+      }
+    }
+    // Assistant turns are scanned for injection signatures only. The size cap must NOT
+    // apply here: the model legitimately produces replies longer than MAX_INPUT_CHARS,
+    // and useChat resends the prior assistant turn on the next request — capping it
+    // would give an otherwise-valid follow-up the generic guardrail refusal before the
+    // model runs (Codex P2).
+    for (const turn of assistantTurns) {
+      if (runHeuristics(turn, { enforceSizeLimit: false })?.action === 'block') {
         return buildBlockedResponse(REFUSAL_MESSAGE, sessionId);
       }
     }
