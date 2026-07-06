@@ -31,7 +31,10 @@ const MOCK_PARTNERS: PublicPartner[] = [
   partner('3', 'Anthony Gracia', 'Anthony', 'agent', 'Colorado Springs', 'Colorado', 'colorado'),
   partner('4', 'Denver Partner', 'Denver', 'agent', 'Denver', 'Colorado', 'colorado'),
   partner('5', 'Norfolk Partner', 'Norfolk', 'agent', 'Norfolk', 'Virginia', 'virginia'),
-  partner('6', 'Killeen Partner', 'Killeen', 'agent', 'Killeen - Fort Hood', 'Texas', 'texas'),
+  // TX partners mirror TX_AGENTS so the routing chain and getAgentsForState return
+  // the same names — MOCK_TX_AGENT_NAMES stays valid whichever path answers a TX request.
+  partner('6', 'Jane Carter', 'Jane', 'agent', 'Killeen - Fort Hood', 'Texas', 'texas'),
+  partner('7', 'Marcus Webb', 'Marcus', 'agent', 'Killeen - Fort Hood', 'Texas', 'texas'),
 ];
 
 function partner(
@@ -84,9 +87,11 @@ function routeFixture(destination: string, stateHint?: string): CoverageRoutingR
         ? coverageArea('Norfolk', 'Virginia', 'VA', 'virginia', 0, true, 'high')
         : input.includes('cavazos') || input.includes('hood')
           ? coverageArea('Killeen - Fort Hood', 'Texas', 'TX', 'texas', 0, true, 'high')
-          : input.includes('colorado') && resolved.type === 'state'
-            ? coverageArea('Colorado Springs', 'Colorado', 'CO', 'colorado', undefined, false, 'medium')
-            : coverageArea('Colorado Springs', 'Colorado', 'CO', 'colorado', 0, true, 'high');
+          : input.includes('texas') && resolved.type === 'state'
+            ? coverageArea('Killeen - Fort Hood', 'Texas', 'TX', 'texas', undefined, false, 'medium')
+            : input.includes('colorado') && resolved.type === 'state'
+              ? coverageArea('Colorado Springs', 'Colorado', 'CO', 'colorado', undefined, false, 'medium')
+              : coverageArea('Colorado Springs', 'Colorado', 'CO', 'colorado', 0, true, 'high');
 
   const caveat = resolved.type === 'state'
     ? resolved.caveat
@@ -148,7 +153,7 @@ export function mockTools(): ToolSet {
     }),
     resolveDestinationLocation: tool({
       description:
-        'Resolve a user-named destination to deterministic geography. Use before partner lookup for bases, cities, ZIPs, and states.',
+        'Step 1 of the routing chain: resolve a user-named destination (base, city, town, ZIP, or state) to deterministic geography. Returns ambiguity instead of guessing. See the system prompt for the required tool order.',
       inputSchema: z.object({ destination: z.string(), stateHint: z.string().optional() }),
       execute: async ({ destination, stateHint }) => ({
         ok: true,
@@ -157,7 +162,7 @@ export function mockTools(): ToolSet {
     }),
     findCoverageAreas: tool({
       description:
-        'Route a resolved destination to active VeteranPCS coverage areas and return caveats when exact coverage is missing.',
+        'Step 2 of the routing chain: route a resolved destination to active VeteranPCS coverage areas. Returns the closest same-state coverage and caveats when exact coverage is missing.',
       inputSchema: z.object({ destination: z.string(), stateHint: z.string().optional() }),
       execute: async ({ destination, stateHint }) => ({
         ok: true,
@@ -166,7 +171,7 @@ export function mockTools(): ToolSet {
     }),
     getPartnersForCoverageArea: tool({
       description:
-        'Get the top 3 actionable VeteranPCS partners for a selected coverage area. Call after findCoverageAreas.',
+        'Step 3 of the routing chain: get the top 3 actionable VeteranPCS partners for the coverage area findCoverageAreas selected. Call only after findCoverageAreas.',
       inputSchema: z.object({
         state: z.string(),
         areaName: z.string().optional(),
@@ -198,7 +203,8 @@ export function mockTools(): ToolSet {
       },
     }),
     getAgentsForState: tool({
-      description: 'Get up to 3 vetted real estate agents who serve a given US state.',
+      description:
+        'Direct state-level agent lookup. Not the concierge routing path: for every agent request, including a bare state name, use the resolveDestinationLocation -> findCoverageAreas -> getPartnersForCoverageArea chain instead.',
       inputSchema: z.object({ state: z.string() }),
       execute: async () => ({
         ok: true,
@@ -206,7 +212,8 @@ export function mockTools(): ToolSet {
       }),
     }),
     getLendersForState: tool({
-      description: 'Get up to 3 vetted VA-loan lenders who serve a given US state.',
+      description:
+        'Direct state-level lender lookup. Not the concierge routing path: for every lender request, including a bare state name, use the resolveDestinationLocation -> findCoverageAreas -> getPartnersForCoverageArea chain instead.',
       inputSchema: z.object({ state: z.string() }),
       execute: async () => ({
         ok: true,

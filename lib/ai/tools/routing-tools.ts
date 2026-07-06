@@ -31,13 +31,13 @@ const partnersForCoverageAreaInputSchema = z.object({
   areaName: z
     .string()
     .optional()
-    .describe('Coverage area name selected by findCoverageAreas. Omit only for state-only requests.'),
+    .describe('Coverage area name selected by findCoverageAreas.'),
   role: z.enum(['agent', 'lender']).describe('Partner type the user asked for.'),
 });
 
 const resolveDestinationLocationTool = tool({
   description:
-    'Resolve a user-named destination to deterministic geography. Use before partner lookup when the user names a military base, city, town, ZIP, or state. Returns ambiguity instead of guessing.',
+    'Step 1 of the routing chain: resolve a user-named destination (base, city, town, ZIP, or state) to deterministic geography. Returns ambiguity instead of guessing. See the system prompt for the required tool order.',
   inputSchema: destinationInputSchema,
   execute: async ({
     destination,
@@ -61,7 +61,7 @@ const resolveDestinationLocationTool = tool({
 
 const findCoverageAreasTool = tool({
   description:
-    'Route a resolved destination to active VeteranPCS coverage areas. Use after resolveDestinationLocation and before getPartnersForCoverageArea. Returns closest same-state coverage and caveats when exact coverage is missing.',
+    'Step 2 of the routing chain: route a resolved destination to active VeteranPCS coverage areas. Returns the closest same-state coverage and caveats when exact coverage is missing.',
   inputSchema: destinationInputSchema,
   execute: async ({
     destination,
@@ -85,7 +85,7 @@ const findCoverageAreasTool = tool({
 
 const getPartnersForCoverageAreaTool = tool({
   description:
-    'Get the top 3 actionable VeteranPCS partners for a selected coverage area. Call this only after findCoverageAreas picks an area, or with state only for broad state requests. Partners are sorted by AA_Score where available and include card hrefs.',
+    'Step 3 of the routing chain: get the top 3 actionable VeteranPCS partners for the coverage area findCoverageAreas selected. Call only after findCoverageAreas. Partners are sorted by AA_Score where available and include card hrefs.',
   inputSchema: partnersForCoverageAreaInputSchema,
   execute: async ({
     state,

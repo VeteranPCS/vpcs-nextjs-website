@@ -102,7 +102,7 @@ const getStateDetailsTool = tool({
 
 const getAgentsForStateTool = tool({
   description:
-    'Get up to 3 vetted real estate agents who serve a given US state. For city/base/ZIP requests, prefer resolveDestinationLocation -> findCoverageAreas -> getPartnersForCoverageArea first. Returns card-ready public data only (no email or phone).',
+    'Direct state-level agent lookup. Not the concierge routing path: for every agent request, including a bare state name, use the resolveDestinationLocation -> findCoverageAreas -> getPartnersForCoverageArea chain instead. Returns card-ready public data only (no email or phone).',
   inputSchema: stateInputSchema,
   execute: async ({
     state,
@@ -143,7 +143,7 @@ const getAgentsForStateTool = tool({
 
 const getLendersForStateTool = tool({
   description:
-    'Get up to 3 vetted VA-loan lenders who serve a given US state. For city/base/ZIP requests, prefer resolveDestinationLocation -> findCoverageAreas -> getPartnersForCoverageArea first. Returns card-ready public data only (no email or phone).',
+    'Direct state-level lender lookup. Not the concierge routing path: for every lender request, including a bare state name, use the resolveDestinationLocation -> findCoverageAreas -> getPartnersForCoverageArea chain instead. Returns card-ready public data only (no email or phone).',
   inputSchema: stateInputSchema,
   execute: async ({
     state,

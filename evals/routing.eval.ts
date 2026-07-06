@@ -58,15 +58,22 @@ describe('routing', () => {
     expect(res.text).toMatch(/which|what|state/i);
   });
 
-  it('handles state-only routing without inventing city coverage', async () => {
+  it('runs the full routing chain for a bare state name, not the state-only helpers', async () => {
     const res = await runConcierge('I am moving to Colorado and need an agent.', {
       tools: mockTools(),
     });
     recordSpend(res.usage);
 
     expectNoRefusal(res);
+    // Approach A (remediation 1.4): a bare state name goes through the full chain in order,
+    // never the demoted getAgentsForState/getLendersForState helpers.
+    expect(res.toolNames, res.text).toContain('resolveDestinationLocation');
     expect(res.toolNames, res.text).toContain('findCoverageAreas');
+    expect(res.toolNames, res.text).toContain('getPartnersForCoverageArea');
+    expect(res.toolNames, res.text).not.toContain('getAgentsForState');
+    expect(res.toolNames, res.text).not.toContain('getLendersForState');
     expectSelectedCoverage(res, 'Colorado Springs', 'CO', 'medium');
+    expectPartnerCall(res, 'Colorado Springs', 'agent');
     expect(routeCaveat(res)).toMatch(/State-only routing is broad/i);
   });
 });

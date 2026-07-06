@@ -6,12 +6,17 @@ import { recordSpend, spendSoFar } from './lib/report';
 afterAll(() => console.log(`[tool-selection] token spend: ${spendSoFar()}`));
 
 describe('tool-selection', () => {
-  it('calls getAgentsForState when the user wants an agent', async () => {
+  it('routes a state agent request through the coverage chain, not the state-only helper', async () => {
     const res = await runConcierge('Can you help me find a real estate agent in Texas?', {
       tools: mockTools(),
     });
     recordSpend(res.usage);
-    expect(res.toolNames, res.text).toContain('getAgentsForState');
+    // Approach A (remediation 1.4): getAgentsForState is demoted; the canonical
+    // resolve -> coverage -> partners chain answers every state agent request.
+    expect(res.toolNames, res.text).toContain('resolveDestinationLocation');
+    expect(res.toolNames, res.text).toContain('findCoverageAreas');
+    expect(res.toolNames, res.text).toContain('getPartnersForCoverageArea');
+    expect(res.toolNames, res.text).not.toContain('getAgentsForState');
   });
 
   it('does not call any submit tool before the user gives info or confirms', async () => {

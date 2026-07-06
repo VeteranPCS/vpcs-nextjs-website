@@ -227,7 +227,7 @@ const submitLenderRequestTool = tool({
 // --- General inquiry ---
 
 const submitGeneralInquiryTool = tool({
-  description: `Send a general question or request for a human follow-up to the VeteranPCS team. ${SUBMIT_REQUIRED} Also required: subject, message. Use this for escalations (e.g., "Requesting human follow-up").`,
+  description: `Send a general question or request for a human follow-up to VeteranPCS. ${SUBMIT_REQUIRED} Also required: subject, message. Use this for escalations (e.g., "Requesting human follow-up").`,
   inputSchema: generalInquirySchema,
   needsApproval: true,
   execute: async (input): Promise<ToolResult<LeadSuccess>> => {
