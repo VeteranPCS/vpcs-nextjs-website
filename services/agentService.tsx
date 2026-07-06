@@ -2,6 +2,7 @@ import { urlForImage } from '@/sanity/lib/image'
 import { client } from '@/sanity/lib/client'
 import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
 import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
+import { escapeSoqlLiteral } from '@/services/soql';
 import { RealEstateAgentDocument } from '@/types/agent';
 import { STATE_ABBR_TO_SLUG as stateAbbreviations } from '@/lib/states';
 
@@ -32,10 +33,19 @@ const agentService = {
         return logos;
     },
     getAgentState: async (salesforceID: string): Promise<string[]> => {
+        // Primary gate: a Salesforce record id is a 15- or 18-char alphanumeric
+        // string. Reject anything else (this value arrives straight off the
+        // webhook body) so an injection payload never reaches the query builder.
+        if (!/^[a-zA-Z0-9]{15,18}$/.test(salesforceID)) {
+            throw new Error("Invalid Salesforce ID.");
+        }
+
+        // Backstop: escape the (already validated) id before interpolating it into
+        // the SOQL string literal — defense in depth against a missed validation.
         const query = `
             SELECT State_s_Licensed_in__pc, Other_States__pc
             FROM Account
-            WHERE AccountId_15__c = '${salesforceID}'
+            WHERE AccountId_15__c = '${escapeSoqlLiteral(salesforceID)}'
         `.replace(/\s+/g, ' ').trim();
 
         const response = await salesForceAPIWithRefresh({

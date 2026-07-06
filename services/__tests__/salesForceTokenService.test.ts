@@ -44,6 +44,38 @@ describe('getSalesforceToken', () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllEnvs();
+  });
+
+  it('sends the OAuth credentials in the POST body with an empty URL query string', async () => {
+    const { getSalesforceToken, salesForceTokenAPI } = await loadFresh();
+    salesForceTokenAPI.mockResolvedValue(tokenResponse('token-1'));
+
+    vi.stubEnv('SALESFORCE_CLIENT_ID', 'cid');
+    vi.stubEnv('SALESFORCE_CLIENT_SECRET', 'secret&with+reserved%chars');
+    vi.stubEnv('SALESFORCE_USERNAME', 'user@test');
+    vi.stubEnv('SALESFORCE_PASSWORD', 'pw');
+    vi.stubEnv('SALESFORCE_TOKEN', 'tok');
+
+    await getSalesforceToken();
+
+    const arg = salesForceTokenAPI.mock.calls[0][0];
+
+    // Credentials must NOT ride on the URL query string (proxy/log leak).
+    expect(arg.endpoint).toBe('https://login.salesforce.test/services/oauth2/token');
+    expect(new URL(arg.endpoint).search).toBe('');
+    expect(arg.endpoint).not.toContain('secret');
+    expect(arg.endpoint).not.toContain('client_id');
+
+    // Credentials travel in an x-www-form-urlencoded body instead.
+    expect(arg.data).toBeInstanceOf(URLSearchParams);
+    const body = arg.data as URLSearchParams;
+    expect(body.get('grant_type')).toBe('password');
+    expect(body.get('client_id')).toBe('cid');
+    expect(body.get('client_secret')).toBe('secret&with+reserved%chars');
+    expect(body.get('username')).toBe('user@test');
+    // Salesforce appends the security token to the password.
+    expect(body.get('password')).toBe('pwtok');
   });
 
   it('caches the token so a second call does not re-hit the OAuth endpoint', async () => {

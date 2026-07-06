@@ -153,12 +153,16 @@ export const salesForceTokenAPI = async ({
 }: ApiParams): Promise<AxiosResponse | undefined> => {
     let res: AxiosResponse | undefined;
 
+    // Token endpoint only: the OAuth2 grant params travel as a
+    // application/x-www-form-urlencoded body (see salesForceTokenService), never
+    // on the URL query string, so credentials don't leak into logs.
     const config: AxiosRequestConfig = {
         url: endpoint,
         method: type as any,
         data,
         headers: {
             "Cache-Control": "no-cache",
+            "Content-Type": "application/x-www-form-urlencoded",
         },
     };
 

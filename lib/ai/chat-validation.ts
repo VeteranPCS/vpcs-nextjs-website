@@ -29,6 +29,23 @@ const CONTROL_CHARS = /[\u0000-\u001F\u007F-\u009F]+/g;
 // can't pad/obfuscate or smuggle content into the system prompt.
 const ZERO_WIDTH_CHARS = /[\u200B-\u200D\u2060\uFEFF]/g;
 
+// The AI SDK marks a UIMessage part as a tool part when its `type` starts with
+// `tool-` (`tool-call`, `tool-result`, `tool-<name>`, ...) or equals `dynamic-tool`
+// (see ai's `isToolUIPart`/`isDynamicToolUIPart`). A browser user turn never
+// legitimately carries these — a client that sends one is trying to forge a tool
+// call/result and smuggle fabricated data (e.g. a bogus BAH rate) into the model
+// context — so we reject the whole request. Assistant turns are handled separately
+// (stripped, not rejected) because `useChat` resends prior tool calls verbatim.
+function isToolPartType(type: unknown): boolean {
+  return typeof type === 'string' && (type.startsWith('tool-') || type === 'dynamic-tool');
+}
+
+function hasToolPart(message: unknown): boolean {
+  const parts = (message as { parts?: unknown })?.parts;
+  if (!Array.isArray(parts)) return false;
+  return parts.some((p) => isToolPartType((p as { type?: unknown })?.type));
+}
+
 // Per-message schema. `role` is restricted to the values a browser chat client may
 // legitimately send. The system prompt is set server-side via `buildSystemPrompt`, so a
 // client-supplied `system` (or any other) role is a prompt-injection vector — and the AI
@@ -39,7 +56,15 @@ const messageSchema = z
   .object({
     role: z.enum(['user', 'assistant']),
   })
-  .loose();
+  .loose()
+  .superRefine((message, ctx) => {
+    if (message.role === 'user' && hasToolPart(message)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'user messages must not contain tool parts',
+      });
+    }
+  });
 
 const pageContextSchema = z
   .object({
@@ -174,4 +199,53 @@ export function parseChatRequest(raw: unknown): ParseChatRequestResult {
       analyticsContext: sanitizeAnalyticsContext(result.data.analyticsContext),
     },
   };
+}
+
+/**
+ * Reduce every assistant message to its plain-text parts before the model runs.
+ *
+ * `useChat` resends the full transcript from cookie-scoped memory, so the client
+ * controls the assistant turns it echoes back. An attacker can forge assistant
+ * content — tool-call / tool-result parts that fabricate data, reasoning blocks,
+ * files — and the model would treat it as its own prior output. We cannot reject
+ * assistant messages (the resent transcript is legitimate), so we strip them: ONLY
+ * `text` parts survive; every non-text part is dropped. An assistant turn that was
+ * nothing but a forged tool result collapses to an empty `parts: []`, which
+ * `convertToModelMessages` safely skips.
+ *
+ * This deliberately ALSO drops the AI-SDK approval-handshake parts
+ * (`approval-requested` / `approval-responded`). Those parts are what drive the
+ * human-in-the-loop execution of `needsApproval` tools — here, the four lead-submit
+ * tools (`submitAgentRequest` / `submitLenderRequest` / `submitGeneralInquiry` /
+ * `submitVALoanGuideRequest`) whose `execute` writes a real Salesforce lead plus a
+ * Slack notification plus an OpenPhone SMS. Because the transcript is client-authored
+ * on every resend and the server keeps NO record of the approvals it issued, a
+ * preserved `approval-responded` part carrying `approved: true` with attacker-chosen
+ * (but schema-valid) input would let `convertToModelMessages` → `streamText` run a
+ * lead-submit tool with NO genuine user consent. The AI SDK exposes no hook to
+ * authenticate a resent approval against a server-issued one, so the only safe
+ * Phase-2 posture is to strip these parts too (remediation item 2.3; the alternative
+ * of preserving them was flagged as a P1 by Codex review).
+ *
+ * CONSEQUENCE: approval-gated (HITL) lead submission does NOT execute from the
+ * transcript while chat memory stays cookie-scoped. The concierge ships behind
+ * `NEXT_PUBLIC_CONCIERGE_ENABLED` (off), so today this changes no live behavior.
+ *
+ * TODO(security): the durable fix — REQUIRED before the concierge is enabled for
+ * lead capture — is a server-held / signed transcript (or a server-recorded approval
+ * registry keyed off the approvals `streamText` actually issued) so the server can
+ * execute an approval only when it matches one it itself produced. Until that lands,
+ * HITL lead submission stays intentionally disabled here.
+ */
+export function stripAssistantMessageParts(messages: UIMessage[]): UIMessage[] {
+  return messages.map((message) => {
+    if (message.role !== 'assistant') return message;
+    const parts = (message as { parts?: unknown }).parts;
+    if (!Array.isArray(parts)) return message;
+    const keptParts = parts.filter((p) => {
+      const type = (p as { type?: unknown })?.type;
+      return type === 'text' && typeof (p as { text?: unknown }).text === 'string';
+    });
+    return { ...message, parts: keptParts } as UIMessage;
+  });
 }

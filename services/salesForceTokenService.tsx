@@ -17,8 +17,23 @@ let cached: CachedSalesforceToken | null = null;
 let inflight: Promise<CachedSalesforceToken> | null = null;
 
 async function requestSalesforceToken(): Promise<CachedSalesforceToken> {
+    // Send the OAuth2 password-grant credentials in the request BODY, not the URL
+    // query string. Credentials on the query string leak into proxy/access logs,
+    // and reserved characters (&, +, %) in the password/security-token corrupt the
+    // query. URLSearchParams url-encodes each value and axios serialises it as an
+    // application/x-www-form-urlencoded body. (Follow-up: migrate to the JWT-bearer
+    // grant so a long-lived password never leaves the box at all.)
+    const body = new URLSearchParams({
+        grant_type: 'password',
+        client_id: process.env.SALESFORCE_CLIENT_ID ?? '',
+        client_secret: process.env.SALESFORCE_CLIENT_SECRET ?? '',
+        username: process.env.SALESFORCE_USERNAME ?? '',
+        password: `${process.env.SALESFORCE_PASSWORD ?? ''}${process.env.SALESFORCE_TOKEN ?? ''}`,
+    });
+
     const response = await salesForceTokenAPI({
-        endpoint: `${SALESFORCE_LOGIN_BASE_URL}/services/oauth2/token?grant_type=password&client_id=${process.env.SALESFORCE_CLIENT_ID}&client_secret=${process.env.SALESFORCE_CLIENT_SECRET}&username=${process.env.SALESFORCE_USERNAME}&password=${process.env.SALESFORCE_PASSWORD}${process.env.SALESFORCE_TOKEN}`,
+        endpoint: `${SALESFORCE_LOGIN_BASE_URL}/services/oauth2/token`,
+        data: body,
         type: RequestType.POST,
     });
 
