@@ -5,6 +5,7 @@ import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListed
 import GetListedLendersProfileInfoWantShareMore from "@/components/GetListedLenders/GetListedLendersProfileInfoWantShareMore";
 import MortgageCompanyInfo from "@/components/GetListedLenders/MortgageCompanyInfo";
 import Image from "next/image";
+import Link from "next/link";
 import { GetListedLendersPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
@@ -111,7 +112,7 @@ export default function GetListedLendersPage() {
             />
           </div>
           <div>
-            <button>
+            <Link href="/" aria-label="Close and return to homepage">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="48"
@@ -124,7 +125,7 @@ export default function GetListedLendersPage() {
                   fill="#E2E4E6"
                 />
               </svg>
-            </button>
+            </Link>
           </div>
         </div>
 
