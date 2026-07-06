@@ -132,27 +132,22 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                 )}
               </div>
               <div className="mb-8 flex flex-col">
-                <label
-                  htmlFor="otherStates"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
-                >
-                  Other State(s) Licensed:
-                </label>
-                <select
-                  id="otherStates"
-                  {...register("otherStates")}
-                  className="border-b border-[#E2E4E5] px-2 py-1 h-32"
-                  multiple
-                >
-                  {US_STATE_CODES.map((code) => (
-                    <option key={code} value={code}>
-                      {code}
-                    </option>
-                  ))}
-                </select>
-                <span className="text-xs text-gray-500 mt-1">
-                  Hold Ctrl/Cmd to select multiple states
-                </span>
+                <fieldset>
+                  <legend className="text-[#242426] tahoma text-sm font-normal mb-1">
+                    Other State(s) Licensed:
+                  </legend>
+                  <div className="grid grid-cols-2 border rounded border-[#E2E4E5] px-2 py-1 max-h-48 overflow-y-auto">
+                    {US_STATE_CODES.map((code) => (
+                      <label
+                        key={code}
+                        className="flex items-center gap-2 min-h-11 tahoma text-sm font-normal cursor-pointer"
+                      >
+                        <input type="checkbox" value={code} {...register("otherStates")} />
+                        {code}
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
                 {errors.otherStates && (
                   <span className="text-error">
                     {errors.otherStates.message}
