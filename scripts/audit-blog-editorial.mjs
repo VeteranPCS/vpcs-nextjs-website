@@ -64,10 +64,14 @@ const REDIRECTED_PREFIXES = [
 // Roughly: "First Last" or "First Middle Last" - no &, no commas, each word capitalized.
 const PERSON_NAME_RE = /^[A-Z][A-Za-z'’-]+(?: [A-Z][A-Za-z'’-]+){1,3}$/;
 
-// The default byline is "VeteranPCS", never "The VeteranPCS Team". This phrase is
-// banned in body copy as well as bylines. Unlike the editorial bands above, a hit
-// here fails `npm run lint:content` unconditionally (see main()), so CI blocks it.
-const BANNED_BYLINES = ['The VeteranPCS Team'];
+// The default byline is "VeteranPCS", never "the VeteranPCS Team". The phrase is
+// banned in body copy as well as bylines, in any casing ("The VeteranPCS Team",
+// "reviewed by the VeteranPCS team", etc.). Matched case-insensitively. The trailing
+// (?![a-z]) keeps the verb phrase "VeteranPCS teams up ..." (plural) from matching
+// while still catching markdown-italic sign-offs like "_From the VeteranPCS Team_"
+// (a trailing \b would fail there, since "_" is a word char). Unlike the editorial
+// bands above, a hit here fails `npm run lint:content` unconditionally (see main()).
+const BANNED_BYLINE_RE = /VeteranPCS team(?![a-z])/i;
 
 function readPosts() {
   if (!existsSync(CONTENT_DIR)) return [];
@@ -138,10 +142,8 @@ function findBannedBylines(md) {
   const lines = md.split('\n');
   const hits = [];
   lines.forEach((line, idx) => {
-    for (const phrase of BANNED_BYLINES) {
-      if (line.includes(phrase)) {
-        hits.push({ line: idx + 1, text: line.trim().slice(0, 100) });
-      }
+    if (BANNED_BYLINE_RE.test(line)) {
+      hits.push({ line: idx + 1, text: line.trim().slice(0, 100) });
     }
   });
   return hits;
