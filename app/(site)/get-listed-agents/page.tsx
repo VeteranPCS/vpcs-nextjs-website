@@ -5,6 +5,7 @@ import CurrentLocation from "@/components/GetListedAgents/CurrentLocation";
 import AgentInfo from "@/components/GetListedAgents/AgentInfo";
 import Image from "next/image";
 import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListedLendersProfileInfo";
+import Link from "next/link";
 import { GetListedAgentsPostForm } from "@/services/salesForcePostFormsService";
 import { useRouter } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
@@ -99,7 +100,7 @@ export default function GetListedAgentsPage() {
             />
           </div>
           <div>
-            <button>
+            <Link href="/">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="48"
@@ -112,7 +113,7 @@ export default function GetListedAgentsPage() {
                   fill="#E2E4E6"
                 />
               </svg>
-            </button>
+            </Link>
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 import React from "react";
-import Button from "@/components/common/Button";
 import classes from "./ImpactVaLoan.module.css";
 import Image from "next/image";
+import LenderCtaLink from "@/components/common/LenderCtaLink";
 
 const ImpactVaLoan = () => {
   return (
@@ -77,7 +77,16 @@ const ImpactVaLoan = () => {
               </div>
             </div>
             <div className="mt-5 md:block flex justify-center">
-              <Button buttonText="More info on VA Loan" />
+              <div className="lg:py-8 md:py-8 sm:py-2 py-2">
+                <LenderCtaLink
+                  className="inline-flex min-h-11 max-w-full items-center justify-center rounded-2xl bg-accent-red px-5 py-3.5 text-center text-sm font-normal leading-6 text-white tahoma transition-colors duration-200 hover:bg-accent-red-dark active:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-5 md:text-lg lg:px-8 lg:py-4 xl:px-8 xl:py-4"
+                  ctaId="impact_va_loan_more_info"
+                  ctaPosition="impact_va_loan_section"
+                  ctaComponent="impact_va_loan"
+                >
+                  More info on VA Loan
+                </LenderCtaLink>
+              </div>
             </div>
           </div>
           <div className="lg:ml-10 md:ml-0 sm:ml-0 ml-0 sm:order-2 order-1">

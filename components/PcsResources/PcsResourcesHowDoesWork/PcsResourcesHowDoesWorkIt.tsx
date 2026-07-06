@@ -7,7 +7,7 @@ import Link from "next/link";
 const PcsResourcesHowDoesWorkIt = () => {
   return (
     <div className={classes.PcsResourcesHowDoesWorkItcontainer}>
-      <div className="mx-auto text-center lg:w-[700px] md:w-[500px] sm:w-[400px] w-[400px] py-10">
+      <div className="mx-auto text-center w-full max-w-[700px] px-5 py-10">
         <div>
           <h1 className="text-[#FFFFFF] text-center roboto lg:text-[45px] md:text-[45px] sm:text-[35px] text-[35px] font-bold px-10 sm:px-0">
             How Does The Move-In-Bonus Work?
