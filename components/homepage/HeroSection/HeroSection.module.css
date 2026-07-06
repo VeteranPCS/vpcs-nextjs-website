@@ -1,5 +1,5 @@
 .herosectioncontainer {
-  background-image: url("/assets/herobgimage.png");
+  background-image: url("/assets/herobg-1600.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -13,6 +13,7 @@
 
 @media screen and (max-width: 767px) {
   .herosectioncontainer {
+    background-image: url("/assets/herobg-750.webp");
     padding: 92px 20px 56px;
     background-position: center top;
   }
