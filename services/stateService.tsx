@@ -63,7 +63,7 @@ export interface Agent {
   };
   BillingStateCode: string;
   State_s_Licensed_in__pc: string;
-  Other_States__pc?: string[]; // INCLUDES can return an array
+  Other_States__pc?: string; // Multi-select picklist: Salesforce returns a ';'-delimited string (INCLUDES is a WHERE filter, not a shape-changer)
   PersonEmail?: string;
   PersonMobilePhone?: string;
   Area_Assignments__r?: {
