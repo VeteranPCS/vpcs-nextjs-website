@@ -99,7 +99,13 @@ vi.mock('@/services/formTrackingService', () => ({
 
 const queryString = '?form=agent&fn=Jason&id=0014x00000HWTqI&state=colorado';
 
-function qaPayload() {
+// The lead-param builders type `formData` as a flat `Record<string, string | undefined>`.
+// These fixtures also carry the analytics passthrough fields (`form_rendered_at`, the
+// `*_count_before_conversion` counters) as real numbers, matching what the client sends on the
+// wire. Assert the builder-facing shape via one type-only cast so the static type matches the
+// builder param while the runtime values stay numeric — the number→string coercion path in the
+// builders/attribution helper is still exercised exactly as in production.
+function qaPayload(): Record<string, string | undefined> {
   return {
     firstName: 'QA',
     lastName: 'Concierge Test',
@@ -117,10 +123,10 @@ function qaPayload() {
     pageview_count_before_conversion: 3,
     cta_click_count_before_conversion: 1,
     form_attempt_count_before_conversion: 1,
-  };
+  } as unknown as Record<string, string | undefined>;
 }
 
-function lenderPayload() {
+function lenderPayload(): Record<string, string | undefined> {
   return {
     firstName: 'QA',
     lastName: 'Lender Test',
@@ -133,7 +139,7 @@ function lenderPayload() {
     company_website: '',
     form_rendered_at: Date.now() - 5_000,
     vpcs_visitor_id: 'vpcs_test_lender_1234567890',
-  };
+  } as unknown as Record<string, string | undefined>;
 }
 
 function mockSalesforceResponse(body: string, init?: ResponseInit) {
@@ -963,6 +969,10 @@ describe('characterization: observable contract for the seven simpler forms', ()
     accept200();
     const result = await GetListedAgentsPostForm({
       firstName: 'Test', lastName: 'Agent', email: 'agent@example.com', phone: '8035550100',
+      // The get-listed Slack message is sourced from `tellusMore` (the form's free-text field),
+      // NOT `additionalComments`. Sending a distinct value in each pins that routing.
+      tellusMore: 'I have served military families for 10 years.',
+      additionalComments: 'internal note that must not reach Slack',
     });
 
     expect(result).toEqual({ message: 'Form submitted successfully!' });
@@ -972,7 +982,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
       name: 'Test Agent',
       email: 'agent@example.com',
       phoneNumber: '8035550100',
-      message: '',
+      message: 'I have served military families for 10 years.',
     });
     expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
@@ -983,6 +993,10 @@ describe('characterization: observable contract for the seven simpler forms', ()
     accept200();
     const result = await GetListedLendersPostForm({
       firstName: 'Test', lastName: 'Lender', email: 'lender@example.com', phone: '8035550100',
+      // The get-listed Slack message is sourced from `tellusMore` (the form's free-text field),
+      // NOT `additionalComments`. Sending a distinct value in each pins that routing.
+      tellusMore: 'VA-focused lender, 500+ closed loans.',
+      additionalComments: 'internal note that must not reach Slack',
     });
 
     expect(result).toEqual({ message: 'Form submitted successfully!' });
@@ -992,7 +1006,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
       name: 'Test Lender',
       email: 'lender@example.com',
       phoneNumber: '8035550100',
-      message: '',
+      message: 'VA-focused lender, 500+ closed loans.',
     });
     expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();

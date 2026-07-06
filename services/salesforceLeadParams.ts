@@ -2,7 +2,7 @@ import { appendSalesforceAttributionParams } from '@/lib/analytics/server';
 import { SF_ORG_ID, SF_RECORD_TYPE } from '@/lib/salesforce/ids';
 
 export function buildAgentLeadParams(
-    formData: any,
+    formData: Record<string, string | undefined>,
     paramsObj: Record<string, string>,
     webFormUrl: string,
     baseUrl: string | undefined,
@@ -45,7 +45,7 @@ export function buildAgentLeadParams(
 }
 
 export function buildLenderLeadParams(
-    formData: any,
+    formData: Record<string, string | undefined>,
     paramsObj: Record<string, string>,
     webFormUrl: string,
     baseUrl: string | undefined,
