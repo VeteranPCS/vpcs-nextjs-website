@@ -1,6 +1,5 @@
 import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
-import { RequestType, salesForceAPI } from '@/services/api';
-import { getSalesforceToken } from '@/services/salesForceTokenService';
+import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { SF_RECORD_TYPE } from '@/lib/salesforce/ids';
 
 // RecordTypeId for Opportunity records we're querying
@@ -45,7 +44,7 @@ async function fetchImpactData(): Promise<SalesforceAggregateResponse> {
     }
 
     try {
-        const response = await salesForceAPI({
+        const response = await salesForceAPIWithRefresh({
             endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(IMPACT_QUERY)}`,
             type: RequestType.GET,
         });
@@ -54,10 +53,6 @@ async function fetchImpactData(): Promise<SalesforceAggregateResponse> {
             cachedResult = response.data as SalesforceAggregateResponse;
             cacheTimestamp = now;
             return cachedResult;
-        } else if (response?.status === 401) {
-            // Token expired: Refresh and retry
-            await getSalesforceToken();
-            return await fetchImpactData();
         } else {
             throw new Error(`Failed to fetch impact data: ${response?.status}`);
         }

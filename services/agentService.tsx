@@ -1,8 +1,7 @@
 import { urlForImage } from '@/sanity/lib/image'
 import { client } from '@/sanity/lib/client'
 import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
-import { RequestType, salesForceAPI } from '@/services/api';
-import { getSalesforceToken } from '@/services/salesForceTokenService';
+import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { RealEstateAgentDocument } from '@/types/agent';
 import { STATE_ABBR_TO_SLUG as stateAbbreviations } from '@/lib/states';
 
@@ -39,18 +38,13 @@ const agentService = {
             WHERE AccountId_15__c = '${salesforceID}'
         `.replace(/\s+/g, ' ').trim();
 
-        const response = await salesForceAPI({
+        const response = await salesForceAPIWithRefresh({
             endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
             type: RequestType.GET,
         });
 
         if (response?.status === 200) {
             return getStateFullNames(combineStateValues(response.data));
-        }
-
-        if (response?.status === 401) {
-            await getSalesforceToken();
-            return agentService.getAgentState(salesforceID);
         }
 
         throw new Error("Failed to fetch agent state.");

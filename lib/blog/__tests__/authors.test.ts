@@ -15,14 +15,10 @@ vi.mock('@/services/api', () => ({
   RequestType: {
     GET: 'get',
   },
-  salesForceAPI: vi.fn(),
+  salesForceAPIWithRefresh: vi.fn(),
 }));
 
-vi.mock('@/services/salesForceTokenService', () => ({
-  getSalesforceToken: vi.fn(),
-}));
-
-import { salesForceAPI } from '@/services/api';
+import { salesForceAPIWithRefresh } from '@/services/api';
 import { resolveAuthor } from '@/lib/blog/authors';
 
 const AGENT_ID = '001AGENT0000001';
@@ -61,7 +57,7 @@ describe('resolveAuthor', () => {
   });
 
   it('resolves an active agent and builds a specific contact-agent URL', async () => {
-    vi.mocked(salesForceAPI).mockResolvedValueOnce(
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce(
       queryResponse([account()]) as never,
     );
 
@@ -76,7 +72,7 @@ describe('resolveAuthor', () => {
   });
 
   it('preserves lender authors with the contact-lender flow', async () => {
-    vi.mocked(salesForceAPI).mockResolvedValueOnce(
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce(
       queryResponse([
         account({
           Id: LENDER_ID,
@@ -101,7 +97,7 @@ describe('resolveAuthor', () => {
   });
 
   it('falls back to VeteranPCS when a Salesforce author is inactive', async () => {
-    vi.mocked(salesForceAPI).mockResolvedValueOnce(
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce(
       queryResponse([
         account({
           Active_on_Website__pc: false,
@@ -118,11 +114,11 @@ describe('resolveAuthor', () => {
     expect(author.name).toBe('VeteranPCS');
     expect(author.salesforceId).toBeNull();
     expect(author.contactHref).toBe('/contact-agent');
-    expect(salesForceAPI).toHaveBeenCalledTimes(1);
+    expect(salesForceAPIWithRefresh).toHaveBeenCalledTimes(1);
   });
 
   it('falls back to VeteranPCS when the Salesforce author is missing', async () => {
-    vi.mocked(salesForceAPI).mockResolvedValueOnce(queryResponse([]) as never);
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce(queryResponse([]) as never);
 
     const author = await resolveAuthor({
       salesforceId: AGENT_ID,
@@ -132,11 +128,11 @@ describe('resolveAuthor', () => {
     expect(author.kind).toBe('fallback');
     expect(author.name).toBe('VeteranPCS');
     expect(author.contactHref).toBe('/contact-agent');
-    expect(salesForceAPI).toHaveBeenCalledTimes(1);
+    expect(salesForceAPIWithRefresh).toHaveBeenCalledTimes(1);
   });
 
   it('uses a post state override when the Salesforce billing state differs', async () => {
-    vi.mocked(salesForceAPI).mockResolvedValueOnce(
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce(
       queryResponse([
         account({
           Id: MARYLAND_AGENT_ID,

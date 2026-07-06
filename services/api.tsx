@@ -1,6 +1,6 @@
 import { EventEmitter } from "node:events";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { SALESFORCETOKEN, getSalesforceToken } from "@/services/salesForceTokenService";
+import { getSalesforceToken } from "@/services/salesForceTokenService";
 
 // Next spawns fresh worker processes for static generation — globals set in
 // next.config.mjs don't reach them. Raise the listener ceiling here so the
@@ -80,9 +80,7 @@ export const salesForceAPI = async ({
 }: ApiParams): Promise<AxiosResponse | undefined> => {
     let res: AxiosResponse | undefined;
 
-    if (!SALESFORCETOKEN) {
-        await getSalesforceToken()
-    }
+    const token = await getSalesforceToken();
 
     const config: AxiosRequestConfig = {
         url: endpoint,
@@ -90,7 +88,7 @@ export const salesForceAPI = async ({
         data,
         headers: {
             "Cache-Control": "no-cache",
-            Authorization: `Bearer ${SALESFORCETOKEN}`,
+            Authorization: `Bearer ${token}`,
             ...customHeader,
         },
     };
@@ -104,6 +102,21 @@ export const salesForceAPI = async ({
     return res;  // Return the response or error
 };
 
+// Runs salesForceAPI and, on a 401, forces a single token refresh and retries once.
+// Bounded at one retry — replaces the previous unbounded 401-recursion at call sites.
+export const salesForceAPIWithRefresh = async (
+    params: ApiParams,
+): Promise<AxiosResponse | undefined> => {
+    let response = await salesForceAPI(params);
+
+    if (response?.status === 401) {
+        await getSalesforceToken({ forceRefresh: true });
+        response = await salesForceAPI(params);
+    }
+
+    return response;
+};
+
 export const salesForceImageAPI = async ({
     endpoint,
     data,
@@ -111,9 +124,7 @@ export const salesForceImageAPI = async ({
 }: ApiParams): Promise<AxiosResponse | undefined> => {
     let res: AxiosResponse | undefined;
 
-    if (!SALESFORCETOKEN) {
-        await getSalesforceToken()
-    }
+    const token = await getSalesforceToken();
 
     const config: AxiosRequestConfig = {
         url: endpoint,
@@ -121,7 +132,7 @@ export const salesForceImageAPI = async ({
         data,
         headers: {
             "Cache-Control": "no-cache",
-            Authorization: `Bearer ${SALESFORCETOKEN}`,
+            Authorization: `Bearer ${token}`,
         },
         responseType: 'arraybuffer'
     };

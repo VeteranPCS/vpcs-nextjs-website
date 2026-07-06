@@ -1,8 +1,7 @@
 import 'server-only';
 
 import { SALESFORCE_API_VERSION, SALESFORCE_BASE_URL } from '@/constants/api';
-import { RequestType, salesForceAPI } from '@/services/api';
-import { getSalesforceToken } from '@/services/salesForceTokenService';
+import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { getLeadOwnerForState, type SalesforceLeadOwner } from '@/services/salesforceLeadOwnerRouting';
 import { logError, logInfo } from '@/services/loggingService';
 import { escapeSoqlLiteral } from '@/services/soql';
@@ -235,7 +234,7 @@ async function patchLeadOwner(
     owner: SalesforceLeadOwner,
     submissionId: string,
 ): Promise<void> {
-    const response = await runSalesforceRequestWithRefresh({
+    const response = await salesForceAPIWithRefresh({
         endpoint: salesforceEndpoint(`/sobjects/Lead/${encodeURIComponent(leadId)}`),
         type: RequestType.PATCH,
         data: { OwnerId: owner.ownerId },
@@ -257,7 +256,7 @@ async function patchLeadOwner(
 }
 
 async function runSalesforceQuery<T>(soql: string): Promise<T[]> {
-    const response = await runSalesforceRequestWithRefresh({
+    const response = await salesForceAPIWithRefresh({
         endpoint: salesforceEndpoint(`/query?q=${encodeURIComponent(soql)}`),
         type: RequestType.GET,
     });
@@ -267,22 +266,6 @@ async function runSalesforceQuery<T>(soql: string): Promise<T[]> {
     }
 
     return response.data?.records ?? [];
-}
-
-async function runSalesforceRequestWithRefresh(params: {
-    endpoint: string;
-    type: RequestType;
-    data?: unknown;
-    customHeader?: Record<string, string>;
-}) {
-    let response = await salesForceAPI(params);
-
-    if (response?.status === 401) {
-        await getSalesforceToken();
-        response = await salesForceAPI(params);
-    }
-
-    return response;
 }
 
 function salesforceEndpoint(path: string): string {

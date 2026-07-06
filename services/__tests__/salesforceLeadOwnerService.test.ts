@@ -12,11 +12,7 @@ vi.mock('@/services/api', () => ({
     GET: 'get',
     PATCH: 'patch',
   },
-  salesForceAPI: vi.fn(),
-}));
-
-vi.mock('@/services/salesForceTokenService', () => ({
-  getSalesforceToken: vi.fn(),
+  salesForceAPIWithRefresh: vi.fn(),
 }));
 
 vi.mock('@/services/loggingService', () => ({
@@ -24,7 +20,7 @@ vi.mock('@/services/loggingService', () => ({
   logInfo: vi.fn(),
 }));
 
-import { RequestType, salesForceAPI } from '@/services/api';
+import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { logError, logInfo } from '@/services/loggingService';
 import {
   appendLeadOwnerSubmissionMarker,
@@ -58,13 +54,13 @@ function routeParams(overrides = {}) {
 }
 
 function decodedQuery(callIndex: number): string {
-  const call = vi.mocked(salesForceAPI).mock.calls[callIndex]?.[0];
+  const call = vi.mocked(salesForceAPIWithRefresh).mock.calls[callIndex]?.[0];
   const endpoint = call?.endpoint ?? '';
   return new URL(endpoint).searchParams.get('q') ?? '';
 }
 
 function patchCall() {
-  return vi.mocked(salesForceAPI).mock.calls.find(([call]) => call.type === RequestType.PATCH)?.[0];
+  return vi.mocked(salesForceAPIWithRefresh).mock.calls.find(([call]) => call.type === RequestType.PATCH)?.[0];
 }
 
 describe('salesforceLeadOwnerService', () => {
@@ -93,7 +89,7 @@ describe('salesforceLeadOwnerService', () => {
   });
 
   it('finds the Lead by submission marker, patches OwnerId, and confirms the owner', async () => {
-    vi.mocked(salesForceAPI)
+    vi.mocked(salesForceAPIWithRefresh)
       .mockResolvedValueOnce(queryResponse([{ Id: '00QMARKER', OwnerId: '005WRONG' }]) as any)
       .mockResolvedValueOnce({ status: 204 } as any)
       .mockResolvedValueOnce(
@@ -123,7 +119,7 @@ describe('salesforceLeadOwnerService', () => {
   });
 
   it('does not patch when the found Lead already has the routed owner', async () => {
-    vi.mocked(salesForceAPI)
+    vi.mocked(salesForceAPIWithRefresh)
       .mockResolvedValueOnce(
         queryResponse([{ Id: '00QALREADY', OwnerId: BETH_OWNER_ID, Owner: { Name: 'Beth Soldner' } }]) as any,
       )
@@ -147,7 +143,7 @@ describe('salesforceLeadOwnerService', () => {
   });
 
   it('falls back to tight criteria when marker lookup misses', async () => {
-    vi.mocked(salesForceAPI)
+    vi.mocked(salesForceAPIWithRefresh)
       .mockResolvedValueOnce(queryResponse([]) as any)
       .mockResolvedValueOnce(queryResponse([{ Id: '00QFALLBACK', OwnerId: '005WRONG' }]) as any)
       .mockResolvedValueOnce({ status: 204 } as any)
@@ -167,7 +163,7 @@ describe('salesforceLeadOwnerService', () => {
   });
 
   it('does not patch when lookup finds no Lead', async () => {
-    vi.mocked(salesForceAPI)
+    vi.mocked(salesForceAPIWithRefresh)
       .mockResolvedValueOnce(queryResponse([]) as any)
       .mockResolvedValueOnce(queryResponse([]) as any);
 
@@ -183,7 +179,7 @@ describe('salesforceLeadOwnerService', () => {
   });
 
   it('does not patch when lookup is ambiguous', async () => {
-    vi.mocked(salesForceAPI).mockResolvedValueOnce(
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce(
       queryResponse([{ Id: '00Q1' }, { Id: '00Q2' }]) as any,
     );
 
@@ -195,7 +191,7 @@ describe('salesforceLeadOwnerService', () => {
   });
 
   it('throws when the OwnerId PATCH fails', async () => {
-    vi.mocked(salesForceAPI)
+    vi.mocked(salesForceAPIWithRefresh)
       .mockResolvedValueOnce(queryResponse([{ Id: '00QPATCH', OwnerId: '005WRONG' }]) as any)
       .mockResolvedValueOnce({ status: 403, data: [{ message: 'insufficient access' }] } as any);
 
@@ -210,7 +206,7 @@ describe('salesforceLeadOwnerService', () => {
   });
 
   it('throws when owner confirmation does not match the requested owner', async () => {
-    vi.mocked(salesForceAPI)
+    vi.mocked(salesForceAPIWithRefresh)
       .mockResolvedValueOnce(queryResponse([{ Id: '00QCONFIRM', OwnerId: '005WRONG' }]) as any)
       .mockResolvedValueOnce({ status: 204 } as any)
       .mockResolvedValue(

@@ -4,8 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { unstable_cache } from 'next/cache';
 import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api';
-import { RequestType, salesForceAPI } from '@/services/api';
-import { getSalesforceToken } from '@/services/salesForceTokenService';
+import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { buildContactCtaHref } from '@/lib/contactAgentUrl';
 import { normalizeStateSlug, stateSlugFromAbbr } from '@/lib/states';
 import type { FrontmatterAuthor, ResolvedAuthor } from '@/lib/blog/types';
@@ -91,12 +90,7 @@ function resolveHeadshotPath(salesforceId: string, isLender: boolean): string | 
 
 async function runQuery(soql: string): Promise<SfAccount | null> {
   const endpoint = `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(soql)}`;
-  let response = await salesForceAPI({ endpoint, type: RequestType.GET });
-
-  if (response?.status === 401) {
-    await getSalesforceToken();
-    response = await salesForceAPI({ endpoint, type: RequestType.GET });
-  }
+  const response = await salesForceAPIWithRefresh({ endpoint, type: RequestType.GET });
 
   if (response?.status !== 200) return null;
   const records: SfAccount[] = response.data?.records ?? [];
