@@ -41,7 +41,7 @@ const HeroSection = () => {
                   </p>
                 </div>
               </div>
-              <div className="absolute sm:bottom-[-15%] bottom-[-20%] xl:left-[45%] lg:left-[35%] md:left-[35%] sm:left-[26%] left-[26%] translate-[-45%] ">
+              <div className="absolute sm:bottom-[-15%] bottom-[-20%] xl:left-[45%] lg:left-[35%] md:left-[35%] sm:left-[26%] left-[26%] translate-[-45%] pointer-events-none">
                 <Image
                   width={1000}
                   height={1000}
