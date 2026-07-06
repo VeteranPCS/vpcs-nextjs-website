@@ -90,7 +90,7 @@ async function HowItWorkHeroSection() {
                 </details>
 
               </div>
-              <div className="absolute bottom-[-15%] left-1/2 transform -translate-x-1/2">
+              <div className="absolute bottom-[-15%] left-1/2 transform -translate-x-1/2 pointer-events-none">
                 <Image
                   width={1000}
                   height={1000}

@@ -10,5 +10,6 @@
 @media screen and (max-width: 844px) {
   .HowitworkHeroSectionContainer {
     padding: 115px 30px;
+    margin-bottom: 120px;
   }
 }
