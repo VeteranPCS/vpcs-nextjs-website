@@ -47,9 +47,22 @@ const AgentBio = ({ bio }: { bio: string }) => {
 
   useEffect(() => {
     const el = textRef.current;
-    if (el) {
-      setIsOverflowing(el.scrollHeight > el.clientHeight);
-    }
+    if (!el) return;
+
+    // Compare against the fixed 80px collapse threshold (not clientHeight) so
+    // the result is independent of expanded/collapsed state — clientHeight
+    // equals scrollHeight while expanded, which would otherwise hide the
+    // toggle mid-interaction.
+    const remeasure = () => {
+      setIsOverflowing(el.scrollHeight > 80);
+    };
+
+    remeasure();
+
+    const observer = new ResizeObserver(remeasure);
+    observer.observe(el);
+
+    return () => observer.disconnect();
   }, [bio]);
 
   return (
