@@ -44,9 +44,9 @@ export async function CategoryBlogPage({ category, page = 1 }: Props) {
         <section className="border-b border-[#E5E7EB] px-5 py-10 md:py-14">
           <div className="container mx-auto">
             <nav className="mb-6 text-sm text-[#6C757D]" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-[#292F6C]">Home</Link>
+              <Link href="/" className="hover:text-[#292F6C] inline-flex items-center min-h-11">Home</Link>
               <span className="mx-2">/</span>
-              <Link href="/blog" className="hover:text-[#292F6C]">Blog</Link>
+              <Link href="/blog" className="hover:text-[#292F6C] inline-flex items-center min-h-11">Blog</Link>
               <span className="mx-2">/</span>
               <span className="text-[#292F6C]">{component.label}</span>
             </nav>
@@ -97,7 +97,7 @@ export async function CategoryBlogPage({ category, page = 1 }: Props) {
                 {page > 1 && (
                   <Link
                     href={page === 2 ? `/blog/category/${category}` : `/blog/category/${category}/page/${page - 1}`}
-                    className="min-h-11 rounded border border-[#E2E4E5] px-4 py-3 text-[#292F6C]"
+                    className="inline-flex items-center min-h-11 rounded border border-[#E2E4E5] px-4 py-3 text-[#292F6C]"
                   >
                     Previous
                   </Link>
@@ -105,7 +105,7 @@ export async function CategoryBlogPage({ category, page = 1 }: Props) {
                 {page < totalPages && (
                   <Link
                     href={`/blog/category/${category}/page/${page + 1}`}
-                    className="min-h-11 rounded border border-[#E2E4E5] px-4 py-3 text-[#292F6C]"
+                    className="inline-flex items-center min-h-11 rounded border border-[#E2E4E5] px-4 py-3 text-[#292F6C]"
                   >
                     Next
                   </Link>

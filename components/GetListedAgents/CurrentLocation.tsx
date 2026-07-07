@@ -89,7 +89,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
                     City*
                   </label>
                   <input
-                    className="border-b border-[#E2E4E5] px-2 py-1"
+                    className="border-b border-[#E2E4E5] px-2 py-3"
                     type="text"
                     id="city"
                     placeholder="Enter City"
@@ -108,7 +108,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
             <div className="flex md:justify-start justify-center">
               <button
                 type="submit"
-                className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
+                className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-3 text-center text-white font-medium flex items-center gap-2 shadow-lg"
               >
                 Next
                 <svg
@@ -132,7 +132,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
         <div className="flex md:justify-start justify-center mt-8">
           <button
             onClick={onBack}
-            className="rounded-md border border-[#BBBFC1] bg-white px-8 py-2 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
+            className="rounded-md border border-[#BBBFC1] bg-white px-8 py-3 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

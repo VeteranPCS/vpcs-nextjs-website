@@ -91,24 +91,22 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
 
                 {/* Other States */}
                 <div className="mb-8 flex flex-col">
-                  <label
-                    htmlFor="otherStates"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
-                  >
-                    Other State(s) Licensed:
-                  </label>
-                  <select
-                    id="otherStates"
-                    {...register('otherStates')}
-                    multiple
-                    className="border-b border-[#E2E4E5] px-2 py-1"
-                  >
-                    {US_STATE_CODES.map((code) => (
-                      <option key={code} value={code}>
-                        {code}
-                      </option>
-                    ))}
-                  </select>
+                  <fieldset>
+                    <legend className="text-[#242426] tahoma text-sm font-normal mb-1">
+                      Other State(s) Licensed:
+                    </legend>
+                    <div className="grid grid-cols-2 border rounded border-[#E2E4E5] px-2 py-1 max-h-48 overflow-y-auto">
+                      {US_STATE_CODES.map((code) => (
+                        <label
+                          key={code}
+                          className="flex items-center gap-2 min-h-11 tahoma text-sm font-normal cursor-pointer"
+                        >
+                          <input type="checkbox" value={code} {...register('otherStates')} />
+                          {code}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
                   {errors.otherStates && (
                     <span className="text-red-500 text-sm">{errors.otherStates.message}</span>
                   )}
@@ -125,7 +123,7 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
                   <textarea
                     id="localCities"
                     {...register('localCities')}
-                    className="border-b border-[#E2E4E5] px-2 py-1"
+                    className="border-b border-[#E2E4E5] px-2 py-3"
                     placeholder="Enter cities or areas"
                   />
                 </div>
@@ -142,7 +140,7 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
                     type="text"
                     id="nmlsId"
                     {...register('nmlsId')}
-                    className="border-b border-[#E2E4E5] px-2 py-1"
+                    className="border-b border-[#E2E4E5] px-2 py-3"
                     placeholder="Enter your NMLS ID"
                   />
                 </div>
@@ -152,7 +150,7 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
               <div className="flex md:justify-start justify-center">
                 <button
                   type="submit"
-                  className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg"
+                  className="rounded-md border border-[#BBBFC1] bg-[#292F6C] px-8 py-3 text-center text-white font-medium flex items-center gap-2 shadow-lg"
                 >
                   Next
                   <svg
@@ -175,7 +173,7 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
             <div className="flex md:justify-start justify-center mt-8">
               <button
                 onClick={handleBack}
-                className="rounded-md border border-[#BBBFC1] bg-white px-8 py-2 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
+                className="rounded-md border border-[#BBBFC1] bg-white px-8 py-3 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

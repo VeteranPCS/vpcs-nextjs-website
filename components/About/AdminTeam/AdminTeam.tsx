@@ -3,6 +3,7 @@ import Image from "next/image";
 import aboutService from "@/services/aboutService";
 import BlockContent from "@/components/Blog/BlockContent";
 import { validateBlockStyle } from "@/components/Blog/BlogDetail";
+import BioToggle from "@/components/About/BioToggle";
 
 export interface ImageAsset {
   image_url?: string;
@@ -88,29 +89,19 @@ const AdminTeam = async () => {
                   <span className="text-[#3E3E59] text-sm md:text-lg font-light">
                     {details.designation}
                   </span>
-                  <div className="relative">
-                    {/* Hidden checkbox to track toggle state */}
-                    <input type="checkbox" id={`toggle-${details._id}`} className="peer hidden" />
-
-                    {/* Text that expands/collapses */}
-                    <p className="text-[#5F6980] max-h-28 text-sm md:text-lg font-light mt-3 mb-3 overflow-hidden peer-checked:max-h-full transition-all duration-300">
-                      {details?.description?.map((block, index) => (
-                        <BlockContent
-                          key={block._key || index}
-                          blocks={[
-                            {
-                              ...block,
-                              style: validateBlockStyle(block.style),
-                            },
-                          ]}
-                        />
-                      ))}
-                    </p>
-
-                    {/* Single label that toggles state */}
-                    <label htmlFor={`toggle-${details._id}`} className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold absolute bottom-[-1] left-0 bg-white peer-checked:before:content-['Read_Less'] before:content-['Read_More'] before:bg-white before:block">
-                    </label>
-                  </div>
+                  <BioToggle id={details._id}>
+                    {details?.description?.map((block, index) => (
+                      <BlockContent
+                        key={block._key || index}
+                        blocks={[
+                          {
+                            ...block,
+                            style: validateBlockStyle(block.style),
+                          },
+                        ]}
+                      />
+                    ))}
+                  </BioToggle>
                 </div>
               </div>
             ))}

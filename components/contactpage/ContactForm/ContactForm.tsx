@@ -323,7 +323,7 @@ const ContactForm = () => {
                     id="message"
                     placeholder="Write your message.."
                     {...register('additionalComments')}
-                    rows={1}
+                    rows={4}
                     autoComplete="off"
                   ></textarea>
                 </div>

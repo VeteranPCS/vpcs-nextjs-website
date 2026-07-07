@@ -132,27 +132,22 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                 )}
               </div>
               <div className="mb-8 flex flex-col">
-                <label
-                  htmlFor="otherStates"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
-                >
-                  Other State(s) Licensed:
-                </label>
-                <select
-                  id="otherStates"
-                  {...register("otherStates")}
-                  className="border-b border-[#E2E4E5] px-2 py-1 h-32"
-                  multiple
-                >
-                  {US_STATE_CODES.map((code) => (
-                    <option key={code} value={code}>
-                      {code}
-                    </option>
-                  ))}
-                </select>
-                <span className="text-xs text-gray-500 mt-1">
-                  Hold Ctrl/Cmd to select multiple states
-                </span>
+                <fieldset>
+                  <legend className="text-[#242426] tahoma text-sm font-normal mb-1">
+                    Other State(s) Licensed:
+                  </legend>
+                  <div className="grid grid-cols-2 border rounded border-[#E2E4E5] px-2 py-1 max-h-48 overflow-y-auto">
+                    {US_STATE_CODES.map((code) => (
+                      <label
+                        key={code}
+                        className="flex items-center gap-2 min-h-11 tahoma text-sm font-normal cursor-pointer"
+                      >
+                        <input type="checkbox" value={code} {...register("otherStates")} />
+                        {code}
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
                 {errors.otherStates && (
                   <span className="text-error">
                     {errors.otherStates.message}
@@ -167,7 +162,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   License Number(s)
                 </label>
                 <input
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   type="text"
                   id="licenseNumber"
                   {...register("licenseNumber")}
@@ -187,7 +182,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   Brokerage Name
                 </label>
                 <input
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   type="text"
                   id="brokerageName"
                   {...register("brokerageName")}
@@ -207,7 +202,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   Managing Broker Name*
                 </label>
                 <input
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   type="text"
                   id="managingBrokerName"
                   {...register("managingBrokerName")}
@@ -227,7 +222,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   Managing Broker Phone*
                 </label>
                 <input
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   type="text"
                   id="managingBrokerPhone"
                   {...register("managingBrokerPhone")}
@@ -247,7 +242,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   Managing Broker Email*
                 </label>
                 <input
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   type="text"
                   id="managingBrokerEmail"
                   {...register("managingBrokerEmail")}
@@ -267,7 +262,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   Cities Serviced
                 </label>
                 <input
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   type="text"
                   id="citiesServiced"
                   {...register("citiesServiced")}
@@ -287,7 +282,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   Bases Serviced
                 </label>
                 <input
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   type="text"
                   id="basesServiced"
                   {...register("basesServiced")}
@@ -309,7 +304,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                 <select
                   id="personallyPCS"
                   {...register("personallyPCS")}
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                 >
                   <option value="" disabled selected>
                     --None--
@@ -333,7 +328,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                 <select
                   id="leadAcceptance"
                   {...register("leadAcceptance")}
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                 >
                   <option value="" disabled selected>
                     --None--
@@ -359,7 +354,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                 </label>
                 <select
                   {...register("howDidYouHear")}
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   id="howDidYouHear"
                 >
                   <option value="">Select an option</option>
@@ -394,7 +389,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                   <input
                     type="text"
                     {...register("tellusMore")}
-                    className="border-b border-[#E2E4E5] px-2 py-1"
+                    className="border-b border-[#E2E4E5] px-2 py-3"
                     id="tellusMore"
                     placeholder="Tell us more..."
                   />
@@ -414,7 +409,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[#292F6C]"} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
+                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[#292F6C]"} px-8 py-3 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
               >
                 {isSubmitting ? "Submitting..." : "Submit Now"}
                 {!isSubmitting && (
@@ -438,7 +433,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
         <div className="flex md:justify-start justify-center mt-8">
           <button
             onClick={onBack}
-            className="rounded-md border border-[#BBBFC1] bg-white px-8 py-2 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
+            className="rounded-md border border-[#BBBFC1] bg-white px-8 py-3 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

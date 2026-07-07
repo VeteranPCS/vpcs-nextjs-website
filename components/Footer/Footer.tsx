@@ -133,7 +133,7 @@ const Locations = () => {
               <div>
                 <TrackedCtaLink
                   href="/terms-of-use"
-                  className="text-white text-center roboto text-lg font-medium"
+                  className="inline-flex items-center min-h-11 text-white text-center roboto text-lg font-medium"
                   cta={{
                     ctaId: 'footer_terms',
                     ctaIntent: 'legal_navigation',
@@ -154,7 +154,7 @@ const Locations = () => {
               <div>
                 <TrackedCtaLink
                   href="/privacy-policy"
-                  className="text-white text-center roboto text-lg font-medium"
+                  className="inline-flex items-center min-h-11 text-white text-center roboto text-lg font-medium"
                   cta={{
                     ctaId: 'footer_privacy',
                     ctaIntent: 'legal_navigation',

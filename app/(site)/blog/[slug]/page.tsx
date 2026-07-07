@@ -173,9 +173,9 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
             />
             <BlogDetailsHeroSection blog={blog} resolvedAuthor={resolvedAuthor} />
             <nav className="container mx-auto px-5 pt-8 text-sm text-[#6C757D]" aria-label="Breadcrumb">
-                <Link href="/" className="hover:text-[#292F6C]">Home</Link>
+                <Link href="/" className="hover:text-[#292F6C] inline-flex items-center min-h-11">Home</Link>
                 <span className="mx-2">/</span>
-                <Link href="/blog" className="hover:text-[#292F6C]">Blog</Link>
+                <Link href="/blog" className="hover:text-[#292F6C] inline-flex items-center min-h-11">Blog</Link>
                 <span className="mx-2">/</span>
                 <span className="text-[#292F6C]">{blog.title}</span>
             </nav>

@@ -39,7 +39,7 @@ export default function StateSelect({
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         onBlur={onBlur}
-        className="flex w-full items-center justify-between border-b border-[#E2E4E5] px-2 py-1 text-left bg-white"
+        className="flex w-full items-center justify-between border-b border-[#E2E4E5] px-2 py-3 text-left bg-white"
       >
         <span className={value ? "text-black" : "text-[#6B7280]"}>
           {value || placeholder}
@@ -64,7 +64,7 @@ export default function StateSelect({
       {open && (
         <ul
           role="listbox"
-          className="absolute left-0 right-0 z-50 mt-1 max-h-60 overflow-y-auto border border-[#E2E4E5] bg-white shadow-lg"
+          className="absolute left-0 right-0 z-50 mt-1 max-h-72 overflow-y-auto border border-[#E2E4E5] bg-white shadow-lg"
         >
           {US_STATE_CODES.map((code) => (
             <li
@@ -75,7 +75,7 @@ export default function StateSelect({
                 onChange(code);
                 setOpen(false);
               }}
-              className={`cursor-pointer px-2 py-1 hover:bg-[#F3F4F6] ${
+              className={`cursor-pointer px-2 py-3 hover:bg-[#F3F4F6] ${
                 value === code ? "bg-[#E5E7EB]" : ""
               }`}
             >
