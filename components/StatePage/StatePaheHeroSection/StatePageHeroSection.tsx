@@ -68,6 +68,7 @@ const StatePageHeroSection = ({
               alt={stateImage?.alt || `Map of ${stateName}`}
               width={1000}
               height={1000}
+              sizes="(min-width: 1024px) 50vw, 100vw"
               className="w-full h-full object-cover"
               loading="eager"
             />

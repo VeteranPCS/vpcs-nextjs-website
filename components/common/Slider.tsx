@@ -61,6 +61,7 @@ const Carousel = ({ logoList }: { logoList: any }) => {
                 width={1000}
                 src={item?.mainImage?.asset?.image_url || item.imageUrl}
                 alt={item?.mainImage?.alt || item.title}
+                sizes="320px"
                 className="h-full w-full object-contain opacity-80 transition-opacity duration-200 ease-in-out hover:opacity-100"
               />
             </a>

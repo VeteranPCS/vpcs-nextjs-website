@@ -33,7 +33,24 @@ const Header = () => {
       }
     };
 
-    fetchMetrics();
+    // The stat this feeds only renders at 2xl (1536px+); skip the fetch
+    // entirely below that breakpoint until the viewport actually grows into it.
+    const mql = window.matchMedia('(min-width: 1536px)');
+    let fetched = false;
+
+    const fetchOnce = () => {
+      if (fetched) return;
+      fetched = true;
+      fetchMetrics();
+    };
+
+    if (mql.matches) {
+      fetchOnce();
+    } else {
+      mql.addEventListener('change', fetchOnce);
+    }
+
+    return () => mql.removeEventListener('change', fetchOnce);
   }, []);
 
   // Close the Get Listed submenu and the mobile drawer on route change.

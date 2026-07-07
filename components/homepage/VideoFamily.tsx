@@ -1,7 +1,7 @@
 "use client"
 import "@/app/globals.css";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface ImpactMetrics {
   cashBackAmount: string;
@@ -15,6 +15,9 @@ const FamilyVideo = () => {
     charityAmount: '$50,000',
     totalVolumeSold: '$189M+',
   });
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [showControls, setShowControls] = useState(false);
+  const autoplayFailedRef = useRef(false);
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -38,26 +41,66 @@ const FamilyVideo = () => {
     fetchMetrics();
   }, []);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) return;
+        if (autoplayFailedRef.current) {
+          // Autoplay already failed once — the user is now in control via
+          // the native controls, so don't fight them with further
+          // play()/pause() calls as the video scrolls in and out of view.
+          return;
+        }
+        if (entry.isIntersecting) {
+          video.play().catch((error: unknown) => {
+            // A pending play() can be interrupted by our own pause() call
+            // (e.g. scrolling quickly past the video) — that rejects with a
+            // benign AbortError, not a real autoplay denial. Only fall back
+            // to manual controls when the browser actually blocked autoplay
+            // (e.g. iOS Low Power Mode).
+            if (
+              error instanceof DOMException &&
+              (error.name === 'NotAllowedError' || error.name === 'NotSupportedError')
+            ) {
+              autoplayFailedRef.current = true;
+              setShowControls(true);
+            }
+          });
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.35 }
+    );
+
+    observer.observe(video);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="w-full relative overflow-hidden">
       <div>
         <video
+          ref={videoRef}
           loop
-          autoPlay
           playsInline
           muted
-          preload="metadata"
-          src="/assets/military-families.mp4"
+          preload="none"
+          poster="/assets/military-families-poster.jpg"
+          src="/assets/military-families-720.mp4"
           className="w-full"
           aria-label="Military families helped by VeteranPCS"
-        >
-          <source type="video/mp4" src="/assets/military-families.mp4" />
-        </video>
+          controls={showControls}
+        />
       </div>
       <div className="container mx-auto overflow-hidden">
         <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 w-full">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               <div className="text-center items-center baseline rounded-2xl p-0 sm:p-6 lg:space-y-10">
                 <div className="flex justify-center mx-auto lg:w-[100px] lg:h-[100px] sm:w-[70px] sm:h-[70px] w-[25px] h-[25px]">
                   <Image
@@ -72,7 +115,7 @@ const FamilyVideo = () => {
                   <h2 className="text-white font-bold lg:text-4xl md:text-4xl text-base tahoma mt-5 mb-2">
                     {metrics.cashBackAmount}
                   </h2>
-                  <p className="text-white font-normal lg:text-xl md:text-base sm:text-xs text-[10px] tahoma">
+                  <p className="text-white font-normal lg:text-xl md:text-base text-xs tahoma">
                     Savings Given Back
                   </p>
                 </div>
@@ -92,7 +135,7 @@ const FamilyVideo = () => {
                   <h2 className="text-white font-bold lg:text-4xl md:text-4xl text-base tahoma mt-5 mb-2">
                     {metrics.totalVolumeSold}
                   </h2>
-                  <p className="text-white font-normal lg:text-xl md:text-base sm:text-xs text-[10px] tahoma">
+                  <p className="text-white font-normal lg:text-xl md:text-base text-xs tahoma">
                     Real Estate Volume Sold
                   </p>
                 </div>
@@ -112,7 +155,7 @@ const FamilyVideo = () => {
                   <h2 className="text-white font-bold lg:text-4xl md:text-4xl text-base tahoma mt-5 mb-2">
                     {metrics.charityAmount}
                   </h2>
-                  <p className="text-white font-normal lg:text-xl md:text-base sm:text-xs text-[10px] tahoma">
+                  <p className="text-white font-normal lg:text-xl md:text-base text-xs tahoma">
                     Donated to Military Foundations
                   </p>
                 </div>

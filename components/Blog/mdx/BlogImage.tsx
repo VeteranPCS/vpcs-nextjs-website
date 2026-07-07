@@ -22,6 +22,7 @@ export default function BlogImage({
         alt={alt}
         width={width}
         height={height}
+        sizes="(min-width: 1536px) 1200px, (min-width: 1280px) 990px, 100vw"
         className="w-full h-auto rounded-xl object-cover"
       />
       {caption ? (
