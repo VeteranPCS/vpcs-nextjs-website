@@ -22,9 +22,9 @@ export default function EndBlogPostDetails({
   return (
     <div className="relative py-12 md:px-10 px-5">
       <div className="container mx-auto">
-        <div className="flex flex-wrap lg:gap-0 gap-10">
-          <div className="lg:w-1/5 md:w-1/5 sm:w-full w-full" />
-          <article className="lg:w-4/5 md:w-4/5 sm:w-full w-full lg:pl-10">
+        <div className="flex flex-col lg:flex-row lg:gap-0 gap-10">
+          <div className="w-full lg:w-1/5" />
+          <article className="w-full lg:w-4/5 lg:pl-10">
             <MDXRemote source={bodySecondHalf} components={mdxComponents} options={mdxOptions} />
           </article>
         </div>
