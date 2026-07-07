@@ -170,7 +170,7 @@ const ReviewsSlider: React.FC<ReviewsSliderProps> = ({ reviews, averageRating, t
           height: 100%;
         }
         .slick-list {
-          margin: 0 -12px;
+          overflow: hidden;
         }
         .slick-slide > div {
           margin: 0 12px;

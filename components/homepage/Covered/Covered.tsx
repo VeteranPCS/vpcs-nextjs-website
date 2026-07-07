@@ -61,7 +61,7 @@ const Covered = () => {
     <div className="container mx-auto w-full lg:py-16 md:py-16 sm:py-16 py-0 md:pt-32 sm:pb-5 pb-5">
       <div
         className="px-4 bg-[#ffffff] mx-auto text-center"
-        data-aos="fade-right"
+        data-aos="fade-up"
         data-aos-duration="1000"
       >
         <div>
@@ -75,7 +75,7 @@ const Covered = () => {
       </div>
       <div
         className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 lg:mt-20 sm:mt-10 mt-5 justify-center md:gap-10 gap-2 md:px-10 px-3"
-        data-aos="fade-left"
+        data-aos="fade-up"
         data-aos-duration="1000"
       >
         {cardsData.map((card, index) => (

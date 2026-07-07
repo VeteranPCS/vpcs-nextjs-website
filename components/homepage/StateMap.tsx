@@ -59,7 +59,7 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
   const handleMouseEnter = useCallback((event: React.MouseEvent<SVGElement>) => {
     const name = event.currentTarget.getAttribute("id");
     const tooltipWidth = tooltipRef.current?.offsetWidth ?? TOOLTIP_FALLBACK_WIDTH;
-    const clampedX = Math.min(event.pageX, window.innerWidth - tooltipWidth - TOOLTIP_VIEWPORT_MARGIN);
+    const clampedX = Math.min(event.pageX, window.scrollX + window.innerWidth - tooltipWidth - TOOLTIP_VIEWPORT_MARGIN);
     setTooltip({
       display: true,
       name: name || "",
@@ -74,7 +74,7 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
 
   const handleMouseMove = useCallback((event: React.MouseEvent<SVGElement>) => {
     const tooltipWidth = tooltipRef.current?.offsetWidth ?? TOOLTIP_FALLBACK_WIDTH;
-    const clampedX = Math.min(event.pageX + 10, window.innerWidth - tooltipWidth - TOOLTIP_VIEWPORT_MARGIN);
+    const clampedX = Math.min(event.pageX + 10, window.scrollX + window.innerWidth - tooltipWidth - TOOLTIP_VIEWPORT_MARGIN);
     setTooltip((prev) => ({
       ...prev,
       x: clampedX,

@@ -77,7 +77,7 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
             {cityName} VA Loan Experts
           </h2>
           <div className="bg-[#7E1618] rounded-full py-1 w-20 mx-auto my-5"></div>
-          <p className="text-[#515151] text-center tahoma md:text-[18px] text-[14px] font-normal xl:w-[1300px] px-5 xl:px-0 w-full mx-auto">
+          <p className="text-[#515151] text-center tahoma md:text-[18px] text-[14px] font-normal xl:max-w-[1300px] px-5 xl:px-0 w-full mx-auto">
             VA loan intricacies can be overwhelming. At VeteranPCS, we
             facilitate your connection with specialized VA loan experts, who
             will not only guide you expertly but also ensure that all potential

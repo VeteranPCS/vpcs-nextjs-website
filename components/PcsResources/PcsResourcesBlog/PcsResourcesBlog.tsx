@@ -78,14 +78,14 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
                     </div>
                   ))}
                 </div>
-                <div className="absolute bottom-4 left-2 px-6 py-1">
+                <div className="absolute bottom-4 left-2 px-6 py-1 max-w-[calc(100%-1rem)]">
                   <p className="text-[#E5E5E5] md:text-[14px] text-[12px] font-normal leading-normal">
                     {formatDate(blog.publishedAt)}
                   </p>
                   <h3 className="text-white tahoma md:text-[21px] text-[15px] font-bold my-3 line-clamp-2">
                     {blog.title}
                   </h3>
-                  <p className="text-[#E5E5E5] roboto text-[14px] font-normal lg:w-[370px] line-clamp-3">
+                  <p className="text-[#E5E5E5] roboto text-[14px] font-normal lg:max-w-[370px] line-clamp-3">
                     {excerpt(blog.content, 250)}
                   </p>
                 </div>
