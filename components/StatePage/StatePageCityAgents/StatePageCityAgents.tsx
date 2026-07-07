@@ -8,6 +8,7 @@ import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
 import { sanitizeCityName } from "@/utils/sanitizeCityName";
 import { Agent } from "@/services/stateService";
 import { trackCtaClicked } from "@/lib/analytics/client";
+import { buildContactCtaHref } from "@/lib/contactAgentUrl";
 
 type Props = {
   city: string;
@@ -88,6 +89,13 @@ const AgentBio = ({ bio }: { bio: string }) => {
 
 
 const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
+  const agentContactHref = (agent: Agent) => buildContactCtaHref({
+    firstName: agent.FirstName,
+    salesforceId: agent.AccountId_15__c,
+    stateSlug: state,
+    form: 'agent',
+  });
+
   const trackAgentCta = (agentId: string, position: string) => {
     trackCtaClicked({
       cta_id: 'state_agent_card_contact',
@@ -112,55 +120,59 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
             <div className="bg-[#7E1618] py-[3px] w-24 mx-auto my-5"></div>
           </div>
           <div className="grid lg:grid-cols-2 grid-cols-1 items-start justify-between gap-10 mt-10">
-            {agent_data.map((agent) => (
-              <div
-                key={agent.AccountId_15__c}
-                className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4"
-              >
-                <div className="justify-center items-center flex flex-col">
-                  <div className="rounded-full bg-[#E1EDFB] md:w-[200px] md:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
-                    <Link
-                      href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}
-                      onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_image')}
-                    >
-                      <Image
-                        src={agent?.PhotoUrl || ""}
-                        alt={`${agent?.Name}'s Profile Picture`}
-                        width={1000}
-                        height={1000}
-                        sizes="(min-width: 768px) 200px, 100px"
-                        className="object-cover"
-                      />
-                    </Link>
-                  </div>
-                  <Link
-                    href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}
-                    onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_button')}
-                  >
-                    <Button buttonText="Contact Now" />
-                  </Link>
-                </div>
-                <div className="md:pl-10 pl-4">
-                  <div>
-                    <Link
-                      href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}
-                      onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_heading')}
-                    >
-                      <h3 className="text-[#292F6C] tahoma md:text-[34px] text-[20px] font-bold">
-                        {agent?.Name}
-                      </h3>
-                    </Link>
-                    <div className="text-[#6C757D] tahoma md:text-[18px] text-sm font-normal sm:mt-4 mt-0">
-                      <p className="font-bold">
-                        {orderMilitaryServiceInfo(agent?.Military_Status__pc || "", agent?.Military_Service__pc || "")}
-                      </p>
-                      <p>{agent?.Brokerage_Name__pc}</p>
+            {agent_data.map((agent) => {
+              const contactHref = agentContactHref(agent);
+
+              return (
+                <div
+                  key={agent.AccountId_15__c}
+                  className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4"
+                >
+                  <div className="justify-center items-center flex flex-col">
+                    <div className="rounded-full bg-[#E1EDFB] md:w-[200px] md:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
+                      <Link
+                        href={contactHref}
+                        onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_image')}
+                      >
+                        <Image
+                          src={agent?.PhotoUrl || ""}
+                          alt={`${agent?.Name}'s Profile Picture`}
+                          width={1000}
+                          height={1000}
+                          sizes="(min-width: 768px) 200px, 100px"
+                          className="object-cover"
+                        />
+                      </Link>
                     </div>
-                    <AgentBio bio={agent?.Agent_Bio__pc || ""} />
+                    <Link
+                      href={contactHref}
+                      onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_button')}
+                    >
+                      <Button buttonText="Contact Now" />
+                    </Link>
+                  </div>
+                  <div className="md:pl-10 pl-4">
+                    <div>
+                      <Link
+                        href={contactHref}
+                        onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_heading')}
+                      >
+                        <h3 className="text-[#292F6C] tahoma md:text-[34px] text-[20px] font-bold">
+                          {agent?.Name}
+                        </h3>
+                      </Link>
+                      <div className="text-[#6C757D] tahoma md:text-[18px] text-sm font-normal sm:mt-4 mt-0">
+                        <p className="font-bold">
+                          {orderMilitaryServiceInfo(agent?.Military_Status__pc || "", agent?.Military_Service__pc || "")}
+                        </p>
+                        <p>{agent?.Brokerage_Name__pc}</p>
+                      </div>
+                      <AgentBio bio={agent?.Agent_Bio__pc || ""} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
