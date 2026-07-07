@@ -112,7 +112,7 @@ const FamilyVideo = () => {
                   />
                 </div>
                 <div className="text-center lg:space-y-5">
-                  <h2 className="text-white font-bold lg:text-4xl md:text-4xl text-base tahoma mt-5 mb-2">
+                  <h2 className="text-white font-bold md:text-4xl text-base tahoma mt-5 mb-2">
                     {metrics.cashBackAmount}
                   </h2>
                   <p className="text-white font-normal lg:text-xl md:text-base text-xs tahoma">
@@ -132,7 +132,7 @@ const FamilyVideo = () => {
                   />
                 </div>
                 <div className="text-center lg:space-y-5">
-                  <h2 className="text-white font-bold lg:text-4xl md:text-4xl text-base tahoma mt-5 mb-2">
+                  <h2 className="text-white font-bold md:text-4xl text-base tahoma mt-5 mb-2">
                     {metrics.totalVolumeSold}
                   </h2>
                   <p className="text-white font-normal lg:text-xl md:text-base text-xs tahoma">
@@ -152,7 +152,7 @@ const FamilyVideo = () => {
                   />
                 </div>
                 <div className="text-center lg:space-y-5">
-                  <h2 className="text-white font-bold lg:text-4xl md:text-4xl text-base tahoma mt-5 mb-2">
+                  <h2 className="text-white font-bold md:text-4xl text-base tahoma mt-5 mb-2">
                     {metrics.charityAmount}
                   </h2>
                   <p className="text-white font-normal lg:text-xl md:text-base text-xs tahoma">

@@ -8,15 +8,15 @@ const StoriesHeroSection = () => {
     <div className="relative">
       <div className={classes.StoriesHeroSectionContainer}>
         <div className="container mx-auto">
-          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-4">
-            <div className="mx-auto text-left w-full sm:order-2 order-2 lg:order-none md:order-none">
-              <p className="text-white font-bold lg:text-[59px] md:text-[29px] sm:text-[32px] text-[32px] poppins leading-[1.3] tahoma">
+          <div className="grid lg:grid-cols-2 grid-cols-1 items-start justify-between gap-4">
+            <div className="mx-auto text-left w-full order-2 md:order-none">
+              <p className="text-white font-bold lg:text-[59px] md:text-[29px] text-[32px] poppins leading-[1.3] tahoma">
                 Success Stories
               </p>
-              <h1 className="lg:text-[18px] md:text-[18px] sm:text-[16px] text-[16px] font-normal text-white poppins mb-10 tahoma">
+              <h1 className="md:text-[18px] text-[16px] font-normal text-white poppins mb-10 tahoma">
                 Real stories from real homes buyers & sellers just like you.
               </h1>
-              <div className="flex justify-between xl:justify-start lg:justify-start md:justify-start sm:justify-between gap-4 mb-10 mt-10 mx-auto text-center">
+              <div className="flex justify-between md:justify-start gap-4 mb-10 mt-10 mx-auto text-center">
                 <div className="flex items-center gap-4">
                   <Image
                     width={100}
@@ -44,13 +44,13 @@ const StoriesHeroSection = () => {
                   </p>
                 </div>
               </div>
-              <div className="absolute bottom-[-15%] xl:left-[45%]  lg:left-[35%] md:left-[35%] sm:left-[26%] left-[26%] translate-[-45%] ">
+              <div className="absolute bottom-[-15%] xl:left-[45%] md:left-[35%] left-[26%]">
                 <Image
                   width={1000}
                   height={1000}
                   src="/icon/VeteranPCS-logo_wht-outline.svg"
                   alt="Description of the image"
-                  className="lg:w-[250px] md:w-[250px] sm:w-[250px] w-[200px] h-auto"
+                  className="sm:w-[250px] w-[200px] h-auto"
                   loading="eager"
                 />
               </div>

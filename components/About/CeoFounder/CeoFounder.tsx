@@ -22,12 +22,12 @@ const CeoFounder = async () => {
         <div className="container mx-auto">
           <div className=" mx-auto">
             <div>
-              <span className="text-[#282828] flex justify-center tahoma lg:text-[21px] sm:text-[18px] text-[18px] font-bold">
+              <span className="text-[#282828] flex justify-center tahoma lg:text-[21px] text-[18px] font-bold">
                 CEO & FOUNDER
               </span>
             </div>
             <div>
-              <h1 className="text-[#292F6C] font-bold text-center tahoma lg:text-[55px] md:text-[60px] sm:text-[30px] text-[30px] ">
+              <h1 className="text-[#292F6C] font-bold text-center tahoma lg:text-[55px] md:text-[60px] text-[30px]">
                 Meet Our Founder
               </h1>
             </div>

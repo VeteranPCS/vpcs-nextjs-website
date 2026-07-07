@@ -108,7 +108,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                 </div>
               )}
               {page == "spanish" && (
-                <div className="lg:flex md:flex justify-start items-center gap-4 flex-wrap ">
+                <div className="md:flex justify-start items-center gap-4 flex-wrap">
                   <TrackedCtaLink
                     href="#state-map"
                     cta={{
@@ -123,7 +123,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                   >
                     <Button buttonText="Explora nuestro mapa" />
                   </TrackedCtaLink>
-                  <p className="text-white font-normal xl:text-[30px] lg:text-[30px] md:text-[20px] sm:text-[20px] text-[20px] mx-10 xl:w-auto w-full hidden md:block">
+                  <p className="text-white font-normal lg:text-[30px] text-[20px] mx-10 xl:w-auto w-full hidden md:block">
                     O
                   </p>
                   <TrackedCtaLink

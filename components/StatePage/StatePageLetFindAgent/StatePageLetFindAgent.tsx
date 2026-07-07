@@ -16,7 +16,7 @@ const StatePageCityAgents = ({
   return (
     <div className="bg-[#292F6C]">
       <div className="container mx-auto">
-        <div className="flex justify-around flex-wrap items-center sm:p-2 p-2 sm:py-2 py-8">
+        <div className="flex justify-around flex-wrap items-center p-2 sm:py-2 py-8">
           <div>
             <h6 className="text-[#FFFFFF] text-enter text-[19px] md:text-[31px] px-8 text-center sm:text-left font-normal md:font-bold leading-none md:leading-[34px]">Don’t see an agent for your area?</h6>
           </div>

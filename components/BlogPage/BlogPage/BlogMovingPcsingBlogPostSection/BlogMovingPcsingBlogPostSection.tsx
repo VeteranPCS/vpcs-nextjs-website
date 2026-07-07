@@ -26,7 +26,7 @@ export default async function BlogMovingPcsingBlogPostSection({
         <div className="flex justify-between items-center flex-wrap">
           <div>
             <div>
-              <h1 className="text-[#292F6C] tahoma lg:text-[36px] md:text-[36px] text-[26px] font-bold">
+              <h1 className="text-[#292F6C] tahoma md:text-[36px] text-[26px] font-bold">
                 {component}
               </h1>
               <BlogCategory categories_list={categories_list} />
@@ -38,7 +38,7 @@ export default async function BlogMovingPcsingBlogPostSection({
             </div>
           </div>
         </div>
-        <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-1 grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 ">
+        <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 justify-center md:gap-10 gap-2">
           {blogList?.map((blog) => (
             <BlogMovingPcsingPost key={blog.slug} blogDetails={blog} />
           ))}

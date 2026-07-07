@@ -32,17 +32,17 @@ const cardsData = [
 const StatePageWhyChooseVetpcs = ({ cityName }: { cityName: string }) => {
 
   return (
-    <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">
+    <div className="container mx-auto md:py-12 py-5 md:px-0 px-5">
       <div className="text-center">
-        <h1 className="text-[#292F6C] text-center tahoma lg:text-[44px] md:text-[44px] sm:text-[31px] text-[31px] font-bold lg:w-[600px] md:w-[600px] sm:w-full w-full mx-auto">
+        <h1 className="text-[#292F6C] text-center tahoma md:text-[44px] text-[31px] font-bold md:w-[600px] w-full mx-auto">
           {cityName}
         </h1>
-        <p className="text-center text-[#292F6C] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal">
+        <p className="text-center text-[#292F6C] tahoma md:text-[18px] text-[14px] font-normal">
           Why choose VeteranPCS as Your Preferred Real Estate Agents?
         </p>
       </div>
       <div
-        className="grid xl:grid-cols-4 lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 lg:mt-10 md:mt-10 sm:mt-10 mt-5 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3"
+        className="grid xl:grid-cols-4 md:grid-cols-2 grid-cols-1 sm:mt-10 mt-5 justify-center md:gap-10 gap-2 md:px-10 px-3"
         data-aos="fade-left"
         data-aos-duration="1000"
       >

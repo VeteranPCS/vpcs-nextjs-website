@@ -38,8 +38,8 @@ async function HowItWorkHeroSection() {
       <div className={classes.HowitworkHeroSectionContainer}>
         <div className="container mx-auto">
           <div className="items-start justify-between gap-4">
-            <div className="mx-auto text-left w-full sm:order-2 order-2 lg:order-none md:order-none">
-              <h1 className="text-white lg:text-[52px] md:text-[52px] sm:text-[32px] text-[32px] poppins leading-[1.3] tahoma">
+            <div className="mx-auto text-left w-full order-2 md:order-none">
+              <h1 className="text-white md:text-[52px] text-[32px] poppins leading-[1.3] tahoma">
                 {overviewSection.component_header[0]?.children.map((child) =>
                   child.marks.includes("strong") ? (
                     <span key={child._key} className="font-bold">
@@ -62,7 +62,7 @@ async function HowItWorkHeroSection() {
                         className="w-7 h-7 mt-2"
                         loading="eager"
                       />
-                      <p className="text-white poppins lg:text-[24px] md:text-[20px] sm:text-[16px] text-[16px] font-medium text-sm tahoma lg:w-[450px] md:w-full sm:w-full w-full leading-8">
+                      <p className="text-white poppins lg:text-[24px] md:text-[20px] sm:text-[16px] text-[16px] font-medium text-sm tahoma lg:w-[450px] w-full leading-8">
                         {item.text}
                       </p>
                     </div>
@@ -96,7 +96,7 @@ async function HowItWorkHeroSection() {
                   height={1000}
                   src="/icon/VeteranPCS-logo_wht-outline.svg"
                   alt="Description of the image"
-                  className="lg:w-[250px] md:w-[250px] sm:w-[250px] w-[200px] h-auto"
+                  className="sm:w-[250px] w-[200px] h-auto"
                   loading="eager"
                 />
               </div>

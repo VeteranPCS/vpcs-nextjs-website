@@ -101,7 +101,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
         <form onSubmit={handleSubmit(onSubmitHandler)}>
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
-              <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
+              <h1 className="text-[#7E1618] tahoma md:text-[32px] text-[24px] font-bold leading-8">
                 Agent Info
               </h1>
             </div>

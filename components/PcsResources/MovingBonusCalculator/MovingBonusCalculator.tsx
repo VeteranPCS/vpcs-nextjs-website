@@ -206,7 +206,7 @@ const MovingBonusCalculator = () => {
                                     </div>
 
                                     {/* VeteranPCS Bonus Display */}
-                                    <div className="text-center md:text-center">
+                                    <div className="text-center">
                                         <p className="text-[#231f20] text-sm mb-1 tahoma">
                                             VeteranPCS Bonus
                                         </p>
@@ -216,7 +216,7 @@ const MovingBonusCalculator = () => {
                                     </div>
 
                                     {/* CTA Button */}
-                                    <div className="text-center md:text-center">
+                                    <div className="text-center">
                                         <Link href="/contact-agent" onClick={handleConnectClick}>
                                             <Button
                                                 buttonText="Find An Agent"

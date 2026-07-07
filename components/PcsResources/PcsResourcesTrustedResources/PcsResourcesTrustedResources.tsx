@@ -32,15 +32,15 @@ const PcsResourcesTrustedResources = async () => {
     <div className="py-12 px-5">
       <div className="container mx-auto">
         <div>
-          <h2 className="text-[#003486] tahoma lg:text-[43px] md:text-[43px] sm:text-[31px] text-[31px] font-bold text-center">
+          <h2 className="text-[#003486] tahoma md:text-[43px] text-[31px] font-bold text-center">
             VeteranPCS Trusted Resources
           </h2>
-          <p className="text-[#878787] text-center mx-auto roboto lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-medium  mt-2 italic ">
+          <p className="text-[#878787] text-center mx-auto roboto md:text-[18px] text-[14px] font-medium mt-2 italic">
             Trusted veteran and military spouse owned resources, businesses and
             organizations.
           </p>
         </div>
-        <div className="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 grid-cols-2 gap-5 lg:mt-10 md:mt-10 sm:mt-5 mt-5">
+        <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-2 gap-5 md:mt-10 mt-5">
           {trusted_sources.map((trusted_source) => (
             <div key={trusted_source._id}>
               {trusted_source?.url ? (
@@ -53,7 +53,7 @@ const PcsResourcesTrustedResources = async () => {
                       "/assets/spouselylogomain.png"
                     }
                     alt={trusted_source?.logo?.alt || "no alt"}
-                    className="md:w-[128px] mt-10 md:h-[36px] sm:w-auto sm:h-auto w-auto h-auto"
+                    className="md:w-[128px] mt-10 md:h-[36px] w-auto h-auto"
                   />
                 </Link>
               ) : (
@@ -66,7 +66,7 @@ const PcsResourcesTrustedResources = async () => {
                       "/assets/spouselylogomain.png"
                     }
                     alt={trusted_source?.logo?.alt || "no alt"}
-                    className="md:w-[128px] mt-10 md:h-[36px] sm:w-auto sm:h-auto w-auto h-auto"
+                    className="md:w-[128px] mt-10 md:h-[36px] w-auto h-auto"
                   />
                 </div>
               )}

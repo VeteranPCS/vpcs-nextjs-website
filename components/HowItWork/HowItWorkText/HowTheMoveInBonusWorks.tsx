@@ -18,7 +18,7 @@ const HowTheMoveInBonusWorks = async () => {
     <>
       <div>
         <div>
-          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] sm:text-[25px] text-[25px] font-bold my-2">
+          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] text-[25px] font-bold my-2">
             {moveInBonus?.title}
           </h6>
         </div>
@@ -30,7 +30,7 @@ const HowTheMoveInBonusWorks = async () => {
             if (isHeading) {
               return (
                 <div key={block._key || index} className="mt-3 mb-5">
-                  <p className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[20px] text-[20px] font-bold mb-5">
+                  <p className="text-[#000000] roboto md:text-[24px] text-[20px] font-bold mb-5">
                     {block.children?.[0]?.text}
                   </p>
                 </div>
@@ -40,7 +40,7 @@ const HowTheMoveInBonusWorks = async () => {
             if (isList) {
               return (
                 <div key={block._key || index} className="pl-6">
-                  <p className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] md:font-medium sm:font-normal font-normal">
+                  <p className="text-[#000000] roboto md:text-[24px] text-[17px] md:font-medium font-normal">
                     {block.children?.[0]?.text}
                   </p>
                 </div>
@@ -49,7 +49,7 @@ const HowTheMoveInBonusWorks = async () => {
 
             return (
               <div key={block._key || index} className="mt-3 mb-5">
-                <p className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] md:font-medium sm:font-normal font-normal">
+                <p className="text-[#000000] roboto md:text-[24px] text-[17px] md:font-medium font-normal">
                   {block.children?.[0]?.text}
                 </p>
               </div>
@@ -62,13 +62,13 @@ const HowTheMoveInBonusWorks = async () => {
           <table className="table-auto border w-full">
             <thead>
               <tr className="border text-left">
-                <th className="text-[#000] tahoma lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] font-bold p-3">
+                <th className="text-[#000] tahoma md:text-[24px] text-[17px] font-bold p-3">
                   Home Price
                 </th>
-                <th className="text-[#000] tahoma lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] font-bold p-3">
+                <th className="text-[#000] tahoma md:text-[24px] text-[17px] font-bold p-3">
                   Move-In Bonus
                 </th>
-                <th className="text-[#000] tahoma lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] font-bold p-3">
+                <th className="text-[#000] tahoma md:text-[24px] text-[17px] font-bold p-3">
                   Charity Donation
                 </th>
               </tr>
@@ -76,13 +76,13 @@ const HowTheMoveInBonusWorks = async () => {
             <tbody>
               {moveInBonus?.bonusTable.map((row, index) => (
                 <tr key={index} className="border">
-                  <td className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] font-bold p-3">
+                  <td className="text-[#000000] roboto md:text-[24px] text-[17px] font-bold p-3">
                     {row.priceRange}
                   </td>
-                  <td className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] md:font-medium sm:font-normal font-normal p-3">
+                  <td className="text-[#000000] roboto md:text-[24px] text-[17px] md:font-medium font-normal p-3">
                     {row.moveInBonus.toLocaleString()}
                   </td>
-                  <td className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] md:font-medium sm:font-normal font-normal p-3">
+                  <td className="text-[#000000] roboto md:text-[24px] text-[17px] md:font-medium font-normal p-3">
                     {row.charityDonation.toLocaleString()}
                   </td>
                 </tr>
@@ -101,7 +101,7 @@ const HowTheMoveInBonusWorks = async () => {
               if (isHeading) {
                 return (
                   <div key={block._key || index} className="mt-3 mb-5">
-                    <p className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[20px] text-[20px] font-bold mb-5">
+                    <p className="text-[#000000] roboto md:text-[24px] text-[20px] font-bold mb-5">
                       {block.children?.[0]?.text}
                     </p>
                   </div>
@@ -111,7 +111,7 @@ const HowTheMoveInBonusWorks = async () => {
               if (isList) {
                 return (
                   <div key={block._key || index} className="pl-6">
-                    <p className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] md:font-medium sm:font-normal font-normal">
+                    <p className="text-[#000000] roboto md:text-[24px] text-[17px] md:font-medium font-normal">
                       {block.children?.[0]?.text}
                     </p>
                   </div>
@@ -120,7 +120,7 @@ const HowTheMoveInBonusWorks = async () => {
 
               return (
                 <div key={block._key || index} className="mt-3 mb-5">
-                  <p className="text-[#000000] roboto lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] md:font-medium sm:font-normal font-normal">
+                  <p className="text-[#000000] roboto md:text-[24px] text-[17px] md:font-medium font-normal">
                     {block.children?.[0]?.text}
                   </p>
                 </div>

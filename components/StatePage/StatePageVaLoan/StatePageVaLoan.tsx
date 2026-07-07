@@ -72,20 +72,20 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
 
   return (
     <div>
-      <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">
+      <div className="container mx-auto md:py-12 py-5 md:px-0 px-5">
         <div className="text-center">
-          <h1 className="text-[#292F6C] text-center tahoma lg:text-[44px] md:text-[44px] sm:text-[31px] text-[31px] font-bold lg:w-[600px] md:w-[600px] sm:w-full w-full mx-auto">
+          <h1 className="text-[#292F6C] text-center tahoma md:text-[44px] text-[31px] font-bold md:w-[600px] w-full mx-auto">
             {cityName} VA Loan Experts
           </h1>
           <div className="bg-[#7E1618] rounded-full py-1 w-20 mx-auto my-5"></div>
-          <p className="text-[#515151] text-center tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal xl:w-[1300px] px-5 xl:px-0 sm:w-full w-full mx-auto">
+          <p className="text-[#515151] text-center tahoma md:text-[18px] text-[14px] font-normal xl:w-[1300px] px-5 xl:px-0 w-full mx-auto">
             VA loan intricacies can be overwhelming. At VeteranPCS, we
             facilitate your connection with specialized VA loan experts, who
             will not only guide you expertly but also ensure that all potential
             benefits are maximized and costly errors are avoided.
           </p>
         </div>
-        <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-10 mt-10">
+        <div className="grid lg:grid-cols-2 grid-cols-1 items-start justify-between gap-10 mt-10">
           {Array.isArray(lendersData) || !lendersData.records
             ? <p>No lenders available</p>
             : lendersData.records.map((lender: Lenders) => (
@@ -119,11 +119,11 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                       href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}
                       onClick={() => trackLenderCta(lender.AccountId_15__c, 'card_heading')}
                     >
-                      <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[24px] text-[24px] font-bold">
+                      <h3 className="text-[#292F6C] tahoma md:text-[34px] text-[24px] font-bold">
                         {lender?.Name}
                       </h3>
                     </Link>
-                    <div className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] text-sm font-normal sm:mt-4 mt-0">
+                    <div className="text-[#6C757D] tahoma md:text-[18px] text-sm font-normal sm:mt-4 mt-0">
                       <p className="font-bold">
                         {orderMilitaryServiceInfo(lender?.Military_Status__pc || "", lender?.Military_Service__pc || "")}
                       </p>

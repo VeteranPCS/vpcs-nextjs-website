@@ -57,7 +57,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
         <form onSubmit={handleSubmit(handleSubmitPersonal)}>
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
-              <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
+              <h1 className="text-[#7E1618] tahoma md:text-[32px] text-[24px] font-bold leading-8">
                 Lenders, Get Listed!
               </h1>
               <p className="text-[#575F6E] roboto text-base font-black mt-3">

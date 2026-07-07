@@ -7,17 +7,17 @@ const ImpactVaLoan = () => {
   return (
     <div className={classes.ImpactVaLoanContainer}>
       <div className="container mx-auto px-8">
-        <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 gap-10 items-center justify-center">
-          <div className="lg:pl-10 md:pl-0 sm:pl-0 pl-0 sm:order-1 order-2">
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-10 items-center justify-center">
+          <div className="lg:pl-10 pl-0 sm:order-1 order-2">
             <div className="md:text-left text-center">
-              <h1 className="text-white font-tahoma lg:text-[42px] md:text-[42px] sm:text-[32px] text-[32px] font-bold leading-[50.4px] capitalize">
+              <h1 className="text-white font-tahoma md:text-[42px] text-[32px] font-bold leading-[50.4px] capitalize">
                 VA loan
               </h1>
-              <p className="text-white font-montserrat lg:text-[26px] md:text-[26px] sm:text-[20px] text-[20px] font-medium">
+              <p className="text-white font-montserrat md:text-[26px] text-[20px] font-medium">
                 Your service is your <b> downpayment </b>
               </p>
             </div>
-            <div className="flex md:justify-start justify-center flex-wrap items-start lg:gap-20 md:gap-5 sm:gap-5 gap-5 mt-10">
+            <div className="flex md:justify-start justify-center flex-wrap items-start lg:gap-20 gap-5 mt-10">
               <div className="flex flex-col justify-center">
                 <div className="mx-auto">
                   <Image
@@ -29,7 +29,7 @@ const ImpactVaLoan = () => {
                   />
                 </div>
                 <div>
-                  <h2 className="text-white font-bold lg:text-[42px] md:text-[32px] sm:text-[32px] text-[32px] tahoma text-center mt-2 mb-2">
+                  <h2 className="text-white font-bold lg:text-[42px] text-[32px] tahoma text-center mt-2 mb-2">
                     200
                   </h2>
                   <p className="text-white text-center font-tahoma text-sm font-normal lg:w-[120px]">
@@ -48,7 +48,7 @@ const ImpactVaLoan = () => {
                   />
                 </div>
                 <div>
-                  <h2 className="text-white font-bold lg:text-[42px] md:text-[32px] sm:text-[32px] text-[32px] tahoma text-center mt-2 mb-2">
+                  <h2 className="text-white font-bold lg:text-[42px] text-[32px] tahoma text-center mt-2 mb-2">
                     12
                   </h2>
                   <p className="text-white text-center font-tahoma text-sm font-normal lg:w-[150px]">
@@ -67,7 +67,7 @@ const ImpactVaLoan = () => {
                   />
                 </div>
                 <div>
-                  <h2 className="text-white font-bold lg:text-[42px] md:text-[32px] sm:text-[32px] text-[32px] tahoma text-center mt-2 mb-2">
+                  <h2 className="text-white font-bold lg:text-[42px] text-[32px] tahoma text-center mt-2 mb-2">
                     300
                   </h2>
                   <p className="text-white text-center font-tahoma text-sm font-normal lg:w-[150px]">
@@ -77,9 +77,9 @@ const ImpactVaLoan = () => {
               </div>
             </div>
             <div className="mt-5 md:block flex justify-center">
-              <div className="lg:py-8 md:py-8 sm:py-2 py-2">
+              <div className="md:py-8 py-2">
                 <LenderCtaLink
-                  className="inline-flex min-h-11 max-w-full items-center justify-center rounded-2xl bg-accent-red px-5 py-3.5 text-center text-sm font-normal leading-6 text-white tahoma transition-colors duration-200 hover:bg-accent-red-dark active:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-5 md:text-lg lg:px-8 lg:py-4 xl:px-8 xl:py-4"
+                  className="inline-flex min-h-11 max-w-full items-center justify-center rounded-2xl bg-accent-red px-5 py-3.5 text-center text-sm font-normal leading-6 text-white tahoma transition-colors duration-200 hover:bg-accent-red-dark active:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:text-lg lg:px-8 lg:py-4"
                   ctaId="impact_va_loan_more_info"
                   ctaPosition="impact_va_loan_section"
                   ctaComponent="impact_va_loan"
@@ -89,13 +89,13 @@ const ImpactVaLoan = () => {
               </div>
             </div>
           </div>
-          <div className="lg:ml-10 md:ml-0 sm:ml-0 ml-0 sm:order-2 order-1">
+          <div className="lg:ml-10 ml-0 sm:order-2 order-1">
             <Image
               width={1000}
               height={1000}
               src="/assets/imageslider3.webp"
               alt="hand"
-              className="lg:w-[445px] lg:h-[445px] md:w-full md:h-full sm:w-full sm:h-full w-full h-full"
+              className="lg:w-[445px] lg:h-[445px] w-full h-full"
             />
           </div>
         </div>

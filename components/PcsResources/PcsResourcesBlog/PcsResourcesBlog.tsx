@@ -18,9 +18,9 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
   return (
     <div className="py-6 px-5" id={component}>
       <div className="container mx-auto">
-        <div className="flex flex-wrap gap-5 items-end lg:justify-between md:justify-between sm:justify-center justify-center">
-          <div className="lg:text-left md:text-left sm:text-center text-center">
-            <h1 className="text-[#292F6C] lg:text-[42px] md:text-[42px] sm:text-[30px] text-[30px] font-bold tahoma lg:text-left md:text-left sm:text-center text-center">
+        <div className="flex flex-wrap gap-5 items-end md:justify-between justify-center">
+          <div className="md:text-left text-center">
+            <h1 className="text-[#292F6C] md:text-[42px] text-[30px] font-bold tahoma md:text-left text-center">
               {component}
             </h1>
           </div>
@@ -80,13 +80,13 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
                   ))}
                 </div>
                 <div className="absolute bottom-4 left-2 px-6 py-1">
-                  <p className="text-[#E5E5E5] lg:text-[14px] md:text-[14px] sm:text-[12px] text-[12px] font-normal leading-normal">
+                  <p className="text-[#E5E5E5] md:text-[14px] text-[12px] font-normal leading-normal">
                     {formatDate(blog.publishedAt)}
                   </p>
-                  <h3 className="text-white tahoma lg:text-[21px] md:text-[21px] sm:text-[15px] text-[15px] font-bold my-3 line-clamp-2">
+                  <h3 className="text-white tahoma md:text-[21px] text-[15px] font-bold my-3 line-clamp-2">
                     {blog.title}
                   </h3>
-                  <p className="text-[#E5E5E5] roboto lg:text-[14px] md:text-[14px] sm:text-[14px] text-[14px] font-normal lg:w-[370px] line-clamp-3">
+                  <p className="text-[#E5E5E5] roboto text-[14px] font-normal lg:w-[370px] line-clamp-3">
                     {excerpt(blog.content, 250)}
                   </p>
                 </div>
