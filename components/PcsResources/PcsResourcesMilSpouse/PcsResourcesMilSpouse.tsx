@@ -11,7 +11,7 @@ const PcsResourcesMilitarySpouse = () => {
         <div className="container mx-auto w-full">
           <div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
-              <div className="sm:order-1 order-3">
+              <div className="sm:order-1 order-1">
                 <h3 className="text-[#003486] tahoma lg:text-[42px] md:text-[42px] sm:text-[31px] text-[31px] font-bold ">
                   Military Spouse<br></br> Resources
                 </h3>
@@ -27,7 +27,7 @@ const PcsResourcesMilitarySpouse = () => {
                   </Link>
                 </div>
               </div>
-              <div className="sm:order-2 order-1">
+              <div className="sm:order-2 order-2">
                 <div className="flex gap-4 items-center">
                   <Image
                     width={465}
@@ -38,7 +38,7 @@ const PcsResourcesMilitarySpouse = () => {
                   />
                 </div>
               </div>
-              <div className="sm:order-3 order-2">
+              <div className="sm:order-3 order-3">
                 <div>
                   <Link href="https://www.gosquaredaway.com/">
                     <Image
