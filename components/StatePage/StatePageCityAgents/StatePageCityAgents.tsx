@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "@/app/globals.css";
 import Image from "next/image";
 import Button from "@/components/common/Button";
@@ -40,6 +40,40 @@ function toTitleCase(str: string): string {
     .join(" ");
 }
 
+const AgentBio = ({ bio }: { bio: string }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (el) {
+      setIsOverflowing(el.scrollHeight > el.clientHeight);
+    }
+  }, [bio]);
+
+  return (
+    <div className="relative">
+      <p
+        ref={textRef}
+        className={`text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 overflow-hidden transition-all duration-300 ${isExpanded ? "max-h-full" : "max-h-[80px]"}`}
+      >
+        {bio}
+      </p>
+      {isOverflowing && (
+        <button
+          type="button"
+          aria-expanded={isExpanded}
+          onClick={() => setIsExpanded((prev) => !prev)}
+          className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 min-h-11 inline-flex items-center"
+        >
+          {isExpanded ? "Read Less" : "...Read More"}
+        </button>
+      )}
+    </div>
+  );
+};
+
 
 const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
   const trackAgentCta = (agentId: string, position: string) => {
@@ -66,7 +100,7 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
             <div className="bg-[#7E1618] py-[3px] w-24 mx-auto my-5"></div>
           </div>
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-10 mt-10">
-            {agent_data.map((agent, index) => (
+            {agent_data.map((agent) => (
               <div
                 key={agent.AccountId_15__c}
                 className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4"
@@ -110,19 +144,7 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                       </p>
                       <p>{agent?.Brokerage_Name__pc}</p>
                     </div>
-                    <div className="relative">
-                      {/* Hidden checkbox to track toggle state */}
-                      <input type="checkbox" id={`toggle-${index + ' ' + agent.Name + ' ' + city.toLowerCase().split(' ').join('-')}`} className="peer hidden" />
-
-                      {/* Text that expands/collapses */}
-                      <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 max-h-[80px] overflow-hidden peer-checked:max-h-full transition-all duration-300">
-                        {agent?.Agent_Bio__pc}
-                      </p>
-
-                      {/* Single label that toggles state */}
-                      <label htmlFor={`toggle-${index + ' ' + agent.Name + ' ' + city.toLowerCase().split(' ').join('-')}`} className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 block peer-checked:before:content-['Read_Less'] before:content-['...Read_More']">
-                      </label>
-                    </div>
+                    <AgentBio bio={agent?.Agent_Bio__pc || ""} />
                   </div>
                 </div>
               </div>

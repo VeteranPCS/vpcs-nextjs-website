@@ -197,10 +197,11 @@ const MovingBonusCalculator = () => {
                                         </label>
                                         <input
                                             type="text"
+                                            inputMode="numeric"
                                             value={homeValue === 0 ? '' : formatCurrency(homeValue)}
                                             onChange={handleInputChange}
                                             placeholder="$0"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded text-[#231f20] text-sm tahoma"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded text-[#231f20] text-base tahoma"
                                         />
                                     </div>
 

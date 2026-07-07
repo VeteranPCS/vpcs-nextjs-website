@@ -290,6 +290,7 @@ export default function BAHCalculator() {
                                 </label>
                                 <input
                                     type="text"
+                                    inputMode="numeric"
                                     id="zipCode"
                                     name="zipCode"
                                     value={formData.zipCode}

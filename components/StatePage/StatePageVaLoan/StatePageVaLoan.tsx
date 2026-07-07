@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "@/app/globals.css";
 import Image from "next/image";
 import Button from "@/components/common/Button";
@@ -8,6 +8,40 @@ import Link from "next/link";
 import { LendersData, Lenders } from "@/services/stateService";
 import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
 import { trackCtaClicked } from "@/lib/analytics/client";
+
+const LenderBio = ({ bio }: { bio: string }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (el) {
+      setIsOverflowing(el.scrollHeight > el.clientHeight);
+    }
+  }, [bio]);
+
+  return (
+    <div className="relative">
+      <p
+        ref={textRef}
+        className={`text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 overflow-hidden transition-all duration-300 ${isExpanded ? "max-h-full" : "max-h-[80px]"}`}
+      >
+        {bio}
+      </p>
+      {isOverflowing && (
+        <button
+          type="button"
+          aria-expanded={isExpanded}
+          onClick={() => setIsExpanded((prev) => !prev)}
+          className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 min-h-11 inline-flex items-center"
+        >
+          {isExpanded ? "Read Less" : "...Read More"}
+        </button>
+      )}
+    </div>
+  );
+};
 
 const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, lendersData: LendersData | [], state: string }) => {
   const trackLenderCta = (lenderId: string, position: string) => {
@@ -41,7 +75,7 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
         <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-10 mt-10">
           {Array.isArray(lendersData) || !lendersData.records
             ? <p>No lenders available</p>
-            : lendersData.records.map((lender: Lenders, index: number) => (
+            : lendersData.records.map((lender: Lenders) => (
               <div key={lender.AccountId_15__c} className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4">
                 <div className="justify-center items-center flex flex-col">
                   <div className="rounded-full bg-[#E1EDFB] sm:w-[200px] sm:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
@@ -88,19 +122,7 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                         </>
                       }
                     </div>
-                    <div className="relative">
-                      {/* Hidden checkbox to track toggle state */}
-                      <input type="checkbox" id={`toggle-${index + ' ' + lender.Name + ' ' + cityName.toLowerCase().split(' ').join('-')}`} className="peer hidden" />
-
-                      {/* Text that expands/collapses */}
-                      <p className="text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 max-h-[80px] overflow-hidden peer-checked:max-h-full transition-all duration-300">
-                        {lender?.Agent_Bio__pc}
-                      </p>
-
-                      {/* Single label that toggles state */}
-                      <label htmlFor={`toggle-${index + ' ' + lender.Name + ' ' + cityName.toLowerCase().split(' ').join('-')}`} className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 block peer-checked:before:content-['Read_Less'] before:content-['...Read_More']">
-                      </label>
-                    </div>
+                    <LenderBio bio={lender?.Agent_Bio__pc || ""} />
 
                   </div>
                 </div>

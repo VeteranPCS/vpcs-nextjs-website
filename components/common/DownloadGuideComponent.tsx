@@ -185,27 +185,36 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                 >
                     <HoneypotField ref={honeypotRef} />
                     <div className="flex flex-col md:flex-row gap-4 mb-4">
-                        <input
-                            className="flex-1 px-4 py-3 rounded border border-gray-300 text-sm"
-                            type="text"
-                            placeholder="First Name*"
-                            {...register('firstName')}
-                            disabled={submitting}
-                        />
-                        <input
-                            className="flex-1 px-4 py-3 rounded border border-gray-300 text-sm"
-                            type="text"
-                            placeholder="Last Name*"
-                            {...register('lastName')}
-                            disabled={submitting}
-                        />
-                        <input
-                            className="flex-1 px-4 py-3 rounded border border-gray-300 text-sm"
-                            type="email"
-                            placeholder="Email*"
-                            {...register('email')}
-                            disabled={submitting}
-                        />
+                        <div className="flex-1">
+                            <input
+                                className="w-full px-4 py-3 rounded border border-gray-300 text-base"
+                                type="text"
+                                placeholder="First Name*"
+                                {...register('firstName')}
+                                disabled={submitting}
+                            />
+                            {errors.firstName && <span className="text-red-600 text-xs block mt-1">{errors.firstName.message}</span>}
+                        </div>
+                        <div className="flex-1">
+                            <input
+                                className="w-full px-4 py-3 rounded border border-gray-300 text-base"
+                                type="text"
+                                placeholder="Last Name*"
+                                {...register('lastName')}
+                                disabled={submitting}
+                            />
+                            {errors.lastName && <span className="text-red-600 text-xs block mt-1">{errors.lastName.message}</span>}
+                        </div>
+                        <div className="flex-1">
+                            <input
+                                className="w-full px-4 py-3 rounded border border-gray-300 text-base"
+                                type="email"
+                                placeholder="Email*"
+                                {...register('email')}
+                                disabled={submitting}
+                            />
+                            {errors.email && <span className="text-red-600 text-xs block mt-1">{errors.email.message}</span>}
+                        </div>
                         <button
                             className="md:w-auto px-6 bg-[#232857] text-white rounded py-3 text-base font-medium hover:bg-[#1a1e4a] disabled:bg-gray-400"
                             type="submit"
@@ -216,9 +225,6 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                     </div>
 
                     <div className="w-full flex flex-col items-center mb-2">
-                        {errors.firstName && <span className="text-red-600 text-xs">{errors.firstName.message}</span>}
-                        {errors.lastName && <span className="text-red-600 text-xs">{errors.lastName.message}</span>}
-                        {errors.email && <span className="text-red-600 text-xs">{errors.email.message}</span>}
                         {error && <span className="text-red-600 text-xs">{error}</span>}
                         {success && <span className="text-green-700 text-xs">Thank you! Your download will begin shortly.</span>}
                     </div>
