@@ -113,7 +113,7 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                     <Button buttonText="Contact Now" />
                   </Link>
                 </div>
-                <div className="pl-10">
+                <div className="md:pl-10 pl-4">
                   <div>
                     <Link
                       href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}
