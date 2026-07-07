@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   errorCodesFromErrors,
   queryMetrics,
+  sanitizeExceptionProperties,
   sanitizeAnalyticsProperties,
   zipPrefix,
 } from '@/lib/analytics/sanitizer';
@@ -111,5 +112,106 @@ describe('analytics sanitizer', () => {
       utm_source: 'codex',
       landing_page_path: '/pcs-resources',
     });
+  });
+
+  it('preserves required exception fields while redacting risky exception text', () => {
+    const clean = sanitizeExceptionProperties({
+      $lib: 'web',
+      $lib_version: '1.391.2',
+      $exception_level: 'error',
+      $exception_handled: false,
+      $exception_fingerprint: ['TypeError', 'https://www.veteranpcs.com/contact-agent?email=alex@example.com'],
+      $exception_types: ['TypeError'],
+      $exception_values: [
+        'Failed for alex@example.com at https://www.veteranpcs.com/contact-agent?email=alex@example.com zip 80920 phone 555-555-1212',
+      ],
+      $exception_steps: [
+        { event: 'clicked submit', html: '<input value="alex@example.com">' },
+      ],
+      $exception_list: [
+        {
+          type: 'TypeError',
+          value: 'Failed for alex@example.com at https://www.veteranpcs.com/contact-agent?email=alex@example.com zip 80920 phone 555-555-1212',
+          stacktrace: {
+            frames: [
+              {
+                filename: 'https://www.veteranpcs.com/_next/static/chunks/app.js?email=alex@example.com',
+                function: 'submitLead',
+                module: 'components/contact-agent',
+                lineno: 57,
+                colno: '14',
+                in_app: true,
+                context_line: 'const email = "alex@example.com"',
+                vars: { email: 'alex@example.com' },
+              },
+            ],
+          },
+          mechanism: {
+            type: 'onerror',
+            handled: false,
+            synthetic: true,
+            data: { raw: 'alex@example.com' },
+          },
+          extra: { raw: 'alex@example.com' },
+        },
+      ],
+    });
+
+    expect(clean).toBeDefined();
+    expect(clean?.$lib).toBe('web');
+    expect(clean?.$exception_level).toBe('error');
+    expect(clean?.$exception_handled).toBe(false);
+    expect(clean?.$exception_fingerprint).toEqual(['TypeError', '/contact-agent']);
+    expect(clean?.$exception_values).toEqual([
+      'Failed for [redacted_email] at /contact-agent zip [redacted_zip] phone [redacted_phone]',
+    ]);
+    expect(clean).not.toHaveProperty('$exception_steps');
+
+    const exceptionList = clean?.$exception_list as Array<Record<string, unknown>> | undefined;
+    expect(exceptionList).toHaveLength(1);
+    const exception = exceptionList?.[0];
+    if (!exception) throw new Error('Expected sanitized exception');
+
+    expect(exception.type).toBe('TypeError');
+    expect(exception.value).toBe(
+      'Failed for [redacted_email] at /contact-agent zip [redacted_zip] phone [redacted_phone]',
+    );
+    expect(exception).not.toHaveProperty('extra');
+
+    const stacktrace = exception.stacktrace as Record<string, unknown>;
+    const frames = stacktrace.frames as Array<Record<string, unknown>>;
+    expect(frames).toHaveLength(1);
+    const frame = frames[0];
+    if (!frame) throw new Error('Expected sanitized exception frame');
+
+    expect(frame).toEqual({
+      filename: '/_next/static/chunks/app.js',
+      function: 'submitLead',
+      module: 'components/contact-agent',
+      lineno: 57,
+      colno: 14,
+      in_app: true,
+    });
+
+    expect(exception.mechanism).toEqual({
+      type: 'onerror',
+      handled: false,
+      synthetic: true,
+    });
+  });
+
+  it('drops malformed exception payloads instead of producing invalid PostHog exceptions', () => {
+    expect(sanitizeExceptionProperties({
+      $lib: 'web',
+      $exception_level: 'error',
+    })).toBeUndefined();
+
+    expect(sanitizeExceptionProperties({
+      $lib: 'web',
+      $exception_list: [
+        { value: { raw: 'not a string' } },
+        'not an exception object',
+      ],
+    })).toBeUndefined();
   });
 });
