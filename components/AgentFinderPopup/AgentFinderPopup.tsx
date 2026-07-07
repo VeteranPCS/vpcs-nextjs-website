@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { sendGTMEvent } from "@next/third-parties/google";
@@ -26,6 +26,7 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
     const [stateImage, setStateImage] = useState<string>('');
     const [isLoadingAreas, setIsLoadingAreas] = useState(false);
     const [isRouting, setIsRouting] = useState(false);
+    const closeButtonRef = useRef<HTMLButtonElement>(null);
 
     // Load states on component mount
     useEffect(() => {
@@ -183,7 +184,7 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
         }
     };
 
-    const handleCloseButtonClick = () => {
+    const handleCloseButtonClick = useCallback(() => {
         // Send GTM event for close button click
         sendGTMEvent({
             event: "agent_finder_popup_closed",
@@ -193,7 +194,45 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
         });
 
         onClose();
-    };
+    }, [selectedState, selectedArea, onClose]);
+
+    // aria-modal without focus placement strands keyboard users behind the overlay:
+    // move focus to the close button on open, and put it back where it was on close.
+    // (Full Tab trapping is deliberately out of scope for this popup.)
+    useEffect(() => {
+        if (!isVisible) {
+            return;
+        }
+
+        const previouslyFocused =
+            document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        closeButtonRef.current?.focus();
+
+        return () => {
+            if (previouslyFocused?.isConnected) {
+                previouslyFocused.focus();
+            }
+        };
+    }, [isVisible]);
+
+    // Close on Escape while the popup is visible, matching the X button's close behavior.
+    useEffect(() => {
+        if (!isVisible) {
+            return;
+        }
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                handleCloseButtonClick();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isVisible, handleCloseButtonClick]);
 
     const handleBackdropClick = (e: React.MouseEvent) => {
         if (e.target === e.currentTarget) {
@@ -215,8 +254,14 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
 
     return (
         <div className="agent-finder-popup-backdrop" onClick={handleBackdropClick}>
-            <div className="agent-finder-popup">
+            <div
+                className="agent-finder-popup"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="agent-finder-popup-title"
+            >
                 <button
+                    ref={closeButtonRef}
                     className="agent-finder-popup__close"
                     onClick={handleCloseButtonClick}
                     aria-label="Close popup"
@@ -225,7 +270,7 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
                 </button>
 
                 <div className="agent-finder-popup__content">
-                    <h2 className="agent-finder-popup__title">Need to find a real estate agent?</h2>
+                    <h2 id="agent-finder-popup-title" className="agent-finder-popup__title">Need to find a real estate agent?</h2>
                     <p className="agent-finder-popup__subtitle">Select the area you need an agent.</p>
 
                     {stateImage && (
