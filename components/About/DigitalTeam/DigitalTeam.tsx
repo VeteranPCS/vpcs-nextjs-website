@@ -30,9 +30,9 @@ const DigitalTeam = async () => {
     <div className="bg-white py-3 px-5 mt-10">
       <div className="bg-[#EEEEEE] px-9 sm:px-4 pb-14">
         <div className="mt-10 pt-7 pb-14 ">
-          <h1 className="text-[#292F6C] font-bold xl:text-[55px] lg:text-[50px] text-[40px] leading-[54px] tahoma text-center">
+          <h2 className="text-[#292F6C] font-bold xl:text-[55px] lg:text-[50px] text-[40px] leading-[54px] tahoma text-center">
             Meet the <span className="font-normal">Veteran</span>PCS team
-          </h1>
+          </h2>
         </div>
         <div className="container mx-auto">
           <div className="text-center">

@@ -77,9 +77,9 @@ const FamilySupport = async () => {
           </div>
           <div className="md:text-left sm:text-justify text-center">
             <div>
-              <h1 className="text-white poppins md:text-[35px] text-[31px] font-bold mt-5 md:text-left text-center px-0">
+              <h2 className="text-white poppins md:text-[35px] text-[31px] font-bold mt-5 md:text-left text-center px-0">
                 {storyDetails?.header}
-              </h1>
+              </h2>
               <div className="text-white roboto text-[16px] font-medium mt-4 md:w-[500px] w-full">
                 {storyDetails?.description?.map((point, index) => (
                   <SupportContent

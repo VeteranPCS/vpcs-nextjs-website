@@ -20,9 +20,9 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
       <div className="container mx-auto">
         <div className="flex flex-wrap gap-5 items-end md:justify-between justify-center">
           <div className="md:text-left text-center">
-            <h1 className="text-[#292F6C] md:text-[42px] text-[30px] font-bold tahoma md:text-left text-center">
+            <h2 className="text-[#292F6C] md:text-[42px] text-[30px] font-bold tahoma md:text-left text-center">
               {component}
-            </h1>
+            </h2>
           </div>
           <TrackedCtaLink
             href={categoryHref}

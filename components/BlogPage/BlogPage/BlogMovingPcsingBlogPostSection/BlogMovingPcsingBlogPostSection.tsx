@@ -26,9 +26,9 @@ export default async function BlogMovingPcsingBlogPostSection({
         <div className="flex justify-between items-center flex-wrap">
           <div>
             <div>
-              <h1 className="text-[#292F6C] tahoma md:text-[36px] text-[26px] font-bold">
+              <h2 className="text-[#292F6C] tahoma md:text-[36px] text-[26px] font-bold">
                 {component}
-              </h1>
+              </h2>
               <BlogCategory categories_list={categories_list} />
             </div>
           </div>

@@ -36,9 +36,9 @@ const StatePageCTA = ({ cityName, stateSlug }: { cityName: string; stateSlug: st
               />
             </div>
             <div>
-              <h1 className="text-white tahoma text-[31px] font-bold mt-5 md:text-left text-center lg:w-[500px]">
+              <h2 className="text-white tahoma text-[31px] font-bold mt-5 md:text-left text-center lg:w-[500px]">
                 Talk to our Agents in {cityName} Today
-              </h1>
+              </h2>
               <p className="text-white tahoma lg:text-[18px] md:text-[19px] text-[16px] font-normal leading-[25px] mt-4 md:text-left text-center">
                 Are you a veteran or military spouse in search of a {cityName}{" "}
                 realtor who understands your distinctive requirements?

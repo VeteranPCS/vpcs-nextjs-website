@@ -107,9 +107,9 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
       <div className="bg-[#F4F4F4]">
         <div className="container mx-auto md:py-12 py-5 md:px-0 px-5">
           <div className="text-center">
-            <h1 className="text-[#292F6C] text-center tahoma md:text-[38px] text-[22px] font-bold md:w-[600px] w-full mx-auto">
+            <h2 className="text-[#292F6C] text-center tahoma md:text-[38px] text-[22px] font-bold md:w-[600px] w-full mx-auto">
               {city}
-            </h1>
+            </h2>
             <div className="bg-[#7E1618] py-[3px] w-24 mx-auto my-5"></div>
           </div>
           <div className="grid lg:grid-cols-2 grid-cols-1 items-start justify-between gap-10 mt-10">

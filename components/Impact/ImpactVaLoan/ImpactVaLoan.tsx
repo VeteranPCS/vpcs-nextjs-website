@@ -10,9 +10,9 @@ const ImpactVaLoan = () => {
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-10 items-center justify-center">
           <div className="lg:pl-10 pl-0 sm:order-1 order-2">
             <div className="md:text-left text-center">
-              <h1 className="text-white font-tahoma md:text-[42px] text-[32px] font-bold leading-[50.4px] capitalize">
+              <h2 className="text-white font-tahoma md:text-[42px] text-[32px] font-bold leading-[50.4px] capitalize">
                 VA loan
-              </h1>
+              </h2>
               <p className="text-white font-montserrat md:text-[26px] text-[20px] font-medium">
                 Your service is your <b> downpayment </b>
               </p>

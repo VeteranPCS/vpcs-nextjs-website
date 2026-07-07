@@ -12,12 +12,12 @@ const HeroSec = async () => {
       <div className={classes.yourimpactsectioncontainer}>
         <div className="container mx-auto md:px-9 sm:px-0">
           <div className="text-center">
-            <p className="text-white font-bold lg:text-[48px] md:text-[40px] text-[32px] poppins leading-[1.3] tahoma">
+            <h2 className="text-white font-bold lg:text-[48px] md:text-[40px] text-[32px] poppins leading-[1.3] tahoma">
               Your Impact
-            </p>
-            <h1 className="text-[18px] font-normal text-white poppins mb-10 mt-3 tahoma">
+            </h2>
+            <p className="text-[18px] font-normal text-white poppins mb-10 mt-3 tahoma">
               With your support we have been able to Impact the military community in amazing ways
-            </h1>
+            </p>
           </div>
           <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 items-start justify-between gap-3">
             <div className="text-center md:block flex items-center mt-3 md:bg-transparent bg-[#7E1618] rounded-2xl p-6">

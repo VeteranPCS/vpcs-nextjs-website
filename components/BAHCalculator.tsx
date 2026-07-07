@@ -212,7 +212,7 @@ export default function BAHCalculator() {
                             </div>
                         </div>
                         <div className="flex-1">
-                            <h1 className="text-2xl md:text-3xl font-bold text-blue-900 mb-2">BAH Calculator</h1>
+                            <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-2">BAH Calculator</h2>
                             <p className="text-gray-600 text-sm md:text-base leading-relaxed">
                                 Use the BAH calculator below to find your 2026 BAH rates. Enter your
                                 pay grade, dependent status and duty station ZIP code to see

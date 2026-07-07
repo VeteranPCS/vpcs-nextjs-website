@@ -27,9 +27,9 @@ const CeoFounder = async () => {
               </span>
             </div>
             <div>
-              <h1 className="text-[#292F6C] font-bold text-center tahoma lg:text-[55px] md:text-[60px] text-[30px]">
+              <h2 className="text-[#292F6C] font-bold text-center tahoma lg:text-[55px] md:text-[60px] text-[30px]">
                 Meet Our Founder
-              </h1>
+              </h2>
             </div>
             <div>
               <p className="text-[#161C2Db3] text-center font-normal sm:text-[24px] text-[14px] mx-auto px-9 sm:px-4">

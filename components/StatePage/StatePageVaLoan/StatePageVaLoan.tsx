@@ -74,9 +74,9 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
     <div>
       <div className="container mx-auto md:py-12 py-5 md:px-0 px-5">
         <div className="text-center">
-          <h1 className="text-[#292F6C] text-center tahoma md:text-[44px] text-[31px] font-bold md:w-[600px] w-full mx-auto">
+          <h2 className="text-[#292F6C] text-center tahoma md:text-[44px] text-[31px] font-bold md:w-[600px] w-full mx-auto">
             {cityName} VA Loan Experts
-          </h1>
+          </h2>
           <div className="bg-[#7E1618] rounded-full py-1 w-20 mx-auto my-5"></div>
           <p className="text-[#515151] text-center tahoma md:text-[18px] text-[14px] font-normal xl:w-[1300px] px-5 xl:px-0 w-full mx-auto">
             VA loan intricacies can be overwhelming. At VeteranPCS, we

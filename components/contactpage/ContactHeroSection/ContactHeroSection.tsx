@@ -9,12 +9,12 @@ const HeroSection = () => {
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 grid-cols-1 items-start justify-between gap-4">
             <div className="mx-auto text-left w-full order-2 md:order-none">
-              <p className="text-white font-normal lg:text-[59px] text-[40px] poppins leading-[1.3] tahoma">
+              <h1 className="text-white font-normal lg:text-[59px] text-[40px] poppins leading-[1.3] tahoma">
                 <b>Contact </b> Veteran<b>PCS</b>
-              </p>
-              <h1 className="text-[18px] font-normal text-white poppins mb-10 tahoma">
-                Questions or remarks? Send us a message!
               </h1>
+              <p className="text-[18px] font-normal text-white poppins mb-10 tahoma">
+                Questions or remarks? Send us a message!
+              </p>
               <div className="flex justify-between md:justify-start gap-4 mb-10 mt-10 mx-auto text-center">
                 <div className="flex items-center gap-4">
                   <Image
