@@ -42,7 +42,7 @@ const Slider = () => {
               width={100}
               height={100}
               className="w-[130px] min-w-[130px] h-auto mt-5"
-              alt={slide?.image?.alt || "Description of the image"}
+              alt={slide?.image?.alt || "Employer partner logo"}
             />
           </button>
         </div>

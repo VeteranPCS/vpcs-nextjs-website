@@ -70,7 +70,7 @@ const FamilySupport = async () => {
               }
               alt={
                 storyDetails?.foreground_image?.alt ||
-                "Description of the image"
+                "Jason Anderson, founder of VeteranPCS"
               }
               className="w-full max-w-[426px] h-auto"
             />

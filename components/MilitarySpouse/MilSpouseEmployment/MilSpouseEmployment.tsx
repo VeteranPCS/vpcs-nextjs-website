@@ -39,7 +39,7 @@ const MilitarySpouseEmployment = async () => {
                   }
                   width={1000}
                   height={1000}
-                  alt={item?.logo?.alt || "Description of the image"}
+                  alt={item?.logo?.alt || "Employer partner logo"}
                   className="md:w-auto md:h-auto sm:w-auto sm:h-auto w-auto h-auto object-cover"
                 />
               </Link>
@@ -56,7 +56,7 @@ const MilitarySpouseEmployment = async () => {
                 src="/assets/instant-teams.png"
                 width={1000}
                 height={1000}
-                alt="Description of the image"
+                alt="Instant Teams logo"
                 className="w-[300px] h-auto  object-cover"
               />
             </div>
@@ -74,7 +74,7 @@ const MilitarySpouseEmployment = async () => {
                 src="/assets/squaredaway.png"
                 width={1000}
                 height={1000}
-                alt="Description of the image"
+                alt="Squared Away logo"
                 className="w-[300px] h-auto  object-cover"
               />
             </div>

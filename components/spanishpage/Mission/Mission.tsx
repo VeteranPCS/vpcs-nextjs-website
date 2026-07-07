@@ -34,7 +34,7 @@ const Mission = async () => {
               height={1000}
               src={pageData?.foreground_image?.asset?.image_url || "/assets/Mission.png"}
               className="w-full max-w-[552px] h-auto"
-              alt="Description of the image"
+              alt={pageData?.foreground_image?.alt || "Real estate agent with a clipboard outside a home for sale"}
             />
           </div>
           <div className="text-left">

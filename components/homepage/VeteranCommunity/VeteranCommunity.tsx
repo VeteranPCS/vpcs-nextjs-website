@@ -147,7 +147,7 @@ const VeteranCommunity = async ({ component_slug }: { component_slug: string }) 
                 "/assets/soldiertraining.png"
               }
               className="w-full max-w-[552px] h-auto"
-              alt="Description of the image"
+              alt={pageData?.image?.alt || "Soldiers training together during a tactical exercise"}
             />
           </div>
         </div>

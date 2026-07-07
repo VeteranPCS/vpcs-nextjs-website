@@ -131,7 +131,7 @@ const KeepInTouch = () => {
                 height={100}
                 className="md:w-auto w-[300px] h-auto mx-auto sm:mx-0"
                 src="/icon/veteran-pcs-logo-white.svg"
-                alt="Description of the image"
+                alt="VeteranPCS logo"
               />
               <p className="text-[#292F6C] tahoma text-lg font-normal leading-[30px] lg:w-[300px]  my-7">
                 Together we&apos;ll make it home. Veteran & Military Spouse Real

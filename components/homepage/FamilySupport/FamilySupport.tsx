@@ -43,7 +43,7 @@ const FamilySupport = async ({ link, component_slug }: { link: string, component
               }
               width={530}
               height={530}
-              alt={pageData?.image?.alt || "Description of the image"}
+              alt={pageData?.image?.alt || "Service member reunited with a loved one"}
               className="lg:w-[530px] lg:h-[530px] md:w-[530px] md:h-[530px] sm:w-[326px] sm:h-[326px] w-[326px] h-[326px] object-cover"
             />
           </div>

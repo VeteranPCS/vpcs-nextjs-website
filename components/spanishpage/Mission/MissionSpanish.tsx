@@ -19,7 +19,7 @@ const MissionSpanish = async () => {
                             height={1000}
                             src={"/assets/military-image-2.png"}
                             className="w-full max-w-[552px] h-auto object-cover"
-                            alt="Description of the image"
+                            alt="Dos militares avanzando juntos en el campo"
                         />
                     </div>
                     <div className="text-left">

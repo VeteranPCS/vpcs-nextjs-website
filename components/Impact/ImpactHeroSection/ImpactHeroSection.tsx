@@ -50,7 +50,7 @@ const HeroSec = () => {
                   width={1000}
                   height={1000}
                   src="/icon/VeteranPCS-logo_wht-outline.svg"
-                  alt="Description of the image"
+                  alt=""
                   className="sm:w-[250px] w-[200px] h-auto"
                   loading="eager"
                 />

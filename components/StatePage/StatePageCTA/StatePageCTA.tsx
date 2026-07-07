@@ -20,7 +20,7 @@ const StatePageCTA = ({ cityName, stateSlug }: { cityName: string; stateSlug: st
               src="/assets/military-signing.png"
               width={530}
               height={530}
-              alt="Description of the image"
+              alt="Real estate agent reviewing paperwork with a service member"
               sizes="(min-width: 768px) 530px, 326px"
               className="w-full max-w-[530px] h-auto object-cover"
             />
@@ -32,7 +32,7 @@ const StatePageCTA = ({ cityName, stateSlug }: { cityName: string; stateSlug: st
                 height={100}
                 className=" w-auto h-auto"
                 src="/icon/userplus.svg"
-                alt="Description of the image"
+                alt=""
               />
             </div>
             <div>

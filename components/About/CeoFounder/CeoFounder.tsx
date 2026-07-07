@@ -44,7 +44,7 @@ const CeoFounder = async () => {
                 <div>
                   <Image
                     src={details?.image?.asset?.image_url || "/assets/CeoPasteimage.png"}
-                    alt="Jason"
+                    alt={details.name}
                     width={417}
                     height={400}
                     className="object-cover"
