@@ -4,7 +4,7 @@
   background-size: cover;
   border-radius: 5.933px;
   position: relative;
-  height: 400px;
+  min-height: 400px;
   padding: 30px;
 }
 
@@ -31,7 +31,7 @@
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
   .blogimageone {
-    height: 300px;
+    min-height: 300px;
   }
 
   .blogimagetwo {
