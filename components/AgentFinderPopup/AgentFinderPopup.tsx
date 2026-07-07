@@ -105,17 +105,22 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
         }
     }, [isVisible]);
 
-    // Lock background scroll while the popup is open, restoring the prior value on close/unmount
+    // Lock background scroll while the popup is open, restoring the prior values on close/unmount.
+    // Both <html> and <body> overflow are locked because the app scrolls via document.scrollingElement
+    // (== <html> in standards mode), so body-only locking leaves the background scrollable.
     useEffect(() => {
         if (!isVisible) {
             return;
         }
 
-        const previousOverflow = document.body.style.overflow;
+        const previousBodyOverflow = document.body.style.overflow;
+        const previousHtmlOverflow = document.documentElement.style.overflow;
         document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
 
         return () => {
-            document.body.style.overflow = previousOverflow;
+            document.body.style.overflow = previousBodyOverflow;
+            document.documentElement.style.overflow = previousHtmlOverflow;
         };
     }, [isVisible]);
 
