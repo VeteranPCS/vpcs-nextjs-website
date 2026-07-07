@@ -3,7 +3,6 @@ import React, { useState, useCallback } from "react";
 import Slider from "react-slick";
 import Image from "next/image";
 import "./ReviewTestimonial.module.css";
-import "@/app/globals.css";
 
 interface Reviewer {
   profilePhotoUrl: string;

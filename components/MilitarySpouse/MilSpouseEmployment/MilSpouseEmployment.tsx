@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import Image from "next/image";
 import militarySpouseService from "@/services/militarySpouseService";
 import { EmploymentDataProps } from "@/services/militarySpouseService";

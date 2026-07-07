@@ -1,5 +1,4 @@
 import Button from "@/components/common/Button";
-import "@/app/globals.css";
 import classes from "./HeroSection.module.css";
 import Image from "next/image";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";

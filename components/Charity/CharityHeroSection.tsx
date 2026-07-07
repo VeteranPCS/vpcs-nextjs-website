@@ -1,5 +1,4 @@
 import React from "react";
-import "@/app/globals.css";
 import classes from "@/components/Charity/CharityHeroSection.module.css";
 import Image from "next/image";
 

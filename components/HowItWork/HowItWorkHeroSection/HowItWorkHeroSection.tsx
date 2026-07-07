@@ -1,5 +1,4 @@
 import React from "react";
-import "@/app/globals.css";
 import classes from "./HowItWorkHeroSection.module.css";
 import Image from "next/image";
 import howItWorksService from "@/services/howItWorksService";

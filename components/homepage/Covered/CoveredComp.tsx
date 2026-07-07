@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import "@/app/globals.css";
 import ClassNames from "./CoveredComp.module.css";
 import Image from "next/image";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";

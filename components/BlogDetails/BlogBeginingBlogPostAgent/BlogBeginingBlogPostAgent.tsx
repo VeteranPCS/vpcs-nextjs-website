@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import AuthorByline from "@/components/Blog/AuthorByline";
 import { formatDate } from "@/utils/helper";

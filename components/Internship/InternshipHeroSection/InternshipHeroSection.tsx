@@ -1,5 +1,4 @@
 import React from "react";
-import "@/app/globals.css";
 import classes from "./InternshipHeroSection.module.css";
 import Image from "next/image";
 import Button from "@/components/common/Button";

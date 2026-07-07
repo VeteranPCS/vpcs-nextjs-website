@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import BlogMovingPcsingPost from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPostSection/BlogMovingPcsingPost";
 import BlogCategory from "@/components/BlogPage/BlogPage/BlogMovingPcsingBlogPostSection/BlogCategory";
 import type { BlogPost } from "@/lib/blog/types";

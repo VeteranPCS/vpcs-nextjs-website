@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import Image from "next/image";
 import { MovingYourLifeProps } from '@/services/militarySpouseService';
 import militarySpouseService from "@/services/militarySpouseService";

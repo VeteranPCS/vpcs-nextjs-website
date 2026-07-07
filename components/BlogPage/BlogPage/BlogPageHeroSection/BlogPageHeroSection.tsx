@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import classes from "./BlogPageHeroSection.module.css";
 import { formatDate } from "@/utils/helper";
 import { excerpt } from "@/lib/blog/mdx";

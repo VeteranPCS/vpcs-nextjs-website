@@ -1,6 +1,5 @@
 // "use client";
 import React from "react";
-import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
 import aboutService from "@/services/aboutService";

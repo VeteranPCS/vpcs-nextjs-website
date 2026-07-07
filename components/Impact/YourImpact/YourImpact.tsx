@@ -1,5 +1,4 @@
 import React from "react";
-import "@/app/globals.css";
 import classes from "./YourImpact.module.css";
 import Image from "next/image";
 import { getAllImpactMetrics } from "@/services/salesforceImpactService";

@@ -1,5 +1,4 @@
 import React from "react";
-import "@/app/globals.css";
 import WhatIsRefinance from "./WhatIsRefinance";
 import HowDoesItWork from "./HowDoesItWork";
 import WhenDoesItMakeSense from "./WhenDoesItMakeSense";

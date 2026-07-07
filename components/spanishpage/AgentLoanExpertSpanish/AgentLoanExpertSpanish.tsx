@@ -1,5 +1,3 @@
-import "@/app/globals.css";
-import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import classes from "@/components/homepage/AgentLoanExpert/AgentLoanExpert.module.css";
 import Link from "next/link";

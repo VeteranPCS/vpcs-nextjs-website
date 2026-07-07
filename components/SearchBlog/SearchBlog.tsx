@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import Image from "next/image";
 import { formatDate } from "@/utils/helper";
 import { excerpt } from "@/lib/blog/mdx";

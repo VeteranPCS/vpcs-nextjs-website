@@ -1,6 +1,5 @@
 "use client"
 import Button from "@/components/common/Button";
-import "@/app/globals.css";
 import classes from "./ContactForm.module.css";
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";

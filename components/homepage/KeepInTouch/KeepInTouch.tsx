@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react"; // No need for useState or useEffect
-import "@/app/globals.css";
 import classes from "./KeepInTouch.module.css";
 import Image from "next/image";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";

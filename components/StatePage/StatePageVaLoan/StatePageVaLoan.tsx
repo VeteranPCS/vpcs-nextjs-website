@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import "@/app/globals.css";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import Link from "next/link";

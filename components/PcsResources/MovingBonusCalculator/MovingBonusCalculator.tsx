@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import "@/app/globals.css";
 import Image from "next/image";
 import styles from "./MovingBonusCalculator.module.css";
 import Button from "@/components/common/Button";

@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import "@/app/globals.css";
 import Link from "next/link";
 import ClassNames from "./StatePageWhyChooseVetpcs.module.css";
 import Image from "next/image";

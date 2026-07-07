@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import classes from "./BlogDetailsHeroSection.module.css";
 import type { BlogPost, ResolvedAuthor } from "@/lib/blog/types";
 

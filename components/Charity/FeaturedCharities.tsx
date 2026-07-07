@@ -1,6 +1,5 @@
 import React from "react";
 import Button from "@/components/common/Button";
-import "@/app/globals.css";
 import "aos/dist/aos.css";
 import Image from "next/image";
 import impactService from "@/services/impactService";

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import Link from "next/link";
 import { trackCtaClicked } from "@/lib/analytics/client";

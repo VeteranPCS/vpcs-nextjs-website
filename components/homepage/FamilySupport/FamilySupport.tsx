@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./FamilySupport.module.css";
 import Image from "next/image";

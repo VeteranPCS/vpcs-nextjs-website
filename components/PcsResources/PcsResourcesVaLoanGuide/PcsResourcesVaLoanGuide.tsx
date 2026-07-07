@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import "@/app/globals.css";
 import Link from "next/link";
 import classes from "./PcsResourcesVaLoanGuide.module.css";
 import Image from "next/image";

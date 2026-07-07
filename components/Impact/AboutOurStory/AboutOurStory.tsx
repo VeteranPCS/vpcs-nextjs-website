@@ -1,6 +1,4 @@
 import React from "react"; // No need for useState or useEffect
-import "@/app/globals.css";
-import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./AboutOurStory.module.css";
 import Image from "next/image";

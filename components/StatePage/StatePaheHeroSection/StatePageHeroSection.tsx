@@ -1,5 +1,4 @@
 import React from "react";
-import "@/app/globals.css";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import CitySelection from "./CitySelection";

@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import Image from "next/image";
 import aboutService from "@/services/aboutService";
 import { TeamMember } from '@/components/About/AdminTeam/AdminTeam';
