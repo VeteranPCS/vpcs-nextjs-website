@@ -40,7 +40,7 @@ const CeoFounder = async () => {
             </div>
 
             {CEODetails.map((details) => (
-              <div key={details._id} className="border border-[#EAECF0] bg-white sm:w-[417px] w-[330px] mx-auto mt-5">
+              <div key={details._id} className="border border-[#EAECF0] bg-white w-full max-w-[417px] mx-auto mt-5">
                 <div>
                   <Image
                     src={details?.image?.asset?.image_url || "/assets/CeoPasteimage.png"}

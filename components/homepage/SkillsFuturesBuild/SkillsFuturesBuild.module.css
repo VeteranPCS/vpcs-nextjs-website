@@ -3,17 +3,17 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 446px;
-  
+    min-height: 446px;
+
     @media (min-width: 640px) {
-      height: 636px;
+      min-height: 636px;
     }
-  
+
     @media (min-width: 768px) {
-      height: 438px;
+      min-height: 438px;
     }
-  
+
     @media (min-width: 1024px) {
-      height: 362px;
+      min-height: 362px;
     }
 }

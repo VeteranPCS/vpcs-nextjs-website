@@ -146,7 +146,7 @@ const VeteranCommunity = async ({ component_slug }: { component_slug: string }) 
                 pageData?.image?.asset?.image_url ||
                 "/assets/soldiertraining.png"
               }
-              className="w-[552px] md:h-[552px] h-auto"
+              className="w-full max-w-[552px] h-auto"
               alt="Description of the image"
             />
           </div>

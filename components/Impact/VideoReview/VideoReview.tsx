@@ -44,7 +44,7 @@ const VideoReview = () => {
             src={videoDetails?.videoUrl || "https://www.youtube.com/embed/QNY6vzSO9p4?autoplay=1&mute=1&modestbranding=1&rel=0"}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
-            className="w-full h-[315px] md:h-[560px] border-0" // Responsive sizing
+            className="w-full aspect-video h-auto border-0" // Responsive sizing
           ></iframe>
         </div>
       </div>

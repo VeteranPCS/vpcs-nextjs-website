@@ -23,7 +23,7 @@ const StatePageCTA = ({ cityName, stateSlug }: { cityName: string; stateSlug: st
               height={530}
               alt="Description of the image"
               sizes="(min-width: 768px) 530px, 326px"
-              className="lg:w-[530px] lg:h-[530px] md:w-[530px] md:h-[530px] sm:w-[326px] sm:h-[326px] w-[326px] h-[326px] object-cover"
+              className="w-full max-w-[530px] h-auto object-cover"
             />
           </div>
           <div className="text-left">
