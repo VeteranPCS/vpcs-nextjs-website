@@ -16,7 +16,7 @@ const Header = () => {
   const navItemClass =
     "relative max-w-fit whitespace-nowrap pr-3 py-1 text-sm after:absolute after:bottom-0 after:left-0 after:h-1 after:w-0 after:bg-accent-red after:transition-all after:duration-300 hover:after:w-full focus-within:after:w-full min-[1400px]:pr-0 min-[1400px]:text-base";
   const navLinkClass =
-    "text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white";
+    "text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white inline-flex items-center min-h-11 min-[1400px]:inline min-[1400px]:min-h-0";
 
   useEffect(() => {
     const fetchMetrics = async () => {

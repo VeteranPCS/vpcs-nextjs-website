@@ -81,7 +81,7 @@ function ApprovalCard({ approvalId, toolName, onApprove }: ApprovalCardProps) {
           type="button"
           onClick={() => onApprove?.(approvalId, true, toolName)}
           disabled={!onApprove}
-          className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-sm font-medium text-white motion-safe:transition-colors hover:bg-primary-hover disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red"
+          className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-3 text-sm font-medium text-white motion-safe:transition-colors hover:bg-primary-hover disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red"
         >
           Yes, send it
         </button>
@@ -89,7 +89,7 @@ function ApprovalCard({ approvalId, toolName, onApprove }: ApprovalCardProps) {
           type="button"
           onClick={() => onApprove?.(approvalId, false, toolName)}
           disabled={!onApprove}
-          className="inline-flex h-9 items-center justify-center rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 motion-safe:transition-colors hover:bg-gray-50 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="inline-flex min-h-11 items-center justify-center rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-gray-700 motion-safe:transition-colors hover:bg-gray-50 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
           Not yet
         </button>

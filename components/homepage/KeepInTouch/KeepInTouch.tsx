@@ -141,12 +141,10 @@ const KeepInTouch = () => {
             <div className="flex justify-center sm:justify-center md:justify-start lg:justify-start">
               <ul className="flex items-center gap-4">
                 {mediaAccount.map((acc) => (
-                  <li
-                    key={acc._id}
-                    className="bg-[#A81F23] rounded-[8px] w-8 h-8 p-2"
-                  >
+                  <li key={acc._id}>
                     <TrackedCtaLink
                       href={acc.link}
+                      className="bg-[#A81F23] rounded-[8px] inline-flex items-center justify-center min-h-11 min-w-11"
                       cta={{
                         ctaId: 'keep_in_touch_social',
                         ctaIntent: 'social_navigation',
@@ -160,6 +158,7 @@ const KeepInTouch = () => {
                       <Image
                         width={50}
                         height={50}
+                        className="w-4 h-4"
                         src={`/icon/${acc.icon}`}
                         alt={acc.name}
                       />

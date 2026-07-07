@@ -12,7 +12,7 @@ const BlogCategory = ({ categories_list }: { categories_list: Set<string> }) => 
                     <TrackedCtaLink
                         key={category}
                         href={slug ? `/blog/category/${slug}` : "/blog"}
-                        className="text-[#292F6C] robot text-sm font-normal"
+                        className="text-[#292F6C] robot text-sm font-normal inline-flex items-center min-h-11"
                         cta={{
                             ctaId: 'blog_category_filter',
                             ctaIntent: 'content_navigation',

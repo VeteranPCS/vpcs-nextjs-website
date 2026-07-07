@@ -82,7 +82,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
                     First name
                   </label>
                   <input
-                    className="border-b border-[#E2E4E5] px-2 py-1"
+                    className="border-b border-[#E2E4E5] px-2 py-3"
                     type="text"
                     id="firstName"
                     placeholder="Please Enter First Name"
@@ -101,7 +101,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
                     Last name
                   </label>
                   <input
-                    className="border-b border-[#E2E4E5] px-2 py-1"
+                    className="border-b border-[#E2E4E5] px-2 py-3"
                     type="text"
                     id="lastName"
                     placeholder="Please Enter Last Name"
@@ -121,7 +121,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
                   </label>
                   <div className="flex items-center border-b border-[#E2E4E5]">
                     <input
-                      className="pl-12 py-1 w-full"
+                      className="pl-12 py-3 w-full"
                       type="email"
                       id="email"
                       {...register('email')}
@@ -156,7 +156,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
                   </label>
                   <div className="flex items-center border-b border-[#E2E4E5]">
                     <input
-                      className="border-b border-[#E2E4E5] pl-12 py-1 w-full"
+                      className="border-b border-[#E2E4E5] pl-12 py-3 w-full"
                       type="tel"
                       id="phone"
                       placeholder="Please Enter Phone"
@@ -188,7 +188,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-white'} px-8 py-2 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg`}
+                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-white'} px-8 py-3 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg`}
               >
                 {isSubmitting ? 'Processing...' : 'Go Next'}
                 <svg

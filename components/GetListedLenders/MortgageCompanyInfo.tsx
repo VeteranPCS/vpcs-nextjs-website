@@ -124,7 +124,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
                 </label>
                 <input
                   {...register('name')}
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   type="text"
                   id="name"
                   placeholder="Name"
@@ -139,7 +139,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
                 </label>
                 <input
                   {...register('companyNMLSId')}
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   type="text"
                   id="companyNMLSId"
                   placeholder="Company NMLS ID"
@@ -154,7 +154,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
                 </label>
                 <input
                   {...register('street')}
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   type="text"
                   id="street"
                   placeholder="Street"
@@ -169,7 +169,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
                 </label>
                 <input
                   {...register('city')}
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   type="text"
                   id="city"
                   placeholder="City"
@@ -204,7 +204,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
                 </label>
                 <input
                   {...register('zip')}
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   type="text"
                   id="zip"
                   placeholder="Zip"
@@ -224,7 +224,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
                 </label>
                 <select
                   {...register('howDidYouHear')}
-                  className="border-b border-[#E2E4E5] px-2 py-1"
+                  className="border-b border-[#E2E4E5] px-2 py-3"
                   id="howDidYouHear"
                 >
                   <option value="">Select an option</option>
@@ -257,7 +257,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
                   <input
                     type="text"
                     {...register('tellusMore')}
-                    className="border-b border-[#E2E4E5] px-2 py-1"
+                    className="border-b border-[#E2E4E5] px-2 py-3"
                     id="tellusMore"
                     placeholder="Tell us more..."
                   />
@@ -274,7 +274,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
+                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-3 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Now'}
                 {!isSubmitting && (
@@ -300,7 +300,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
         <div className="flex md:justify-start justify-center mt-8">
           <button
             onClick={handleBack}
-            className="rounded-md border border-[#BBBFC1] bg-white px-8 py-2 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
+            className="rounded-md border border-[#BBBFC1] bg-white px-8 py-3 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
