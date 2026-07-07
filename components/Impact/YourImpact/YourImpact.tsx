@@ -34,7 +34,7 @@ const HeroSec = async () => {
                 <h2 className="text-white font-bold md:text-[42px] sm:text-[35px] text-[35px] tahoma md:mt-5 mb-2">
                   {metrics.cashBackAmount}
                 </h2>
-                <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
+                <p className="text-white font-normal md:text-[23px] sm:text-[14px] text-[14px] tahoma">
                   Savings Given Back
                 </p>
               </div>
@@ -46,14 +46,14 @@ const HeroSec = async () => {
                   height={1000}
                   src="/icon/yourhome.svg"
                   alt="impact_wearblue"
-                  className="md:w-full md:h-full sm:w-14 sm:h-14 w-14 h-14"
+                  className="md:w-full md:h-full sm:w-14 sm:h-14 w-14 h-14 object-contain"
                 />
               </div>
               <div className="md:text-center sm:text-left text-left md:pl-0 sm:pl-3 pl-3">
                 <h2 className="text-white font-bold md:text-[42px] sm:text-[35px] text-[35px] tahoma md:mt-5 mb-2">
                   {metrics.totalVolumeSold}
                 </h2>
-                <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
+                <p className="text-white font-normal md:text-[23px] sm:text-[14px] text-[14px] tahoma">
                   Real Estate Volume Sold
                 </p>
               </div>
@@ -72,7 +72,7 @@ const HeroSec = async () => {
                 <h2 className="text-white font-bold md:text-[42px] sm:text-[35px] text-[35px] tahoma md:mt-5 mb-2">
                   {metrics.charityAmount}
                 </h2>
-                <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
+                <p className="text-white font-normal md:text-[23px] sm:text-[14px] text-[14px] tahoma">
                   Donated to Military Foundations
                 </p>
               </div>
@@ -91,7 +91,7 @@ const HeroSec = async () => {
                 <h2 className="text-white font-bold md:text-[42px] sm:text-[35px] text-[35px] tahoma md:mt-5 mb-2">
                   370+
                 </h2>
-                <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
+                <p className="text-white font-normal md:text-[23px] sm:text-[14px] text-[14px] tahoma">
                   Veterans & Military Spouses Listed
                 </p>
               </div>
@@ -110,7 +110,7 @@ const HeroSec = async () => {
                 <h2 className="text-white font-bold md:text-[42px] sm:text-[35px] text-[35px] tahoma md:mt-5 mb-2">
                   250+
                 </h2>
-                <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
+                <p className="text-white font-normal md:text-[23px] sm:text-[14px] text-[14px] tahoma">
                   VA Loans Used
                 </p>
               </div>
@@ -129,7 +129,7 @@ const HeroSec = async () => {
                 <h2 className="text-white font-bold md:text-[42px] sm:text-[35px] text-[35px] tahoma md:mt-5 mb-2">
                   30+
                 </h2>
-                <p className="text-white font-normal md:text-[23px] sm:text-[13px] text-[13px] tahoma">
+                <p className="text-white font-normal md:text-[23px] sm:text-[14px] text-[14px] tahoma">
                   Connected Internships
                 </p>
               </div>

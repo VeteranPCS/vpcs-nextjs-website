@@ -45,7 +45,7 @@ export default function BlogMovingPcsingPost({ blogDetails }: Props) {
             </div>
           </div>
           {blogDetails.categories?.length ? (
-            <div className="flex items-center absolute top-4 right-4 gap-4">
+            <div className="flex items-center absolute top-4 right-4 gap-4 flex-wrap max-w-[calc(100%-2rem)] justify-end">
               {blogDetails.categories.map((category) => (
                 <div
                   key={category}

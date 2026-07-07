@@ -154,7 +154,7 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
     ]);
 
     return (
-        <>
+        <div className="pb-20 md:pb-0">
             <Script
                 id={`json-ld-blog-${slug}`}
                 type="application/ld+json"
@@ -230,6 +230,6 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                     {ctaLabel}
                 </TrackedCtaLink>
             </div>
-        </>
+        </div>
     );
 }

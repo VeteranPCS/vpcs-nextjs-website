@@ -72,7 +72,7 @@ const FamilySupport = async () => {
                 storyDetails?.foreground_image?.alt ||
                 "Description of the image"
               }
-              className="lg:w-[426px] lg:h-[500px] md:w-[426px] md:h-[500px] sm:w-[326px] sm:h-[326px] w-[326px] h-auto"
+              className="w-full max-w-[426px] h-auto"
             />
           </div>
           <div className="md:text-left sm:text-justify text-center">

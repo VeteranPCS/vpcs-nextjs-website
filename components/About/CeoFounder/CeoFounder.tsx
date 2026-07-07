@@ -32,7 +32,7 @@ const CeoFounder = async () => {
               </h1>
             </div>
             <div>
-              <p className="text-[#161C2Db3] text-center font-normal sm:text-[24px] text-[14px] mx-auto px-9 sm:px-0">
+              <p className="text-[#161C2Db3] text-center font-normal sm:text-[24px] text-[14px] mx-auto px-9 sm:px-4">
                 VeteranPCS was created to be different. A site dedicated to
                 equally serving the agents as much as the military families
                 going through a PCS or move.
@@ -40,7 +40,7 @@ const CeoFounder = async () => {
             </div>
 
             {CEODetails.map((details) => (
-              <div key={details._id} className="border border-[#EAECF0] bg-white sm:w-[417px] w-[330px] mx-auto mt-5">
+              <div key={details._id} className="border border-[#EAECF0] bg-white w-full max-w-[417px] mx-auto mt-5">
                 <div>
                   <Image
                     src={details?.image?.asset?.image_url || "/assets/CeoPasteimage.png"}

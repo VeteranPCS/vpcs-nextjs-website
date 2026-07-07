@@ -26,6 +26,18 @@ export default function BlogBeginningBlogPostAgent({
 }: Props) {
   const mdxComponents = createBlogMdxComponents({ resolvedAuthor, headingIds });
 
+  const tocList = (
+    <ul className="mt-3 space-y-2">
+      {tocHeadings.map((heading) => (
+        <li key={heading.id}>
+          <a href={`#${heading.id}`} className="text-sm text-[#495057] hover:text-[#292F6C]">
+            {heading.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+
   return (
     <div className="relative py-12 md:px-10 px-5">
       <div className="container mx-auto">
@@ -43,18 +55,18 @@ export default function BlogBeginningBlogPostAgent({
               variant="card"
             />
             {tocHeadings.length > 0 && (
-              <nav className="mt-8 hidden rounded border border-[#E5E7EB] p-4 lg:block" aria-label="Table of contents">
-                <p className="text-[#292F6C] tahoma text-sm font-bold">In this guide</p>
-                <ul className="mt-3 space-y-2">
-                  {tocHeadings.map((heading) => (
-                    <li key={heading.id}>
-                      <a href={`#${heading.id}`} className="text-sm text-[#495057] hover:text-[#292F6C]">
-                        {heading.text}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
+              <>
+                <details className="mt-8 rounded border border-[#E5E7EB] p-4 lg:hidden">
+                  <summary className="flex min-h-11 cursor-pointer items-center text-[#292F6C] tahoma text-sm font-bold">
+                    Table of contents
+                  </summary>
+                  {tocList}
+                </details>
+                <nav className="mt-8 hidden rounded border border-[#E5E7EB] p-4 lg:block" aria-label="Table of contents">
+                  <p className="text-[#292F6C] tahoma text-sm font-bold">In this guide</p>
+                  {tocList}
+                </nav>
+              </>
             )}
           </div>
           <article className="w-full lg:w-4/5 lg:pl-10">

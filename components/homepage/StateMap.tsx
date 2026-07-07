@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Button from "@/components/common/Button";
@@ -24,6 +24,12 @@ interface TooltipState {
   y: number;
 }
 
+// Fallback width used before the tooltip has rendered/measured itself; the tooltip's
+// actual width is content-dependent (see .tooltip in app/globals.css, no fixed width),
+// so once mounted we prefer the real measured offsetWidth via tooltipRef.
+const TOOLTIP_FALLBACK_WIDTH = 150;
+const TOOLTIP_VIEWPORT_MARGIN = 10;
+
 const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, subTitle: string, buttonText: string, buttonLink: string }) => {
   const [tooltip, setTooltip] = useState<TooltipState>({
     display: false,
@@ -32,6 +38,7 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
     y: 0,
   });
   const [showDesktopMap, setShowDesktopMap] = useState(false);
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const desktopQuery = window.matchMedia("(min-width: 768px)");
@@ -51,10 +58,12 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
   // references, so empty deps are correct.
   const handleMouseEnter = useCallback((event: React.MouseEvent<SVGElement>) => {
     const name = event.currentTarget.getAttribute("id");
+    const tooltipWidth = tooltipRef.current?.offsetWidth ?? TOOLTIP_FALLBACK_WIDTH;
+    const clampedX = Math.min(event.pageX, window.innerWidth - tooltipWidth - TOOLTIP_VIEWPORT_MARGIN);
     setTooltip({
       display: true,
       name: name || "",
-      x: event.pageX,
+      x: clampedX,
       y: event.pageY,
     });
   }, []);
@@ -64,9 +73,11 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
   }, []);
 
   const handleMouseMove = useCallback((event: React.MouseEvent<SVGElement>) => {
+    const tooltipWidth = tooltipRef.current?.offsetWidth ?? TOOLTIP_FALLBACK_WIDTH;
+    const clampedX = Math.min(event.pageX + 10, window.innerWidth - tooltipWidth - TOOLTIP_VIEWPORT_MARGIN);
     setTooltip((prev) => ({
       ...prev,
-      x: event.pageX + 10,
+      x: clampedX,
       y: event.pageY + 10,
     }));
   }, []);
@@ -252,6 +263,7 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
       </section>
       {tooltip.display && (
         <div
+          ref={tooltipRef}
           className="tooltip"
           style={{ top: `${tooltip.y}px`, left: `${tooltip.x}px` }}
         >

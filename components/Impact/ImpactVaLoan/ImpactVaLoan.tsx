@@ -63,7 +63,7 @@ const ImpactVaLoan = () => {
                     height={1000}
                     src="/icon/yourhome.svg"
                     alt="hand"
-                    className="w-[50px] h-[50px]"
+                    className="w-[50px] h-[50px] object-contain"
                   />
                 </div>
                 <div>

@@ -38,7 +38,7 @@ const SupportOurVeterans = async () => {
 
     return (
         <div>
-            <div className="w-full lg:py-10 md:py-10 sm:py-10 py-10 px-9 sm:px-0">
+            <div className="w-full lg:py-10 md:py-10 sm:py-10 py-10 px-9 sm:px-4">
                 <div>
                     <div className="container mx-auto w-full">
                         <div
@@ -49,7 +49,7 @@ const SupportOurVeterans = async () => {
                             <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4 justify-between items-start mt-10">
                                 <div className="lg:text-left sm:text-center text-left flex flex-col gap-4 justify-between">
                                     <div>
-                                        <h2 className="text-[#292F6C] font-bold xl:text-[42px] lg:text-[40px] sm:text-[40px] text-[40px] leading-[54px] tahoma">
+                                        <h2 className="text-[#292F6C] font-bold text-[28px] sm:text-[40px] xl:text-[42px] leading-[54px] tahoma">
                                             {pageData?.header_1}
                                         </h2>
                                     </div>
@@ -94,7 +94,7 @@ const SupportOurVeterans = async () => {
                                 </div>
                                 <div className="lg:text-left sm:text-left text-left flex flex-col sm:gap-7 gap-4 justify-between lg:ml-5 md:ml-5 sm:ml-0 ml-0">
                                     <div>
-                                        <h2 className="text-[#292F6C] font-bold xl:text-[42px] lg:text-[40px] sm:text-[40px] text-[40px] leading-[54px] tahoma">
+                                        <h2 className="text-[#292F6C] font-bold text-[28px] sm:text-[40px] xl:text-[42px] leading-[54px] tahoma">
                                             {pageData?.header_2}
                                         </h2>
                                     </div>

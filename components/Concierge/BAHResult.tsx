@@ -38,21 +38,21 @@ export default function BAHResult({ data }: Props) {
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div className="rounded-md bg-primary/5 p-2">
-          <p className="text-[11px] uppercase tracking-wide text-gray-500">With dependents</p>
+          <p className="text-[12px] uppercase tracking-wide text-gray-500">With dependents</p>
           <p className="text-base font-semibold text-primary">
             {formatAmount(data?.withDependents)}
             <span className="ml-1 text-xs font-normal text-gray-500">/mo</span>
           </p>
         </div>
         <div className="rounded-md bg-primary/5 p-2">
-          <p className="text-[11px] uppercase tracking-wide text-gray-500">Without dependents</p>
+          <p className="text-[12px] uppercase tracking-wide text-gray-500">Without dependents</p>
           <p className="text-base font-semibold text-primary">
             {formatAmount(data?.withoutDependents)}
             <span className="ml-1 text-xs font-normal text-gray-500">/mo</span>
           </p>
         </div>
       </div>
-      <p className="text-[11px] text-gray-500">
+      <p className="text-[12px] text-gray-500">
         ZIP {data?.zipCode || '—'}
         {data?.mha ? ` · MHA ${data.mha}` : ''}
       </p>

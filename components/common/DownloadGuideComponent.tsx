@@ -155,7 +155,7 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
     return (
         <div className={`flex justify-center items-center py-4 bg-white ${className}`}>
             <div className="w-full max-w-[800px] bg-white rounded-2xl shadow-lg p-8">
-                <div className="flex flex-row items-start mb-8 max-w-[600px] mx-auto">
+                <div className="flex flex-col sm:flex-row items-start mb-8 max-w-[600px] mx-auto">
                     <div className="flex-shrink-0">
                         <Image
                             src={icon}
@@ -166,7 +166,7 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                         />
                     </div>
                     <div className="ml-6">
-                        <h2 className="text-[#232857] font-bold text-3xl mb-2 font-poppins">
+                        <h2 className="text-[#232857] font-bold text-2xl sm:text-3xl mb-2 font-poppins">
                             {headerText}
                         </h2>
                         <p className="text-[#232857] text-sm font-medium font-roboto">

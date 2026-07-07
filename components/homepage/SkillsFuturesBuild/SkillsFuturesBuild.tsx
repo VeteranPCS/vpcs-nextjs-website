@@ -13,7 +13,7 @@ const SkillFuturesBuild = () => {
               <h2 className="text-white lg:text-[48px] text-[30px] font-bold poppins px-10 sm:px-0 mb-5">
                 Skills to share. Futures to build
               </h2>
-              <p className="font-medium text-[18px] leading-[30px] text-white roboto lg:w-full w-[300px] mx-auto">
+              <p className="font-medium text-[18px] leading-[30px] text-white roboto w-full mx-auto">
                 Interested in Starting a Career as a Real Estate Agent or
                 Mortgage Loan Officer?
               </p>

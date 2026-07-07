@@ -65,7 +65,7 @@ const Covered = () => {
         data-aos="fade-right"
         data-aos-duration="1000"
       >
-        <div className="md:block sm:hidden hidden">
+        <div>
           <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-[20px] tahoma  md:block ">
             We’ve got you covered
           </h2>

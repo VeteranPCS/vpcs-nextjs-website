@@ -58,7 +58,8 @@ const HowTheMoveInBonusWorks = async () => {
         </div>
 
         <div className="md:pl-6 mt-2">
-          <table className="table-auto border lg:w-[1000px] w-full">
+          <div className="overflow-x-auto">
+          <table className="table-auto border w-full">
             <thead>
               <tr className="border text-left">
                 <th className="text-[#000] tahoma lg:text-[24px] md:text-[24px] sm:text-[17px] text-[17px] font-bold p-3">
@@ -88,6 +89,7 @@ const HowTheMoveInBonusWorks = async () => {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
 
         <div className="mt-8">

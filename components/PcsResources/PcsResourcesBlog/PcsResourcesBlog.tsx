@@ -69,7 +69,7 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
                   contentType: 'blog_post',
                 }}
               >
-                <div className="flex items-center absolute top-4 right-4 gap-2">
+                <div className="flex items-center absolute top-4 right-4 gap-2 flex-wrap max-w-[calc(100%-2rem)] justify-end">
                   {blog.categories?.map((category) => (
                     <div
                       key={category}
@@ -83,10 +83,10 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
                   <p className="text-[#E5E5E5] lg:text-[14px] md:text-[14px] sm:text-[12px] text-[12px] font-normal leading-normal">
                     {formatDate(blog.publishedAt)}
                   </p>
-                  <h3 className="text-white tahoma lg:text-[21px] md:text-[21px] sm:text-[15px] text-[15px] font-bold my-3">
+                  <h3 className="text-white tahoma lg:text-[21px] md:text-[21px] sm:text-[15px] text-[15px] font-bold my-3 line-clamp-2">
                     {blog.title}
                   </h3>
-                  <p className="text-[#E5E5E5] roboto lg:text-[14px] md:text-[14px] sm:text-[12px] text-[12px] font-normal lg:w-[370px] line-clamp-3">
+                  <p className="text-[#E5E5E5] roboto lg:text-[14px] md:text-[14px] sm:text-[14px] text-[14px] font-normal lg:w-[370px] line-clamp-3">
                     {excerpt(blog.content, 250)}
                   </p>
                 </div>
