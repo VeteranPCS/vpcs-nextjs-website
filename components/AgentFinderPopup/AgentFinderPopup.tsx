@@ -105,6 +105,20 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
         }
     }, [isVisible]);
 
+    // Lock background scroll while the popup is open, restoring the prior value on close/unmount
+    useEffect(() => {
+        if (!isVisible) {
+            return;
+        }
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [isVisible]);
+
     const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const stateAbbr = e.target.value;
         const selectedStateData = states.find(state => state.short_name === stateAbbr);
