@@ -95,10 +95,6 @@ blockquote {
 }
 
 /* State Map Styling */
-.map-container {
-  @apply relative w-full h-[600px] bg-white;
-}
-
 .state {
   @apply cursor-pointer;
 }
@@ -199,23 +195,6 @@ blockquote {
 .comlogoslider .slick-track {
   display: flex;
   align-items: center;
-}
-
-.reviw-topslider .slick-list {
-  width: 1000px !important;
-  margin: 0px auto !important;
-}
-
-.reviw-topslider .slick-slide .withoutdatasliderbox {
-  width: 80px !important;
-}
-
-.reviw-topslider .slick-slide .activesliderbox {
-  width: 256px !important;
-}
-
-.custom-slider .slick-slide:not(.slick-active:nth-child(4)) {
-  width: 256px !important;
 }
 
 /* UI Component Styles */

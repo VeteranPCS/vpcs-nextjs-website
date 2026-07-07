@@ -34,8 +34,6 @@ export default async function BlogMovingPcsingBlogPostSection({
           </div>
           <div>
             <BlogSearchForm id="blog-section-search-query" className="hidden md:inline-flex justify-center mt-6" />
-            <div className="sm:flex justify-end mt-5 hidden">
-            </div>
           </div>
         </div>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1 justify-center md:gap-10 gap-2">
