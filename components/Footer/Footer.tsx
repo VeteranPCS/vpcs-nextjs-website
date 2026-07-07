@@ -129,7 +129,7 @@ const Locations = () => {
             ))}
           </div>
           <div className="mt-10 px-5">
-            <div className="md:flex sm:block sm:justify-center sm:text-center text-center flex-wrap gap-5 md:justify-between items-center">
+            <div className="md:flex sm:block sm:justify-center text-center flex-wrap gap-5 md:justify-between items-center">
               <div>
                 <TrackedCtaLink
                   href="/terms-of-use"
@@ -146,7 +146,7 @@ const Locations = () => {
                   Terms Of Service
                 </TrackedCtaLink>
               </div>
-              <div className="my-7 sm:my-7 md:my-0">
+              <div className="my-7 md:my-0">
                 <span className="text-white text-center roboto text-lg font-medium">
                   VeteranPCS ©2021 - {currentYear}
                 </span>
@@ -173,7 +173,7 @@ const Locations = () => {
       </div>
       <div className={classes.Footer}>
         <div className="container mx-auto">
-          <div className="grid lg:grid-cols-3 md:grid-cols-3 sm:grid-cols-1 grid-cols-1 gap-8">
+          <div className="grid md:grid-cols-3 grid-cols-1 gap-8">
             <div>
               <div>
                 <Image

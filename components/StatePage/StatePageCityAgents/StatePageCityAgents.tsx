@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import "@/app/globals.css";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import Link from "next/link";
@@ -105,21 +104,21 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
   return (
     <div id={sanitizeCityName(city)}>
       <div className="bg-[#F4F4F4]">
-        <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">
+        <div className="container mx-auto md:py-12 py-5 md:px-0 px-5">
           <div className="text-center">
-            <h1 className="text-[#292F6C] text-center tahoma lg:text-[38px] md:text-[38px] sm:text-[22px] text-[22px] font-bold lg:w-[600ox] md:w-[600px] sm:w-full w-full mx-auto">
+            <h2 className="text-[#292F6C] text-center tahoma md:text-[38px] text-[22px] font-bold md:w-[600px] w-full mx-auto">
               {city}
-            </h1>
+            </h2>
             <div className="bg-[#7E1618] py-[3px] w-24 mx-auto my-5"></div>
           </div>
-          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-10 mt-10">
+          <div className="grid lg:grid-cols-2 grid-cols-1 items-start justify-between gap-10 mt-10">
             {agent_data.map((agent) => (
               <div
                 key={agent.AccountId_15__c}
                 className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4"
               >
                 <div className="justify-center items-center flex flex-col">
-                  <div className="rounded-full bg-[#E1EDFB] md:w-[200px] md:h-[200px] sm:w-[100px] sm:h-[100px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
+                  <div className="rounded-full bg-[#E1EDFB] md:w-[200px] md:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
                     <Link
                       href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}
                       onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_image')}
@@ -141,17 +140,17 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                     <Button buttonText="Contact Now" />
                   </Link>
                 </div>
-                <div className="md:pl-10 sm:pl-4 pl-4">
+                <div className="md:pl-10 pl-4">
                   <div>
                     <Link
                       href={`/contact-agent?form=agent&fn=${agent.FirstName}&id=${agent.AccountId_15__c}&state=${state}`}
                       onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_heading')}
                     >
-                      <h3 className="text-[#292F6C] tahoma lg:text-[34px] md:text-[34px] sm:text-[20px] text-[20px] font-bold">
+                      <h3 className="text-[#292F6C] tahoma md:text-[34px] text-[20px] font-bold">
                         {agent?.Name}
                       </h3>
                     </Link>
-                    <div className="text-[#6C757D] tahoma lg:text-[18px] md:text-[18px] text-sm font-normal sm:mt-4 mt-0">
+                    <div className="text-[#6C757D] tahoma md:text-[18px] text-sm font-normal sm:mt-4 mt-0">
                       <p className="font-bold">
                         {orderMilitaryServiceInfo(agent?.Military_Status__pc || "", agent?.Military_Service__pc || "")}
                       </p>

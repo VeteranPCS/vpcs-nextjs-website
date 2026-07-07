@@ -55,11 +55,14 @@ export function useHoneypot() {
 }
 
 /**
- * Visually-hidden honeypot input. Off-screen (not `display:none`, which naive
- * bots skip) so it stays in the DOM and fillable by automated fillers, while
- * `aria-hidden` + `tabIndex={-1}` keep it away from screen readers and keyboard
- * users and `autoComplete="off"` keeps password managers from autofilling it
- * (which would falsely quarantine a real user). Pair with `useHoneypot()`.
+ * Visually-hidden honeypot input. Clipped to a 1px box (not `display:none`,
+ * which naive bots skip) so it stays in the DOM and fillable by automated
+ * fillers, while `aria-hidden` + `tabIndex={-1}` keep it away from screen
+ * readers and keyboard users and `autoComplete="off"` keeps password managers
+ * from autofilling it (which would falsely quarantine a real user). Uses the
+ * clip technique rather than a large negative offset so it never extends the
+ * document past the viewport (which would reintroduce horizontal overflow).
+ * Pair with `useHoneypot()`.
  */
 export const HoneypotField = forwardRef<HTMLInputElement>(function HoneypotField(_props, ref) {
   return (
@@ -73,12 +76,16 @@ export const HoneypotField = forwardRef<HTMLInputElement>(function HoneypotField
       aria-hidden="true"
       style={{
         position: 'absolute',
-        left: '-9999px',
-        top: 'auto',
         width: '1px',
         height: '1px',
+        margin: 0,
+        padding: 0,
+        border: 0,
         opacity: 0,
         overflow: 'hidden',
+        clip: 'rect(0, 0, 0, 0)',
+        clipPath: 'inset(50%)',
+        whiteSpace: 'nowrap',
         pointerEvents: 'none',
       }}
     />

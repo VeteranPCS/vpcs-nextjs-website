@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import ReviewTestimonialSlider from "@/components/homepage/ReviewTestimonial/ReviewTestimonialSlider";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";

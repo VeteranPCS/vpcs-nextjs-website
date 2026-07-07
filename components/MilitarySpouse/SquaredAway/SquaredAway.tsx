@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
 import React from "react";
@@ -22,7 +21,7 @@ const SquaredAway = () => {
               src="/assets/spouseaway.png"
               width={1000}
               height={869}
-              alt="Description of the image"
+              alt="Squared Away infographic: remote employment support for military spouses during PCS moves"
               className="lg:w-full xl:h-auto lg:h-[869px] md:w-full md:h-[530px] sm:w-full sm:h-[326px] w-full h-auto mb-5 md:mb-0"
             />
           </div>

@@ -1,5 +1,4 @@
 import React from "react";
-import "@/app/globals.css";
 import styles from "./GuidesHero.module.css";
 import Image from "next/image";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";

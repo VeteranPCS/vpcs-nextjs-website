@@ -1,6 +1,5 @@
 "use client"
 import React from "react";
-import "@/app/globals.css";
 import classes from "./BlogCts.module.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
@@ -10,10 +9,10 @@ const StatePageHeroSecondSection = () => {
     return (
         <div className={classes.BlogCtsContainer}>
             <div className="container mx-auto">
-                <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-center justify-between gap-4 mt-10">
+                <div className="grid lg:grid-cols-2 grid-cols-1 items-center justify-between gap-4 mt-10">
                     <div>
                         <div>
-                            <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold">Buying Or Selling</h2>
+                            <h2 className="text-[#FFFFFF] tahoma md:text-[40px] text-[30px] font-bold">Buying Or Selling</h2>
                         </div>
                         <TrackedCtaLink
                             href="/#state-map"
@@ -30,7 +29,7 @@ const StatePageHeroSecondSection = () => {
                             <Button buttonText="Find An Agent" />
                         </TrackedCtaLink>
                         <div>
-                            <h2 className="text-[#FFFFFF] tahoma lg:text-[40px] md:text-[40px] sm:text-[30px] text-[30px] font-bold">VA Loan Expert</h2>
+                            <h2 className="text-[#FFFFFF] tahoma md:text-[40px] text-[30px] font-bold">VA Loan Expert</h2>
                         </div>
                         <TrackedCtaLink
                             href="/#state-map"
@@ -49,7 +48,7 @@ const StatePageHeroSecondSection = () => {
                     </div>
                     <div>
                         <div>
-                            <Image src="/assets/blogpcsright.png" alt="Description of the image" width={1000} height={1000} sizes="710px" className="w-auto h-auto object-cover" />
+                            <Image src="/assets/blogpcsright.png" alt="VeteranPCS move-in bonus check presented to a military family" width={1000} height={1000} sizes="710px" className="w-auto h-auto object-cover" />
                         </div>
                     </div>
                 </div>

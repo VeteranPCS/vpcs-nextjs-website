@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import Image from "next/image";
 import { MovingYourLifeProps } from '@/services/militarySpouseService';
 import militarySpouseService from "@/services/militarySpouseService";
@@ -35,7 +34,7 @@ const MovingOurLife = async () => {
                   src={item?.logo?.asset?.image_url || "/assets/empoweremploy.png"}
                   width={1000}
                   height={1000}
-                  alt={item?.logo?.alt || "Description of the image"}
+                  alt={item?.logo?.alt || "Employer partner logo"}
                   className="w-[300px] h-auto object-cover"
                 />
               </Link>

@@ -3,7 +3,6 @@ import React, { useState, useCallback } from "react";
 import Slider from "react-slick";
 import Image from "next/image";
 import "./ReviewTestimonial.module.css";
-import "@/app/globals.css";
 
 interface Reviewer {
   profilePhotoUrl: string;
@@ -171,7 +170,7 @@ const ReviewsSlider: React.FC<ReviewsSliderProps> = ({ reviews, averageRating, t
           height: 100%;
         }
         .slick-list {
-          margin: 0 -12px;
+          overflow: hidden;
         }
         .slick-slide > div {
           margin: 0 12px;

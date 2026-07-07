@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import Image from "next/image";
 import aboutService from "@/services/aboutService";
 import { TeamMember } from '@/components/About/AdminTeam/AdminTeam';
@@ -30,9 +29,9 @@ const DigitalTeam = async () => {
     <div className="bg-white py-3 px-5 mt-10">
       <div className="bg-[#EEEEEE] px-9 sm:px-4 pb-14">
         <div className="mt-10 pt-7 pb-14 ">
-          <h1 className="text-[#292F6C] font-bold xl:text-[55px] lg:text-[50px] sm:text-[40px] text-[40px] leading-[54px] tahoma text-center">
+          <h2 className="text-[#292F6C] font-bold xl:text-[55px] lg:text-[50px] text-[40px] leading-[54px] tahoma text-center">
             Meet the <span className="font-normal">Veteran</span>PCS team
-          </h1>
+          </h2>
         </div>
         <div className="container mx-auto">
           <div className="text-center">
@@ -55,7 +54,7 @@ const DigitalTeam = async () => {
                       details?.image?.asset?.image_url ||
                       "/assets/CeoPasteimage.png"
                     }
-                    alt="Jason"
+                    alt={details.name}
                     width={417}
                     height={400}
                     className="w-full sm:h-[350px] h-auto object-cover"

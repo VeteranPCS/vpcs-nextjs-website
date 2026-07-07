@@ -394,7 +394,7 @@ const Header = () => {
                 aria-expanded={isMenuOpen}
                 aria-controls="primary-navigation"
               >
-                <span className="absolute top-1/2 left-1/2 size-12 -translate-x-1/2 -translate-y-1/2 [@media(pointer:fine):hidden]"></span>
+                <span className="absolute top-1/2 left-1/2 size-12 -translate-x-1/2 -translate-y-1/2 [@media(pointer:fine)]:hidden"></span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="25"

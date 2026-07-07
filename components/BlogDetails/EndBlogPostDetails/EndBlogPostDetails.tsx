@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { createBlogMdxComponents } from "@/mdx-components";
 import { mdxOptions } from "@/lib/blog/mdx-options";

@@ -99,7 +99,6 @@ export default function PcsResourcesPage() {
         link="https://www.veteranpcs.com/impact"
         component_slug="support-our-veteran-community"
       />
-      <FrequentlyAskedQuestion />
       <PcsResourcesEmployment />
       <ReviewsList />
       <VideoReview />

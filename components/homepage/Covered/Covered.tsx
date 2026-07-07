@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect } from "react";
-import "@/app/globals.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import CoveredComp from "./CoveredComp";
@@ -62,21 +61,21 @@ const Covered = () => {
     <div className="container mx-auto w-full lg:py-16 md:py-16 sm:py-16 py-0 md:pt-32 sm:pb-5 pb-5">
       <div
         className="px-4 bg-[#ffffff] mx-auto text-center"
-        data-aos="fade-right"
+        data-aos="fade-up"
         data-aos-duration="1000"
       >
         <div>
           <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-[20px] tahoma  md:block ">
             We’ve got you covered
           </h2>
-          <p className="normal text-[#7E1618] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] leading-[32px] font-medium  md:block tahoma">
+          <p className="normal text-[#7E1618] lg:text-[18px] md:text-[19px] text-[16px] leading-[32px] font-medium md:block tahoma">
             Military community helping our military community move.
           </p>
         </div>
       </div>
       <div
-        className="grid xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1 lg:mt-20 md:mt-10 sm:mt-10 mt-5 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3"
-        data-aos="fade-left"
+        className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 lg:mt-20 sm:mt-10 mt-5 justify-center md:gap-10 gap-2 md:px-10 px-3"
+        data-aos="fade-up"
         data-aos-duration="1000"
       >
         {cardsData.map((card, index) => (

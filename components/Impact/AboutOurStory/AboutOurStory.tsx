@@ -1,6 +1,4 @@
 import React from "react"; // No need for useState or useEffect
-import "@/app/globals.css";
-import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./AboutOurStory.module.css";
 import Image from "next/image";
@@ -59,7 +57,7 @@ const FamilySupport = async () => {
   return (
     <div className="container mx-auto w-full sm:py-16 py-0 ">
       <div className={classes.aboutourstorycontainer}>
-        <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3 lg:py-12 items-center">
+        <div className="grid lg:grid-cols-2 grid-cols-1 justify-center md:gap-10 gap-2 md:px-10 px-3 lg:py-12 items-center">
           <div className="flex justify-center">
             <Image
               width={426}
@@ -70,17 +68,17 @@ const FamilySupport = async () => {
               }
               alt={
                 storyDetails?.foreground_image?.alt ||
-                "Description of the image"
+                "Jason Anderson, founder of VeteranPCS"
               }
               className="w-full max-w-[426px] h-auto"
             />
           </div>
           <div className="md:text-left sm:text-justify text-center">
             <div>
-              <h1 className="text-white poppins lg:text-[35px] md:text-[35px] sm:text-[31px] text-[31px] font-bold mt-5 md:text-left sm:text-center text-center sm:px-0 px-0">
+              <h2 className="text-white poppins md:text-[35px] text-[31px] font-bold mt-5 md:text-left text-center px-0">
                 {storyDetails?.header}
-              </h1>
-              <div className="text-white roboto lg:text-[16px] md:text-[16px] sm:text-[16px] text-[16px] font-medium mt-4 lg:w-[500px] md:w-[500px] sm:w-full w-full">
+              </h2>
+              <div className="text-white roboto text-[16px] font-medium mt-4 md:w-[500px] w-full">
                 {storyDetails?.description?.map((point, index) => (
                   <SupportContent
                     key={point._id || index}

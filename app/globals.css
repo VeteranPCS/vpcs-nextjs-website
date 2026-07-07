@@ -8,12 +8,7 @@
 }
 
 body {
-  @apply m-0 p-0 box-border overflow-x-hidden;
-}
-
-html,
-body {
-  @apply overflow-x-hidden;
+  @apply m-0 p-0 box-border;
 }
 
 html {
@@ -95,10 +90,6 @@ blockquote {
 }
 
 /* State Map Styling */
-.map-container {
-  @apply relative w-full h-[600px] bg-white;
-}
-
 .state {
   @apply cursor-pointer;
 }
@@ -201,23 +192,6 @@ blockquote {
   align-items: center;
 }
 
-.reviw-topslider .slick-list {
-  width: 1000px !important;
-  margin: 0px auto !important;
-}
-
-.reviw-topslider .slick-slide .withoutdatasliderbox {
-  width: 80px !important;
-}
-
-.reviw-topslider .slick-slide .activesliderbox {
-  width: 256px !important;
-}
-
-.custom-slider .slick-slide:not(.slick-active:nth-child(4)) {
-  width: 256px !important;
-}
-
 /* UI Component Styles */
 .custom-bg-gradient {
   background: linear-gradient(233deg, #5a72ea 28.37%, #8468b1 95.18%), #d9d9d9;
@@ -268,10 +242,3 @@ blockquote {
   margin-right: 8px;
 }
 
-/* Responsive Fixes */
-@media screen and (max-width: 1024px) and (-webkit-min-device-pixel-ratio: 2) {
-  html,
-  body {
-    overflow-x: hidden;
-  }
-}

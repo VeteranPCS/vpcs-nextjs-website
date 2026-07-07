@@ -1,6 +1,5 @@
 "use client"
 import Button from "@/components/common/Button";
-import "@/app/globals.css";
 import classes from "./ContactForm.module.css";
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
@@ -133,9 +132,9 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="container mx-auto flex flex-wrap justify-center lg:py-12 md:py-12 sm:py-2 py-2 gap-10">
+    <div className="container mx-auto flex flex-wrap justify-center md:py-12 py-2 gap-10">
       <div className="flex flex-wrap justify-around rounded-[12.128px] bg-white shadow-[0px_0px_72.766px_36.383px_rgba(0,0,0,0.03)] p-4 w-full overflow-hidden mx-8 md:mb-0 mb-5">
-        <div className="md:w-1/3 sm:w-full w-full ">
+        <div className="md:w-1/3 w-full">
           <div className={classes.Container}>
             <TrackedCtaLink
               href="/get-listed-agents"
@@ -257,7 +256,7 @@ const ContactForm = () => {
             </div>
           </div>
         </div>
-        <div className="md:w-2/3 sm:w-full w-full relative md:px-10 lg:px-20 mt-10 md:mt-0">
+        <div className="md:w-2/3 w-full relative md:px-10 lg:px-20 mt-10 md:mt-0">
 
           <form
             onSubmit={(event) => {
@@ -268,7 +267,7 @@ const ContactForm = () => {
           >
             <div className={classes.FormContainer}>
               <div className="w-full">
-                <div className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 grid-cols-1  gap-5 mb-10">
+                <div className="grid md:grid-cols-2 grid-cols-1 gap-5 mb-10">
                   <div className={classes.FormGroup}>
                     <label className={classes.Label} htmlFor="firstName">
                       First Name
@@ -329,15 +328,14 @@ const ContactForm = () => {
                 </div>
 
                 <HoneypotField ref={honeypotRef} />
-                <div className="flex flex-col items-end lg:py-8 md:py-8 sm:py-2 py-2 gap-3">
+                <div className="flex flex-col items-end md:py-8 py-2 gap-3">
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     className={`items-center ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#A81F23]'} w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px] px-[20px] xl:py-[15px] lg:py-[15px] sm:py-[14px] py-[14px] rounded-[16px] text-center tracking-[1px] hover:tracking-[5px] duration-500 transition-all`}
                   >
                     <span
-                      className="xl:text-[18px] lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal leading-6 bg-cover
-                        text-white text-nowrap tahoma"
+                      className="md:text-[18px] text-[14px] font-normal leading-6 bg-cover text-white text-nowrap tahoma"
                     >
                       {isSubmitting ? 'Sending...' : 'Send Message'}
                     </span>

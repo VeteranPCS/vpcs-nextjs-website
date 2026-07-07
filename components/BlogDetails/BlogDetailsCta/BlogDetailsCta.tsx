@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import classes from "./BlogDetailsCta.module.css";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";

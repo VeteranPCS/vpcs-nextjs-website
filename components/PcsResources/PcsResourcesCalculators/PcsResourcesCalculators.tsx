@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import "@/app/globals.css";
 import Image from "next/image";
 import Link from "next/link";
 import { captureAnalyticsEvent } from "@/lib/analytics/client";

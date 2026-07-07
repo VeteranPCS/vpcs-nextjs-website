@@ -1,5 +1,4 @@
 import React from "react";
-import "@/app/globals.css";
 import HowVeterencePCSServiceWorks from "./HowVeterencePCSServiceWorks";
 import HowTheMoveInBonusWorks from "./HowTheMoveInBonusWorks";
 import WhoIsEligableForMoveIn from "./WhoIsEligableForMoveIn";

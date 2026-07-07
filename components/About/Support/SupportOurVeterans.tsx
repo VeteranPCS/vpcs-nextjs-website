@@ -1,6 +1,5 @@
 // "use client";
 import React from "react";
-import "@/app/globals.css";
 import Button from "@/components/common/Button";
 import Image from "next/image";
 import aboutService from "@/services/aboutService";
@@ -38,7 +37,7 @@ const SupportOurVeterans = async () => {
 
     return (
         <div>
-            <div className="w-full lg:py-10 md:py-10 sm:py-10 py-10 px-9 sm:px-4">
+            <div className="w-full py-10 px-9 sm:px-4">
                 <div>
                     <div className="container mx-auto w-full">
                         <div
@@ -46,7 +45,7 @@ const SupportOurVeterans = async () => {
                             data-aos="fade-right"
                             data-aos-duration="1000"
                         >
-                            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4 justify-between items-start mt-10">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 justify-between items-start mt-10">
                                 <div className="lg:text-left sm:text-center text-left flex flex-col gap-4 justify-between">
                                     <div>
                                         <h2 className="text-[#292F6C] font-bold text-[28px] sm:text-[40px] xl:text-[42px] leading-[54px] tahoma">
@@ -92,7 +91,7 @@ const SupportOurVeterans = async () => {
                                         />
                                     </div>
                                 </div>
-                                <div className="lg:text-left sm:text-left text-left flex flex-col sm:gap-7 gap-4 justify-between lg:ml-5 md:ml-5 sm:ml-0 ml-0">
+                                <div className="text-left flex flex-col sm:gap-7 gap-4 justify-between md:ml-5 ml-0">
                                     <div>
                                         <h2 className="text-[#292F6C] font-bold text-[28px] sm:text-[40px] xl:text-[42px] leading-[54px] tahoma">
                                             {pageData?.header_2}
@@ -105,7 +104,7 @@ const SupportOurVeterans = async () => {
                                     </div>
                                     <TrackedCtaLink
                                         href="/impact"
-                                        className="flex lg:justify-start md:justify-start sm:justify-start justify-start items-center"
+                                        className="flex justify-start items-center"
                                         cta={{
                                             ctaId: 'about_support_impact',
                                             ctaIntent: 'impact_navigation',

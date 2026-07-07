@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import classes from "./BlogPageHeroSection.module.css";
 import { formatDate } from "@/utils/helper";
 import { excerpt } from "@/lib/blog/mdx";
@@ -35,11 +34,11 @@ export default function BlogPageHeroSection({ blog }: Props) {
             <div>
               <div className="text-center">
                 {blog.categories?.[0] ? (
-                  <span className="rounded-lg bg-white/15 py-1 px-3 text-white text-center roboto text-xsfont-bold mx-auto">
+                  <span className="rounded-lg bg-white/15 py-1 px-3 text-white text-center roboto text-xs font-bold mx-auto">
                     {blog.categories[0]}
                   </span>
                 ) : null}
-                <h1 className="text-white text-center tahoma lg:text-[36px] md:text-[36px] sm:text-[31px] text-[31px] font-bold mt-8 mb-3 leading-normal max-w-[800px]">
+                <h1 className="text-white text-center tahoma md:text-[36px] text-[31px] font-bold mt-8 mb-3 leading-normal max-w-[800px]">
                   {blog.title}
                 </h1>
                 <div className="flex items-center justify-center">
