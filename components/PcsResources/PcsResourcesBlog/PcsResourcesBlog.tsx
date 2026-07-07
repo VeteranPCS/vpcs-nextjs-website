@@ -86,7 +86,7 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
                   <h3 className="text-white tahoma lg:text-[21px] md:text-[21px] sm:text-[15px] text-[15px] font-bold my-3 line-clamp-2">
                     {blog.title}
                   </h3>
-                  <p className="text-[#E5E5E5] roboto lg:text-[14px] md:text-[14px] sm:text-[12px] text-[12px] font-normal lg:w-[370px] line-clamp-3">
+                  <p className="text-[#E5E5E5] roboto lg:text-[14px] md:text-[14px] sm:text-[14px] text-[14px] font-normal lg:w-[370px] line-clamp-3">
                     {excerpt(blog.content, 250)}
                   </p>
                 </div>

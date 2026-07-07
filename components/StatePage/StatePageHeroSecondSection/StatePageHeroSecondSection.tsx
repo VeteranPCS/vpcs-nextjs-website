@@ -27,8 +27,8 @@ const StatePageHeroSecondSection = ({ stateName }: StatePageHeroSecondSectionPro
 
   return (
     <section className="bg-primary text-white" aria-label="VeteranPCS lending support">
-      <div className="mx-auto flex max-w-[1500px] items-stretch">
-        <div className="flex w-[36%] items-center justify-center bg-primary-hover/25 px-10 py-8 xl:px-14">
+      <div className="mx-auto flex flex-col md:flex-row max-w-[1500px] items-stretch">
+        <div className="flex w-full md:w-[36%] items-center justify-center bg-primary-hover/25 px-10 py-8 xl:px-14">
           <div className="flex max-w-[360px] flex-col items-center text-center">
             <Image
               src="/icon/VeteranPCSlogo.svg"
@@ -52,7 +52,7 @@ const StatePageHeroSecondSection = ({ stateName }: StatePageHeroSecondSectionPro
                   alt=""
                   width={36}
                   height={36}
-                  className="mb-4 size-9"
+                  className="mb-4 size-9 object-contain"
                 />
                 <p className="font-inter text-xl font-bold leading-tight text-white">
                   {benefit.title}

@@ -15,7 +15,7 @@ const PcsResourcesMilitarySpouse = () => {
                 <h3 className="text-[#003486] tahoma lg:text-[42px] md:text-[42px] sm:text-[31px] text-[31px] font-bold ">
                   Military Spouse<br></br> Resources
                 </h3>
-                <p className="text-[#747D88] tahoma lg:text-[16px] md:text-[16px] sm:text-[12px] text-[12px] font-normal mt-5 mb-5">
+                <p className="text-[#747D88] tahoma lg:text-[16px] md:text-[16px] sm:text-[14px] text-[14px] font-normal mt-5 mb-5">
                   The backbone of our Armed forces. Thank you for supporting our
                   services members. We’re here to support you!  Check out
                   Squared Away and other military spouse resources.
@@ -50,7 +50,7 @@ const PcsResourcesMilitarySpouse = () => {
                     />
                   </Link>
                   <div>
-                    <p className="text-[#000000] roboto lg:text-[18px] md:text-[18px] sm:text-[13px] text-[13px] font-light mt-1 lg:w-[259px]">
+                    <p className="text-[#000000] roboto lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-light mt-1 lg:w-[259px]">
                       We exist to make work better by letting you focus solely
                       on what matters. We are your trusted assistants
                     </p>

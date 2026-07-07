@@ -52,14 +52,14 @@ const Covered: React.FC<CoveredProps> = ({ card }) => {
                 <Image
                   width={80}
                   height={80}
-                  className="coverd-link-img lg:w-[80px] lg:h-[80px] md:w-[80px] md:h-[80px] sm:w-[50px] sm:h-[50px] w-[60px] h-[60px]"
+                  className="coverd-link-img lg:w-[80px] lg:h-[80px] md:w-[80px] md:h-[80px] sm:w-[50px] sm:h-[50px] w-[60px] h-[60px] object-contain"
                   src={img}
                   alt=""
                 />
                 <Image
                   width={80}
                   height={80}
-                  className="coverd-link-imgred lg:w-[80px] lg:h-[80px] md:w-[80px] md:h-[80px] sm:w-[50px] sm:h-[50px] w-[60px] h-[60px]"
+                  className="coverd-link-imgred lg:w-[80px] lg:h-[80px] md:w-[80px] md:h-[80px] sm:w-[50px] sm:h-[50px] w-[60px] h-[60px] object-contain"
                   src={imgred}
                   alt=""
                 />

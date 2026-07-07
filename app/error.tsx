@@ -27,7 +27,7 @@ export default function Error({ error, reset }: ErrorProps) {
                                 src="/icon/VeteranPCS-logo_wht-outline.svg"
                                 alt="VeteranPCS Logo"
                                 width={200}
-                                height={200}
+                                height={176}
                                 className="mx-auto"
                             />
                         </div>

@@ -60,7 +60,7 @@ const AdminTeam = async () => {
 
   return (
     <div>
-      <div className="bg-[#FFFFFF] pt-7 pb-14 px-9 sm:px-0">
+      <div className="bg-[#FFFFFF] pt-7 pb-14 px-9 sm:px-4">
         <div className="container mx-auto">
           <div className="text-center">
             <h6 className="text-gray-800 text-center font-bold text-[21px] tahoma">

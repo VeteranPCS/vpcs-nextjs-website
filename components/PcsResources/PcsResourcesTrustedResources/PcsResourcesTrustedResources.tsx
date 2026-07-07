@@ -35,7 +35,7 @@ const PcsResourcesTrustedResources = async () => {
           <h2 className="text-[#003486] tahoma lg:text-[43px] md:text-[43px] sm:text-[31px] text-[31px] font-bold text-center">
             VeteranPCS Trusted Resources
           </h2>
-          <p className="text-[#878787] text-center mx-auto roboto lg:text-[18px] md:text-[18px] sm:text-[13px] text-[13px] font-medium  mt-2 italic ">
+          <p className="text-[#878787] text-center mx-auto roboto lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-medium  mt-2 italic ">
             Trusted veteran and military spouse owned resources, businesses and
             organizations.
           </p>

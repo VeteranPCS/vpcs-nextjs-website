@@ -32,7 +32,7 @@ const CeoFounder = async () => {
               </h1>
             </div>
             <div>
-              <p className="text-[#161C2Db3] text-center font-normal sm:text-[24px] text-[14px] mx-auto px-9 sm:px-0">
+              <p className="text-[#161C2Db3] text-center font-normal sm:text-[24px] text-[14px] mx-auto px-9 sm:px-4">
                 VeteranPCS was created to be different. A site dedicated to
                 equally serving the agents as much as the military families
                 going through a PCS or move.

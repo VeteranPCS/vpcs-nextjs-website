@@ -128,7 +128,7 @@ const FamilyVideo = () => {
                     height={100}
                     src="/icon/yourhome.svg"
 	                    alt=""
-                    className="w-full h-full"
+                    className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="text-center lg:space-y-5">

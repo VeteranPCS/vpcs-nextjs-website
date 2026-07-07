@@ -15,7 +15,7 @@ const WhyVeteranPcs = () => {
                 <h3 className="text-[#002258] tahoma lg:text-[42px] md:text-[42px] sm:text-[31px] text-[31px] font-bold ">
                   Employment
                 </h3>
-                <p className="text-[#161C2D] tahoma lg:text-[20px] md:text-[20px] sm:text-[12px] text-[12px] font-normal mt-5 mb-5">
+                <p className="text-[#161C2D] tahoma lg:text-[20px] md:text-[20px] sm:text-[14px] text-[14px] font-normal mt-5 mb-5">
                   Transitioning Military{" "}
                 </p>
                 <div>
@@ -45,7 +45,7 @@ const WhyVeteranPcs = () => {
                     />
                   </Link>
                   <div>
-                    <p className="text-[#000000] roboto lg:text-[18px] md:text-[18px] sm:text-[13px] text-[13px] font-light mt-1">
+                    <p className="text-[#000000] roboto lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-light mt-1">
                       Hiring Our Heroes (HOH) connects the military
                       community—service members, military spouses, and veterans
                       —with American businesses to create economic opportunity
@@ -64,7 +64,7 @@ const WhyVeteranPcs = () => {
                     />
                   </Link>
                   <div>
-                    <p className="text-[#000000] roboto lg:text-[18px] md:text-[18px] sm:text-[13px] text-[13px] font-light mt-1">
+                    <p className="text-[#000000] roboto lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-light mt-1">
                       Hire Heroes USA provides free job search assistance to
                       U.S. military members, veterans and their spouses, and we
                       help companies connect with opportunities to hire them.

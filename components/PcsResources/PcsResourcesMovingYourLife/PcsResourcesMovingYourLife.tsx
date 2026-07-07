@@ -34,7 +34,7 @@ const PcsResourcesMovingYourLife = async () => {
     <div className="bg-[#E8E8E8] py-12 px-5">
       <div className="container mx-auto">
         <div>
-          <h2 className="text-[#003486] tahoma lg:text-[43px] md:text-[43px] sm:text-[43px] text-[43px] font-bold leading-[46px]">
+          <h2 className="text-[#003486] tahoma lg:text-[43px] md:text-[43px] sm:text-[31px] text-[31px] font-bold leading-[46px]">
             Moving your life resources
           </h2>
         </div>
@@ -50,7 +50,7 @@ const PcsResourcesMovingYourLife = async () => {
                   "/assets/MovingLifeimg1.png"
                 }
                 alt={life_resource?.logo?.alt || "no alt"}
-                className="md:w-[356px] md:h-[95px] sm:w-auto sm:h-auto w-auto h-auto"
+                className="md:w-[356px] md:h-auto sm:w-auto sm:h-auto w-auto h-auto"
               />
               <div className="mt-5">
                 <Link
