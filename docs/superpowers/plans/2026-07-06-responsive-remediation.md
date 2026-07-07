@@ -123,11 +123,11 @@ Files: sitewide small edits; `app/globals.css` LAST.
 
 ## Phase 7 — Final validation (no code unless failures found)
 
-- [ ] Full success-criteria run: overflow gate, touch gate, quality gates, weight numbers, Concierge flag-on checks at 667×375.
-- [ ] **Production-build sweep:** `npm run build && npm start` once; re-run the overflow probe + capture real transfer sizes (hero variants, video non-download) against the prod server — dev-server numbers don't count for the weight gate.
-- [ ] Human-sense review: I examine every screenshot (11 pages × 6 viewports) and write a per-page verdict; any "technically passes but feels wrong for a human" issue becomes a fix or a documented decision.
-- [ ] Report the manual-only checklist (iOS Safari: dvh drawer, video autoplay, Low Power Mode) for Harper to spot-check on a real device.
-- [ ] Kill dev server. Summary report: finding → fix → evidence for all ~60 items.
+- [x] Full success-criteria run: overflow gate, touch gate, quality gates, weight numbers, Concierge flag-on checks at 667×375.
+- [x] **Production-build sweep:** `npm run build && npm start` once; re-run the overflow probe + capture real transfer sizes (hero variants, video non-download) against the prod server — dev-server numbers don't count for the weight gate.
+- [x] Human-sense review: I examine every screenshot (11 pages × 6 viewports) and write a per-page verdict; any "technically passes but feels wrong for a human" issue becomes a fix or a documented decision.
+- [x] Report the manual-only checklist (iOS Safari: dvh drawer, video autoplay, Low Power Mode) for Harper to spot-check on a real device.
+- [x] Kill dev server. Summary report: finding → fix → evidence for all ~60 items.
 
 ## Delegation & Parallelism
 
