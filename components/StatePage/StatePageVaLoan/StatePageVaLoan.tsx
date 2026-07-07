@@ -7,6 +7,7 @@ import Link from "next/link";
 import { LendersData, Lenders } from "@/services/stateService";
 import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
 import { trackCtaClicked } from "@/lib/analytics/client";
+import { buildContactCtaHref } from "@/lib/contactAgentUrl";
 
 const LenderBio = ({ bio }: { bio: string }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -56,6 +57,13 @@ const LenderBio = ({ bio }: { bio: string }) => {
 };
 
 const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, lendersData: LendersData | [], state: string }) => {
+  const lenderContactHref = (lender: Lenders) => buildContactCtaHref({
+    firstName: lender.FirstName,
+    salesforceId: lender.AccountId_15__c,
+    stateSlug: state,
+    form: 'lender',
+  });
+
   const trackLenderCta = (lenderId: string, position: string) => {
     trackCtaClicked({
       cta_id: 'state_lender_card_contact',
@@ -87,59 +95,63 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
         <div className="grid lg:grid-cols-2 grid-cols-1 items-start justify-between gap-10 mt-10">
           {Array.isArray(lendersData) || !lendersData.records
             ? <p>No lenders available</p>
-            : lendersData.records.map((lender: Lenders) => (
-              <div key={lender.AccountId_15__c} className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4">
-                <div className="justify-center items-center flex flex-col">
-                  <div className="rounded-full bg-[#E1EDFB] sm:w-[200px] sm:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
-                    <Link
-                      href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}
-                      onClick={() => trackLenderCta(lender.AccountId_15__c, 'card_image')}
-                    >
-                      <Image
-                        src={lender?.PhotoUrl || ""}
-                        alt={`${lender?.Name}'s Profile Picture`}
-                        width={1000}
-                        height={1000}
-                        sizes="(min-width: 640px) 200px, 100px"
-                        className="object-cover"
-                      />
-                    </Link>
-                  </div>
-                  <Link
-                    href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}
-                    onClick={() => trackLenderCta(lender.AccountId_15__c, 'card_button')}
-                  >
-                    <Button buttonText="Contact Now" />
-                  </Link>
-                </div>
-                <div className="md:pl-10 pl-4">
-                  <div>
-                    <Link
-                      href={`/contact-lender?form=lender&fn=${lender.FirstName}&id=${lender.AccountId_15__c}&state=${state}`}
-                      onClick={() => trackLenderCta(lender.AccountId_15__c, 'card_heading')}
-                    >
-                      <h3 className="text-[#292F6C] tahoma md:text-[34px] text-[24px] font-bold">
-                        {lender?.Name}
-                      </h3>
-                    </Link>
-                    <div className="text-[#6C757D] tahoma md:text-[18px] text-sm font-normal sm:mt-4 mt-0">
-                      <p className="font-bold">
-                        {orderMilitaryServiceInfo(lender?.Military_Status__pc || "", lender?.Military_Service__pc || "")}
-                      </p>
-                      <p>NMLS: {lender.Individual_NMLS_ID__pc}</p>
-                      {lender.Company_NMLS_ID__pc &&
-                        <>
-                          <p>{lender.Brokerage_Name__pc}</p>
-                          <p>NMLS: {lender.Company_NMLS_ID__pc}</p>
-                        </>
-                      }
-                    </div>
-                    <LenderBio bio={lender?.Agent_Bio__pc || ""} />
+            : lendersData.records.map((lender: Lenders) => {
+              const contactHref = lenderContactHref(lender);
 
+              return (
+                <div key={lender.AccountId_15__c} className="rounded-[30px] border bg-white shadow-[0px_5px_14px_0px_rgba(8,_15,_52,_0.04)] flex sm:p-8 p-4">
+                  <div className="justify-center items-center flex flex-col">
+                    <div className="rounded-full bg-[#E1EDFB] sm:w-[200px] sm:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
+                      <Link
+                        href={contactHref}
+                        onClick={() => trackLenderCta(lender.AccountId_15__c, 'card_image')}
+                      >
+                        <Image
+                          src={lender?.PhotoUrl || ""}
+                          alt={`${lender?.Name}'s Profile Picture`}
+                          width={1000}
+                          height={1000}
+                          sizes="(min-width: 640px) 200px, 100px"
+                          className="object-cover"
+                        />
+                      </Link>
+                    </div>
+                    <Link
+                      href={contactHref}
+                      onClick={() => trackLenderCta(lender.AccountId_15__c, 'card_button')}
+                    >
+                      <Button buttonText="Contact Now" />
+                    </Link>
+                  </div>
+                  <div className="md:pl-10 pl-4">
+                    <div>
+                      <Link
+                        href={contactHref}
+                        onClick={() => trackLenderCta(lender.AccountId_15__c, 'card_heading')}
+                      >
+                        <h3 className="text-[#292F6C] tahoma md:text-[34px] text-[24px] font-bold">
+                          {lender?.Name}
+                        </h3>
+                      </Link>
+                      <div className="text-[#6C757D] tahoma md:text-[18px] text-sm font-normal sm:mt-4 mt-0">
+                        <p className="font-bold">
+                          {orderMilitaryServiceInfo(lender?.Military_Status__pc || "", lender?.Military_Service__pc || "")}
+                        </p>
+                        <p>NMLS: {lender.Individual_NMLS_ID__pc}</p>
+                        {lender.Company_NMLS_ID__pc &&
+                          <>
+                            <p>{lender.Brokerage_Name__pc}</p>
+                            <p>NMLS: {lender.Company_NMLS_ID__pc}</p>
+                          </>
+                        }
+                      </div>
+                      <LenderBio bio={lender?.Agent_Bio__pc || ""} />
+
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
         </div>
       </div>
     </div>
