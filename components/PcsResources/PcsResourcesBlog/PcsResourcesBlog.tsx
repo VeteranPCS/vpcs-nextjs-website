@@ -26,7 +26,7 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
           </div>
           <TrackedCtaLink
             href={categoryHref}
-            className="text-[#292F6C] robot text-sm font-bold"
+            className="text-[#292F6C] roboto text-sm font-bold"
             cta={{
               ctaId: 'pcs_resources_blog_view_all',
               ctaIntent: 'content_navigation',

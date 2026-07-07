@@ -222,7 +222,7 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
                         <TrackedCtaLink
                           key={state.name}
                           href={state.link}
-                          className="flex min-h-11 items-center justify-center border border-solid px-3 py-2 text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-primary"
+                          className="flex min-h-11 items-center justify-center border border-solid px-3 py-2 text-primary focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
                           cta={{
                             ctaId: 'state_map_mobile_state',
                             ctaIntent: 'state_page',

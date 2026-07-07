@@ -46,7 +46,7 @@ export default async function BlogMovingPcsingBlogPostSection({
         <div className="flex justify-end mt-5 sm:hidden ">
           <TrackedCtaLink
             href={categoryHref}
-            className="text-[#292F6C] robot text-sm font-bold inline-flex items-center min-h-11"
+            className="text-[#292F6C] roboto text-sm font-bold inline-flex items-center min-h-11"
             cta={{
               ctaId: 'blog_section_view_all',
               ctaIntent: 'content_navigation',

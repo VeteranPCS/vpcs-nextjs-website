@@ -9,7 +9,7 @@ const PcsResources = () => {
       <div className={classes.pcsresourcesherosectioncontainer}>
         <div className="container mx-auto px-5">
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-start justify-between gap-4">
-            <div className="mx-auto lg:text-left md:text-left sm:text-leeft text-leeft w-full sm:order-2 order-2 lg:order-none md:order-none">
+            <div className="mx-auto lg:text-left md:text-left sm:text-left text-left w-full sm:order-2 order-2 lg:order-none md:order-none">
               <h1 className="text-white font-bold lg:text-[59px] md:text-[29px] sm:text-[32px] text-[32px] poppins mb-5 tahoma leading-[1.3]">
                 Military & family <br></br> Resources
               </h1>

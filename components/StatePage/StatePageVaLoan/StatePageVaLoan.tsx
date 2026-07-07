@@ -74,7 +74,7 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
     <div>
       <div className="container mx-auto md:py-12 sm:py-5 py-5 md:px-0 px-5">
         <div className="text-center">
-          <h1 className="text-[#292F6C] text-center tahoma lg:text-[44px] md:text-[44px] sm:text-[31px] text-[31px] font-bold lg:w-[600ox] md:w-[600px] sm:w-full w-full mx-auto">
+          <h1 className="text-[#292F6C] text-center tahoma lg:text-[44px] md:text-[44px] sm:text-[31px] text-[31px] font-bold lg:w-[600px] md:w-[600px] sm:w-full w-full mx-auto">
             {cityName} VA Loan Experts
           </h1>
           <div className="bg-[#7E1618] rounded-full py-1 w-20 mx-auto my-5"></div>

@@ -35,7 +35,7 @@ export default function BlogPageHeroSection({ blog }: Props) {
             <div>
               <div className="text-center">
                 {blog.categories?.[0] ? (
-                  <span className="rounded-lg bg-white/15 py-1 px-3 text-white text-center roboto text-xsfont-bold mx-auto">
+                  <span className="rounded-lg bg-white/15 py-1 px-3 text-white text-center roboto text-xs font-bold mx-auto">
                     {blog.categories[0]}
                   </span>
                 ) : null}
