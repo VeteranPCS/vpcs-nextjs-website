@@ -120,7 +120,7 @@ const KeepInTouch = () => {
   };
 
   return (
-    <div className="bg-[#EEEEEE] py-12">
+    <div className="bg-surface-dark py-10 md:py-12">
       <div className="container mx-auto mb-12">
         <div className="grid lg:grid-cols-2 grid-cols-1 justify-center md:gap-10 gap-2 md:px-10 px-3">
           <div className="md:text-left text-center">
@@ -128,11 +128,11 @@ const KeepInTouch = () => {
               <Image
                 width={100}
                 height={100}
-                className="md:w-auto w-[300px] h-auto mx-auto sm:mx-0"
+                className="md:w-auto md:max-w-none w-full max-w-[300px] h-auto mx-auto sm:mx-0"
                 src="/icon/veteran-pcs-logo-white.svg"
                 alt="VeteranPCS logo"
               />
-              <p className="text-[#292F6C] tahoma text-lg font-normal leading-[30px] lg:w-[300px]  my-7">
+              <p className="text-[#292F6C] text-lg font-normal leading-[30px] lg:max-w-[300px] my-7">
                 Together we&apos;ll make it home. Veteran & Military Spouse Real
                 Estate Agents and VA Loan Experts You Can Trust
               </p>
@@ -234,7 +234,7 @@ const KeepInTouch = () => {
 	                        className={`inline-flex min-h-11 items-center rounded-2xl px-5 py-3.5 text-center transition-colors duration-200 sm:px-5 lg:px-[30px] lg:py-[15px] xl:px-[30px] xl:py-[15px] ${isSubmitting ? 'cursor-not-allowed bg-gray-400' : 'bg-accent-red hover:bg-accent-red-dark'}`}
                       >
                         <span
-                          className="md:text-[18px] text-[14px] font-normal leading-6 bg-cover text-white text-nowrap tahoma"
+                          className="md:text-[18px] text-[14px] font-normal leading-6 bg-cover text-white text-nowrap"
                         >
                           {isSubmitting ? 'Submitting...' : 'Submit'}
                         </span>

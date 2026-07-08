@@ -17,17 +17,17 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
         <div className="container mx-auto">
           <div className="grid grid-cols-1 items-center justify-between gap-6 lg:grid-cols-2 lg:gap-10">
             <div className="order-1 mx-auto w-full max-w-[680px] text-center lg:mt-8 lg:max-w-none lg:text-left">
-              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-white/90 tahoma">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/90 sm:mb-3 sm:text-sm">
                 Free military-friendly agent matching
               </p>
-              <h1 id="home-hero-title" className="text-[2.25rem] font-bold leading-[1.12] text-white tahoma sm:text-[2.75rem] md:text-[3.25rem] lg:text-[3.7rem]">
+              <h1 id="home-hero-title" className="text-3xl font-bold leading-[1.12] text-white sm:text-[2.75rem] md:text-[3.25rem] lg:text-[3.7rem]">
                 {title}
               </h1>
-              <p className="mx-auto my-5 max-w-[38rem] text-base font-normal leading-7 text-white tahoma md:text-lg lg:mx-0 lg:my-7">
+              <p className="mx-auto my-3 max-w-[38rem] text-sm font-normal leading-6 text-white sm:my-5 sm:text-base sm:leading-7 md:text-lg lg:mx-0 lg:my-7">
                 {subTitle}
               </p>
               {page == "home" && (
-                <p className="mx-auto max-w-[36rem] text-base leading-7 text-white/95 tahoma lg:mx-0">
+                <p className="mx-auto max-w-[36rem] text-sm leading-6 text-white/95 sm:text-base sm:leading-7 lg:mx-0">
                   Tell us where you are moving. We will help match you with a vetted agent who understands military moves.
                 </p>
               )}
@@ -44,7 +44,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                 </div>
               )}
               {page == "home" && (
-                <div className="mx-auto my-6 flex max-w-[360px] flex-wrap justify-center gap-4 text-center lg:mx-0 lg:my-8 lg:max-w-none lg:justify-start">
+                <div className="mx-auto my-4 flex max-w-[360px] flex-wrap justify-center gap-4 text-center sm:my-6 lg:mx-0 lg:my-8 lg:max-w-none lg:justify-start">
                   <div className="flex items-center gap-4">
                     <Image
                       width={6}
@@ -54,7 +54,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                       className="w-6 h-6"
                       loading="eager"
                     />
-                    <p className="text-white font-medium text-sm tahoma">
+                    <p className="text-white font-medium text-sm">
                       Free To Use
                     </p>
                   </div>
@@ -67,7 +67,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                       className="w-6 h-6"
                       loading="eager"
                     />
-                    <p className="text-white font-medium text-sm tahoma">
+                    <p className="text-white font-medium text-sm">
                       Get Cash Back
                     </p>
                   </div>
@@ -82,12 +82,12 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
                       ctaIntent: 'contact_agent',
                       ctaPosition: 'hero_primary',
                       ctaComponent: 'homepage_hero',
-                      ctaLabel: 'Find An Agent',
+                      ctaLabel: 'Match Me With An Agent',
                       destination: '/contact-agent',
                       pageType: 'homepage',
                     }}
                   >
-                    <Button buttonText="Find An Agent" />
+                    <Button buttonText="Match Me With An Agent" />
                   </TrackedCtaLink>
                   <TrackedCtaLink
                     href="#state-map"
@@ -145,7 +145,7 @@ const HeroSection = ({ title, subTitle, page }: HeroSectionProps) => {
             </div>
             <div className="order-2 mx-auto w-full md:mb-12 lg:mb-0">
               <div className="flex justify-center">
-                <div className="relative w-full max-w-[873px] mb-[72px] md:mb-[28px] lg:mb-0">
+                <div className="relative w-full max-w-[873px] mb-14 md:mb-[28px] lg:mb-0">
                   <Image
                     width={873}
                     height={482}

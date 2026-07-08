@@ -5,17 +5,20 @@ import { useState, useEffect, useCallback } from 'react';
 interface UseScrollTriggerOptions {
     triggerElementId?: string;
     offset?: number;
-    cooldownDuration?: number; // Time to wait before showing popup again (in ms)
 }
+
+// Fire the popup at most once per browser session. The guard is persisted in
+// sessionStorage so it also survives a same-session reload; it clears when the
+// tab/session ends, so a fresh visit can see it again.
+const SESSION_STORAGE_KEY = 'vpcs_agent_finder_popup_shown';
 
 export const useScrollTrigger = ({
     triggerElementId = 'state-map',
     offset = 100,
-    cooldownDuration = 60000 // 1 minute default cooldown
 }: UseScrollTriggerOptions = {}) => {
     const [showPopup, setShowPopup] = useState(false);
+    // Once true, the scroll handler never shows the popup again this session.
     const [hasTriggered, setHasTriggered] = useState(false);
-    const [lastDismissTime, setLastDismissTime] = useState<number | null>(null);
 
     // Check if we're on desktop (not mobile)
     const [isDesktop, setIsDesktop] = useState(false);
@@ -31,13 +34,21 @@ export const useScrollTrigger = ({
         return () => window.removeEventListener('resize', checkIfDesktop);
     }, []);
 
+    // If the popup already fired earlier this session, keep it suppressed after a reload.
+    useEffect(() => {
+        // sessionStorage can throw (e.g. all cookies/storage blocked); degrade to
+        // "popup may show again" instead of crashing to the error boundary.
+        try {
+            if (sessionStorage.getItem(SESSION_STORAGE_KEY)) {
+                setHasTriggered(true);
+            }
+        } catch {
+            // Storage unavailable — skip the persisted guard.
+        }
+    }, []);
+
     const handleScroll = useCallback(() => {
         if (hasTriggered) return;
-
-        // Check cooldown period
-        if (lastDismissTime && Date.now() - lastDismissTime < cooldownDuration) {
-            return;
-        }
 
         const triggerElement = document.getElementById(triggerElementId);
         if (!triggerElement) {
@@ -50,36 +61,30 @@ export const useScrollTrigger = ({
 
         // Trigger when the element has scrolled past the viewport plus offset
         if (elementBottom + offset < 0) {
-            console.log('Popup triggered by scroll');
             setShowPopup(true);
             setHasTriggered(true);
+            try {
+                sessionStorage.setItem(SESSION_STORAGE_KEY, '1');
+            } catch {
+                // Storage unavailable — in-memory hasTriggered still suppresses re-fires this page load.
+            }
         }
-    }, [hasTriggered, lastDismissTime, cooldownDuration, triggerElementId, offset]);
+    }, [hasTriggered, triggerElementId, offset]);
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, [handleScroll]);
 
+    // Closing does not re-arm the trigger: the sessionStorage guard keeps it
+    // suppressed for the rest of the session.
     const closePopup = useCallback(() => {
         setShowPopup(false);
-        setLastDismissTime(Date.now());
-
-        // Reset trigger after cooldown to allow showing again
-        setTimeout(() => {
-            setHasTriggered(false);
-        }, cooldownDuration);
-    }, [cooldownDuration]);
-
-    const resetTrigger = useCallback(() => {
-        setHasTriggered(false);
-        setLastDismissTime(null);
     }, []);
 
     return {
         showPopup,
         closePopup,
-        resetTrigger,
         isDesktop
     };
 };

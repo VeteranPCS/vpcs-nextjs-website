@@ -8,7 +8,7 @@ const AgentLoanExpert = () => {
       <div className={classes.agentLoanExpertContainer}>
         <div className="items-center grid lg:grid-cols-2 grid-cols-1 md:mt-10 mt-0 justify-center md:gap-10 gap-2">
           <div className="lg:text-left text-center md:py-10 py-0">
-            <h4 className="text-white poppins text-3xl font-bold lg:w-[415px] w-full">
+            <h4 className="text-white poppins text-3xl font-bold w-full lg:max-w-[415px]">
               Are you an agent or VA loan expert?
             </h4>
             <p className="roboto text-[21px] italic font-medium text-white m-0 pt-5">

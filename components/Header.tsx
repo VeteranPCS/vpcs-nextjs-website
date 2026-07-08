@@ -6,13 +6,13 @@ import AgentCtaLink from "@/components/common/AgentCtaLink";
 import LenderCtaLink from "@/components/common/LenderCtaLink";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
-// The desktop nav renders inline at >=1400px; below that the SAME markup is a
+// The desktop nav renders inline at >=1280px; below that the SAME markup is a
 // right-side, full-width slide-in drawer. We track the breakpoint with matchMedia
 // (not a CSS-only guess) so the drawer-only JS behaviors — scroll lock, focus
 // trap, Escape, `inert` — never run against the visible desktop nav. `isMounted`
 // gates anything that must match between SSR and the first client render (the
 // `inert` attribute in particular): it stays false until after mount.
-const DESKTOP_NAV_MEDIA_QUERY = "(min-width: 1400px)";
+const DESKTOP_NAV_MEDIA_QUERY = "(min-width: 1280px)";
 
 const useIsDesktopNav = () => {
   const [state, setState] = useState({ isMounted: false, isDesktop: false });
@@ -38,16 +38,16 @@ const Header = () => {
   const pathname = usePathname();
   const { isMounted, isDesktop } = useIsDesktopNav();
 
-  // Shared with the desktop nav. Every mobile rule is scoped so the >=1400px
+  // Shared with the desktop nav. Every mobile rule is scoped so the >=1280px
   // output stays byte-for-byte identical to before: max-w-fit / whitespace-nowrap /
-  // the smaller text + right-padding only apply at min-[1400px]; the underline
+  // the smaller text + right-padding only apply at min-[1280px]; the underline
   // pseudo-element is inert on touch. Mobile rows are full-width tap targets.
   const navItemClass =
-    "relative py-3.5 text-lg after:absolute after:bottom-0 after:left-0 after:h-1 after:w-0 after:bg-accent-red after:transition-all after:duration-300 hover:after:w-full focus-within:after:w-full min-[1400px]:max-w-fit min-[1400px]:whitespace-nowrap min-[1400px]:py-1 min-[1400px]:pr-0 min-[1400px]:text-base";
+    "relative py-3.5 text-lg after:absolute after:bottom-0 after:left-0 after:h-1 after:w-0 after:bg-accent-red after:transition-all after:duration-300 hover:after:w-full focus-within:after:w-full min-[1280px]:max-w-fit min-[1280px]:whitespace-nowrap min-[1280px]:py-1 min-[1280px]:pr-0 min-[1280px]:text-base";
   const navLinkClass =
-    "text-white inline-flex w-full items-center min-h-11 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white min-[1400px]:inline min-[1400px]:w-auto min-[1400px]:min-h-0";
-  // Quieter secondary group (Get Listed) — mobile drawer only (min-[1400px]:hidden).
-  const secondaryNavItemClass = "min-[1400px]:hidden py-2.5 text-base";
+    "text-white inline-flex w-full items-center min-h-11 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white min-[1280px]:inline min-[1280px]:w-auto min-[1280px]:min-h-0";
+  // Quieter secondary group (Get Listed) — mobile drawer only (min-[1280px]:hidden).
+  const secondaryNavItemClass = "min-[1280px]:hidden py-2.5 text-base";
   const secondaryNavLinkClass =
     "text-white/80 inline-flex w-full items-center min-h-11 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white";
 
@@ -151,7 +151,7 @@ const Header = () => {
       ).filter((el) => el.offsetParent !== null);
 
     // First focusable is queried at open time — the CTA pill is lg:hidden, so
-    // between 1024–1399px this is the About link, not the pill. Focus must wait
+    // between 1024–1279px this is the About link, not the pill. Focus must wait
     // for the visibility transition to start: at effect time the drawer's
     // computed visibility is still `hidden` (it only interpolates to `visible`
     // once transition progress > 0), and .focus() on a hidden element no-ops.
@@ -204,7 +204,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed left-0 top-0 z-nav w-full overflow-x-clip bg-primary px-5 shadow-lg min-[1400px]:px-0">
+    <header className="fixed left-0 top-0 z-nav w-full overflow-x-clip bg-primary px-5 shadow-lg min-[1280px]:px-0">
       <div className="container mx-auto w-full">
         <nav className="flex min-h-[64px] justify-between lg:min-h-[80px]" aria-label="Primary navigation">
           <TrackedCtaLink
@@ -233,9 +233,9 @@ const Header = () => {
               id="primary-navigation"
               ref={navRef}
               inert={isMounted && !isDesktop && !isMenuOpen}
-              className={`absolute top-full inset-x-0 w-full h-[calc(100vh-64px)] supports-[height:100dvh]:h-[calc(100dvh-64px)] lg:h-[calc(100vh-80px)] lg:supports-[height:100dvh]:h-[calc(100dvh-80px)] overflow-y-auto bg-primary transition-[transform,visibility] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none min-[1400px]:static min-[1400px]:flex min-[1400px]:h-auto min-[1400px]:w-auto min-[1400px]:min-w-0 min-[1400px]:items-center min-[1400px]:overflow-visible min-[1400px]:bg-transparent min-[1400px]:translate-x-0 min-[1400px]:visible min-[1400px]:transition-none ${isMenuOpen ? "translate-x-0 visible duration-300" : "translate-x-full invisible duration-[225ms]"}`}
+              className={`absolute top-full inset-x-0 w-full h-[calc(100vh-64px)] supports-[height:100dvh]:h-[calc(100dvh-64px)] lg:h-[calc(100vh-80px)] lg:supports-[height:100dvh]:h-[calc(100dvh-80px)] overflow-y-auto bg-primary transition-[transform,visibility] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none min-[1280px]:static min-[1280px]:flex min-[1280px]:h-auto min-[1280px]:w-auto min-[1280px]:min-w-0 min-[1280px]:items-center min-[1280px]:overflow-visible min-[1280px]:bg-transparent min-[1280px]:translate-x-0 min-[1280px]:visible min-[1280px]:transition-none ${isMenuOpen ? "translate-x-0 visible duration-300" : "translate-x-full invisible duration-[225ms]"}`}
             >
-              <ul className="menu nav mx-auto flex w-full max-w-sm flex-col gap-0 divide-y divide-white/10 px-6 pt-8 pb-12 min-[1400px]:mx-0 min-[1400px]:w-auto min-[1400px]:max-w-none min-[1400px]:flex-row min-[1400px]:items-center min-[1400px]:gap-8 min-[1400px]:divide-y-0 min-[1400px]:px-0 min-[1400px]:py-0">
+              <ul className="menu nav mx-auto flex w-full max-w-sm flex-col gap-0 divide-y divide-white/10 px-6 pt-8 pb-12 min-[1280px]:mx-0 min-[1280px]:w-auto min-[1280px]:max-w-none min-[1280px]:flex-row min-[1280px]:items-center min-[1280px]:gap-6 min-[1280px]:divide-y-0 min-[1280px]:px-0 min-[1280px]:py-0">
                 <li className="mb-4 lg:hidden">
                   <AgentCtaLink
                     className="inline-flex w-full min-h-11 justify-center rounded-2xl bg-accent-red px-5 py-3 text-white transition-colors hover:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
@@ -244,15 +244,15 @@ const Header = () => {
                     ctaPosition="mobile_primary_nav"
                     ctaComponent="site_header"
                   >
-                    Find an Agent
+                    Match Me With An Agent
                   </AgentCtaLink>
                 </li>
-                {/* lg–1399px hides the CTA pill above, but divide-y still counts it
+                {/* lg–1279px hides the CTA pill above, but divide-y still counts it
                     as a sibling and would paint a stray hairline above this first
                     visible row; `!` is needed to out-rank divide-y's compound selector.
-                    max-[1399.98px] (not 1399) so fractional viewports just under the
-                    min-[1400px] desktop cutover are still covered. */}
-                <li className={`${navItemClass} lg:max-[1399.98px]:!border-t-0`}>
+                    max-[1279.98px] (not 1280) so fractional viewports just under the
+                    min-[1280px] desktop cutover are still covered. */}
+                <li className={`${navItemClass} lg:max-[1279.98px]:!border-t-0`}>
                   <TrackedCtaLink
                     className={navLinkClass}
                     href="/about"
@@ -404,7 +404,7 @@ const Header = () => {
                 <li
                   ref={submenuRef}
                   data-submenu-open={isSubmenuOpen}
-                  className={`hidden min-[1400px]:block ${navItemClass}`}
+                  className={`hidden min-[1280px]:block ${navItemClass}`}
                 >
                   <div className="flex items-center">
                     <TrackedCtaLink
@@ -496,7 +496,7 @@ const Header = () => {
                 ctaPosition="desktop_primary_cta"
                 ctaComponent="site_header"
               >
-                Find an Agent
+                Match With An Agent
               </AgentCtaLink>
               <div className="hidden shrink-0 bg-accent-red-dark px-4 text-sm 2xl:block">
                 <div className="text-center py-4">
@@ -515,7 +515,7 @@ const Header = () => {
                 type="button"
                 name={isMenuOpen ? "close" : "menu"}
                 onClick={onMenuToggle}
-                className="relative min-h-11 min-w-11 cursor-pointer text-[30px] min-[1400px]:hidden"
+                className="relative min-h-11 min-w-11 cursor-pointer text-[30px] min-[1280px]:hidden"
                 aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
                 aria-expanded={isMenuOpen}
                 aria-controls="primary-navigation"
