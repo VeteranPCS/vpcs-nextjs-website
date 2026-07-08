@@ -47,7 +47,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
-              <h1 className="text-[#7E1618] tahoma md:text-[32px] text-[24px] font-bold leading-8">
+              <h1 className="text-[#7E1618] md:text-[32px] text-[24px] font-bold leading-8">
                 Current Location
               </h1>
             </div>
@@ -57,7 +57,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="state"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     State*
                   </label>
@@ -84,7 +84,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
                 <div className="flex flex-col">
                   <label
                     htmlFor="city"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     City*
                   </label>

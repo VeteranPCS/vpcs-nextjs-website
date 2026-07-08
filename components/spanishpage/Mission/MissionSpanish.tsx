@@ -26,7 +26,7 @@ const MissionSpanish = async () => {
                             <h2 className="text-white poppins text-[31px] font-bold mt-5 md:text-left sm:text-center text-left">
                                 Muévete con una misión
                             </h2>
-                            <p className="text-white lg:text-[20px] md:text-[19px] text-[16px] font-normal leading-[30px] mt-4 md:text-left sm:text-center text-left tahoma">
+                            <p className="text-white lg:text-[20px] md:text-[19px] text-[16px] font-normal leading-[30px] mt-4 md:text-left sm:text-center text-left">
                                 VeteranPCS está aquí para ayudarte. Hemos identificado agentes inmobiliarios que hablan español y que son veteranos o cónyuges de militares para ayudarte a comprar o vender una vivienda. Además, como usted es parte de las fuerzas armadas, calificas para un bono de $200 a $4,000 en el cierre para ayudarte con los costos de compra de tu hogar.
                             </p>
                         </div>

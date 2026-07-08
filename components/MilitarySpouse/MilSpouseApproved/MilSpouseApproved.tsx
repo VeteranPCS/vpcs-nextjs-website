@@ -34,10 +34,10 @@ const MilitarySpouseApproved = async () => {
           </div>
           <div>
             <div>
-              <h2 className="text-[#292F6C] tahoma lg:text-[63px] md:text-[53px] sm:text-[43px] text-[35px] leading-[40px] md:leading-normal font-bold my-6 md:my-0">
+              <h2 className="text-[#292F6C] lg:text-[63px] md:text-[53px] sm:text-[43px] text-[35px] leading-[40px] md:leading-normal font-bold my-6 md:my-0">
                 {milSpouseApproved?.component_title}
               </h2>
-              <p className="text-[#292F6C] tahoma lg:text-[30px] md:text-[30px] sm:text-[20px] text-[20px] font-normal">
+              <p className="text-[#292F6C] lg:text-[30px] md:text-[30px] sm:text-[20px] text-[20px] font-normal">
                 {milSpouseApproved?.header}
               </p>
             </div>

@@ -101,7 +101,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
         <form onSubmit={handleSubmit(onSubmitHandler)}>
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
-              <h1 className="text-[#7E1618] tahoma md:text-[32px] text-[24px] font-bold leading-8">
+              <h1 className="text-[#7E1618] md:text-[32px] text-[24px] font-bold leading-8">
                 Agent Info
               </h1>
             </div>
@@ -109,7 +109,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <div className="mb-8 flex flex-col">
                 <label
                   htmlFor="primaryState"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  className="text-[#242426] text-sm font-normal mb-1"
                 >
                   Primary State to be Listed:
                 </label>
@@ -133,14 +133,14 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               </div>
               <div className="mb-8 flex flex-col">
                 <fieldset>
-                  <legend className="text-[#242426] tahoma text-sm font-normal mb-1">
+                  <legend className="text-[#242426] text-sm font-normal mb-1">
                     Other State(s) Licensed:
                   </legend>
                   <div className="grid grid-cols-2 border rounded border-[#E2E4E5] px-2 py-1 max-h-48 overflow-y-auto">
                     {US_STATE_CODES.map((code) => (
                       <label
                         key={code}
-                        className="flex items-center gap-2 min-h-11 tahoma text-sm font-normal cursor-pointer"
+                        className="flex items-center gap-2 min-h-11 text-sm font-normal cursor-pointer"
                       >
                         <input type="checkbox" value={code} {...register("otherStates")} />
                         {code}
@@ -157,7 +157,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <div className="mb-8 flex flex-col">
                 <label
                   htmlFor="licenseNumber"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  className="text-[#242426] text-sm font-normal mb-1"
                 >
                   License Number(s)
                 </label>
@@ -177,7 +177,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <div className="mb-8 flex flex-col">
                 <label
                   htmlFor="brokerageName"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  className="text-[#242426] text-sm font-normal mb-1"
                 >
                   Brokerage Name
                 </label>
@@ -197,7 +197,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <div className="mb-8 flex flex-col">
                 <label
                   htmlFor="managingBrokerName"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  className="text-[#242426] text-sm font-normal mb-1"
                 >
                   Managing Broker Name*
                 </label>
@@ -217,7 +217,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <div className="mb-8 flex flex-col">
                 <label
                   htmlFor="managingBrokerPhone"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  className="text-[#242426] text-sm font-normal mb-1"
                 >
                   Managing Broker Phone*
                 </label>
@@ -237,7 +237,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <div className="mb-8 flex flex-col">
                 <label
                   htmlFor="managingBrokerEmail"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  className="text-[#242426] text-sm font-normal mb-1"
                 >
                   Managing Broker Email*
                 </label>
@@ -257,7 +257,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <div className="mb-8 flex flex-col">
                 <label
                   htmlFor="citiesServiced"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  className="text-[#242426] text-sm font-normal mb-1"
                 >
                   Cities Serviced
                 </label>
@@ -277,7 +277,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <div className="mb-8 flex flex-col">
                 <label
                   htmlFor="basesServiced"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  className="text-[#242426] text-sm font-normal mb-1"
                 >
                   Bases Serviced
                 </label>
@@ -297,7 +297,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <div className="mb-8 flex flex-col">
                 <label
                   htmlFor="personallyPCS"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  className="text-[#242426] text-sm font-normal mb-1"
                 >
                   Have you personally PCS&apos;d?
                 </label>
@@ -321,7 +321,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <div className="flex flex-col">
                 <label
                   htmlFor="leadAcceptance"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  className="text-[#242426] text-sm font-normal mb-1"
                 >
                   Are you able to receive leads for a 30% fee?
                 </label>
@@ -348,7 +348,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
               <div className="mb-8 flex flex-col">
                 <label
                   htmlFor="howDidYouHear"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  className="text-[#242426] text-sm font-normal mb-1"
                 >
                   How did you hear about us?*
                 </label>
@@ -382,7 +382,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="tellusMore"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Please tell us more*
                   </label>

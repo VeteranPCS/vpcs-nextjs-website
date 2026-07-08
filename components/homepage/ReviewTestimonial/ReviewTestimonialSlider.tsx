@@ -55,7 +55,7 @@ function formatReviewDate(value: string): string {
 const ReviewCard: React.FC<{ review: Review }> = ({ review }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const formattedDate = formatReviewDate(review.createTime);
-  const comment = review.comment?.trim() || "No review provided.";
+  const comment = review.comment?.trim() ?? "";
   const shouldShowReadMore = comment.length > 250;
 
   return (
@@ -101,9 +101,9 @@ const ReviewCard: React.FC<{ review: Review }> = ({ review }) => {
 
 const ReviewsSlider: React.FC<ReviewsSliderProps> = ({ reviews, averageRating, totalReviewCount }) => {
   const sliderSettings = {
-    infinite: true,
+    infinite: reviews.length > 2,
     speed: 500,
-    slidesToShow: 2,
+    slidesToShow: Math.min(2, reviews.length),
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 4000,
@@ -112,7 +112,7 @@ const ReviewsSlider: React.FC<ReviewsSliderProps> = ({ reviews, averageRating, t
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 2,
+          slidesToShow: Math.min(2, reviews.length),
         },
       },
       {

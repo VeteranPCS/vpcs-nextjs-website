@@ -11,7 +11,7 @@ const VeteranPcsGivesBack = () => {
                 <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 gap-10 items-center justify-center">
                     <div className="lg:pl-10 md:pl-0 sm:pl-0 pl-0 sm:order-1 order-2">
                         <div className="md:text-left text-center">
-                            <h2 className="text-white font-tahoma lg:text-[42px] md:text-[42px] sm:text-[32px] text-[32px] font-bold leading-[50.4px] capitalize">
+                            <h2 className="text-white lg:text-[42px] md:text-[42px] sm:text-[32px] text-[32px] font-bold leading-[50.4px] capitalize">
                                 Veteran<span className="text-white">PCS</span> Gives Back
                             </h2>
                             <p className="text-white font-montserrat lg:text-[26px] md:text-[26px] sm:text-[20px] text-[20px] font-medium pt-6">

@@ -335,7 +335,7 @@ const ContactForm = () => {
                     className={`items-center ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#A81F23]'} w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px] px-[20px] xl:py-[15px] lg:py-[15px] sm:py-[14px] py-[14px] rounded-[16px] text-center tracking-[1px] hover:tracking-[5px] duration-500 transition-all`}
                   >
                     <span
-                      className="md:text-[18px] text-[14px] font-normal leading-6 bg-cover text-white text-nowrap tahoma"
+                      className="md:text-[18px] text-[14px] font-normal leading-6 bg-cover text-white text-nowrap"
                     >
                       {isSubmitting ? 'Sending...' : 'Send Message'}
                     </span>

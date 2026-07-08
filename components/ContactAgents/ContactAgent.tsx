@@ -120,10 +120,10 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
           <HoneypotField ref={honeypotRef} />
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
-              <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
+              <h1 className="text-[#7E1618] lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
                 Contact {agentName}
               </h1>
-              <h2 className="text-[#242426] my-2 tahoma lg:text-[23px] md:text-[22px] sm:text-[18px] text-[18px] font-bold leading-6">
+              <h2 className="text-[#242426] my-2 lg:text-[23px] md:text-[22px] sm:text-[18px] text-[18px] font-bold leading-6">
                 No spam mail, no fees. VeteranPCS is free to use.
               </h2>
               <p className="text-[#575F6E] roboto text-base font-black mt-8">
@@ -136,7 +136,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="firstName"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     First name*
                   </label>
@@ -156,7 +156,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="lastName"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Last name*
                   </label>
@@ -176,7 +176,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="email"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Email
                   </label>
@@ -196,7 +196,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="phone"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Phone
                   </label>
@@ -216,7 +216,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="currentBase"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Current Base/City*
                   </label>
@@ -237,7 +237,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                   <div className="mb-8 flex flex-col">
                     <label
                       htmlFor="state"
-                      className="text-[#242426] tahoma text-sm font-normal mb-1"
+                      className="text-[#242426] text-sm font-normal mb-1"
                     >
                       What state are you buying/selling in?*
                     </label>
@@ -263,7 +263,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="destinationBase"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Destination Base/City*
                   </label>
@@ -284,7 +284,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="howDidYouHear"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     How did you hear about us?
                   </label>
@@ -316,7 +316,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                   <div className="mb-8 flex flex-col">
                     <label
                       htmlFor="tellusMore"
-                      className="text-[#242426] tahoma text-sm font-normal mb-1"
+                      className="text-[#242426] text-sm font-normal mb-1"
                     >
                       Please tell us more*
                     </label>
@@ -337,7 +337,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                 <div className="flex flex-col">
                   <label
                     htmlFor="additionalComments"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Additional Comments
                   </label>

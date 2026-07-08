@@ -44,7 +44,7 @@ export default function FindAgentInState({ state, blogSlug, position }: Props) {
           background: 'linear-gradient(233deg, #2A2F6C 28.37%, #555CA4 95.18%)',
         }}
       >
-        <h2 className="text-[28px] sm:text-[36px] font-bold tahoma mb-4">
+        <h2 className="text-[28px] sm:text-[36px] font-bold mb-4">
           Find a veteran-friendly agent in {displayName}
         </h2>
         <p className="text-base sm:text-lg mb-6 max-w-2xl mx-auto">

@@ -22,7 +22,7 @@ export default function NotFound() {
                         <h1 className="text-primary font-bold text-[42px] mb-4 poppins">
                             404 - Page Not Found
                         </h1>
-                        <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px] tahoma mb-8">
+                        <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px] mb-8">
                             The page you&apos;re looking for doesn&apos;t exist or has been moved.
                             Let us help you find what you&apos;re looking for.
                         </p>

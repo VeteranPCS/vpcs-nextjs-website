@@ -33,7 +33,7 @@ const PcsResourcesMovingYourLife = async () => {
     <div className="bg-[#E8E8E8] py-12 px-5">
       <div className="container mx-auto">
         <div>
-          <h2 className="text-[#003486] tahoma md:text-[43px] text-[31px] font-bold leading-[46px]">
+          <h2 className="text-[#003486] md:text-[43px] text-[31px] font-bold leading-[46px]">
             Moving your life resources
           </h2>
         </div>

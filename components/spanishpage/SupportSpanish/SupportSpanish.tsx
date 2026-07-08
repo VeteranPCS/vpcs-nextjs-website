@@ -19,12 +19,12 @@ const SupportSpanish = async () => {
                 <div className="flex flex-col lg:flex-row md:flex-row gap-8 justify-between items-center">
                   <div className="lg:text-left sm:text-center text-left flex flex-col gap-4 justify-between px-12">
                     <div>
-                      <h2 className="text-[#292F6C] font-bold xl:text-[42px] lg:text-[40px] sm:text-[40px] text-[40px] leading-[54px] tahoma">
+                      <h2 className="text-[#292F6C] font-bold xl:text-[42px] lg:text-[40px] sm:text-[40px] text-[40px] leading-[54px]">
                         Ayuda con el préstamo VA
                       </h2>
                     </div>
                     <div>
-                      <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px] tahoma">
+                      <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px]">
                         El beneficio del préstamo VA puede ser difícil de entender. Además, muchas empresas cobran de más a los miembros del servicio y veteranos en tasas y comisiones. VeteranPCS puede ayudarte a ahorrar dinero conectándote con un prestamista hipotecario de préstamo VA que habla español.
                       </p>
                     </div>

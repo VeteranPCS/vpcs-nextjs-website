@@ -51,7 +51,7 @@ const HowVetPcsStarted = async () => {
               />
             </div>
             <div className="lg:mt-16 lg:mb-7">
-              <h2 className="text-[#292F6C] text-center font-tahoma text-[32px] leading-[32px] font-bold md:pb-0 pb-5 my-4">
+              <h2 className="text-[#292F6C] text-center text-[32px] leading-[32px] font-bold md:pb-0 pb-5 my-4">
                 {pageData?.header}
               </h2>
             </div>
@@ -59,7 +59,7 @@ const HowVetPcsStarted = async () => {
               {pageData?.description?.split("\n").map((paragraph, index) => (
                 <p
                   key={index}
-                  className="text-black tahoma text-lg font-normal mb-4"
+                  className="text-black text-lg font-normal mb-4"
                 >
                   {paragraph.trim()}
                 </p>

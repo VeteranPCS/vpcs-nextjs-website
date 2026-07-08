@@ -34,7 +34,7 @@ export default function Error({ error, reset }: ErrorProps) {
                         <h1 className="text-primary font-bold text-[42px] mb-4 poppins">
                             Oops! Something Went Wrong
                         </h1>
-                        <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px] tahoma mb-8">
+                        <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px] mb-8">
                             We apologize for the inconvenience. Our team has been notified and is working to fix this issue.
                         </p>
                         <div className="flex justify-center gap-4">

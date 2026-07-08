@@ -858,13 +858,13 @@ const ContactForm = () => {
             <table className="table-auto border lg:w-[750px] w-full">
               <thead>
                 <tr className="border text-left">
-                  <th className="text-[#000] tahoma p-3">
+                  <th className="text-[#000] p-3">
                     <b>Home Price</b>
                   </th>
-                  <th className="text-[#000] tahoma p-3">
+                  <th className="text-[#000] p-3">
                     <b>Move-In Bonus</b>
                   </th>
-                  <th className="text-[#000] tahoma p-3">
+                  <th className="text-[#000] p-3">
                     <b>Charity Donation</b>
                   </th>
                 </tr>

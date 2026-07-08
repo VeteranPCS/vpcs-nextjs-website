@@ -17,11 +17,11 @@ export default function BlogDetailsHeroSection({ blog, resolvedAuthor }: Props) 
         <div className="flex flex-col justify-center items-center">
           <div>
             <div className="text-center">
-              <h1 className="text-white text-center tahoma text-[28px] md:text-[36px] font-bold mt-8 mb-3 max-w-[800px]">
+              <h1 className="text-white text-center text-[28px] md:text-[36px] font-bold mt-8 mb-3 max-w-[800px]">
                 {blog.title}
               </h1>
               <div>
-                <h6 className="text-white tahoma text-sm font-bold mt-10">
+                <h6 className="text-white text-sm font-bold mt-10">
                   By {resolvedAuthor.name}
                 </h6>
               </div>

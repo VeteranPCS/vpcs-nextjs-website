@@ -112,14 +112,14 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
-              <h1 className="text-[#7E1618] tahoma md:text-[32px] text-[24px] font-bold leading-8">
+              <h1 className="text-[#7E1618] md:text-[32px] text-[24px] font-bold leading-8">
                 Mortgage Company Info
               </h1>
             </div>
             <div className="border rounded-lg border-[#E2E4E5] p-8">
               {/* Name */}
               <div className="mb-8 flex flex-col">
-                <label htmlFor="name" className="text-[#242426] tahoma text-sm font-normal mb-1">
+                <label htmlFor="name" className="text-[#242426] text-sm font-normal mb-1">
                   Name
                 </label>
                 <input
@@ -134,7 +134,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
 
               {/* Company NMLS ID */}
               <div className="mb-8 flex flex-col">
-                <label htmlFor="companyNMLSId" className="text-[#242426] tahoma text-sm font-normal mb-1">
+                <label htmlFor="companyNMLSId" className="text-[#242426] text-sm font-normal mb-1">
                   Company NMLS ID
                 </label>
                 <input
@@ -149,7 +149,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
 
               {/* Street */}
               <div className="mb-8 flex flex-col">
-                <label htmlFor="street" className="text-[#242426] tahoma text-sm font-normal mb-1">
+                <label htmlFor="street" className="text-[#242426] text-sm font-normal mb-1">
                   Street
                 </label>
                 <input
@@ -164,7 +164,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
 
               {/* City */}
               <div className="mb-8 flex flex-col">
-                <label htmlFor="city" className="text-[#242426] tahoma text-sm font-normal mb-1">
+                <label htmlFor="city" className="text-[#242426] text-sm font-normal mb-1">
                   City
                 </label>
                 <input
@@ -179,7 +179,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
 
               {/* State */}
               <div className="mb-8 flex flex-col">
-                <label htmlFor="state" className="text-[#242426] tahoma text-sm font-normal mb-1">
+                <label htmlFor="state" className="text-[#242426] text-sm font-normal mb-1">
                   State/Province
                 </label>
                 <Controller
@@ -199,7 +199,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
 
               {/* Zip */}
               <div className="mb-8 flex flex-col">
-                <label htmlFor="zip" className="text-[#242426] tahoma text-sm font-normal mb-1">
+                <label htmlFor="zip" className="text-[#242426] text-sm font-normal mb-1">
                   Zip
                 </label>
                 <input
@@ -218,7 +218,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
               <div className="mb-8 flex flex-col">
                 <label
                   htmlFor="howDidYouHear"
-                  className="text-[#242426] tahoma text-sm font-normal mb-1"
+                  className="text-[#242426] text-sm font-normal mb-1"
                 >
                   How did you hear about us?*
                 </label>
@@ -250,7 +250,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="tellusMore"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Please tell us more*
                   </label>

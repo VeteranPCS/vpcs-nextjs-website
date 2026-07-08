@@ -57,7 +57,7 @@ export default async function AuthorByline({
           />
         </div>
         <p className="text-[#495057] roboto text-sm font-normal mt-5">
-          <b className="text-[#495057] tahoma">{VPCS_FALLBACK.name}</b>
+          <b className="text-[#495057]">{VPCS_FALLBACK.name}</b>
           <br />
           {VPCS_FALLBACK.location}
           <br />
@@ -123,7 +123,7 @@ export default async function AuthorByline({
         />
       </div>
       <p className="text-[#495057] roboto text-sm font-normal mt-5">
-        <b className="text-[#495057] tahoma">{displayName}</b>
+        <b className="text-[#495057]">{displayName}</b>
         {author.city && author.state ? (
           <>
             <br />

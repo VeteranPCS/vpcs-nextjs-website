@@ -13,7 +13,7 @@ const SquaredAway = () => {
         >
           <div>
             <div className="block md:hidden">
-              <h2 className="text-[#292F6C] tahoma lg:text-[63px] md:text-[53px] sm:text-[30px] text-[30px] leading-[36px] md:leading-normal text-center md:text-left font-bold md:mb-3 mb-5">
+              <h2 className="text-[#292F6C] lg:text-[63px] md:text-[53px] sm:text-[30px] text-[30px] leading-[36px] md:leading-normal text-center md:text-left font-bold md:mb-3 mb-5">
                 Spouse Employment with Squared Away
               </h2>
             </div>
@@ -27,7 +27,7 @@ const SquaredAway = () => {
           </div>
           <div>
             <div>
-              <h2 className="text-[#292F6C] tahoma lg:text-[63px] md:text-[53px] sm:text-[43px] text-[43px] font-bold mb-3 md:block hidden">
+              <h2 className="text-[#292F6C] lg:text-[63px] md:text-[53px] sm:text-[43px] text-[43px] font-bold mb-3 md:block hidden">
                 Spouse Employment with Squared Away
               </h2>
             </div>

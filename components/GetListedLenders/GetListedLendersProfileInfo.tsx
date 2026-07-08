@@ -83,7 +83,7 @@ const GetListedLendersProfileInfo = ({ onSubmit, onBack, shouldValidate }: Conta
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
-              <h1 className="text-[#7E1618] tahoma md:text-[32px] text-[24px] font-bold leading-8">
+              <h1 className="text-[#7E1618] md:text-[32px] text-[24px] font-bold leading-8">
                 Military Service
               </h1>
             </div>
@@ -92,7 +92,7 @@ const GetListedLendersProfileInfo = ({ onSubmit, onBack, shouldValidate }: Conta
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="status_select"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Status*
                   </label>
@@ -116,7 +116,7 @@ const GetListedLendersProfileInfo = ({ onSubmit, onBack, shouldValidate }: Conta
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="branch_select"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Branch*
                   </label>
@@ -140,7 +140,7 @@ const GetListedLendersProfileInfo = ({ onSubmit, onBack, shouldValidate }: Conta
                 <div className="flex flex-col">
                   <label
                     htmlFor="discharge_status"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Discharge Status(es)*
                   </label>

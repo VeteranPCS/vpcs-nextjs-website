@@ -11,10 +11,10 @@ const WhyVeteranPcs = () => {
           <div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
               <div className="text-left md:order-0 order-1">
-                <h3 className="text-[#002258] tahoma md:text-[42px] text-[31px] font-bold">
+                <h3 className="text-[#002258] md:text-[42px] text-[31px] font-bold">
                   Employment
                 </h3>
-                <p className="text-[#161C2D] tahoma md:text-[20px] text-[14px] font-normal mt-5 mb-5">
+                <p className="text-[#161C2D] md:text-[20px] text-[14px] font-normal mt-5 mb-5">
                   Transitioning Military{" "}
                 </p>
                 <div>

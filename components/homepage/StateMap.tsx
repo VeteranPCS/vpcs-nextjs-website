@@ -11,7 +11,7 @@ import { buildCtaProperties } from "@/lib/analytics/cta";
 const StateMapSvg = dynamic(() => import("@/components/homepage/StateMapSvg"), {
   ssr: false,
   loading: () => (
-    <div className="flex min-h-[420px] items-center justify-center text-primary tahoma">
+    <div className="flex min-h-[420px] items-center justify-center text-primary">
       Loading state map...
     </div>
   ),
@@ -175,10 +175,10 @@ const StateMap = ({ title, subTitle, buttonText, buttonLink }: { title: string, 
         <div className="w-full bg-primary-light px-4 py-10 lg:px-16">
           <div>
             <div className="text-center pb-5 w-full relative">
-              <h2 id="state-map-title" className="text-center text-[2rem] font-bold leading-tight text-primary tahoma sm:text-[2.4rem] md:text-[2.75rem] lg:text-[3.4rem]">
+              <h2 id="state-map-title" className="text-center text-[2rem] font-bold leading-tight text-primary sm:text-[2.4rem] md:text-[2.75rem] lg:text-[3.4rem]">
                 {title}
               </h2>
-              <p className="mx-auto my-5 max-w-[46rem] px-2 text-center text-base font-normal leading-7 text-primary tahoma md:my-6 md:text-lg">
+              <p className="mx-auto my-5 max-w-[46rem] px-2 text-center text-base font-normal leading-7 text-primary md:my-6 md:text-lg">
                 {subTitle}
               </p>
             </div>

@@ -20,7 +20,7 @@ const cardsData = [
     img: "/icon/Moveinbonus.svg",
     title: "Bonus",
     subTitle: "Get cash back when you close on a home. $200-$4,000.",
-    link: "how-it-works",
+    link: "/how-it-works",
   },
 ];
 

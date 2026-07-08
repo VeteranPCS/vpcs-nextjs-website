@@ -35,7 +35,7 @@ export default function PromoCard({
         </div>
       ) : null}
       <div className="flex-1 text-center md:text-left">
-        <h3 className="tahoma text-xl font-bold text-[#212529] mb-3">{headline}</h3>
+        <h3 className="text-xl font-bold text-[#212529] mb-3">{headline}</h3>
         <TrackedCtaLink
           href={href}
           cta={{

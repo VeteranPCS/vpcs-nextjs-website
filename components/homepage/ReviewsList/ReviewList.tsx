@@ -28,7 +28,14 @@ export default async function ReviewsList() {
 
     const { reviews: reviewsList, averageRating, totalReviewCount } = reviewsData;
 
-    const reviewSchema: WithContext<Testimonial>[] = reviewsList.map((review) => ({
+    const reviewsWithComments = reviewsList.filter((review) => review.comment?.trim());
+
+    // With no written reviews left after filtering, the slider has nothing to show
+    if (reviewsWithComments.length === 0) {
+        return null;
+    }
+
+    const reviewSchema: WithContext<Testimonial>[] = reviewsWithComments.map((review) => ({
         "@context": "https://schema.org",
         "@type": "Review",
         author: {
@@ -65,7 +72,7 @@ export default async function ReviewsList() {
         <div>
             <Script id="json-ld-testimonials" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
             <ReviewTestimonial
-                reviewsList={reviewsList}
+                reviewsList={reviewsWithComments}
                 averageRating={averageRating}
                 totalReviewCount={totalReviewCount}
             />

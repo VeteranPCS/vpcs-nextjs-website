@@ -49,7 +49,7 @@ const OptionalInformationForBuyer = ({ onSubmit, shouldSubmit }: ContactFormProp
         <form onSubmit={handleSubmit(onSubmitHandler)}>
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
-              <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
+              <h1 className="text-[#7E1618] lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
                 Optional Information for Buyer
               </h1>
             </div>
@@ -59,7 +59,7 @@ const OptionalInformationForBuyer = ({ onSubmit, shouldSubmit }: ContactFormProp
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="typeOfHome"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Type of Home:
                   </label>
@@ -86,7 +86,7 @@ const OptionalInformationForBuyer = ({ onSubmit, shouldSubmit }: ContactFormProp
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="bedrooms"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     How many Bedrooms are you looking for?:
                   </label>
@@ -113,7 +113,7 @@ const OptionalInformationForBuyer = ({ onSubmit, shouldSubmit }: ContactFormProp
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="bathrooms"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     How many Bathrooms are you looking for?:
                   </label>
@@ -139,7 +139,7 @@ const OptionalInformationForBuyer = ({ onSubmit, shouldSubmit }: ContactFormProp
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="maxPrice"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Maximum Price:
                   </label>
@@ -174,7 +174,7 @@ const OptionalInformationForBuyer = ({ onSubmit, shouldSubmit }: ContactFormProp
                 <div className="flex flex-col">
                   <label
                     htmlFor="preApproval"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Are you pre-approved for a mortgage?
                   </label>

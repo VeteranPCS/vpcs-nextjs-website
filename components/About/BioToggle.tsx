@@ -31,7 +31,7 @@ const BioToggle = ({ id, children }: BioToggleProps) => {
         aria-expanded={isExpanded}
         aria-controls={contentId}
         onClick={() => setIsExpanded((prev) => !prev)}
-        className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold bg-white min-h-11 inline-flex items-center"
+        className="cursor-pointer text-[#292F6C] text-sm font-bold bg-white min-h-11 inline-flex items-center"
       >
         {isExpanded ? "Read Less" : "Read More"}
       </button>

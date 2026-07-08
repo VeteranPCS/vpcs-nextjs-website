@@ -48,12 +48,12 @@ const SupportOurVeterans = async () => {
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 justify-between items-start mt-10">
                                 <div className="lg:text-left sm:text-center text-left flex flex-col gap-4 justify-between">
                                     <div>
-                                        <h2 className="text-[#292F6C] font-bold text-[28px] sm:text-[40px] xl:text-[42px] leading-[54px] tahoma">
+                                        <h2 className="text-[#292F6C] font-bold text-[28px] sm:text-[40px] xl:text-[42px] leading-[54px]">
                                             {pageData?.header_1}
                                         </h2>
                                     </div>
                                     <div>
-                                        <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px] tahoma">
+                                        <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px]">
                                             {pageData?.description_1}
                                         </p>
                                     </div>
@@ -93,12 +93,12 @@ const SupportOurVeterans = async () => {
                                 </div>
                                 <div className="text-left flex flex-col sm:gap-7 gap-4 justify-between md:ml-5 ml-0">
                                     <div>
-                                        <h2 className="text-[#292F6C] font-bold text-[28px] sm:text-[40px] xl:text-[42px] leading-[54px] tahoma">
+                                        <h2 className="text-[#292F6C] font-bold text-[28px] sm:text-[40px] xl:text-[42px] leading-[54px]">
                                             {pageData?.header_2}
                                         </h2>
                                     </div>
                                     <div>
-                                        <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px] tahoma">
+                                        <p className="text-[#161C2Db3] text-[20px] font-normal leading-[39px]">
                                             {pageData?.description_2}
                                         </p>
                                     </div>

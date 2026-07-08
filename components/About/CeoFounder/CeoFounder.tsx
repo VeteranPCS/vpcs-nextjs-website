@@ -19,14 +19,14 @@ const CeoFounder = async () => {
     <div className="pt-14">
       <div>
         <div className="container mx-auto">
-          <div className=" mx-auto">
+          <div className="mx-auto">
             <div>
-              <span className="text-[#282828] flex justify-center tahoma lg:text-[21px] text-[18px] font-bold">
+              <span className="text-[#282828] flex justify-center lg:text-[21px] text-[18px] font-bold">
                 CEO & FOUNDER
               </span>
             </div>
             <div>
-              <h2 className="text-[#292F6C] font-bold text-center tahoma lg:text-[55px] md:text-[60px] text-[30px]">
+              <h2 className="text-[#292F6C] font-bold text-center lg:text-[55px] md:text-[60px] text-[30px]">
                 Meet Our Founder
               </h2>
             </div>
@@ -50,7 +50,7 @@ const CeoFounder = async () => {
                   />
                 </div>
                 <div className="px-5 py-5">
-                  <h6 className="text-black tahoma font-semibold text-lg md:text-2xl ">
+                  <h6 className="text-black font-semibold text-lg md:text-2xl">
                     {details.name}
                   </h6>
                   <span className="text-[#3E3E59] text-sm md:text-lg font-light">

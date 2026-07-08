@@ -65,10 +65,10 @@ const Covered = () => {
                 data-aos-duration="1000"
             >
                 <div className="md:block sm:hidden hidden">
-                    <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-[20px] tahoma  md:block ">
+                    <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-[20px] md:block">
                         Te tenemos a su familia en mente
                     </h2>
-                    <p className="normal text-[#7E1618] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] leading-[32px] font-medium  md:block tahoma">
+                    <p className="normal text-[#7E1618] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] leading-[32px] font-medium md:block">
                         La comunidad militar ayudando a la comunidad militar a mudarse.
                     </p>
                 </div>

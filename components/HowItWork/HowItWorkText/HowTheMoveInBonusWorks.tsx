@@ -18,7 +18,7 @@ const HowTheMoveInBonusWorks = async () => {
     <>
       <div>
         <div>
-          <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] text-[25px] font-bold my-2">
+          <h6 className="text-[#292F6C] lg:text-[33px] md:text-[30px] text-[25px] font-bold my-2">
             {moveInBonus?.title}
           </h6>
         </div>
@@ -62,13 +62,13 @@ const HowTheMoveInBonusWorks = async () => {
           <table className="table-auto border w-full">
             <thead>
               <tr className="border text-left">
-                <th className="text-[#000] tahoma md:text-[24px] text-[17px] font-bold p-3">
+                <th className="text-[#000] md:text-[24px] text-[17px] font-bold p-3">
                   Home Price
                 </th>
-                <th className="text-[#000] tahoma md:text-[24px] text-[17px] font-bold p-3">
+                <th className="text-[#000] md:text-[24px] text-[17px] font-bold p-3">
                   Move-In Bonus
                 </th>
-                <th className="text-[#000] tahoma md:text-[24px] text-[17px] font-bold p-3">
+                <th className="text-[#000] md:text-[24px] text-[17px] font-bold p-3">
                   Charity Donation
                 </th>
               </tr>

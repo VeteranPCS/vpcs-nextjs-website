@@ -20,7 +20,7 @@ const HowDidYouHearAboutUs: React.FC<HowDidYouHearAboutUsProps> = ({
             <div className="mb-8 flex flex-col">
                 <label
                     htmlFor="howDidYouHear"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                 >
                     How did you hear about us?
                 </label>
@@ -52,7 +52,7 @@ const HowDidYouHearAboutUs: React.FC<HowDidYouHearAboutUsProps> = ({
                 <div className="mb-8 flex flex-col">
                     <label
                         htmlFor="tellusMore"
-                        className="text-[#242426] tahoma text-sm font-normal mb-1"
+                        className="text-[#242426] text-sm font-normal mb-1"
                     >
                         Please tell us more*
                     </label>

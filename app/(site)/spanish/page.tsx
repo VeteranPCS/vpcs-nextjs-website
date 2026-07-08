@@ -80,7 +80,7 @@ export default function Home() {
               />
             </div>
             <div className="w-full md:w-1/2 mt-10 md:mt-0 max-w-[500px] flex flex-col items-center md:items-start text-center md:text-left">
-              <h6 className="text-[22px] md:text-[25px] font-bold text-[#292F6C] mt-5 tahoma uppercase">
+              <h6 className="text-[22px] md:text-[25px] font-bold text-[#292F6C] mt-5 uppercase">
                 Apoya a los miembros del servicio latino, veteranos y sus familias
               </h6>
               <p className="text-black font-roboto text-base font-medium mt-4">

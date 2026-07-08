@@ -4,7 +4,7 @@ const BeingProactive = () => {
   return (
     <>
       <div>
-        <h2 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] sm:text-[25px] text-[25px] font-bold my-2">
+        <h2 className="text-[#292F6C] lg:text-[33px] md:text-[30px] sm:text-[25px] text-[25px] font-bold my-2">
           Being Proactive and Doing the Application Early to Score the Best Rates
         </h2>
       </div>

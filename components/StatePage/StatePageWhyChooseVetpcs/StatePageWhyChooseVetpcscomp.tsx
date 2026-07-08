@@ -46,12 +46,12 @@ const Covered: React.FC<CoveredProps> = ({ card }) => {
             </div>
             <div className="text-center md:ml-0 sm:ml-5 ml-0 mt-4">
               <div className="md:mt-5 mt-0">
-                <h4 className="text-[#FFFFFF] lg:text-[24px] md:text-[19px] sm:text-[16px] text-[18px] font-bold tahoma">
+                <h4 className="text-[#FFFFFF] lg:text-[24px] md:text-[19px] sm:text-[16px] text-[18px] font-bold">
                   {title}
                 </h4>
               </div>
               <div className="md:mt-3 mt-0 px-10">
-                <span className="text-[#FFFFFF] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[13px] ">
+                <span className="text-[#FFFFFF] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[13px]">
                   {subTitle}
                 </span>
               </div>

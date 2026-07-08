@@ -44,41 +44,33 @@ const Covered: React.FC<CoveredProps> = ({ card }) => {
       }}
     >
       <div className={ClassNames.coveredwrappercontainer}>
-        <div className="md:p-9 sm:p-2 p-4 cover-card mx-auto">
+        <div className="p-3 md:p-6 cover-card mx-auto h-full">
           <div className="text-center">
-            <div className="md:block flex items-center md:justify-center justify-start">
-              <div className="flex justify-center">
-                <Image
-                  width={80}
-                  height={80}
-                  className="coverd-link-img md:w-[80px] md:h-[80px] sm:w-[50px] sm:h-[50px] w-[60px] h-[60px] object-contain"
-                  src={img}
-                  alt=""
-                />
-                <Image
-                  width={80}
-                  height={80}
-                  className="coverd-link-imgred md:w-[80px] md:h-[80px] sm:w-[50px] sm:h-[50px] w-[60px] h-[60px] object-contain"
-                  src={imgred}
-                  alt=""
-                />
-              </div>
-              <div className="md:text-center text-left md:ml-0 ml-5">
-                <div className="md:mt-5 mt-0">
-                  <h4 className="text-[#292F6C] lg:text-[24px] md:text-[19px] sm:text-[16px] text-[18px] font-bold">
-                    {title}
-                  </h4>
-                </div>
-                <div className="md:mt-3 mt-0">
-                  <span className="text-[#000000] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[13px]">
-                    {subTitle}
-                  </span>
-                </div>
-                <div className="md:mt-3 sm:mt-0">
-                  <span className="text-[#A81F23] text-[16px]">Learn more</span>
-                </div>
-              </div>
+            <div className="flex justify-center">
+              <Image
+                width={80}
+                height={80}
+                className="coverd-link-img w-8 h-8 md:w-12 md:h-12 object-contain"
+                src={img}
+                alt=""
+              />
+              <Image
+                width={80}
+                height={80}
+                className="coverd-link-imgred w-8 h-8 md:w-12 md:h-12 object-contain"
+                src={imgred}
+                alt=""
+              />
             </div>
+            <h4 className="text-[#292F6C] text-base md:text-lg font-bold mt-2 md:mt-3">
+              {title}
+            </h4>
+            <span className="text-[#000000] text-xs md:text-sm mt-1 block">
+              {subTitle}
+            </span>
+            <span className="text-[#A81F23] text-xs md:text-base mt-0.5 md:mt-2 block">
+              Learn more
+            </span>
           </div>
         </div>
       </div>

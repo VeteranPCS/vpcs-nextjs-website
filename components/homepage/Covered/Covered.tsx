@@ -58,23 +58,23 @@ const Covered = () => {
   }, []);
 
   return (
-    <div className="container mx-auto w-full py-16 md:py-24">
+    <div className="container mx-auto w-full py-10 md:py-12">
       <div
         className="px-4 bg-[#ffffff] mx-auto text-center"
         data-aos="fade-up"
         data-aos-duration="1000"
       >
         <div>
-          <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-[20px] md:block">
+          <h2 className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-lg md:block">
             We’ve got you covered
           </h2>
-          <p className="normal text-[#7E1618] lg:text-[18px] md:text-[19px] text-[16px] leading-[32px] font-medium md:block">
+          <p className="normal text-[#7E1618] lg:text-[18px] md:text-[19px] text-[16px] leading-normal md:leading-[32px] font-medium md:block">
             Military community helping our military community move.
           </p>
         </div>
       </div>
       <div
-        className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 lg:mt-20 sm:mt-10 mt-5 justify-center md:gap-10 gap-2 md:px-10 px-3"
+        className="grid grid-cols-2 md:grid-cols-3 mt-4 md:mt-10 justify-center gap-2 md:gap-6 md:px-10 px-3"
         data-aos="fade-up"
         data-aos-duration="1000"
       >

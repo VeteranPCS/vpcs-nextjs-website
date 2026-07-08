@@ -66,7 +66,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
       <div className="md:w-[456px] mx-auto my-10">
         <div className="flex flex-col gap-8">
           <div className="md:text-left text-center">
-            <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
+            <h1 className="text-[#7E1618] lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
               Where You&apos;re Moving To
             </h1>
           </div>
@@ -77,7 +77,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
                   <div className="mb-8 flex flex-col">
                     <label
                       htmlFor="state"
-                      className="text-[#242426] tahoma text-sm font-normal mb-1"
+                      className="text-[#242426] text-sm font-normal mb-1"
                     >
                       State*
                     </label>
@@ -99,7 +99,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
                   <div className="mb-8 flex flex-col">
                     <label
                       htmlFor="city"
-                      className="text-[#242426] tahoma text-sm font-normal mb-1"
+                      className="text-[#242426] text-sm font-normal mb-1"
                     >
                       City*
                     </label>
@@ -115,7 +115,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
                   <div className="mb-8 flex flex-col">
                     <label
                       htmlFor="destination"
-                      className="text-[#242426] tahoma text-sm font-normal mb-1"
+                      className="text-[#242426] text-sm font-normal mb-1"
                     >
                       Destination Base/City*
                     </label>
@@ -134,7 +134,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="buyingSelling"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Are you buying and/or selling?*
                   </label>
@@ -155,7 +155,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="timeframe"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     What is your timeframe?*
                   </label>

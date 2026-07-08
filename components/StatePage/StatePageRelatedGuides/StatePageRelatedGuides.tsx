@@ -15,10 +15,10 @@ export default function StatePageRelatedGuides({ stateName, guides, stateSlug, s
     <section className="bg-white py-14 md:py-16">
       <div className="container mx-auto px-5 md:px-0">
         <div className="max-w-3xl">
-          <p className="tahoma text-sm font-bold uppercase tracking-[1px] text-[#A81F23]">
+          <p className="text-sm font-bold uppercase tracking-[1px] text-[#A81F23]">
             PCS resources
           </p>
-          <h2 className="tahoma mt-2 text-3xl font-bold text-[#292F6C] md:text-[38px]">
+          <h2 className="mt-2 text-3xl font-bold text-[#292F6C] md:text-[38px]">
             Guides for {stateName}
           </h2>
           <p className="roboto mt-3 text-base leading-7 text-[#495057] md:text-lg">
@@ -46,10 +46,10 @@ export default function StatePageRelatedGuides({ stateName, guides, stateSlug, s
               }}
             >
               <div>
-                <p className="tahoma text-xs font-bold uppercase tracking-[1px] text-[#6C757D]">
+                <p className="text-xs font-bold uppercase tracking-[1px] text-[#6C757D]">
                   {guide.component}
                 </p>
-                <h3 className="tahoma mt-3 text-xl font-bold leading-snug text-[#292F6C] group-hover:text-[#A81F23]">
+                <h3 className="mt-3 text-xl font-bold leading-snug text-[#292F6C] group-hover:text-[#A81F23]">
                   {guide.title}
                 </h3>
                 {guide.description && (
@@ -58,7 +58,7 @@ export default function StatePageRelatedGuides({ stateName, guides, stateSlug, s
                   </p>
                 )}
               </div>
-              <span className="tahoma mt-5 text-sm font-bold text-[#A81F23]">
+              <span className="mt-5 text-sm font-bold text-[#A81F23]">
                 Read guide
               </span>
             </TrackedCtaLink>

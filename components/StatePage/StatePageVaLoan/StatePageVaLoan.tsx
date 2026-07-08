@@ -38,7 +38,7 @@ const LenderBio = ({ bio }: { bio: string }) => {
     <div className="relative">
       <p
         ref={textRef}
-        className={`text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 overflow-hidden transition-all duration-300 ${isExpanded ? "max-h-full" : "max-h-[80px]"}`}
+        className={`text-[#747D88] lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 overflow-hidden transition-all duration-300 ${isExpanded ? "max-h-full" : "max-h-[80px]"}`}
       >
         {bio}
       </p>
@@ -47,7 +47,7 @@ const LenderBio = ({ bio }: { bio: string }) => {
           type="button"
           aria-expanded={isExpanded}
           onClick={() => setIsExpanded((prev) => !prev)}
-          className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 min-h-11 inline-flex items-center"
+          className="cursor-pointer text-[#292F6C] text-sm font-bold mt-2 min-h-11 inline-flex items-center"
         >
           {isExpanded ? "Read Less" : "...Read More"}
         </button>
@@ -81,11 +81,11 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
     <div>
       <div className="container mx-auto md:py-12 py-5 md:px-0 px-5">
         <div className="text-center">
-          <h2 className="text-[#292F6C] text-center tahoma md:text-[44px] text-[31px] font-bold md:w-[600px] w-full mx-auto">
+          <h2 className="text-[#292F6C] text-center md:text-[44px] text-[31px] font-bold md:w-[600px] w-full mx-auto">
             {cityName} VA Loan Experts
           </h2>
           <div className="bg-[#7E1618] rounded-full py-1 w-20 mx-auto my-5"></div>
-          <p className="text-[#515151] text-center tahoma md:text-[18px] text-[14px] font-normal xl:max-w-[1300px] px-5 xl:px-0 w-full mx-auto">
+          <p className="text-[#515151] text-center md:text-[18px] text-[14px] font-normal xl:max-w-[1300px] px-5 xl:px-0 w-full mx-auto">
             VA loan intricacies can be overwhelming. At VeteranPCS, we
             facilitate your connection with specialized VA loan experts, who
             will not only guide you expertly but also ensure that all potential
@@ -129,11 +129,11 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                         href={contactHref}
                         onClick={() => trackLenderCta(lender.AccountId_15__c, 'card_heading')}
                       >
-                        <h3 className="text-[#292F6C] tahoma md:text-[34px] text-[24px] font-bold">
+                        <h3 className="text-[#292F6C] md:text-[34px] text-[24px] font-bold">
                           {lender?.Name}
                         </h3>
                       </Link>
-                      <div className="text-[#6C757D] tahoma md:text-[18px] text-sm font-normal sm:mt-4 mt-0">
+                      <div className="text-[#6C757D] md:text-[18px] text-sm font-normal sm:mt-4 mt-0">
                         <p className="font-bold">
                           {orderMilitaryServiceInfo(lender?.Military_Status__pc || "", lender?.Military_Service__pc || "")}
                         </p>

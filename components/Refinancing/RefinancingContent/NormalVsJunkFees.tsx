@@ -4,7 +4,7 @@ const NormalVsJunkFees = () => {
   return (
     <>
       <div>
-        <h2 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] sm:text-[25px] text-[25px] font-bold my-2">
+        <h2 className="text-[#292F6C] lg:text-[33px] md:text-[30px] sm:text-[25px] text-[25px] font-bold my-2">
           What Fees Are Normal vs. Junk Fees
         </h2>
       </div>

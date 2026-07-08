@@ -155,7 +155,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" data-scroll-behavior="smooth" className={`scroll-pt-20 ${inter.variable} ${poppins.variable} ${roboto.variable} ${lora.variable}`}>
+        <html lang="en" className={`scroll-pt-20 ${inter.variable} ${poppins.variable} ${roboto.variable} ${lora.variable}`}>
             <head>
                 <GoogleTagManager gtmId={GTM_ID} />
                 <Script id={`json-ld-real-estate-agent`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />

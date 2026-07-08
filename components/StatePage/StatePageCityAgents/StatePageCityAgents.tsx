@@ -69,7 +69,7 @@ const AgentBio = ({ bio }: { bio: string }) => {
     <div className="relative">
       <p
         ref={textRef}
-        className={`text-[#747D88] tahoma lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 overflow-hidden transition-all duration-300 ${isExpanded ? "max-h-full" : "max-h-[80px]"}`}
+        className={`text-[#747D88] lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] font-normal mt-4 overflow-hidden transition-all duration-300 ${isExpanded ? "max-h-full" : "max-h-[80px]"}`}
       >
         {bio}
       </p>
@@ -78,7 +78,7 @@ const AgentBio = ({ bio }: { bio: string }) => {
           type="button"
           aria-expanded={isExpanded}
           onClick={() => setIsExpanded((prev) => !prev)}
-          className="cursor-pointer text-[#292F6C] tahoma text-sm font-bold mt-2 min-h-11 inline-flex items-center"
+          className="cursor-pointer text-[#292F6C] text-sm font-bold mt-2 min-h-11 inline-flex items-center"
         >
           {isExpanded ? "Read Less" : "...Read More"}
         </button>
@@ -114,7 +114,7 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
       <div className="bg-[#F4F4F4]">
         <div className="container mx-auto md:py-12 py-5 md:px-0 px-5">
           <div className="text-center">
-            <h2 className="text-[#292F6C] text-center tahoma md:text-[38px] text-[22px] font-bold md:w-[600px] w-full mx-auto">
+            <h2 className="text-[#292F6C] text-center md:text-[38px] text-[22px] font-bold md:w-[600px] w-full mx-auto">
               {city}
             </h2>
             <div className="bg-[#7E1618] py-[3px] w-24 mx-auto my-5"></div>
@@ -157,11 +157,11 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                         href={contactHref}
                         onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_heading')}
                       >
-                        <h3 className="text-[#292F6C] tahoma md:text-[34px] text-[20px] font-bold">
+                        <h3 className="text-[#292F6C] md:text-[34px] text-[20px] font-bold">
                           {agent?.Name}
                         </h3>
                       </Link>
-                      <div className="text-[#6C757D] tahoma md:text-[18px] text-sm font-normal sm:mt-4 mt-0">
+                      <div className="text-[#6C757D] md:text-[18px] text-sm font-normal sm:mt-4 mt-0">
                         <p className="font-bold">
                           {orderMilitaryServiceInfo(agent?.Military_Status__pc || "", agent?.Military_Service__pc || "")}
                         </p>

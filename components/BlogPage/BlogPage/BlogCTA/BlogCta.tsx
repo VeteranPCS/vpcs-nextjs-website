@@ -12,7 +12,7 @@ const StatePageHeroSecondSection = () => {
                 <div className="grid lg:grid-cols-2 grid-cols-1 items-center justify-between gap-4 mt-10">
                     <div>
                         <div>
-                            <h2 className="text-[#FFFFFF] tahoma md:text-[40px] text-[30px] font-bold">Buying Or Selling</h2>
+                            <h2 className="text-[#FFFFFF] md:text-[40px] text-[30px] font-bold">Buying Or Selling</h2>
                         </div>
                         <TrackedCtaLink
                             href="/#state-map"
@@ -29,7 +29,7 @@ const StatePageHeroSecondSection = () => {
                             <Button buttonText="Find An Agent" />
                         </TrackedCtaLink>
                         <div>
-                            <h2 className="text-[#FFFFFF] tahoma md:text-[40px] text-[30px] font-bold">VA Loan Expert</h2>
+                            <h2 className="text-[#FFFFFF] md:text-[40px] text-[30px] font-bold">VA Loan Expert</h2>
                         </div>
                         <TrackedCtaLink
                             href="/#state-map"

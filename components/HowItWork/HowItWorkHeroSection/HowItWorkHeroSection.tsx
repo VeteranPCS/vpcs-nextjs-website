@@ -38,7 +38,7 @@ async function HowItWorkHeroSection() {
         <div className="container mx-auto">
           <div className="items-start justify-between gap-4">
             <div className="mx-auto text-left w-full order-2 md:order-none">
-              <h1 className="text-white md:text-[52px] text-[32px] poppins leading-[1.3] tahoma">
+              <h1 className="text-white md:text-[52px] text-[32px] poppins leading-[1.3]">
                 {overviewSection.component_header[0]?.children.map((child) =>
                   child.marks.includes("strong") ? (
                     <span key={child._key} className="font-bold">
@@ -61,14 +61,14 @@ async function HowItWorkHeroSection() {
                         className="w-7 h-7 mt-2"
                         loading="eager"
                       />
-                      <p className="text-white poppins lg:text-[24px] md:text-[20px] sm:text-[16px] text-[16px] font-medium text-sm tahoma lg:w-[450px] w-full leading-8">
+                      <p className="text-white poppins lg:text-[24px] md:text-[20px] sm:text-[16px] text-[16px] font-medium text-sm lg:w-[450px] w-full leading-8">
                         {item.text}
                       </p>
                     </div>
                   ))}
                 </div>
                 <div className="mt-5 flex flex-col items-center gap-3 sm:mt-6">
-                  <p className="text-center text-white poppins text-[18px] md:text-[20px] lg:text-[22px] font-semibold tahoma">
+                  <p className="text-center text-white poppins text-[18px] md:text-[20px] lg:text-[22px] font-semibold">
                     It&apos;s that easy!
                   </p>
                   <Link href="/how-it-works#agent-map">
@@ -81,7 +81,7 @@ async function HowItWorkHeroSection() {
                   </summary>
                   <div className="mt-4 space-y-3 text-left">
                     {militaryBonusNotes.map((note) => (
-                      <p key={note} className="poppins text-[13px] sm:text-[14px] leading-6 tahoma">
+                      <p key={note} className="poppins text-[13px] sm:text-[14px] leading-6">
                         {note}
                       </p>
                     ))}
