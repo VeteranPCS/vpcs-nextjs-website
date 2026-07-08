@@ -42,6 +42,9 @@ ngrok.yml
 # test/debug artifacts
 .playwright-mcp/
 
+# local analytics exports / session artifacts (may contain production metrics)
+artifacts/
+
 # migration data (contains customer PII — never commit)
 data/
 
