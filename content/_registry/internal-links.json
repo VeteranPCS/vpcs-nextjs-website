@@ -1,6 +1,6 @@
 {
-  "contentHash": "7470fa821f11de2925a181e49732907219e8f022ba2bb370da8d41264a4f0a75",
-  "totalPosts": 332,
+  "contentHash": "0e8028440c973445216f89123710a7b881c0e0532494344e02b3085c46881139",
+  "totalPosts": 334,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -183,6 +183,7 @@
     "Things to Do Near You": [
       "7-best-family-friendly-activities-near-kirtland-afb",
       "9-things-to-do-near-ft-bragg",
+      "best-things-to-do-near-nas-jrb-fort-worth",
       "fun-family-and-date-night-activities-near-tinker-afb",
       "things-to-do-near-fort-riley-a-local-guide",
       "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
@@ -333,6 +334,7 @@
       "should-you-put-money-down-on-a-va-loan-in-oklahoma-city",
       "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
       "understanding-the-va-funding-fee-a-complete-guide-for-military-families",
+      "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
       "va-loan-assumption-guide-how-military-families-can-save-thousands-on-their-next-home-purchase",
       "va-loan-assumptions-a-hidden-strategy-for-military-homebuyers",
       "va-loan-assumptions-the-hidden-entitlement-rule-that-trips-up-military-homebuyers",
@@ -531,6 +533,7 @@
     "things-to-do-near-you": [
       "7-best-family-friendly-activities-near-kirtland-afb",
       "9-things-to-do-near-ft-bragg",
+      "best-things-to-do-near-nas-jrb-fort-worth",
       "fun-family-and-date-night-activities-near-tinker-afb",
       "things-to-do-near-fort-riley-a-local-guide",
       "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
@@ -681,6 +684,7 @@
       "should-you-put-money-down-on-a-va-loan-in-oklahoma-city",
       "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
       "understanding-the-va-funding-fee-a-complete-guide-for-military-families",
+      "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
       "va-loan-assumption-guide-how-military-families-can-save-thousands-on-their-next-home-purchase",
       "va-loan-assumptions-a-hidden-strategy-for-military-homebuyers",
       "va-loan-assumptions-the-hidden-entitlement-rule-that-trips-up-military-homebuyers",
@@ -794,6 +798,7 @@
       "pcs-to-mcb-hawaii-kaneohe-bay-2026-guide",
       "pcs-to-schofield-barracks-2026-guide",
       "should-active-duty-military-buy-a-home-in-hawaii",
+      "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
       "what-military-bases-are-in-hawaii"
     ],
     "idaho": [
@@ -937,6 +942,7 @@
     ],
     "oklahoma": [
       "pcs-to-fort-sill-lawton-2026-guide",
+      "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "what-military-bases-are-in-oklahoma"
     ],
     "oregon": [
@@ -974,6 +980,7 @@
     "texas": [
       "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-fort-hood",
+      "best-things-to-do-near-nas-jrb-fort-worth",
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "pcs-to-dyess-afb-abilene-2026-guide",
       "pcs-to-fort-bliss-el-paso-2026-guide",
@@ -1030,10 +1037,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 230,
+    "resolved": 233,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 207,
+      "frontmatter-state-slug": 210,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -1058,7 +1065,6 @@
       "pcs-to-kitsap-county-five-things-military-families",
       "pcs-to-your-first-duty-station-guide",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
-      "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "percheron-colorado-springs-master-planned-community-near-colorado-military-bases",
       "prepare-to-pcs-how-do-i-prepare-for-movers",
       "prepare-to-pcs-understanding-your-pcs-entitlements-and-benefits",
@@ -1785,6 +1791,37 @@
         "Swarthmore and Wallingford: Commuter-Friendly and Family-Oriented",
         "Philadelphia Neighborhoods: City Living Close to Base",
         "Start Planning Your Move to Philadelphia"
+      ]
+    },
+    {
+      "slug": "best-things-to-do-near-nas-jrb-fort-worth",
+      "title": "Best Things to Do Near NAS JRB Fort Worth",
+      "url": "/blog/best-things-to-do-near-nas-jrb-fort-worth",
+      "component": "Things to Do Near You",
+      "componentSlug": "things-to-do-near-you",
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Things to Do Near You"
+      ],
+      "description": "A local agent's guide to the Stockyards, Airfield Falls, the Cultural District, the Fort Worth Zoo, and Lake Worth for families PCSing to NAS JRB Fort Worth.",
+      "publishedAt": "2026-07-01T09:00:00.000Z",
+      "updatedAt": "2026-07-07T00:00:00.000Z",
+      "primaryKeyword": "things to do near nas jrb fort worth",
+      "secondaryKeywords": [
+        "airfield falls trailhead",
+        "fort worth family activities",
+        "fort worth stockyards",
+        "nas jrb fort worth pcs"
+      ],
+      "h2Outline": [
+        "Fort Worth Stockyards",
+        "Airfield Falls Trailhead",
+        "The Cultural District",
+        "Fort Worth Zoo and Botanic Garden",
+        "Lake Worth and the Outdoors",
+        "Day Trips and Nearby Towns",
+        "Settling In with Local Help"
       ]
     },
     {
@@ -8128,15 +8165,15 @@
       "url": "/blog/pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "component": "PCS Help",
       "componentSlug": "pcs-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "oklahoma",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
         "US Military Bases"
       ],
       "description": "2026 BAH rates, neighborhood guides, VA Loan strategy, and a smart PCS housing plan and timeline for military families headed to Tinker AFB and the OKC metro.",
       "publishedAt": "2026-05-25T15:00:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-07-07T00:00:00.000Z",
       "primaryKeyword": "pcsing to tinker afb",
       "secondaryKeywords": [
         "midwest city neighborhoods",
@@ -9382,6 +9419,38 @@
         "GI Bill and Yellow Ribbon Program",
         "Want to See What You Missed?",
         "Connect with VeteranPCS"
+      ]
+    },
+    {
+      "slug": "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
+      "title": "Using Your VA Loan in Hawaii: What Oahu Buyers Should Know",
+      "url": "/blog/using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": "hawaii",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "VA Loan Help"
+      ],
+      "description": "How the VA loan works on Oahu: eligibility, the COE, reusing your entitlement, VA-approved condos, and why loan assumptions get tricky in a high-price market.",
+      "publishedAt": "2026-07-02T09:00:00.000Z",
+      "updatedAt": "2026-07-07T00:00:00.000Z",
+      "primaryKeyword": "va loan hawaii",
+      "secondaryKeywords": [
+        "pcs to hawaii home buying",
+        "va loan assumption hawaii",
+        "va loan eligibility",
+        "va loan oahu"
+      ],
+      "h2Outline": [
+        "How the VA loan works",
+        "Who is eligible",
+        "Start with your Certificate of Eligibility (COE)",
+        "A lifetime benefit you can use again",
+        "What you can buy on Oahu",
+        "VA loan assumptions on Oahu: the equity-gap problem",
+        "Should you buy on Oahu at all?",
+        "Talk with someone who knows the island"
       ]
     },
     {
