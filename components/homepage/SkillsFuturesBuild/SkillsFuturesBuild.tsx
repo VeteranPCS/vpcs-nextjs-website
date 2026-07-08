@@ -6,7 +6,7 @@ const SkillFuturesBuild = () => {
   return (
     <div className="w-full lg:mb-8 mb-0">
       <div className={`${classes.SkillsFuturesBuildContainer} flex items-center`}>
-        <div className="w-full text-center">
+        <div className="w-full text-center py-16 md:py-24">
           <h2 className="text-white lg:text-[48px] text-[30px] font-bold poppins px-10 sm:px-0 mb-5">
             Skills to share. Futures to build
           </h2>
