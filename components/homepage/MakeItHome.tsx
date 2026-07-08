@@ -5,9 +5,9 @@ import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const MilitaryHomePage = () => {
   return (
-    <div className="bg-[#F4F4F4]">
+    <div className="bg-surface">
       <div className="container mx-auto px-8">
-        <div className="flex flex-col md:flex-row items-center justify-center py-10 md:py-20">
+        <div className="flex flex-col md:flex-row items-center justify-center py-16 md:py-24">
           <div className="w-full md:w-1/2 lg:pr-10 md:pr-6 flex justify-center">
             <Image
               width={400}

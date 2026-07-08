@@ -26,6 +26,10 @@ const config: Config = {
           },
         },
         spinner: '#3498db',
+        surface: {
+          DEFAULT: '#F4F4F4',
+          dark: '#EEEEEE',
+        },
       },
       fontFamily: {
         inter: ['var(--font-inter)'],

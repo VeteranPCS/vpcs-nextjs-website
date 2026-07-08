@@ -3,7 +3,6 @@ import HeroSection from "@/components/homepage/HeroSection/HeroSection";
 import FeaturedLogos from "@/components/homepage/FeaturedLogos/FeaturedLogos";
 import VideoFamily from "@/components/homepage/VideoFamily";
 import Covered from "@/components/homepage/Covered/Covered";
-import FamilySupport from "@/components/homepage/FamilySupport/FamilySupport";
 import VeteranPCS from "@/components/homepage/VeteranPCSWorksComp/VeteranPCSWorks";
 import MakeItHome from "@/components/homepage/MakeItHome";
 import VeteranCommunity from "@/components/homepage/VeteranCommunity/VeteranCommunity";
@@ -37,10 +36,6 @@ export default function Home() {
       <VideoFamily />
       <VeteranCommunity component_slug="support-our-veteran-community" />
       <WhyVeteranPcs />
-      <FamilySupport
-        link="https://www.veteranpcs.com/impact"
-        component_slug="support-our-veteran-community"
-      />
       <MakeItHome />
       <Covered />
       <AgentLoanExpert />

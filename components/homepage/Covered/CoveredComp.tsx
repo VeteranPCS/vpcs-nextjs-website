@@ -65,7 +65,7 @@ const Covered: React.FC<CoveredProps> = ({ card }) => {
               </div>
               <div className="md:text-center text-left md:ml-0 ml-5">
                 <div className="md:mt-5 mt-0">
-                  <h4 className="text-[#292F6C] lg:text-[24px] md:text-[19px] sm:text-[16px] text-[18px] font-bold tahoma">
+                  <h4 className="text-[#292F6C] lg:text-[24px] md:text-[19px] sm:text-[16px] text-[18px] font-bold">
                     {title}
                   </h4>
                 </div>

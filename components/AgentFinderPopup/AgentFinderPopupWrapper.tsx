@@ -7,8 +7,7 @@ import { useScrollTrigger } from './useScrollTrigger';
 const AgentFinderPopupWrapper: React.FC = () => {
     const { showPopup, closePopup } = useScrollTrigger({
         triggerElementId: 'state-map',
-        offset: 100,
-        cooldownDuration: 60000 // 1 minute cooldown
+        offset: 100
     });
 
     const handleClose = () => {

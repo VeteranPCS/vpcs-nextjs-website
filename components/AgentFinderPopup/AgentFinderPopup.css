@@ -169,13 +169,15 @@
 @media (max-width: 768px) {
   .agent-finder-popup-backdrop {
     align-items: flex-end;
-    padding: 10px 10px 0;
+    /* Top inset keeps the blurred page context visible above the sheet so the
+       popup never covers the full viewport, even at 320px wide. */
+    padding: 56px 12px 0;
   }
-  
+
   .agent-finder-popup {
     max-width: 100%;
     border-radius: 16px 16px 0 0;
-    max-height: calc(100dvh - 40px);
+    max-height: calc(100dvh - 72px);
   }
   
   .agent-finder-popup__content {

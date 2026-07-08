@@ -96,68 +96,66 @@ const FamilyVideo = () => {
           controls={showControls}
         />
       </div>
-      <div className="container mx-auto overflow-hidden">
-        <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 w-full">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              <div className="text-center items-center baseline rounded-2xl p-0 sm:p-6 lg:space-y-10">
-                <div className="flex justify-center mx-auto lg:w-[100px] lg:h-[100px] sm:w-[70px] sm:h-[70px] w-[25px] h-[25px]">
-                  <Image
-                    width={100}
-                    height={100}
-                    src="/icon/yourimpacthendwhhite.svg"
-	                    alt=""
-                    className="w-full h-full"
-                  />
-                </div>
-                <div className="text-center lg:space-y-5">
-                  <h2 className="text-white font-bold md:text-4xl text-base tahoma mt-5 mb-2">
-                    {metrics.cashBackAmount}
-                  </h2>
-                  <p className="text-white font-normal lg:text-xl md:text-base text-xs tahoma">
-                    Savings Given Back
-                  </p>
-                </div>
+      <div className="pointer-events-none absolute inset-0 flex flex-col justify-center">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="text-center items-center baseline rounded-2xl p-0 sm:p-6 lg:space-y-10">
+              <div className="flex justify-center mx-auto lg:w-[100px] lg:h-[100px] sm:w-[70px] sm:h-[70px] w-[25px] h-[25px]">
+                <Image
+                  width={100}
+                  height={100}
+                  src="/icon/yourimpacthendwhhite.svg"
+                  alt=""
+                  className="w-full h-full"
+                />
               </div>
-
-              <div className="text-center items-center baseline rounded-2xl p-0 sm:p-6 lg:space-y-10">
-                <div className="flex justify-center mx-auto lg:w-[100px] lg:h-[100px] sm:w-[70px] sm:h-[70px] w-[25px] h-[25px]">
-                  <Image
-                    width={100}
-                    height={100}
-                    src="/icon/yourhome.svg"
-	                    alt=""
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="text-center lg:space-y-5">
-                  <h2 className="text-white font-bold md:text-4xl text-base tahoma mt-5 mb-2">
-                    {metrics.totalVolumeSold}
-                  </h2>
-                  <p className="text-white font-normal lg:text-xl md:text-base text-xs tahoma">
-                    Real Estate Volume Sold
-                  </p>
-                </div>
+              <div className="text-center lg:space-y-5">
+                <h2 className="text-white font-bold md:text-4xl text-base mt-5 mb-2">
+                  {metrics.cashBackAmount}
+                </h2>
+                <p className="text-white font-normal lg:text-xl md:text-base text-xs">
+                  Savings Given Back
+                </p>
               </div>
+            </div>
 
-              <div className="text-center items-center baseline rounded-2xl p-0 sm:p-6 lg:space-y-10">
-                <div className="flex justify-center mx-auto lg:w-[100px] lg:h-[100px] sm:w-[70px] sm:h-[70px] w-[25px] h-[25px]">
-                  <Image
-                    width={100}
-                    height={100}
-                    src="/icon/yourSymbol.svg"
-	                    alt=""
-                    className="w-full h-full"
-                  />
-                </div>
-                <div className="text-center lg:space-y-5">
-                  <h2 className="text-white font-bold md:text-4xl text-base tahoma mt-5 mb-2">
-                    {metrics.charityAmount}
-                  </h2>
-                  <p className="text-white font-normal lg:text-xl md:text-base text-xs tahoma">
-                    Donated to Military Foundations
-                  </p>
-                </div>
+            <div className="text-center items-center baseline rounded-2xl p-0 sm:p-6 lg:space-y-10">
+              <div className="flex justify-center mx-auto lg:w-[100px] lg:h-[100px] sm:w-[70px] sm:h-[70px] w-[25px] h-[25px]">
+                <Image
+                  width={100}
+                  height={100}
+                  src="/icon/yourhome.svg"
+                  alt=""
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="text-center lg:space-y-5">
+                <h2 className="text-white font-bold md:text-4xl text-base mt-5 mb-2">
+                  {metrics.totalVolumeSold}
+                </h2>
+                <p className="text-white font-normal lg:text-xl md:text-base text-xs">
+                  Real Estate Volume Sold
+                </p>
+              </div>
+            </div>
+
+            <div className="text-center items-center baseline rounded-2xl p-0 sm:p-6 lg:space-y-10">
+              <div className="flex justify-center mx-auto lg:w-[100px] lg:h-[100px] sm:w-[70px] sm:h-[70px] w-[25px] h-[25px]">
+                <Image
+                  width={100}
+                  height={100}
+                  src="/icon/yourSymbol.svg"
+                  alt=""
+                  className="w-full h-full"
+                />
+              </div>
+              <div className="text-center lg:space-y-5">
+                <h2 className="text-white font-bold md:text-4xl text-base mt-5 mb-2">
+                  {metrics.charityAmount}
+                </h2>
+                <p className="text-white font-normal lg:text-xl md:text-base text-xs">
+                  Donated to Military Foundations
+                </p>
               </div>
             </div>
           </div>
