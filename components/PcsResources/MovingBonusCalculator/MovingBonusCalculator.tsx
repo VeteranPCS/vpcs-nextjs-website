@@ -161,10 +161,10 @@ const MovingBonusCalculator = () => {
                             <div className="flex-1">
                                 {/* Header */}
                                 <div className="mb-8">
-                                    <h2 className="text-[#27306d] font-bold text-2xl lg:text-3xl mb-2 tahoma">
+                                    <h2 className="text-[#27306d] font-bold text-2xl lg:text-3xl mb-2">
                                         Estimated <span className="font-normal">Veteran</span>PCS Bonus
                                     </h2>
-                                    <p className="text-[#231f20] text-sm tahoma">
+                                    <p className="text-[#231f20] text-sm">
 	                                        Adjust the slider to estimate your VeteranPCS bonus. We can confirm your options when we match you with an agent.
                                     </p>
                                 </div>
@@ -191,7 +191,7 @@ const MovingBonusCalculator = () => {
                                 <div className="flex flex-col md:grid md:grid-cols-3 gap-6 md:items-center">
                                     {/* Home Price Input */}
                                     <div>
-                                        <label className="block text-[#231f20] text-sm mb-2 tahoma">
+                                        <label className="block text-[#231f20] text-sm mb-2">
                                             Home Price
                                         </label>
                                         <input
@@ -200,16 +200,16 @@ const MovingBonusCalculator = () => {
                                             value={homeValue === 0 ? '' : formatCurrency(homeValue)}
                                             onChange={handleInputChange}
                                             placeholder="$0"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded text-[#231f20] text-base tahoma"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded text-[#231f20] text-base"
                                         />
                                     </div>
 
                                     {/* VeteranPCS Bonus Display */}
                                     <div className="text-center">
-                                        <p className="text-[#231f20] text-sm mb-1 tahoma">
+                                        <p className="text-[#231f20] text-sm mb-1">
                                             VeteranPCS Bonus
                                         </p>
-                                        <p className="text-[#27306d] font-bold text-2xl tahoma">
+                                        <p className="text-[#27306d] font-bold text-2xl">
                                             {formatCurrency(movingBonus)}
                                         </p>
                                     </div>
@@ -230,7 +230,7 @@ const MovingBonusCalculator = () => {
 
                     {/* Disclaimer */}
                     <div className="mt-8 text-center">
-                        <p className="text-gray-500 text-sm max-w-2xl mx-auto tahoma">
+                        <p className="text-gray-500 text-sm max-w-2xl mx-auto">
                             * Bonus amounts are estimates and may vary based on final purchase price and actual commission rates.
                         </p>
                     </div>

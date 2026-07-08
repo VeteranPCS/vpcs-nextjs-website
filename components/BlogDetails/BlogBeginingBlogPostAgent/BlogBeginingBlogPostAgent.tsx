@@ -56,13 +56,13 @@ export default function BlogBeginningBlogPostAgent({
             {tocHeadings.length > 0 && (
               <>
                 <details className="mt-8 rounded border border-[#E5E7EB] p-4 lg:hidden">
-                  <summary className="flex min-h-11 cursor-pointer items-center text-[#292F6C] tahoma text-sm font-bold">
+                  <summary className="flex min-h-11 cursor-pointer items-center text-[#292F6C] text-sm font-bold">
                     Table of contents
                   </summary>
                   {tocList}
                 </details>
                 <nav className="mt-8 hidden rounded border border-[#E5E7EB] p-4 lg:block" aria-label="Table of contents">
-                  <p className="text-[#292F6C] tahoma text-sm font-bold">In this guide</p>
+                  <p className="text-[#292F6C] text-sm font-bold">In this guide</p>
                   {tocList}
                 </nav>
               </>

@@ -19,7 +19,7 @@ const MovingOurLife = async () => {
     <div className="w-full py-12 lg:px-0 px-5">
       <div className="container mx-auto">
         <div>
-          <h1 className="text-[#292F6C] text-center tahoma lg:text-[43px] md:text-[30px] sm:text-[30px] text-[30px] leading-[32px] md:leading-normal mb-10 md:mb-0 font-bold">
+          <h1 className="text-[#292F6C] text-center lg:text-[43px] md:text-[30px] sm:text-[30px] text-[30px] leading-[32px] md:leading-normal mb-10 md:mb-0 font-bold">
             Moving Your Life
           </h1>
         </div>

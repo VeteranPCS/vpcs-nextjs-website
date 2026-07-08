@@ -28,17 +28,17 @@ const DigitalTeam = async () => {
   return (
     <div className="bg-white py-3 px-5 mt-10">
       <div className="bg-[#EEEEEE] px-9 sm:px-4 pb-14">
-        <div className="mt-10 pt-7 pb-14 ">
-          <h2 className="text-[#292F6C] font-bold xl:text-[55px] lg:text-[50px] text-[40px] leading-[54px] tahoma text-center">
+        <div className="mt-10 pt-7 pb-14">
+          <h2 className="text-[#292F6C] font-bold xl:text-[55px] lg:text-[50px] text-[40px] leading-[54px] text-center">
             Meet the <span className="font-normal">Veteran</span>PCS team
           </h2>
         </div>
         <div className="container mx-auto">
           <div className="text-center">
-            <h6 className="text-gray-800 text-center font-bold text-[21px] tahoma">
+            <h6 className="text-gray-800 text-center font-bold text-[21px]">
               OPERATIONS & TECH
             </h6>
-            <p className="text-[#000000] text-center tahoma font-normal text-[24px] lg:w-[1000px] mx-auto my-3">
+            <p className="text-[#000000] text-center font-normal text-[24px] lg:w-[1000px] mx-auto my-3">
               Veterans and Military Spouses, Just Like You
             </p>
           </div>
@@ -61,7 +61,7 @@ const DigitalTeam = async () => {
                   />
                 </div>
                 <div className="px-5 py-5">
-                  <h6 className="text-black tahoma font-semibold text-lg md:text-2xl">
+                  <h6 className="text-black font-semibold text-lg md:text-2xl">
                     {details.name}
                   </h6>
                   <span className="text-[#3E3E59] text-sm md:text-lg font-light">

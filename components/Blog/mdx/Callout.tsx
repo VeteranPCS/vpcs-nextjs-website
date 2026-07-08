@@ -21,7 +21,7 @@ export default function Callout({ type = 'info', title, children }: Props) {
       className={`my-6 rounded-xl border-l-4 px-5 py-4 ${VARIANT_STYLES[type]}`}
       role="note"
     >
-      {title ? <p className="font-bold tahoma mb-2">{title}</p> : null}
+      {title ? <p className="font-bold mb-2">{title}</p> : null}
       <div className="roboto text-sm leading-6 [&>p]:m-0 [&>p+p]:mt-3">{children}</div>
     </aside>
   );

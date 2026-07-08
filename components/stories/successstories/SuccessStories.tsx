@@ -32,10 +32,10 @@ const SuccessStories = async () => {
       <div>
         <div className="container mx-auto pt-20 md:pb-10 pb-5">
           <div className="mx-auto text-center w-full order-2 md:order-1 px-6 sm:px-0">
-            <p className="text-[#292F6C] font-bold lg:text-[59px] md:text-[29px] text-[32px] poppins leading-[1.3] tahoma">
+            <p className="text-[#292F6C] font-bold lg:text-[59px] md:text-[29px] text-[32px] poppins leading-[1.3]">
               Check out our success stories
             </p>
-            <h1 className="md:text-[18px] text-[16px] font-normal text-[#7E1618] poppins lg:mb-10 mb:mb-10 mb-2 tahoma">
+            <h1 className="md:text-[18px] text-[16px] font-normal text-[#7E1618] poppins lg:mb-10 mb:mb-10 mb-2">
               Military community helping military community move.
             </h1>
           </div>

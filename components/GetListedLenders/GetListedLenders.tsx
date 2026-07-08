@@ -57,7 +57,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
         <form onSubmit={handleSubmit(handleSubmitPersonal)}>
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
-              <h1 className="text-[#7E1618] tahoma md:text-[32px] text-[24px] font-bold leading-8">
+              <h1 className="text-[#7E1618] md:text-[32px] text-[24px] font-bold leading-8">
                 Lenders, Get Listed!
               </h1>
               <p className="text-[#575F6E] roboto text-base font-black mt-3">
@@ -66,7 +66,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
             </div>
             <div className="border rounded-lg border-[#E2E4E5] p-8">
               <div className="mb-8">
-                <h3 className="text-[#000080] tahoma text-xl font-bold">
+                <h3 className="text-[#000080] text-xl font-bold">
                   Personal data
                 </h3>
                 <p className="text-[#575F6E] roboto text-sm font-light">
@@ -77,7 +77,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="firstName"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     First name
                   </label>
@@ -96,7 +96,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="lastName"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Last name
                   </label>
@@ -115,7 +115,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
                 <div className="mb-8 flex flex-col relative">
                   <label
                     htmlFor="email"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Email
                   </label>
@@ -150,7 +150,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
                 <div className="flex flex-col relative">
                   <label
                     htmlFor="phone"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Phone
                   </label>

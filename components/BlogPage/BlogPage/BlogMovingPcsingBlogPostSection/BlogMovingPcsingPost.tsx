@@ -59,7 +59,7 @@ export default function BlogMovingPcsingPost({ blogDetails }: Props) {
             <p className="text-[#6C757D] lora text-sm font-normal">
               {formatDate(blogDetails.publishedAt)}
             </p>
-            <h3 className="text-[#495057] tahoma text-lg font-bold my-4 line-clamp-2">
+            <h3 className="text-[#495057] text-lg font-bold my-4 line-clamp-2">
               {blogDetails.title}
             </h3>
             <p className="text-[#6C757D] roboto text-sm font-normal line-clamp-3">

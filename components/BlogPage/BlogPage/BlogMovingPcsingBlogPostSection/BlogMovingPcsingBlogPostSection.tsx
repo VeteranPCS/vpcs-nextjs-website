@@ -25,7 +25,7 @@ export default async function BlogMovingPcsingBlogPostSection({
         <div className="flex justify-between items-center flex-wrap">
           <div>
             <div>
-              <h2 className="text-[#292F6C] tahoma md:text-[36px] text-[26px] font-bold">
+              <h2 className="text-[#292F6C] md:text-[36px] text-[26px] font-bold">
                 {component}
               </h2>
               <BlogCategory categories_list={categories_list} />
@@ -40,7 +40,7 @@ export default async function BlogMovingPcsingBlogPostSection({
             <BlogMovingPcsingPost key={blog.slug} blogDetails={blog} />
           ))}
         </div>
-        <div className="flex justify-end mt-5 sm:hidden ">
+        <div className="flex justify-end mt-5 sm:hidden">
           <TrackedCtaLink
             href={categoryHref}
             className="text-[#292F6C] roboto text-sm font-bold inline-flex items-center min-h-11"

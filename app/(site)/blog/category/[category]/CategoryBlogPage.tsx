@@ -52,7 +52,7 @@ export async function CategoryBlogPage({ category, page = 1 }: Props) {
             </nav>
             <div className="grid gap-6 md:grid-cols-[1fr_320px] md:items-end">
               <div>
-                <h1 className="text-[#292F6C] tahoma text-[30px] font-bold md:text-[42px]">
+                <h1 className="text-[#292F6C] text-[30px] font-bold md:text-[42px]">
                   {component.label}
                 </h1>
                 <p className="mt-4 max-w-3xl text-[#495057] roboto text-base leading-7">

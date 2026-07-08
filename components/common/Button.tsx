@@ -23,7 +23,7 @@ const Button: React.FC<ButtonProps> = ({
 
   const label = (
     <span
-      className="bg-cover text-sm font-normal leading-6 text-white tahoma md:text-lg"
+      className="bg-cover text-sm font-normal leading-6 text-white md:text-lg"
     >
       {buttonText}
     </span>

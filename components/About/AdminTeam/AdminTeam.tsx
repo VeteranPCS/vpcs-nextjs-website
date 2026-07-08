@@ -62,10 +62,10 @@ const AdminTeam = async () => {
       <div className="bg-[#FFFFFF] pt-7 pb-14 px-9 sm:px-4">
         <div className="container mx-auto">
           <div className="text-center">
-            <h6 className="text-gray-800 text-center font-bold text-[21px] tahoma">
+            <h6 className="text-gray-800 text-center font-bold text-[21px]">
               ADMINISTRATION
             </h6>
-            <p className="text-[#000000] text-center tahoma font-normal text-[24px] lg:w-[1000px] mx-auto my-3">
+            <p className="text-[#000000] text-center font-normal text-[24px] lg:w-[1000px] mx-auto my-3">
               Ensuring your experience is seamless and an extraordinary move or PCS.
             </p>
           </div>
@@ -82,7 +82,7 @@ const AdminTeam = async () => {
                   />
                 </div>
                 <div className="px-5 py-5">
-                  <h6 className="text-black tahoma font-semibold text-lg md:text-2xl">
+                  <h6 className="text-black font-semibold text-lg md:text-2xl">
                     {details.name}
                   </h6>
                   <span className="text-[#3E3E59] text-sm md:text-lg font-light">

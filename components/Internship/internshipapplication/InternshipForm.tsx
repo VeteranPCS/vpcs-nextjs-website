@@ -174,7 +174,7 @@ const WebToLeadForm = () => {
 
                     <div className="flex flex-col gap-8">
                         <div className="md:text-left text-center">
-                            <h1 className="text-[#7E1618] tahoma lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
+                            <h1 className="text-[#7E1618] lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
                                 Kick Start Your Career
                             </h1>
                             <p className="text-[#575F6E] roboto text-base font-black mt-8">
@@ -182,7 +182,7 @@ const WebToLeadForm = () => {
                         </div>
 
                         <div className="border rounded-lg border-[#E2E4E5] p-8">
-                            <h3 className="text-[#000080] font-bold tahoma text-lg mb-1">Personal Information</h3>
+                            <h3 className="text-[#000080] font-bold text-lg mb-1">Personal Information</h3>
                             <p className="text-sm text-[#575F6E] roboto mb-8">No spam mail, no fees.</p>
                             {/* First Name */}
                             <div className="mb-8 flex flex-col">
@@ -258,12 +258,12 @@ const WebToLeadForm = () => {
 
                             {/* Military Service */}
                             <fieldset className="mb-8">
-                                <legend className="text-[#000080] font-bold tahoma text-lg mb-1">
+                                <legend className="text-[#000080] font-bold text-lg mb-1">
                                     Military Service Information
                                 </legend>
                                 {/* Military Branch */}
                                 <div className="mb-4 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
+                                    <label className="text-[#242426] text-sm font-normal mb-1">
                                         Branch of Service
                                     </label>
                                     <select
@@ -288,7 +288,7 @@ const WebToLeadForm = () => {
 
                                 {/* Military Status */}
                                 <div className="mb-4 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
+                                    <label className="text-[#242426] text-sm font-normal mb-1">
                                         Military Status
                                     </label>
                                     <select
@@ -313,7 +313,7 @@ const WebToLeadForm = () => {
 
                                 {/* Discharge Status */}
                                 <div className="mb-4 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
+                                    <label className="text-[#242426] text-sm font-normal mb-1">
                                         Discharge Status
                                     </label>
                                     <select
@@ -336,10 +336,10 @@ const WebToLeadForm = () => {
                             </fieldset>
 
                             {/* Current Location */}
-                            <h3 className="text-[#000080] font-bold tahoma text-lg mb-8">Location & Internship</h3>
+                            <h3 className="text-[#000080] font-bold text-lg mb-8">Location & Internship</h3>
 
                             <fieldset className="mb-8">
-                                <legend className="text-[#242426] tahoma text-sm font-normal mb-1">
+                                <legend className="text-[#242426] text-sm font-normal mb-1">
                                     Current Location
                                 </legend>
 
@@ -449,7 +449,7 @@ const WebToLeadForm = () => {
 
                             {/* Internship */}
                             <fieldset className="mb-8">
-                                <legend className="text-[#242426] tahoma text-sm font-normal mb-1">
+                                <legend className="text-[#242426] text-sm font-normal mb-1">
                                     Internship Type
                                 </legend>
 
@@ -476,7 +476,7 @@ const WebToLeadForm = () => {
 
                                 {/* Destination State */}
                                 <div className="mb-4 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
+                                    <label className="text-[#242426] text-sm font-normal mb-1">
                                         Desired Location
                                     </label>
                                     <select
@@ -568,7 +568,7 @@ const WebToLeadForm = () => {
 
                                 {/* Start Date */}
                                 <div className="mb-4 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
+                                    <label className="text-[#242426] text-sm font-normal mb-1">
                                         Preferred Start Date
                                     </label>
                                     <input
@@ -590,7 +590,7 @@ const WebToLeadForm = () => {
 
                                 {/* Licensed */}
                                 <div className="mb-4 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
+                                    <label className="text-[#242426] text-sm font-normal mb-1">
                                         Are you licensed?
                                     </label>
                                     <select
@@ -613,7 +613,7 @@ const WebToLeadForm = () => {
 
                             {/* How Did You Hear */}
                             <div className="mb-8 flex flex-col">
-                                <label className="text-[#242426] tahoma text-sm font-normal mb-1">
+                                <label className="text-[#242426] text-sm font-normal mb-1">
                                     How Did You Hear About Us?
                                 </label>
                                 <select
@@ -645,7 +645,7 @@ const WebToLeadForm = () => {
                             {/* Tell Us More */}
                             {howDidYouHear === "Other" && (
                                 <div className="mb-8 flex flex-col">
-                                    <label className="text-[#242426] tahoma text-sm font-normal mb-1">
+                                    <label className="text-[#242426] text-sm font-normal mb-1">
                                         Tell Us More!
                                     </label>
                                     <input

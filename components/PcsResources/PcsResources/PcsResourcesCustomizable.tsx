@@ -19,10 +19,10 @@ const PcsResourcesCustomizable: React.FC<PcsResourcesCustomizableProps> = ({
                 <div className="container mx-auto px-5">
                     <div className="grid lg:grid-cols-2 grid-cols-1 items-start justify-between gap-4">
                         <div className="mx-auto text-left w-full order-2 md:order-none">
-                            <h1 className="text-white font-bold lg:text-[59px] md:text-[29px] text-[32px] poppins mb-5 tahoma leading-[1.3]">
+                            <h1 className="text-white font-bold lg:text-[59px] md:text-[29px] text-[32px] poppins mb-5 leading-[1.3]">
                                 {headerText}
                             </h1>
-                            <p className="md:text-[18px] text-[16px] font-normal text-white poppins mb-10 tahoma">
+                            <p className="md:text-[18px] text-[16px] font-normal text-white poppins mb-10">
                                 {subText}
                             </p>
                             <div className="flex justify-between md:justify-start gap-4 mb-10 mt-10 mx-auto text-center">
@@ -35,7 +35,7 @@ const PcsResourcesCustomizable: React.FC<PcsResourcesCustomizableProps> = ({
                                         className="w-6 h-6"
                                         loading="eager"
                                     />
-                                    <p className="text-white font-medium text-sm tahoma">
+                                    <p className="text-white font-medium text-sm">
                                         Free To Use
                                     </p>
                                 </div>
@@ -48,7 +48,7 @@ const PcsResourcesCustomizable: React.FC<PcsResourcesCustomizableProps> = ({
                                         className="w-6 h-6"
                                         loading="eager"
                                     />
-                                    <p className="text-white font-medium text-sm tahoma">
+                                    <p className="text-white font-medium text-sm">
                                         Veteran Approved
                                     </p>
                                 </div>

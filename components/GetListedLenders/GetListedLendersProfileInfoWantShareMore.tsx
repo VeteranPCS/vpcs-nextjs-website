@@ -57,7 +57,7 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
       <div className="md:w-[456px] mx-auto my-10">
         <div className="flex flex-col gap-8">
           <div className="md:text-left text-center">
-            <h1 className="text-[#7E1618] tahoma md:text-[32px] text-[24px] font-bold leading-8">
+            <h1 className="text-[#7E1618] md:text-[32px] text-[24px] font-bold leading-8">
               Lender Info
             </h1>
           </div>
@@ -68,7 +68,7 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="primaryState"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Primary State to be Listed:
                   </label>
@@ -92,14 +92,14 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
                 {/* Other States */}
                 <div className="mb-8 flex flex-col">
                   <fieldset>
-                    <legend className="text-[#242426] tahoma text-sm font-normal mb-1">
+                    <legend className="text-[#242426] text-sm font-normal mb-1">
                       Other State(s) Licensed:
                     </legend>
                     <div className="grid grid-cols-2 border rounded border-[#E2E4E5] px-2 py-1 max-h-48 overflow-y-auto">
                       {US_STATE_CODES.map((code) => (
                         <label
                           key={code}
-                          className="flex items-center gap-2 min-h-11 tahoma text-sm font-normal cursor-pointer"
+                          className="flex items-center gap-2 min-h-11 text-sm font-normal cursor-pointer"
                         >
                           <input type="checkbox" value={code} {...register('otherStates')} />
                           {code}
@@ -116,7 +116,7 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
                 <div className="mb-8 flex flex-col">
                   <label
                     htmlFor="localCities"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Cities/Bases/Areas you consider yourself as a &apos;local lender&apos;
                   </label>
@@ -132,7 +132,7 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
                 <div className="flex flex-col">
                   <label
                     htmlFor="nmlsId"
-                    className="text-[#242426] tahoma text-sm font-normal mb-1"
+                    className="text-[#242426] text-sm font-normal mb-1"
                   >
                     Individual NMLS ID:
                   </label>

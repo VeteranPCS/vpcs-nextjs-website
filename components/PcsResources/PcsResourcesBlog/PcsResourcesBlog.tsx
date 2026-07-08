@@ -19,7 +19,7 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
       <div className="container mx-auto">
         <div className="flex flex-wrap gap-5 items-end md:justify-between justify-center">
           <div className="md:text-left text-center">
-            <h2 className="text-[#292F6C] md:text-[42px] text-[30px] font-bold tahoma md:text-left text-center">
+            <h2 className="text-[#292F6C] md:text-[42px] text-[30px] font-bold md:text-left text-center">
               {component}
             </h2>
           </div>
@@ -82,7 +82,7 @@ export default function PcsResourcesBlog({ blogList, component }: Props) {
                   <p className="text-[#E5E5E5] md:text-[14px] text-[12px] font-normal leading-normal">
                     {formatDate(blog.publishedAt)}
                   </p>
-                  <h3 className="text-white tahoma md:text-[21px] text-[15px] font-bold my-3 line-clamp-2">
+                  <h3 className="text-white md:text-[21px] text-[15px] font-bold my-3 line-clamp-2">
                     {blog.title}
                   </h3>
                   <p className="text-[#E5E5E5] roboto text-[14px] font-normal lg:max-w-[370px] line-clamp-3">

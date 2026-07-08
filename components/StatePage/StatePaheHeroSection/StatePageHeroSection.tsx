@@ -30,10 +30,10 @@ const StatePageHeroSection = ({
         <div className="grid lg:grid-cols-2 grid-cols-1 items-center justify-between gap-4">
           <div>
             <div className="sm:text-left text-center">
-              <h1 className="text-[#292F6C] tahoma lg:text-[78px] md:text-[66px] text-[40px] font-bold md:w-[300px] w-full">
+              <h1 className="text-[#292F6C] lg:text-[78px] md:text-[66px] text-[40px] font-bold md:w-[300px] w-full">
                 {stateName}
               </h1>
-              <p className="text-[#292F6C] tahoma lg:text-[40px] md:text-[35px] sm:text-[25px] text-[18px] font-normal mt-5">
+              <p className="text-[#292F6C] lg:text-[40px] md:text-[35px] sm:text-[25px] text-[18px] font-normal mt-5">
                 Real Estate Agents & VA Loan Lenders
               </p>
             </div>

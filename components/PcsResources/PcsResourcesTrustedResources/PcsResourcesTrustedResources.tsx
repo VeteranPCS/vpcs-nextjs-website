@@ -31,7 +31,7 @@ const PcsResourcesTrustedResources = async () => {
     <div className="py-12 px-5">
       <div className="container mx-auto">
         <div>
-          <h2 className="text-[#003486] tahoma md:text-[43px] text-[31px] font-bold text-center">
+          <h2 className="text-[#003486] md:text-[43px] text-[31px] font-bold text-center">
             VeteranPCS Trusted Resources
           </h2>
           <p className="text-[#878787] text-center mx-auto roboto md:text-[18px] text-[14px] font-medium mt-2 italic">

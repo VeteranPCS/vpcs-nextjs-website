@@ -10,7 +10,7 @@ const ImpactVaLoan = () => {
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-10 items-center justify-center">
           <div className="lg:pl-10 pl-0 sm:order-1 order-2">
             <div className="md:text-left text-center">
-              <h2 className="text-white font-tahoma md:text-[42px] text-[32px] font-bold leading-[50.4px] capitalize">
+              <h2 className="text-white md:text-[42px] text-[32px] font-bold leading-[50.4px] capitalize">
                 VA loan
               </h2>
               <p className="text-white font-montserrat md:text-[26px] text-[20px] font-medium">
@@ -29,10 +29,10 @@ const ImpactVaLoan = () => {
                   />
                 </div>
                 <div>
-                  <h2 className="text-white font-bold lg:text-[42px] text-[32px] tahoma text-center mt-2 mb-2">
+                  <h2 className="text-white font-bold lg:text-[42px] text-[32px] text-center mt-2 mb-2">
                     200
                   </h2>
-                  <p className="text-white text-center font-tahoma text-sm font-normal lg:w-[120px]">
+                  <p className="text-white text-center text-sm font-normal lg:w-[120px]">
                     VA Loans used through VeteranPCS
                   </p>
                 </div>
@@ -48,10 +48,10 @@ const ImpactVaLoan = () => {
                   />
                 </div>
                 <div>
-                  <h2 className="text-white font-bold lg:text-[42px] text-[32px] tahoma text-center mt-2 mb-2">
+                  <h2 className="text-white font-bold lg:text-[42px] text-[32px] text-center mt-2 mb-2">
                     12
                   </h2>
-                  <p className="text-white text-center font-tahoma text-sm font-normal lg:w-[150px]">
+                  <p className="text-white text-center text-sm font-normal lg:w-[150px]">
                     VA Loan Experts
                   </p>
                 </div>
@@ -67,10 +67,10 @@ const ImpactVaLoan = () => {
                   />
                 </div>
                 <div>
-                  <h2 className="text-white font-bold lg:text-[42px] text-[32px] tahoma text-center mt-2 mb-2">
+                  <h2 className="text-white font-bold lg:text-[42px] text-[32px] text-center mt-2 mb-2">
                     300
                   </h2>
-                  <p className="text-white text-center font-tahoma text-sm font-normal lg:w-[150px]">
+                  <p className="text-white text-center text-sm font-normal lg:w-[150px]">
                     Veterans & their families buy & sell homes
                   </p>
                 </div>
@@ -79,7 +79,7 @@ const ImpactVaLoan = () => {
             <div className="mt-5 md:block flex justify-center">
               <div className="md:py-8 py-2">
                 <LenderCtaLink
-                  className="inline-flex min-h-11 max-w-full items-center justify-center rounded-2xl bg-accent-red px-5 py-3.5 text-center text-sm font-normal leading-6 text-white tahoma transition-colors duration-200 hover:bg-accent-red-dark active:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:text-lg lg:px-8 lg:py-4"
+                  className="inline-flex min-h-11 max-w-full items-center justify-center rounded-2xl bg-accent-red px-5 py-3.5 text-center text-sm font-normal leading-6 text-white transition-colors duration-200 hover:bg-accent-red-dark active:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:text-lg lg:px-8 lg:py-4"
                   ctaId="impact_va_loan_more_info"
                   ctaPosition="impact_va_loan_section"
                   ctaComponent="impact_va_loan"

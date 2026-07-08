@@ -20,7 +20,7 @@ export default function BahRateTable({ base, year, title }: Props) {
   if (!snapshot) {
     return (
       <aside className="my-6 rounded-lg border border-[#E5E7EB] bg-[#F8F9FA] p-5">
-        <p className="tahoma text-lg font-bold text-[#292F6C]">
+        <p className="text-lg font-bold text-[#292F6C]">
           BAH rates unavailable
         </p>
         <p className="roboto mt-2 text-sm leading-6 text-[#495057]">
@@ -43,7 +43,7 @@ export default function BahRateTable({ base, year, title }: Props) {
   return (
     <section className="my-8 overflow-hidden rounded-lg border border-[#DDE3EA] bg-white">
       <div className="bg-[#292F6C] px-5 py-4 text-white">
-        <h3 className="tahoma text-xl font-bold">
+        <h3 className="text-xl font-bold">
           {title ?? `${snapshot.baseName} BAH Rates (${snapshot.year})`}
         </h3>
         <p className="roboto mt-1 text-sm text-white/85">

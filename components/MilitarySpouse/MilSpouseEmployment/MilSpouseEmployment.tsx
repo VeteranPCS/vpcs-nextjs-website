@@ -21,7 +21,7 @@ const MilitarySpouseEmployment = async () => {
     <div className="w-full py-10 lg:px-0 px-5 bg-[#E8E8E8]">
       <div className="container mx-auto">
         <div>
-          <h1 className="text-[#292F6C] text-center tahoma lg:text-[43px] md:text-[30px] sm:text-[30px] text-[30px] leading-[32px] md:leading-normal mb-10 md:mb-0 font-bold">
+          <h1 className="text-[#292F6C] text-center lg:text-[43px] md:text-[30px] sm:text-[30px] text-[30px] leading-[32px] md:leading-normal mb-10 md:mb-0 font-bold">
             Military Spouse Employment
           </h1>
         </div>
@@ -56,7 +56,7 @@ const MilitarySpouseEmployment = async () => {
                 width={1000}
                 height={1000}
                 alt="Instant Teams logo"
-                className="w-[300px] h-auto  object-cover"
+                className="w-[300px] h-auto object-cover"
               />
             </div>
             <div>
@@ -74,7 +74,7 @@ const MilitarySpouseEmployment = async () => {
                 width={1000}
                 height={1000}
                 alt="Squared Away logo"
-                className="w-[300px] h-auto  object-cover"
+                className="w-[300px] h-auto object-cover"
               />
             </div>
             <div>

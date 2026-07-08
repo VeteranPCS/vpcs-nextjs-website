@@ -17,10 +17,10 @@ const GuidesHero = () => {
                 <div className="container mx-auto px-5">
                     <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-center justify-between gap-8">
                         <div className="mx-auto lg:text-left md:text-left sm:text-left text-left w-full">
-                            <h1 className="text-white font-bold lg:text-[59px] md:text-[45px] sm:text-[36px] text-[32px] poppins mb-5 tahoma leading-[1.2]">
+                            <h1 className="text-white font-bold lg:text-[59px] md:text-[45px] sm:text-[36px] text-[32px] poppins mb-5 leading-[1.2]">
                                 VeteranPCS Guides
                             </h1>
-                            <p className="lg:text-[20px] md:text-[18px] sm:text-[16px] text-[16px] font-normal text-white poppins mb-10 tahoma max-w-lg">
+                            <p className="lg:text-[20px] md:text-[18px] sm:text-[16px] text-[16px] font-normal text-white poppins mb-10 max-w-lg">
                                 Resources designed to help military families navigate PCS moves, home buying, VA loans, and more
                             </p>
                             <div className="flex flex-wrap gap-4 mb-10 mt-8">

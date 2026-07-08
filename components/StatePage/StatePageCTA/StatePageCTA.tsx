@@ -28,16 +28,16 @@ const StatePageCTA = ({ cityName, stateSlug }: { cityName: string; stateSlug: st
               <Image
                 width={100}
                 height={100}
-                className=" w-auto h-auto"
+                className="w-auto h-auto"
                 src="/icon/userplus.svg"
                 alt=""
               />
             </div>
             <div>
-              <h2 className="text-white tahoma text-[31px] font-bold mt-5 md:text-left text-center lg:w-[500px]">
+              <h2 className="text-white text-[31px] font-bold mt-5 md:text-left text-center lg:w-[500px]">
                 Talk to our Agents in {cityName} Today
               </h2>
-              <p className="text-white tahoma lg:text-[18px] md:text-[19px] text-[16px] font-normal leading-[25px] mt-4 md:text-left text-center">
+              <p className="text-white lg:text-[18px] md:text-[19px] text-[16px] font-normal leading-[25px] mt-4 md:text-left text-center">
                 Are you a veteran or military spouse in search of a {cityName}{" "}
                 realtor who understands your distinctive requirements?
                 VeteranPCS is the answer. We are not serving merely as another
@@ -77,7 +77,7 @@ const StatePageCTA = ({ cityName, stateSlug }: { cityName: string; stateSlug: st
                 <button
                   className="items-center border-2 border-[#A3161B] bg-white w-auto inline-flex lg:px-[30px] px-[20px] md:py-[14px] py-[12px] rounded-[16px] text-center tracking-[1px] text-[#A3161B] hover:bg-[#A3161B] hover:text-[#ffffff] all-duration transition-all duration-300 ease-in-out"
                 >
-                  <span className="md:text-[18px] text-[14px] font-normal leading-6 bg-cover text-nowrap tahoma">
+                  <span className="md:text-[18px] text-[14px] font-normal leading-6 bg-cover text-nowrap">
                     Lender
                   </span>
                 </button>

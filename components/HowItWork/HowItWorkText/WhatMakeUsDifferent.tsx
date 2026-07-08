@@ -19,7 +19,7 @@ const WhatMakeUsDifferent = async () => {
   return (
     <>
       <div>
-        <h6 className="text-[#292F6C] tahoma lg:text-[33px] md:text-[30px] sm:text-[25px] text-[25px] font-bold my-2">
+        <h6 className="text-[#292F6C] lg:text-[33px] md:text-[30px] sm:text-[25px] text-[25px] font-bold my-2">
           {pageContent.component_header[0]?.children.map((child) =>
             child.marks.includes("strong") ? (
               <span key={child._key} className="font-bold">

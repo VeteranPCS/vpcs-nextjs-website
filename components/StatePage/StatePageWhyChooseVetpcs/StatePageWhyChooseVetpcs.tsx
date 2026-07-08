@@ -33,10 +33,10 @@ const StatePageWhyChooseVetpcs = ({ cityName }: { cityName: string }) => {
   return (
     <div className="container mx-auto md:py-12 py-5 md:px-0 px-5">
       <div className="text-center">
-        <h2 className="text-[#292F6C] text-center tahoma md:text-[44px] text-[31px] font-bold md:w-[600px] w-full mx-auto">
+        <h2 className="text-[#292F6C] text-center md:text-[44px] text-[31px] font-bold md:w-[600px] w-full mx-auto">
           {cityName}
         </h2>
-        <p className="text-center text-[#292F6C] tahoma md:text-[18px] text-[14px] font-normal">
+        <p className="text-center text-[#292F6C] md:text-[18px] text-[14px] font-normal">
           Why choose VeteranPCS as Your Preferred Real Estate Agents?
         </p>
       </div>

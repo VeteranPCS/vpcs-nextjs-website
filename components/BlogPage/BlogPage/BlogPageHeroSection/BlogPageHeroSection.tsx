@@ -38,7 +38,7 @@ export default function BlogPageHeroSection({ blog }: Props) {
                     {blog.categories[0]}
                   </span>
                 ) : null}
-                <h1 className="text-white text-center tahoma md:text-[36px] text-[31px] font-bold mt-8 mb-3 leading-normal max-w-[800px]">
+                <h1 className="text-white text-center md:text-[36px] text-[31px] font-bold mt-8 mb-3 leading-normal max-w-[800px]">
                   {blog.title}
                 </h1>
                 <div className="flex items-center justify-center">
@@ -53,7 +53,7 @@ export default function BlogPageHeroSection({ blog }: Props) {
                 </div>
                 {blog.author?.name ? (
                   <div>
-                    <h6 className="text-white tahoma text-sm font-bold mt-10">
+                    <h6 className="text-white text-sm font-bold mt-10">
                       By {blog.author.name}
                     </h6>
                   </div>

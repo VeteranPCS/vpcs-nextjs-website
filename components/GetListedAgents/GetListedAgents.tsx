@@ -57,7 +57,7 @@ const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
         <form onSubmit={handleSubmit(handleFormSubmit)}>
           <div className="flex flex-col gap-8">
             <div className="md:text-left text-center">
-              <h1 className="text-[#7E1618] tahoma md:text-[32px] text-[24px] font-bold leading-8">
+              <h1 className="text-[#7E1618] md:text-[32px] text-[24px] font-bold leading-8">
                 Agents, Get Listed!
               </h1>
               <p className="text-[#575F6E] roboto text-base font-black mt-3">
@@ -68,7 +68,7 @@ const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
               <div>
                 {/* First Name */}
                 <div className="mb-8 flex flex-col">
-                  <label htmlFor="firstName" className="text-[#242426] tahoma text-sm font-normal mb-1">
+                  <label htmlFor="firstName" className="text-[#242426] text-sm font-normal mb-1">
                     First name*
                   </label>
                   <input
@@ -85,7 +85,7 @@ const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
                 </div>
                 {/* Last Name */}
                 <div className="mb-8 flex flex-col">
-                  <label htmlFor="lastName" className="text-[#242426] tahoma text-sm font-normal mb-1">
+                  <label htmlFor="lastName" className="text-[#242426] text-sm font-normal mb-1">
                     Last name*
                   </label>
                   <input
@@ -102,7 +102,7 @@ const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
                 </div>
                 {/* Email */}
                 <div className="mb-8 flex flex-col">
-                  <label htmlFor="email" className="text-[#242426] tahoma text-sm font-normal mb-1">
+                  <label htmlFor="email" className="text-[#242426] text-sm font-normal mb-1">
                     Email*
                   </label>
                   <input
@@ -119,7 +119,7 @@ const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
                 </div>
                 {/* Phone */}
                 <div className="mb-8 flex flex-col">
-                  <label htmlFor="phone" className="text-[#242426] tahoma text-sm font-normal mb-1">
+                  <label htmlFor="phone" className="text-[#242426] text-sm font-normal mb-1">
                     Phone*
                   </label>
                   <input

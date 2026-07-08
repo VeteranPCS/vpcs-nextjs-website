@@ -11,10 +11,10 @@ const PcsResourcesMilitarySpouse = () => {
           <div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
               <div className="order-1">
-                <h3 className="text-[#003486] tahoma md:text-[42px] text-[31px] font-bold">
+                <h3 className="text-[#003486] md:text-[42px] text-[31px] font-bold">
                   Military Spouse<br></br> Resources
                 </h3>
-                <p className="text-[#747D88] tahoma md:text-[16px] text-[14px] font-normal mt-5 mb-5">
+                <p className="text-[#747D88] md:text-[16px] text-[14px] font-normal mt-5 mb-5">
                   The backbone of our Armed forces. Thank you for supporting our
                   services members. We’re here to support you!  Check out
                   Squared Away and other military spouse resources.

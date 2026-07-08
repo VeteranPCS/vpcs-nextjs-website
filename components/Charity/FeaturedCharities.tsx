@@ -59,7 +59,7 @@ const FeaturedCharities = async () => {
         <div className="bg-[#F4F4F4] px-9 sm:px-0">
             <div className="container mx-auto px-8">
                 <div className="flex flex-col md:flex-row items-center justify-center py-10 md:py-20">
-                    <div className="w-full md:w-1/2  flex justify-center">
+                    <div className="w-full md:w-1/2 flex justify-center">
                         <Image
                             width={400}
                             height={400}
@@ -78,10 +78,10 @@ const FeaturedCharities = async () => {
                                 className="md:w-[273px] md:h-[63px] w-auto h-auto"
                             />
                         </div>
-                        <h6 className="lg:text-left md:text-left lg:text-[25px] font-bold text-[#292F6C] mt-5 tahoma uppercase">
+                        <h6 className="lg:text-left md:text-left lg:text-[25px] font-bold text-[#292F6C] mt-5 uppercase">
                             {storieDetails?.title}
                         </h6>
-                        <p className="text-black font-roboto text-base font-medium ">
+                        <p className="text-black font-roboto text-base font-medium">
                             {/* Wear blue's mission is to honor the service and sacrifice of the
               American military through active remembrance. */}
                             {storieDetails?.description?.map((point, index) => (
@@ -133,10 +133,10 @@ const FeaturedCharities = async () => {
                                 className="md:w-[273px] w-auto h-auto"
                             />
                         </div>
-                        <h6 className="lg:text-left md:text-left lg:text-[25px] font-bold text-[#292F6C] mt-5 tahoma uppercase">
+                        <h6 className="lg:text-left md:text-left lg:text-[25px] font-bold text-[#292F6C] mt-5 uppercase">
                             Freedom Service Dogs
                         </h6>
-                        <p className="text-black font-roboto text-base font-medium ">
+                        <p className="text-black font-roboto text-base font-medium">
                             We transform lives by partnering people with custom-trained assistance dogs.  At Freedom Service Dogs, we believe dogs can make a profound difference in the everyday lives of people challenged by disabilities.
                         </p>
                         <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center mt-4 md:mt-0">

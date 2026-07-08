@@ -15,25 +15,25 @@ function isExternal(href: string): boolean {
 export const mdxComponents: MDXComponents = {
     h1: (props) => (
       <h1
-        className="tahoma text-3xl md:text-4xl font-bold text-[#212529] mt-10 mb-4"
+        className="text-3xl md:text-4xl font-bold text-[#212529] mt-10 mb-4"
         {...props}
       />
     ),
     h2: (props) => (
       <h2
-        className="tahoma text-2xl md:text-3xl font-bold text-[#212529] mt-8 mb-3"
+        className="text-2xl md:text-3xl font-bold text-[#212529] mt-8 mb-3"
         {...props}
       />
     ),
     h3: (props) => (
       <h3
-        className="tahoma text-xl md:text-2xl font-bold text-[#212529] mt-6 mb-3"
+        className="text-xl md:text-2xl font-bold text-[#212529] mt-6 mb-3"
         {...props}
       />
     ),
     h4: (props) => (
       <h4
-        className="tahoma text-lg md:text-xl font-bold text-[#212529] mt-5 mb-2"
+        className="text-lg md:text-xl font-bold text-[#212529] mt-5 mb-2"
         {...props}
       />
     ),
@@ -160,7 +160,7 @@ export function createBlogMdxComponents({
       return (
         <h2
           id={heading?.id}
-          className="tahoma scroll-mt-28 text-2xl md:text-3xl font-bold text-[#212529] mt-8 mb-3"
+          className="scroll-mt-28 text-2xl md:text-3xl font-bold text-[#212529] mt-8 mb-3"
           {...props}
         >
           {children}

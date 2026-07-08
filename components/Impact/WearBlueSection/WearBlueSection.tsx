@@ -60,10 +60,10 @@ const MilitaryHomePage = async () => {
       <div className="container mx-auto px-8">
         <div className="flex flex-col md:flex-row items-center justify-center py-10 md:py-20">
           <div className="w-full md:w-1/2 mt-10 md:mt-0">
-            <h6 className="lg:text-left md:text-left lg:text-[25px] font-bold text-[#292F6C] mt-5 tahoma uppercase">
+            <h6 className="lg:text-left md:text-left lg:text-[25px] font-bold text-[#292F6C] mt-5 uppercase">
               Blue Skies Foundation
             </h6>
-            <p className="text-black font-roboto text-base font-medium ">
+            <p className="text-black font-roboto text-base font-medium">
               Our mission is to provide financial assistance, support services, and advocacy for the Army Aviation community and its Gold Star Families.
             </p>
             <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center mt-4 md:mt-0">
@@ -94,7 +94,7 @@ const MilitaryHomePage = async () => {
           </div>
         </div>
         <div className="flex flex-col md:flex-row items-center justify-center py-10 md:py-20">
-          <div className="w-full md:w-1/2  flex justify-center">
+          <div className="w-full md:w-1/2 flex justify-center">
             <Image
               width={400}
               height={400}
@@ -113,10 +113,10 @@ const MilitaryHomePage = async () => {
                 className="md:w-[273px] md:h-[63px] w-auto h-auto"
               />
             </div>
-            <h6 className="lg:text-left md:text-left lg:text-[25px] font-bold text-[#292F6C] mt-5 tahoma uppercase">
+            <h6 className="lg:text-left md:text-left lg:text-[25px] font-bold text-[#292F6C] mt-5 uppercase">
               {storieDetails?.title}
             </h6>
-            <p className="text-black font-roboto text-base font-medium ">
+            <p className="text-black font-roboto text-base font-medium">
               {/* Wear blue's mission is to honor the service and sacrifice of the
               American military through active remembrance. */}
               {storieDetails?.description?.map((point, index) => (
@@ -150,10 +150,10 @@ const MilitaryHomePage = async () => {
         {/* Warrior Bonfire Program Section */}
         <div className="flex flex-col md:flex-row items-center justify-center py-10 md:py-20">
           <div className="w-full md:w-1/2 mt-10 md:mt-0">
-            <h6 className="lg:text-left md:text-left lg:text-[25px] font-bold text-[#292F6C] mt-5 tahoma uppercase">
+            <h6 className="lg:text-left md:text-left lg:text-[25px] font-bold text-[#292F6C] mt-5 uppercase">
               WARRIOR BONFIRE PROGRAM
             </h6>
-            <p className="text-black font-roboto text-base font-medium ">
+            <p className="text-black font-roboto text-base font-medium">
               The Warrior Bonfire Program is designed to meet a critical need throughout the United States to provide much needed mental health and peer support to combat wounded Veterans through recreational therapy, and Post-traumatic healing. We are a 501c3 organization founded and led by Veterans to support and honor the immense number of Purple Heart recipients throughout the nation. Our signature program, the Bonfire retreat, Bonfire Retreats are recreational therapy based, multi-day events that are reserved primarily for six Purple Heart Veterans. Bonfire retreats provide opportunities for wounded veterans, in small groups of six, to enjoy a favorite activity while partaking in the camaraderie and therapeutic value of spending time around the bonfire with fellow veterans while promoting Post-Traumatic Healing and the building of support communities, fostering healing and improving lives. Each retreat is concluded with a bonfire including a U.S. Flag retirement ceremony providing participants with an opportunity to honor fallen comrades.
             </p>
             <div className="flex lg:justify-start md:justify-start sm:justify-center justify-center mt-4 md:mt-0">
