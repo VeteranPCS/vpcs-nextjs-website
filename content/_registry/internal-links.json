@@ -1,6 +1,6 @@
 {
-  "contentHash": "0e8028440c973445216f89123710a7b881c0e0532494344e02b3085c46881139",
-  "totalPosts": 334,
+  "contentHash": "3e6700883f5a9de9fe430cbb697689ed57e47a3134a51f41979ced2d08dbe9fd",
+  "totalPosts": 338,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -14,6 +14,7 @@
       "delaware-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
       "florida-veteran-property-tax-exemptions-2026",
+      "fort-bragg-bah-2026-buy-vs-rent",
       "fort-meade-bah-2026-what-your-allowance-buys",
       "georgia-veteran-property-tax-exemptions-2026",
       "hawaii-veteran-property-tax-exemptions-2026",
@@ -158,6 +159,7 @@
       "preparing-to-pcs-what-you-need-to-know",
       "rent-or-sell-your-home-when-you-pcs",
       "settling-down-pcsing-to-birmingham-alabama-with-the-military",
+      "short-notice-pcs-move-30-days",
       "should-active-duty-military-buy-a-home-in-hawaii",
       "strategic-refinancing-for-luxury-homeowners-in-castle-rock-co",
       "temporary-lodging-expense-tle-pcs-guide",
@@ -327,6 +329,7 @@
       "does-the-va-loan-always-have-the-best-rate",
       "florida-va-loan-benefits-hidden-savings",
       "how-does-a-0-down-va-loan-work",
+      "how-much-house-can-you-afford-on-bah",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
       "new-home-builders-offering-4-99-4-5-or-even-4-rates-heres-the-clarity-you-need-to-know",
@@ -340,6 +343,7 @@
       "va-loan-assumptions-the-hidden-entitlement-rule-that-trips-up-military-homebuyers",
       "va-loan-assumptions-what-military-families-must-know",
       "va-loan-calculator-mistakes",
+      "va-loan-certificate-of-eligibility",
       "va-loan-credit-score-requirements",
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
@@ -364,6 +368,7 @@
       "delaware-veteran-property-tax-exemptions-2026",
       "florida-cost-of-living-military-bases-bah",
       "florida-veteran-property-tax-exemptions-2026",
+      "fort-bragg-bah-2026-buy-vs-rent",
       "fort-meade-bah-2026-what-your-allowance-buys",
       "georgia-veteran-property-tax-exemptions-2026",
       "hawaii-veteran-property-tax-exemptions-2026",
@@ -508,6 +513,7 @@
       "preparing-to-pcs-what-you-need-to-know",
       "rent-or-sell-your-home-when-you-pcs",
       "settling-down-pcsing-to-birmingham-alabama-with-the-military",
+      "short-notice-pcs-move-30-days",
       "should-active-duty-military-buy-a-home-in-hawaii",
       "strategic-refinancing-for-luxury-homeowners-in-castle-rock-co",
       "temporary-lodging-expense-tle-pcs-guide",
@@ -677,6 +683,7 @@
       "does-the-va-loan-always-have-the-best-rate",
       "florida-va-loan-benefits-hidden-savings",
       "how-does-a-0-down-va-loan-work",
+      "how-much-house-can-you-afford-on-bah",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
       "new-home-builders-offering-4-99-4-5-or-even-4-rates-heres-the-clarity-you-need-to-know",
@@ -690,6 +697,7 @@
       "va-loan-assumptions-the-hidden-entitlement-rule-that-trips-up-military-homebuyers",
       "va-loan-assumptions-what-military-families-must-know",
       "va-loan-calculator-mistakes",
+      "va-loan-certificate-of-eligibility",
       "va-loan-credit-score-requirements",
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
@@ -919,6 +927,7 @@
     "north-carolina": [
       "9-things-to-do-near-ft-bragg",
       "buy-vs-rent-near-camp-lejeune",
+      "fort-bragg-bah-2026-buy-vs-rent",
       "north-carolina-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-bragg-2026-guide",
       "pcs-to-mcas-cherry-point-2026-guide",
@@ -1037,10 +1046,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 233,
+    "resolved": 234,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 210,
+      "frontmatter-state-slug": 211,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -1053,6 +1062,7 @@
       "florida-cost-of-living-military-bases-bah",
       "fun-family-and-date-night-activities-near-tinker-afb",
       "house-hunting-leave-pcs-guide",
+      "how-much-house-can-you-afford-on-bah",
       "how-to-choose-the-right-real-estate-agent-for-your-military-pcs-move",
       "huntsville-redstone-bah-2026-buy-vs-rent",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
@@ -1072,6 +1082,7 @@
       "preparing-for-an-overseas-pcs-a-guide-for-military-families",
       "preparing-to-pcs-what-you-need-to-know",
       "rent-or-sell-your-home-when-you-pcs",
+      "short-notice-pcs-move-30-days",
       "temporary-lodging-expense-tle-pcs-guide",
       "the-ultimate-pcs-binder-guide-get-organized-for-your-move",
       "the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel",
@@ -2625,6 +2636,36 @@
       ]
     },
     {
+      "slug": "fort-bragg-bah-2026-buy-vs-rent",
+      "title": "Fort Bragg BAH 2026: What Your Allowance Buys (Buy vs. Rent)",
+      "url": "/blog/fort-bragg-bah-2026-buy-vs-rent",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "north-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "See 2026 Fort Bragg BAH rates by rank, how low Fayetteville home prices and property taxes affect your payment, and when buying near Bragg beats renting.",
+      "publishedAt": "2026-07-05T09:00:00.000Z",
+      "updatedAt": "2026-07-10T00:00:00.000Z",
+      "primaryKeyword": "fort bragg bah 2026",
+      "secondaryKeywords": [
+        "does bah cover a mortgage fort bragg",
+        "fayetteville nc bah buy vs rent",
+        "fort bragg bah rates",
+        "nc182 bah rates"
+      ],
+      "h2Outline": [
+        "2026 BAH Rates for Fort Bragg (MHA NC182)",
+        "Why Your BAH Goes Further Near Fort Bragg",
+        "Buy vs. Rent: A 2026 Example",
+        "When Renting Still Makes Sense",
+        "The Bottom Line"
+      ]
+    },
+    {
       "slug": "fort-meade-bah-2026-what-your-allowance-buys",
       "title": "Fort Meade BAH Rates 2026: What Your Housing Allowance Actually Buys",
       "url": "/blog/fort-meade-bah-2026-what-your-allowance-buys",
@@ -2883,6 +2924,37 @@
         "Investment Perspective: Why Commercial Proximity Matters for Luxury Real Estate",
         "Local Market Intelligence: Insider Insights for Luxury Buyers",
         "Making Informed Luxury Real Estate Decisions in Castle Rock"
+      ]
+    },
+    {
+      "slug": "how-much-house-can-you-afford-on-bah",
+      "title": "How Much House Can You Afford on BAH? A 2026 Guide",
+      "url": "/blog/how-much-house-can-you-afford-on-bah",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "A simple, four-step way to turn your tax-free BAH into a realistic home price, plus the VA loan rules that decide how much you can actually borrow in 2026.",
+      "publishedAt": "2026-07-09T09:00:00.000Z",
+      "updatedAt": "2026-07-10T00:00:00.000Z",
+      "primaryKeyword": "how much house can i afford on bah",
+      "secondaryKeywords": [
+        "bah to home price",
+        "does bah cover a mortgage",
+        "military home buying budget",
+        "va loan affordability"
+      ],
+      "h2Outline": [
+        "Start With Your BAH, Not a Guess",
+        "Four Steps to Turn BAH Into a Home Price",
+        "Why the VA Loan Stretches Your BAH",
+        "What a Lender Actually Checks",
+        "Common Questions",
+        "The Bottom Line"
       ]
     },
     {
@@ -3964,7 +4036,7 @@
       ],
       "description": "I often get questions about how new home builders advertise low interest rates like 4.99%, 4.5%, or even 4%.",
       "publishedAt": "2025-01-19T00:06:00.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-07-10T00:00:00.000Z",
       "primaryKeyword": "builders offering low interest rates",
       "secondaryKeywords": [
         "builder financing incentives",
@@ -3973,7 +4045,15 @@
         "mortgage rate buy down",
         "new construction interest rates"
       ],
-      "h2Outline": []
+      "h2Outline": [
+        "Understanding Interest Rates and Their Impact on Purchasing Power",
+        "Why Builders Advertise Low Rates",
+        "Comparing Lower Prices vs. Lower Interest Rates",
+        "What Does This Mean for You?",
+        "Alternatives to Builder Offers",
+        "A Quick Word for VA Buyers",
+        "Got Questions? Let’s Talk."
+      ]
     },
     {
       "slug": "new-jersey-veteran-property-tax-exemptions-2026",
@@ -8561,6 +8641,38 @@
       ]
     },
     {
+      "slug": "short-notice-pcs-move-30-days",
+      "title": "Short-Notice PCS Move: A 30-Day Plan for Military Families",
+      "url": "/blog/short-notice-pcs-move-30-days",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "PCS Help"
+      ],
+      "description": "A week-by-week plan for a short-notice PCS move: what to lock in first, the entitlements that soften a fast move, and how to find housing when time is short.",
+      "publishedAt": "2026-07-07T09:00:00.000Z",
+      "updatedAt": "2026-07-10T00:00:00.000Z",
+      "primaryKeyword": "short notice pcs move",
+      "secondaryKeywords": [
+        "fast pcs move checklist",
+        "pcs in 30 days",
+        "quick turn pcs orders",
+        "short notice military move"
+      ],
+      "h2Outline": [
+        "What Counts as a Short-Notice PCS Move?",
+        "Week 1 (Days 30 to 22): Lock In the Basics",
+        "Week 2 (Days 21 to 15): Housing and Money",
+        "Week 3 (Days 14 to 8): Pack, Sort, and Confirm",
+        "Week 4 (Days 7 to 1): Final Steps",
+        "Money Help That Softens a Fast Move",
+        "Short-Notice PCS FAQ",
+        "The Bottom Line"
+      ]
+    },
+    {
       "slug": "should-active-duty-military-buy-a-home-in-hawaii",
       "title": "Should Active Duty Military Buy a Home in Hawaii? A Complete 2025 Guide",
       "url": "/blog/should-active-duty-military-buy-a-home-in-hawaii",
@@ -9651,6 +9763,38 @@
         "Making Informed Decisions for Your Military Family",
         "Your Next Steps",
         "Keep Learning About Your VA Loan"
+      ]
+    },
+    {
+      "slug": "va-loan-certificate-of-eligibility",
+      "title": "VA Loan Certificate of Eligibility: How to Get Your COE",
+      "url": "/blog/va-loan-certificate-of-eligibility",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "A plain-language guide to the VA loan Certificate of Eligibility (COE): what it proves, how to request one in three ways, and the papers you need to have ready.",
+      "publishedAt": "2026-07-03T09:00:00.000Z",
+      "updatedAt": "2026-07-10T00:00:00.000Z",
+      "primaryKeyword": "va loan certificate of eligibility",
+      "secondaryKeywords": [
+        "how to get a coe for va loan",
+        "request coe online",
+        "va form 26-1880",
+        "va loan coe requirements"
+      ],
+      "h2Outline": [
+        "What Is a VA Loan Certificate of Eligibility (COE)?",
+        "Do You Qualify? COE Eligibility at a Glance",
+        "Three Ways to Request Your COE",
+        "Documents You Will Need",
+        "What Your COE Does and Does Not Tell You",
+        "Common COE Questions",
+        "The Bottom Line"
       ]
     },
     {
