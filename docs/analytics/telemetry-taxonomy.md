@@ -227,7 +227,7 @@ Pre/post comparison windows must start no earlier than 2026-06-27, when `cta_cli
 
 Dashboard disposition: any saved PostHog insight or dashboard tile that filters `cta_id = 'blog_mobile_sticky_agent'` alone now undercounts total mobile sticky footer engagement, because lender-intent posts fire `blog_mobile_sticky_lender` instead. File a follow-up to add `blog_mobile_sticky_lender` to those filters. The same applies to any saved insight built around `blog_find_agent_in_state` that does not segment out the retired `bottom` position.
 
-This is a ticketed CTA change under `docs/ai-first/homepage-followups.md:33` ("No route/href/`ctaId`/form/data-attribute changes except where a ticket explicitly says so"), which is the guardrail this doc update and its underlying code change satisfy.
+These ctaId changes are ticketed by the Blog Post CTA Rationalization plan (branch `feat/blog-post-cta-rationalization`); this keeps them consistent with the ctaId-stability rule recorded for the homepage cycle in `docs/ai-first/homepage-followups.md:33`, which requires a ticket for any ctaId change.
 
 ## Customer Form IDs
 
