@@ -4,48 +4,55 @@
     "label": "PCS Help",
     "description": "PCS planning, timelines, move strategy, and relocation guidance.",
     "ctaCopy": "Find an Agent",
-    "intro": "PCS orders set a lot in motion. These guides walk you through timelines, entitlements, and the decisions that make a military move easier from start to finish."
+    "intro": "PCS orders set a lot in motion. These guides walk you through timelines, entitlements, and the decisions that make a military move easier from start to finish.",
+    "partnerIntent": "agent"
   },
   {
     "slug": "us-military-bases",
     "label": "U.S. Military Bases",
     "description": "Installation guides, state base lists, and local PCS context.",
     "ctaCopy": "Find an Agent",
-    "intro": "Every installation has its own housing picture, commute patterns, and local quirks. Start here to learn what daily life looks like at your next duty station."
+    "intro": "Every installation has its own housing picture, commute patterns, and local quirks. Start here to learn what daily life looks like at your next duty station.",
+    "partnerIntent": "agent"
   },
   {
     "slug": "va-loan-help",
     "label": "VA Loan Help",
     "description": "VA loan education, entitlement, funding fee, assumptions, and lender guidance.",
     "ctaCopy": "Find a Lender",
-    "intro": "The VA loan is one of the strongest benefits you have earned, and it is easier to use than most people think. These guides cover entitlement, funding fees, and how to work with a lender who knows the program."
+    "intro": "The VA loan is one of the strongest benefits you have earned, and it is easier to use than most people think. These guides cover entitlement, funding fees, and how to work with a lender who knows the program.",
+    "partnerIntent": "lender"
   },
   {
     "slug": "military-transition-help",
     "label": "Military Transition Help",
     "description": "Separation, retirement, SkillBridge, and civilian move planning.",
     "ctaCopy": "Find an Agent",
-    "intro": "Leaving the service brings a new set of choices about where to live and what comes next. These guides help you plan the move from military life to your next chapter."
+    "intro": "Leaving the service brings a new set of choices about where to live and what comes next. These guides help you plan the move from military life to your next chapter.",
+    "partnerIntent": "agent"
   },
   {
     "slug": "financial-guidance",
     "label": "Financial Guidance",
     "description": "Budgeting, BAH, taxes, cost of living, and military money decisions.",
     "ctaCopy": "Find a Lender",
-    "intro": "Military pay, BAH, and frequent moves make money planning different for service members. These guides break down budgets, taxes, and cost of living in plain terms."
+    "intro": "Military pay, BAH, and frequent moves make money planning different for service members. These guides break down budgets, taxes, and cost of living in plain terms.",
+    "partnerIntent": "lender"
   },
   {
     "slug": "things-to-do-near-you",
     "label": "Things to Do Near You",
     "description": "Local activities and neighborhood context near military communities.",
     "ctaCopy": "Find an Agent",
-    "intro": "A new duty station is easier to call home once you know the area. Explore local activities and family favorites near military communities."
+    "intro": "A new duty station is easier to call home once you know the area. Explore local activities and family favorites near military communities.",
+    "partnerIntent": "agent"
   },
   {
     "slug": "real-estate-insights",
     "label": "Real Estate Insights",
     "description": "Market, agent, and home-buying guidance for military families.",
     "ctaCopy": "Find an Agent",
-    "intro": "Buying or selling a home during military life comes with its own timing and tradeoffs. These guides share what military families should know about the market and choosing the right agent."
+    "intro": "Buying or selling a home during military life comes with its own timing and tradeoffs. These guides share what military families should know about the market and choosing the right agent.",
+    "partnerIntent": "agent"
   }
 ]

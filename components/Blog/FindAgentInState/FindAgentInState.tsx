@@ -6,15 +6,14 @@ import { getStateDisplayName } from '@/lib/blog/getStateForBlog';
 import { trackCtaClicked } from '@/lib/analytics/client';
 import { buildCtaProperties } from '@/lib/analytics/cta';
 
-type Position = 'top' | 'bottom';
-
+// The 'bottom' placement was retired (zero organic clicks); this component
+// now renders only in the single top position on agent-intent posts.
 type Props = {
   state: string;
   blogSlug: string;
-  position: Position;
 };
 
-export default function FindAgentInState({ state, blogSlug, position }: Props) {
+export default function FindAgentInState({ state, blogSlug }: Props) {
   const displayName = getStateDisplayName(state);
   const href = `/${state}?source=blog&blog_slug=${encodeURIComponent(blogSlug)}`;
 
@@ -23,12 +22,12 @@ export default function FindAgentInState({ state, blogSlug, position }: Props) {
       event: 'blog_to_state_cta_click',
       state,
       blog_slug: blogSlug,
-      position,
+      position: 'top',
     });
     trackCtaClicked(buildCtaProperties({
       ctaId: 'blog_find_agent_in_state',
       ctaIntent: 'state_agent_search',
-      ctaPosition: position,
+      ctaPosition: 'top',
       ctaComponent: 'blog_find_agent_in_state',
       destination: href,
       pageType: 'blog_post',
@@ -39,7 +38,7 @@ export default function FindAgentInState({ state, blogSlug, position }: Props) {
   };
 
   return (
-    <div className="container mx-auto w-full my-12 px-4">
+    <div className="container mx-auto w-full my-12 px-4" data-cta-id="blog_find_agent_in_state">
       <div
         className="rounded-[32px] p-8 sm:p-12 text-white text-center"
         style={{
@@ -50,7 +49,7 @@ export default function FindAgentInState({ state, blogSlug, position }: Props) {
           Find a veteran-friendly agent in {displayName}
         </h2>
         <p className="text-base sm:text-lg mb-6 max-w-2xl mx-auto">
-          Our {displayName} agents are PCS-fluent and VA-loan experts. Get matched in minutes — no spam, no pressure.
+          Our {displayName} agents are PCS-fluent and VA-loan experts. Get matched in minutes. No spam, no pressure.
         </p>
         <Link
           href={href}

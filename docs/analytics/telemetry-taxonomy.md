@@ -1,6 +1,6 @@
 # VeteranPCS Telemetry Taxonomy
 
-Last updated: 2026-06-26
+Last updated: 2026-07-12
 
 This is the durable reference for VeteranPCS web telemetry. Use it when changing analytics code, troubleshooting PostHog, comparing against Google Analytics, or planning Salesforce closed-loop reporting.
 
@@ -170,10 +170,12 @@ Post template (`page_type: blog_post`):
 | cta_id | cta_position | cta_intent |
 |---|---|---|
 | `blog_breadcrumb_category` | `blog_post_breadcrumb` | `content_navigation` |
-| `blog_details_find_agent` / `blog_details_find_lender` (kept; now carry `state_slug`) | `blog_details_cta_band` | `contact_agent` / `contact_lender` |
+| `blog_details_find_agent` / `blog_details_find_lender` (kept; carry `state_slug`; single-intent rationalization now renders exactly one block per post, chosen by the post's category `partnerIntent` in `content/_data/blog-components.json`; payload now also carries `content_slug` and `content_type: 'blog_post'`) | `blog_details_cta_band` | `contact_agent` / `contact_lender` |
 | `blog_next_guide` | `blog_post_after_body` | `content_navigation` |
-| `blog_related_card` / `blog_related_card_view_all` | `blog_post_related_rail` | `content_navigation` |
-| `blog_find_agent_in_state` (kept; now built via `buildCtaProperties`) | `top` / `bottom` | `state_agent_search` |
+| `blog_related_card` / `blog_related_card_view_all` (`blog_related_card_view_all` is documented, not yet wired in code; see PR #169) | `blog_post_related_rail` | `content_navigation` |
+| `blog_find_agent_in_state` (kept; built via `buildCtaProperties`; renders only on agent-intent, state-matched posts; position `top` only, `bottom` retired) | `top` | `state_agent_search` |
+| `blog_mobile_sticky_agent` (fixed mobile footer on agent-intent posts; added to correct prior documentation drift, the id already fires in code) | `mobile_sticky_footer` | `contact_agent` |
+| `blog_mobile_sticky_lender` (fixed mobile footer on lender-intent posts; new) | `mobile_sticky_footer` | `contact_lender` |
 
 Blog landing (`page_type: blog_landing`):
 
@@ -209,6 +211,23 @@ Search results (`page_type: blog_search`):
 | `blog_search_results_all_guides`, `blog_search_no_results_all_guides`, `blog_search_no_results_category` (unchanged) | `blog_search_results_header` / `blog_search_no_results` | `content_navigation` |
 
 Retired ids (stop appearing after the refactor deploy): `blog_article_card` (hub grid), `blog_search_result_image`, `blog_search_result_title`. `pcs_resources_blog_card` no longer fires on post pages (the related rail now emits `blog_related_card`) but still fires on `/va-loan-help`, `/pcs-resources`, and `/thank-you`.
+
+The single-intent CTA rationalization change (branch `feat/blog-post-cta-rationalization`, pending deploy as of 2026-07-12) retires `blog_find_agent_in_state` position `bottom`. Only position `top` continues to fire, and only on agent-intent, state-matched posts. This does not retire the `blog_find_agent_in_state` id itself, only the `bottom` position value.
+
+### Blog Post CTA Comparability (2026-07 single-intent rationalization)
+
+Before this change, `blog_details_find_agent` and `blog_details_find_lender` both rendered on every blog post, so a click-through rate could be computed against total blog post views. As of this change, the `blog_details_cta_band` renders exactly one block per post, chosen by the post's category `partnerIntent`. Treat the two ids as separate populations with separate denominators, not two variants sharing one pool:
+
+- `blog_details_find_agent`, `blog_mobile_sticky_agent`, and `blog_find_agent_in_state` (position `top`): denominator is agent-intent posts only, 247 posts as of 2026-07-12 (`pcs-help`, `us-military-bases`, `military-transition-help`, `things-to-do-near-you`, and `real-estate-insights` categories).
+- `blog_details_find_lender` and `blog_mobile_sticky_lender`: denominator is lender-intent posts only, 95 posts as of 2026-07-12 (`va-loan-help` and `financial-guidance` categories).
+
+Build the denominator from `content_viewed` (carries `content_slug` and `topic_cluster`) sequenced or joined with `cta_clicked` per `cta_id`, and segment both sides by category intent by mapping `topic_cluster` to `partnerIntent` in `content/_data/blog-components.json`. Do not divide clicks on one id by pageviews of the whole blog post population; that overstates the denominator for both intents now that only one CTA block renders per post.
+
+Pre/post comparison windows must start no earlier than 2026-06-27, when `cta_clicked` with `page_type: blog_post` first fired in PostHog. Blog `$pageview` capture started earlier, on 2026-06-22, but that is a pageview-only signal and understates the CTA baseline if used as the instrumentation start date. Exclude a QA burst on 2026-07-12 between 23:40 and 23:43 UTC: a single test session produced roughly 30 `cta_clicked` events in that window while validating the PR #169 blog discovery surfaces (`blog_category` and `blog_archive` page types). Verified against the PostHog `events` table on 2026-07-12.
+
+Dashboard disposition: any saved PostHog insight or dashboard tile that filters `cta_id = 'blog_mobile_sticky_agent'` alone now undercounts total mobile sticky footer engagement, because lender-intent posts fire `blog_mobile_sticky_lender` instead. File a follow-up to add `blog_mobile_sticky_lender` to those filters. The same applies to any saved insight built around `blog_find_agent_in_state` that does not segment out the retired `bottom` position.
+
+These ctaId changes are ticketed by the Blog Post CTA Rationalization plan (PR #170, branch `feat/blog-post-cta-rationalization`); this keeps them consistent with the ctaId-stability rule recorded for the homepage cycle in `docs/superpowers/plans/2026-07-08-homepage-followups.md:16`, which requires a ticket for any ctaId change.
 
 ## Customer Form IDs
 
@@ -284,6 +303,7 @@ Known GTM events in the current app:
 | `state_map_interaction` | Homepage state map interaction |
 | `get_listed_agent_submitted` | Agent listing request |
 | `get_listed_lender_submitted` | Lender listing request |
+| `blog_to_state_cta_click` | `FindAgentInState` blog post CTA (`blog_find_agent_in_state`), position `top`, agent-intent posts only; comparator alongside the PostHog `cta_clicked` event |
 
 If a GTM conversion fires before a confirmed Salesforce acceptance, use the PostHog `lead_conversion_created` event for accepted-lead reporting.
 

@@ -4,7 +4,6 @@ import { cache } from "react";
 import { BlogPosting, WithContext } from "schema-dts";
 import BlogDetailsHeroSection from "@/components/BlogDetails/BlogDetailsHeroSection/BlogDetailsHeroSection";
 import BlogBeginingPostAgent from "@/components/BlogDetails/BlogBeginingBlogPostAgent/BlogBeginingBlogPostAgent";
-import Testimonials from "@/components/Testimonials/TestimonialPage";
 import BlogDetailsCta from "@/components/BlogDetails/BlogDetailsCta/BlogDetailsCta";
 import EndBlogPostDetails from "@/components/BlogDetails/EndBlogPostDetails/EndBlogPostDetails";
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
@@ -22,7 +21,7 @@ import {
     getBlogSlugs,
     readingTimeMinutes,
 } from "@/lib/blog/mdx";
-import { getBlogComponentBySlug } from "@/lib/blog/components";
+import { getBlogComponentBySlug, getBlogCtaIntent } from "@/lib/blog/components";
 import { toBlogCardData } from "@/lib/blog/cards";
 import { pickNextGuide, rankRelatedBlogs } from "@/lib/blog/related";
 import { resolveAuthor } from "@/lib/blog/authors";
@@ -99,11 +98,15 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
     const firstHeadingIds = tocHeadings.slice(0, firstHeadingCount);
     const secondHeadingIds = tocHeadings.slice(firstHeadingCount);
     const readingMinutes = readingTimeMinutes(blog.content);
-    const contactHref = buildContactCtaHref({ stateSlug: bridgeState, form: "agent" });
-    const ctaLabel = bridgeState
-        ? `Find an agent in ${getStateDisplayName(bridgeState)}`
-        : "Find an Agent";
     const blogComponent = getBlogComponentBySlug(componentSlugForBlog(blog));
+    const ctaIntent = getBlogCtaIntent(blogComponent?.slug);
+    const contactHref = buildContactCtaHref({ stateSlug: bridgeState, form: ctaIntent });
+    const partnerLabel = ctaIntent === 'agent' ? 'an agent' : 'a lender';
+    const ctaLabel = bridgeState
+        ? `Find ${partnerLabel} in ${getStateDisplayName(bridgeState)}`
+        : `Find ${partnerLabel}`;
+    const stickyCtaId = ctaIntent === 'agent' ? 'blog_mobile_sticky_agent' : 'blog_mobile_sticky_lender';
+    const stickyCtaIntent = ctaIntent === 'agent' ? 'contact_agent' : 'contact_lender';
     const allBlogs = await getAllBlogs();
     const rankedRelated = rankRelatedBlogs(allBlogs, blog);
     const nextGuide = pickNextGuide(rankedRelated);
@@ -222,11 +225,10 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                 tocHeadings={tocHeadings}
                 headingIds={firstHeadingIds}
             />
-            {bridgeState && (
-                <FindAgentInState state={bridgeState} blogSlug={slug} position="top" />
+            {bridgeState && ctaIntent === 'agent' && (
+                <FindAgentInState state={bridgeState} blogSlug={slug} />
             )}
-            <Testimonials />
-            <BlogDetailsCta stateSlug={bridgeState} componentSlug={blogComponent?.slug ?? null} />
+            <BlogDetailsCta stateSlug={bridgeState} componentSlug={blogComponent?.slug ?? null} contentSlug={slug} />
             <EndBlogPostDetails
                 bodySecondHalf={bodySecondHalf}
                 resolvedAuthor={resolvedAuthor}
@@ -250,9 +252,6 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                     </div>
                 </div>
             )}
-            {bridgeState && (
-                <FindAgentInState state={bridgeState} blogSlug={slug} position="bottom" />
-            )}
             <CommonBlog
                 component={blog.component || ""}
                 blog={blog}
@@ -271,13 +270,16 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
             </div>
             <FrequentlyAskedQuestion />
             <KeepInTouch />
-            <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E5E7EB] bg-white/95 px-5 py-3 shadow-lg md:hidden">
+            <div
+                className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E5E7EB] bg-white/95 px-5 py-3 shadow-lg md:hidden"
+                data-cta-id={stickyCtaId}
+            >
                 <TrackedCtaLink
                     href={contactHref}
                     className="block min-h-11 rounded-custom bg-[#a81f23] px-5 py-3 text-center text-sm font-bold text-white"
                     cta={{
-                        ctaId: 'blog_mobile_sticky_agent',
-                        ctaIntent: 'contact_agent',
+                        ctaId: stickyCtaId,
+                        ctaIntent: stickyCtaIntent,
                         ctaPosition: 'mobile_sticky_footer',
                         ctaComponent: 'blog_mobile_sticky_cta',
                         ctaLabel,
@@ -286,7 +288,7 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                         stateSlug: bridgeState,
                         contentSlug: slug,
                         contentType: 'blog_post',
-                        partnerType: 'agent',
+                        partnerType: ctaIntent,
                     }}
                 >
                     {ctaLabel}
