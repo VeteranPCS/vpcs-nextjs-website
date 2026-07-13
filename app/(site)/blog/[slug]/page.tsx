@@ -226,7 +226,7 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                 <FindAgentInState state={bridgeState} blogSlug={slug} position="top" />
             )}
             <Testimonials />
-            <BlogDetailsCta stateSlug={bridgeState} componentSlug={blogComponent?.slug ?? null} />
+            <BlogDetailsCta stateSlug={bridgeState} componentSlug={blogComponent?.slug ?? null} contentSlug={slug} />
             <EndBlogPostDetails
                 bodySecondHalf={bodySecondHalf}
                 resolvedAuthor={resolvedAuthor}
