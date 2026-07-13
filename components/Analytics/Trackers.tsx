@@ -109,11 +109,15 @@ export function BlogSearchTracker({
   totalResultCount: number;
   page: number;
 }) {
+  // Two effects on purpose: paging changes only `page`, and a page click is
+  // not a new search, so blog_search_submitted must not depend on it.
   useEffect(() => {
     captureAnalyticsEvent(
       'blog_search_submitted',
       blogSearchSubmittedProperties(query, totalResultCount),
     );
+  }, [query, totalResultCount]);
+  useEffect(() => {
     captureAnalyticsEvent(
       'blog_search_results',
       blogSearchResultsProperties(totalResultCount, page),
