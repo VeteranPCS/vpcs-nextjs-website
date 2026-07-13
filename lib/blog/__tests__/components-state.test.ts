@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BLOG_COMPONENTS, normalizeBlogComponentSlug } from '@/lib/blog/components';
+import { BLOG_COMPONENTS, normalizeBlogComponentSlug, getBlogCtaIntent } from '@/lib/blog/components';
 import { resolveBlogStateSlug, resolveBlogState } from '@/lib/blog/state';
 import type { BlogPost } from '@/lib/blog/types';
 
@@ -43,5 +43,32 @@ describe('blog state resolver', () => {
   it('does not resolve ambiguous token aliases without an exact post pin', () => {
     expect(resolveBlogStateSlug(post({ slug: 'housing-near-fort-campbell' }))).toBeNull();
     expect(resolveBlogStateSlug(post({ slug: 'best-of-washington-state-not-dc' }))).toBeNull();
+  });
+});
+
+describe('getBlogCtaIntent', () => {
+  it('maps lender-led categories to lender', () => {
+    expect(getBlogCtaIntent('va-loan-help')).toBe('lender');
+    expect(getBlogCtaIntent('financial-guidance')).toBe('lender');
+  });
+
+  it('maps all other categories to agent', () => {
+    for (const slug of ['pcs-help', 'us-military-bases', 'military-transition-help', 'things-to-do-near-you', 'real-estate-insights']) {
+      expect(getBlogCtaIntent(slug)).toBe('agent');
+    }
+  });
+
+  it('defaults to agent for null, undefined, and unknown slugs', () => {
+    expect(getBlogCtaIntent(null)).toBe('agent');
+    expect(getBlogCtaIntent(undefined)).toBe('agent');
+    expect(getBlogCtaIntent('not-a-component')).toBe('agent');
+  });
+
+  it('every component declares a valid partnerIntent (fail loud on new categories)', () => {
+    for (const c of BLOG_COMPONENTS) {
+      expect(['agent', 'lender']).toContain(c.partnerIntent);
+    }
+    expect(BLOG_COMPONENTS.filter((c) => c.partnerIntent === 'lender').map((c) => c.slug).sort())
+      .toEqual(['financial-guidance', 'va-loan-help']);
   });
 });

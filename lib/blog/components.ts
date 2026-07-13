@@ -1,10 +1,13 @@
 import components from '@/content/_data/blog-components.json';
 
+export type BlogCtaIntent = 'agent' | 'lender';
+
 export type BlogComponent = {
   slug: string;
   label: string;
   description: string;
   ctaCopy?: string;
+  partnerIntent: BlogCtaIntent;
 };
 
 export const BLOG_COMPONENTS = components as readonly BlogComponent[];
@@ -42,6 +45,10 @@ export function normalizeBlogComponentSlug(value: string | null | undefined): st
 export function getBlogComponentBySlug(slug: string | null | undefined): BlogComponent | null {
   if (!slug) return null;
   return BLOG_COMPONENT_BY_SLUG.get(slug) ?? null;
+}
+
+export function getBlogCtaIntent(componentSlug: string | null | undefined): BlogCtaIntent {
+  return getBlogComponentBySlug(componentSlug)?.partnerIntent ?? 'agent';
 }
 
 export function getBlogComponentByLabel(label: string | null | undefined): BlogComponent | null {
