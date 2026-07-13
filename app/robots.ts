@@ -8,9 +8,10 @@ const DISALLOW = [
     '/studio',
     '/studio/*',
     '/thank-you',
-    '/blog-search',
-    '/blog-search/*',
-    '/blog-search?*',
+    // /blog-search is deliberately NOT disallowed: crawl control lives in the
+    // page's meta robots noindex,follow, which crawlers can only see if the
+    // URL is crawlable. A robots.txt block would hide the noindex and leave
+    // parameterized search URLs indexed URL-only.
     '/contact-lender?*',
     '/contact-agent?*',
 ];

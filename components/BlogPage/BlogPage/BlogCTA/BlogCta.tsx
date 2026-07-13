@@ -15,14 +15,14 @@ const StatePageHeroSecondSection = () => {
                             <h2 className="text-[#FFFFFF] md:text-[40px] text-[30px] font-bold">Buying Or Selling</h2>
                         </div>
                         <TrackedCtaLink
-                            href="/#state-map"
+                            href="/contact-agent"
                             cta={{
                                 ctaId: 'blog_landing_agent_cta',
-                                ctaIntent: 'state_map',
+                                ctaIntent: 'contact_agent',
                                 ctaPosition: 'blog_landing_cta_band',
                                 ctaComponent: 'blog_cta_band',
                                 ctaLabel: 'Find An Agent',
-                                destination: '/#state-map',
+                                destination: '/contact-agent',
                                 pageType: 'blog_landing',
                             }}
                         >
@@ -32,14 +32,14 @@ const StatePageHeroSecondSection = () => {
                             <h2 className="text-[#FFFFFF] md:text-[40px] text-[30px] font-bold">VA Loan Expert</h2>
                         </div>
                         <TrackedCtaLink
-                            href="/#state-map"
+                            href="/contact-lender"
                             cta={{
                                 ctaId: 'blog_landing_lender_cta',
-                                ctaIntent: 'state_map',
+                                ctaIntent: 'contact_lender',
                                 ctaPosition: 'blog_landing_cta_band',
                                 ctaComponent: 'blog_cta_band',
                                 ctaLabel: 'Find A Lender',
-                                destination: '/#state-map',
+                                destination: '/contact-lender',
                                 pageType: 'blog_landing',
                             }}
                         >

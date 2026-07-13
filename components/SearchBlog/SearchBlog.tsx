@@ -1,24 +1,48 @@
-import Image from "next/image";
-import { formatDate } from "@/utils/helper";
-import { excerpt } from "@/lib/blog/mdx";
+import BlogCard from "@/components/Blog/BlogCard/BlogCard";
+import PaginationNav from "@/components/common/PaginationNav";
+import { toBlogCardData, type BlogCardCtaContext } from "@/lib/blog/cards";
 import type { BlogPost } from "@/lib/blog/types";
 import { BLOG_COMPONENTS } from "@/lib/blog/components";
 import BlogSearchForm from "@/components/BlogPage/BlogSearchForm";
 import { BlogSearchTracker } from "@/components/Analytics/Trackers";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
+export const BLOG_SEARCH_PAGE_SIZE = 10;
+
+const SEARCH_RESULT_CTA: BlogCardCtaContext = {
+  ctaId: 'blog_search_result_card',
+  ctaPosition: 'blog_search_results',
+  pageType: 'blog_search',
+  ctaLocation: 'blog_search_results',
+};
+
+// Page 1 is the bare query URL; deeper pages add &page=N. URLSearchParams
+// handles encoding the raw query value.
+function searchHrefFor(query: string, page: number): string {
+  const params = new URLSearchParams();
+  if (query.trim()) params.set('query', query);
+  if (page > 1) params.set('page', String(page));
+  const qs = params.toString();
+  return qs ? `/blog-search?${qs}` : '/blog-search';
+}
+
 type Props = {
-  searchedBlog: BlogPost[];
+  // Current page slice of the ranked results.
+  results: BlogPost[];
+  // Total ranked result count across all pages (drives heading + analytics).
+  totalResultCount: number;
+  page: number;
+  totalPages: number;
   query: string;
 };
 
-export default function SearchBlog({ searchedBlog, query }: Props) {
+export default function SearchBlog({ results, totalResultCount, page, totalPages, query }: Props) {
   const trimmedQuery = query.trim();
 
-  if (!searchedBlog || searchedBlog.length === 0) {
+  if (totalResultCount === 0) {
     return (
       <div className="container mx-auto my-16 px-5">
-        <BlogSearchTracker query={query} resultCount={0} />
+        <BlogSearchTracker query={query} totalResultCount={0} page={page} />
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-[#292F6C] text-[30px] font-bold md:text-[42px]">
             No results{trimmedQuery ? ` for "${trimmedQuery}"` : ''}
@@ -67,12 +91,17 @@ export default function SearchBlog({ searchedBlog, query }: Props) {
 
   return (
     <div className="container mx-auto md:mt-36 sm:mt-5 mt-5 px-5">
-      <BlogSearchTracker query={query} resultCount={searchedBlog.length} />
+      <BlogSearchTracker query={query} totalResultCount={totalResultCount} page={page} />
       <div className="max-w-3xl">
         <h1 className="text-[#292F6C] text-[30px] font-bold md:text-[42px]">
-          {searchedBlog.length} result{searchedBlog.length === 1 ? '' : 's'}
+          {totalResultCount} result{totalResultCount === 1 ? '' : 's'}
           {trimmedQuery ? ` for "${trimmedQuery}"` : ''}
         </h1>
+        {totalPages > 1 ? (
+          <p className="mt-2 text-[#6C757D] text-[16px]">
+            Page {page} of {totalPages}
+          </p>
+        ) : null}
         <TrackedCtaLink
           href="/blog"
           className="mt-4 inline-block text-[#292F6C] font-bold"
@@ -91,65 +120,23 @@ export default function SearchBlog({ searchedBlog, query }: Props) {
       </div>
       <div className="flex flex-wrap justify-start gap-10 my-10">
         <div className="lg:w-3/5 sm:w-full w-full xl:mr-14 lg:mr-5 md:mr-10">
-          {searchedBlog.map((blog) => {
-            const heroSrc = blog.mainImage?.src ?? "";
-            const heroAlt = blog.mainImage?.alt ?? "Blog image";
-            return (
-              <div className="my-10" key={blog.slug}>
-                <TrackedCtaLink
-                  href={`/blog/${blog.slug}`}
-                  cta={{
-                    ctaId: 'blog_search_result_image',
-                    ctaIntent: 'content_navigation',
-                    ctaPosition: 'blog_search_results',
-                    ctaComponent: 'blog_search_result',
-                    ctaLabel: 'Search result image',
-                    destination: `/blog/${blog.slug}`,
-                    pageType: 'blog_search',
-                    contentSlug: blog.slug,
-                    contentType: 'blog_post',
-                  }}
-                >
-                  {heroSrc ? (
-                    <Image
-                      src={heroSrc}
-                      alt={heroAlt}
-                      width={1000}
-                      height={1000}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : null}
-                </TrackedCtaLink>
-                <div className="mt-5">
-                  <TrackedCtaLink
-                    href={`/blog/${blog.slug}`}
-                    className="text-[#292F6C] font-bold lg:text-[48px] md:text-[29px] sm:text-[25px] text-[20px] lg:block md:block"
-                    cta={{
-                      ctaId: 'blog_search_result_title',
-                      ctaIntent: 'content_navigation',
-                      ctaPosition: 'blog_search_results',
-                      ctaComponent: 'blog_search_result',
-                      ctaLabel: 'Search result title',
-                      destination: `/blog/${blog.slug}`,
-                      pageType: 'blog_search',
-                      contentSlug: blog.slug,
-                      contentType: 'blog_post',
-                    }}
-                  >
-                    {blog.title}
-                  </TrackedCtaLink>
-                  <p className="text-[#000000] lg:text-[18px] md:text-[19px] sm:text-[16px] text-[13px] mt-5">
-                    {formatDate(blog.publishedAt)}
-                  </p>
-                  <div>
-                    <p className="text-[#000000] font-medium lg:text-[18px] md:text-[19px] sm:text-[16px] text-[13px] mt-7 font-poppins line-clamp-3">
-                      {excerpt(blog.content, 300)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {results.map((blog) => (
+            <div
+              key={blog.slug}
+              className="my-10 overflow-hidden rounded-custom border border-[#E2E4E5]"
+            >
+              <BlogCard
+                data={toBlogCardData(blog)}
+                variant="horizontal"
+                cta={SEARCH_RESULT_CTA}
+              />
+            </div>
+          ))}
+          <PaginationNav
+            currentPage={page}
+            totalPages={totalPages}
+            hrefFor={(p) => searchHrefFor(query, p)}
+          />
         </div>
         <div className="lg:w-1/5 sm:w-full w-full">
           <aside className="w-full max-w-xs p-6 md:border-l border-b-0 sticky top-16 right-0 bg-white">

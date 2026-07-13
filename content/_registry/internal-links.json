@@ -1,6 +1,6 @@
 {
-  "contentHash": "3e6700883f5a9de9fe430cbb697689ed57e47a3134a51f41979ced2d08dbe9fd",
-  "totalPosts": 338,
+  "contentHash": "9f7f415588bfee0f6e70bd4b5135c53e8144afb25db200af8fd53da5ed804ec9",
+  "totalPosts": 342,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -335,15 +335,19 @@
       "new-home-builders-offering-4-99-4-5-or-even-4-rates-heres-the-clarity-you-need-to-know",
       "should-you-buy-now-and-refinance-later",
       "should-you-put-money-down-on-a-va-loan-in-oklahoma-city",
+      "texas-va-loan-benefits-for-military-homebuyers",
       "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
       "understanding-the-va-funding-fee-a-complete-guide-for-military-families",
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
+      "va-irrrl-streamline-refinance-guide",
+      "va-loan-appraisal-what-to-expect",
       "va-loan-assumption-guide-how-military-families-can-save-thousands-on-their-next-home-purchase",
       "va-loan-assumptions-a-hidden-strategy-for-military-homebuyers",
       "va-loan-assumptions-the-hidden-entitlement-rule-that-trips-up-military-homebuyers",
       "va-loan-assumptions-what-military-families-must-know",
       "va-loan-calculator-mistakes",
       "va-loan-certificate-of-eligibility",
+      "va-loan-closing-costs-what-military-buyers-pay",
       "va-loan-credit-score-requirements",
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
@@ -689,15 +693,19 @@
       "new-home-builders-offering-4-99-4-5-or-even-4-rates-heres-the-clarity-you-need-to-know",
       "should-you-buy-now-and-refinance-later",
       "should-you-put-money-down-on-a-va-loan-in-oklahoma-city",
+      "texas-va-loan-benefits-for-military-homebuyers",
       "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
       "understanding-the-va-funding-fee-a-complete-guide-for-military-families",
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
+      "va-irrrl-streamline-refinance-guide",
+      "va-loan-appraisal-what-to-expect",
       "va-loan-assumption-guide-how-military-families-can-save-thousands-on-their-next-home-purchase",
       "va-loan-assumptions-a-hidden-strategy-for-military-homebuyers",
       "va-loan-assumptions-the-hidden-entitlement-rule-that-trips-up-military-homebuyers",
       "va-loan-assumptions-what-military-families-must-know",
       "va-loan-calculator-mistakes",
       "va-loan-certificate-of-eligibility",
+      "va-loan-closing-costs-what-military-buyers-pay",
       "va-loan-credit-score-requirements",
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
@@ -999,6 +1007,7 @@
       "pcs-to-nas-corpus-christi-2026-guide",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
       "pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb",
+      "texas-va-loan-benefits-for-military-homebuyers",
       "texas-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-texas",
       "why-dallas-fort-worth-is-the-ideal-destination-for-military-members-and-veterans"
@@ -1046,10 +1055,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 234,
+    "resolved": 235,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 211,
+      "frontmatter-state-slug": 212,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -1242,7 +1251,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "Things to Do Near You",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Receiving PCS orders to Kirtland Air Force Base brings your military family to one of the Southwest's most vibrant and culturally rich cities. As a veteran real estate agent who's helped countless military families settle into Albuquerqu...",
       "publishedAt": "2025-03-01T01:19:00.000Z",
@@ -1344,7 +1353,7 @@
       "stateSlug": "alabama",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Alabama is home to over 100,000 active-duty military personnel and their families. The military community in Alabama is diverse and close-knit, bringing together service members from across the country and around the world.",
       "publishedAt": "2023-09-19T03:34:43.000Z",
@@ -1629,7 +1638,7 @@
       "stateSource": null,
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Compare Madison, Hampton Cove, Harvest, Meridianville, Athens, and South Huntsville by schools, commute, and typical home value before your Redstone PCS.",
       "publishedAt": "2026-05-20T12:00:00.000Z",
@@ -1663,7 +1672,7 @@
       "stateSlug": "florida",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Looking to Buy or Sell a Home Near Eglin AFB?",
       "publishedAt": "2023-10-25T15:31:42.000Z",
@@ -1695,7 +1704,7 @@
       "stateSlug": "georgia",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "If you're preparing for a Permanent Change of Station (PCS) to Fort Benning, Georgia, home to the United States Army Infantry School and the Maneuver Center of Excellence, finding the right place to live is crucial.",
       "publishedAt": "2023-11-14T06:02:14.000Z",
@@ -1724,7 +1733,7 @@
       "stateSlug": "texas",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Fort Hood is one of the largest military installations in the world, home to over 45,000 active-duty soldiers and their families. If you are moving to Fort Hood, finding the right place to live is an important decision. This guide explor...",
       "publishedAt": "2023-11-03T16:32:24.000Z",
@@ -1755,7 +1764,7 @@
       "stateSlug": "georgia",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Looking to Buy or Sell a Home Near Fort Gordon?",
       "publishedAt": "2023-10-25T16:23:03.000Z",
@@ -1846,7 +1855,7 @@
       "categories": [
         "PCS Help",
         "Real Estate Insights",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Marines stationed at Camp Lejeune for 24+ months typically benefit financially from buying with a VA loan, while shorter assignments favor renting. Current Jacksonville market conditions and VA loan advantages make homeownership particul...",
       "publishedAt": "2025-06-02T11:45:00.000Z",
@@ -1911,7 +1920,7 @@
       "stateSlug": "texas",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Relocating to Joint Base San Antonio (JBSA) for a Permanent Change of Station (PCS) is a significant transition, especially when purchasing a home in a new city. Finding the right home while balancing military timelines, VA loan benefits...",
       "publishedAt": "2024-05-09T19:01:09.000Z",
@@ -2382,7 +2391,7 @@
       "stateSlug": "utah",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "For military families and civilian employees relocating to Hill Air Force Base (HAFB), finding the right community to call home is an essential part of the transition. Located in Davis County, Utah, Hill AFB is surrounded by a mix of vib...",
       "publishedAt": "2024-05-10T02:21:27.000Z",
@@ -2675,7 +2684,7 @@
       "stateSource": "author-state-slug",
       "categories": [
         "Financial Guidance",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "See 2026 Fort Meade BAH rates, what they can buy near Odenton, Crofton, Columbia, and Bowie, and how on-post housing changes the math.",
       "publishedAt": "2026-06-08T12:00:00.000Z",
@@ -3602,7 +3611,7 @@
       "stateSource": null,
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A plain-language guide to finding military bases near you, by state and branch, with official tools and tips for planning a PCS move to a new installation.",
       "publishedAt": "2026-06-15T09:00:00.000Z",
@@ -4410,7 +4419,7 @@
       "stateSource": null,
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A complete Redstone Arsenal PCS guide covering SPACECOM, in-processing, housing, BAH, schools, VA loans, taxes, and local life in Huntsville.",
       "publishedAt": "2026-05-23T12:00:00.000Z",
@@ -4447,7 +4456,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Aberdeen Proving Ground, covering where to live, BAH, schools, healthcare, and life in Harford County, Maryland.",
       "publishedAt": "2026-04-12T09:00:00.000Z",
@@ -4481,7 +4490,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families PCSing to the U.S. Air Force Academy, covering where to live in north Colorado Springs and Monument, BAH, schools, healthcare, and life at elevation.",
       "publishedAt": "2026-04-17T09:00:00.000Z",
@@ -4514,7 +4523,7 @@
       "stateSlug": "arizona",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Arizona is a prime destination for active-duty military personnel and veterans. With its many military bases, tax-free military pay, outdoor recreation opportunities, and military-friendly communities, Arizona provides a welcoming enviro...",
       "publishedAt": "2023-11-14T05:22:06.000Z",
@@ -4552,7 +4561,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Barksdale AFB, covering where to live, BAH, schools, healthcare, and life in the Shreveport-Bossier area.",
       "publishedAt": "2026-03-25T09:00:00.000Z",
@@ -4586,7 +4595,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Beale AFB, covering where to live, BAH, schools, healthcare, and life near Marysville and Yuba City, California.",
       "publishedAt": "2026-05-06T09:00:00.000Z",
@@ -4620,7 +4629,7 @@
       "stateSource": null,
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 Bremerton and Naval Base Kitsap PCS guide covering neighborhoods, schools, BAH, commute realities, food, recreation, and local housing choices.",
       "publishedAt": "2026-06-12T12:00:00.000Z",
@@ -4656,7 +4665,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Buckley Space Force Base, covering where to live, BAH, schools, healthcare, and life in the Denver-Aurora metro.",
       "publishedAt": "2026-04-21T09:00:00.000Z",
@@ -4690,7 +4699,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Cannon AFB, covering where to live, BAH, schools, healthcare, and life on the eastern New Mexico high plains.",
       "publishedAt": "2026-06-07T09:00:00.000Z",
@@ -4758,7 +4767,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Davis-Monthan AFB, covering where to live, BAH, schools, healthcare, and life in Tucson, Arizona.",
       "publishedAt": "2026-03-08T09:00:00.000Z",
@@ -4792,7 +4801,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Dyess AFB, covering where to live, BAH, schools, healthcare, and life in Abilene, Texas.",
       "publishedAt": "2026-05-28T09:00:00.000Z",
@@ -4826,7 +4835,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Edwards Air Force Base, covering where to live, BAH, schools, healthcare, and life in the high desert Antelope Valley.",
       "publishedAt": "2026-05-01T09:00:00.000Z",
@@ -4860,7 +4869,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2027 guide for military families moving to Eielson Air Force Base, covering where to live near Fairbanks, BAH, schools, healthcare, and life in interior Alaska.",
       "publishedAt": "2026-05-13T09:00:00.000Z",
@@ -4894,7 +4903,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Ellsworth AFB, covering where to live, BAH, schools, healthcare, and life near Rapid City, South Dakota.",
       "publishedAt": "2026-06-19T09:00:00.000Z",
@@ -4928,7 +4937,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fairchild AFB, covering where to live, BAH, schools, healthcare, and life in the Spokane area.",
       "publishedAt": "2026-04-02T09:00:00.000Z",
@@ -4962,7 +4971,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to F.E. Warren AFB, covering where to live, BAH, schools, healthcare, and life in Cheyenne, Wyoming.",
       "publishedAt": "2026-06-24T09:00:00.000Z",
@@ -5029,7 +5038,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Belvoir, covering where to live, BAH, schools, healthcare, and life in Northern Virginia.",
       "publishedAt": "2025-09-20T09:00:00.000Z",
@@ -5063,7 +5072,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Benning, Georgia (formerly Fort Moore), covering where to live, BAH, schools, healthcare, and life near Columbus.",
       "publishedAt": "2025-09-27T09:00:00.000Z",
@@ -5097,7 +5106,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A friendly, plain-language guide to moving your family to Fort Bliss in El Paso, Texas, from neighborhoods and BAH to schools, healthcare, and the desert weather.",
       "publishedAt": "2025-08-02T09:00:00.000Z",
@@ -5131,7 +5140,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Bragg, North Carolina (formerly Fort Liberty), covering where to live, BAH, schools, healthcare, and life near Fayetteville.",
       "publishedAt": "2025-09-25T09:00:00.000Z",
@@ -5165,7 +5174,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Carson, covering where to live, BAH, schools, healthcare, and life in Colorado Springs.",
       "publishedAt": "2025-08-12T09:00:00.000Z",
@@ -5199,7 +5208,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Drum, covering where to live, BAH, schools, healthcare, and life in New York North Country.",
       "publishedAt": "2025-08-24T09:00:00.000Z",
@@ -5233,7 +5242,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "If you just received orders to Fort Gordon (formerly Fort Eisenhower), welcome to the Augusta area. PCS moves can feel overwhelming, especially when you are relocating to a new state and trying to figure out where to live, what the area ...",
       "publishedAt": "2026-04-15T03:23:00.000Z",
@@ -5270,7 +5279,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A plain-language 2026 guide to moving to Fort Hood near Killeen, Texas (formerly Fort Cavazos), covering housing, BAH, schools, healthcare, and things to do.",
       "publishedAt": "2025-08-04T09:00:00.000Z",
@@ -5304,7 +5313,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Huachuca, covering where to live, BAH, schools, healthcare, and high-desert life in southeastern Arizona.",
       "publishedAt": "2025-09-18T09:00:00.000Z",
@@ -5338,7 +5347,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Irwin, the Army National Training Center, covering on-post housing, BAH, schools, healthcare, and Mojave Desert life.",
       "publishedAt": "2025-09-10T09:00:00.000Z",
@@ -5372,7 +5381,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Jackson, covering where to live, BAH, schools, healthcare, and life in Columbia, South Carolina.",
       "publishedAt": "2025-08-31T09:00:00.000Z",
@@ -5406,7 +5415,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Knox, covering where to live, BAH, schools, healthcare, and life in north-central Kentucky.",
       "publishedAt": "2025-09-03T09:00:00.000Z",
@@ -5475,7 +5484,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Lee, Virginia (formerly Fort Gregg-Adams), covering where to live, BAH, schools, healthcare, and life in the Tri-Cities.",
       "publishedAt": "2025-09-15T09:00:00.000Z",
@@ -5509,7 +5518,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Leonard Wood, covering where to live, BAH, schools, healthcare, and life in the Missouri Ozarks.",
       "publishedAt": "2025-08-19T09:00:00.000Z",
@@ -5543,7 +5552,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Meade, covering where to live, BAH, schools, healthcare, and life between Baltimore and Washington.",
       "publishedAt": "2025-10-12T09:00:00.000Z",
@@ -5577,7 +5586,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Polk, home of the Joint Readiness Training Center, covering where to live, BAH, schools, healthcare, and life in west-central Louisiana.",
       "publishedAt": "2025-09-13T09:00:00.000Z",
@@ -5611,7 +5620,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Riley, Kansas, covering where to live, BAH, schools, healthcare, and life in the Flint Hills.",
       "publishedAt": "2025-09-08T09:00:00.000Z",
@@ -5645,7 +5654,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Rucker, covering where to live, BAH, schools, healthcare, and life in southeast Alabama's Wiregrass region.",
       "publishedAt": "2026-04-24T09:00:00.000Z",
@@ -5680,7 +5689,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Sill, covering where to live, BAH, schools, healthcare, and life around Lawton, Oklahoma.",
       "publishedAt": "2025-08-17T09:00:00.000Z",
@@ -5714,7 +5723,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Fort Stewart and Hunter Army Airfield, covering where to live, BAH, schools, healthcare, and coastal Georgia life.",
       "publishedAt": "2025-08-29T09:00:00.000Z",
@@ -5748,7 +5757,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2027 guide for military families moving to Fort Wainwright, covering where to live, BAH, schools, healthcare, and life in Fairbanks, Alaska.",
       "publishedAt": "2026-05-11T09:00:00.000Z",
@@ -5782,7 +5791,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Goodfellow AFB, covering where to live, BAH, schools, healthcare, and life in San Angelo, Texas.",
       "publishedAt": "2026-05-31T09:00:00.000Z",
@@ -5816,7 +5825,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Grand Forks Air Force Base, covering where to live, BAH, schools, healthcare, and life in the Red River Valley.",
       "publishedAt": "2026-06-17T09:00:00.000Z",
@@ -5850,7 +5859,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Hanscom AFB, covering where to live, BAH, schools, healthcare, and life near Boston in Bedford, Massachusetts.",
       "publishedAt": "2026-07-02T09:00:00.000Z",
@@ -5884,7 +5893,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Relocating to Hawaii during a Permanent Change of Station (PCS) is both exciting and challenging. The idea of living in paradise is appealing, but navigating Hawaii’s real estate market requires careful planning. Property values are high...",
       "publishedAt": "2024-07-15T20:59:07.000Z",
@@ -5943,7 +5952,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Hill AFB, covering where to live, BAH, schools, healthcare, and life near Ogden and Layton, Utah.",
       "publishedAt": "2026-03-11T09:00:00.000Z",
@@ -5977,7 +5986,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2027 guide for military families moving to Holloman AFB, covering where to live near Alamogordo, BAH, schools, the 49th Medical Group, and White Sands.",
       "publishedAt": "2026-06-09T09:00:00.000Z",
@@ -6011,7 +6020,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Joint Base Andrews, covering where to live, BAH, schools, healthcare, and life in Prince George's County, Maryland.",
       "publishedAt": "2026-02-24T09:00:00.000Z",
@@ -6045,7 +6054,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Joint Base Elmendorf-Richardson, covering where to live, BAH, schools, healthcare, and life in Anchorage, Alaska.",
       "publishedAt": "2026-02-17T09:00:00.000Z",
@@ -6079,7 +6088,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Joint Base Langley-Eustis, covering where to live, BAH, schools, healthcare, and life on the Virginia Peninsula.",
       "publishedAt": "2025-10-05T09:00:00.000Z",
@@ -6113,7 +6122,7 @@
       "stateSource": "state-map-post",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A friendly, plain-language guide to moving your family to Joint Base Lewis-McChord in Washington, from neighborhoods to schools to the weather.",
       "publishedAt": "2026-06-22T09:00:00.000Z",
@@ -6148,7 +6157,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Joint Base McGuire-Dix-Lakehurst, covering where to live, BAH, schools, healthcare, and life in central New Jersey.",
       "publishedAt": "2026-02-22T09:00:00.000Z",
@@ -6182,7 +6191,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Joint Base Pearl Harbor-Hickam, covering where to live, BAH, schools, healthcare, and life on Oahu, Hawaii.",
       "publishedAt": "2026-02-14T09:00:00.000Z",
@@ -6216,7 +6225,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Joint Base San Antonio, covering where to live, BAH, schools, healthcare, and life in South Texas.",
       "publishedAt": "2025-09-22T09:00:00.000Z",
@@ -6250,7 +6259,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Keesler AFB, covering where to live, BAH, schools, healthcare, and life on the Mississippi Gulf Coast.",
       "publishedAt": "2026-03-06T09:00:00.000Z",
@@ -6284,7 +6293,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Kirtland AFB, covering where to live, BAH, schools, healthcare, and life in Albuquerque, New Mexico.",
       "publishedAt": "2026-03-30T09:00:00.000Z",
@@ -6318,7 +6327,7 @@
       "stateSource": null,
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Five practical Kitsap County PCS notes for military families, from the housing market and VA assumptions to the Gorst commute, HHG timing, and cost of living.",
       "publishedAt": "2026-06-14T12:00:00.000Z",
@@ -6351,7 +6360,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Receiving PCS orders to Luke Air Force Base or planning to retire in the Phoenix area? The West Valley offers a perfect blend of desert sunshine, family-friendly neighborhoods, and a strong military community. This guide provides essenti...",
       "publishedAt": "2025-05-01T22:59:00.000Z",
@@ -6387,7 +6396,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to MacDill Air Force Base, covering where to live, BAH, schools, healthcare, and life in Tampa, Florida.",
       "publishedAt": "2025-10-07T09:00:00.000Z",
@@ -6421,7 +6430,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Malmstrom Air Force Base, covering where to live, BAH, schools, healthcare, and life in Great Falls, Montana.",
       "publishedAt": "2026-06-22T09:00:00.000Z",
@@ -6455,7 +6464,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Maxwell AFB, covering where to live, BAH, schools, healthcare, and life in Montgomery, Alabama.",
       "publishedAt": "2026-03-13T09:00:00.000Z",
@@ -6489,7 +6498,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to MCAS Beaufort, covering where to live, BAH, schools, healthcare, and life in the South Carolina Lowcountry.",
       "publishedAt": "2026-05-26T09:00:00.000Z",
@@ -6523,7 +6532,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to MCAS Cherry Point, covering where to live, BAH, schools, healthcare, and life on the North Carolina Crystal Coast.",
       "publishedAt": "2026-04-04T09:00:00.000Z",
@@ -6557,7 +6566,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to MCB Camp Pendleton, covering where to live, BAH, schools, healthcare, and coastal Southern California life.",
       "publishedAt": "2025-09-05T09:00:00.000Z",
@@ -6591,7 +6600,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Marine Corps Base Hawaii at Kaneohe Bay, covering where to live, BAH, schools, healthcare, and life on windward Oahu.",
       "publishedAt": "2026-03-03T09:00:00.000Z",
@@ -6625,7 +6634,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A plain-language guide to moving your family to Marine Corps Base Quantico in Northern Virginia, covering housing, schools, healthcare, and the I-95 commute.",
       "publishedAt": "2025-08-07T09:00:00.000Z",
@@ -6659,7 +6668,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to McConnell AFB, covering where to live, BAH, schools, healthcare, and life in Wichita, Kansas.",
       "publishedAt": "2026-03-28T09:00:00.000Z",
@@ -6693,7 +6702,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to MCRD Parris Island, covering where to live, BAH, schools, healthcare, and life in the South Carolina Lowcountry.",
       "publishedAt": "2025-08-22T09:00:00.000Z",
@@ -6727,7 +6736,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Minot AFB, covering where to live, BAH, schools, healthcare, climate, and life in North Dakota.",
       "publishedAt": "2026-06-14T09:00:00.000Z",
@@ -6761,7 +6770,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2027 guide for military families moving to Moody Air Force Base, covering where to live, BAH, schools, healthcare, and life near Valdosta, Georgia.",
       "publishedAt": "2026-05-21T09:00:00.000Z",
@@ -6795,7 +6804,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2027 guide for military families moving to Mountain Home AFB, covering where to live, BAH, schools, healthcare, and life on the Snake River Plain.",
       "publishedAt": "2026-06-12T09:00:00.000Z",
@@ -6829,7 +6838,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to NAS Corpus Christi, covering where to live, BAH, schools, healthcare, and life on the Texas Gulf Coast.",
       "publishedAt": "2026-06-02T09:00:00.000Z",
@@ -6863,7 +6872,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2027 guide for military families moving to Naval Air Station Lemoore, covering where to live, BAH, schools, healthcare, and life in the San Joaquin Valley.",
       "publishedAt": "2026-04-26T09:00:00.000Z",
@@ -6897,7 +6906,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to NAS Oceana or JEB Little Creek-Fort Story, covering where to live, BAH, schools, healthcare, and life in Virginia Beach.",
       "publishedAt": "2026-03-01T09:00:00.000Z",
@@ -6931,7 +6940,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to NAS Pensacola, covering where to live, BAH, schools, healthcare, and life on the Gulf Coast.",
       "publishedAt": "2025-09-30T09:00:00.000Z",
@@ -6965,7 +6974,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to NAS Whidbey Island, covering where to live, BAH, schools, healthcare, and life on Washington's Whidbey Island.",
       "publishedAt": "2026-06-05T09:00:00.000Z",
@@ -6999,7 +7008,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to the Naval Academy and NSA Annapolis, covering where to live, BAH, schools, healthcare, and life on the Chesapeake Bay.",
       "publishedAt": "2026-04-14T09:00:00.000Z",
@@ -7033,7 +7042,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Naval Base Ventura County, covering where to live, BAH, schools, healthcare, and life on the Southern California coast.",
       "publishedAt": "2026-04-29T09:00:00.000Z",
@@ -7067,7 +7076,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Naval Station Great Lakes, covering where to live, BAH, schools, healthcare, and life on the North Shore of Lake Michigan.",
       "publishedAt": "2026-02-19T09:00:00.000Z",
@@ -7101,7 +7110,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Naval Station Mayport or NAS Jacksonville, covering where to live, BAH, schools, healthcare, and life in northeast Florida.",
       "publishedAt": "2026-02-26T09:00:00.000Z",
@@ -7135,7 +7144,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Naval Station Newport, covering where to live, BAH, schools, healthcare, and life on the Rhode Island coast.",
       "publishedAt": "2026-06-29T09:00:00.000Z",
@@ -7169,7 +7178,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A plain-language 2026 guide to moving your family to Naval Station Norfolk, from where to live to BAH and schools.",
       "publishedAt": "2025-08-09T09:00:00.000Z",
@@ -7203,7 +7212,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Naval Submarine Base Kings Bay, covering where to live, BAH, schools, healthcare, and life on the Georgia coast.",
       "publishedAt": "2026-05-23T09:00:00.000Z",
@@ -7237,7 +7246,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Nellis Air Force Base, covering where to live, BAH, schools, healthcare, and life in the Las Vegas area.",
       "publishedAt": "2025-10-10T09:00:00.000Z",
@@ -7306,7 +7315,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families PCSing to North Carolina, covering the major bases, BAH, home prices near each, and veteran property tax breaks.",
       "publishedAt": "2026-06-23T09:00:00.000Z",
@@ -7339,7 +7348,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Patrick Space Force Base, covering where to live, BAH, schools, healthcare, and life on Florida Space Coast near Cocoa Beach.",
       "publishedAt": "2026-05-18T09:00:00.000Z",
@@ -7373,7 +7382,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 PCS guide for Peterson and Schriever Space Force Base, covering where to live on the east side of Colorado Springs, BAH, schools, healthcare, and the Space Force mission.",
       "publishedAt": "2026-04-19T09:00:00.000Z",
@@ -7407,7 +7416,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Portsmouth Naval Shipyard, covering where to live in Maine and New Hampshire, BAH, schools, healthcare, and Seacoast life.",
       "publishedAt": "2026-07-04T09:00:00.000Z",
@@ -7441,7 +7450,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2027 guide for military families moving to the Presidio of Monterey and the Defense Language Institute, covering where to live, BAH, schools, healthcare, and life on the California coast.",
       "publishedAt": "2026-05-09T09:00:00.000Z",
@@ -7475,7 +7484,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Robins AFB, covering where to live, BAH, schools, healthcare, and life in Middle Georgia.",
       "publishedAt": "2026-03-16T09:00:00.000Z",
@@ -7509,7 +7518,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to the San Diego military bases, covering where to live, BAH, schools, healthcare, and life in Southern California.",
       "publishedAt": "2026-02-12T09:00:00.000Z",
@@ -7543,7 +7552,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Schofield Barracks, covering where to live, BAH, schools, healthcare, and life on Oahu, Hawaii.",
       "publishedAt": "2025-10-02T09:00:00.000Z",
@@ -7577,7 +7586,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Scott AFB, covering where to live, BAH, schools, healthcare, and life in the Metro East area near St. Louis.",
       "publishedAt": "2026-03-21T09:00:00.000Z",
@@ -7611,7 +7620,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2027 guide for military families moving to Selfridge Air National Guard Base, covering where to live, BAH, schools, healthcare, and life in metro Detroit.",
       "publishedAt": "2026-06-27T09:00:00.000Z",
@@ -7645,7 +7654,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Seymour Johnson AFB, covering where to live, BAH, schools, healthcare, and life in Goldsboro, North Carolina.",
       "publishedAt": "2026-04-07T09:00:00.000Z",
@@ -7679,7 +7688,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Shaw AFB, covering where to live, BAH, schools, healthcare, and life in the South Carolina Midlands.",
       "publishedAt": "2026-03-23T09:00:00.000Z",
@@ -7713,7 +7722,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Travis AFB, covering where to live, BAH, schools, healthcare, and life in Solano County, California.",
       "publishedAt": "2025-08-27T09:00:00.000Z",
@@ -7747,7 +7756,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Tyndall Air Force Base, covering where to live, BAH, schools, healthcare, and life on the Florida Gulf coast.",
       "publishedAt": "2026-05-16T09:00:00.000Z",
@@ -7781,7 +7790,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2027 guide for military families moving to Vandenberg Space Force Base, covering where to live, BAH, schools, healthcare, and life on California's Central Coast.",
       "publishedAt": "2026-05-04T09:00:00.000Z",
@@ -7815,7 +7824,7 @@
       "stateSource": "author-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Compare Walter Reed Bethesda neighborhoods, 2026 BAH realities, Montgomery County trade-offs, and how Maryland stacks up against Northern Virginia.",
       "publishedAt": "2026-06-10T12:00:00.000Z",
@@ -7850,7 +7859,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to West Point, covering where to live, BAH, schools, healthcare, and life in New York's Hudson Valley.",
       "publishedAt": "2026-03-18T09:00:00.000Z",
@@ -7884,7 +7893,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Whiteman Air Force Base, covering where to live, BAH, schools, healthcare, and life near Knob Noster, Missouri.",
       "publishedAt": "2026-04-09T09:00:00.000Z",
@@ -7918,7 +7927,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Receiving PCS orders to Wichita Falls, Texas brings exciting opportunities for military families stationed at Sheppard Air Force Base. Beyond finding the right home, understanding the robust support systems and community resources can tr...",
       "publishedAt": "2025-05-16T00:10:00.000Z",
@@ -7953,7 +7962,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide for military families moving to Wright-Patterson AFB, covering where to live, BAH, schools, healthcare, and life around Dayton, Ohio.",
       "publishedAt": "2025-08-14T09:00:00.000Z",
@@ -8111,7 +8120,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "If you are PCSing to Camp Lejeune or MCAS New River, you are headed into the heart of Onslow County, one of the most military-connected communities in the country. Jacksonville, North Carolina, is the primary support city for both instal...",
       "publishedAt": "2026-04-17T15:20:00.000Z",
@@ -8148,7 +8157,7 @@
       "stateSource": null,
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Your friendly guide to PCSing to Eglin AFB or Hurlburt Field. Real 2026 BAH, neighborhood breakdowns, schools, and what life is like on the Emerald Coast.",
       "publishedAt": "2026-05-25T15:00:00.000Z",
@@ -8183,7 +8192,7 @@
       "stateSource": "slug-heuristic",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "How to choose the right Florida military installation for your family in 2026 — region, BAH, schools, hurricane prep, and homestead tax benefits.",
       "publishedAt": "2026-05-25T15:00:00.000Z",
@@ -8249,7 +8258,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "2026 BAH rates, neighborhood guides, VA Loan strategy, and a smart PCS housing plan and timeline for military families headed to Tinker AFB and the OKC metro.",
       "publishedAt": "2026-05-25T15:00:00.000Z",
@@ -8588,7 +8597,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "Financial Guidance",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "See the 2026 San Diego BAH rates by pay grade, how far they stretch against local rents and home prices, and whether renting or buying makes more sense.",
       "publishedAt": "2026-07-02T09:00:00.000Z",
@@ -8957,6 +8966,40 @@
       ]
     },
     {
+      "slug": "texas-va-loan-benefits-for-military-homebuyers",
+      "title": "Texas VA Loan Benefits: Extra Savings for Military Homebuyers",
+      "url": "/blog/texas-va-loan-benefits-for-military-homebuyers",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "Texas layers no state income tax, disabled veteran property tax exemptions, and the state Texas Vet Loan on top of the federal VA loan. Here is how the benefits stack for military buyers moving to the Lone Star State.",
+      "publishedAt": "2026-07-11T09:00:00.000Z",
+      "updatedAt": "2026-07-12T00:00:00.000Z",
+      "primaryKeyword": "texas va loan benefits",
+      "secondaryKeywords": [
+        "buying a home in texas military",
+        "texas disabled veteran property tax exemption",
+        "texas vet loan",
+        "texas veterans land board home loan",
+        "va loan texas"
+      ],
+      "h2Outline": [
+        "The Federal VA Loan, in Plain English",
+        "Texas Benefit 1: No State Income Tax",
+        "Texas Benefit 2: Veteran Property Tax Exemptions",
+        "Texas Benefit 3: The Texas Vet Loan",
+        "What Homes Cost Near Texas Bases",
+        "Putting the Benefits Together",
+        "Frequently Asked Questions",
+        "The Bottom Line"
+      ]
+    },
+    {
       "slug": "texas-veteran-property-tax-exemptions-2026",
       "title": "Texas Military & Veteran Property Tax Exemptions (2026)",
       "url": "/blog/texas-veteran-property-tax-exemptions-2026",
@@ -9119,7 +9162,7 @@
       "stateSlug": null,
       "stateSource": null,
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A Permanent Change of Station (PCS) move is one of the most significant transitions for active duty military personnel and their families. Whether you are relocating within the United States or moving overseas, planning ahead is essentia...",
       "publishedAt": "2024-05-09T18:45:35.000Z",
@@ -9184,7 +9227,7 @@
       "stateSource": null,
       "categories": [
         "Things to Do Near You",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Living near Fort Riley offers a surprising mix of history, local charm, and weekend-worthy adventures. Whether you just received PCS orders to the area or have lived in the Flint Hills for years, there are countless nearby destinations t...",
       "publishedAt": "2026-03-03T15:47:00.000Z",
@@ -9215,7 +9258,7 @@
       "stateSource": null,
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "If you just received orders to Tinker Air Force Base, welcome to Oklahoma. PCSing can feel overwhelming, but with the right information, your transition to the Oklahoma City metro area can be smooth and strategic. From neighborhoods and ...",
       "publishedAt": "2026-02-09T15:25:00.000Z",
@@ -9274,7 +9317,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "Things to Do Near You",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Getting PCS orders to Camp Lejeune brings excitement and questions for military families. Located in eastern North Carolina, Marine Corps Base Camp Lejeune serves as home to the largest Marine Corps base on the East Coast. Beyond duty re...",
       "publishedAt": "2025-06-25T12:00:00.000Z",
@@ -9597,6 +9640,70 @@
       ]
     },
     {
+      "slug": "va-irrrl-streamline-refinance-guide",
+      "title": "VA IRRRL: The Streamline Refinance for Military Homeowners",
+      "url": "/blog/va-irrrl-streamline-refinance-guide",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "A plain-language guide to the VA IRRRL, the streamline refinance that lets military homeowners lower their rate with less paperwork, a low funding fee, and often no new appraisal or income check.",
+      "publishedAt": "2026-07-09T09:00:00.000Z",
+      "updatedAt": "2026-07-12T00:00:00.000Z",
+      "primaryKeyword": "va irrrl",
+      "secondaryKeywords": [
+        "interest rate reduction refinance loan",
+        "va irrrl funding fee",
+        "va irrrl requirements",
+        "va refinance seasoning rules",
+        "va streamline refinance"
+      ],
+      "h2Outline": [
+        "What Is a VA IRRRL?",
+        "How the VA IRRRL Is Different",
+        "VA IRRRL Requirements",
+        "Is a VA IRRRL Worth It?",
+        "Frequently Asked Questions",
+        "The Bottom Line"
+      ]
+    },
+    {
+      "slug": "va-loan-appraisal-what-to-expect",
+      "title": "The VA Loan Appraisal: What to Expect and How It Works",
+      "url": "/blog/va-loan-appraisal-what-to-expect",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "VA Loan Help"
+      ],
+      "description": "A plain-language look at the VA loan appraisal: what the appraiser checks, how it differs from a home inspection, what the Tidewater process is, and what happens when a home needs repairs.",
+      "publishedAt": "2026-07-07T09:00:00.000Z",
+      "updatedAt": "2026-07-12T00:00:00.000Z",
+      "primaryKeyword": "va loan appraisal",
+      "secondaryKeywords": [
+        "tidewater process va",
+        "va appraisal process",
+        "va appraisal vs home inspection",
+        "va minimum property requirements",
+        "va notice of value"
+      ],
+      "h2Outline": [
+        "What a VA Loan Appraisal Does",
+        "VA Appraisal vs. Home Inspection",
+        "Minimum Property Requirements",
+        "The Tidewater Process",
+        "What Happens If the Appraisal Comes In Low",
+        "Frequently Asked Questions",
+        "The Bottom Line"
+      ]
+    },
+    {
       "slug": "va-loan-assumption-guide-how-military-families-can-save-thousands-on-their-next-home-purchase",
       "title": "VA Loan Assumption Guide: How Military Families Can Save Thousands on Their Next Home Purchase",
       "url": "/blog/va-loan-assumption-guide-how-military-families-can-save-thousands-on-their-next-home-purchase",
@@ -9794,6 +9901,40 @@
         "Documents You Will Need",
         "What Your COE Does and Does Not Tell You",
         "Common COE Questions",
+        "The Bottom Line"
+      ]
+    },
+    {
+      "slug": "va-loan-closing-costs-what-military-buyers-pay",
+      "title": "VA Loan Closing Costs: What Military Buyers Actually Pay",
+      "url": "/blog/va-loan-closing-costs-what-military-buyers-pay",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "A plain-language breakdown of VA loan closing costs: what you pay, the fees the VA will not let a lender charge you, who can cover the bill, and simple ways to keep more cash in your pocket at closing.",
+      "publishedAt": "2026-07-05T09:00:00.000Z",
+      "updatedAt": "2026-07-12T00:00:00.000Z",
+      "primaryKeyword": "va loan closing costs",
+      "secondaryKeywords": [
+        "how to lower va loan closing costs",
+        "seller concessions va loan",
+        "va funding fee 2026",
+        "va loan non-allowable fees",
+        "who pays closing costs on a va loan"
+      ],
+      "h2Outline": [
+        "What Are VA Loan Closing Costs?",
+        "Closing Costs You Can Expect to Pay",
+        "The VA Funding Fee",
+        "Fees the VA Will Not Let You Pay",
+        "Who Can Pay Your VA Loan Closing Costs",
+        "How to Lower Your VA Loan Closing Costs",
+        "Frequently Asked Questions",
         "The Bottom Line"
       ]
     },
@@ -10061,7 +10202,7 @@
       "stateSource": null,
       "categories": [
         "Real Estate Insights",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "When military families face the complex process of buying or selling a home during a PCS (Permanent Change of Station) or transition to civilian life, they need more than just a real estate agent—they need someone who understands the uni...",
       "publishedAt": "2025-10-13T20:56:00.000Z",
@@ -10257,7 +10398,7 @@
       "stateSlug": "alaska",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Alaska is home to over 30,000 active-duty service members and their families, playing a vital role in national defense and Arctic security. Due to its strategic location, the military presence in Alaska helps protect U.S. interests and a...",
       "publishedAt": "2023-09-26T12:00:00.000Z",
@@ -10292,7 +10433,7 @@
       "stateSlug": "arizona",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Arizona is home to a large and active military community, with over 100,000 active-duty service members, reservists, and National Guard members. The state's military installations play a crucial role in national defense, aviation trainin...",
       "publishedAt": "2023-07-19T14:40:58.000Z",
@@ -10327,7 +10468,7 @@
       "stateSlug": "arkansas",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Arkansas is home to over 300,000 veterans, around 5,000 active-duty service members, and over 13,000 National Guard and reserve members. The state's military bases contribute significantly to the local economy, supporting over 20,000 job...",
       "publishedAt": "2023-10-02T21:14:24.000Z",
@@ -10359,7 +10500,7 @@
       "stateSlug": "california",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "California has the largest military population in the United States, with over 157,000 active-duty personnel and more than 800,000 veterans. The military contributes over $90 billion annually to the state's economy and supports over 700,...",
       "publishedAt": "2023-10-14T01:19:32.000Z",
@@ -10387,7 +10528,7 @@
       "stateSlug": "colorado",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Colorado is home to several key military installations that support the U.S. Air Force, Space Force, Army, and national defense operations. Whether you're PCSing (Permanent Change of Station) to Colorado or just curious about the militar...",
       "publishedAt": "2022-09-20T14:35:24.000Z",
@@ -10420,7 +10561,7 @@
       "stateSlug": "connecticut",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Connecticut has a rich military history, playing a key role in every major U.S. conflict from the American Revolution to today. The state is home to several military museums and historical sites, such as the Submarine Force Museum & Libr...",
       "publishedAt": "2023-10-17T00:50:04.000Z",
@@ -10450,7 +10591,7 @@
       "stateSlug": "delaware",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Delaware has a long and distinguished military history, playing a crucial role in every major U.S. conflict from the American Revolution to today. The state was the site of key battles such as the Battle of Cooch’s Bridge and the Battle ...",
       "publishedAt": "2023-11-20T21:51:40.000Z",
@@ -10476,7 +10617,7 @@
       "stateSlug": "florida",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Florida has a long history of military involvement, from the American Revolution to modern defense operations. The state is home to twenty-four active military installations, supporting the Army, Navy, Air Force, Marine Corps, Space Forc...",
       "publishedAt": "2024-06-25T13:58:25.000Z",
@@ -10507,7 +10648,7 @@
       "stateSlug": "georgia",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Georgia has played a pivotal role in U.S. military history, from the American Revolution to modern-day defense operations. With thirteen active military installations, the state remains a key hub for national security, training, and logi...",
       "publishedAt": "2024-06-25T13:47:49.000Z",
@@ -10539,7 +10680,7 @@
       "stateSlug": "hawaii",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Hawaii has a rich military history and is home to eleven active military installations spread across multiple islands. With its strategic location in the Pacific, Hawaii has played a critical role in U.S. military operations for over a c...",
       "publishedAt": "2024-06-25T14:58:26.000Z",
@@ -10572,7 +10713,7 @@
       "stateSlug": "idaho",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Idaho's military presence is centered around Mountain Home Air Force Base, the state's primary installation. Located in southwestern Idaho, this base plays a critical role in air combat training and operations, supporting the U.S. Air Fo...",
       "publishedAt": "2024-07-02T13:10:11.000Z",
@@ -10597,7 +10738,7 @@
       "stateSlug": "illinois",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Illinois is home to a strong military presence, with key installations that support training, logistics, and national defense operations. These bases play a crucial role in military readiness while also contributing to the state’s econom...",
       "publishedAt": "2024-06-25T15:06:54.000Z",
@@ -10627,7 +10768,7 @@
       "stateSlug": "indiana",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Indiana has a deep-rooted military history dating back to the War of 1812 and has contributed to every major U.S. conflict since. Today, the state is home to three key military installations, each serving a distinct mission within the Ar...",
       "publishedAt": "2024-07-02T12:57:54.000Z",
@@ -10657,7 +10798,7 @@
       "stateSlug": "iowa",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Iowa has a long history of military service dating back to the early 1800s when local militias played a role in regional defense. The Iowa National Guard was officially formed in 1878, and since then, soldiers from the state have served ...",
       "publishedAt": "2024-07-02T13:25:38.000Z",
@@ -10683,7 +10824,7 @@
       "stateSlug": "kansas",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Kansas has a deep military history dating back to the Louisiana Purchase in 1803. As settlers moved west along the Oregon Trail, the U.S. Army established a network of forts to provide security and logistical support. Two of these forts—...",
       "publishedAt": "2024-07-10T13:51:25.000Z",
@@ -10706,7 +10847,7 @@
       "stateSlug": "kentucky",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Kentucky's strategic location along the Ohio River has made it a key military region throughout U.S. history. The state played a pivotal role in early conflicts, including the French and Indian War, and has remained a vital part of natio...",
       "publishedAt": "2024-07-02T13:40:24.000Z",
@@ -10729,7 +10870,7 @@
       "stateSlug": "louisiana",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Louisiana has a rich military history dating back to the colonial era when European settlers formed militias to defend their territories. One of the most significant moments in the state's military past was the Battle of New Orleans duri...",
       "publishedAt": "2024-07-16T14:54:18.000Z",
@@ -10752,7 +10893,7 @@
       "stateSlug": "maine",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Maine has a long and distinguished military history, dating back to the 1600s when its early settlers were involved in the French and Indian Wars. Since then, Maine’s citizens have played a role in every major U.S. conflict. Today, the s...",
       "publishedAt": "2024-07-02T13:33:13.000Z",
@@ -10775,7 +10916,7 @@
       "stateSlug": "maryland",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Maryland sits at the heart of the nation's defense network, with bases that handle everything from cyber defense to medical care to weapons testing. According to the State of Maryland, twenty military installations support active-duty mi...",
       "publishedAt": "2026-06-25T09:00:00.000Z",
@@ -10806,7 +10947,7 @@
       "stateSlug": "massachusetts",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Massachusetts has a small but important military footprint. The state is home to five major active installations, supporting the Air Force, Army, and Coast Guard, plus Air Force Reserve and National Guard units that train and fly alongsi...",
       "publishedAt": "2025-07-13T09:00:00.000Z",
@@ -10837,7 +10978,7 @@
       "stateSlug": "michigan",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Michigan has a smaller military footprint than some states, but the installations it does have carry important missions. The state is home to four major active installations, supporting the Air Force, Army, and Coast Guard, with much of ...",
       "publishedAt": "2025-07-16T09:00:00.000Z",
@@ -10868,7 +11009,7 @@
       "stateSlug": "minnesota",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Minnesota has a rich military history dating back to the 1820s, when Fort Snelling served as a key frontier outpost, protecting settlers and maintaining peace with Native American tribes. While Fort Snelling is no longer an active milita...",
       "publishedAt": "2024-07-10T14:16:12.000Z",
@@ -10891,7 +11032,7 @@
       "stateSlug": "mississippi",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Mississippi has a strong and steady military presence, much of it along the Gulf Coast. The state is home to six major active installations, supporting the Air Force, Navy, and Army National Guard, plus reserve and tenant units that trai...",
       "publishedAt": "2025-07-11T09:00:00.000Z",
@@ -10922,7 +11063,7 @@
       "stateSlug": "missouri",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Missouri sits in the heart of the country and plays a key role in training and defense. The state is home to four major active installations, supporting the Army, Air Force, and Air National Guard, plus reserve and joint units that train...",
       "publishedAt": "2026-07-01T09:00:00.000Z",
@@ -10953,7 +11094,7 @@
       "stateSlug": "montana",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Montana has a deep military history, despite its limited active-duty military presence today. The state’s military community is built around the Army National Guard and Air National Guard, with approximately 14,000 soldiers and airmen se...",
       "publishedAt": "2024-07-10T14:34:57.000Z",
@@ -10976,7 +11117,7 @@
       "stateSlug": "nebraska",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Nebraska has a long military history, dating back to the establishment of early forts used to protect trade routes and interact with Native American tribes. The state has played a role in every major U.S. conflict, and in 1881, it formal...",
       "publishedAt": "2024-07-10T14:40:36.000Z",
@@ -10999,7 +11140,7 @@
       "stateSlug": "nevada",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Nevada plays a quiet but important role in how the military trains for war. The state is home to four major active installations, supporting the Air Force, Navy, and Army, plus the vast ranges where pilots and aircrews sharpen their skil...",
       "publishedAt": "2025-07-06T09:00:00.000Z",
@@ -11030,7 +11171,7 @@
       "stateSlug": "new-hampshire",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "New Hampshire has a small but important military footprint. The state is home to two major active installations, supporting the Air National Guard (part of the Air Force) and the Space Force. Whether you are PCSing to New Hampshire (Perm...",
       "publishedAt": "2025-07-28T09:00:00.000Z",
@@ -11060,7 +11201,7 @@
       "stateSlug": "new-jersey",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "New Jersey has a small but important military footprint. The state is home to four major active installations, supporting the Air Force, Army, Navy, and Coast Guard, including the one base where all three of the largest services share th...",
       "publishedAt": "2026-07-02T09:00:00.000Z",
@@ -11092,7 +11233,7 @@
       "stateSlug": "new-mexico",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "A 2026 guide to the four major military installations in New Mexico, what each base does, and what military families should know before a PCS to the Land of Enchantment.",
       "publishedAt": "2023-07-25T17:25:11.000Z",
@@ -11124,7 +11265,7 @@
       "stateSlug": "new-york",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "New York has played a pivotal role in U.S. military history, dating back to the Revolutionary War. The state is home to West Point, the oldest continuously occupied military post in the United States, which served as a key stronghold for...",
       "publishedAt": "2024-07-10T14:45:55.000Z",
@@ -11147,7 +11288,7 @@
       "stateSlug": "north-carolina",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "North Carolina has a rich and diverse military presence, with ten major military installations across the state. Each base plays a crucial role in supporting national defense, training, and logistics operations.",
       "publishedAt": "2022-10-18T02:18:27.000Z",
@@ -11184,7 +11325,7 @@
       "stateSlug": "north-dakota",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "North Dakota's military presence is deeply rooted in its strategic location on the Great Plains, making it a key part of national defense since the 1800s. Over the years, the state has hosted numerous forts and installations, supporting ...",
       "publishedAt": "2024-07-16T14:42:49.000Z",
@@ -11207,7 +11348,7 @@
       "stateSlug": "ohio",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Ohio's military footprint is built around airpower and logistics. The state is home to six major active installations, supporting the Air Force, the Air Force Reserve, the Air National Guard, and the Defense Logistics Agency. Whether you...",
       "publishedAt": "2026-06-30T09:00:00.000Z",
@@ -11237,7 +11378,7 @@
       "stateSlug": "oklahoma",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Oklahoma has a long military history, and it is still a busy home for the armed forces today. The state hosts five major active military installations, supporting the Army and the Air Force. Whether you are PCSing to Oklahoma (PCS stands...",
       "publishedAt": "2026-06-29T09:00:00.000Z",
@@ -11267,7 +11408,7 @@
       "stateSlug": "oregon",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Oregon has a smaller military footprint than many states, but the bases here carry important national missions. The state is home to five major active installations, supporting the Air National Guard, Coast Guard, and Army National Guard...",
       "publishedAt": "2025-07-18T09:00:00.000Z",
@@ -11298,7 +11439,7 @@
       "stateSlug": "pennsylvania",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Pennsylvania has a long and proud military history. The state is home to seven major active installations, supporting the Army, Navy, and Air Force, plus a major Defense Logistics Agency site and reserve and Guard units that train alongs...",
       "publishedAt": "2025-07-08T09:00:00.000Z",
@@ -11330,7 +11471,7 @@
       "stateSlug": "rhode-island",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Rhode Island is the smallest state, but it carries a big role in the military. The state is home to one major active installation, Naval Station Newport, plus Air National Guard and Coast Guard units. The Navy leads the way here, with Ne...",
       "publishedAt": "2025-07-21T09:00:00.000Z",
@@ -11361,7 +11502,7 @@
       "stateSlug": "south-carolina",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "South Carolina has a long and proud military history, and it is still a busy training hub today. The state is home to six major active-duty installations, supporting the Army, Navy, Air Force, and Marine Corps, along with an Air National...",
       "publishedAt": "2026-06-26T09:00:00.000Z",
@@ -11392,7 +11533,7 @@
       "stateSlug": "south-dakota",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "South Dakota has a small but important military footprint. The state is home to one major active-duty installation, Ellsworth Air Force Base, plus key Air National Guard and Army National Guard sites that train and support the force. The...",
       "publishedAt": "2025-07-23T09:00:00.000Z",
@@ -11423,7 +11564,7 @@
       "stateSlug": "texas",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Texas has one of the largest military footprints in the country. The state is home to eleven major active installations, supporting the Army, Air Force, and Navy, plus reserve and joint units that train alongside them. Whether you are PC...",
       "publishedAt": "2026-06-22T09:00:00.000Z",
@@ -11454,7 +11595,7 @@
       "stateSlug": "utah",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Utah has a smaller but very busy military footprint. The state is home to five major active installations, supporting the Air Force and Army, plus National Guard units that train alongside them. Whether you are PCSing to Utah (Permanent ...",
       "publishedAt": "2025-07-26T09:00:00.000Z",
@@ -11485,7 +11626,7 @@
       "stateSlug": "vermont",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Vermont has a small but important military footprint, built almost entirely on the National Guard. The state is home to two major active installations, one supporting the Air National Guard and one supporting the Army National Guard. Whe...",
       "publishedAt": "2025-07-31T09:00:00.000Z",
@@ -11515,7 +11656,7 @@
       "stateSlug": "virginia",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Virginia has one of the deepest military histories in the country, and it is still one of the most active military states today. The state is home to eleven major military installations, supporting the Navy, Marine Corps, Army, and Air F...",
       "publishedAt": "2026-06-23T09:00:00.000Z",
@@ -11546,7 +11687,7 @@
       "stateSlug": "washington",
       "stateSource": "frontmatter-state-slug",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Washington State sits at the center of America's defense in the Pacific Northwest. It is home to seven major active military installations that support the Army, Navy, Air Force, and Coast Guard. From the South Sound to the Kitsap Penins...",
       "publishedAt": "2026-06-24T09:00:00.000Z",
@@ -11578,7 +11719,7 @@
       "stateSlug": "west-virginia",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "West Virginia has a long and proud military tradition dating back to the early 1730s, when some of the first militias were formed in the region. Over the years, the state has played a crucial role in national defense, providing both trai...",
       "publishedAt": "2024-07-16T15:15:32.000Z",
@@ -11601,7 +11742,7 @@
       "stateSlug": "wisconsin",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Wisconsin has a deep military history dating back to its early territorial days. Settlers formed militias to protect their communities, and in 1851, these militias formally became the Wisconsin National Guard. The state played a signific...",
       "publishedAt": "2024-07-16T15:09:03.000Z",
@@ -11624,7 +11765,7 @@
       "stateSlug": "wyoming",
       "stateSource": "slug-heuristic",
       "categories": [
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Wyoming has a small but strong military community with a history that dates back to 1870, when the state first began forming its National Guard. While Wyoming does not have multiple active installations, it is home to one key military ba...",
       "publishedAt": "2024-07-16T15:00:39.000Z",
@@ -11829,7 +11970,7 @@
       "stateSource": "frontmatter-state-slug",
       "categories": [
         "PCS Help",
-        "US Military Bases"
+        "U.S. Military Bases"
       ],
       "description": "Moving to Marine Corps Air Station Yuma presents military families with unique opportunities in Arizona's sunny desert landscape. MCAS Yuma serves as the Marine Corps' premier air-to-ground aviation training facility, supporting 80% of t...",
       "publishedAt": "2025-06-25T09:00:00.000Z",

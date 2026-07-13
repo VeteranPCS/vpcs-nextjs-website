@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Script from "next/script";
 import Link from "next/link";
 import { cache } from "react";
 import { BlogPosting, WithContext } from "schema-dts";
@@ -13,12 +12,19 @@ import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
 import FindAgentInState from "@/components/Blog/FindAgentInState";
 import { ContentViewedTracker } from "@/components/Analytics/Trackers";
+import BlogCard from "@/components/Blog/BlogCard/BlogCard";
+import BlogSearchForm from "@/components/BlogPage/BlogSearchForm";
 import {
+    componentSlugForBlog,
     extractTocHeadings,
+    getAllBlogs,
     getBlogBySlug,
     getBlogSlugs,
     readingTimeMinutes,
 } from "@/lib/blog/mdx";
+import { getBlogComponentBySlug } from "@/lib/blog/components";
+import { toBlogCardData } from "@/lib/blog/cards";
+import { pickNextGuide, rankRelatedBlogs } from "@/lib/blog/related";
 import { resolveAuthor } from "@/lib/blog/authors";
 import {
     getStateDisplayName,
@@ -97,6 +103,10 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
     const ctaLabel = bridgeState
         ? `Find an agent in ${getStateDisplayName(bridgeState)}`
         : "Find an Agent";
+    const blogComponent = getBlogComponentBySlug(componentSlugForBlog(blog));
+    const allBlogs = await getAllBlogs();
+    const rankedRelated = rankRelatedBlogs(allBlogs, blog);
+    const nextGuide = pickNextGuide(rankedRelated);
 
     const heroImageUrl = blog.mainImage?.src
         ? `${BASE_URL}${blog.mainImage.src}`
@@ -150,17 +160,20 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
     const breadcrumbJsonLd = buildBreadcrumbList([
         { name: "Home", url: `${BASE_URL}/` },
         { name: "Blog", url: `${BASE_URL}/blog` },
+        ...(blogComponent
+            ? [{ name: blogComponent.label, url: `${BASE_URL}/blog/category/${blogComponent.slug}` }]
+            : []),
         { name: blog.title, url: `${BASE_URL}/blog/${slug}` },
     ]);
 
     return (
         <div className="pb-20 md:pb-0">
-            <Script
+            <script
                 id={`json-ld-blog-${slug}`}
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
-            <Script
+            <script
                 id={`json-ld-blog-breadcrumb-${slug}`}
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
@@ -176,6 +189,28 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                 <Link href="/" className="hover:text-[#292F6C] inline-flex items-center min-h-11">Home</Link>
                 <span className="mx-2">/</span>
                 <Link href="/blog" className="hover:text-[#292F6C] inline-flex items-center min-h-11">Blog</Link>
+                {blogComponent && (
+                    <>
+                        <span className="mx-2">/</span>
+                        <TrackedCtaLink
+                            href={`/blog/category/${blogComponent.slug}`}
+                            className="hover:text-[#292F6C] inline-flex items-center min-h-11"
+                            cta={{
+                                ctaId: 'blog_breadcrumb_category',
+                                ctaIntent: 'content_navigation',
+                                ctaPosition: 'blog_post_breadcrumb',
+                                ctaComponent: 'blog_breadcrumb',
+                                ctaLabel: blogComponent.label,
+                                destination: `/blog/category/${blogComponent.slug}`,
+                                pageType: 'blog_post',
+                                contentSlug: slug,
+                                contentType: 'blog_post',
+                            }}
+                        >
+                            {blogComponent.label}
+                        </TrackedCtaLink>
+                    </>
+                )}
                 <span className="mx-2">/</span>
                 <span className="text-[#292F6C]">{blog.title}</span>
             </nav>
@@ -191,22 +226,49 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                 <FindAgentInState state={bridgeState} blogSlug={slug} position="top" />
             )}
             <Testimonials />
-            <BlogDetailsCta />
+            <BlogDetailsCta stateSlug={bridgeState} componentSlug={blogComponent?.slug ?? null} />
             <EndBlogPostDetails
                 bodySecondHalf={bodySecondHalf}
                 resolvedAuthor={resolvedAuthor}
                 headingIds={secondHeadingIds}
             />
+            {nextGuide && (
+                <div className="container mx-auto px-5 my-12">
+                    <h2 className="text-[#292F6C] md:text-[32px] text-[24px] font-bold mb-6">
+                        Up next
+                    </h2>
+                    <div className="overflow-hidden rounded-custom border border-[#E5E7EB] bg-white">
+                        <BlogCard
+                            data={toBlogCardData(nextGuide)}
+                            variant="horizontal"
+                            cta={{
+                                ctaId: 'blog_next_guide',
+                                ctaPosition: 'blog_post_after_body',
+                                pageType: 'blog_post',
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
             {bridgeState && (
                 <FindAgentInState state={bridgeState} blogSlug={slug} position="bottom" />
             )}
             <CommonBlog
                 component={blog.component || ""}
-                currentSlug={slug}
-                stateSlug={bridgeState}
-                categories={blog.categories}
-                primaryKeyword={blog.primaryKeyword}
+                blog={blog}
+                excludeSlugs={nextGuide ? [nextGuide.slug] : []}
             />
+            <div className="container mx-auto px-5 my-12">
+                <div className="mx-auto max-w-xl text-center">
+                    <h2 className="text-[#292F6C] text-[24px] font-bold mb-2">
+                        Looking for something else?
+                    </h2>
+                    <p className="text-[#6C757D] roboto text-sm mb-4">
+                        Search all VeteranPCS PCS and VA loan guides.
+                    </p>
+                    <BlogSearchForm />
+                </div>
+            </div>
             <FrequentlyAskedQuestion />
             <KeepInTouch />
             <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E5E7EB] bg-white/95 px-5 py-3 shadow-lg md:hidden">

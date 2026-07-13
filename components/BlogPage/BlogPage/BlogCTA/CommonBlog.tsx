@@ -1,40 +1,55 @@
 import PcsResourcesBlog from "@/components/PcsResources/PcsResourcesBlog/PcsResourcesBlog";
-import { getAllBlogs } from "@/lib/blog/mdx";
-import { resolveBlogStateSlug } from "@/lib/blog/state";
+import BlogCardRail from "@/components/Blog/BlogCard/BlogCardRail";
+import { componentSlugForBlog, getAllBlogs, getBlogsByComponent } from "@/lib/blog/mdx";
+import { getBlogComponentBySlug } from "@/lib/blog/components";
+import { pickRelated, rankRelatedBlogs } from "@/lib/blog/related";
+import { toBlogCardData } from "@/lib/blog/cards";
+import type { BlogPost } from "@/lib/blog/types";
 
 export default async function CommonBlog({
   component,
-  currentSlug,
-  stateSlug,
-  categories = [],
-  primaryKeyword,
+  blog,
+  excludeSlugs = [],
   limit = 3,
 }: {
   component: string;
-  currentSlug?: string;
-  stateSlug?: string | null;
-  categories?: string[];
-  primaryKeyword?: string | null;
+  // Current post. When set, renders the ranked "Keep reading" related rail
+  // instead of the component rail.
+  blog?: BlogPost;
+  excludeSlugs?: string[];
   limit?: number;
 }) {
-  const categorySet = new Set(categories);
-  const allBlogs = await getAllBlogs();
-  const blogList = allBlogs
-    .filter((blog) => !currentSlug || blog.slug !== currentSlug)
-    .map((blog) => {
-      let score = 0;
-      if (component && blog.component === component) score += 3;
-      const candidateState = resolveBlogStateSlug(blog);
-      if (stateSlug && candidateState === stateSlug) score += 4;
-      if (primaryKeyword && blog.primaryKeyword === primaryKeyword) score += 2;
-      score += (blog.categories ?? []).filter((category) => categorySet.has(category)).length;
-      return { blog, score };
-    })
-    .filter(({ score }) => score > 0)
-    .sort((a, b) => b.score - a.score || new Date(b.blog.publishedAt).getTime() - new Date(a.blog.publishedAt).getTime())
-    .slice(0, limit)
-    .map(({ blog }) => blog);
+  if (blog) {
+    const allBlogs = await getAllBlogs();
+    const ranked = rankRelatedBlogs(allBlogs, blog);
+    const related = pickRelated(ranked, { limit: 6, crossComponentMin: 2, excludeSlugs });
+    if (related.length === 0) return null;
 
+    const blogComponent = getBlogComponentBySlug(componentSlugForBlog(blog));
+
+    return (
+      <div className="my-5">
+        <BlogCardRail
+          items={related.map(toBlogCardData)}
+          heading="Keep reading"
+          headingHref={blogComponent ? `/blog/category/${blogComponent.slug}` : "/blog"}
+          headingLinkLabel={
+            blogComponent ? `View all ${blogComponent.label} guides` : "View all guides"
+          }
+          cta={{
+            ctaId: "blog_related_card",
+            ctaPosition: "blog_post_related_rail",
+            pageType: "blog_post",
+          }}
+        />
+      </div>
+    );
+  }
+
+  // Component-rail mode (va-loan-help, thank-you, pcs-resources callers).
+  // Matches the old inline scoring for component-only input: same-component
+  // posts, newest first.
+  const blogList = await getBlogsByComponent(component, limit);
   if (blogList.length === 0) return null;
 
   return (

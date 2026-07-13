@@ -17,6 +17,8 @@
 //   1 - findings present AND --strict set (use in CI)
 //   1 - a banned byline ("The VeteranPCS Team") appears in body copy — ALWAYS,
 //       even without --strict. This is the `npm run lint:content` hard gate.
+//   1 - a frontmatter `categories` entry is outside the canonical component
+//       labels (content/_data/blog-components.json) — also ALWAYS.
 
 import {
   mkdirSync,
@@ -72,6 +74,16 @@ const PERSON_NAME_RE = /^[A-Z][A-Za-z'’-]+(?: [A-Z][A-Za-z'’-]+){1,3}$/;
 // (a trailing \b would fail there, since "_" is a word char). Unlike the editorial
 // bands above, a hit here fails `npm run lint:content` unconditionally (see main()).
 const BANNED_BYLINE_RE = /VeteranPCS team(?![a-z])/i;
+
+// Canonical category vocabulary = the 7 component labels. Frontmatter
+// `categories` entries outside this set are drift (e.g. the old
+// "US Military Bases" spelling) and fail `npm run lint:content` hard, like
+// banned bylines. Normalize with: node scripts/normalize-blog-categories.mjs
+const CANONICAL_CATEGORY_LABELS = new Set(
+  JSON.parse(readFileSync(join(ROOT, 'content', '_data', 'blog-components.json'), 'utf-8')).map(
+    (c) => c.label,
+  ),
+);
 
 function readPosts() {
   if (!existsSync(CONTENT_DIR)) return [];
@@ -251,6 +263,19 @@ function evaluatePost(post) {
     });
   }
 
+  // 9. Non-canonical categories - hard CI gate (see main()). Keeps the weekly
+  //    auto-blog from silently reintroducing label drift.
+  const categories = Array.isArray(fm.categories) ? fm.categories : [];
+  const nonCanonical = categories.filter((c) => !CANONICAL_CATEGORY_LABELS.has(c));
+  if (nonCanonical.length > 0) {
+    findings.push({
+      kind: 'noncanonical-category',
+      severity: 'high',
+      detail: `categories not in the canonical component-label set: ${nonCanonical.map((c) => `"${c}"`).join(', ')}`,
+      hits: nonCanonical.slice(0, 5),
+    });
+  }
+
   return { slug: post.slug, words, findings };
 }
 
@@ -384,6 +409,18 @@ function main() {
     console.error(
       'ERROR: banned byline "The VeteranPCS Team" found in body copy. ' +
         'The default byline is "VeteranPCS". Fix before merging.',
+    );
+    process.exitCode = 1;
+  }
+
+  // Non-canonical categories are also a hard gate: the canonical vocabulary is
+  // the 7 component labels in content/_data/blog-components.json.
+  const hasNonCanonicalCategory = allFindings.some((f) => f.kind === 'noncanonical-category');
+  if (hasNonCanonicalCategory) {
+    console.error(
+      'ERROR: non-canonical category label(s) found in frontmatter. ' +
+        'Use the component labels from content/_data/blog-components.json; ' +
+        'run node scripts/normalize-blog-categories.mjs for known aliases.',
     );
     process.exitCode = 1;
   }

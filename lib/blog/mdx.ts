@@ -6,9 +6,18 @@ import matter from 'gray-matter';
 import { cache } from 'react';
 import type { BlogFrontmatter, BlogPost } from '@/lib/blog/types';
 import { getBlogComponentBySlug, normalizeBlogComponentSlug } from '@/lib/blog/components';
+import { rankBlogSearch } from '@/lib/blog/search';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'blog');
 export const BLOG_CATEGORY_PAGE_SIZE = 12;
+
+// Historical frontmatter drift, normalized at read time so consumers only ever
+// see canonical component labels. scripts/audit-blog-editorial.mjs hard-fails
+// on non-canonical categories; this map keeps rendering correct if drift lands
+// anyway (e.g. an auto-blog PR merged before the lint ran).
+const CATEGORY_ALIASES: Record<string, string> = {
+  'US Military Bases': 'U.S. Military Bases',
+};
 
 function readAllFromDisk(): BlogPost[] {
   if (!fs.existsSync(CONTENT_DIR)) return [];
@@ -30,7 +39,7 @@ function readAllFromDisk(): BlogPost[] {
 
     posts.push({
       ...fm,
-      categories: fm.categories ?? [],
+      categories: (fm.categories ?? []).map((c) => CATEGORY_ALIASES[c] ?? c),
       author: fm.author ?? {},
       content,
       filepath,
@@ -91,14 +100,8 @@ export function pageCount(totalItems: number, pageSize: number): number {
 }
 
 export async function searchBlogs(query: string): Promise<BlogPost[]> {
-  if (!query.trim()) return [];
-  const needle = query.toLowerCase();
   const blogs = await getAllBlogs();
-  return blogs.filter(
-    (b) =>
-      b.title.toLowerCase().includes(needle) ||
-      b.content.toLowerCase().includes(needle),
-  );
+  return rankBlogSearch(blogs, query);
 }
 
 export async function groupBlogsByComponent(): Promise<Record<string, BlogPost[]>> {
