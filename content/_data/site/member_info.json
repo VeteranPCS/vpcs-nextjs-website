@@ -1,0 +1,272 @@
+[
+  {
+    "_id": "041a0c49-ae79-47a4-9d74-e8c5651df4fd",
+    "_type": "member_info",
+    "_createdAt": "2024-12-10T06:08:25Z",
+    "_updatedAt": "2024-12-10T06:41:49Z",
+    "description": [
+      {
+        "_key": "b345d9aa178b",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "6fc50ce167c90",
+            "_type": "span",
+            "marks": [],
+            "text": "I am a design enthusiast with a passion for working with companies that have a strong purpose and mission. I graduated from Austin Peay State University with a BFA in 2014, however, being the wife of a veteran made the start of my career difficult with several PCS moves. Thankfully, through hard work and support of my family, I started my own freelance design company. I have worked on projects from advertising for environmental organizations, to producing materials used for individuals recovering from addiction. I am thrilled with the opportunity to assist current families going through the struggles of military service and the hassles a PCS move brings."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "designation": "Chief Creative Officer",
+    "image": {
+      "_sanityAssetId": "image-9db0cc634b555fc84b508b926c0dcfd427fc363a-640x475-webp",
+      "alt": "Stephanie Camfield Image",
+      "height": 475,
+      "path": "/images/content/member-info/digitalpasteimage.webp",
+      "width": 640
+    },
+    "name": "Stephanie Camfield",
+    "roles": "digital_innovation"
+  },
+  {
+    "_id": "25ae4344-896d-439f-8322-8463b231d547",
+    "_type": "member_info",
+    "_createdAt": "2024-12-10T06:15:09Z",
+    "_updatedAt": "2025-01-23T14:44:26Z",
+    "description": [
+      {
+        "_key": "4e9c85836e1e",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "91063a48650b0",
+            "_type": "span",
+            "marks": [],
+            "text": "I am military spouse, mom, social media strategist and super passionate about sharing resources with military families. I graduated from BYU-Idaho in 2015 with a Bachelors in Clothing Construction, but having a young family and military life lead to a shift towards learning social media marketing and creating resources and content for military spouses and families. Throughout the 6 moves in 12 years and soon to be 6 kids, it’s been a blessing to be able to work remotely, work with companies that truly care, and serve the military community!"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "designation": "Social Media Strategist",
+    "image": {
+      "_sanityAssetId": "image-206ad20916eecc1cc824f6f26e868f28347ca3a5-640x475-webp",
+      "alt": "Michelle Bowler Profile Image",
+      "height": 475,
+      "path": "/images/content/member-info/digitalpasteimage3.webp",
+      "width": 640
+    },
+    "name": "Michelle Bowler",
+    "roles": "digital_innovation"
+  },
+  {
+    "_id": "4ac79db6-8e04-4026-9f74-bf0ba94cec6b",
+    "_type": "member_info",
+    "_createdAt": "2024-12-10T05:57:40Z",
+    "_updatedAt": "2024-12-10T06:41:22Z",
+    "description": [
+      {
+        "_key": "27ec8a9c28ef",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "784dba46420c0",
+            "_type": "span",
+            "marks": [],
+            "text": "I am a lifelong learner, passionate about my family and friends, the outdoors, traveling, adventure, and trying to make a difference in people’s lives. I grew up in Minnesota with a dream of flying and serving in the military. In 2012 that dream came true and I set off to fly AH-64D Apaches in South Korea, North Carolina, Afghanistan, Colorado, and Europe. My experience in the military ignited my deep passion for servant leadership. That combined with a mind for entrepreneurship led me into real estate. Every aspect of VeteranPCS has been designed with serving others in mind. I am highly passionate about this company, our team, and building a business with integrity and trust at its core. This is military families helping military families move."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "cd495a0bf39b",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "6ed06f13e5fb0",
+            "_type": "span",
+            "marks": [],
+            "text": "\n"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "designation": "Founder & CEO",
+    "image": {
+      "_sanityAssetId": "image-508745c90b2767b875dc1564760147de77f1ecfe-640x475-webp",
+      "alt": "CEO image",
+      "height": 475,
+      "path": "/images/content/member-info/ceopasteimage.webp",
+      "width": 640
+    },
+    "name": "Jason Anderson",
+    "roles": "founder"
+  },
+  {
+    "_id": "77e967ba-ca00-461d-bf88-3d5c88d902db",
+    "_type": "member_info",
+    "_createdAt": "2024-12-10T06:09:33Z",
+    "_updatedAt": "2025-01-23T14:48:20Z",
+    "description": [
+      {
+        "_key": "d86d835797b8",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "82d307607bca0",
+            "_type": "span",
+            "marks": [],
+            "text": "I am an entrepreneurial full-stack engineer driven by a passion for technology, business, and serving the veteran community. After an eight-year career as a Navy Explosive Ordnance Disposal Officer, I transitioned to technology investment banking where I advised C-Suite executives on $3.5 billion of transactions across five mergers and acquisitions. I discovered a passion for software development while learning to write code to automate repetitive work while in finance and soon left banking to learn to code full-time. As the CTO of VeteranPCS, I leverage my deep expertise in developing custom software solutions that enhance user experiences and stakeholder communication. Committed to delivering secure, impactful services, I use my skills to ensure our operations are seamless and help fellow veterans easily navigate the home-buying process."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "designation": "Chief Technology Officer",
+    "image": {
+      "_sanityAssetId": "image-dfbe925ccf6a3a311274b47e1e25f6e8aed319b7-640x450-webp",
+      "alt": "Harper Foley Profile Image",
+      "height": 450,
+      "path": "/images/content/member-info/harper-new.webp",
+      "width": 640
+    },
+    "name": "Harper Foley",
+    "roles": "digital_innovation"
+  },
+  {
+    "_id": "98453e9f-54dd-483f-b7cd-9af047b10f60",
+    "_type": "member_info",
+    "_createdAt": "2024-12-10T06:18:10Z",
+    "_updatedAt": "2024-12-10T06:18:59Z",
+    "description": [
+      {
+        "_key": "608a6895788c",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "598f3b3031ac0",
+            "_type": "span",
+            "marks": [],
+            "text": "I am a wife and mother who chooses daily to see this military life as an adventure. I grew up in Georgia and met my husband when we were both in school at the University of Georgia. In 2011, I became a military spouse and have been zigzagging across this great country of ours since then. I teach our sons at home so that we can get out and explore wherever we are planted, and so that we can have a flexible schedule around the military. I love to spend time outdoors with my family, whether we are soaking up the sunshine on a beach, backpacking in the mountains, or skiing all winter long. As someone who understands the PCS process, I am passionate about helping other military families navigate this venture."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "designation": "Administrative Manager",
+    "image": {
+      "_sanityAssetId": "image-4b482dfd8c63cefee1a26fa2e06efb768af09fac-640x475-webp",
+      "alt": "Stephanie Guree Profile Image",
+      "height": 475,
+      "path": "/images/content/member-info/adminpasteimage2.webp",
+      "width": 640
+    },
+    "name": "Stephanie Guree",
+    "roles": "administration"
+  },
+  {
+    "_id": "b74566ba-d758-4acc-acce-800dc4093461",
+    "_type": "member_info",
+    "_createdAt": "2025-12-11T04:28:59Z",
+    "_updatedAt": "2025-12-11T04:35:15Z",
+    "description": [
+      {
+        "_key": "156c7b539ea3",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "2ca990802cdc",
+            "_type": "span",
+            "marks": [],
+            "text": "I have worn many hats as a teacher, sound engineer, homeschool mom/coordinator, commissary stocker, and Air Force CDC trainer. Most importantly, however, I am a wife and mother, and those jobs have taken me far and wide with my husband serving in the Air Force since 2010. I enjoy spending time with my husband and teenage sons, who faithfully ensure that we are never bored. I enjoy spending time outdoors, at the lake, hiking, hunting, fishing, or sometimes watching said activities while reading a good book. I grew up in Texas, content to stay put and have a quiet life, but now enjoy the adventure that awaits at each new duty station. I understand the struggle of reinventing my career, family routine, and putting down roots. Helping others find the start of their next chapter or close out the last one with VeteranPCS is an honor."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "designation": "Administrative Manager",
+    "image": {
+      "_sanityAssetId": "image-8cf09181ce2239df7a8be3b194ce33d601325ae6-360x360-webp",
+      "alt": "Tara Gould",
+      "height": 360,
+      "path": "/images/content/member-info/tara-gould.webp",
+      "width": 360
+    },
+    "name": "Tara Gould",
+    "roles": "administration"
+  },
+  {
+    "_id": "c7530906-a861-4dee-b0bb-5eb9366b9eea",
+    "_type": "member_info",
+    "_createdAt": "2024-12-10T06:19:09Z",
+    "_updatedAt": "2026-05-17T23:25:31Z",
+    "description": [
+      {
+        "_key": "080f0094e518",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "ffaa58b01e420",
+            "_type": "span",
+            "marks": [],
+            "text": "I am a entrepreneur with a love and passion for design, developing and growing businesses, as well as building relationships. I was lucky enough to experience being a military spouse for eight years in the Army and PCSing five times during that time. Although, I am a East Coast girl, born and currently residing in Georgia, we spent three years stationed in Texas. I am a mother to three beautiful kids, I enjoy running, being outdoors and spending time with family. I love helping others and I feel blessed to be a part of the VeteranPCS team and their mission in helping other military families during their PCS move."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "designation": "Administrative Manager",
+    "image": {
+      "_sanityAssetId": "image-36a0547383453f0605392d2c6a19fabe94d89d02-750x750-webp",
+      "alt": "Jessica Brown Profile Image",
+      "height": 750,
+      "path": "/images/content/member-info/brown-pp.webp",
+      "width": 750
+    },
+    "name": "Jessica Brown",
+    "roles": "administration"
+  },
+  {
+    "_id": "f5d054e5-6011-4e04-a564-680fa94c1552",
+    "_type": "member_info",
+    "_createdAt": "2024-12-10T06:16:53Z",
+    "_updatedAt": "2024-12-10T06:17:58Z",
+    "description": [
+      {
+        "_key": "d495fb751988",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "cf33d77fd2390",
+            "_type": "span",
+            "marks": [],
+            "text": "I’m a wife, mother, and former teacher with a passion for serving others, baking, reading, and spending time with my family. I grew up in Iowa where I met my husband and started my journey as a military spouse in 2014. During our first PCS to Hawai’i, I finished my Bachelors Degree in Elementary Education from the University of Hawai’i, West Oahu in 2017. Since graduating, we have PCS’ed multiple times, which offered me deep insight on how difficult it can be to adjust to a new home and job every few years. In 2021, as our family began to grow, I decided to leave the classroom and begin working from home in order to spend more time with my children as they grow. I am so blessed to be a part of the VeteranPCS team to assist other military families during the transitional times of PCSing."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "designation": "Chief Administrative Officer",
+    "image": {
+      "_sanityAssetId": "image-e912f8df670c8524ffbb5ed37ca099e9305e0ef3-640x474-webp",
+      "alt": "Beth Soldner Profile Image",
+      "height": 474,
+      "path": "/images/content/member-info/adminpasteimage.webp",
+      "width": 640
+    },
+    "name": "Beth Soldner",
+    "roles": "administration"
+  }
+]

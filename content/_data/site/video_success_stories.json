@@ -1,0 +1,160 @@
+[
+  {
+    "_id": "7c4bd06b-c354-43e0-9fe0-eae47f749a47",
+    "_type": "video_success_stories",
+    "_createdAt": "2024-12-19T12:26:03Z",
+    "_updatedAt": "2024-12-19T12:27:37Z",
+    "description": [
+      {
+        "_key": "37298f5fadb1",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "32d6af275dc70",
+            "_type": "span",
+            "marks": [],
+            "text": "Active duty military family"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "226478bed259",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "106bd453a32d0",
+            "_type": "span",
+            "marks": [],
+            "text": "Struggling with using other sites during their PCS"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "a56ea0823b19",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "8c29c46685f70",
+            "_type": "span",
+            "marks": [],
+            "text": "Received $1,200 Move-In-Bonus"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "title": "Tyler & Ana Success Story",
+    "videoUrl": "https://player.vimeo.com/video/949245984?dnt=1&app_id=122963"
+  },
+  {
+    "_id": "ba3df14e-d163-41c8-bde9-1d2758924750",
+    "_type": "video_success_stories",
+    "_createdAt": "2024-12-19T12:27:47Z",
+    "_updatedAt": "2024-12-19T13:11:16Z",
+    "description": [
+      {
+        "_key": "00855b352122",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "d14d9ebe31000",
+            "_type": "span",
+            "marks": [],
+            "text": "You get to choose a military charity to donate your bonus check too"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "7600f61984f5",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "b500db3c8c780",
+            "_type": "span",
+            "marks": [],
+            "text": "Mt. Carmel received $400.00 thanks to Ken and Jen"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "title": "Did you know civilians can use VeteranPCS to buy or sell a home?",
+    "videoUrl": "https://player.vimeo.com/video/949234198?dnt=1&app_id=122963"
+  },
+  {
+    "_id": "eb0f7a7a-7fae-4fe6-8de8-a36768ee51d1",
+    "_type": "video_success_stories",
+    "_createdAt": "2024-12-19T12:27:12Z",
+    "_updatedAt": "2024-12-19T12:27:29Z",
+    "description": [
+      {
+        "_key": "a1ff92aa202f",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "0fe8b5714dad0",
+            "_type": "span",
+            "marks": [],
+            "text": "Active duty military family"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "b9af320a452c",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "d18899456c1e0",
+            "_type": "span",
+            "marks": [],
+            "text": "work veterans who understood their needs"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "7d1c895ecd0d",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "7f0d142183720",
+            "_type": "span",
+            "marks": [],
+            "text": "Recieved $1,200 Move-In-Bonus"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "title": "Micah & Natalia Success Story",
+    "videoUrl": "https://player.vimeo.com/video/949226028?dnt=1&app_id=122963"
+  }
+]

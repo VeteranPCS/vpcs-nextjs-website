@@ -1,0 +1,54 @@
+[
+  {
+    "_id": "37a8f41e-af28-4743-af22-618ae9db7c17",
+    "_type": "stories_poster",
+    "_createdAt": "2024-12-11T07:00:17Z",
+    "_updatedAt": "2025-05-08T02:42:08Z",
+    "button_text": "Learn More",
+    "description": [
+      {
+        "_key": "a2236c554364",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "a3226bae9b6b",
+            "_type": "span",
+            "marks": [],
+            "text": "Wear blue’s mission is to honor the service and sacrifice of the American military through active remembrance. Discover meaningful ways to get involved through volunteer opportunities, giving, and corporate partnerships that support the wear blue community and honor our nation's military."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "193de69b2bf6",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "2d2cda522c1f0",
+            "_type": "span",
+            "marks": [],
+            "text": "\n"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "poster_1": {
+      "_sanityAssetId": "image-8caf3d395ec81420395ef3f24f36406ab94bfcf1-942x904-webp",
+      "alt": "VeteranPCS donates $3,000 to Wear Blue: Run to Remember",
+      "height": 904,
+      "path": "/images/content/stories-poster/wearblue-run-to-remember.webp",
+      "width": 942
+    },
+    "poster_2": {
+      "_sanityAssetId": "image-e3fd545f24eff5894c19892552d17f95c40eae91-384x88-webp",
+      "alt": "wear blue: run to remember logo",
+      "height": 88,
+      "path": "/images/content/stories-poster/poster-2.webp",
+      "width": 384
+    },
+    "title": "WEAR BLUE RUN TO REMEMBER"
+  }
+]

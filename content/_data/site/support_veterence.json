@@ -1,0 +1,448 @@
+[
+  {
+    "_id": "1a48f335-e0b6-4ddb-b635-82efd16f82e3",
+    "_type": "support_veterence",
+    "_createdAt": "2024-12-10T13:15:02Z",
+    "_updatedAt": "2024-12-11T04:37:51Z",
+    "button_text": "How it Works",
+    "description": [
+      {
+        "_key": "e82492578e6c",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "cc7aeb27f4c20",
+            "_type": "span",
+            "marks": [],
+            "text": "Every Agent and VA Loan expert is a veteran or military\nspouse that understands the stresses of moving in the\n"
+          },
+          {
+            "_key": "cc7aeb27f4c21",
+            "_type": "span",
+            "marks": [
+              "em"
+            ],
+            "text": "military or after the military."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "icon": {
+      "_sanityAssetId": "image-950dc6aa9d21d6521b40e98f01b8f39c99d6f960-71x56-svg",
+      "alt": "Userplus icon",
+      "height": 56,
+      "path": "/images/content/support-veterence/userplus.svg",
+      "width": 71
+    },
+    "image": {
+      "_sanityAssetId": "image-83947451929d637dbfa8d5c1b0d577c58fdce743-2210x2210-png",
+      "alt": "Meet Daughter",
+      "height": 2210,
+      "path": "/images/content/support-veterence/meetdaugether.png",
+      "width": 2210
+    },
+    "points": [
+      {
+        "_key": "c13fcf3dcf68",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "4158e42586210",
+            "_type": "span",
+            "marks": [
+              "strong"
+            ],
+            "text": "Support"
+          },
+          {
+            "_key": "4158e42586211",
+            "_type": "span",
+            "marks": [],
+            "text": " military, veterans and families"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "200d00d00f28",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "78a9ab7c2a1e0",
+            "_type": "span",
+            "marks": [
+              "strong"
+            ],
+            "text": "Support"
+          },
+          {
+            "_key": "78a9ab7c2a1e1",
+            "_type": "span",
+            "marks": [],
+            "text": " veteran and military spouse employment"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "4f6474f65619",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "ccbe5466507a0",
+            "_type": "span",
+            "marks": [
+              "strong"
+            ],
+            "text": "Support"
+          },
+          {
+            "_key": "ccbe5466507a1",
+            "_type": "span",
+            "marks": [],
+            "text": " military-focused charity"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "slug": {
+      "_type": "slug",
+      "current": "support-veterans-and-their-families"
+    },
+    "title": "Support veterans & their families"
+  },
+  {
+    "_id": "20519935-de47-41c1-941a-764245b59499",
+    "_type": "support_veterence",
+    "_createdAt": "2024-12-10T13:19:04Z",
+    "_updatedAt": "2025-09-16T13:35:09Z",
+    "button_text": "Our impact",
+    "description": [
+      {
+        "_key": "4d2aab1a6cbf",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "fddc2abd380e",
+            "_type": "span",
+            "marks": [],
+            "text": "Support military spouse & veteran owned businesses"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "icon": {
+      "_sanityAssetId": "image-950dc6aa9d21d6521b40e98f01b8f39c99d6f960-71x56-svg",
+      "alt": "Person with checkmark icon.",
+      "height": 56,
+      "path": "/images/content/support-veterence/userplus.svg",
+      "width": 71
+    },
+    "image": {
+      "_sanityAssetId": "image-71e47ebee2f22297c31edbe1c012939c31482940-1060x1061-webp",
+      "alt": "A solider steadies his rifle in the kneeling position.",
+      "height": 1061,
+      "path": "/images/content/support-veterence/image.webp",
+      "width": 1060
+    },
+    "points": [
+      {
+        "_key": "ae1238361e8b",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "1d9831e29850",
+            "_type": "span",
+            "marks": [],
+            "text": "VeteranPCS is "
+          },
+          {
+            "_key": "2288bee9d92f",
+            "_type": "span",
+            "marks": [
+              "strong"
+            ],
+            "text": "FREE"
+          },
+          {
+            "_key": "0015cbccc8cc",
+            "_type": "span",
+            "marks": [],
+            "text": " to use."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "c758292362d8",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "3eaf4f5e2bb20",
+            "_type": "span",
+            "marks": [],
+            "text": "Each closing gives "
+          },
+          {
+            "_key": "3065e120e46a",
+            "_type": "span",
+            "marks": [
+              "strong"
+            ],
+            "text": "10% to military focused charities"
+          },
+          {
+            "_key": "5a5fc57c4ec8",
+            "_type": "span",
+            "marks": [],
+            "text": "."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "819817758b28",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "0dd332ccff04",
+            "_type": "span",
+            "marks": [],
+            "text": "Part of your agent's commission goes back to you at closing."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "slug": {
+      "_type": "slug",
+      "current": "support-our-veteran-community"
+    },
+    "title": "Support our veteran community"
+  },
+  {
+    "_id": "237b03fd-3a89-4be6-bd05-445cb8a22760",
+    "_type": "support_veterence",
+    "_createdAt": "2025-03-13T04:07:04Z",
+    "_updatedAt": "2025-03-13T04:08:30Z",
+    "button_text": "descubre cómo conectarte ahora",
+    "description": [
+      {
+        "_key": "e49ef72061ef",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "78a7b21ed8a1",
+            "_type": "span",
+            "marks": [],
+            "text": "Apoya a los negocios propiedad de cónyuges de militares y veteranos"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "icon": {
+      "_sanityAssetId": "image-950dc6aa9d21d6521b40e98f01b8f39c99d6f960-71x56-svg",
+      "alt": "Userplus icon",
+      "height": 56,
+      "path": "/images/content/support-veterence/userplus.svg",
+      "width": 71
+    },
+    "image": {
+      "_sanityAssetId": "image-db8fa1f1b1bd419dafeb33b1af3e0ff363cda940-2210x1799-png",
+      "alt": "Soldier Training Image",
+      "height": 1799,
+      "path": "/images/content/support-veterence/soldiertraining.png",
+      "width": 2210
+    },
+    "points": [
+      {
+        "_key": "f5b51ba81c09",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "745565d9956b",
+            "_type": "span",
+            "marks": [],
+            "text": "Cada cierre de vivienda dona el 10% a las organizaciones benéficas enfocadas en militares."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "52f58796ae2e",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "8868b1eedcf4",
+            "_type": "span",
+            "marks": [],
+            "text": "Es GRATIS para los agentes estar listados."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "0e1daa3f8a32",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "7e5ee7adeecf",
+            "_type": "span",
+            "marks": [],
+            "text": "VeteranPCS es GRATIS para usar. Parte de la comisión de tu agente regresa a ti en el cierre de vivienda."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "slug": {
+      "_type": "slug",
+      "current": "support-our-veteran-community-spanish"
+    },
+    "title": "Apoya a nuestra comunidad de veteranos"
+  },
+  {
+    "_id": "85050721-337d-4202-b31b-a262d4654ca7",
+    "_type": "support_veterence",
+    "_createdAt": "2025-09-15T22:14:36Z",
+    "_updatedAt": "2025-09-16T13:32:10Z",
+    "button_text": "Freedom Service Dogs of America",
+    "description": [
+      {
+        "_key": "eb55d49b49dc",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "a301b0372a8b",
+            "_type": "span",
+            "text": "By just using our site you help us support important missions like Freedom Service Dogs of America"
+          }
+        ],
+        "style": "normal"
+      }
+    ],
+    "icon": {
+      "_sanityAssetId": "image-4ac330a9fb7b0943ee17f5023b02232a915853e3-768x317-webp",
+      "alt": "Freedom Service Dogs of America Logo",
+      "height": 317,
+      "path": "/images/content/support-veterence/fsd-logo-2019-cmyk-768x317.webp",
+      "width": 768
+    },
+    "image": {
+      "_sanityAssetId": "image-54848f02869628fdbf8af1d664ea450ce394d027-360x360-webp",
+      "alt": "A yellow lab provided to a veteran by Freedom Service Dogs of America",
+      "height": 360,
+      "path": "/images/content/support-veterence/service-dog-4.webp",
+      "width": 360
+    },
+    "points": [
+      {
+        "_key": "f97bc3af226c",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "bee76566069b",
+            "_type": "span",
+            "text": "VeteranPCS is "
+          },
+          {
+            "_key": "2905a3844de9",
+            "_type": "span",
+            "marks": [
+              "strong"
+            ],
+            "text": "FREE"
+          },
+          {
+            "_key": "0cdffbba1582",
+            "_type": "span",
+            "text": " to use."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "style": "normal"
+      },
+      {
+        "_key": "b2478f8188ff",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "81bcd38fe105",
+            "_type": "span",
+            "text": "Each closing gives "
+          },
+          {
+            "_key": "631c3805e88a",
+            "_type": "span",
+            "marks": [
+              "strong"
+            ],
+            "text": "10% to military focused charities"
+          },
+          {
+            "_key": "dc8ee2858b20",
+            "_type": "span",
+            "text": "."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "style": "normal"
+      },
+      {
+        "_key": "ee947a7087ef",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "e53f58fbc3f5",
+            "_type": "span",
+            "text": "Part of your agent's commission goes back to you at closing."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "style": "normal"
+      }
+    ],
+    "slug": {
+      "_type": "slug",
+      "current": "freedom-service-dogs"
+    },
+    "title": "VeteranPCS has given $4,500+"
+  }
+]

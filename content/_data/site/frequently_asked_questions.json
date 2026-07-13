@@ -1,0 +1,160 @@
+[
+  {
+    "_id": "02740d91-5185-4a23-a04b-dbd6f35565aa",
+    "_type": "frequently_asked_questions",
+    "_createdAt": "2025-05-01T22:56:03Z",
+    "_updatedAt": "2025-06-12T04:11:48Z",
+    "answer": [
+      {
+        "_key": "00f837504532",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "8316d9384162",
+            "_type": "span",
+            "marks": [],
+            "text": "Not always. Foreclosures and bankruptcies do not automatically disqualify borrowers for future loans. Depending on the circumstances, there will be a waiting period before you can qualify for a mortgage again. To best understand, and to see if there are exceptions for your circumstances its best to speak with one of our VA Loan experts."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "question": "Am I disqualified if I have a bankruptcy or foreclosure on record?"
+  },
+  {
+    "_id": "0590ae58-22ef-444d-8d7e-835df6713efb",
+    "_type": "frequently_asked_questions",
+    "_createdAt": "2025-05-01T22:56:19Z",
+    "_updatedAt": "2025-06-12T04:12:00Z",
+    "answer": [
+      {
+        "_key": "4d2a0b8ac0e2",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "ba986c661edf",
+            "_type": "span",
+            "marks": [],
+            "text": "The best way to identify how much purchasing power you have, or what price of home you would be approved for, would be to go through a pre-approval application with one of our VA Loan experts. Every person’s finances are different. One of our experts can assess your income, type of pay, debts, assets, and credit and give you an assured number to help base your home search on."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "question": "How do I know how much I’m qualified for with a VA Loan?"
+  },
+  {
+    "_id": "4b94b27d-eb99-48f6-8325-f4a050691522",
+    "_type": "frequently_asked_questions",
+    "_createdAt": "2024-12-10T07:22:16Z",
+    "_updatedAt": "2025-06-12T04:11:24Z",
+    "answer": [
+      {
+        "_key": "60f8d91cf713",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "0a6b920de125",
+            "_type": "span",
+            "marks": [],
+            "text": "Multiple times. If you buy a home with a VA loan and then sell that home your VA entitlement will be restored in full, allowing you to purchase your next home with no limit on the purchase price. You can do this as many times you need in your lifetime. If you keep a previous home on the VA loan as a rental property, and want to buy a second home, you are now limited to your remaining entitlement. Calculating your remaining entitlement is best with one of our VeteranPCS VA Loan experts as it depends on the county loan limit in the county where you’re purchasing next. There is also a One-Time-Restoration if you refinance a previous home to, say, a conventional loan, allowing you to free up your full entitlement for your next purchase."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "question": "How Many Times Can I Use My VA Home Loan Benefit?"
+  },
+  {
+    "_id": "678504db-1654-4a12-8fab-ac22c36c2620",
+    "_type": "frequently_asked_questions",
+    "_createdAt": "2024-12-10T07:21:55Z",
+    "_updatedAt": "2025-06-12T04:11:12Z",
+    "answer": [
+      {
+        "_key": "2881552a0d4c",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "01a2dd3e1f13",
+            "_type": "span",
+            "marks": [],
+            "text": "Yes, there are always closing costs when purchasing a home with a VA loan; however, who pays those closing costs depends on the transaction. You’re not required to have a down payment with a VA loan (in most cases), but there will still be closing costs. It’s good to plan for roughly 2% of the home price in closing costs. Depending on the market, your VeteranPCS real estate agent may be able to negotiate seller concessions to pay part, or all, of those closing costs."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "question": "Are There Closing Costs Associated with a VA Loan?"
+  },
+  {
+    "_id": "f7209c53-99e9-43bd-8d39-c29f95f7a95c",
+    "_type": "frequently_asked_questions",
+    "_createdAt": "2024-12-10T07:22:31Z",
+    "_updatedAt": "2025-06-12T04:11:34Z",
+    "answer": [
+      {
+        "_key": "1ba2e8641d91",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "83e1b02289b4",
+            "_type": "span",
+            "marks": [],
+            "text": "Yes, but, as with most things with the VA loan, it depends on the circumstances. The VA Loan is intended to help service members and veterans obtain home ownership for their primary residence. If you want to keep one home on the VA loan and purchase a second you are allowed but it depends on remaining entitlement. Even if you go above your remaining entitlement, you can, you just need to put 25% down of the difference over your remaining entitlement."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "question": "Can I Have Two VA Loans?"
+  },
+  {
+    "_id": "ff9361e6-5aa1-4ea2-ba12-1e52a1122105",
+    "_type": "frequently_asked_questions",
+    "_createdAt": "2024-12-10T07:21:33Z",
+    "_updatedAt": "2025-06-12T04:10:57Z",
+    "answer": [
+      {
+        "_key": "6f6f87ac2757",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "b9c4909c4630",
+            "_type": "span",
+            "marks": [],
+            "text": "First verify that you are eligible. The fastest way to verify eligibility and determine the amount of the entitlement is to use VA’s eBenefits website ("
+          },
+          {
+            "_key": "d7c0ec90f907",
+            "_type": "span",
+            "marks": [
+              "d4e83f410ed7"
+            ],
+            "text": "www.ebenefits.va.gov/ebenefits/homepage"
+          },
+          {
+            "_key": "777456dc3bdc",
+            "_type": "span",
+            "marks": [],
+            "text": "). You can check loan benefits and entitlements and download a Certificate of Eligibility (COE). Or, you can speak with one of our VA Loan experts and they can pull your COE for you through their portal."
+          }
+        ],
+        "markDefs": [
+          {
+            "_key": "d4e83f410ed7",
+            "_type": "link",
+            "href": "http://www.ebenefits.va.gov/ebenefits/homepage"
+          }
+        ],
+        "style": "normal"
+      }
+    ],
+    "question": "How do I apply for a VA guaranteed loan?"
+  }
+]

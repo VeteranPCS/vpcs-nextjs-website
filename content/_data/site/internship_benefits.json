@@ -1,0 +1,162 @@
+[
+  {
+    "_id": "ac39def6-93e7-4642-98df-9514c0fb18f6",
+    "_type": "internship_benefits",
+    "_createdAt": "2024-12-12T10:06:59Z",
+    "_updatedAt": "2024-12-12T10:07:56Z",
+    "description": [
+      {
+        "_key": "51f85d0490f9",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "23bdfdbd522c0",
+            "_type": "span",
+            "marks": [],
+            "text": "Individual Internships can be set up as part of the Career Skills Program or DoD Skill Bridge Program within six months of your separation date"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "53c5bd5bce4d",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "6f0826f0dbd10",
+            "_type": "span",
+            "marks": [],
+            "text": "Individual Internships are also available for Military Spouses and Veterans"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "d7431954f217",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "0b542720a4910",
+            "_type": "span",
+            "marks": [],
+            "text": "Cost for the internship through VeteranPCS is $250"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "15c2dfb15630",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "6a8a5c5d9ff70",
+            "_type": "span",
+            "marks": [],
+            "text": "Licensing costs and requirements vary by state. You can choose the licensing option that best suits you."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "786900440e08",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "5091076b15830",
+            "_type": "span",
+            "marks": [],
+            "text": "Internship length of time can be custom-tailored to your needs/timeline"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "6c4295378da7",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "77466b0407410",
+            "_type": "span",
+            "marks": [],
+            "text": "Interview multiple agents and choose the agent and brokerage that best suit you for the internship"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "be171f708bf6",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "a89069ec841f0",
+            "_type": "span",
+            "marks": [],
+            "text": "When complete you have the opportunity to select whichever brokerage you want for your new career"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "45bfb31daaf8",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "7509d45942c20",
+            "_type": "span",
+            "marks": [],
+            "text": "VeteranPCS cannot guarantee placement on the website when complete"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "ea78c73596b8",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "7054dce8ff330",
+            "_type": "span",
+            "marks": [],
+            "text": "Once you have your license you can apply to be listed on VeteranPCS"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "logo": {
+      "_sanityAssetId": "image-60ca68b5e0498b18824bc07dcfa1bb72cb61fd49-350x308-svg",
+      "alt": "Logo",
+      "height": 308,
+      "path": "/images/content/internship-benefits/veteranpcs-logo-wht-outline.svg",
+      "width": 350
+    },
+    "title": "The Details"
+  }
+]

@@ -1,0 +1,194 @@
+[
+  {
+    "_id": "06ff6b2b-dc84-4b90-b7d0-fbce3e7e44d6",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:47:24Z",
+    "_updatedAt": "2025-01-16T00:06:48Z",
+    "logo": {
+      "_sanityAssetId": "image-e91167047d2573e3fa16430e01d44018a1fe2a25-980x364-webp",
+      "alt": "Squared Away's Logo",
+      "height": 364,
+      "path": "/images/content/trusted-resources/squared-away.webp",
+      "width": 980
+    },
+    "name": "Squared Away",
+    "url": "https://www.gosquaredaway.com/"
+  },
+  {
+    "_id": "22a0ce2d-18fc-46a1-bcc2-268bdb04f556",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:41:25Z",
+    "_updatedAt": "2025-01-16T00:07:55Z",
+    "logo": {
+      "_sanityAssetId": "image-9633e614f00be51f6730015e94353e1957961220-194x50-webp",
+      "alt": "Porch's Logo",
+      "height": 50,
+      "path": "/images/content/trusted-resources/porch.webp",
+      "width": 194
+    },
+    "name": "Porch",
+    "url": "https://porch.com/advice/expert-moving-tips"
+  },
+  {
+    "_id": "32ee5bfd-5ddd-4ae2-93dd-94d53c3bdf4d",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:43:52Z",
+    "_updatedAt": "2025-01-16T00:07:30Z",
+    "logo": {
+      "_sanityAssetId": "image-c5bb3b01f53b44c18dfc9f09a6ae66ef922557b3-480x144-webp",
+      "alt": "Instant Teams's Logo",
+      "height": 144,
+      "path": "/images/content/trusted-resources/instant-teams.webp",
+      "width": 480
+    },
+    "name": "Instant Teams"
+  },
+  {
+    "_id": "3d7ffb3d-9a7e-4e64-848f-e5463d643129",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:46:02Z",
+    "_updatedAt": "2025-01-16T00:07:34Z",
+    "logo": {
+      "_sanityAssetId": "image-8df81cd57e01e646d98cd004e45f648a45966f7c-700x100-webp",
+      "alt": "We Are The Mighty's Image",
+      "height": 100,
+      "path": "/images/content/trusted-resources/we-are-the-mighty.webp",
+      "width": 700
+    },
+    "name": "We Are The Mighty"
+  },
+  {
+    "_id": "842ce5ac-55d7-408f-964d-ea10bd4a9650",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:47:54Z",
+    "_updatedAt": "2024-12-17T08:48:28Z",
+    "logo": {
+      "_sanityAssetId": "image-a98315e70c21ac16f0610113fd2814985260910b-1166x262-svg",
+      "alt": "Hire Heroes USA's Logo",
+      "height": 262,
+      "path": "/images/content/trusted-resources/hire-heroes-color-01.svg",
+      "width": 1166
+    },
+    "name": "Hire Heroes USA",
+    "url": "https://www.hireheroesusa.org/"
+  },
+  {
+    "_id": "8ec68a7b-a1af-4b1f-a022-2db3cdafe51e",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:38:34Z",
+    "_updatedAt": "2025-01-16T00:08:37Z",
+    "logo": {
+      "_sanityAssetId": "image-62e8a938d1b8dd33286392fcbf5d908882ea8081-1280x366-webp",
+      "alt": "Packing Props's Logo",
+      "height": 366,
+      "path": "/images/content/trusted-resources/packing-props.webp",
+      "width": 1280
+    },
+    "name": "Packing Props",
+    "url": "https://packingprops.com/"
+  },
+  {
+    "_id": "abf218ee-e786-4727-924a-79b9520c39c0",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:34:58Z",
+    "_updatedAt": "2025-01-16T00:09:02Z",
+    "logo": {
+      "_sanityAssetId": "image-d2371a740f69b2e873afac5f97bfedff1c30ff1b-128x37-webp",
+      "alt": "SPOUSE-LY's Logo",
+      "height": 37,
+      "path": "/images/content/trusted-resources/spousely.webp",
+      "width": 128
+    },
+    "name": "SPOUSE-LY",
+    "url": "https://spouse-ly.com/"
+  },
+  {
+    "_id": "aee894f2-1afd-484f-8b66-61f1882c39d1",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:39:29Z",
+    "_updatedAt": "2025-01-16T00:09:07Z",
+    "logo": {
+      "_sanityAssetId": "image-6c9f4dcd1a638ab0901c58b24def789f89ac4bb3-414x100-webp",
+      "alt": "Military On Source's Logo",
+      "height": 100,
+      "path": "/images/content/trusted-resources/military-one-source.webp",
+      "width": 414
+    },
+    "name": "Military On Source"
+  },
+  {
+    "_id": "cf2ebc47-2130-4ebb-a419-342b747af534",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:40:18Z",
+    "_updatedAt": "2025-01-16T00:08:26Z",
+    "logo": {
+      "_sanityAssetId": "image-79d41d53272e94374ce161b9248e2476bccb93a5-480x79-webp",
+      "alt": "Stars and Stripe's Logo",
+      "height": 79,
+      "path": "/images/content/trusted-resources/stars-and-stripes.webp",
+      "width": 480
+    },
+    "name": "Stars and Stripe",
+    "url": "https://epub.stripes.com/?issue=Transition-Guide_180523"
+  },
+  {
+    "_id": "d633b94f-0831-461e-b04b-338c6fa89fc4",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:36:26Z",
+    "_updatedAt": "2025-01-16T00:09:11Z",
+    "logo": {
+      "_sanityAssetId": "image-b6ab6e66148651f30d9fae4e8c4e2426a9487de6-240x240-webp",
+      "alt": "Mil - Vets's  Logo",
+      "height": 240,
+      "path": "/images/content/trusted-resources/mil-vets.webp",
+      "width": 240
+    },
+    "name": "Mil - Vets",
+    "url": "https://apps.apple.com/us/app/mil-vets/id1643182823"
+  },
+  {
+    "_id": "d92799f8-238d-4dd7-b9cf-32b89396e6cd",
+    "_type": "trusted_resources",
+    "_createdAt": "2026-06-17T02:02:05Z",
+    "_updatedAt": "2026-06-17T02:03:01Z",
+    "logo": {
+      "_sanityAssetId": "image-4b603f69394bb209a72555746e665766972f792a-1130x460-webp",
+      "alt": "Syracuse University ",
+      "height": 460,
+      "path": "/images/content/trusted-resources/ivmp.webp",
+      "width": 1130
+    },
+    "name": "Syracuse University ",
+    "url": "https://ivmf.syracuse.edu/"
+  },
+  {
+    "_id": "db4571bc-5e99-41e6-be76-e02021af10ab",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:48:38Z",
+    "_updatedAt": "2025-10-09T02:05:15Z",
+    "logo": {
+      "_sanityAssetId": "image-e1f3f8f1540dbe699eabf188c4282296c5da0a25-1280x266-webp",
+      "alt": "BoxOps's Logo",
+      "height": 266,
+      "path": "/images/content/trusted-resources/boxops.webp",
+      "width": 1280
+    },
+    "name": "BoxOps",
+    "url": "https://teamboxops.com/?sca_ref=9622927.1wk78wJxbHEk"
+  },
+  {
+    "_id": "e3c3bb2c-b274-4197-9f63-1de2d9f9505b",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:46:36Z",
+    "_updatedAt": "2025-01-16T00:07:05Z",
+    "logo": {
+      "_sanityAssetId": "image-660bd7d3f549279fe5c9cf20a53967fed6f25ba4-244x84-webp",
+      "alt": "Empower Employ's Logo",
+      "height": 84,
+      "path": "/images/content/trusted-resources/empower-employ.webp",
+      "width": 244
+    },
+    "name": "Empower Employ",
+    "url": "https://www.empoweremploy.us/"
+  }
+]

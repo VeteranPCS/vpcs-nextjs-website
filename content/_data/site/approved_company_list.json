@@ -1,0 +1,100 @@
+[
+  {
+    "_id": "06488d4d-ea5e-4993-9cbf-d9eca55b9804",
+    "_type": "approved_company_list",
+    "_createdAt": "2024-12-18T07:26:10Z",
+    "_updatedAt": "2024-12-18T07:26:25Z",
+    "image": {
+      "_sanityAssetId": "image-fc2275e35e03ba55756ccc80a8e72bb0ab9e00a2-1389x289-png",
+      "alt": "BoxOps's Logo",
+      "height": 289,
+      "path": "/images/content/approved-company-list/boxops.png",
+      "width": 1389
+    },
+    "name": "BoxOps"
+  },
+  {
+    "_id": "19384847-6de3-4d50-a409-8c5c8a74092d",
+    "_type": "approved_company_list",
+    "_createdAt": "2024-12-18T07:22:25Z",
+    "_updatedAt": "2024-12-18T07:22:39Z",
+    "image": {
+      "_sanityAssetId": "image-ccbfe01c7d06fcc031753a604a9b5b44d1793841-128x45-webp",
+      "alt": "A+ Company's Logo",
+      "height": 45,
+      "path": "/images/content/approved-company-list/bbbrating.webp",
+      "width": 128
+    },
+    "name": "A+ Company"
+  },
+  {
+    "_id": "4568279c-de25-4db7-9ab8-56304f7b264d",
+    "_type": "approved_company_list",
+    "_createdAt": "2024-12-18T07:24:48Z",
+    "_updatedAt": "2024-12-18T07:25:01Z",
+    "image": {
+      "_sanityAssetId": "image-92f9bd11593f6399c895dd5fb16502129a0f3883-514x192-webp",
+      "alt": "Squared Away's Logo",
+      "height": 192,
+      "path": "/images/content/approved-company-list/squaredaway.webp",
+      "width": 514
+    },
+    "name": "Squared Away"
+  },
+  {
+    "_id": "4ebbb7c7-35b3-4571-ad73-8ce3dc8f84f1",
+    "_type": "approved_company_list",
+    "_createdAt": "2024-12-18T07:22:52Z",
+    "_updatedAt": "2024-12-18T07:23:13Z",
+    "image": {
+      "_sanityAssetId": "image-1def44ed76988e775c24c29d91964d892787b0b4-514x125-webp",
+      "alt": "Military On Source's Logo",
+      "height": 125,
+      "path": "/images/content/approved-company-list/militaryonesource.webp",
+      "width": 514
+    },
+    "name": "Military On Source"
+  },
+  {
+    "_id": "757cd91a-a529-43c9-b374-3bf00e6812a6",
+    "_type": "approved_company_list",
+    "_createdAt": "2024-12-18T07:25:26Z",
+    "_updatedAt": "2024-12-18T07:25:43Z",
+    "image": {
+      "_sanityAssetId": "image-99262d9e218355a14e2e7b236c1277949ff350c9-194x50-png",
+      "alt": "Porch's Logo",
+      "height": 50,
+      "path": "/images/content/approved-company-list/porchimage.png",
+      "width": 194
+    },
+    "name": "Porch"
+  },
+  {
+    "_id": "a087cafa-7b0b-4dcc-bc6c-dee2c4402bb4",
+    "_type": "approved_company_list",
+    "_createdAt": "2024-12-18T07:21:09Z",
+    "_updatedAt": "2024-12-18T07:21:37Z",
+    "image": {
+      "_sanityAssetId": "image-6c5bafe43db29a4105e2d600c854b5c430b9bcb7-128x35-webp",
+      "alt": "Chamber & Commerce's Logo",
+      "height": 35,
+      "path": "/images/content/approved-company-list/movinglifeimg1.webp",
+      "width": 128
+    },
+    "name": "Chamber & Commerce"
+  },
+  {
+    "_id": "f5bb9e2c-8c49-4ea9-94df-fd74790ad106",
+    "_type": "approved_company_list",
+    "_createdAt": "2024-12-18T07:23:56Z",
+    "_updatedAt": "2024-12-18T07:24:15Z",
+    "image": {
+      "_sanityAssetId": "image-a0057497dc25ef4f42728be98379fc4a9b2e074f-128x37-webp",
+      "alt": "Spousely's Logo",
+      "height": 37,
+      "path": "/images/content/approved-company-list/spouselyflaglogo.webp",
+      "width": 128
+    },
+    "name": "SPOUSELY"
+  }
+]
