@@ -39,7 +39,7 @@ export default function FindAgentInState({ state, blogSlug, position }: Props) {
   };
 
   return (
-    <div className="container mx-auto w-full my-12 px-4">
+    <div className="container mx-auto w-full my-12 px-4" data-cta-id="blog_find_agent_in_state">
       <div
         className="rounded-[32px] p-8 sm:p-12 text-white text-center"
         style={{
@@ -50,7 +50,7 @@ export default function FindAgentInState({ state, blogSlug, position }: Props) {
           Find a veteran-friendly agent in {displayName}
         </h2>
         <p className="text-base sm:text-lg mb-6 max-w-2xl mx-auto">
-          Our {displayName} agents are PCS-fluent and VA-loan experts. Get matched in minutes — no spam, no pressure.
+          Our {displayName} agents are PCS-fluent and VA-loan experts. Get matched in minutes. No spam, no pressure.
         </p>
         <Link
           href={href}
