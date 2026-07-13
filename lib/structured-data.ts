@@ -1,5 +1,6 @@
 import type {
   BreadcrumbList,
+  CollectionPage,
   FAQPage,
   ItemList,
   LocalBusiness,
@@ -133,9 +134,55 @@ export function buildWebSite(): WithContext<WebSite> {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${BASE_URL}/blog-search?q={search_term_string}`,
+        urlTemplate: `${BASE_URL}/blog-search?query={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     } as WithContext<WebSite>['potentialAction'],
+  };
+}
+
+type BlogItemListItem = { url: string; name: string };
+
+type BlogItemListInput = {
+  url: string;
+  name: string;
+  items: BlogItemListItem[];
+};
+
+export function buildBlogItemList(input: BlogItemListInput): WithContext<ItemList> {
+  const { url, name, items } = input;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    '@id': `${url}#item-list`,
+    url,
+    name,
+    numberOfItems: items.length,
+    itemListElement: items.map((item, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
+
+type CollectionPageInput = {
+  url: string;
+  name: string;
+  description?: string;
+  itemList?: ItemList | WithContext<ItemList>;
+};
+
+export function buildCollectionPage(input: CollectionPageInput): WithContext<CollectionPage> {
+  const { url, name, description, itemList } = input;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': url,
+    url,
+    name,
+    description,
+    mainEntity: itemList,
   };
 }

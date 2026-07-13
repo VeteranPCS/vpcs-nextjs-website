@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { sendGTMEvent } from '@next/third-parties/google';
 import { getStateDisplayName } from '@/lib/blog/getStateForBlog';
 import { trackCtaClicked } from '@/lib/analytics/client';
+import { buildCtaProperties } from '@/lib/analytics/cta';
 
 type Position = 'top' | 'bottom';
 
@@ -24,16 +25,17 @@ export default function FindAgentInState({ state, blogSlug, position }: Props) {
       blog_slug: blogSlug,
       position,
     });
-    trackCtaClicked({
-      cta_id: 'blog_find_agent_in_state',
-      cta_intent: 'state_agent_search',
-      cta_position: position,
-      cta_component: 'blog_find_agent_in_state',
-      destination_path: href,
-      state_slug: state,
-      content_slug: blogSlug,
-      content_type: 'blog_post',
-    });
+    trackCtaClicked(buildCtaProperties({
+      ctaId: 'blog_find_agent_in_state',
+      ctaIntent: 'state_agent_search',
+      ctaPosition: position,
+      ctaComponent: 'blog_find_agent_in_state',
+      destination: href,
+      pageType: 'blog_post',
+      stateSlug: state,
+      contentSlug: blogSlug,
+      contentType: 'blog_post',
+    }));
   };
 
   return (

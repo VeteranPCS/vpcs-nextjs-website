@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { BLOG_COMPONENTS, getBlogComponentBySlug } from '@/lib/blog/components';
 import { BLOG_CATEGORY_PAGE_SIZE, getBlogsByComponentSlug, pageCount } from '@/lib/blog/mdx';
 import { SITE_URL } from '@/lib/siteUrl';
@@ -42,7 +42,8 @@ export default async function Page(
 ) {
   const { category, page: pageParam } = await props.params;
   const page = Number(pageParam);
-  if (pageParam === '1') redirect(`/blog/category/${category}`);
+  // Page 1 is the hub itself; permanent (308) redirect keeps one canonical URL.
+  if (pageParam === '1') permanentRedirect(`/blog/category/${category}`);
   if (!Number.isInteger(page) || page < 1) notFound();
 
   return <CategoryBlogPage category={category} page={page} />;

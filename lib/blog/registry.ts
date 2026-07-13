@@ -30,6 +30,12 @@ export function getRegistryPost(slug: string): InternalLinkRegistryPost | null {
   return POSTS_BY_SLUG.get(slug) ?? null;
 }
 
+export function getStatePostCounts(): Array<{ stateSlug: string; count: number }> {
+  return Object.entries(INTERNAL_LINK_REGISTRY.byState)
+    .map(([stateSlug, slugs]) => ({ stateSlug, count: slugs.length }))
+    .sort((a, b) => b.count - a.count || a.stateSlug.localeCompare(b.stateSlug));
+}
+
 export function getStateGuidePosts(
   stateSlugInput: string | null | undefined,
   limit = 6,

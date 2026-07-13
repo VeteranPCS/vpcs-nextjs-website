@@ -94,7 +94,7 @@ Common optional properties:
 | `content_viewed` | Blog posts | `content_id`, `content_slug`, `content_type`, `topic_cluster` |
 | `state_page_viewed` | State landing pages | `state_code`, `state_slug`, `source_content_type` |
 | `blog_search_submitted` | Blog search results pages | `query_length`, `query_word_count`, `query_word_count_bucket`, `result_count`, `result_bucket` |
-| `blog_search_results` | Blog search results pages | `result_count`, `result_bucket` |
+| `blog_search_results` | Blog search results pages | `result_count`, `result_bucket`, `page` |
 | `bah_calculator_used` | BAH calculator success | `zip_prefix`, `paygrade`, `dependents`, `year`, `mha` |
 | `moving_bonus_calculated` | Moving bonus calculator | `home_value_bucket`, `bonus_amount`, `charity_amount` |
 
@@ -160,6 +160,55 @@ Use `cta_clicked` as the canonical event for partner cards, state CTAs, blog CTA
 Do not add dedicated events like `agent_card_clicked`, `lender_card_clicked`, or `contact_click` unless a future reporting requirement cannot be handled with `cta_clicked` properties.
 
 Use `calculator_cta_clicked` only for calculator-specific CTAs where calculator context is central to analysis.
+
+### Blog Discovery Surface CTA Registry (2026-07 refactor)
+
+All blog discovery modules consolidate onto `cta_clicked`. `result_count` on `blog_search_results` always means the TOTAL ranked count, never the page slice; `page` records which results page fired the event. Numbered pagination links (`PaginationNav`) are deliberately untracked navigation chrome; pageviews capture them.
+
+Post template (`page_type: blog_post`):
+
+| cta_id | cta_position | cta_intent |
+|---|---|---|
+| `blog_breadcrumb_category` | `blog_post_breadcrumb` | `content_navigation` |
+| `blog_details_find_agent` / `blog_details_find_lender` (kept; now carry `state_slug`) | `blog_details_cta_band` | `contact_agent` / `contact_lender` |
+| `blog_next_guide` | `blog_post_after_body` | `content_navigation` |
+| `blog_related_card` / `blog_related_card_view_all` | `blog_post_related_rail` | `content_navigation` |
+| `blog_find_agent_in_state` (kept; now built via `buildCtaProperties`) | `top` / `bottom` | `state_agent_search` |
+
+Blog landing (`page_type: blog_landing`):
+
+| cta_id | cta_position | cta_intent |
+|---|---|---|
+| `blog_landing_category_nav` | `blog_landing_nav_strip` | `content_navigation` |
+| `blog_landing_start_here` | `blog_landing_start_here` | `content_navigation` |
+| `blog_landing_rail_card` / `blog_landing_rail_view_all` | `blog_landing_category_rail` | `content_navigation` |
+| `blog_landing_agent_cta` / `blog_landing_lender_cta` (ids kept; intent changed from `state_map`, destination now `/contact-agent` and `/contact-lender`) | `blog_landing_cta_band` | `contact_agent` / `contact_lender` |
+| `blog_landing_state_link` (+ `state_slug`; the "All states" chip fires it without `state_slug`) | `blog_landing_state_rail` | `state_agent_search` |
+| `blog_landing_latest_card` | `blog_landing_latest` | `content_navigation` |
+
+Archive `/blog/page/N` (`page_type: blog_archive`):
+
+| cta_id | cta_position | cta_intent |
+|---|---|---|
+| `blog_archive_card` | `blog_archive_grid` | `content_navigation` |
+| `blog_archive_find_agent` / `blog_archive_find_lender` | `blog_archive_cta_band` | `contact_agent` / `contact_lender` |
+
+Category hubs (`page_type: blog_category`):
+
+| cta_id | cta_position | cta_intent |
+|---|---|---|
+| `blog_category_card` (replaces `blog_article_card`; position kept for distribution continuity) | `blog_article_grid` | `content_navigation` |
+| `blog_category_pillar` | `blog_category_pillar` | `content_navigation` |
+| `blog_category_find_agent` / `blog_category_find_lender` | `blog_category_header`, `blog_category_cta_band` | `contact_agent` / `contact_lender` |
+
+Search results (`page_type: blog_search`):
+
+| cta_id | cta_position | cta_intent |
+|---|---|---|
+| `blog_search_result_card` (replaces `blog_search_result_image` + `blog_search_result_title`) | `blog_search_results` | `content_navigation` |
+| `blog_search_results_all_guides`, `blog_search_no_results_all_guides`, `blog_search_no_results_category` (unchanged) | `blog_search_results_header` / `blog_search_no_results` | `content_navigation` |
+
+Retired ids (stop appearing after the refactor deploy): `blog_article_card` (hub grid), `blog_search_result_image`, `blog_search_result_title`. `pcs_resources_blog_card` no longer fires on post pages (the related rail now emits `blog_related_card`) but still fires on `/va-loan-help`, `/pcs-resources`, and `/thank-you`.
 
 ## Customer Form IDs
 

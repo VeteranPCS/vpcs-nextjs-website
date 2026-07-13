@@ -93,7 +93,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         return urls;
     });
 
-    const allRoutes = [...staticRoutes, ...mappedStateRoutes, ...mappedBlogRoutes, ...mappedCategoryRoutes];
+    // All-posts archive (/blog/page/2..N); page 1 is /blog itself. Same lastmod
+    // logic as the category page/N entries: latest post date in the set.
+    const archiveLastModified = latestDate(blogs.map(dateFromBlog));
+    const archiveTotalPages = pageCount(blogs.length, BLOG_CATEGORY_PAGE_SIZE);
+    const mappedArchiveRoutes: Array<{ url: string; lastModified: Date }> = [];
+    for (let page = 2; page <= archiveTotalPages; page += 1) {
+        mappedArchiveRoutes.push({ url: `${SITE_URL}/blog/page/${page}`, lastModified: archiveLastModified });
+    }
+
+    const allRoutes = [...staticRoutes, ...mappedStateRoutes, ...mappedBlogRoutes, ...mappedCategoryRoutes, ...mappedArchiveRoutes];
 
     return allRoutes.map((route) => ({
         ...route,
