@@ -10,7 +10,32 @@ export type BlogComponent = {
   partnerIntent: BlogCtaIntent;
 };
 
-export const BLOG_COMPONENTS = components as readonly BlogComponent[];
+function isBlogCtaIntent(value: unknown): value is BlogCtaIntent {
+  return value === 'agent' || value === 'lender';
+}
+
+// JSON imports are only assertion-checked by TypeScript, so a category added
+// without a valid partnerIntent would silently fall back to 'agent'. Fail the
+// build instead: every canonical category must declare its intent explicitly.
+function validateBlogComponents(raw: unknown): readonly BlogComponent[] {
+  if (!Array.isArray(raw)) {
+    throw new Error('blog-components.json must be an array of categories');
+  }
+  for (const entry of raw) {
+    if (!isBlogCtaIntent(entry?.partnerIntent)) {
+      throw new Error(
+        `blog-components.json: category "${entry?.slug}" has a missing or invalid partnerIntent ` +
+        `(expected 'agent' or 'lender', got ${JSON.stringify(entry?.partnerIntent)})`,
+      );
+    }
+  }
+  return raw as readonly BlogComponent[];
+}
+
+export const BLOG_COMPONENTS = validateBlogComponents(components);
+
+// Only import __testables from tests.
+export const __testables = { validateBlogComponents };
 
 export const BLOG_COMPONENT_BY_SLUG: ReadonlyMap<string, BlogComponent> = new Map(
   BLOG_COMPONENTS.map((component) => [component.slug, component]),

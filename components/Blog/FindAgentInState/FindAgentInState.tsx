@@ -6,15 +6,14 @@ import { getStateDisplayName } from '@/lib/blog/getStateForBlog';
 import { trackCtaClicked } from '@/lib/analytics/client';
 import { buildCtaProperties } from '@/lib/analytics/cta';
 
-type Position = 'top' | 'bottom';
-
+// The 'bottom' placement was retired (zero organic clicks); this component
+// now renders only in the single top position on agent-intent posts.
 type Props = {
   state: string;
   blogSlug: string;
-  position: Position;
 };
 
-export default function FindAgentInState({ state, blogSlug, position }: Props) {
+export default function FindAgentInState({ state, blogSlug }: Props) {
   const displayName = getStateDisplayName(state);
   const href = `/${state}?source=blog&blog_slug=${encodeURIComponent(blogSlug)}`;
 
@@ -23,12 +22,12 @@ export default function FindAgentInState({ state, blogSlug, position }: Props) {
       event: 'blog_to_state_cta_click',
       state,
       blog_slug: blogSlug,
-      position,
+      position: 'top',
     });
     trackCtaClicked(buildCtaProperties({
       ctaId: 'blog_find_agent_in_state',
       ctaIntent: 'state_agent_search',
-      ctaPosition: position,
+      ctaPosition: 'top',
       ctaComponent: 'blog_find_agent_in_state',
       destination: href,
       pageType: 'blog_post',

@@ -226,7 +226,7 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                 headingIds={firstHeadingIds}
             />
             {bridgeState && ctaIntent === 'agent' && (
-                <FindAgentInState state={bridgeState} blogSlug={slug} position="top" />
+                <FindAgentInState state={bridgeState} blogSlug={slug} />
             )}
             <BlogDetailsCta stateSlug={bridgeState} componentSlug={blogComponent?.slug ?? null} contentSlug={slug} />
             <EndBlogPostDetails
