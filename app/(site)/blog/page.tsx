@@ -76,8 +76,9 @@ export default async function Home() {
     return <p>Failed to load the blog.</p>;
   }
 
-  // usedSlugs threads through every section below so no post renders twice
-  // (fixes the old duplicate-hero bug).
+  // usedSlugs dedupes the editorial sections (hero, start-here, category
+  // rails) against each other (fixes the old duplicate-hero bug). The
+  // "Latest guides" grid is exempt: it is archive page 1 (see below).
   const hero = blogs[0]!; // non-empty: length checked above
   const usedSlugs = new Set<string>([hero.slug]);
   const blogsBySlug = new Map(blogs.map((blog) => [blog.slug, blog]));
@@ -128,11 +129,11 @@ export default async function Home() {
       name: STATE_SLUG_TO_NAME[stateSlug] ?? stateSlug,
     }));
 
-  // Newest posts not already on the page; the numbered pagination continues
-  // into the full archive at /blog/page/N (page 1 = /blog itself).
-  const latestPosts = blogs
-    .filter((blog) => !usedSlugs.has(blog.slug))
-    .slice(0, LATEST_GUIDES_SIZE);
+  // The exact first archive slice, NOT deduped against the sections above:
+  // /blog/page/N paginates the raw list, so this grid must be its page 1 or
+  // the numbered pagination skips/repeats posts across pages. A few posts
+  // featured above may repeat here; that's deliberate.
+  const latestPosts = blogs.slice(0, LATEST_GUIDES_SIZE);
   const totalPages = pageCount(blogs.length, BLOG_CATEGORY_PAGE_SIZE);
 
   const itemListJsonLd = buildBlogItemList({
