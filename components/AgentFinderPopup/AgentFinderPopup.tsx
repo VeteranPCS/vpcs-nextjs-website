@@ -74,9 +74,11 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
 
             setIsLoadingAreas(true);
             try {
-                // Load state image
+                // Load state image. The API returns an absolute URL on the
+                // site origin; next/image only accepts allowlisted remote
+                // hosts, so render this same-origin image by its path.
                 const imageUrl = await clientStateService.fetchStateImage(selectedStateSlug);
-                setStateImage(imageUrl);
+                setStateImage(new URL(imageUrl, window.location.origin).pathname);
 
                 // Load areas from API route (server-side)
                 const sortedAreas = await clientAreaService.fetchAreasByState(selectedState);

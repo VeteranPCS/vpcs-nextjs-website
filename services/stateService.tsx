@@ -2,30 +2,14 @@ import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
 import { RequestType, salesForceAPIWithRefresh, salesForceImageAPI } from '@/services/api';
 import { escapeSoqlLiteral, isStateCode } from '@/services/soql';
 import { logDebug, logError } from '@/services/loggingService';
-import { client } from '@/sanity/lib/client';
-import { urlForImage } from '@/sanity/lib/image';
-import { defineQuery } from 'next-sanity';
-import type {
-  STATE_LIST_QUERYResult,
-  STATE_DETAILS_QUERYResult,
-} from '@/sanity.types';
-
-// GROQ queries wrapped in defineQuery so `sanity typegen` derives their result types
-// (STATE_LIST_QUERYResult, etc.) from the projection. The generated types are consumed
-// below, so dropping a field from a projection is caught by type-check instead of silently
-// diverging from the hand-written interface (the bug this replaces).
-const STATE_LIST_QUERY = defineQuery(
-  `*[_type == "state_list"]{ _id, _updatedAt, state_slug, short_name, state_name }`,
-);
-const STATE_DETAILS_QUERY = defineQuery(
-  `*[_type == "state_list" && state_slug.current == $state][0]`,
-);
-const STATE_IMAGE_QUERY = defineQuery(
-  `*[_type == "state_list" && state_slug.current == $state][0]{ state_map }`,
-);
+import { getStateBySlug, STATE_LIST } from '@/lib/content/states';
+import { absoluteUrl } from '@/lib/siteUrl';
+import { toLegacyImage, type LegacyImage } from '@/lib/content/loader';
 
 // Dynamic node:fs import keeps these calls out of client bundles that
-// transitively import this module. Only ever runs server-side.
+// transitively import this module. Only ever runs server-side. (The module is
+// now also hard server-only via the lib/content/states import above; type-only
+// imports from client components remain fine because they compile away.)
 async function resolveHeadshot(
   role: 'agents' | 'lenders',
   salesforceID: string,
@@ -38,27 +22,26 @@ async function resolveHeadshot(
   return fs.existsSync(path.join(process.cwd(), 'public', rel)) ? rel : null;
 }
 
-// One fully-populated row of the state-list projection. fetchStateList filters out rows
-// missing a slug / short_name / state_name (incomplete Sanity docs never reach the UI), so
-// the public type presents those fields as non-null. Built from the generated projection via
-// a mapped type, so dropping a field from STATE_LIST_QUERY shrinks StateList and breaks
-// type-check at whichever consumer reads it (the drift the hand-written interface hid).
-type StateListRow = STATE_LIST_QUERYResult[number];
-export type StateList = { [K in keyof StateListRow]-?: NonNullable<StateListRow[K]> } & {
+// One row of the state list, sourced from the repo-committed export
+// (content/_data/site/state_list.json via lib/content/states). The loader
+// validates every field at module load and throws — so rows are always fully
+// populated and unique by short_name/slug, and consumers keep the null-free
+// shape the Sanity-era filtering used to guarantee.
+export type StateList = {
+  _id: string;
+  _updatedAt: string;
   state_slug: { _type: 'slug'; current: string };
+  short_name: string;
+  state_name: string;
 };
 
-// fetchStateDetails returns the full state_list document with a runtime-synthesized
-// `image_url` grafted onto state_map.asset (via urlForImage), so model that explicitly on
-// top of the generated document type.
-type StateDetailDoc = NonNullable<STATE_DETAILS_QUERYResult>;
-type StateDetailMap = NonNullable<StateDetailDoc['state_map']>;
-export type StateDetails = Omit<StateDetailDoc, 'state_map'> & {
-  state_map:
-    | (Omit<StateDetailMap, 'asset'> & {
-        asset: Partial<NonNullable<StateDetailMap['asset']>> & { image_url: string };
-      })
-    | null;
+// fetchStateDetails returns the full state_list document. state_map keeps the
+// Sanity-era `asset.image_url` shape (see LegacyImage) so consumers don't
+// churn; the URL is now the local public/ path of the committed state map.
+export type StateDetails = StateList & {
+  _type: 'state_list';
+  _createdAt: string;
+  state_map: LegacyImage | null;
 };
 
 export interface Agent {
@@ -196,56 +179,36 @@ async function runStateLicensedQuery<T extends { AccountId_15__c: string }>(
 }
 
 const stateService = {
+  // Kept async (data is now local) so the exported signatures — and every
+  // consumer (SSR pages, sitemap, llms.txt, MCP, concierge tools, /api/v1) —
+  // are unchanged from the Sanity-backed implementation.
   fetchStateList: async (): Promise<StateList[]> => {
-    try {
-      const response = await client.fetch(STATE_LIST_QUERY)
-      if (response) {
-        const seen = new Set<string>();
-        // Drop rows an incomplete Sanity doc would produce (no slug/short_name/state_name):
-        // they can't render a state page or link anyway. The predicate narrows the element
-        // type to the non-null StateList, so every consumer of the list is spared per-field
-        // null guards.
-        return response.filter((state): state is StateList => {
-          const slug = state.state_slug?.current;
-          if (!slug || !state.short_name || !state.state_name) return false;
-          if (seen.has(state.short_name)) return false;
-          seen.add(state.short_name);
-          return true;
-        });
-      } else {
-        throw new Error('Failed to fetch State List');
-      }
-    } catch (error: any) {
-      console.error('Error fetching State List:', error);
-      throw error;
-    }
+    return STATE_LIST.map(({ _id, _updatedAt, state_slug, short_name, state_name }) => ({
+      _id,
+      _updatedAt,
+      state_slug,
+      short_name,
+      state_name,
+    }));
   },
   fetchStateDetails: async (state: string): Promise<StateDetails> => {
-    try {
-      const state_detail = await client.fetch(STATE_DETAILS_QUERY, { state: state });
-
-      if (state_detail) {
-        // Pass the whole image object (not just its asset) to urlForImage so it honors the
-        // editor-configured crop/hotspot on the Sanity image; guard on asset presence so an
-        // image with no uploaded file yields '' rather than a broken URL.
-        const state_map = state_detail.state_map;
-        return {
-          ...state_detail,
-          state_map: state_map ? {
-            ...state_map,
-            asset: {
-              ...state_map.asset,
-              image_url: state_map.asset ? urlForImage(state_map) : ''
-            }
-          } : null
-        };
-      } else {
-        throw new Error('Failed to fetch State Details');
-      }
-    } catch (error: any) {
-      console.error('Error fetching State Details:', error);
-      throw error;
+    const doc = getStateBySlug(state);
+    if (!doc) {
+      // Same throw-on-unknown-slug contract as the Sanity-backed version: the
+      // [state] page catches it and renders its failure copy; the per-state
+      // llms.txt route catches it and returns 404.
+      throw new Error('Failed to fetch State Details');
     }
+    return {
+      _id: doc._id,
+      _type: 'state_list',
+      _createdAt: doc._createdAt,
+      _updatedAt: doc._updatedAt,
+      short_name: doc.short_name,
+      state_name: doc.state_name,
+      state_slug: doc.state_slug,
+      state_map: toLegacyImage(doc.state_map),
+    };
   },
   fetchAgentsListByState: async (
     state: string,
@@ -295,18 +258,15 @@ const stateService = {
     }
   },
   fetchStateImage: async (state_slug: string): Promise<string> => {
-    try {
-      const result = await client.fetch(STATE_IMAGE_QUERY, { state: state_slug });
-      const image = result?.state_map;
-      if (!image?.asset) {
-        throw new Error('No state map found');
-      }
-      // Pass the full image object so urlForImage honors crop/hotspot (see fetchStateDetails).
-      return urlForImage(image);
-    } catch (error: any) {
-      console.error('Error fetching State Image:', error);
-      throw error;
+    const image = getStateBySlug(state_slug)?.state_map;
+    if (!image) {
+      // Same throw contract as before (unknown slug or missing map).
+      throw new Error('No state map found');
     }
+    // The Sanity implementation returned an absolute CDN URL; keep the
+    // absolute-URL contract (the /api/v1 image route forwards this verbatim
+    // to external consumers) by resolving the local path on the site origin.
+    return absoluteUrl(image.path);
   },
   fetchAgentById: async (agentId: string): Promise<Agent | null> => {
     try {
