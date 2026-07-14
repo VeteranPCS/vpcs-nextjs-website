@@ -1,8 +1,8 @@
 import Image from "next/image";
 import aboutService from "@/services/aboutService";
-import BlockContent from "@/components/Blog/BlockContent";
-import { validateBlockStyle } from "@/components/Blog/BlogDetail";
 import BioToggle from "@/components/About/BioToggle";
+import { getTeamBio } from "@/components/About/teamBios";
+import type { PortableTextBlock } from "@/lib/content/loader";
 
 export interface ImageAsset {
   image_url?: string;
@@ -11,26 +11,15 @@ export interface ImageAsset {
 interface MainImage {
   alt: string; // Alternative text for the image
   asset: {
-    image_url?: string; // URL of the image
-    _ref: string; // Reference ID for the image asset
-    _type: string; // Type of the asset, typically "reference"
+    image_url?: string; // URL (local path) of the image
   };
-  _type: "image"; // Type of the main image, typically "image"
 }
 
 export interface TeamMember {
   _id: string;
   image: MainImage;
-  description: {
-    _key: string;
-    style: string;
-    children: {
-      _key: string;
-      marks: string[];
-      text: string;
-    }[];
-  }[];
-  buttonText: string;
+  /** Portable Text export of the bio; the rendered copy lives in components/About/teamBios.tsx. */
+  description: PortableTextBlock[];
   name: string;
   designation: string;
 }
@@ -89,17 +78,7 @@ const AdminTeam = async () => {
                     {details.designation}
                   </span>
                   <BioToggle id={details._id}>
-                    {details?.description?.map((block, index) => (
-                      <BlockContent
-                        key={block._key || index}
-                        blocks={[
-                          {
-                            ...block,
-                            style: validateBlockStyle(block.style),
-                          },
-                        ]}
-                      />
-                    ))}
+                    {getTeamBio(details._id)}
                   </BioToggle>
                 </div>
               </div>
