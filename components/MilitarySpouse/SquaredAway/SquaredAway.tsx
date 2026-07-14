@@ -2,8 +2,18 @@ import Button from "@/components/common/Button";
 import Image from "next/image";
 import React from "react";
 import SliderValueLabel from "@/components/MilitarySpouse/SquaredAway/SquaredAwaySlider";
+import militarySpouseService, { MilitarySpouseApprovedCompaniesProps } from "@/services/militarySpouseService";
 
-const SquaredAway = () => {
+const SquaredAway = async () => {
+  let approvedCompanies: MilitarySpouseApprovedCompaniesProps[] = [];
+
+  try {
+    approvedCompanies =
+      await militarySpouseService.fetchMilitarySpouseApprovedCompanies();
+  } catch (error) {
+    console.error("Error fetching Military Spouse Approved Companies", error);
+  }
+
   return (
     <div className="container mx-auto w-full md:py-16 py-8">
       <div>
@@ -59,7 +69,7 @@ const SquaredAway = () => {
               <Button buttonText="Squared Away" />
             </div>
             <div className="container mx-auto w-full mt-5">
-              <SliderValueLabel />
+              <SliderValueLabel companies={approvedCompanies} />
             </div>
           </div>
         </div>

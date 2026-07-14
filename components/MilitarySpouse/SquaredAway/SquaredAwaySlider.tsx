@@ -1,33 +1,35 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import { MilitarySpouseApprovedCompaniesProps } from '@/services/militarySpouseService';
-import militarySpouseService from "@/services/militarySpouseService";
 
-const Slider = () => {
+// Plain serializable shape passed from the server components (SquaredAway,
+// MilSpouseApproved) that fetch the approved-company list via
+// militarySpouseService. This client file must not import the service — it
+// now pulls in the server-only content loaders.
+export interface ApprovedCompanySlide {
+  _id: string;
+  image: {
+    alt: string;
+    asset: {
+      image_url: string;
+    };
+  };
+}
+
+interface SliderProps {
+  companies: ApprovedCompanySlide[];
+}
+
+const Slider = ({ companies }: SliderProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [sliderData, setSliderData] = useState<MilitarySpouseApprovedCompaniesProps[]>([]);
 
   const handleSlideClick = (index: number) => {
     setActiveIndex(index);
   };
 
-  const fetchMilitarySpouseApprovedCompanies = useCallback(async () => {
-    try {
-      const response = await militarySpouseService.fetchMilitarySpouseApprovedCompanies();
-      setSliderData(response);
-    } catch (error) {
-      console.error("Error fetching Military Spouse Approved Companies", error);
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchMilitarySpouseApprovedCompanies()
-  }, [fetchMilitarySpouseApprovedCompanies])
-
   return (
     <div className="w-full flex overflow-x-auto">
-      {sliderData.map((slide, index) => (
+      {companies.map((slide, index) => (
         <div
           key={slide._id}
           className={`px-4 py-2 flex border-b-2  transition-colors duration-300 ${
