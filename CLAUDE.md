@@ -9,13 +9,13 @@ Operational guide for Claude (and any other AI assistant) working in this repo. 
 VeteranPCS is a Next.js site that connects active-duty service members, veterans, and military spouses doing a PCS (Permanent Change of Station) move to vetted, military-experienced real estate agents and VA-loan lenders. The site is read-mostly marketing surface (state pages, blog) plus form-driven lead capture; Phase 2 is layering an LLM concierge on top of that.
 
 - Source of truth for agents/lenders/customers/deals: **Salesforce** (Person Account model with `__pc` custom fields). Person-Account customers are identified by the `isAgent__pc` / `isLender__pc` / `isCustomer__pc` booleans, **not** by an Account record-type filter. (`0124x000000Z7G3AAK` is the **Opportunity** "Customer" record type, used only in Opportunity queries.)
-- Source of truth for marketing content (states, blog, headshots, copy): **Sanity CMS** + `public/images/`.
+- Source of truth for marketing content (states, blog, headshots, copy): **the repo itself** — structured content in `content/_data/site/*.json`, rich text as typed `.tsx` modules colocated with their consumers, images under `public/images/`. (Sanity CMS was fully removed 2026-07-13 — see `docs/sanity-migration-decision.md`.)
 - Lead intake: server actions → Salesforce REST + Slack notification + OpenPhone SMS.
 
 ## Tech stack
 
 - **Framework:** Next.js 16 App Router (Turbopack), React 19.2, Node runtime.
-- **CMS:** Sanity (`next-sanity`, GROQ). Studio mounted at `/studio`.
+- **Content:** repo-committed JSON (`content/_data/site/`) read through typed loaders in `lib/content/` (server-only, validated at module load — bad data fails the build). No CMS.
 - **CRM:** Salesforce REST (SOQL); token retrieval via `services/salesForceTokenService.tsx`, queries via `services/api.tsx` + `services/stateService.tsx`.
 - **AI:** Vercel AI SDK v6 (`ai`, `@ai-sdk/react`) routed through **Vercel AI Gateway** (model id `anthropic/claude-sonnet-4.6` in `lib/ai/models.ts`). No direct provider SDK is wired up — use the Gateway.
 - **Telemetry:** PostHog is the primary funnel telemetry source; GA/GTM is a comparator. Taxonomy and troubleshooting live in `docs/analytics/telemetry-taxonomy.md`.
@@ -43,19 +43,21 @@ Pre-commit hook (`.husky/pre-commit`) runs `lint && type-check && build`. **It d
 ```
 app/
   (site)/              marketing pages (homepage, about, partners, etc.)
-  [state]/             state landing pages (SSR from Sanity + Salesforce)
+  [state]/             state landing pages (repo content + Salesforce)
   blog/                MDX-driven blog
-  studio/              Sanity Studio
   api/
     chat/              concierge streaming endpoint (Phase 2)
     v1/                public REST: areas, bah, impact, media-accounts, revalidate, states
     mcp/               MCP server entry
+content/
+  _data/site/          site content JSON, one file per former Sanity type + _manifest.json
 lib/
   ai/                  concierge: models.ts, session.ts, system-prompt.ts, tools/
+  content/             typed content loaders (server-only, throw-on-invalid at import)
   bah-scraper.ts       DTMO BAH lookup (see "BAH year format" gotcha)
   feature-flags.ts     NEXT_PUBLIC_CONCIERGE_ENABLED + future gates
 services/
-  stateService.tsx     Sanity state list + Salesforce agent/lender fetch
+  stateService.tsx     state list (repo content) + Salesforce agent/lender fetch
   agentService.tsx     agent detail
   api.tsx              SOQL builder + REST wrappers
   salesForceTokenService.tsx
@@ -68,7 +70,6 @@ components/
   GetListedAgents/     agent get-listed form
   GetListedLenders/    lender get-listed form
   Internship/          internship application form
-sanity/                Studio config + schemas
 scripts/               Node scripts (audits, ingest, headshot classify, etc.)
 evals/                 on-demand concierge eval suites (npm run eval)
 docs/
@@ -89,9 +90,12 @@ docs/
 - Scripts that talk to Salesforce use **inline API helpers** (not top-level module imports) so env vars are read after `dotenv` runs.
 - Schema reference: use the committed `.md` summaries in `docs/salesforce-schema/`. The deeper `raw/` dumps (`sobjects.json`, `*-describe.json`) are **gitignored** — not present in a fresh clone. Regenerate them (and refresh the `.md` summaries) with `node --env-file=.env.local scripts/recon-salesforce.mjs` (needs the Salesforce env vars). If present, **never `Read` them whole** — `sobjects.json` is ~1.35 MB (~350K tokens) and will blow the context window; grep or jq them instead.
 
-### Sanity
+### Repo content (`content/_data/site/`)
 
-- `state_list` documents drive state pages. The GROQ projection in `services/stateService.tsx` must include `state_name` (it was silently dropped before — see PROJECT.md "Bugs fixed").
+- **Editing structured content:** edit the type's JSON in `content/_data/site/` directly. Loaders in `lib/content/` validate at module load and **throw** — a typo'd field fails the build, not silently at runtime. Keep `_id` stable; bump `_updatedAt` when you edit (the sitemap's `lastModified` reads it).
+- **Editing rich text** (team bios, FAQ answers, support blurbs): edit the typed `.tsx` content modules colocated with their consumers (`components/About/teamBios.tsx`, FAQ `faqContent.tsx`, `supportVeterenceContent.tsx`). Links/bold/lists are plain JSX. Each module has a parity test that derives its expectations from the exported Portable Text JSON in `content/_data/site/` — for a deliberate content change, update **both** the JSX and its matching JSON document; never weaken the test itself.
+- **State images:** drop the file in `public/images/states/`, update the state's `state_map` entry (path/alt/width/height) in `content/_data/site/state_list.json`, and bump that doc's `_updatedAt`. A test in `lib/content/__tests__/states.test.ts` verifies every `state_map.path` exists on disk — it runs in `npm test` and CI, **not** in pre-commit or the build, so run `npm test` after touching state content.
+- **Deliberate leftovers:** `scripts/export-sanity-content.mjs` (+ its test, + the `@sanity/image-url` devDependency) are retained ONLY for grace-window re-exports while the old Sanity project is kept read-only as rollback (~30 days post-merge). After the window closes, delete all three. Nothing in the app runtime imports Sanity.
 - Headshot routing convention: `scripts/classify-headshot-ids.mjs` plus the `public/images/agents/` vs `public/images/lenders/` folders.
 
 ### Concierge (Phase 2)
@@ -120,7 +124,7 @@ docs/
 ### TypeScript & code placement
 
 - **`noUncheckedIndexedAccess` is on.** Array/record index access (`arr[i]`, `obj[key]`) is typed `T | undefined`. Handle the `undefined` in priority order: (1) restructure so it can't arise (`str.charAt(i)` over `str[i]`, `map[k] ??= []`, iterate `Object.values(map)`); (2) guard (`if (!x) return …`) or default (`?? fallback`) when it's genuinely reachable; (3) assert with `!` **only** where control flow proves the index is in-bounds (immediately after a `.length` check, inside a bounded `for` loop, a mandatory regex capture group, or a `toHaveBeenCalledTimes(n)` in tests) — and leave a one-line why. Never `!` to silence a genuinely-possible `undefined`; that reintroduces the silent-failure class this flag exists to catch.
-- **Where shared code goes:** framework-agnostic helpers and pure functions live in `lib/`, grouped by feature (`lib/ai/`, `lib/blog/`, `lib/bah/`); external-system access (Salesforce, Sanity) lives in `services/`. Don't add a top-level `utils/` or `constants/` catch-all — colocate with the feature that owns it.
+- **Where shared code goes:** framework-agnostic helpers and pure functions live in `lib/`, grouped by feature (`lib/ai/`, `lib/blog/`, `lib/content/`); external-system access (Salesforce) lives in `services/`. Don't add a top-level `utils/` or `constants/` catch-all — colocate with the feature that owns it.
 - **`.ts` vs `.tsx`:** new files with no JSX get a `.ts` extension; reserve `.tsx` for modules that return JSX. This is a going-forward rule for **new files only** — do not mass-rename the existing JSX-free `.tsx` files (e.g. `services/*.tsx`).
 
 ### Env vars (on `main`)
@@ -128,7 +132,6 @@ docs/
 The env vars used on `main`:
 
 - Salesforce: `SALESFORCE_CLIENT_ID`, `SALESFORCE_CLIENT_SECRET`, `SALESFORCE_USERNAME`, `SALESFORCE_PASSWORD`, `SALESFORCE_TOKEN`, `SALESFORCE_LOGIN_BASE_URL`, `SALESFORCE_API_VERSION`, `VPCS_SALESFORCE_BASE_URL`, `SALESFORCE_WEBHOOK_SECRET`
-- Sanity: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_API_VERSION`, `NEXT_PUBLIC_SANITY_API_TOKEN`, `SANITY_REVALIDATE_KEY`
 - AI: `AI_GATEWAY_API_KEY` (Vercel AI Gateway), `NEXT_PUBLIC_CONCIERGE_ENABLED`
 - **Rate limit / bot:** Upstash Redis REST env can use either the canonical pair `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` or the Vercel integration pair `UPSTASH_REDIS_REST_KV_REST_API_URL` / `UPSTASH_REDIS_REST_KV_REST_API_TOKEN` (resolved in `lib/upstash-env.ts`). The app intentionally does **not** use read-only token or Redis-protocol URL vars for write paths. `LEAD_SPAM_ENFORCED` (`LEAD_SPAM_ENFORCED='0'` is the kill-switch that disables lead-spam quarantine — any other value or unset = enforced). BotID is auto-wired on Vercel and now guards **only** the concierge chat route (`/api/chat`), not the lead forms. `BOTID_FORMS_ENFORCED` is retired.
 - **Guardrails:** `GUARDRAILS_ENFORCED` (`'0'` = disable all concierge input guardrails; any other value or unset = enforced). Mirrors `LEAD_SPAM_ENFORCED`. Guardrails run in `app/api/chat/route.ts` via `lib/ai/guardrails/evaluateInput`.
