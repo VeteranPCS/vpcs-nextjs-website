@@ -5,8 +5,6 @@ const DISALLOW = [
     '/api/*',
     '/error',
     '/not-found',
-    '/studio',
-    '/studio/*',
     '/thank-you',
     // /blog-search is deliberately NOT disallowed: crawl control lives in the
     // page's meta robots noindex,follow, which crawlers can only see if the

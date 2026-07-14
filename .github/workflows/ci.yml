@@ -19,12 +19,6 @@ jobs:
     # Per-PR + push-to-main gate. Skipped on manual (eval-only) runs.
     if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
-    env:
-      # Public Sanity identifiers, provided as repo Actions variables. The
-      # production build reads these at build time; no secrets are required
-      # because the concierge (AI Gateway) is flag-gated off in CI.
-      NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
-      NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,14 +27,6 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Sanity typegen drift check
-        # Regenerate the Sanity schema + GROQ result types and fail if they differ
-        # from what's committed. Catches a projection edit that wasn't paired with
-        # `npm run typegen` (the state_name-drop bug class) — a stale query string no
-        # longer maps to a generated type, so type-check alone can miss it.
-        run: |
-          npm run typegen
-          git diff --exit-code -- sanity.types.ts schema.json
       - name: Lint
         run: npm run lint
       - name: Type-check
@@ -71,8 +57,6 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     env:
-      NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
-      NEXT_PUBLIC_SANITY_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET }}
       AI_GATEWAY_API_KEY: ${{ secrets.AI_GATEWAY_API_KEY }}
     steps:
       - uses: actions/checkout@v4

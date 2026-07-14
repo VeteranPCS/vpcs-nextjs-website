@@ -1,10 +1,10 @@
-import { SanityDocument } from '@sanity/client';
 import { SanityImage, BaseFormData, BaseContactFormData, MilitaryServiceInfo } from './common';
 
 /**
- * Represents a real estate agent document in Sanity CMS
+ * Represents a real estate agent document (legacy Sanity-era document shape,
+ * kept so consumers don't churn; data now comes from the repo content export).
  */
-export interface RealEstateAgentDocument extends SanityDocument {
+export interface RealEstateAgentDocument {
   title: string;
   url: string;
   mainImage: SanityImage;
@@ -12,6 +12,8 @@ export interface RealEstateAgentDocument extends SanityDocument {
   _id: string;
   _rev: string;
   _type: 'real_state_agents';
+  _createdAt: string;
+  _updatedAt: string;
 }
 
 /**

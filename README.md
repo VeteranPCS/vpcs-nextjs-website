@@ -2,33 +2,7 @@
 
 ## Overview
 
-VeteranPCS is a NextJS-based web application designed to connect military personnel, veterans, and their families with real estate agents and mortgage lenders during Permanent Change of Station (PCS) moves. The platform integrates with Salesforce for CRM, Sanity for content management, Slack for notifications, OpenPhone for SMS messaging, and Google Business Profile for reviews.
-
-## Maintenance Scripts
-
-### Update Sanity state images
-
-Use `scripts/update-state-images-from-folder.mjs` to replace `state_list.state_map` images in Sanity from a local folder of state-named image files. The script matches files to Sanity states by filename, skips images that are already current, and defaults to dry-run mode.
-
-Required local env:
-
-```bash
-SANITY_STATE_UPDATE_TOKEN="write-capable Sanity project token"
-```
-
-Example dry-run:
-
-```bash
-node --env-file=.env.local scripts/update-state-images-from-folder.mjs --folder=/path/to/updated-states
-```
-
-Apply the updates:
-
-```bash
-node --env-file=.env.local scripts/update-state-images-from-folder.mjs --folder=/path/to/updated-states --apply
-```
-
-Image filenames should match `state_name` values in Sanity, such as `Alaska.webp`, `New Hampshire.webp`, or `utah.webp`.
+VeteranPCS is a NextJS-based web application designed to connect military personnel, veterans, and their families with real estate agents and mortgage lenders during Permanent Change of Station (PCS) moves. The platform integrates with Salesforce for CRM, Slack for notifications, OpenPhone for SMS messaging, and Google Business Profile for reviews. Marketing content (states, blog, copy) lives in the repo under `content/` and `public/images/`.
 
 ## API Routes
 
@@ -136,38 +110,6 @@ Image filenames should match `state_name` values in Sanity, such as `Alaska.webp
   - **500 Internal Server Error**
 - **Authentication**: Requires Salesforce webhook secret in header
 - **Side Effects**: Revalidates Next.js cached paths for all states associated with the agent
-
----
-
-### Endpoint: `/api/v1/revalidate/sanity`
-
-- **HTTP Method**: POST
-- **Description**: Revalidates cached paths based on content type changes in Sanity CMS.
-- **Parameters**:
-  - **Body (JSON)**: Sanity webhook payload containing:
-    - `_type`: string (required) - Content type identifier
-    - `slug?`: `{ _type: "slug", current: string }` - Content slug
-    - `state_slug?`: `{ _type: "slug", current: string }` - State slug
-    - `salesforceID?`: string - Salesforce ID for agent/lender
-    - `author?`: `{ _type: "reference", _ref: string }` - Author reference
-    - `_id`: string - Content ID
-- **Response**:
-  - **200 OK**:
-
-    ```json
-    {
-      "status": 200,
-      "revalidated": true,
-      "now": 1680000000000,
-      "body": { /* Original request body */ }
-    }
-    ```
-
-  - **400 Bad Request**: Missing `_type` or invalid type
-  - **401 Unauthorized**: Invalid signature
-  - **500 Internal Server Error**
-- **Authentication**: Requires Sanity webhook secret for verification
-- **Side Effects**: Revalidates relevant Next.js cached paths based on content type
 
 ---
 
@@ -367,7 +309,7 @@ Image filenames should match `state_name` values in Sanity, such as `Alaska.webp
 
 #### Function: `fetchBlogs`
 
-- **Description**: Retrieves all blog posts from Sanity CMS.
+- **Description**: Retrieves all blog posts.
 - **Parameters**: None
 - **Return Value**: Promise<Array> - Array of blog posts
 - **Side Effects**: None
@@ -530,7 +472,7 @@ Image filenames should match `state_name` values in Sanity, such as `Alaska.webp
 
 ## Additional Notes
 
-The codebase integrates multiple external services including Salesforce for CRM, Sanity for content management, Slack for notifications, OpenPhone for messaging, and Google for reviews. It employs Next.js cache revalidation strategies to ensure content is fresh while maintaining performance.
+The codebase integrates multiple external services including Salesforce for CRM, Slack for notifications, OpenPhone for messaging, and Google for reviews. It employs Next.js cache revalidation strategies to ensure content is fresh while maintaining performance.
 
 ### API Versioning
 
@@ -538,7 +480,7 @@ All public API endpoints are versioned under `/api/v1/` to support future iterat
 
 - BAH calculator (`/api/v1/bah`)
 - Geographic areas lookup (`/api/v1/areas`)
-- Cache revalidation webhooks (`/api/v1/revalidate/salesforce`, `/api/v1/revalidate/sanity`)
+- Cache revalidation webhook (`/api/v1/revalidate/salesforce`)
 
 ---
 

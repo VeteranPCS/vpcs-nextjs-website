@@ -35,13 +35,13 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
                 const statesData = await clientStateService.fetchStateList();
 
                 if (!statesData || statesData.length === 0) {
-                    console.warn('No states data received from Sanity');
+                    console.warn('No states data received');
                     return;
                 }
 
                 // Check if state_slug exists on the first item
                 if (statesData[0] && !statesData[0].state_slug) {
-                    console.error('state_slug field missing from Sanity response:', statesData[0]);
+                    console.error('state_slug field missing from states response:', statesData[0]);
                 }
 
                 // Sort states alphabetically by state name
@@ -49,7 +49,7 @@ const AgentFinderPopup: React.FC<AgentFinderPopupProps> = ({ isVisible, onClose 
                     .filter(state => state.state_slug) // Filter out items without state_slug
                     .sort((a, b) => a.state_slug.current.localeCompare(b.state_slug.current));
 
-                console.log(`Loaded ${sortedStates.length} states from Sanity`);
+                console.log(`Loaded ${sortedStates.length} states`);
                 setStates(sortedStates);
             } catch (error) {
                 console.error('Error loading states:', error);
