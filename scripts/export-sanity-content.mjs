@@ -72,14 +72,15 @@ const MANIFEST_PATH = join(CONTENT_DIR, '_manifest.json');
  * differs is a WARNING (fatal by default) — it means content changed since the
  * audit and the appendix (or this table) needs a refresh.
  *
- * Two counts are adjusted from the appendix because the audit counted drafts
+ * Two counts were adjusted from the appendix because the audit counted drafts
  * while this export only ships published docs (verified 2026-07-13):
  *   - state_list: appendix 54 = 52 published + 2 drafts (New Jersey, Pennsylvania)
- *   - trusted_resources: appendix 14 = 13 published + 1 draft (Johns Hopkins University)
+ *   - trusted_resources: was 13 until Harper published the Johns Hopkins
+ *     University draft (2026-07-14), making the appendix count of 14 live
  */
 export const EXPECTED_COUNTS = {
   state_list: 52,
-  trusted_resources: 13,
+  trusted_resources: 14,
   real_state_agents: 13,
   member_info: 8,
   how_veterence_pcs_works: 7,

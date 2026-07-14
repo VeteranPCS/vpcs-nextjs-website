@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-07-13T23:48:19.612Z",
+  "exportedAt": "2026-07-14T12:17:14.171Z",
   "images": [
     {
       "alt": "Flying Solo Image",
@@ -85,6 +85,23 @@
       "size": 11216,
       "sourceUrl": "https://cdn.sanity.io/images/1y9pm0mb/production/1def44ed76988e775c24c29d91964d892787b0b4-514x125.webp",
       "width": 514
+    },
+    {
+      "alt": "Johns Hopkins University's Logo",
+      "assetId": "image-d7148854b22180cf2ec483c45ecbfe62a7170ec8-480x130-webp",
+      "bytes": 7058,
+      "docId": "0cdc9f3e-cd9e-4a25-85dd-339541ef894a",
+      "fieldPath": "logo",
+      "height": 130,
+      "localPath": "/images/content/trusted-resources/johns-hopkins.webp",
+      "mime": "image/webp",
+      "sha1": "d7148854b22180cf2ec483c45ecbfe62a7170ec8",
+      "sha1Verified": true,
+      "sha1hash": "d7148854b22180cf2ec483c45ecbfe62a7170ec8",
+      "sha256": "b792bea02a488b347a7983bc24a9dc37870c02e02b8d431a80993d4e229a7560",
+      "size": 7058,
+      "sourceUrl": "https://cdn.sanity.io/images/1y9pm0mb/production/d7148854b22180cf2ec483c45ecbfe62a7170ec8-480x130.webp",
+      "width": 480
     },
     {
       "alt": "A+ Company's Logo",
@@ -895,19 +912,19 @@
     },
     {
       "alt": "Johns Hopkins University logo",
-      "assetId": "image-415d73cb5fee3d8a65a885191f718ecc132f5f9e-480x130-png",
-      "bytes": 50685,
+      "assetId": "image-d7148854b22180cf2ec483c45ecbfe62a7170ec8-480x130-webp",
+      "bytes": 7058,
       "docId": "9d3faf0d-1686-4760-a11f-36490fdfff4b",
       "fieldPath": "mainImage",
       "height": 130,
-      "localPath": "/images/content/real-state-agents/screen-shot-2023-11-05-at-8-02-12-pm-480x118.png",
-      "mime": "image/png",
-      "sha1": "415d73cb5fee3d8a65a885191f718ecc132f5f9e",
+      "localPath": "/images/content/trusted-resources/johns-hopkins.webp",
+      "mime": "image/webp",
+      "sha1": "d7148854b22180cf2ec483c45ecbfe62a7170ec8",
       "sha1Verified": true,
-      "sha1hash": "415d73cb5fee3d8a65a885191f718ecc132f5f9e",
-      "sha256": "e0f8c14b3dcc85a9545a4d3157cc329d81e029e9051222ffec596fb0bbc6e95c",
-      "size": 50685,
-      "sourceUrl": "https://cdn.sanity.io/images/1y9pm0mb/production/415d73cb5fee3d8a65a885191f718ecc132f5f9e-480x130.png",
+      "sha1hash": "d7148854b22180cf2ec483c45ecbfe62a7170ec8",
+      "sha256": "b792bea02a488b347a7983bc24a9dc37870c02e02b8d431a80993d4e229a7560",
+      "size": 7058,
+      "sourceUrl": "https://cdn.sanity.io/images/1y9pm0mb/production/d7148854b22180cf2ec483c45ecbfe62a7170ec8-480x130.webp",
       "width": 480
     },
     {
@@ -1972,22 +1989,20 @@
     },
     {
       "alt": "Pennsylvania Image",
-      "assetId": "image-23c0bb8c05b12b24ba97a3eaf18b831dd431a79c-360x360-svg",
-      "bytes": 2214,
-      "cdnSanitized": true,
+      "assetId": "image-acf9926e7fb08974243f065995565200cb9555ac-750x750-webp",
+      "bytes": 6780,
       "docId": "p1E1t9c6MmuSwvdT93QqMX",
-      "expectedSha1": "23c0bb8c05b12b24ba97a3eaf18b831dd431a79c",
       "fieldPath": "state_map",
-      "height": 360,
-      "localPath": "/images/states/pennsylvania.svg",
-      "mime": "image/svg+xml",
-      "sha1": "1d490f39dd98eb4cabbc354658aea2c5175aa424",
-      "sha1Verified": false,
-      "sha1hash": "23c0bb8c05b12b24ba97a3eaf18b831dd431a79c",
-      "sha256": "c315ee2f128d1bcde90d8b98dcfd490baf122f02218234765ba05c6d545b0003",
-      "size": 2214,
-      "sourceUrl": "https://cdn.sanity.io/images/1y9pm0mb/production/23c0bb8c05b12b24ba97a3eaf18b831dd431a79c-360x360.svg",
-      "width": 360
+      "height": 750,
+      "localPath": "/images/states/pennsylvania.webp",
+      "mime": "image/webp",
+      "sha1": "acf9926e7fb08974243f065995565200cb9555ac",
+      "sha1Verified": true,
+      "sha1hash": "acf9926e7fb08974243f065995565200cb9555ac",
+      "sha256": "b35ef5af93918b52d90c04ce6c0f43c787458cd6b387a2057ec1b92bf7ac8e61",
+      "size": 6780,
+      "sourceUrl": "https://cdn.sanity.io/images/1y9pm0mb/production/acf9926e7fb08974243f065995565200cb9555ac-750x750.webp",
+      "width": 750
     },
     {
       "alt": "Kansas Image",
@@ -2350,7 +2365,7 @@
   "report": {
     "errors": [],
     "imageValidation": {
-      "checked": 135,
+      "checked": 136,
       "failed": 0
     },
     "perTypeCounts": {
@@ -2375,7 +2390,7 @@
       "state_list": 52,
       "stories_poster": 1,
       "support_veterence": 4,
-      "trusted_resources": 13,
+      "trusted_resources": 14,
       "users": 7,
       "video_review": 1,
       "video_success_stories": 3
@@ -2565,7 +2580,7 @@
         "e8d3a8c7-c3de-4d76-a298-c7fd08ffe33e": "UQJxDctsMNKpiCcXYCMjJ9",
         "efc9dba4-bda2-4fa6-b991-fddac84a08ee": "UQJxDctsMNKpiCcXYCKSCj"
       },
-      "sha256": "16a18fbeeaab4c9479ce337b7339ba1858daf9bb3dcd20de09fe1b25f316cc98"
+      "sha256": "46a324ac268cc1d47bbdb95354ac00bb9209f22c83ba9021623ca296d2856efd"
     },
     "state_list": {
       "count": 52,
@@ -2600,7 +2615,7 @@
         "p1E1t9c6MmuSwvdT93Qnzv": "tsIwnl6gd1CRRIIb9oscIp",
         "p1E1t9c6MmuSwvdT93QowZ": "y9Phyt8FRzzwXGVbXYwIxg",
         "p1E1t9c6MmuSwvdT93QpUm": "LZI3uBHLBGkJpDBhVUu2ra",
-        "p1E1t9c6MmuSwvdT93QqMX": "2CBQQwFWRlx9tTg4TJwURJ",
+        "p1E1t9c6MmuSwvdT93QqMX": "F75NE0oRkvOpWEQ2o3Kzte",
         "p1E1t9c6MmuSwvdT93QsZN": "78EsO9CrxXd3ckUWWGjuwH",
         "p1E1t9c6MmuSwvdT93Qt7a": "E5WN227Z5PhQ2KtGm2E1v5",
         "p1E1t9c6MmuSwvdT93QuhK": "YcotQ1OIvxyfhKSk6w6prz",
@@ -2623,7 +2638,7 @@
         "zLqbGSDWQtuCHFE15AM3t5": "CMHiIZ6oXo9Bc22LIJ1vxU",
         "zLqbGSDWQtuCHFE15AM5GF": "1OHV7GMsUZDY4IFuSjNio1"
       },
-      "sha256": "be398f281bd8d6fa414cfb58b0568542a92a5e9995912a4f3dcdf1ff1f263f1b"
+      "sha256": "e9cc9c6b087ab43ec31a2697863c26daa88642d6adecc7a2420b70aad782f143"
     },
     "stories_poster": {
       "count": 1,
@@ -2643,9 +2658,10 @@
       "sha256": "9cf85087b5a626c658ba831a754b4c8fcc34b8ac0d82547295056c25cdc00e54"
     },
     "trusted_resources": {
-      "count": 13,
+      "count": 14,
       "ids": {
         "06ff6b2b-dc84-4b90-b7d0-fbce3e7e44d6": "whpRLkwvxva49hcLZMKzbB",
+        "0cdc9f3e-cd9e-4a25-85dd-339541ef894a": "4khN17on27D9yuN0OdKu0d",
         "22a0ce2d-18fc-46a1-bcc2-268bdb04f556": "UCe181y7ND8VpGNVLVO7Sd",
         "32ee5bfd-5ddd-4ae2-93dd-94d53c3bdf4d": "whpRLkwvxva49hcLZMM5GR",
         "3d7ffb3d-9a7e-4e64-848f-e5463d643129": "whpRLkwvxva49hcLZMMC7B",
@@ -2659,7 +2675,7 @@
         "db4571bc-5e99-41e6-be76-e02021af10ab": "UsaWKKSJ1KBsilFyNAx5RN",
         "e3c3bb2c-b274-4197-9f63-1de2d9f9505b": "nsxTqRv7yl9rbYA81AY5aZ"
       },
-      "sha256": "b3097a12233f83a17201f0289524d494f4f2da3c5632e4eeefd74addc44ad6e1"
+      "sha256": "f0b19d1d353bea96d954a30f4ea8bd44bec30100b4f04185b0328632e7eae935"
     },
     "users": {
       "count": 7,

@@ -15,6 +15,21 @@
     "url": "https://www.gosquaredaway.com/"
   },
   {
+    "_id": "0cdc9f3e-cd9e-4a25-85dd-339541ef894a",
+    "_type": "trusted_resources",
+    "_createdAt": "2024-12-17T08:42:30Z",
+    "_updatedAt": "2026-07-14T12:09:26Z",
+    "logo": {
+      "_sanityAssetId": "image-d7148854b22180cf2ec483c45ecbfe62a7170ec8-480x130-webp",
+      "alt": "Johns Hopkins University's Logo",
+      "height": 130,
+      "path": "/images/content/trusted-resources/johns-hopkins.webp",
+      "width": 480
+    },
+    "name": "Johns Hopkins University",
+    "url": "https://carey.jhu.edu/"
+  },
+  {
     "_id": "22a0ce2d-18fc-46a1-bcc2-268bdb04f556",
     "_type": "trusted_resources",
     "_createdAt": "2024-12-17T08:41:25Z",

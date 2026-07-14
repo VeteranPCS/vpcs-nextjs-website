@@ -573,14 +573,14 @@
     "_id": "p1E1t9c6MmuSwvdT93QqMX",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:30:03Z",
-    "_updatedAt": "2025-03-18T18:39:37Z",
+    "_updatedAt": "2026-07-14T12:09:02Z",
     "short_name": "PA",
     "state_map": {
-      "_sanityAssetId": "image-23c0bb8c05b12b24ba97a3eaf18b831dd431a79c-360x360-svg",
+      "_sanityAssetId": "image-acf9926e7fb08974243f065995565200cb9555ac-750x750-webp",
       "alt": "Pennsylvania Image",
-      "height": 360,
-      "path": "/images/states/pennsylvania.svg",
-      "width": 360
+      "height": 750,
+      "path": "/images/states/pennsylvania.webp",
+      "width": 750
     },
     "state_name": "Pennsylvania",
     "state_slug": {
