@@ -2,17 +2,7 @@ import { TeamMember } from '@/components/About/AdminTeam/AdminTeam';
 import { AboutVetPcsResponse } from '@/components/About/HowVetPcsStarted/HowVetPcsStarted'
 import { SupportComponentProps } from '@/components/About/Support/SupportOurVeterans';
 import { ABOUT_SUPPORT_COMPONENT, getAboutUsPage, getMembersByRole } from '@/lib/content/about';
-import type { ContentImage } from '@/lib/content/loader';
-
-// The Sanity-era responses exposed images as image.asset.image_url (a CDN
-// URL). Keep that shape so consumers don't churn; the URL is now the local
-// public/ path from the repo-committed export.
-function toLegacyImage(image: ContentImage): { alt: string; asset: { image_url: string } };
-function toLegacyImage(image: ContentImage | undefined): { alt: string; asset: { image_url: string } } | undefined;
-function toLegacyImage(image: ContentImage | undefined) {
-    if (!image) return undefined;
-    return { alt: image.alt, asset: { image_url: image.path } };
-}
+import { toLegacyImage } from '@/lib/content/loader';
 
 const aboutService = {
     fetchMembersDetail: async (roles: string): Promise<TeamMember[]> => {

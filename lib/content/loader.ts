@@ -40,6 +40,18 @@ export type PortableTextBlock = {
   level?: number;
 };
 
+// The Sanity-era service responses exposed images as image.asset.image_url (a
+// CDN URL). Services keep that shape so consumers don't churn; the URL is now
+// the local public/ path from the repo-committed export.
+export type LegacyImage = { alt: string; asset: { image_url: string } };
+
+export function toLegacyImage(image: ContentImage): LegacyImage;
+export function toLegacyImage(image: ContentImage | undefined): LegacyImage | undefined;
+export function toLegacyImage(image: ContentImage | undefined) {
+  if (!image) return undefined;
+  return { alt: image.alt, asset: { image_url: image.path } };
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
