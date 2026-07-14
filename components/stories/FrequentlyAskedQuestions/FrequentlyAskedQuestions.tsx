@@ -2,29 +2,13 @@ import { WithContext, FAQPage } from "schema-dts";
 import AccordionItem from "@/components/common/AccordionItem";
 import commonService from "@/services/commonServices";
 import Script from "next/script";
-import BlockContent from "@/components/Blog/BlockContent";
-
-interface Block {
-  _key: string;
-  children: Array<{
-    _key: string;
-    marks: string[];
-    text: string;
-  }>;
-  style: 'h1' | 'h2' | 'h3' | 'h4' | 'normal';
-  listItem?: 'bullet';
-  level?: number;
-  markDefs?: Array<{
-    _key: string;
-    _type: string;
-    href: string;
-  }>;
-}
+import type { PortableTextBlock } from "@/lib/content/loader";
+import { FAQ_ANSWERS } from "./faqContent";
 
 export type FreqAskedQuestionsProps = {
   _id: string;
   question: string;
-  answer: Block[] | string;
+  answer: PortableTextBlock[] | string;
 };
 
 export default async function FrequentlyAskedQuestions() {
@@ -60,10 +44,7 @@ export default async function FrequentlyAskedQuestions() {
           key={question._id}
           id={question._id}
           title={question.question}
-          content={Array.isArray(question.answer)
-            ? <BlockContent blocks={question.answer} />
-            : question.answer || ''
-          }
+          content={FAQ_ANSWERS[question._id]}
         />
       ))}
     </div>

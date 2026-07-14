@@ -1,6 +1,3 @@
-"use client"
-import Image from "next/image";
-import { useEffect, useState, useCallback } from "react";
 import commonService from "@/services/commonServices";
 
 export interface VideoReviewProps {
@@ -9,39 +6,22 @@ export interface VideoReviewProps {
   videoUrl?: string;
 }
 
-const VideoReview = () => {
-  const [videoDetails, setVideoDetails] = useState<VideoReviewProps | null>(null);
-  
-  const fetchVideoDetails = useCallback(async () => {
-    try {
-      const response = await commonService.fetchVideoReview();
-      // if (!response.ok) throw new Error("Failed to fetch posts");
-      // const data = await response.json();
-      setVideoDetails(response);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchVideoDetails()
-  }, [fetchVideoDetails])
+// Server component: the video data now comes from the repo-committed export
+// (content/_data/site/video_review.json) via services/commonServices at render
+// time. The old 'use client' version fetched Sanity from the browser, which is
+// CSP-blocked in prod; the fallbacks below are kept only as a type-level
+// safety net for the optional VideoReviewProps fields.
+const VideoReview = async () => {
+  const videoDetails = await commonService.fetchVideoReview();
 
   return (
     <div className="container mx-auto bg-[#ffffff] shadow-lg sm:my-10 my-0 p-5">
       <div>
         <div className=" relative w-full">
-          {/* <Image
-            width={1000}
-            height={1000}
-            src="/icon/VideoReviewPlay.svg"
-            alt="hand"
-            className="w-[80px] h-[80px] cursor-pointer absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"
-          /> */}
           <iframe
             loading="lazy" // Native lazy loading
-            title={videoDetails?.title || "VeteranPCS Customer Review"} 
-            src={videoDetails?.videoUrl || "https://www.youtube.com/embed/QNY6vzSO9p4?autoplay=1&mute=1&modestbranding=1&rel=0"}
+            title={videoDetails.title || "VeteranPCS Customer Review"}
+            src={videoDetails.videoUrl || "https://www.youtube.com/embed/QNY6vzSO9p4?autoplay=1&mute=1&modestbranding=1&rel=0"}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
             className="w-full aspect-video h-auto border-0" // Responsive sizing

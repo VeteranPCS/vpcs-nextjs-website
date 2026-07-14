@@ -1,35 +1,24 @@
 import { VideoReviewProps } from '@/components/Impact/VideoReview/VideoReview';
 import { FreqAskedQuestionsProps } from '@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions';
-import { client } from '@/sanity/lib/client'
+import { FREQUENTLY_ASKED_QUESTIONS, VIDEO_REVIEW } from '@/lib/content/common';
 
+// Data now comes from the repo-committed export in content/_data/site/ via
+// lib/content/common (validated at module load); the response shapes match
+// the old Sanity fetches so consumers don't churn.
 const commonService = {
     fetchFrequentlyAskedQuestions: async (): Promise<FreqAskedQuestionsProps[]> => {
-        try {
-            const faqs = await client.fetch<FreqAskedQuestionsProps[]>(`*[_type == "frequently_asked_questions"]`);
-
-            if (faqs) {
-                return faqs as FreqAskedQuestionsProps[];
-            } else {
-                throw new Error('Failed to fetch Frequently Asked Questions');
-            }
-        } catch (error: any) {
-            console.error('Error fetching Frequently Asked Questions:', error);
-            throw error; // You can handle the error more gracefully based on your needs
-        }
+        return FREQUENTLY_ASKED_QUESTIONS.map((faq) => ({
+            _id: faq._id,
+            question: faq.question,
+            answer: faq.answer,
+        }));
     },
     fetchVideoReview: async (): Promise<VideoReviewProps> => {
-        try {
-            const videoReview = await client.fetch<VideoReviewProps>(`*[_type == "video_review"][0]`);
-
-            if (videoReview) {
-                return videoReview as VideoReviewProps;
-            } else {
-                throw new Error('Failed to fetch Video Review');
-            }
-        } catch (error: any) {
-            console.error('Error fetching Video Review:', error);
-            throw error; // You can handle the error more gracefully based on your needs
-        }
+        return {
+            _id: VIDEO_REVIEW._id,
+            title: VIDEO_REVIEW.title,
+            videoUrl: VIDEO_REVIEW.videoUrl,
+        };
     },
 };
 

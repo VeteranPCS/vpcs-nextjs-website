@@ -1,11 +1,10 @@
-import { client } from '@/sanity/lib/client'
+import { VIDEO_SUCCESS_STORIES } from '@/lib/content/stories';
 
 export type VideoSuccessStory = {
     _createdAt: string;
     _id: string;
-    _rev: string;
     _type: 'video_success_stories';
-    description: ChildrenProps[]; // Change this from `ChildrenProps` to `ChildrenProps[]`
+    description: ChildrenProps[];
     title: string;
     videoUrl: string;
     _updatedAt: string;
@@ -15,8 +14,8 @@ export type ChildrenProps = {
     _key: string;
     _type: string;
     children: DescriptionChild[];
-    level: number;
-    listItem: string;
+    level?: number;
+    listItem?: string;
     markDefs: any[]; // Adjust based on your actual data
     style: string;
 };
@@ -28,20 +27,20 @@ interface DescriptionChild {
     text: string;
 }
 
+// Data now comes from the repo-committed export in content/_data/site/ via
+// lib/content/stories (validated at module load); the response shape matches
+// the old Sanity fetch so consumers don't churn.
 const storiesService = {
     fetchVideoSuccessStories: async (): Promise<VideoSuccessStory[]> => {
-        try {
-            const additionalStories = await client.fetch<VideoSuccessStory[]>(`*[_type == "video_success_stories"]`);
-
-            if (additionalStories) {
-                return additionalStories as VideoSuccessStory[];
-            } else {
-                throw new Error('Failed to fetch Video Success Stories');
-            }
-        } catch (error: any) {
-            console.error('Error fetching Video Success Stories:', error);
-            throw error;
-        }
+        return VIDEO_SUCCESS_STORIES.map((story) => ({
+            _createdAt: story._createdAt,
+            _id: story._id,
+            _type: story._type,
+            description: story.description,
+            title: story.title,
+            videoUrl: story.videoUrl,
+            _updatedAt: story._updatedAt,
+        }));
     }
 };
 
