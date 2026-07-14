@@ -159,30 +159,35 @@ export function requirePortableText(
     fail(fileLabel, `document ${JSON.stringify(doc._id)} is missing Portable Text field "${field}"`);
   }
   return value.map((block, index) => {
+    // Sanity omits empty `markDefs`/`marks` arrays in some exports (e.g.
+    // support_veterence.json); treat an absent array as empty, but still fail
+    // on any other wrong shape (including an explicit null).
+    const blockMarkDefs = isRecord(block) ? (block.markDefs === undefined ? [] : block.markDefs) : undefined;
     if (
       !isRecord(block) ||
       typeof block._key !== 'string' ||
       typeof block._type !== 'string' ||
       typeof block.style !== 'string' ||
       !Array.isArray(block.children) ||
-      !Array.isArray(block.markDefs)
+      !Array.isArray(blockMarkDefs)
     ) {
       fail(fileLabel, `document ${JSON.stringify(doc._id)} has an invalid Portable Text block at "${field}"[${index}]`);
     }
     const children = block.children.map((child, childIndex): PortableTextSpan => {
+      const childMarks = isRecord(child) ? (child.marks === undefined ? [] : child.marks) : undefined;
       if (
         !isRecord(child) ||
         typeof child._key !== 'string' ||
         typeof child._type !== 'string' ||
         typeof child.text !== 'string' ||
-        !Array.isArray(child.marks) ||
-        !child.marks.every((mark) => typeof mark === 'string')
+        !Array.isArray(childMarks) ||
+        !childMarks.every((mark) => typeof mark === 'string')
       ) {
         fail(fileLabel, `document ${JSON.stringify(doc._id)} has an invalid span at "${field}"[${index}].children[${childIndex}]`);
       }
-      return { _key: child._key, _type: child._type, marks: child.marks, text: child.text };
+      return { _key: child._key, _type: child._type, marks: childMarks, text: child.text };
     });
-    const markDefs = block.markDefs.map((markDef, markIndex): PortableTextMarkDef => {
+    const markDefs = blockMarkDefs.map((markDef, markIndex): PortableTextMarkDef => {
       if (!isRecord(markDef) || typeof markDef._key !== 'string' || typeof markDef._type !== 'string') {
         fail(fileLabel, `document ${JSON.stringify(doc._id)} has an invalid markDef at "${field}"[${index}].markDefs[${markIndex}]`);
       }

@@ -1,14 +1,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-// Stub the Salesforce transport and Sanity clients so importing agentService
-// pulls in no network side effects; we only drive getAgentState here.
+// Stub the Salesforce transport so importing agentService pulls in no network
+// side effects; we only drive getAgentState here.
 vi.mock('@/services/api', () => ({
   RequestType: { GET: 'get', POST: 'post', PUT: 'put', PATCH: 'patch', DELETE: 'delete' },
   salesForceAPIWithRefresh: vi.fn(),
 }));
 
-vi.mock('@/sanity/lib/client', () => ({ client: { fetch: vi.fn() } }));
-vi.mock('@/sanity/lib/image', () => ({ urlForImage: vi.fn() }));
+// agentService now imports lib/content/homepage, whose `server-only` guard
+// throws outside a React Server environment; neutralize it for Vitest.
+vi.mock('server-only', () => ({}));
 
 import agentService from '@/services/agentService';
 import { salesForceAPIWithRefresh } from '@/services/api';

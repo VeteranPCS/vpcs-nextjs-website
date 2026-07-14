@@ -1,56 +1,26 @@
 import { VeteranCommunityProps } from '@/components/homepage/VeteranCommunity/VeteranCommunity';
-import { client } from '@/sanity/lib/client';
-import { urlForImage } from '@/sanity/lib/image';
-import { SanityDocument } from 'sanity';
+import { getSupportVeterence } from '@/lib/content/homepage';
+import { toLegacyImage } from '@/lib/content/loader';
 
-interface ReviewDocument extends SanityDocument {
-    _type: string;
-    title: string;
-    publishedAt: string;
-    slug: {
-        current: string;
-    };
-    image: {
-        asset: {
-            image_url: string;
-            _ref: string;
-        };
-        alt: string;
-    };
-    icon: {
-        asset: {
-            image_url: string;
-            _ref: string;
-        };
-        alt: string;
-    }
-}
-
+// Data now comes from the repo-committed export in content/_data/site/ via
+// lib/content/homepage (validated at module load); the response shape matches
+// the old Sanity fetch so consumers don't churn. The rendered rich copy lives
+// in components/homepage/supportVeterenceContent.tsx.
 const veterenceSupportService = {
     fetchVeterenceSupport: async (slug: string): Promise<VeteranCommunityProps> => {
-        try {
-            const post = await client.fetch<ReviewDocument>(
-                `*[_type == "support_veterence" && slug.current == $slug][0]`,
-                { slug }
-            );
-
-            if (post.image?.asset?._ref) {
-                post.image.asset.image_url = urlForImage(post.image.asset); // Add the image URL to the response
-            }
-
-            if (post.icon?.asset?._ref) {
-                post.icon.asset.image_url = urlForImage(post.icon.asset); // Add the image URL to the response
-            }
-
-            if (post) {
-                return post;
-            } else {
-                throw new Error('Failed to fetch Veterence Support Data');
-            }
-        } catch (error: any) {
-            console.error('Error fetching Veterence Support Data:', error);
-            throw error;
+        const doc = getSupportVeterence(slug);
+        if (!doc) {
+            throw new Error(`Veterence Support document not found: ${slug}`);
         }
+        return {
+            _id: doc._id,
+            title: doc.title,
+            button_text: doc.button_text,
+            description: doc.description,
+            points: doc.points,
+            image: toLegacyImage(doc.image),
+            icon: toLegacyImage(doc.icon),
+        };
     }
 };
 

@@ -1,28 +1,22 @@
-import { client } from '@/sanity/lib/client';
-import { urlForImage } from '@/sanity/lib/image';
 import { UserImage } from '@/components/common/ImageSlider';
+import { USERS } from '@/lib/content/homepage';
 
+// Data now comes from the repo-committed export in content/_data/site/ via
+// lib/content/homepage (validated at module load); the response shape matches
+// the old Sanity fetch so consumers don't churn.
 const userImageServices = {
-    fetchImages: async () => {
-        try {
-
-            const users = await client.fetch<UserImage[]>(`*[_type == "users"] { userImage }`)
-
-            users.forEach((user: UserImage) => {
-                if (user.userImage?.asset?._ref) {
-                    user.userImage.asset.image_url = urlForImage(user.userImage.asset);  // Add the image URL to the response
-                }
-            })
-
-            if (users) {
-                return users;
-            } else {
-                throw new Error('Failed to fetch Images');
-            }
-        } catch (error: any) {
-            console.error('Error fetching Images:', error);
-            throw error;
-        }
+    fetchImages: async (): Promise<UserImage[]> => {
+        return USERS.map((user) => ({
+            _id: user._id,
+            userImage: {
+                alt: user.userImage.alt,
+                asset: {
+                    image_url: user.userImage.path,
+                    // Original Sanity asset id, kept for shape compatibility.
+                    _ref: user.userImage._sanityAssetId ?? '',
+                },
+            },
+        }));
     }
 };
 
