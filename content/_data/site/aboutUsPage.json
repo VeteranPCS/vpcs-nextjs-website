@@ -1,0 +1,60 @@
+[
+  {
+    "_id": "9e68e6f4-2fe8-44b1-801d-a045cb9ebb00",
+    "_type": "aboutUsPage",
+    "_createdAt": "2024-12-10T09:32:13Z",
+    "_updatedAt": "2025-06-19T00:00:17Z",
+    "background_image": {
+      "_sanityAssetId": "image-7d4da2633efb0f40c36df2705fb432eeae86f59c-7680x2612-webp",
+      "alt": "VeteranPCS Helps You Move to Your Next Duty Station with Confidence",
+      "height": 2612,
+      "path": "/images/content/about-us-page/aboutherosectionbg.webp",
+      "width": 7680
+    },
+    "buttonText": "Selling or Moving?",
+    "componentName": "overview",
+    "description": "VeteranPCS was designed to make a difference in the lives of military families. Connecting you with fellow veterans and military spouses you can trust to help make a new place Home. ",
+    "foreground_image": {
+      "_sanityAssetId": "image-60ca68b5e0498b18824bc07dcfa1bb72cb61fd49-350x308-svg",
+      "alt": "Veterence PCS icon",
+      "height": 308,
+      "path": "/images/content/about-us-page/veteranpcs-logo-wht-outline.svg",
+      "width": 350
+    },
+    "header": "About Us"
+  },
+  {
+    "_id": "9f9fe538-1eaa-4af2-a9e1-fa8c2db83e24",
+    "_type": "aboutUsPage",
+    "_createdAt": "2024-12-10T10:57:01Z",
+    "_updatedAt": "2024-12-10T10:58:25Z",
+    "buttonText": "How it Works",
+    "componentName": "move_with_a_mission",
+    "description": "With VeteranPCS, not only do you get great service and a Move In Bonus up to $4,000, but you also get to support veteran and military spouse businesses by working with a veteran or military spouse real estate agent and VA loan expert. On top of that, part of the proceeds of every closing get donated to a veteran-focused charity.This is military families helping military families move.",
+    "foreground_image": {
+      "_sanityAssetId": "image-93af5c3364d0cb2df232751067c78c98ab0e4289-2210x2210-png",
+      "alt": "Move with a mission Image",
+      "height": 2210,
+      "path": "/images/content/about-us-page/mission.png",
+      "width": 2210
+    },
+    "header": "Move with a mission"
+  },
+  {
+    "_id": "caae91c9-8431-4a83-a464-3467699ed48e",
+    "_type": "aboutUsPage",
+    "_createdAt": "2024-12-10T11:07:34Z",
+    "_updatedAt": "2025-06-23T22:14:35Z",
+    "buttonText": "How it Works",
+    "componentName": "how_veternce_pcs_started",
+    "description": "My name is Jason Anderson, founder and creator of VeteranPCS. I spent 8 years in the Army as an AH-64D Apache Helicopter Pilot. I moved 9 times in 8 years and after transitioning out I entered into a new career as a real estate agent.\n\nI quickly realized real estate can be an expensive industry to get into. Many sites cost hundreds, thousands, or even tens of thousands of dollars per month to help grow your business. And with less reviews to show than others, it can be impossible to be found online, despite being a great agent.\n\nWhen you get orders in the military, it can be hard to find an agent you can trust. There are designations like “military relocation professional,” but nothing compares to working with a recommended agent who has personally PCS’d.\n\nVeteranPCS was created to be different. A site dedicated to equally serving the agents as much as the military families going through a PCS. A site that is open to anyone to use but features only veterans and military spouses now working as agents. No need to sift through reviews or stars, every agent on here has been recommended by military families that bought or sold a house through them.\n\nVeteranPCS charges no annual or monthly fees. We simply collect a small percentage of the commission and then give back to both the military family as well as non-profits and charities.",
+    "foreground_image": {
+      "_sanityAssetId": "image-ac1fd5a6d9ddaff9d5792ccd7035d92a21ea7c15-2800x2094-png",
+      "alt": "About Flight Image",
+      "height": 2094,
+      "path": "/images/content/about-us-page/aboutflight.png",
+      "width": 2800
+    },
+    "header": "How VeteranPCS Got Started"
+  }
+]

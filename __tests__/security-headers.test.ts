@@ -54,8 +54,7 @@ describe('CORS headers (proxy.ts)', () => {
 });
 
 describe('Content-Security-Policy (enforced)', () => {
-  const siteRule = () => rule('/((?!studio).*)');
-  const studioRule = () => rule('/studio/:path*');
+  const siteRule = () => rule('/(.*)');
 
   it('sets an ENFORCED (not Report-Only) CSP on the site route', () => {
     const site = siteRule();
@@ -79,7 +78,6 @@ describe('Content-Security-Policy (enforced)', () => {
     expect(csp).toContain('https://www.googletagmanager.com');
     expect(csp).toContain('https://us.i.posthog.com');
     expect(csp).toContain('https://vitals.vercel-insights.com');
-    expect(csp).toContain('https://cdn.sanity.io');
     expect(csp).toContain('https://veteranpcs.my.salesforce.com');
     expect(csp).toContain('https://lh3.googleusercontent.com');
     expect(csp).toContain('https://www.youtube-nocookie.com');
@@ -89,15 +87,7 @@ describe('Content-Security-Policy (enforced)', () => {
     expect(csp).toContain('https://analytics.ahrefs.com');
     expect(csp).toContain('https://www.googleadservices.com');
     expect(csp).toContain('https://*.doubleclick.net');
-    // the tighter site policy must NOT carry the Studio-only escape hatch
+    // the site policy must never carry an eval escape hatch
     expect(csp).not.toContain("'unsafe-eval'");
-  });
-
-  it('studio CSP relaxes eval/blob/websockets for Sanity Studio', () => {
-    const csp = value(studioRule(), 'Content-Security-Policy')!;
-    expect(csp).toContain("'unsafe-eval'");
-    expect(csp).toContain('blob:');
-    expect(csp).toContain('wss://*.api.sanity.io');
-    expect(csp).toContain('https://*.api.sanity.io');
   });
 });

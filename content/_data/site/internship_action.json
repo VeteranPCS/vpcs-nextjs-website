@@ -1,0 +1,47 @@
+[
+  {
+    "_id": "35fab4c7-5ae5-4bac-99b5-ecc464866b39",
+    "_type": "internship_action",
+    "_createdAt": "2024-12-12T09:45:27Z",
+    "_updatedAt": "2024-12-12T09:47:13Z",
+    "action_image": {
+      "_sanityAssetId": "image-1ddf7e3b94f4f510ebd34463c5ac042acd667317-1080x721-webp",
+      "alt": "Moving Calculator Image",
+      "height": 721,
+      "path": "/images/content/internship-action/successful-team1.webp",
+      "width": 1080
+    },
+    "description": "Utilize our recommended moving calculator to estimate the cost of your move. **Not available for overseas moves**",
+    "title": "Moving Calculator"
+  },
+  {
+    "_id": "384c9738-54de-46c7-a9ed-d3d70212bd0b",
+    "_type": "internship_action",
+    "_createdAt": "2024-12-12T09:47:21Z",
+    "_updatedAt": "2024-12-12T09:47:41Z",
+    "action_image": {
+      "_sanityAssetId": "image-b1211b178d81c4108b0e85b9eea0aa7a883280c2-1080x718-webp",
+      "alt": "Mortgage Calculator Image",
+      "height": 718,
+      "path": "/images/content/internship-action/successful-team2.webp",
+      "width": 1080
+    },
+    "description": "Not sure what your monthly payment will be on a new home loan? Use this calculator to find out!",
+    "title": "Mortgage Calculator"
+  },
+  {
+    "_id": "564f2689-116c-4277-b520-3392d406c7eb",
+    "_type": "internship_action",
+    "_createdAt": "2024-12-12T09:47:49Z",
+    "_updatedAt": "2024-12-12T09:48:22Z",
+    "action_image": {
+      "_sanityAssetId": "image-8ea098bdb24153f6fd4d2e33e6b12054f5848cd6-1080x721-webp",
+      "alt": "BAH Calculator Image",
+      "height": 721,
+      "path": "/images/content/internship-action/successful-team3.webp",
+      "width": 1080
+    },
+    "description": "Calculate the Basic Allowance for Housing (BAH) amount you will receive at your next duty station based on location, pay grade, and dependency status.",
+    "title": "BAH Calculator"
+  }
+]

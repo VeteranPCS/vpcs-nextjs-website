@@ -1,0 +1,21 @@
+[
+  {
+    "_id": "7da48b08-9d37-4025-b996-03ae5be4c42d",
+    "_type": "aboutSupportComponent",
+    "_createdAt": "2024-12-10T11:23:52Z",
+    "_updatedAt": "2025-06-19T00:01:57Z",
+    "buttonText_1": "Connect Now!",
+    "buttonText_2": "Our Impact",
+    "description_1": "We charge no monthly fees for agents on the site, when you use this site you are helping a veteran or military spouse grow their business",
+    "description_2": "VeteranPCS donates from each closing to support military and veteran focused charities",
+    "header_1": "We support our veterans & military spouses",
+    "header_2": "We support a cause",
+    "image": {
+      "_sanityAssetId": "image-49987864f6954544e027fd05a93398e5e0a7b99c-1852x1676-png",
+      "alt": "Military image 2",
+      "height": 1676,
+      "path": "/images/content/about-support-component/military-image-2.png",
+      "width": 1852
+    }
+  }
+]

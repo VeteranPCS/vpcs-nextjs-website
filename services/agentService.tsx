@@ -1,5 +1,4 @@
-import { urlForImage } from '@/sanity/lib/image'
-import { client } from '@/sanity/lib/client'
+import { REAL_STATE_AGENTS } from '@/lib/content/homepage'
 import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
 import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { escapeSoqlLiteral } from '@/services/soql';
@@ -21,16 +20,32 @@ function getStateFullNames(abbreviations: string[]): string[] {
 }
 
 const agentService = {
+    // Logo data now comes from the repo-committed export in content/_data/site/
+    // via lib/content/homepage (validated at module load); the response shape
+    // matches the old Sanity fetch so consumers don't churn.
     fetchLogosList: async (): Promise<RealEstateAgentDocument[]> => {
-        const logos = await client.fetch<RealEstateAgentDocument[]>(`*[_type == "real_state_agents"]`);
-
-        logos.forEach((logo) => {
-            if (logo.mainImage?.asset?._ref) {
-                logo.mainImage.asset.image_url = urlForImage(logo.mainImage.asset);
-            }
-        });
-
-        return logos;
+        return REAL_STATE_AGENTS.map((agent) => ({
+            _id: agent._id,
+            // The repo export carries no document revision; the field only
+            // exists to satisfy the legacy SanityDocument shape.
+            _rev: '',
+            _type: 'real_state_agents' as const,
+            _createdAt: agent._createdAt,
+            _updatedAt: agent._updatedAt,
+            title: agent.title,
+            url: agent.url,
+            publishedAt: agent.publishedAt,
+            mainImage: {
+                _type: 'image' as const,
+                alt: agent.mainImage.alt,
+                asset: {
+                    image_url: agent.mainImage.path,
+                    // Original Sanity asset id, kept for shape compatibility.
+                    _ref: agent.mainImage._sanityAssetId ?? '',
+                    _type: 'reference',
+                },
+            },
+        }));
     },
     getAgentState: async (salesforceID: string): Promise<string[]> => {
         // Primary gate: a Salesforce record id is a 15- or 18-char alphanumeric

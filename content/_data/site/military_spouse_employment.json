@@ -1,0 +1,50 @@
+[
+  {
+    "_id": "3a0c6115-92e6-4caf-8d00-194fb050fc5a",
+    "_type": "military_spouse_employment",
+    "_createdAt": "2024-12-18T04:48:18Z",
+    "_updatedAt": "2024-12-18T06:33:23Z",
+    "description": "We use innovative technology and a focus on skills-based hiring to create dynamic talent and outsourcing solutions for employers and remote careers for military spouses.",
+    "logo": {
+      "_sanityAssetId": "image-6a9f2b5a946e0da9030c82aba8544b5814839cbc-514x155-webp",
+      "alt": "Instant Teams's Logo",
+      "height": 155,
+      "path": "/images/content/military-spouse-employment/instant-teams.webp",
+      "width": 514
+    },
+    "name": "Instant Teams",
+    "url": "https://instantteams.com/"
+  },
+  {
+    "_id": "3dc6890a-6637-4166-99d0-6ecea2beaa64",
+    "_type": "military_spouse_employment",
+    "_createdAt": "2024-12-18T04:47:05Z",
+    "_updatedAt": "2024-12-18T06:33:36Z",
+    "description": "Connecting the corporate workforce to the military community through education and technology solutions.",
+    "logo": {
+      "_sanityAssetId": "image-bdda67c6474374c9f18aed1e6959fd52865c5cc9-514x177-webp",
+      "alt": "Empower Employ's Logo",
+      "height": 177,
+      "path": "/images/content/military-spouse-employment/empoweremploy.webp",
+      "width": 514
+    },
+    "name": "Empower Employ",
+    "url": "https://www.empoweremploy.us/"
+  },
+  {
+    "_id": "884cfb39-0c4d-4d48-9608-14d008e2ecd9",
+    "_type": "military_spouse_employment",
+    "_createdAt": "2024-12-18T04:48:55Z",
+    "_updatedAt": "2024-12-18T06:33:11Z",
+    "description": "At Squared Away, we understand the unique challenges of frequent relocations, especially when it comes to ensuring your spouse can find fulfilling employment. ",
+    "logo": {
+      "_sanityAssetId": "image-92f9bd11593f6399c895dd5fb16502129a0f3883-514x192-webp",
+      "alt": "Squared Away's Logo",
+      "height": 192,
+      "path": "/images/content/military-spouse-employment/squaredaway.webp",
+      "width": 514
+    },
+    "name": "Squared Away",
+    "url": "https://www.gosquaredaway.com/"
+  }
+]

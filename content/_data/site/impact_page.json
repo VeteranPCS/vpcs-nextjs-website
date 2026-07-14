@@ -1,0 +1,50 @@
+[
+  {
+    "_id": "a6b75bfd-aad4-4aec-a433-4e34931b9ab2",
+    "_type": "impact_page",
+    "_createdAt": "2024-12-11T09:21:04Z",
+    "_updatedAt": "2024-12-11T09:27:16Z",
+    "buttonText": "OUR STORY",
+    "componentName": "our_story",
+    "description": [
+      {
+        "_key": "f2eafac724ae",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "5d89486896c70",
+            "_type": "span",
+            "marks": [],
+            "text": "VeteranPCS was designed to make a difference in the lives of military families. Connecting you with fellow veterans and military spouses you can trust to help make a new place Home."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "48a31c10f2a2",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "e55e71dd09180",
+            "_type": "span",
+            "marks": [
+              "strong"
+            ],
+            "text": "\nWe are military families, helping military families move."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "foreground_image": {
+      "_sanityAssetId": "image-b0545a230c679c88d8db0634175c384f49b491e3-640x751-webp",
+      "alt": "Our Story Image",
+      "height": 751,
+      "path": "/images/content/impact-page/ceo-founder-jason-anderson.webp",
+      "width": 640
+    },
+    "header": "Learn more about our Story"
+  }
+]

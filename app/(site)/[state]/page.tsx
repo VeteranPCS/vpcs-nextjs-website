@@ -21,7 +21,7 @@ import {
   groupAgentsByAreaForState,
   type StateAgentGroups,
 } from "@/lib/stateAgents";
-import { SITE_URL } from "@/lib/siteUrl";
+import { SITE_URL, absoluteUrl } from "@/lib/siteUrl";
 import { getStateGuidePosts } from "@/lib/blog/registry";
 
 const BASE_URL = SITE_URL;
@@ -50,7 +50,11 @@ export async function generateMetadata(props: { params: Promise<{ state: string 
 
   const ogTitle = `Military PCS Moves: Top Veteran Real Estate Agents in ${stateName} - VA Loan Experts`;
   const ogDescription = `Connect with the best veteran real estate agents in ${stateName} who understand the unique needs of veterans and military families. Contact a veteran real estate agent in ${stateName} today and start your PCS move with confidence.`;
-  const ogImage = await stateService.fetchStateImage(params.state);
+  // fetchStateImage returns an absolute URL; absoluteUrl is an idempotent
+  // guard here so BOTH openGraph and twitter images can never regress to a
+  // relative or protocol-relative `//images/...` URL on the wrong host (the
+  // old code did `/${ogImage}` for Twitter, which had exactly that bug).
+  const ogImage = absoluteUrl(await stateService.fetchStateImage(params.state));
 
   return {
     metadataBase: new URL(BASE_URL),
@@ -75,7 +79,7 @@ export async function generateMetadata(props: { params: Promise<{ state: string 
       card: "summary_large_image",
       title: ogTitle,
       description: ogDescription,
-      images: [`/${ogImage}`],
+      images: [ogImage],
     },
   };
 }

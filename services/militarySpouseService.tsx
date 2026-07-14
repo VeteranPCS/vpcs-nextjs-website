@@ -1,12 +1,15 @@
-import { client } from '@/sanity/lib/client'
-import { urlForImage } from '@/sanity/lib/image';
+import {
+    APPROVED_COMPANIES,
+    MILITARY_SPOUSE_APPROVED,
+    MILITARY_SPOUSE_EMPLOYMENT,
+    MOVING_YOUR_LIFE,
+} from '@/lib/content/military-spouse';
+import { toLegacyImage } from '@/lib/content/loader';
 
 interface EmploymentLogo {
     asset: {
-        _ref?: string;
-        image_url?: string;
+        image_url: string;
     };
-    _type: string;
     alt: string;
 }
 
@@ -18,7 +21,6 @@ export interface EmploymentDataProps {
     logo: EmploymentLogo;
     _updatedAt: string;
     _createdAt: string;
-    _rev: string;
     url: string;
 }
 
@@ -30,7 +32,6 @@ export interface MovingYourLifeProps {
     logo: EmploymentLogo;
     _updatedAt: string;
     _createdAt: string;
-    _rev: string;
     url: string;
 }
 
@@ -43,7 +44,6 @@ export interface MilitarySpouseApprovedProps {
     image: EmploymentLogo;
     _updatedAt: string;
     _createdAt: string;
-    _rev: string;
 }
 
 interface DescriptionBlock {
@@ -68,87 +68,54 @@ export interface MilitarySpouseApprovedCompaniesProps {
     image: EmploymentLogo;
     _updatedAt: string;
     _createdAt: string;
-    _rev: string;
 }
 
 const militarySpouseService = {
     fetchMilitarySpouseEmployment: async (): Promise<EmploymentDataProps[]> => {
-        try {
-            const employmentData = await client.fetch<EmploymentDataProps[]>(`*[_type == "military_spouse_employment"]`)
-
-            employmentData.map((employment) => {
-                if (employment?.logo?.asset?._ref) {
-                    employment.logo.asset.image_url = urlForImage(employment.logo.asset);
-                }
-            })
-
-            if (employmentData) {
-                return employmentData as EmploymentDataProps[];
-            } else {
-                throw new Error('Failed to fetch Military Spouse Employment');
-            }
-        } catch (error: any) {
-            console.error('Error fetching Military Spouse Employment:', error);
-            throw error; // You can handle the error more gracefully based on your needs
-        }
+        return MILITARY_SPOUSE_EMPLOYMENT.map((doc) => ({
+            _id: doc._id,
+            _type: doc._type,
+            name: doc.name,
+            description: doc.description,
+            logo: toLegacyImage(doc.logo),
+            _updatedAt: doc._updatedAt,
+            _createdAt: doc._createdAt,
+            url: doc.url,
+        }));
     },
     fetchMovingYourLife: async (): Promise<MovingYourLifeProps[]> => {
-        try {
-            const movingYourLife = await client.fetch<MovingYourLifeProps[]>(`*[_type == "moving_your_life"]`)
-
-            movingYourLife.map((data) => {
-                if (data?.logo?.asset?._ref) {
-                    data.logo.asset.image_url = urlForImage(data.logo.asset);
-                }
-            })
-
-            if (movingYourLife) {
-                return movingYourLife as MovingYourLifeProps[];
-            } else {
-                throw new Error('Failed to fetch Moving Your Life');
-            }
-        } catch (error: any) {
-            console.error('Error fetching Moving Your Life:', error);
-            throw error; // You can handle the error more gracefully based on your needs
-        }
+        return MOVING_YOUR_LIFE.map((doc) => ({
+            _id: doc._id,
+            _type: doc._type,
+            name: doc.name,
+            description: doc.description,
+            logo: toLegacyImage(doc.logo),
+            _updatedAt: doc._updatedAt,
+            _createdAt: doc._createdAt,
+            url: doc.url,
+        }));
     },
     fetchMilitarySpouseApproved: async (): Promise<MilitarySpouseApprovedProps> => {
-        try {
-            const militarySpouseApproved = await client.fetch<MilitarySpouseApprovedProps>(`*[_type == "military_spouse_approved"][0]`)
-
-            if (militarySpouseApproved?.image?.asset?._ref) {
-                militarySpouseApproved.image.asset.image_url = urlForImage(militarySpouseApproved.image.asset);
-            }
-
-            if (militarySpouseApproved) {
-                return militarySpouseApproved as MilitarySpouseApprovedProps;
-            } else {
-                throw new Error('Failed to fetch Military Spouse Approved');
-            }
-        } catch (error: any) {
-            console.error('Error fetching Military Spouse Approved:', error);
-            throw error; // You can handle the error more gracefully based on your needs
-        }
+        return {
+            _id: MILITARY_SPOUSE_APPROVED._id,
+            _type: MILITARY_SPOUSE_APPROVED._type,
+            component_title: MILITARY_SPOUSE_APPROVED.component_title,
+            header: MILITARY_SPOUSE_APPROVED.header,
+            description: MILITARY_SPOUSE_APPROVED.description,
+            image: toLegacyImage(MILITARY_SPOUSE_APPROVED.image),
+            _updatedAt: MILITARY_SPOUSE_APPROVED._updatedAt,
+            _createdAt: MILITARY_SPOUSE_APPROVED._createdAt,
+        };
     },
     fetchMilitarySpouseApprovedCompanies: async (): Promise<MilitarySpouseApprovedCompaniesProps[]> => {
-        try {
-            const militarySpouseApprovedCompanies = await client.fetch<MilitarySpouseApprovedCompaniesProps[]>(`*[_type == "approved_company_list"]`)
-
-            militarySpouseApprovedCompanies.map((data) => {
-                if (data?.image?.asset?._ref) {
-                    data.image.asset.image_url = urlForImage(data.image.asset);
-                }
-            })
-
-            if (militarySpouseApprovedCompanies) {
-                return militarySpouseApprovedCompanies as MilitarySpouseApprovedCompaniesProps[];
-            } else {
-                throw new Error('Failed to fetch Military Spouse Approved');
-            }
-        } catch (error: any) {
-            console.error('Error fetching Military Spouse Approved:', error);
-            throw error; // You can handle the error more gracefully based on your needs
-        }
+        return APPROVED_COMPANIES.map((doc) => ({
+            _id: doc._id,
+            _type: doc._type,
+            name: doc.name,
+            image: toLegacyImage(doc.image),
+            _updatedAt: doc._updatedAt,
+            _createdAt: doc._createdAt,
+        }));
     },
 };
 

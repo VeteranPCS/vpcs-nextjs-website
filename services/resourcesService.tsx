@@ -1,58 +1,42 @@
-import { client } from '@/sanity/lib/client';
-import { SanityDocument } from '@sanity/client';
-import { urlForImage } from '@/sanity/lib/image';
+import { LIFE_RESOURCES, TRUSTED_RESOURCES } from '@/lib/content/resources';
+import { toLegacyImage, type LegacyImage } from '@/lib/content/loader';
 
+export interface LifeResourceProps {
+    _id: string;
+    _type: string;
+    name: string;
+    description: string;
+    url: string;
+    logo: LegacyImage;
+}
 
-interface LifeResource extends SanityDocument {
-    logo?: {
-        asset?: {
-            _ref?: string;
-            image_url?: string; // Adding a new field for the image URL
-        };
-    };
+export interface TrustedResourceProps {
+    _id: string;
+    _type: string;
+    name: string;
+    url?: string;
+    logo: LegacyImage;
 }
 
 const blogService = {
-    fetchLifeResources: async (): Promise<any> => {
-        try {
-            const life_resources: LifeResource[] = await client.fetch(`*[_type == "life_resources"]`);
-
-            // Map over life resources to add image URLs
-            life_resources.forEach((life_resource) => {
-                if (life_resource?.logo?.asset?._ref) {
-                    life_resource.logo.asset.image_url = urlForImage(life_resource.logo.asset);
-                }
-            });
-
-            if (life_resources) {
-                return life_resources;
-            } else {
-                throw new Error('Failed to fetch blog');
-            }
-        } catch (error: any) {
-            console.error('Error fetching blogs:', error);
-            throw error; // You can handle the error more gracefully based on your needs
-        }
+    fetchLifeResources: async (): Promise<LifeResourceProps[]> => {
+        return LIFE_RESOURCES.map((doc) => ({
+            _id: doc._id,
+            _type: doc._type,
+            name: doc.name,
+            description: doc.description,
+            url: doc.url,
+            logo: toLegacyImage(doc.logo),
+        }));
     },
-    fetchTrustedResources: async (): Promise<any> => {
-        try {
-            const trusted_sources: LifeResource[] = await client.fetch(`*[_type == "trusted_resources"]`)
-
-            trusted_sources.map((trusted_source) => {
-                if (trusted_source?.logo?.asset?._ref) {
-                    trusted_source.logo.asset.image_url = urlForImage(trusted_source.logo.asset);
-                }
-            })
-
-            if (trusted_sources) {
-                return trusted_sources;
-            } else {
-                throw new Error('Failed to fetch blog');
-            }
-        } catch (error: any) {
-            console.error('Error fetching blogs:', error);
-            throw error; // You can handle the error more gracefully based on your needs
-        }
+    fetchTrustedResources: async (): Promise<TrustedResourceProps[]> => {
+        return TRUSTED_RESOURCES.map((doc) => ({
+            _id: doc._id,
+            _type: doc._type,
+            name: doc.name,
+            url: doc.url,
+            logo: toLegacyImage(doc.logo),
+        }));
     },
 };
 

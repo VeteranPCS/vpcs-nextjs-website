@@ -1,0 +1,35 @@
+[
+  {
+    "_id": "7c0b6ff3-9851-4863-9103-fec4f98129a5",
+    "_type": "military_spouse_approved",
+    "_createdAt": "2024-12-18T07:03:10Z",
+    "_updatedAt": "2024-12-18T07:03:46Z",
+    "component_title": "Military Spouse Approved Resources",
+    "description": [
+      {
+        "_key": "b156afba679e",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "ec70f3da112f0",
+            "_type": "span",
+            "marks": [],
+            "text": "Moving can be a huge stressor. Check out these helpful resources."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "header": "support mil spouse & veteran owned businesses",
+    "image": {
+      "_sanityAssetId": "image-beda8e7efd5fd689d07d4f2c274c77e2fa39649a-1080x1075-webp",
+      "alt": "Title Image",
+      "height": 1075,
+      "path": "/images/content/military-spouse-approved/milspouseapproved.webp",
+      "width": 1080
+    }
+  }
+]

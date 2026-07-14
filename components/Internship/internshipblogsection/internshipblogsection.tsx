@@ -2,14 +2,6 @@ import React from "react";
 import Image from "next/image";
 import internshipPageService from "@/services/internshipPageService";
 
-interface ActionImage {
-  action_image?: {
-    asset?: {
-      _ref: string;
-      image_url?: string; // Make sure image_url exists here
-    };
-  };
-}
 export interface InternshipActionDataProps {
   _id: string;
   title: string;
@@ -17,7 +9,6 @@ export interface InternshipActionDataProps {
   action_image?: {
     alt?: string;
     asset?: {
-      _ref: string;
       image_url?: string; // Make sure image_url exists here
     };
   };

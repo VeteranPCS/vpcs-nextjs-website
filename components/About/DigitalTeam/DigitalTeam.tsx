@@ -1,9 +1,8 @@
 import Image from "next/image";
 import aboutService from "@/services/aboutService";
 import { TeamMember } from '@/components/About/AdminTeam/AdminTeam';
-import BlockContent from "@/components/Blog/BlockContent";
-import { validateBlockStyle } from "@/components/Blog/BlogDetail";
 import BioToggle from "@/components/About/BioToggle";
+import { getTeamBio } from "@/components/About/teamBios";
 
 const DigitalTeam = async () => {
   let DigitalTeamDetails: TeamMember[] | null = null;
@@ -68,17 +67,7 @@ const DigitalTeam = async () => {
                     {details.designation}
                   </span>
                   <BioToggle id={details._id}>
-                    {details?.description?.map((block, index) => (
-                      <BlockContent
-                        key={block._key || index}
-                        blocks={[
-                          {
-                            ...block,
-                            style: validateBlockStyle(block.style),
-                          },
-                        ]}
-                      />
-                    ))}
+                    {getTeamBio(details._id)}
                   </BioToggle>
                 </div>
               </div>

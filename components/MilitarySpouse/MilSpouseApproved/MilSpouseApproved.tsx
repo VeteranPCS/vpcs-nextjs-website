@@ -1,13 +1,15 @@
 import Image from "next/image";
 import SliderValueLabel from "@/components/MilitarySpouse/SquaredAway/SquaredAwaySlider";
-import { MilitarySpouseApprovedProps } from '@/services/militarySpouseService';
+import { MilitarySpouseApprovedProps, MilitarySpouseApprovedCompaniesProps } from '@/services/militarySpouseService';
 import militarySpouseService from "@/services/militarySpouseService";
 
 const MilitarySpouseApproved = async () => {
   let milSpouseApproved: MilitarySpouseApprovedProps | null = null;
+  let approvedCompanies: MilitarySpouseApprovedCompaniesProps[] = [];
 
   try {
     milSpouseApproved = await militarySpouseService.fetchMilitarySpouseApproved();
+    approvedCompanies = await militarySpouseService.fetchMilitarySpouseApprovedCompanies();
   } catch (error) {
     console.error("Error fetching Military Spouse Approved Content", error);
   }
@@ -56,7 +58,7 @@ const MilitarySpouseApproved = async () => {
               </ul>
             </div>
             <div>
-              <SliderValueLabel />
+              <SliderValueLabel companies={approvedCompanies} />
             </div>
           </div>
         </div>

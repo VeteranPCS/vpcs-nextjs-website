@@ -1,26 +1,12 @@
-import { client } from '@/sanity/lib/client'
-import { SanityDocument } from '@sanity/client'
+import { MEDIA_ACCOUNTS } from '@/lib/content/mediaAccounts';
 import type { MediaAccountProps } from '@/services/mediaAccountTypes';
 
-
-interface AccountDocument extends SanityDocument {
-    _type: 'media_account'
-}
-
+// Data now comes from the repo-committed export in content/_data/site/ via
+// lib/content/mediaAccounts (validated at module load); the Sanity query had
+// no projection, so the full document shape is preserved for consumers.
 const mediaAccountService = {
     fetchAccounts: async (): Promise<MediaAccountProps[]> => {
-        try {
-            const mediaAccounts = await client.fetch<MediaAccountProps[]>(`*[_type == "media_account"]`)
-
-            if (mediaAccounts) {
-                return mediaAccounts as MediaAccountProps[];
-            } else {
-                throw new Error('Failed to fetch Internship Benefits');
-            }
-        } catch (error: any) {
-            console.error('Error fetching Internship Benefits:', error);
-            throw error;
-        }
+        return [...MEDIA_ACCOUNTS];
     }
 };
 

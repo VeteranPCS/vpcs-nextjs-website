@@ -1,0 +1,50 @@
+[
+  {
+    "_id": "4dc7efdf-b693-467f-a829-dcc13e9dab13",
+    "_type": "moving_your_life",
+    "_createdAt": "2024-12-18T06:43:47Z",
+    "_updatedAt": "2024-12-18T06:44:26Z",
+    "description": "Moving, improving, and everything in between. Porch makes moving, insurance, and improving your home simple.",
+    "logo": {
+      "_sanityAssetId": "image-abe4b7968963d62ca88af60a147bffeff9a0f239-514x134-webp",
+      "alt": "Porch's Logo",
+      "height": 134,
+      "path": "/images/content/moving-your-life/porch-logo.webp",
+      "width": 514
+    },
+    "name": "Porch",
+    "url": "https://porch.com/"
+  },
+  {
+    "_id": "cef6b882-4c1a-4c04-93a4-f2dbad315172",
+    "_type": "moving_your_life",
+    "_createdAt": "2024-12-18T06:40:33Z",
+    "_updatedAt": "2025-10-09T02:05:28Z",
+    "description": "Color Coded Moving Labels and Moving Box Organization.",
+    "logo": {
+      "_sanityAssetId": "image-f77a3ccd005c74137de80c96015e8b28bab6ab35-514x107-webp",
+      "alt": "BoxOps's Logo",
+      "height": 107,
+      "path": "/images/content/moving-your-life/boxops-logo.webp",
+      "width": 514
+    },
+    "name": "BoxOps",
+    "url": "https://teamboxops.com/?sca_ref=9622927.1wk78wJxbHEk"
+  },
+  {
+    "_id": "d652ef49-55fc-4210-8162-3fb0ad265ebf",
+    "_type": "moving_your_life",
+    "_createdAt": "2024-12-18T06:42:47Z",
+    "_updatedAt": "2024-12-18T06:43:30Z",
+    "description": "Sponsorship can help service members and their families settle in quicker. Sponsors are assigned through your unit but if you need assistance, or haven’t been assigned a sponsor. ",
+    "logo": {
+      "_sanityAssetId": "image-1def44ed76988e775c24c29d91964d892787b0b4-514x125-webp",
+      "alt": "Military On Source's Logo",
+      "height": 125,
+      "path": "/images/content/moving-your-life/militaryonesource.webp",
+      "width": 514
+    },
+    "name": "Military On Source",
+    "url": "https://installations.militaryonesource.mil/search?program-service=26/view-by=ALL"
+  }
+]

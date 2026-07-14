@@ -74,7 +74,7 @@ const listStatesTool = tool({
 
 const getStateDetailsTool = tool({
   description:
-    'Get details for a single US state by slug ("texas") or name ("Texas"). Use this when the user names a state and you need its Sanity record (display name, image, etc.).',
+    'Get details for a single US state by slug ("texas") or name ("Texas"). Use this when the user names a state and you need its state record (display name, image, etc.).',
   inputSchema: stateInputSchema,
   execute: async ({ state }): Promise<ToolResult<{ state: StateDetails }>> => {
     try {

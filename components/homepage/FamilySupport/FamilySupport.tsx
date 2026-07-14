@@ -2,11 +2,9 @@ import Button from "@/components/common/Button";
 import classes from "./FamilySupport.module.css";
 import Image from "next/image";
 import veterenceSupportService from "@/services/veterenceSupportService";
-import SupportContent from "./SupportContent";
+import { SUPPORT_VETERENCE_CONTENT } from "@/components/homepage/supportVeterenceContent";
 import { VeteranCommunityProps } from "@/components/homepage/VeteranCommunity/VeteranCommunity";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";
-
-type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
 const FamilySupport = async ({ link, component_slug }: { link: string, component_slug: string }) => {
   let pageData: VeteranCommunityProps | null = null;
@@ -20,12 +18,9 @@ const FamilySupport = async ({ link, component_slug }: { link: string, component
     return <p>Failed to load Veterence Data.</p>;
   }
 
-  const validateBlockStyle = (style: string | undefined): BlockStyle => {
-    const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];
-    return validStyles.includes(style as BlockStyle)
-      ? (style as BlockStyle)
-      : "normal";
-  };
+  const supportContent = pageData
+    ? SUPPORT_VETERENCE_CONTENT[pageData._id]
+    : undefined;
 
   return (
     <div className="container mx-auto w-full md:py-16 py-0">
@@ -63,24 +58,16 @@ const FamilySupport = async ({ link, component_slug }: { link: string, component
                 {pageData?.title}
               </h2>
               <div className="text-white roboto lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] italic font-medium leading-[25px] mt-4 lg:text-left md:text-left sm:text-center text-center">
-                {pageData?.description?.map((block, index) => (
-                  <SupportContent
-                    key={block._key || index}
-                    block={{
-                      ...block,
-                      style: validateBlockStyle(block.style || "normal"),
-                    }}
-                  />
-                ))}
+                {supportContent?.description}
               </div>
             </div>
 
             {/* Points Section */}
             <div className="mt-5">
-              {pageData?.points?.map((point, index) => (
+              {supportContent?.points.map((point, index) => (
                 <div
                   className="flex items-start gap-4"
-                  key={point._id || index}
+                  key={index}
                 >
                   <Image
                     width={100}
@@ -90,13 +77,7 @@ const FamilySupport = async ({ link, component_slug }: { link: string, component
                     alt=""
                   />
                   <div className="text-white roboto lg:text-[18px] md:text-[19px] sm:text-[16px] text-[16px] font-medium leading-[41px]">
-                    <SupportContent
-                      key={point._id || index}
-                      block={{
-                        ...point,
-                        style: validateBlockStyle(point.style || "normal"),
-                      }}
-                    />
+                    {point}
                   </div>
                 </div>
               ))}

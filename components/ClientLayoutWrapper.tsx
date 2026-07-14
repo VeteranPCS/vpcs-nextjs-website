@@ -1,6 +1,3 @@
-"use client";
-
-import { usePathname } from "next/navigation";
 import Header from "@/components/Header";
 
 export default function ClientLayoutWrapper({
@@ -8,12 +5,9 @@ export default function ClientLayoutWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const shouldShowHeader = !pathname.startsWith("/studio");
-
   return (
     <>
-      {shouldShowHeader && <Header />}
+      <Header />
       <main>{children}</main>
     </>
   );

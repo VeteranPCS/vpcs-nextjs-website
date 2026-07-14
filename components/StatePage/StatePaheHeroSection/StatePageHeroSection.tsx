@@ -20,8 +20,8 @@ const StatePageHeroSection = ({
   stateSlug,
   stateCode,
 }: StatePageHeroSectionProps) => {
-  // fetchStateDetails pre-computes the CDN URL onto asset.image_url, so read it directly
-  // instead of re-running urlForImage on the projected (loosely-typed) image object.
+  // fetchStateDetails puts the committed state map's local public/ path on
+  // asset.image_url (the Sanity-era shape, kept so consumers don't churn).
   const imageUrl = stateImage?.asset?.image_url || "/assets/South-Carolina-map.png";
 
   return (

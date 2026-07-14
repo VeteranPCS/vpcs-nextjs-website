@@ -3,10 +3,8 @@ import Button from "@/components/common/Button";
 import classes from "./VeteranCommunity.module.css";
 import Image from "next/image";
 import veterenceSupportService from "@/services/veterenceSupportService";
-import SupportContent from "@/components/homepage/FamilySupport/SupportContent";
+import { SUPPORT_VETERENCE_CONTENT } from "@/components/homepage/supportVeterenceContent";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";
-
-type BlockStyle = "h1" | "h2" | "h3" | "normal";
 
 interface ImageAsset {
   image_url?: string;
@@ -57,12 +55,9 @@ const VeteranCommunity = async ({ component_slug }: { component_slug: string }) 
     return <p>Failed to load Veterence Data.</p>;
   }
 
-  const validateBlockStyle = (style?: string): BlockStyle => {
-    const validStyles: BlockStyle[] = ["h1", "h2", "h3", "normal"];
-    return validStyles.includes(style as BlockStyle)
-      ? (style as BlockStyle)
-      : "normal";
-  };
+  const supportContent = pageData
+    ? SUPPORT_VETERENCE_CONTENT[pageData._id]
+    : undefined;
 
   return (
     <div className="w-full">
@@ -83,23 +78,14 @@ const VeteranCommunity = async ({ component_slug }: { component_slug: string }) 
                 {pageData?.title}
               </h2>
               <div className="text-white md:text-xl sm:text-sm md:text-left text-center italic font-medium leading-[25px] mt-4 roboto">
-                {pageData?.description?.map((block, index) => (
-                  <SupportContent
-                    key={block._key || `description-${index}`}
-                    block={{
-                      ...block,
-                      style: validateBlockStyle(block.style),
-                      children: block.children || [],
-                    }}
-                  />
-                ))}
+                {supportContent?.description}
               </div>
             </div>
             <div className="mt-5">
-              {pageData?.points?.map((point, index) => (
+              {supportContent?.points.map((point, index) => (
                 <div
                   className="flex items-start gap-4 my-4"
-                  key={point._id || `point-${index}`}
+                  key={`point-${index}`}
                 >
                   <Image
                     width={100}
@@ -109,14 +95,7 @@ const VeteranCommunity = async ({ component_slug }: { component_slug: string }) 
                     alt=""
                   />
                   <h6 className="text-white roboto md:text-lg sm:text-sm font-medium my-0">
-                    <SupportContent
-                      key={point._id || `point-content-${index}`}
-                      block={{
-                        ...point,
-                        style: validateBlockStyle(point.style),
-                        children: point.children || [], // Ensure children is always an array
-                      }}
-                    />
+                    {point}
                   </h6>
                 </div>
               ))}
