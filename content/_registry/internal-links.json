@@ -1,6 +1,6 @@
 {
-  "contentHash": "9f7f415588bfee0f6e70bd4b5135c53e8144afb25db200af8fd53da5ed804ec9",
-  "totalPosts": 342,
+  "contentHash": "e6369ccc9645e9b4dc86be80b12fadd99b35d4bee5e5c94247da11029ca6add5",
+  "totalPosts": 346,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -36,6 +36,7 @@
       "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
       "montana-veteran-property-tax-exemptions-2026",
+      "naval-station-norfolk-bah-2026-buy-vs-rent",
       "nebraska-veteran-property-tax-exemptions-2026",
       "nevada-veteran-property-tax-exemptions-2026",
       "new-hampshire-veteran-property-tax-exemptions-2026",
@@ -82,6 +83,7 @@
       "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-philadelphia-military-bases",
       "buying-a-home-sight-unseen-during-a-pcs-move",
+      "buying-a-home-with-power-of-attorney-military",
       "castle-rock-a-community-of-distinction-and-luxury",
       "choosing-the-best-relocation-method-for-your-pcs",
       "complete-fort-campbell-pcs-guide",
@@ -348,10 +350,12 @@
       "va-loan-calculator-mistakes",
       "va-loan-certificate-of-eligibility",
       "va-loan-closing-costs-what-military-buyers-pay",
+      "va-loan-condo-approval-guide",
       "va-loan-credit-score-requirements",
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
       "va-loan-huntsville-madison-county-2026",
+      "va-loan-occupancy-requirements-pcs",
       "va-loan-refinance-pro-tip-how-to-lock-in-a-lower-rate-before-it-s-too-late",
       "va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
       "va-vs-fha",
@@ -394,6 +398,7 @@
       "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
       "montana-veteran-property-tax-exemptions-2026",
+      "naval-station-norfolk-bah-2026-buy-vs-rent",
       "nebraska-veteran-property-tax-exemptions-2026",
       "nevada-veteran-property-tax-exemptions-2026",
       "new-hampshire-veteran-property-tax-exemptions-2026",
@@ -440,6 +445,7 @@
       "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-philadelphia-military-bases",
       "buying-a-home-sight-unseen-during-a-pcs-move",
+      "buying-a-home-with-power-of-attorney-military",
       "castle-rock-a-community-of-distinction-and-luxury",
       "choosing-the-best-relocation-method-for-your-pcs",
       "complete-fort-campbell-pcs-guide",
@@ -706,10 +712,12 @@
       "va-loan-calculator-mistakes",
       "va-loan-certificate-of-eligibility",
       "va-loan-closing-costs-what-military-buyers-pay",
+      "va-loan-condo-approval-guide",
       "va-loan-credit-score-requirements",
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
       "va-loan-huntsville-madison-county-2026",
+      "va-loan-occupancy-requirements-pcs",
       "va-loan-refinance-pro-tip-how-to-lock-in-a-lower-rate-before-it-s-too-late",
       "va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
       "va-vs-fha",
@@ -783,6 +791,7 @@
       "best-neighborhoods-nas-jacksonville-military-families",
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "discovering-military-friendly-living-in-panama-city-florida",
+      "florida-va-loan-benefits-hidden-savings",
       "florida-veteran-property-tax-exemptions-2026",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
       "pcs-to-macdill-afb-tampa-2026-guide",
@@ -1023,6 +1032,7 @@
       "what-military-bases-are-in-vermont"
     ],
     "virginia": [
+      "naval-station-norfolk-bah-2026-buy-vs-rent",
       "pcs-to-fort-belvoir-2026-guide",
       "pcs-to-fort-lee-2026-guide",
       "pcs-to-joint-base-langley-eustis-2026-guide",
@@ -1055,10 +1065,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 235,
+    "resolved": 237,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 212,
+      "frontmatter-state-slug": 214,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -1096,7 +1106,8 @@
       "the-ultimate-pcs-binder-guide-get-organized-for-your-move",
       "the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel",
       "things-to-do-near-fort-riley-a-local-guide",
-      "tinker-air-force-base-pcs-guide"
+      "tinker-air-force-base-pcs-guide",
+      "va-loan-occupancy-requirements-pcs"
     ]
   },
   "posts": [
@@ -1976,6 +1987,38 @@
       ]
     },
     {
+      "slug": "buying-a-home-with-power-of-attorney-military",
+      "title": "Buying a Home With a Power of Attorney While Deployed",
+      "url": "/blog/buying-a-home-with-power-of-attorney-military",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "PCS Help",
+        "VA Loan Help"
+      ],
+      "description": "How a power of attorney lets military families buy a home during deployment or a PCS, what the VA and lenders require, and how to keep your closing on track from anywhere.",
+      "publishedAt": "2026-07-16T09:00:00.000Z",
+      "updatedAt": "2026-07-19T00:00:00.000Z",
+      "primaryKeyword": "buying a home with power of attorney military",
+      "secondaryKeywords": [
+        "alive and well statement",
+        "closing on a home while deployed",
+        "poa home purchase",
+        "specific power of attorney real estate",
+        "va loan power of attorney"
+      ],
+      "h2Outline": [
+        "What a Power of Attorney Does in a Home Purchase",
+        "What the VA and Lenders Require",
+        "Getting a POA Signed Overseas",
+        "Tips to Keep Your Closing on Track",
+        "Frequently Asked Questions",
+        "The Bottom Line"
+      ]
+    },
+    {
       "slug": "california-veteran-property-tax-exemptions-2026",
       "title": "California Military & Veteran Property Tax Exemptions (2026)",
       "url": "/blog/california-veteran-property-tax-exemptions-2026",
@@ -2581,8 +2624,8 @@
       "url": "/blog/florida-va-loan-benefits-hidden-savings",
       "component": "VA Loan Help",
       "componentSlug": "va-loan-help",
-      "stateSlug": null,
-      "stateSource": null,
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
       "categories": [
         "VA Loan Help"
       ],
@@ -3824,6 +3867,38 @@
       ]
     },
     {
+      "slug": "naval-station-norfolk-bah-2026-buy-vs-rent",
+      "title": "Naval Station Norfolk BAH 2026: Buy vs. Rent Guide",
+      "url": "/blog/naval-station-norfolk-bah-2026-buy-vs-rent",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": "virginia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "See 2026 Naval Station Norfolk BAH rates by rank, how Hampton Roads home prices and property taxes affect your payment, and when buying near Norfolk beats renting.",
+      "publishedAt": "2026-07-18T09:00:00.000Z",
+      "updatedAt": "2026-07-19T00:00:00.000Z",
+      "primaryKeyword": "naval station norfolk bah 2026",
+      "secondaryKeywords": [
+        "does bah cover a mortgage norfolk",
+        "hampton roads buy vs rent",
+        "norfolk bah rates 2026",
+        "norfolk military housing",
+        "va298 bah rates"
+      ],
+      "h2Outline": [
+        "2026 BAH Rates for Naval Station Norfolk (MHA VA298)",
+        "What Your Allowance Buys in Hampton Roads",
+        "Buy vs. Rent: A Real Example",
+        "When Renting Makes More Sense",
+        "Frequently Asked Questions",
+        "The Bottom Line"
+      ]
+    },
+    {
       "slug": "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "title": "Navigating Temporary Housing During Your PCS Move: What You Need to Know",
       "url": "/blog/navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
@@ -4021,7 +4096,7 @@
       ],
       "description": "Understanding Builder-Advertised Low Interest Rates: What Military Homebuyers Need to Know",
       "publishedAt": "2024-12-10T18:12:34.000Z",
-      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "updatedAt": "2026-07-19T00:00:00.000Z",
       "primaryKeyword": "is 4.99 a good mortgage rate",
       "secondaryKeywords": [
         "4.5 mortgage rate",
@@ -9939,6 +10014,37 @@
       ]
     },
     {
+      "slug": "va-loan-condo-approval-guide",
+      "title": "VA Loan Condo Approval: How to Buy a Condo the Right Way",
+      "url": "/blog/va-loan-condo-approval-guide",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "VA Loan Help"
+      ],
+      "description": "A plain-language guide to VA loan condo approval: why the whole project must be approved, how to check the VA list, and what happens if a condo is not approved yet.",
+      "publishedAt": "2026-07-14T09:00:00.000Z",
+      "updatedAt": "2026-07-19T00:00:00.000Z",
+      "primaryKeyword": "va loan condo approval",
+      "secondaryKeywords": [
+        "buying a condo with a va loan",
+        "is a condo va approved",
+        "va approved condos",
+        "va condo list",
+        "va condo requirements"
+      ],
+      "h2Outline": [
+        "Why VA Condo Approval Is Different",
+        "How to Check If a Condo Is VA-Approved",
+        "What If the Condo Is Not Approved Yet",
+        "Occupancy and Property Rules Still Apply",
+        "Frequently Asked Questions",
+        "The Bottom Line"
+      ]
+    },
+    {
       "slug": "va-loan-credit-score-requirements",
       "title": "VA Loan Credit Score Requirements: What Lenders Look For in 2026",
       "url": "/blog/va-loan-credit-score-requirements",
@@ -10060,6 +10166,38 @@
         "Alabama's Tax Breaks for Veterans",
         "From Active Duty to a Civilian Redstone Job: Your Eligibility Still Counts",
         "Putting It All Together"
+      ]
+    },
+    {
+      "slug": "va-loan-occupancy-requirements-pcs",
+      "title": "VA Loan Occupancy Requirements: The PCS Rules to Know",
+      "url": "/blog/va-loan-occupancy-requirements-pcs",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "PCS Help",
+        "VA Loan Help"
+      ],
+      "description": "A plain-language look at the VA loan occupancy requirement: the 60-day move-in window, who can satisfy it while you are deployed, and how PCS orders let you rent the home later.",
+      "publishedAt": "2026-07-12T09:00:00.000Z",
+      "updatedAt": "2026-07-19T00:00:00.000Z",
+      "primaryKeyword": "va loan occupancy requirements",
+      "secondaryKeywords": [
+        "intent to occupy va loan",
+        "renting out a va loan home",
+        "va loan occupancy pcs exception",
+        "va loan primary residence rule",
+        "va occupancy 60 days"
+      ],
+      "h2Outline": [
+        "What the VA Occupancy Rule Actually Says",
+        "When You Are Deployed or on Active Duty",
+        "What Happens When You Get PCS Orders",
+        "What the Rule Is Not Meant For",
+        "Frequently Asked Questions",
+        "The Bottom Line"
       ]
     },
     {
