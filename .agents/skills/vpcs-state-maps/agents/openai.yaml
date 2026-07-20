@@ -1,0 +1,4 @@
+interface:
+  display_name: "VeteranPCS State Maps"
+  short_description: "Process VeteranPCS state-map update tickets"
+  default_prompt: "Use $vpcs-state-maps to process the latest urgent VeteranPCS state-map update ticket."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "VeteranPCS Agent Headshots"
+  short_description: "Process VeteranPCS agent headshot tickets"
+  default_prompt: "Use $vpcs-agent-headshots to process the latest urgent VeteranPCS agent headshot ticket."
