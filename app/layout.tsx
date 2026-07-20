@@ -88,8 +88,9 @@ const jsonLd: WithContext<RealEstateAgent> =
     address: {
         "@type": "PostalAddress",
         streetAddress: "415 N. Tejon St.",
-        addressLocality: "Colorado Spring",
-        postalCode: "CO 809003",
+        addressLocality: "Colorado Springs",
+        addressRegion: "CO",
+        postalCode: "80903",
         addressCountry: "US"
     },
     geo: {
@@ -98,8 +99,8 @@ const jsonLd: WithContext<RealEstateAgent> =
         longitude: "-104.813499"
     },
     openingHours: [
-        "Mon - Fri 9:00 am - 17:00 pm",
-        "Sat - 9:00 am - 17:00 pm"
+        "Mo-Fr 09:00-17:00",
+        "Sa 09:00-17:00"
     ],
     priceRange: "$",
     brand: {
