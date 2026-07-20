@@ -77,6 +77,8 @@ export default function HowItWorksDetails() {
             ctaComponent: "HowItWorksDetails",
             ctaLabel: "Find your agent",
             pageType: "how_it_works",
+            // A bare fragment href would resolve to "/" in safePath; record the real page.
+            destination: "/how-it-works#agent-map",
           }}
         >
           <Button buttonText="Find your agent" />
