@@ -70,9 +70,10 @@ describe('STATE_LIST / getStateBySlug', () => {
 
   it('resolves a known slug', () => {
     const texas = getStateBySlug('texas');
+    const texasSource = stateListJson.find((doc) => doc.short_name === 'TX');
     expect(texas?.short_name).toBe('TX');
     expect(texas?.state_name).toBe('Texas');
-    expect(texas?.state_map.path).toBe('/images/states/texas.webp');
+    expect(texas?.state_map.path).toBe(texasSource?.state_map.path);
   });
 
   it('returns null for an unknown slug', () => {

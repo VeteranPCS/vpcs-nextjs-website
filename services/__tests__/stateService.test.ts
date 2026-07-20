@@ -14,6 +14,9 @@ vi.mock('@/services/api', () => ({
 import stateService from '@/services/stateService';
 import stateListJson from '@/content/_data/site/state_list.json';
 
+const texasImagePath = stateListJson.find((state) => state.short_name === 'TX')?.state_map.path;
+if (!texasImagePath) throw new Error('Texas state-map fixture is missing');
+
 describe('stateService.fetchStateList (repo-content backed)', () => {
   it('returns one row per exported document with exactly the legacy projection keys', async () => {
     const states = await stateService.fetchStateList();
@@ -41,7 +44,7 @@ describe('stateService.fetchStateDetails', () => {
     expect(details.state_slug).toEqual({ _type: 'slug', current: 'texas' });
     expect(details.state_map).toEqual({
       alt: 'Texas',
-      asset: { image_url: '/images/states/texas.webp' },
+      asset: { image_url: texasImagePath },
     });
     expect(details._createdAt).not.toBe('');
     expect(details._updatedAt).not.toBe('');
@@ -60,7 +63,7 @@ describe('stateService.fetchStateImage', () => {
     // external consumers, so the absolute-URL contract must hold.
     const imageUrl = await stateService.fetchStateImage('texas');
     expect(imageUrl).toMatch(/^https?:\/\//);
-    expect(imageUrl.endsWith('/images/states/texas.webp')).toBe(true);
+    expect(imageUrl.endsWith(texasImagePath)).toBe(true);
     expect(imageUrl).not.toContain('//images');
   });
 

@@ -649,14 +649,13 @@
     "_id": "p1E1t9c6MmuSwvdT93QvUC",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:30:15Z",
-    "_updatedAt": "2026-07-10T20:13:40Z",
+    "_updatedAt": "2026-07-20T19:48:27Z",
     "short_name": "TX",
     "state_map": {
-      "_sanityAssetId": "image-6a442a7c60376ff1be333c832f08718615e5f594-1000x1000-webp",
       "alt": "Texas",
-      "height": 1000,
-      "path": "/images/states/texas.webp",
-      "width": 1000
+      "height": 360,
+      "path": "/images/states/texas.svg",
+      "width": 360
     },
     "state_name": "Texas",
     "state_slug": {
@@ -725,13 +724,12 @@
     "_id": "zLqbGSDWQtuCHFE15ALwoV",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:29:33Z",
-    "_updatedAt": "2025-10-31T13:57:13Z",
+    "_updatedAt": "2026-07-20T19:48:27Z",
     "short_name": "WV",
     "state_map": {
-      "_sanityAssetId": "image-e6ecf12ded01eed8e98f330dceadc43c170e9877-360x360-webp",
       "alt": "West Virginia Image",
       "height": 360,
-      "path": "/images/states/west-virginia.webp",
+      "path": "/images/states/west-virginia.svg",
       "width": 360
     },
     "state_name": "West Virginia",
@@ -953,14 +951,13 @@
     "_id": "zLqbGSDWQtuCHFE15AM3t5",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:30:10Z",
-    "_updatedAt": "2026-03-20T19:00:59Z",
+    "_updatedAt": "2026-07-20T19:48:27Z",
     "short_name": "LA",
     "state_map": {
-      "_sanityAssetId": "image-55c09a37f26603a37cf81d21a0d13c0539882f51-750x750-webp",
       "alt": "Louisiana",
-      "height": 750,
-      "path": "/images/states/louisiana.webp",
-      "width": 750
+      "height": 360,
+      "path": "/images/states/louisiana.svg",
+      "width": 360
     },
     "state_name": "Louisiana",
     "state_slug": {
