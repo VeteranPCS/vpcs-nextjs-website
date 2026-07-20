@@ -10,6 +10,7 @@ vi.mock('@/services/stateService', () => ({
 import sitemap from '@/app/sitemap';
 import { BLOG_COMPONENTS } from '@/lib/blog/components';
 import { BLOG_CATEGORY_PAGE_SIZE, getAllBlogs, pageCount } from '@/lib/blog/mdx';
+import { HOW_IT_WORKS_SECTIONS, MOVE_IN_BONUS } from '@/lib/content/how-it-works';
 import { SITE_URL } from '@/lib/siteUrl';
 
 describe('sitemap blog invariants', () => {
@@ -21,6 +22,21 @@ describe('sitemap blog invariants', () => {
   it('includes /blog', async () => {
     const { urls } = await build();
     expect(urls.has(`${SITE_URL}/blog`)).toBe(true);
+  });
+
+  it('derives /how-it-works lastModified from the how-it-works content docs', async () => {
+    const { entries } = await build();
+    const entry = entries.find((item) => item.url === `${SITE_URL}/how-it-works`);
+    expect(entry).toBeDefined();
+    // Max _updatedAt across the seven section docs + the moveInBonus doc
+    // (2026-07-20 at the time of writing), not the old hardcoded static date.
+    const expected = Math.max(
+      ...HOW_IT_WORKS_SECTIONS.map((doc) => new Date(doc._updatedAt).getTime()),
+      new Date(MOVE_IN_BONUS._updatedAt).getTime(),
+    );
+    expect(new Date(entry!.lastModified as string | Date).getTime()).toBe(expected);
+    // Guards the regression back to the static fallback date.
+    expect(expected).toBeGreaterThan(new Date('2026-06-18T00:00:00.000Z').getTime());
   });
 
   it('includes every post URL and its .md twin', async () => {

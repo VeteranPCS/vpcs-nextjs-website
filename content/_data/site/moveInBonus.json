@@ -3,143 +3,173 @@
     "_id": "2c430069-d62a-4f21-b819-b9145f11a3eb",
     "_type": "moveInBonus",
     "_createdAt": "2024-12-18T11:08:31Z",
-    "_updatedAt": "2025-09-16T14:14:50Z",
+    "_updatedAt": "2026-07-20T00:00:00Z",
     "bonusTable": [
       {
         "_key": "b43eee564838",
         "charityDonation": "$20",
         "moveInBonus": "$200",
-        "priceRange": "$100,000"
+        "priceRange": "Under $100,000"
       },
       {
         "_key": "cadb4fb46fbd",
         "charityDonation": "$40",
-        "moveInBonus": "$400\t",
-        "priceRange": "$100,000 – $199,999\t"
+        "moveInBonus": "$400",
+        "priceRange": "$100,000 – $199,999"
       },
       {
         "_key": "cbf247ace3d5",
         "charityDonation": "$70",
-        "moveInBonus": "$700\t",
-        "priceRange": "$200,000 – $299,999\t"
+        "moveInBonus": "$700",
+        "priceRange": "$200,000 – $299,999"
       },
       {
         "_key": "bfc6802d739f",
         "charityDonation": "$100",
-        "moveInBonus": "$1,000\t",
-        "priceRange": "$300,000 – $399,999\t"
+        "moveInBonus": "$1,000",
+        "priceRange": "$300,000 – $399,999"
       },
       {
         "_key": "dfbc26e90b6c",
         "charityDonation": "$120",
-        "moveInBonus": "$1,200\t",
-        "priceRange": "$400,000 – $499,999\t"
+        "moveInBonus": "$1,200",
+        "priceRange": "$400,000 – $499,999"
       },
       {
         "_key": "0d50add45da9",
         "charityDonation": "$150",
-        "moveInBonus": "$1,500\t",
-        "priceRange": "$500,000 – $649,999\t"
+        "moveInBonus": "$1,500",
+        "priceRange": "$500,000 – $649,999"
       },
       {
         "_key": "6dfa1f3615bf",
         "charityDonation": "$200",
-        "moveInBonus": "$2,000\t",
-        "priceRange": "$650,000 – $799,999\t"
+        "moveInBonus": "$2,000",
+        "priceRange": "$650,000 – $799,999"
       },
       {
         "_key": "a68a2fdb9a88",
         "charityDonation": "$300",
-        "moveInBonus": "$3,000\t",
-        "priceRange": "$800,000 – $999,999\t"
+        "moveInBonus": "$3,000",
+        "priceRange": "$800,000 – $999,999"
       },
       {
         "_key": "7545c5837beb",
         "charityDonation": "$400",
-        "moveInBonus": "$4,000\t",
-        "priceRange": "$1,000,000+\t"
+        "moveInBonus": "$4,000",
+        "priceRange": "$1,000,000+"
       }
     ],
     "description": [
       {
-        "_key": "7648e5351852",
+        "_key": "2c6b3375bbea",
         "_type": "block",
         "children": [
           {
-            "_key": "1e4ef2505fb60",
+            "_key": "712f436eaf16",
             "_type": "span",
             "marks": [],
-            "text": "The VeteranPCS Bonus will be distributed upon closing on a property, when allowed according to the following schedule:"
+            "text": "We distribute the VeteranPCS Bonus when you close on a property, based on the schedule below."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "3b6c104f0707",
+        "_key": "e8ed7bbd3186",
         "_type": "block",
         "children": [
           {
-            "_key": "1c773b5d302f0",
+            "_key": "eafc1e0e08de",
             "_type": "span",
             "marks": [],
-            "text": "The VeteranPCS Bonus is offered in most states, but due to local regulations, it may not be available in your state. In some states, a relocation grant may be available in lieu of the VeteranPCS Bonus. We will notify you if your state is not eligible for the VeteranPCS Bonus so you can apply for a Relocation Grant. We will reach out to you once you begin using the service and notify you if the VeteranPCS Bonus is not available in your state."
+            "text": "The VeteranPCS Bonus is offered in most states. Due to local regulations, it may not be available in your state."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "385b1594377a",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "136a2acbadbf",
+            "_type": "span",
+            "marks": [],
+            "text": "In some states, a relocation grant may be available in place of the bonus."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "f5590b65f341",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "a79aabec1fab",
+            "_type": "span",
+            "marks": [],
+            "text": "We will reach out once you begin using the service. If the bonus is not available in your state, we will let you know so you can apply for a Relocation Grant."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       }
     ],
     "requirements": [
       {
-        "_key": "06bedb11249f",
+        "_key": "4477a0f56759",
         "_type": "block",
         "children": [
           {
-            "_key": "c74b9b360f080",
+            "_key": "4b410be4f1ba",
             "_type": "span",
-            "marks": [
-              "strong"
-            ],
-            "text": "Before obtaining the VeteranPCS Bonus, you will be required to:"
+            "marks": [],
+            "text": "Bonus requirements"
           }
         ],
         "markDefs": [],
-        "style": "h6"
+        "style": "h3"
       },
       {
-        "_key": "fc4c5b965b6b",
+        "_key": "2c99e229ad82",
         "_type": "block",
         "children": [
           {
-            "_key": "648fc536f2400",
+            "_key": "2b97c86a28af",
             "_type": "span",
             "marks": [],
-            "text": "Sign and submit the VeteranPCS Bonus Agreement, in which you will agree to the terms of receiving the VeteranPCS Bonus, including affirming your status as a Service Member, described below."
+            "text": "Sign and submit the VeteranPCS Bonus Agreement."
           }
         ],
+        "markDefs": [],
+        "style": "normal",
         "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
+        "listItem": "bullet"
       },
       {
-        "_key": "94026b4ba6c4",
+        "_key": "74772a943dc8",
         "_type": "block",
         "children": [
           {
-            "_key": "163d6af626430",
+            "_key": "eec43036274c",
             "_type": "span",
             "marks": [],
-            "text": "\n"
+            "text": "Affirm your status as a Service Member in that agreement (see Who Is Eligible for the Bonus)."
           }
         ],
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       }
     ],
     "title": "How the VeteranPCS Bonus Works"

@@ -3,17 +3,17 @@
     "_id": "05606310-8d1a-4c67-ae2f-a9aaad24dc2f",
     "_type": "how_veterence_pcs_works",
     "_createdAt": "2024-12-18T10:33:47Z",
-    "_updatedAt": "2025-09-16T14:09:46Z",
+    "_updatedAt": "2026-07-20T00:00:00Z",
     "component_header": [
       {
-        "_key": "e7082f53185f",
+        "_key": "4395e3cdfeea",
         "_type": "block",
         "children": [
           {
-            "_key": "dc024f538aac0",
+            "_key": "0a4470d0e5a7",
             "_type": "span",
             "marks": [],
-            "text": "Who is Eligible for the VeteranPCS Bonus?"
+            "text": "Who Is Eligible for the Bonus?"
           }
         ],
         "markDefs": [],
@@ -22,81 +22,141 @@
     ],
     "description": [
       {
-        "_key": "88accd569af2",
+        "_key": "941fd7e831aa",
         "_type": "block",
         "children": [
           {
-            "_key": "90491fbff4d70",
+            "_key": "67eb6dfc98a9",
+            "_type": "span",
+            "marks": [],
+            "text": "The VeteranPCS Bonus is for current service members, veterans with an honorable discharge, and their spouses."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "6ef19fa2e510",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "916e9e15f880",
+            "_type": "span",
+            "marks": [],
+            "text": "You are eligible if you are:"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "d33c6b7e0007",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "72930d6735aa",
+            "_type": "span",
+            "marks": [],
+            "text": "Currently serving in the U.S. Armed Forces"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "71154c3fedf4",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "461bb645a23d",
+            "_type": "span",
+            "marks": [],
+            "text": "A veteran who received an Honorable Discharge"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "dc5826ae9c31",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "9cd47317f0e8",
+            "_type": "span",
+            "marks": [],
+            "text": "The spouse of someone who meets either one"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "47254f186c04",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "adbb35d4b61a",
+            "_type": "span",
+            "marks": [],
+            "text": "Not a Service Member?"
+          }
+        ],
+        "markDefs": [],
+        "style": "h3"
+      },
+      {
+        "_key": "3cf8c63c637e",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "bd84129b5d56",
+            "_type": "span",
+            "marks": [],
+            "text": "You can still use the VeteranPCS service. Instead of receiving the bonus, the amount that would have gone to you is donated to a veteran-focused charity."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "1322af0a6009",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "c45305c29f63",
+            "_type": "span",
+            "marks": [],
+            "text": "There are penalties for falsely claiming you are a Service Member. Full details are in the "
+          },
+          {
+            "_key": "173b8d49c972",
             "_type": "span",
             "marks": [
-              "strong"
+              "c7dcf6f8806e"
             ],
-            "text": "Service Member"
-          }
-        ],
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "c66a2b885fa0",
-        "_type": "block",
-        "children": [
+            "text": "Terms of Use"
+          },
           {
-            "_key": "341c4ba18df10",
+            "_key": "4b15cf5b237a",
             "_type": "span",
             "marks": [],
-            "text": "A Service Member eligible to receive the VeteranPCS Bonus means that you are either (a) currently serving in the U.S. Armed Forces, (b) have served in the past and obtained an Honorable Discharge, or (c) are a spouse of someone meeting the criteria of (a) or (b) (there are penalties for falsely affirming you are a Service Member when you do not meet these criteria; see Section 1.1 of the Platform Terms of Use for more information),"
+            "text": "."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "ed711b32f39d",
-        "_type": "block",
-        "children": [
+        "markDefs": [
           {
-            "_key": "4008e52a8f0b0",
-            "_type": "span",
-            "marks": [
-              "strong"
-            ],
-            "text": "Non-Service Member"
+            "_key": "c7dcf6f8806e",
+            "_type": "link",
+            "href": "/terms-of-use"
           }
         ],
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "64758ec025db",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "86c2a12848960",
-            "_type": "span",
-            "marks": [],
-            "text": "If you do not meet the criteria above, you may still use the VeteranPCS service, but instead of receiving the VeteranPCS Bonus, you will agree that what would be distributed to you as a VeteranPCS Bonus, if you were a Service Member, will instead be donated to a Veteran-focused charity."
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "17d1c054b50b",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "b919f28f27280",
-            "_type": "span",
-            "marks": [],
-            "text": "\n"
-          }
-        ],
-        "markDefs": [],
         "style": "normal"
       }
     ],
@@ -109,17 +169,17 @@
     "_id": "117273c4-d4b5-44ef-954e-81b73dc6dbfe",
     "_type": "how_veterence_pcs_works",
     "_createdAt": "2024-12-18T10:37:32Z",
-    "_updatedAt": "2025-09-16T14:12:16Z",
+    "_updatedAt": "2026-07-20T00:00:00Z",
     "component_header": [
       {
-        "_key": "1e79f27531ba",
+        "_key": "bae76b4387e1",
         "_type": "block",
         "children": [
           {
-            "_key": "f6b5fca70b560",
+            "_key": "e9e575bf08d1",
             "_type": "span",
             "marks": [],
-            "text": "What makes us different?"
+            "text": "What Makes Us Different"
           }
         ],
         "markDefs": [],
@@ -128,128 +188,184 @@
     ],
     "description": [
       {
-        "_key": "12b05bbdb5a9",
+        "_key": "f1267cd19389",
         "_type": "block",
         "children": [
           {
-            "_key": "0e63736f47d20",
+            "_key": "905b024eba17",
             "_type": "span",
             "marks": [],
-            "text": "VeteranPCS was designed to add value in three ways: first we help connect military families to agents who have personally PCSd. Second, we help agents who are either veterans or military spouses by helping them receive more clients. Third, we give back to veteran-focused charities."
+            "text": "VeteranPCS was designed to add value in three ways:"
           }
         ],
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "978d0944c655",
+        "_key": "86d509f4448b",
         "_type": "block",
         "children": [
           {
-            "_key": "24324f031d750",
+            "_key": "3814ea8e242f",
             "_type": "span",
-            "marks": [
-              "strong"
-            ],
+            "marks": [],
+            "text": "We connect military families with agents who have personally PCSd."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "011c8e2decb4",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "3115b3754257",
+            "_type": "span",
+            "marks": [],
+            "text": "We help agents who are veterans or military spouses earn more clients."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "a85ce2d00dae",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "c9eeb04a3f9c",
+            "_type": "span",
+            "marks": [],
+            "text": "We give back to veteran-focused charities."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "ddaec6d9a47f",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "3f9d93673551",
+            "_type": "span",
+            "marks": [],
             "text": "Reviews"
           }
         ],
         "markDefs": [],
-        "style": "normal"
+        "style": "h3"
       },
       {
-        "_key": "7f3aaafe5e76",
+        "_key": "61dd4b26115b",
         "_type": "block",
         "children": [
           {
-            "_key": "aefc9151c0ce0",
+            "_key": "41b2329c2971",
             "_type": "span",
             "marks": [],
-            "text": "You will not see reviews listed for agents on this site. Each agent has been interviewed and selected and we have verified their reviews. You do not need to spend time sifting through reviews to find a great agent."
+            "text": "You will not see reviews listed for agents on this site."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "3bee039682cb",
+        "_key": "92c79b73de14",
         "_type": "block",
         "children": [
           {
-            "_key": "ada10e24938b0",
+            "_key": "f97a90dc45ce",
             "_type": "span",
             "marks": [],
-            "text": "Each agent here has been referred by a military client that bought or sold a house through them."
+            "text": "We interview and select every agent, and we verify their reviews. You do not need to sift through reviews to find a great agent."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       },
       {
-        "_key": "46ebb1dc31bb",
+        "_key": "6593c9c4316b",
         "_type": "block",
         "children": [
           {
-            "_key": "d3625c2ee6c40",
+            "_key": "4ac7a8c4c9bd",
             "_type": "span",
             "marks": [],
-            "text": "Review-based sites can make it very difficult for a veteran or military spouse to start a business. They have high fees, are hard to get noticed on, and do not distinguish between agents who have real experience with PCSing."
+            "text": "Every agent here was referred by a military client who bought or sold a house with them."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       },
       {
-        "_key": "7f1e682d8f9a",
+        "_key": "a3e901a140b3",
         "_type": "block",
         "children": [
           {
-            "_key": "d02f50731bed0",
+            "_key": "dadc29e85c8f",
             "_type": "span",
             "marks": [],
-            "text": "If you wish to see an agents reviews you will be able to get access to their personal website links once getting in contact with them through the site"
+            "text": "Review-based sites can make it hard for a veteran or military spouse to start a business. They charge high fees, make it hard to get noticed, and do not show which agents have real PCS experience."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       },
       {
-        "_key": "3871a6883707",
+        "_key": "ab067f610ae5",
         "_type": "block",
         "children": [
           {
-            "_key": "f53e5e6c533a0",
+            "_key": "4cf2b72d5b0a",
             "_type": "span",
-            "marks": [
-              "strong"
-            ],
+            "marks": [],
+            "text": "If you want to see an agent’s reviews, you can get links to their personal websites once you contact them through the site."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "e0145629af61",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "c088ae312c43",
+            "_type": "span",
+            "marks": [],
             "text": "Charities"
           }
         ],
         "markDefs": [],
-        "style": "normal"
+        "style": "h3"
       },
       {
-        "_key": "5a992b21ffd0",
+        "_key": "39c65f86246f",
         "_type": "block",
         "children": [
           {
-            "_key": "dace1d69defc0",
+            "_key": "49793cfb81d7",
             "_type": "span",
             "marks": [],
-            "text": "VeteranPCS is proud to support many different veteran-focused charities and organizations. We donate an additional 10% of your VeteranPCS Bonus amount to a military-focused charity, for full details on amounts see the table above."
+            "text": "VeteranPCS is proud to support many veteran-focused charities and organizations. We donate an additional 10% of your VeteranPCS Bonus amount to a military-focused charity. See the bonus table above for amounts."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
         "style": "normal"
       }
@@ -263,17 +379,17 @@
     "_id": "214430af-b230-46fa-99e2-0b4f50077952",
     "_type": "how_veterence_pcs_works",
     "_createdAt": "2024-12-18T10:36:25Z",
-    "_updatedAt": "2024-12-18T10:37:19Z",
+    "_updatedAt": "2026-07-20T00:00:00Z",
     "component_header": [
       {
-        "_key": "1fdee04d5b3e",
+        "_key": "5a36c67ad50a",
         "_type": "block",
         "children": [
           {
-            "_key": "ef47dc50cf640",
+            "_key": "b22954e8ebc2",
             "_type": "span",
             "marks": [],
-            "text": "How it works for Mortgage Loan Officers"
+            "text": "How It Works for Mortgage Loan Officers"
           }
         ],
         "markDefs": [],
@@ -282,146 +398,264 @@
     ],
     "description": [
       {
-        "_key": "38aecfb66aa7",
+        "_key": "35774511cc05",
         "_type": "block",
         "children": [
           {
-            "_key": "a97b089e0d480",
+            "_key": "7b64c4b92511",
             "_type": "span",
             "marks": [
               "em"
             ],
-            "text": "The following is intended to provide a general overview of how our site works with mortgage loan officers, or VA Loan Experts. For full information and understanding of the terms and conditions you must refer to our Marketing Services Agreement."
+            "text": "This is a general overview of how our site works with mortgage loan officers, or VA Loan Experts. For full terms and conditions, refer to our Marketing Services Agreement."
           }
         ],
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "44bbbccb1b1b",
+        "_key": "b87c19a53207",
         "_type": "block",
         "children": [
           {
-            "_key": "e996f1cd75670",
+            "_key": "f211d36f8ed9",
             "_type": "span",
-            "marks": [
-              "strong"
-            ],
+            "marks": [],
             "text": "Who qualifies to be a VA Loan Expert?"
           }
         ],
         "markDefs": [],
-        "style": "normal"
+        "style": "h3"
       },
       {
-        "_key": "6abf2088cd65",
+        "_key": "3c5c338faac9",
         "_type": "block",
         "children": [
           {
-            "_key": "13e222c56a2d0",
+            "_key": "a39227e83784",
             "_type": "span",
             "marks": [],
-            "text": "To be considered as a VA Loan Expert featured on VeteranPCS you must be either (a) currently serving in the U.S. Armed Forces, (b) have served in the past and obtained an Honorable Discharge, or (c) are a spouse of someone meeting the criteria of (a) or (b)"
+            "text": "To be featured as a VA Loan Expert on VeteranPCS, you must be one of the following:"
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "83d6643a3a15",
+        "_key": "b92d82c36ab9",
         "_type": "block",
         "children": [
           {
-            "_key": "20408ee904b10",
+            "_key": "deeab8a46213",
             "_type": "span",
             "marks": [],
-            "text": "You must be a licensed Mortgage Loan Officer in good standing.\nYou must not charge the 1% loan origination fee."
+            "text": "Currently serving in the U.S. Armed Forces"
           }
         ],
+        "markDefs": [],
+        "style": "normal",
         "level": 1,
-        "listItem": "bullet",
+        "listItem": "bullet"
+      },
+      {
+        "_key": "03843116b084",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "53bc656eb0d0",
+            "_type": "span",
+            "marks": [],
+            "text": "A veteran who received an Honorable Discharge"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "3149d717652b",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "6ba2f3e17091",
+            "_type": "span",
+            "marks": [],
+            "text": "The spouse of someone who meets either one"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "c1ce463a1677",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "313c4eaec351",
+            "_type": "span",
+            "marks": [],
+            "text": "You must also meet these requirements:"
+          }
+        ],
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "1b4d77806da6",
+        "_key": "504d7e3ed159",
         "_type": "block",
         "children": [
           {
-            "_key": "e8499b7ce7bb0",
+            "_key": "08c3365ff067",
             "_type": "span",
             "marks": [],
-            "text": "Additional requirements to be considered as a VA Loan Expert can be found in the Marketing Services Agreement. Please contact us if you are interested in becoming a VA Loan Expert with VeteranPCS. If you do not meet the exact criteria listed above but believe you should be considered as a VA Loan Expert, please contact us to discuss your criteria."
+            "text": "You must be a licensed Mortgage Loan Officer in good standing."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       },
       {
-        "_key": "32da51d5e689",
+        "_key": "57755ca15085",
         "_type": "block",
         "children": [
           {
-            "_key": "533a2816ece30",
+            "_key": "cb26c2e9638a",
+            "_type": "span",
+            "marks": [],
+            "text": "You must not charge the 1% loan origination fee."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "f91bf8be2063",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "39c4f46ac7bf",
+            "_type": "span",
+            "marks": [],
+            "text": "Additional requirements are listed in the Marketing Services Agreement. If you are interested in becoming a VA Loan Expert, or if you do not meet the exact criteria above but believe you should be considered, please "
+          },
+          {
+            "_key": "97a488180542",
             "_type": "span",
             "marks": [
-              "strong"
+              "92ebe749c3bd"
             ],
-            "text": "What does is cost?"
-          }
-        ],
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "3669370487c8",
-        "_type": "block",
-        "children": [
+            "text": "contact us"
+          },
           {
-            "_key": "1a815589193d0",
+            "_key": "379573b3d5c6",
             "_type": "span",
             "marks": [],
-            "text": "VeteranPCS has annual marketing fee for licensed mortgage lenders to be featured on the website. The fee is based on demand in each state and renewed each calendar year. Please use our Get Listed button on the Contact Us page to start the process and schedule a phone call interview."
+            "text": " to discuss."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
+        "markDefs": [
+          {
+            "_key": "92ebe749c3bd",
+            "_type": "link",
+            "href": "/contact"
+          }
+        ],
+        "style": "normal"
+      },
+      {
+        "_key": "0234240f46c4",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "68aa1d8f9fee",
+            "_type": "span",
+            "marks": [],
+            "text": "What does it cost?"
+          }
+        ],
+        "markDefs": [],
+        "style": "h3"
+      },
+      {
+        "_key": "a304c7844967",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "6c138d02d95e",
+            "_type": "span",
+            "marks": [],
+            "text": "VeteranPCS has an annual marketing fee for licensed mortgage lenders to be featured on the website. The fee is based on demand in each state and renews each calendar year."
+          }
+        ],
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "d1c4ec61f182",
+        "_key": "9f14763f9345",
         "_type": "block",
         "children": [
           {
-            "_key": "623678e99df80",
+            "_key": "a720a68dae60",
+            "_type": "span",
+            "marks": [],
+            "text": "Use the Get Listed button on the "
+          },
+          {
+            "_key": "8d467d8724f4",
             "_type": "span",
             "marks": [
-              "strong"
+              "33c910cbbd89"
             ],
-            "text": "Are you a Lending company or Bank?"
+            "text": "Contact Us page"
+          },
+          {
+            "_key": "a739132c81b3",
+            "_type": "span",
+            "marks": [],
+            "text": " to start the process and schedule a phone interview."
           }
         ],
-        "markDefs": [],
+        "markDefs": [
+          {
+            "_key": "33c910cbbd89",
+            "_type": "link",
+            "href": "/contact"
+          }
+        ],
         "style": "normal"
       },
       {
-        "_key": "28384cb37d52",
+        "_key": "5daecf4edafe",
         "_type": "block",
         "children": [
           {
-            "_key": "b6fa484455710",
+            "_key": "853cc38aa901",
             "_type": "span",
             "marks": [],
-            "text": "No we are not a mortgage broker, lending company, or bank. We feature veterans and military spouses who are licensed mortgage loan officers from a variety of different companies across the nation."
+            "text": "Are you a lending company or bank?"
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
+        "markDefs": [],
+        "style": "h3"
+      },
+      {
+        "_key": "8038038134ca",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "c20927383acf",
+            "_type": "span",
+            "marks": [],
+            "text": "No, we are not a mortgage broker, lending company, or bank. We feature veterans and military spouses who are licensed mortgage loan officers from many different companies across the nation."
+          }
+        ],
         "markDefs": [],
         "style": "normal"
       }
@@ -435,17 +669,17 @@
     "_id": "4762721d-0adf-43f8-b574-60f1d9ea5cb2",
     "_type": "how_veterence_pcs_works",
     "_createdAt": "2024-12-18T10:35:15Z",
-    "_updatedAt": "2025-07-14T23:24:27Z",
+    "_updatedAt": "2026-07-20T00:00:00Z",
     "component_header": [
       {
-        "_key": "bbe1fbad4a29",
+        "_key": "ef13bf6c6875",
         "_type": "block",
         "children": [
           {
-            "_key": "ceb7ca403a720",
+            "_key": "c6c9244e1a45",
             "_type": "span",
             "marks": [],
-            "text": "How it Works for Agents"
+            "text": "How It Works for Agents"
           }
         ],
         "markDefs": [],
@@ -454,83 +688,125 @@
     ],
     "description": [
       {
-        "_key": "6d2fc8ec3f60",
+        "_key": "3779d1b350e5",
         "_type": "block",
         "children": [
           {
-            "_key": "e3da1eda817d0",
+            "_key": "05654014c545",
             "_type": "span",
             "marks": [
               "em"
             ],
-            "text": "The following is intended to provide a general overview of how our site works with agents. For full information and understanding of the terms and conditions you must refer to our Referral Partner Agreement."
+            "text": "This is a general overview of how our site works with agents. For full terms and conditions, refer to our Referral Partner Agreement."
           }
         ],
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "62574aa1602d",
+        "_key": "5bbc4206d07d",
         "_type": "block",
         "children": [
           {
-            "_key": "6e659fd9ea860",
+            "_key": "c42418f79d74",
             "_type": "span",
-            "marks": [
-              "strong"
-            ],
+            "marks": [],
             "text": "Who qualifies to be a Referral Partner?"
           }
         ],
         "markDefs": [],
-        "style": "normal"
+        "style": "h3"
       },
       {
-        "_key": "8648383d11b8",
+        "_key": "90cb5c59a3d1",
         "_type": "block",
         "children": [
           {
-            "_key": "9cdecf40074b0",
+            "_key": "e0c99c16b0ae",
             "_type": "span",
             "marks": [],
-            "text": "To be considered to be a Referral Partner with VeteranPCS you must be either (a) currently serving in the U.S. Armed Forces, (b) have served in the past and obtained an Honorable Discharge, or (c) are a spouse of someone meeting the criteria of (a) or (b) while they served."
+            "text": "To be a Referral Partner with VeteranPCS, you must be one of the following:"
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "a1863286dca4",
+        "_key": "b8d6fc6420d6",
         "_type": "block",
         "children": [
           {
-            "_key": "d4a11d71c2030",
+            "_key": "854837d59f6e",
             "_type": "span",
             "marks": [],
-            "text": "Additional requirements to be considered as a Referral Partner can be found in the Referral Partner Agreement. "
+            "text": "Currently serving in the U.S. Armed Forces"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "3929ca7cd952",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "158ccee7a807",
+            "_type": "span",
+            "marks": [],
+            "text": "A veteran who received an Honorable Discharge"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "b659749c04b2",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "856f90bdbb26",
+            "_type": "span",
+            "marks": [],
+            "text": "The spouse of someone who met either one while they served"
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "67230047bc94",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "551b2bc43291",
+            "_type": "span",
+            "marks": [],
+            "text": "Additional requirements are listed in the Referral Partner Agreement. Please "
           },
           {
-            "_key": "409eb05d4e58",
+            "_key": "0155e34a3783",
             "_type": "span",
             "marks": [
-              "b3420899e8b2"
+              "a742d3736d11"
             ],
-            "text": "Please fill out the agent form"
+            "text": "fill out the agent form"
           },
           {
-            "_key": "c54d5996d88c",
+            "_key": "9f4fb2d7474c",
             "_type": "span",
             "marks": [],
             "text": " if you are interested in becoming a Referral Partner."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [
           {
-            "_key": "b3420899e8b2",
+            "_key": "a742d3736d11",
             "_type": "link",
             "href": "https://www.veteranpcs.com/get-listed-agents"
           }
@@ -538,130 +814,142 @@
         "style": "normal"
       },
       {
-        "_key": "7e9f6154a3d5",
+        "_key": "e869c402fd9a",
         "_type": "block",
         "children": [
           {
-            "_key": "44a09f356c700",
+            "_key": "5022aaa4d688",
             "_type": "span",
             "marks": [],
-            "text": "If you do not meet the exact criteria listed above but believe you should be considered as a Referral Partner, please contact us to discuss your criteria."
+            "text": "If you do not meet the exact criteria above but believe you should be considered, please "
+          },
+          {
+            "_key": "8668e5875958",
+            "_type": "span",
+            "marks": [
+              "0420686c40a6"
+            ],
+            "text": "contact us"
+          },
+          {
+            "_key": "353632e84426",
+            "_type": "span",
+            "marks": [],
+            "text": " to discuss."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
+        "markDefs": [
+          {
+            "_key": "0420686c40a6",
+            "_type": "link",
+            "href": "/contact"
+          }
+        ],
         "style": "normal"
       },
       {
-        "_key": "d750873a7450",
+        "_key": "edaece56c6ce",
         "_type": "block",
         "children": [
           {
-            "_key": "ed60766114d40",
+            "_key": "f0ae0ea3eccd",
             "_type": "span",
-            "marks": [
-              "strong"
-            ],
+            "marks": [],
             "text": "What does it cost?"
           }
         ],
         "markDefs": [],
-        "style": "normal"
+        "style": "h3"
       },
       {
-        "_key": "740c6d5409d0",
+        "_key": "55d0106f5545",
         "_type": "block",
         "children": [
           {
-            "_key": "885e6ae553fd0",
+            "_key": "0d155f2770bc",
             "_type": "span",
             "marks": [],
             "text": "VeteranPCS has no annual fees, no monthly fees, no fees for calls, and no hidden fees."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       },
       {
-        "_key": "afc838fe3e12",
+        "_key": "f97ea9f98bad",
         "_type": "block",
         "children": [
           {
-            "_key": "d55058cb5f750",
+            "_key": "2a48e343c864",
             "_type": "span",
             "marks": [],
-            "text": "We operate based on a simple 30% referral of the gross commission to VeteranPCS for any customer that closes on the sale or purchase of a home that uses VeteranPCS to contact you."
+            "text": "We operate on a simple 30% referral fee of the gross commission for any customer who contacts you through VeteranPCS and closes on the sale or purchase of a home."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       },
       {
-        "_key": "620307ac53ba",
+        "_key": "277365408ff0",
         "_type": "block",
         "children": [
           {
-            "_key": "120cfffce2a5",
+            "_key": "3149e9cebeb3",
             "_type": "span",
             "marks": [],
-            "text": "VeteranPCS then distributes part of that 30% referral fee back to the Service Member at or after closing, if allowed by your state. If a client does not meet the criteria of Service Member, defined above, then VeteranPCS distributes that would-be bonus to a veteran/military focused charity instead."
+            "text": "VeteranPCS distributes part of that 30% referral fee back to the Service Member at or after closing, when your state allows it. If a client is not a Service Member, we donate that would-be bonus to a veteran and military focused charity instead."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       },
       {
-        "_key": "f7230002f553",
+        "_key": "e70cb070ba96",
         "_type": "block",
         "children": [
           {
-            "_key": "9b5ea0dacc8a",
+            "_key": "4f646e5d7d69",
             "_type": "span",
             "marks": [],
-            "text": "In states that do not allow giving money back at or after closing, VeteranPCS collects a standard 30% referral fee. In these states we will consider the Client, if a Service Member, for a Relocation Grant program instead."
+            "text": "In states that do not allow giving money back at or after closing, VeteranPCS collects the standard 30% referral fee. In those states, we will consider the client, if a Service Member, for a Relocation Grant instead."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       },
       {
-        "_key": "098d645f58ee",
+        "_key": "6ed554c9a3a9",
         "_type": "block",
         "children": [
           {
-            "_key": "67014c58a5a00",
+            "_key": "3e72de1a96a4",
             "_type": "span",
-            "marks": [
-              "strong"
-            ],
+            "marks": [],
             "text": "Are you a Brokerage?"
           }
         ],
         "markDefs": [],
-        "style": "normal"
+        "style": "h3"
       },
       {
-        "_key": "4a8bb6590145",
+        "_key": "ccd39d3badf1",
         "_type": "block",
         "children": [
           {
-            "_key": "a77ae2b2d9fe0",
+            "_key": "a213c46ced16",
             "_type": "span",
             "marks": [],
             "text": "VeteranPCS is a registered trade name for Solid Oak Realty, Inc., a Colorado corporation and real estate brokerage. Referral Partners are not employed by VeteranPCS. VeteranPCS features licensed real estate agents from many different brokerages."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
         "style": "normal"
       }
@@ -675,7 +963,7 @@
     "_id": "4f9600b4-0e71-492e-a8ce-2b7036b7d844",
     "_type": "how_veterence_pcs_works",
     "_createdAt": "2024-12-18T09:24:06Z",
-    "_updatedAt": "2025-09-16T14:12:47Z",
+    "_updatedAt": "2026-07-20T00:00:00Z",
     "component_header": [
       {
         "_key": "74c06eeb1b8e",
@@ -696,274 +984,426 @@
     ],
     "description": [
       {
-        "_key": "3e4479a15fcc",
+        "_key": "59c8fc14fb93",
         "_type": "block",
         "children": [
           {
-            "_key": "cb11f2008b880",
+            "_key": "7ff67242d8a2",
+            "_type": "span",
+            "marks": [],
+            "text": "The VeteranPCS service is "
+          },
+          {
+            "_key": "d7b201c03fb5",
             "_type": "span",
             "marks": [
               "strong"
             ],
+            "text": "free to use"
+          },
+          {
+            "_key": "3776475f21d3",
+            "_type": "span",
+            "marks": [],
+            "text": "."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "53a56691d06c",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "9e4cc7abba43",
+            "_type": "span",
+            "marks": [],
+            "text": "Your agent pays VeteranPCS a "
+          },
+          {
+            "_key": "db7393857a92",
+            "_type": "span",
+            "marks": [
+              "strong"
+            ],
+            "text": "30% referral fee"
+          },
+          {
+            "_key": "99ac09d4871a",
+            "_type": "span",
+            "marks": [],
+            "text": " at closing."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "cfec18b67a93",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "44f2c3aed58c",
+            "_type": "span",
+            "marks": [],
+            "text": "You receive a "
+          },
+          {
+            "_key": "8dab3252a5d4",
+            "_type": "span",
+            "marks": [
+              "strong"
+            ],
+            "text": "Move-In or Military Bonus"
+          },
+          {
+            "_key": "015cc1f258b6",
+            "_type": "span",
+            "marks": [],
+            "text": " of $200 to $4,000 when your state allows it."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "34997dcc3f3d",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "d61148d53d58",
+            "_type": "span",
+            "marks": [],
+            "text": "10% of your bonus amount also goes to "
+          },
+          {
+            "_key": "093e558215ec",
+            "_type": "span",
+            "marks": [
+              "strong"
+            ],
+            "text": "military charities"
+          },
+          {
+            "_key": "735ef7a95f64",
+            "_type": "span",
+            "marks": [],
+            "text": "."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
+      },
+      {
+        "_key": "76e016603d23",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "4f998846f3c0",
+            "_type": "span",
+            "marks": [],
             "text": "What does it cost?"
           }
         ],
         "markDefs": [],
-        "style": "normal"
+        "style": "h3"
       },
       {
-        "_key": "8943fc8c4486",
+        "_key": "df93486611b3",
         "_type": "block",
         "children": [
           {
-            "_key": "9a75d7df3c540",
+            "_key": "78f7f711ecea",
             "_type": "span",
             "marks": [],
-            "text": "The VeteranPCS service is free to use. VeteranPCS takes a percentage of any commission an Agent earns for purchases or sales consummated through VeteranPCS as a referral fee."
+            "text": "The VeteranPCS service is free to use. Your agent pays VeteranPCS a referral fee. The fee comes out of the commission they earn when you buy or sell a home through the site."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "13c5f05ee973",
+        "_key": "d20938f60a56",
         "_type": "block",
         "children": [
           {
-            "_key": "98c94f493f7b0",
+            "_key": "b960a7f305be",
             "_type": "span",
             "marks": [],
-            "text": "The Referral Partners also distribute the VeteranPCS Bonus to the Service Member after closing, when allowed, for using the site, explained below."
+            "text": "VeteranPCS then shares part of that referral fee with you as your VeteranPCS Bonus at or after closing."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "a9a28b70e36f",
+        "_key": "9a18f35dfd11",
         "_type": "block",
         "children": [
           {
-            "_key": "9922fa47384d0",
+            "_key": "05c4536f638f",
+            "_type": "span",
+            "marks": [],
+            "text": "Connecting with an agent"
+          }
+        ],
+        "markDefs": [],
+        "style": "h3"
+      },
+      {
+        "_key": "6fcf62d91e84",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "1e3bca14884d",
+            "_type": "span",
+            "marks": [],
+            "text": "You can "
+          },
+          {
+            "_key": "b9f39f0fecab",
+            "_type": "span",
+            "marks": [
+              "12036badc983"
+            ],
+            "text": "browse agents by state"
+          },
+          {
+            "_key": "f2f9958de738",
+            "_type": "span",
+            "marks": [],
+            "text": " and contact them through the website. Click the “Get in Contact” button and fill out a short form to connect with that agent."
+          }
+        ],
+        "markDefs": [
+          {
+            "_key": "12036badc983",
+            "_type": "link",
+            "href": "#agent-map"
+          }
+        ],
+        "style": "normal"
+      },
+      {
+        "_key": "9ec83ce7b8bd",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "9e9166de8f31",
+            "_type": "span",
+            "marks": [],
+            "text": "Your information is "
+          },
+          {
+            "_key": "932ff06dc7e3",
             "_type": "span",
             "marks": [
               "strong"
             ],
-            "text": "Connecting with an Agent"
-          }
-        ],
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "9bccec6ca0da",
-        "_type": "block",
-        "children": [
+            "text": "never shared or sold"
+          },
           {
-            "_key": "9ad055f353360",
+            "_key": "aa156b004da4",
             "_type": "span",
             "marks": [],
-            "text": "You may browse agents according to geographic area and contact them through the website. You simply click the “Get in Contact” button and fill out a form to connect with that agent."
+            "text": ". The only purpose of the form is to connect you with that agent."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       },
       {
-        "_key": "e39971d28d4c",
+        "_key": "253df0b77737",
         "_type": "block",
         "children": [
           {
-            "_key": "4044cd2862c80",
+            "_key": "64082d65313d",
             "_type": "span",
             "marks": [],
-            "text": "Your information will not be shared or sold, the sole intention of the form is to connect you with that agent."
+            "text": "When you submit the form, you receive an auto-email with that agent’s contact information. The agent receives an email with your information. You can start talking right away."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       },
       {
-        "_key": "69672836caa0",
+        "_key": "c74334ad4d20",
         "_type": "block",
         "children": [
           {
-            "_key": "5a8a19c37c230",
+            "_key": "8a1d25fe8ede",
             "_type": "span",
             "marks": [],
-            "text": "If you decide to enter into an agency agreement with them, that contract happens outside of the website and VeteranPCS is not a party to that contract."
+            "text": "If you sign an agency agreement with an agent, that contract happens outside the website. VeteranPCS is not a party to it."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
-        "style": "normal"
+        "style": "normal",
+        "level": 1,
+        "listItem": "bullet"
       },
       {
-        "_key": "1a1a25c73936",
+        "_key": "4be4d02b1ebb",
         "_type": "block",
         "children": [
           {
-            "_key": "11128574447d0",
+            "_key": "86be0cd9062c",
             "_type": "span",
             "marks": [],
-            "text": "When you submit your information, you will receive an auto-email with that agent’s contact information, and the agent will receive an email with your information, so you can start communicating right away."
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "3fda2a212b8d",
-        "_type": "block",
-        "children": [
+            "text": "You "
+          },
           {
-            "_key": "0669f6b3fb850",
-            "_type": "span",
-            "marks": [],
-            "text": "You must agree to receive periodic communications from us in order to use our services and receive the VeteranPCS Bonus. We must keep track of key dates to ensure you receive your VeteranPCS Bonus, when allowed."
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "23aa7ee25cde",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "68527cd874cd0",
+            "_key": "8b056db7002b",
             "_type": "span",
             "marks": [
               "strong"
             ],
-            "text": "Interview Agents"
+            "text": "must agree to receive periodic communications"
+          },
+          {
+            "_key": "c246310f1e55",
+            "_type": "span",
+            "marks": [],
+            "text": " from us to use the service and receive the VeteranPCS Bonus. We track key dates to make sure you receive your bonus."
           }
         ],
         "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "85f3a8a8f2f7",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "b62f9e6371c70",
-            "_type": "span",
-            "marks": [],
-            "text": "Fill out multiple forms to get in contact with agents. Interview them yourself and see which one is the best match for you."
-          }
-        ],
+        "style": "normal",
         "level": 1,
-        "listItem": "bullet",
+        "listItem": "bullet"
+      },
+      {
+        "_key": "7aa332f8c45f",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "90ce17a48de6",
+            "_type": "span",
+            "marks": [],
+            "text": "Interviewing agents"
+          }
+        ],
+        "markDefs": [],
+        "style": "h3"
+      },
+      {
+        "_key": "57f21633b677",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "280b7ab31dc8",
+            "_type": "span",
+            "marks": [],
+            "text": "Fill out forms for as many agents as you like. Interview them yourself and pick the one who fits you best."
+          }
+        ],
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "ade824e1c9fb",
+        "_key": "c44f78880166",
         "_type": "block",
         "children": [
           {
-            "_key": "404953fd5c6d0",
+            "_key": "8f99d081d758",
             "_type": "span",
             "marks": [],
-            "text": "If you are an agent, you are not entitled to every lead that you receive from the website. The decision on which agent to choose rests on the client, and VeteranPCS will communicate their decision to each agent to ensure clear communication."
+            "text": "Agents are not entitled to every lead from the website. You choose your agent. VeteranPCS tells each agent your decision so communication stays clear."
           }
         ],
+        "markDefs": [],
+        "style": "normal",
         "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
+        "listItem": "bullet"
       },
       {
-        "_key": "6c032f51837f",
+        "_key": "fd7bd6c82420",
         "_type": "block",
         "children": [
           {
-            "_key": "aa77d8b5a2e00",
+            "_key": "69eff3b9dc89",
             "_type": "span",
             "marks": [],
-            "text": "If a valid agency agreement has been signed between an agent and a client, VeteranPCS is not a party to that contract and will not attempt to break that contract."
+            "text": "Already signed a valid agency agreement with another agent? VeteranPCS is not a party to that contract and will not attempt to break it."
           }
         ],
+        "markDefs": [],
+        "style": "normal",
         "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
+        "listItem": "bullet"
       },
       {
-        "_key": "475a19d0b032",
+        "_key": "48da442be2b7",
         "_type": "block",
         "children": [
           {
-            "_key": "2155d59630530",
-            "_type": "span",
-            "marks": [
-              "strong"
-            ],
-            "text": "Follow Up"
-          }
-        ],
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "e59869efe273",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "33882c9edba40",
+            "_key": "25e216ce1f3e",
             "_type": "span",
             "marks": [],
-            "text": "We will keep in contact with both you and your agent throughout the process to ensure you are receiving the quality of service we expect from all agents using VeteranPCS."
+            "text": "Follow up"
           }
         ],
+        "markDefs": [],
+        "style": "h3"
+      },
+      {
+        "_key": "1813b952ffb9",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "02b6494254c7",
+            "_type": "span",
+            "marks": [],
+            "text": "We keep in contact with you and your agent through the whole process. We want to be sure you receive the quality of service we expect from every agent on VeteranPCS."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "a91363d226fe",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "ead8f7009fe3",
+            "_type": "span",
+            "marks": [],
+            "text": "If you are ever dissatisfied with the level of service, let us know. We will investigate and may suspend that agent’s use of our services."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal",
         "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
+        "listItem": "bullet"
       },
       {
-        "_key": "2cafcc6dc902",
+        "_key": "d4ff694b0aeb",
         "_type": "block",
         "children": [
           {
-            "_key": "4d11abb2bdb60",
+            "_key": "85e86b965586",
             "_type": "span",
             "marks": [],
-            "text": "If you are ever dissatisfied with the level of service you are receiving, we encourage you to let us know. We will investigate, and may suspend that agent’s use of our services."
+            "text": "When you close on your home, your agent pays VeteranPCS a 30% referral fee from their total commission. VeteranPCS then sends your VeteranPCS Bonus to you if your state allows it (see How the VeteranPCS Bonus Works)."
           }
         ],
+        "markDefs": [],
+        "style": "normal",
         "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "01ee3f6e37e4",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "9abc3e6db0da0",
-            "_type": "span",
-            "marks": [],
-            "text": "When you close on a property, your agent will pay us a 15% referral fee from their total commission, and will distribute the VeteranPCS Bonus to you, when allowed (described below)."
-          }
-        ],
-        "markDefs": [],
-        "style": "normal"
+        "listItem": "bullet"
       }
     ],
     "header_slug": {
@@ -975,7 +1415,7 @@
     "_id": "845ffc52-f46f-4aad-8c7e-b1b3571c698f",
     "_type": "how_veterence_pcs_works",
     "_createdAt": "2024-12-18T09:23:14Z",
-    "_updatedAt": "2026-06-16T18:23:43Z",
+    "_updatedAt": "2026-07-20T00:00:00Z",
     "component_header": [
       {
         "_key": "88865c5328b2",
@@ -1065,7 +1505,7 @@
             "_key": "a85b2bfa1526",
             "_type": "span",
             "marks": [],
-            "text": "After closing receive a military bonus of $200-$4000 when working with an agent from VeteranPCS"
+            "text": "After closing receive a military bonus of $200-$4,000 when working with an agent from VeteranPCS"
           }
         ],
         "level": 1,
@@ -1083,17 +1523,17 @@
     "_id": "ef0bd7c2-bfce-4444-b577-ea8782774d44",
     "_type": "how_veterence_pcs_works",
     "_createdAt": "2024-12-18T10:38:15Z",
-    "_updatedAt": "2024-12-18T10:38:34Z",
+    "_updatedAt": "2026-07-20T00:00:00Z",
     "component_header": [
       {
-        "_key": "57a73cbd764a",
+        "_key": "9a86f2920c55",
         "_type": "block",
         "children": [
           {
-            "_key": "a7b59352b0680",
+            "_key": "036d0e90368e",
             "_type": "span",
             "marks": [],
-            "text": "What Charities do you support?"
+            "text": "What Charities Do You Support?"
           }
         ],
         "markDefs": [],
@@ -1102,33 +1542,51 @@
     ],
     "description": [
       {
-        "_key": "85f0204ba596",
+        "_key": "7dbcabee21f7",
         "_type": "block",
         "children": [
           {
-            "_key": "528fc000db220",
+            "_key": "cf8312acc4b7",
             "_type": "span",
             "marks": [],
-            "text": "Coming Soon: A page exclusively featuring supported charities VeteranPCS supports multiple veteran-focused charities that benefit both service members as well as their families. If you would like to recommend a charity please visit our contact us page to email us."
+            "text": "VeteranPCS supports multiple veteran-focused charities that benefit service members and their families."
           }
         ],
-        "level": 1,
-        "listItem": "bullet",
         "markDefs": [],
         "style": "normal"
       },
       {
-        "_key": "55ddeb096767",
+        "_key": "d2552671e066",
         "_type": "block",
         "children": [
           {
-            "_key": "f2af8332dbdb0",
+            "_key": "531460ec933d",
             "_type": "span",
             "marks": [],
-            "text": "\n"
+            "text": "If you would like to recommend a charity, please visit our "
+          },
+          {
+            "_key": "f7861878d30c",
+            "_type": "span",
+            "marks": [
+              "680ab5ae755d"
+            ],
+            "text": "contact page"
+          },
+          {
+            "_key": "2a7b006705bd",
+            "_type": "span",
+            "marks": [],
+            "text": " to email us."
           }
         ],
-        "markDefs": [],
+        "markDefs": [
+          {
+            "_key": "680ab5ae755d",
+            "_type": "link",
+            "href": "/contact"
+          }
+        ],
         "style": "normal"
       }
     ],

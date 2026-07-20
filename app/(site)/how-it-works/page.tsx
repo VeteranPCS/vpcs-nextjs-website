@@ -1,14 +1,15 @@
 import { Metadata } from "next";
 import HowItWorkHeroSection from "@/components/HowItWork/HowItWorkHeroSection/HowItWorkHeroSection";
 import Covered from "@/components/homepage/Covered/Covered";
-import HowItWorkText from "@/components/HowItWork/HowItWorkText/HowItWorkText";
+import HowItWorksDetails from "@/components/HowItWork/HowItWorksDetails/HowItWorksDetails";
+import HowItWorksJsonLd from "@/components/HowItWork/HowItWorksDetails/HowItWorksJsonLd";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import StateMap from "@/components/homepage/StateMap";
 import MovingBonusCalculator from "@/components/PcsResources/MovingBonusCalculator/MovingBonusCalculator";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const META_TITLE = "The VeteranPCS Process: PCS Support, VA Loan Expertise & $4,000 Bonuses";
-const META_DESCRIPTION = "Your military move, simplified. From PCS orders to closing, we connect you with agents who understand military timelines and VA requirements. Receive personalized support, expert guidance, and up to $4,000 in Move-In Bonuses—all while supporting veteran charities.";
+const META_TITLE = "How VeteranPCS Works: Free, Vetted Military Agents & Bonus";
+const META_DESCRIPTION = "VeteranPCS is free to use. Connect with vetted military real estate agents and VA loan experts for your PCS move, and earn a bonus up to $4,000 at closing.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
@@ -17,17 +18,17 @@ export const metadata: Metadata = {
     default: META_TITLE,
   },
   alternates: {
-    canonical: `${BASE_URL}/how-it-works`,
+    canonical: "/how-it-works",
   },
   description: META_DESCRIPTION,
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: BASE_URL,
+    url: "/how-it-works",
     siteName: "VeteranPCS",
     images: [
       {
-        url: `${BASE_URL}/opengraph/og-logo.png`,
+        url: "/opengraph/og-logo.png",
         width: 1200,
         height: 630,
         alt: "VeteranPCS",
@@ -44,7 +45,8 @@ export const metadata: Metadata = {
 
 export default function HowItWorksPage() {
   return (
-    <>
+    <main>
+      <HowItWorksJsonLd />
       <HowItWorkHeroSection />
       <div className="mt-10">
         <MovingBonusCalculator />
@@ -58,8 +60,8 @@ export default function HowItWorksPage() {
         />
       </div>
       <Covered />
-      <HowItWorkText />
+      <HowItWorksDetails />
       <KeepInTouch />
-    </>
+    </main>
   );
 }
