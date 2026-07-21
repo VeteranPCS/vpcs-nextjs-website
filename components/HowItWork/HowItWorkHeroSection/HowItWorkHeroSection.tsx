@@ -50,23 +50,23 @@ async function HowItWorkHeroSection() {
                 )}
               </h1>
               <div className="mb-10 mt-10">
-                <div className="flex flex-col md:flex-row md:flex-wrap md:justify-between">
+                <ol className="flex list-none flex-col md:flex-row md:flex-wrap md:justify-between">
                   {heroBullets.map((item) => (
-                    <div key={item.key} className="flex items-start gap-4 my-4 md:w-[48%]">
+                    <li key={item.key} className="flex items-start gap-4 my-4 md:w-[48%]">
                       <Image
                         width={100}
                         height={100}
                         src="/icon/checkred.svg"
-                        alt="check"
+                        alt=""
                         className="w-7 h-7 mt-2"
                         loading="eager"
                       />
                       <p className="text-white poppins lg:text-[24px] md:text-[20px] sm:text-[16px] text-[16px] font-medium text-sm lg:w-[450px] w-full leading-8">
                         {item.text}
                       </p>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ol>
                 <div className="mt-5 flex flex-col items-center gap-3 sm:mt-6">
                   <p className="text-center text-white poppins text-[18px] md:text-[20px] lg:text-[22px] font-semibold">
                     It&apos;s that easy!

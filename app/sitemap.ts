@@ -4,11 +4,19 @@ import {
     getAllBlogs,
     pageCount,
 } from "@/lib/blog/mdx";
+import { HOW_IT_WORKS_SECTIONS, MOVE_IN_BONUS } from "@/lib/content/how-it-works";
 import { SITE_URL } from "@/lib/siteUrl";
 import stateService from "@/services/stateService";
 import { MetadataRoute } from "next"
 
 const STATIC_LAST_MODIFIED = new Date("2026-06-18T00:00:00.000Z");
+
+// /how-it-works renders from the how_veterence_pcs_works + moveInBonus docs;
+// its lastModified is the max _updatedAt across all of them.
+const HOW_IT_WORKS_LAST_MODIFIED = latestDate(
+    [...HOW_IT_WORKS_SECTIONS.map((doc) => doc._updatedAt), MOVE_IN_BONUS._updatedAt]
+        .map((updatedAt) => new Date(updatedAt)),
+);
 
 function dateFromBlog(post: { updatedAt?: string; publishedAt?: string }): Date {
     const candidate = post.updatedAt ?? post.publishedAt;
@@ -58,10 +66,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const stateRoutes = await stateService.fetchStateList();
     const blogs = await getAllBlogs();
 
-    const staticRoutes = routes.map((route) => ({
-        url: `${SITE_URL}${route}`,
-        lastModified: route === "/blog" ? latestDate(blogs.map(dateFromBlog)) : STATIC_LAST_MODIFIED,
-    }));
+    const staticRoutes = routes.map((route) => {
+        let lastModified = STATIC_LAST_MODIFIED;
+        if (route === "/blog") lastModified = latestDate(blogs.map(dateFromBlog));
+        if (route === "/how-it-works") lastModified = HOW_IT_WORKS_LAST_MODIFIED;
+        return { url: `${SITE_URL}${route}`, lastModified };
+    });
 
     const mappedStateRoutes = stateRoutes.flatMap((route) => {
         const path = route.state_slug.current;

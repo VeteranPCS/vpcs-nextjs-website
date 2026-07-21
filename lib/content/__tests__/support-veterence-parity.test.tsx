@@ -40,7 +40,9 @@ const LIVE_DOCS = DOCS.filter((doc) => doc.slug !== ORPHAN_SLUG);
 function asLegacyRendered(semantics: Semantics): Semantics {
   return {
     ...semantics,
-    blocks: semantics.blocks.map((block) => (block.kind === 'li' ? { ...block, kind: 'p' } : block)),
+    blocks: semantics.blocks.flatMap((block) =>
+      'items' in block ? block.items.map((item) => ({ kind: 'p', text: item.text })) : [block],
+    ),
   };
 }
 
