@@ -1,8 +1,8 @@
 import React from "react";
 import styles from "./RefinancingHero.module.css";
-import Image from "next/image";
 import Button from "@/components/common/Button";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";
+import RefinancingLenderCard from "./RefinancingLenderCard";
 
 const RefinancingHero = () => {
     return (
@@ -49,6 +49,9 @@ const RefinancingHero = () => {
                                     Learn More
                                 </TrackedCtaLink>
                             </div>
+                        </div>
+                        <div className="flex items-center justify-center lg:justify-end">
+                            <RefinancingLenderCard />
                         </div>
                     </div>
                 </div>
