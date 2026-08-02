@@ -1,6 +1,6 @@
 {
-  "contentHash": "f993d4beebe3fc05dfb4d495521aeb9fb139812c70f3ee3c2dd9c6e9c1e37f94",
-  "totalPosts": 350,
+  "contentHash": "dbc9364608d6a4de771f8096bc2adf31cf4b250dd2c4f25a5208efbe5752e59e",
+  "totalPosts": 354,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -32,6 +32,7 @@
       "massachusetts-veteran-property-tax-exemptions-2026",
       "michigan-veteran-property-tax-exemptions-2026",
       "military-capital-gains-exclusion-selling-your-home",
+      "military-moving-expenses-tax-deduction-pcs",
       "minnesota-veteran-property-tax-exemptions-2026",
       "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
@@ -176,6 +177,7 @@
       "top-10-things-to-love-about-living-in-spokane",
       "top-communities-for-military-families-near-naval-base-kitsap",
       "why-military-members-should-choose-a-veteran-friendly-realtor",
+      "winter-pcs-move-guide",
       "your-first-home-in-florida-a-complete-guide-for-veterans-and-military-families"
     ],
     "Real Estate Insights": [
@@ -341,6 +343,7 @@
       "should-you-buy-now-and-refinance-later",
       "should-you-put-money-down-on-a-va-loan-in-oklahoma-city",
       "texas-va-loan-benefits-for-military-homebuyers",
+      "two-va-loans-at-once-second-tier-entitlement",
       "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
       "understanding-the-va-funding-fee-a-complete-guide-for-military-families",
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
@@ -359,6 +362,7 @@
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
       "va-loan-huntsville-madison-county-2026",
+      "va-loan-national-guard-reserve-eligibility",
       "va-loan-occupancy-requirements-pcs",
       "va-loan-refinance-pro-tip-how-to-lock-in-a-lower-rate-before-it-s-too-late",
       "va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
@@ -398,6 +402,7 @@
       "massachusetts-veteran-property-tax-exemptions-2026",
       "michigan-veteran-property-tax-exemptions-2026",
       "military-capital-gains-exclusion-selling-your-home",
+      "military-moving-expenses-tax-deduction-pcs",
       "minnesota-veteran-property-tax-exemptions-2026",
       "mississippi-veteran-property-tax-exemptions-2026",
       "missouri-veteran-property-tax-exemptions-2026",
@@ -542,6 +547,7 @@
       "top-10-things-to-love-about-living-in-spokane",
       "top-communities-for-military-families-near-naval-base-kitsap",
       "why-military-members-should-choose-a-veteran-friendly-realtor",
+      "winter-pcs-move-guide",
       "your-first-home-in-florida-a-complete-guide-for-veterans-and-military-families"
     ],
     "real-estate-insights": [
@@ -707,6 +713,7 @@
       "should-you-buy-now-and-refinance-later",
       "should-you-put-money-down-on-a-va-loan-in-oklahoma-city",
       "texas-va-loan-benefits-for-military-homebuyers",
+      "two-va-loans-at-once-second-tier-entitlement",
       "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
       "understanding-the-va-funding-fee-a-complete-guide-for-military-families",
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
@@ -725,6 +732,7 @@
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
       "va-loan-huntsville-madison-county-2026",
+      "va-loan-national-guard-reserve-eligibility",
       "va-loan-occupancy-requirements-pcs",
       "va-loan-refinance-pro-tip-how-to-lock-in-a-lower-rate-before-it-s-too-late",
       "va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
@@ -1095,6 +1103,7 @@
       "huntsville-redstone-bah-2026-buy-vs-rent",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
       "military-bases-near-me-how-to-find-bases-by-state",
+      "military-moving-expenses-tax-deduction-pcs",
       "military-pcs-weight-allowance-2026",
       "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
@@ -1118,7 +1127,8 @@
       "the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel",
       "things-to-do-near-fort-riley-a-local-guide",
       "tinker-air-force-base-pcs-guide",
-      "va-loan-occupancy-requirements-pcs"
+      "va-loan-occupancy-requirements-pcs",
+      "winter-pcs-move-guide"
     ]
   },
   "posts": [
@@ -3754,6 +3764,40 @@
       ]
     },
     {
+      "slug": "military-moving-expenses-tax-deduction-pcs",
+      "title": "Military Moving Expenses Tax Deduction: A 2026 Guide",
+      "url": "/blog/military-moving-expenses-tax-deduction-pcs",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "A plain-language guide to the military moving expenses tax deduction: who still qualifies, what you can write off on Form 3903, and what the government already covers.",
+      "publishedAt": "2026-07-26T09:00:00.000Z",
+      "updatedAt": "2026-08-02T00:00:00.000Z",
+      "primaryKeyword": "military moving expenses tax deduction",
+      "secondaryKeywords": [
+        "are pcs moving expenses tax deductible",
+        "irs form 3903 military",
+        "moving expense deduction active duty",
+        "pcs move tax write off",
+        "unreimbursed pcs expenses"
+      ],
+      "h2Outline": [
+        "Who Still Qualifies for the Deduction?",
+        "What You Can Deduct",
+        "What You Cannot Deduct",
+        "How Reimbursements and a PPM Change the Math",
+        "Keep Good Records",
+        "Free Help Filing",
+        "Frequently Asked Questions",
+        "Plan Your Move With People Who Get It"
+      ]
+    },
+    {
       "slug": "military-pcs-weight-allowance-2026",
       "title": "Military PCS Weight Allowance 2026: Limits by Rank",
       "url": "/blog/military-pcs-weight-allowance-2026",
@@ -4173,7 +4217,7 @@
       ],
       "description": "Understanding Builder-Advertised Low Interest Rates: What Military Homebuyers Need to Know",
       "publishedAt": "2024-12-10T18:12:34.000Z",
-      "updatedAt": "2026-07-19T00:00:00.000Z",
+      "updatedAt": "2026-08-02T00:00:00.000Z",
       "primaryKeyword": "is 4.99 a good mortgage rate",
       "secondaryKeywords": [
         "4.5 mortgage rate",
@@ -9599,6 +9643,39 @@
       ]
     },
     {
+      "slug": "two-va-loans-at-once-second-tier-entitlement",
+      "title": "Two VA Loans at Once: How Second-Tier Entitlement Works",
+      "url": "/blog/two-va-loans-at-once-second-tier-entitlement",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "PCS orders do not mean you have to sell. Here is how second-tier VA entitlement lets many military families hold two VA loans at the same time.",
+      "publishedAt": "2026-07-30T09:00:00.000Z",
+      "updatedAt": "2026-08-02T00:00:00.000Z",
+      "primaryKeyword": "two VA loans at once",
+      "secondaryKeywords": [
+        "bonus entitlement va loan",
+        "can you have two va loans",
+        "keep home and buy after pcs",
+        "second va loan while keeping first",
+        "second-tier entitlement"
+      ],
+      "h2Outline": [
+        "Yes, You Can Use the VA Loan More Than Once",
+        "How Second-Tier Entitlement Works",
+        "The Occupancy Rule Is What Makes This Legal",
+        "Keep and Rent, or Sell? Weigh It Honestly",
+        "A Few Practical Notes",
+        "Frequently Asked Questions",
+        "Run Your Numbers With Someone Who Knows the Rules"
+      ]
+    },
+    {
       "slug": "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
       "title": "Understand Your VA Loan Entitlement - What is VA Loan Entitlement",
       "url": "/blog/understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
@@ -10312,6 +10389,39 @@
       ]
     },
     {
+      "slug": "va-loan-national-guard-reserve-eligibility",
+      "title": "VA Loan for National Guard and Reserve: Who Qualifies",
+      "url": "/blog/va-loan-national-guard-reserve-eligibility",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "VA Loan Help"
+      ],
+      "description": "National Guard and Reserve members can earn the same VA loan benefit as active-duty troops. Here are the exact service requirements and how to prove them.",
+      "publishedAt": "2026-08-01T09:00:00.000Z",
+      "updatedAt": "2026-08-02T00:00:00.000Z",
+      "primaryKeyword": "VA loan for National Guard and Reserve",
+      "secondaryKeywords": [
+        "do reservists qualify for a va loan",
+        "guard reserve va loan eligibility",
+        "national guard va home loan requirements",
+        "reserve va loan service requirements",
+        "va loan 6 creditable years"
+      ],
+      "h2Outline": [
+        "The Same Benefit, Different Service Rules",
+        "National Guard Eligibility",
+        "Reserve Eligibility",
+        "What \"6 Creditable Years\" Really Means",
+        "How to Prove Your Eligibility",
+        "You Still Have to Qualify With a Lender",
+        "Frequently Asked Questions",
+        "Ready to See What You Qualify For?"
+      ]
+    },
+    {
       "slug": "va-loan-occupancy-requirements-pcs",
       "title": "VA Loan Occupancy Requirements: The PCS Rules to Know",
       "url": "/blog/va-loan-occupancy-requirements-pcs",
@@ -10933,9 +11043,9 @@
       "categories": [
         "U.S. Military Bases"
       ],
-      "description": "Georgia has played a pivotal role in U.S. military history, from the American Revolution to modern-day defense operations. With thirteen active military installations, the state remains a key hub for national security, training, and logi...",
+      "description": "Georgia has played a pivotal role in U.S. military history, from the American Revolution to modern-day defense operations. With nine major military installations, the state remains a key hub for national security, training, and logistics...",
       "publishedAt": "2024-06-25T13:47:49.000Z",
-      "updatedAt": "2026-07-19T00:00:00.000Z",
+      "updatedAt": "2026-08-02T00:00:00.000Z",
       "primaryKeyword": "military forts in georgia",
       "secondaryKeywords": [
         "air force base georgia",
@@ -12180,6 +12290,39 @@
         "Leveraging Your Veteran Status for Real Estate Success",
         "Start Your Wilmington Investment Journey",
         "Plan Your PCS to North Carolina"
+      ]
+    },
+    {
+      "slug": "winter-pcs-move-guide",
+      "title": "Winter PCS Move: A Military Family's Cold-Weather Guide",
+      "url": "/blog/winter-pcs-move-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "PCS Help"
+      ],
+      "description": "Off-season moves have real upsides. Here is how to handle a winter PCS move, from cold-weather packing to holiday scheduling and safe travel.",
+      "publishedAt": "2026-07-28T09:00:00.000Z",
+      "updatedAt": "2026-08-02T00:00:00.000Z",
+      "primaryKeyword": "winter PCS move",
+      "secondaryKeywords": [
+        "cold weather pcs tips",
+        "moving in winter military",
+        "off-season pcs move",
+        "pcs during the holidays",
+        "winter military move checklist"
+      ],
+      "h2Outline": [
+        "Why Off-Season Moves Have Real Upsides",
+        "Prepare Your Belongings for the Cold",
+        "Winterize Your Travel",
+        "Mind the Holiday Calendar",
+        "Lodging, Kids, and Pets in Winter",
+        "Start Your Housing Search Early",
+        "Frequently Asked Questions",
+        "Land Your Winter Move With Confidence"
       ]
     },
     {
