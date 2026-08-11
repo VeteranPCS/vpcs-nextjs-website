@@ -212,13 +212,12 @@
     "_id": "O0syOADLMvCWbGv9htjPSl",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:29:52Z",
-    "_updatedAt": "2026-03-20T19:00:59Z",
+    "_updatedAt": "2026-08-11T16:59:09Z",
     "short_name": "FL",
     "state_map": {
-      "_sanityAssetId": "image-e8fa5c9f5fda631c6d9e0ab5680606370a0b55f9-750x750-webp",
       "alt": "Florida",
       "height": 750,
-      "path": "/images/states/florida.webp",
+      "path": "/images/states/florida.png",
       "width": 750
     },
     "state_name": "Florida",
@@ -554,14 +553,13 @@
     "_id": "p1E1t9c6MmuSwvdT93QpUm",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:30:01Z",
-    "_updatedAt": "2026-01-29T20:00:59Z",
+    "_updatedAt": "2026-08-11T16:59:09Z",
     "short_name": "CA",
     "state_map": {
-      "_sanityAssetId": "image-a6ccffe976a46e367ee206587d743076da0bb16e-1500x1500-webp",
       "alt": "California",
-      "height": 1500,
-      "path": "/images/states/california.webp",
-      "width": 1500
+      "height": 750,
+      "path": "/images/states/california.png",
+      "width": 750
     },
     "state_name": "California",
     "state_slug": {
@@ -573,13 +571,12 @@
     "_id": "p1E1t9c6MmuSwvdT93QqMX",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:30:03Z",
-    "_updatedAt": "2026-07-14T12:09:02Z",
+    "_updatedAt": "2026-08-11T16:59:09Z",
     "short_name": "PA",
     "state_map": {
-      "_sanityAssetId": "image-acf9926e7fb08974243f065995565200cb9555ac-750x750-webp",
       "alt": "Pennsylvania Image",
       "height": 750,
-      "path": "/images/states/pennsylvania.webp",
+      "path": "/images/states/pennsylvania.png",
       "width": 750
     },
     "state_name": "Pennsylvania",
