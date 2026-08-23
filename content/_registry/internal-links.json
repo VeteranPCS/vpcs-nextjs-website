@@ -1,6 +1,6 @@
 {
-  "contentHash": "dbc9364608d6a4de771f8096bc2adf31cf4b250dd2c4f25a5208efbe5752e59e",
-  "totalPosts": 354,
+  "contentHash": "521af7a44a1a2b4cf72999a52c38a2cf68e08a3d81160942e64e7008bcb6c647",
+  "totalPosts": 362,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -57,6 +57,7 @@
       "tennessee-veteran-property-tax-exemptions-2026",
       "texas-veteran-property-tax-exemptions-2026",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
+      "tsp-loan-for-a-home-down-payment",
       "understanding-escrow-in-real-estate-veterans-guide",
       "utah-veteran-property-tax-exemptions-2026",
       "vermont-veteran-property-tax-exemptions-2026",
@@ -83,6 +84,7 @@
       "best-neighborhoods-nas-jacksonville-military-families",
       "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-philadelphia-military-bases",
+      "breaking-a-lease-with-military-orders-scra",
       "buying-a-home-sight-unseen-during-a-pcs-move",
       "buying-a-home-with-power-of-attorney-military",
       "castle-rock-a-community-of-distinction-and-luxury",
@@ -167,6 +169,7 @@
       "settling-down-pcsing-to-birmingham-alabama-with-the-military",
       "short-notice-pcs-move-30-days",
       "should-active-duty-military-buy-a-home-in-hawaii",
+      "storage-in-transit-sit-pcs-guide",
       "strategic-refinancing-for-luxury-homeowners-in-castle-rock-co",
       "temporary-lodging-expense-tle-pcs-guide",
       "tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state",
@@ -331,6 +334,7 @@
     "VA Loan Help": [
       "2026-va-loan-limits-explained-for-military-homebuyers",
       "buying-a-duplex-with-a-va-loan",
+      "can-you-buy-a-manufactured-home-with-a-va-loan",
       "can-you-use-the-va-loan-more-than-once",
       "complete-guide-to-buying-your-first-home-with-a-va-loan",
       "does-the-va-loan-always-have-the-best-rate",
@@ -347,6 +351,8 @@
       "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
       "understanding-the-va-funding-fee-a-complete-guide-for-military-families",
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
+      "va-cash-out-refinance-guide",
+      "va-energy-efficient-mortgage-guide",
       "va-irrrl-streamline-refinance-guide",
       "va-loan-after-foreclosure-or-bankruptcy",
       "va-loan-appraisal-what-to-expect",
@@ -365,7 +371,9 @@
       "va-loan-national-guard-reserve-eligibility",
       "va-loan-occupancy-requirements-pcs",
       "va-loan-refinance-pro-tip-how-to-lock-in-a-lower-rate-before-it-s-too-late",
+      "va-loan-vs-conventional-loan",
       "va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
+      "va-specially-adapted-housing-grant-guide",
       "va-vs-fha",
       "veterans-skip-the-hustle-unlock-homeownership-how-assuming-a-va-loan-can-save-you-time-and-money",
       "what-are-the-benefits-of-a-va-loan"
@@ -427,6 +435,7 @@
       "tennessee-veteran-property-tax-exemptions-2026",
       "texas-veteran-property-tax-exemptions-2026",
       "the-military-members-complete-guide-to-building-and-maintaining-strong-credit",
+      "tsp-loan-for-a-home-down-payment",
       "understanding-escrow-in-real-estate-veterans-guide",
       "utah-veteran-property-tax-exemptions-2026",
       "vermont-veteran-property-tax-exemptions-2026",
@@ -453,6 +462,7 @@
       "best-neighborhoods-nas-jacksonville-military-families",
       "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-philadelphia-military-bases",
+      "breaking-a-lease-with-military-orders-scra",
       "buying-a-home-sight-unseen-during-a-pcs-move",
       "buying-a-home-with-power-of-attorney-military",
       "castle-rock-a-community-of-distinction-and-luxury",
@@ -537,6 +547,7 @@
       "settling-down-pcsing-to-birmingham-alabama-with-the-military",
       "short-notice-pcs-move-30-days",
       "should-active-duty-military-buy-a-home-in-hawaii",
+      "storage-in-transit-sit-pcs-guide",
       "strategic-refinancing-for-luxury-homeowners-in-castle-rock-co",
       "temporary-lodging-expense-tle-pcs-guide",
       "tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state",
@@ -701,6 +712,7 @@
     "va-loan-help": [
       "2026-va-loan-limits-explained-for-military-homebuyers",
       "buying-a-duplex-with-a-va-loan",
+      "can-you-buy-a-manufactured-home-with-a-va-loan",
       "can-you-use-the-va-loan-more-than-once",
       "complete-guide-to-buying-your-first-home-with-a-va-loan",
       "does-the-va-loan-always-have-the-best-rate",
@@ -717,6 +729,8 @@
       "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
       "understanding-the-va-funding-fee-a-complete-guide-for-military-families",
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
+      "va-cash-out-refinance-guide",
+      "va-energy-efficient-mortgage-guide",
       "va-irrrl-streamline-refinance-guide",
       "va-loan-after-foreclosure-or-bankruptcy",
       "va-loan-appraisal-what-to-expect",
@@ -735,7 +749,9 @@
       "va-loan-national-guard-reserve-eligibility",
       "va-loan-occupancy-requirements-pcs",
       "va-loan-refinance-pro-tip-how-to-lock-in-a-lower-rate-before-it-s-too-late",
+      "va-loan-vs-conventional-loan",
       "va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
+      "va-specially-adapted-housing-grant-guide",
       "va-vs-fha",
       "veterans-skip-the-hustle-unlock-homeownership-how-assuming-a-va-loan-can-save-you-time-and-money",
       "what-are-the-benefits-of-a-va-loan"
@@ -1122,6 +1138,7 @@
       "preparing-to-pcs-what-you-need-to-know",
       "rent-or-sell-your-home-when-you-pcs",
       "short-notice-pcs-move-30-days",
+      "storage-in-transit-sit-pcs-guide",
       "temporary-lodging-expense-tle-pcs-guide",
       "the-ultimate-pcs-binder-guide-get-organized-for-your-move",
       "the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel",
@@ -1877,6 +1894,40 @@
       ]
     },
     {
+      "slug": "breaking-a-lease-with-military-orders-scra",
+      "title": "Breaking a Lease With Military Orders: Your SCRA Rights",
+      "url": "/blog/breaking-a-lease-with-military-orders-scra",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "PCS orders or a long deployment let you end a lease early without a penalty fee. Here is exactly who qualifies, how notice works, and when the lease ends.",
+      "publishedAt": "2026-08-15T09:00:00.000Z",
+      "updatedAt": "2026-08-22T00:00:00.000Z",
+      "primaryKeyword": "breaking a lease with military orders",
+      "secondaryKeywords": [
+        "50 usc 3955",
+        "can i break my lease with pcs orders",
+        "military clause lease",
+        "military lease termination letter",
+        "scra lease termination"
+      ],
+      "h2Outline": [
+        "Who Qualifies to Terminate a Lease",
+        "How to Give Notice the Right Way",
+        "When Your Lease Actually Ends",
+        "What You Owe, and What You Do Not",
+        "Car Leases Follow Different Rules",
+        "Do Not Sign Away Rights You Already Have",
+        "Should You Rent Again, or Buy?",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "buy-vs-rent-near-camp-lejeune",
       "title": "Buy vs. Rent Near Camp Lejeune: The Complete Financial Guide for Military Families",
       "url": "/blog/buy-vs-rent-near-camp-lejeune",
@@ -2068,6 +2119,39 @@
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "can-you-buy-a-manufactured-home-with-a-va-loan",
+      "title": "Can You Buy a Manufactured Home With a VA Loan?",
+      "url": "/blog/can-you-buy-a-manufactured-home-with-a-va-loan",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Real Estate Insights",
+        "VA Loan Help"
+      ],
+      "description": "A clear guide to using a VA loan for a manufactured or modular home: the foundation and property rules the VA requires, how loan terms differ, the funding fee, and why the right lender matters.",
+      "publishedAt": "2026-08-04T09:00:00.000Z",
+      "updatedAt": "2026-08-09T00:00:00.000Z",
+      "primaryKeyword": "va loan manufactured home",
+      "secondaryKeywords": [
+        "can you buy a manufactured home with a va loan",
+        "modular home va loan",
+        "va loan foundation requirements",
+        "va loan mobile home",
+        "va manufactured home requirements"
+      ],
+      "h2Outline": [
+        "Can You Use a VA Loan for a Manufactured Home?",
+        "VA Requirements for a Manufactured Home",
+        "Loan Terms Are Usually Shorter",
+        "The Funding Fee Still Applies",
+        "Why It Can Be Hard to Find a Lender",
+        "Frequently Asked Questions",
+        "The Bottom Line"
       ]
     },
     {
@@ -3712,7 +3796,7 @@
       ],
       "description": "A plain-language guide to finding military bases near you, by state and branch, with official tools and tips for planning a PCS move to a new installation.",
       "publishedAt": "2026-06-15T09:00:00.000Z",
-      "updatedAt": "2026-06-28T00:00:00.000Z",
+      "updatedAt": "2026-08-22T00:00:00.000Z",
       "primaryKeyword": "military bases near me",
       "secondaryKeywords": [
         "army bases near me",
@@ -4217,7 +4301,7 @@
       ],
       "description": "Understanding Builder-Advertised Low Interest Rates: What Military Homebuyers Need to Know",
       "publishedAt": "2024-12-10T18:12:34.000Z",
-      "updatedAt": "2026-08-02T00:00:00.000Z",
+      "updatedAt": "2026-08-22T00:00:00.000Z",
       "primaryKeyword": "is 4.99 a good mortgage rate",
       "secondaryKeywords": [
         "4.5 mortgage rate",
@@ -9061,6 +9145,40 @@
       ]
     },
     {
+      "slug": "storage-in-transit-sit-pcs-guide",
+      "title": "Storage in Transit (SIT): The 90-Day PCS Storage Rule",
+      "url": "/blog/storage-in-transit-sit-pcs-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "PCS Help",
+        "Real Estate Insights"
+      ],
+      "description": "SIT is the temporary storage the military pays for during a PCS. Here is how the 90-day clock works, how to extend it, and how to avoid paying out of pocket.",
+      "publishedAt": "2026-08-17T09:00:00.000Z",
+      "updatedAt": "2026-08-22T00:00:00.000Z",
+      "primaryKeyword": "storage in transit military",
+      "secondaryKeywords": [
+        "90 days sit military move",
+        "sit extension dd form 1857",
+        "sit pcs",
+        "sit vs nts",
+        "temporary storage pcs"
+      ],
+      "h2Outline": [
+        "What SIT Is and Where It Happens",
+        "The First 90 Days",
+        "Getting a Second 90 Days",
+        "The Extension Paperwork",
+        "SIT Versus Non-Temporary Storage",
+        "Getting Some of Your Things Early",
+        "How SIT Shapes Your House Hunt",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "strategic-refinancing-for-luxury-homeowners-in-castle-rock-co",
       "title": "Strategic Refinancing for Luxury Homeowners in Castle Rock, CO",
       "url": "/blog/strategic-refinancing-for-luxury-homeowners-in-castle-rock-co",
@@ -9643,6 +9761,39 @@
       ]
     },
     {
+      "slug": "tsp-loan-for-a-home-down-payment",
+      "title": "TSP Loan for a Home Down Payment: Rules and Real Costs",
+      "url": "/blog/tsp-loan-for-a-home-down-payment",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "A TSP primary residence loan can help you close on a home, but the rules are narrow. Here is what it covers, what it costs, and when to skip it entirely.",
+      "publishedAt": "2026-08-21T09:00:00.000Z",
+      "updatedAt": "2026-08-22T00:00:00.000Z",
+      "primaryKeyword": "tsp loan for home down payment",
+      "secondaryKeywords": [
+        "borrow from tsp to buy a house",
+        "tsp loan closing costs",
+        "tsp loan rules",
+        "tsp primary residence loan",
+        "tsp residential loan"
+      ],
+      "h2Outline": [
+        "The Two Kinds of TSP Loan",
+        "What a Residential Loan Cannot Pay For",
+        "Borrowing Limits",
+        "What It Costs",
+        "The Risks Worth Knowing Before You Sign",
+        "The Question to Answer First",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "two-va-loans-at-once-second-tier-entitlement",
       "title": "Two VA Loans at Once: How Second-Tier Entitlement Works",
       "url": "/blog/two-va-loans-at-once-second-tier-entitlement",
@@ -9898,6 +10049,74 @@
         "Military Pay and Utah State Income Tax",
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "va-cash-out-refinance-guide",
+      "title": "VA Cash-Out Refinance: How Military Homeowners Tap Home Equity",
+      "url": "/blog/va-cash-out-refinance-guide",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "A plain-language guide to the VA cash-out refinance: how it turns home equity into cash, how much you can borrow, the funding fee, the rules that protect you, and how it compares to the IRRRL streamline.",
+      "publishedAt": "2026-08-06T09:00:00.000Z",
+      "updatedAt": "2026-08-09T00:00:00.000Z",
+      "primaryKeyword": "va cash-out refinance",
+      "secondaryKeywords": [
+        "how much can i cash out va loan",
+        "va cash out refinance requirements",
+        "va cash out refinance rules",
+        "va cash-out refinance vs irrrl",
+        "va refinance funding fee"
+      ],
+      "h2Outline": [
+        "What Is a VA Cash-Out Refinance?",
+        "How Much Can You Borrow?",
+        "Type I vs. Type II Cash-Out Refinances",
+        "The Funding Fee on a Cash-Out Refinance",
+        "Rules That Protect You",
+        "Cash-Out Refinance vs. IRRRL",
+        "Frequently Asked Questions",
+        "The Bottom Line"
+      ]
+    },
+    {
+      "slug": "va-energy-efficient-mortgage-guide",
+      "title": "VA Energy Efficient Mortgage: Add Up to $6,000 to Your Loan",
+      "url": "/blog/va-energy-efficient-mortgage-guide",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "The VA lets you finance energy upgrades inside your home loan, up to $6,000. Here is what qualifies, what does not, and how the two cost tiers work.",
+      "publishedAt": "2026-08-19T09:00:00.000Z",
+      "updatedAt": "2026-08-22T00:00:00.000Z",
+      "primaryKeyword": "va energy efficient mortgage",
+      "secondaryKeywords": [
+        "energy efficient mortgage veterans",
+        "va eem",
+        "va eem $6000",
+        "va loan energy improvements",
+        "va loan insulation windows financing"
+      ],
+      "h2Outline": [
+        "What an EEM Actually Does",
+        "The Two Cost Tiers",
+        "What Qualifies, and What Does Not",
+        "How the Money Actually Reaches the Contractor",
+        "Using an EEM on a Refinance",
+        "EEM Versus a VA Rehab Loan",
+        "How to Ask for It",
         "Frequently Asked Questions"
       ]
     },
@@ -10487,6 +10706,41 @@
       ]
     },
     {
+      "slug": "va-loan-vs-conventional-loan",
+      "title": "VA Loan vs. Conventional Loan: Which Is Better for Military Buyers?",
+      "url": "/blog/va-loan-vs-conventional-loan",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "A side-by-side look at the VA loan and the conventional loan: what each asks for at closing, how mortgage insurance and the funding fee compare, and when one beats the other for a military buyer.",
+      "publishedAt": "2026-08-02T09:00:00.000Z",
+      "updatedAt": "2026-08-09T00:00:00.000Z",
+      "primaryKeyword": "va loan vs conventional loan",
+      "secondaryKeywords": [
+        "conventional loan pmi",
+        "is a va loan better than conventional",
+        "va funding fee vs pmi",
+        "va loan no down payment",
+        "va loan vs conventional"
+      ],
+      "h2Outline": [
+        "The Basic Difference",
+        "Down Payment and Mortgage Insurance",
+        "The VA Funding Fee vs. PMI",
+        "Credit Score and Qualifying",
+        "Loan Limits and Property Type",
+        "Interest Rates",
+        "When a Conventional Loan Might Win",
+        "Frequently Asked Questions",
+        "The Bottom Line"
+      ]
+    },
+    {
       "slug": "va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
       "title": "VA Rehab Loans: The Most Powerful VA Loan You've Never Heard Of",
       "url": "/blog/va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
@@ -10519,6 +10773,41 @@
         "Getting Started: Choose the Right Lender",
         "The Bottom Line: Transform Potential into Profit",
         "Keep Learning About Your VA Loan"
+      ]
+    },
+    {
+      "slug": "va-specially-adapted-housing-grant-guide",
+      "title": "VA Specially Adapted Housing (SAH) Grants: A 2026 Guide",
+      "url": "/blog/va-specially-adapted-housing-grant-guide",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "A clear guide to VA disability housing grants: the 2026 SAH, SHA, and TRA amounts, the service-connected disabilities that qualify, and how to use a grant alongside your VA home loan.",
+      "publishedAt": "2026-08-08T09:00:00.000Z",
+      "updatedAt": "2026-08-09T00:00:00.000Z",
+      "primaryKeyword": "specially adapted housing grant",
+      "secondaryKeywords": [
+        "sah grant",
+        "sah grant amount 2026",
+        "special home adaptation grant",
+        "va disability housing grant",
+        "va grant for disabled veterans home"
+      ],
+      "h2Outline": [
+        "What Is the Specially Adapted Housing Grant?",
+        "2026 Grant Amounts",
+        "Who Qualifies for an SAH Grant",
+        "Who Qualifies for an SHA Grant",
+        "The Temporary Residence Adaptation (TRA) Grant",
+        "Using a Grant With Your VA Home Loan",
+        "How to Apply",
+        "Frequently Asked Questions",
+        "The Bottom Line"
       ]
     },
     {
@@ -11014,7 +11303,7 @@
       ],
       "description": "Florida has a long history of military involvement, from the American Revolution to modern defense operations. The state is home to twenty-four active military installations, supporting the Army, Navy, Air Force, Marine Corps, Space Forc...",
       "publishedAt": "2024-06-25T13:58:25.000Z",
-      "updatedAt": "2026-07-19T00:00:00.000Z",
+      "updatedAt": "2026-08-09T00:00:00.000Z",
       "primaryKeyword": "military bases in florida",
       "secondaryKeywords": [
         "air force bases in florida",
@@ -11045,7 +11334,7 @@
       ],
       "description": "Georgia has played a pivotal role in U.S. military history, from the American Revolution to modern-day defense operations. With nine major military installations, the state remains a key hub for national security, training, and logistics...",
       "publishedAt": "2024-06-25T13:47:49.000Z",
-      "updatedAt": "2026-08-02T00:00:00.000Z",
+      "updatedAt": "2026-08-09T00:00:00.000Z",
       "primaryKeyword": "military forts in georgia",
       "secondaryKeywords": [
         "air force base georgia",
