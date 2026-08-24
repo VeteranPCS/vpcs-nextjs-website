@@ -56,7 +56,7 @@ const LenderBio = ({ bio }: { bio: string }) => {
   );
 };
 
-const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, lendersData: LendersData | [], state: string }) => {
+const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, lendersData: LendersData, state: string }) => {
   const lenderContactHref = (lender: Lenders) => buildContactCtaHref({
     firstName: lender.FirstName,
     salesforceId: lender.AccountId_15__c,
@@ -93,8 +93,8 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
           </p>
         </div>
         <div className="grid lg:grid-cols-2 grid-cols-1 items-start justify-between gap-10 mt-10">
-          {Array.isArray(lendersData) || !lendersData.records
-            ? <p>No lenders available</p>
+          {lendersData.records.length === 0
+            ? <p className="text-[#515151] text-[18px] text-center lg:col-span-2">No lenders are currently listed for this state.</p>
             : lendersData.records.map((lender: Lenders) => {
               const contactHref = lenderContactHref(lender);
 

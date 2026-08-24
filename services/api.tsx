@@ -1,7 +1,7 @@
 import { EventEmitter } from "node:events";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { getSalesforceToken } from "@/services/salesForceTokenService";
-import { logError } from "@/services/loggingService";
+import { logDebug, logError } from "@/services/loggingService";
 
 // Next spawns fresh worker processes for static generation — globals set in
 // next.config.mjs don't reach them. Raise the listener ceiling here so the
@@ -17,6 +17,9 @@ import { BASE_API_URL } from "@/constants/api";
 
 // ***** start - static variables *****
 const mainUrl = BASE_API_URL;
+const SALESFORCE_REQUEST_TIMEOUT_MS = 15_000;
+const SALESFORCE_GET_RETRY_DELAYS_MS = [250, 750] as const;
+const RETRYABLE_SALESFORCE_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
 // ***** end - static variables *****
 
 // Enum for API Request Types
@@ -55,6 +58,9 @@ const logSafeEndpoint = (url: string | undefined): string | undefined => {
     const queryStart = url.indexOf('?');
     return queryStart === -1 ? url : url.slice(0, queryStart);
 };
+
+const wait = (milliseconds: number): Promise<void> =>
+    new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 // ***** start - Api function for calling any type of APIs *****
 export const api = async ({
@@ -105,6 +111,7 @@ export const salesForceAPI = async ({
         url: endpoint,
         method: type as any,
         data,
+        timeout: SALESFORCE_REQUEST_TIMEOUT_MS,
         headers: {
             "Cache-Control": "no-cache",
             Authorization: `Bearer ${token}`,
@@ -129,19 +136,55 @@ export const salesForceAPI = async ({
     return res;  // Return the response or error
 };
 
-// Runs salesForceAPI and, on a 401, forces a single token refresh and retries once.
-// Bounded at one retry — replaces the previous unbounded 401-recursion at call sites.
+// Keeps the existing one-time 401 refresh for every request type. Safe GETs also
+// retry bounded transient failures so a momentary Salesforce/network issue does
+// not poison a statically generated or ISR state page with an empty result.
+// Mutations are never transiently retried because the first attempt may have
+// reached Salesforce even when the response was lost.
 export const salesForceAPIWithRefresh = async (
     params: ApiParams,
 ): Promise<AxiosResponse | undefined> => {
-    let response = await salesForceAPI(params);
+    const isRetryableGet = params.type === RequestType.GET;
+    const attempts = isRetryableGet ? SALESFORCE_GET_RETRY_DELAYS_MS.length + 1 : 1;
+    let didRefreshAuth = false;
 
-    if (response?.status === 401) {
-        await getSalesforceToken({ forceRefresh: true });
-        response = await salesForceAPI(params);
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+        try {
+            let response = await salesForceAPI(params);
+
+            if (response?.status === 401 && !didRefreshAuth) {
+                didRefreshAuth = true;
+                await getSalesforceToken({ forceRefresh: true });
+                response = await salesForceAPI(params);
+            }
+
+            const shouldRetry = response?.status !== undefined
+                && RETRYABLE_SALESFORCE_STATUSES.has(response.status)
+                && attempt < attempts;
+
+            if (!shouldRetry) return response;
+
+            logDebug('Retrying transient Salesforce GET response', {
+                endpoint: logSafeEndpoint(params.endpoint),
+                status: response?.status,
+                attempt,
+                maxAttempts: attempts,
+            });
+        } catch (error) {
+            if (!isRetryableGet || attempt >= attempts) throw error;
+
+            logDebug('Retrying transient Salesforce GET error', {
+                endpoint: logSafeEndpoint(params.endpoint),
+                attempt,
+                maxAttempts: attempts,
+            });
+        }
+
+        const retryDelay = SALESFORCE_GET_RETRY_DELAYS_MS[attempt - 1];
+        if (retryDelay !== undefined) await wait(retryDelay);
     }
 
-    return response;
+    throw new Error('Salesforce GET retry loop exhausted');
 };
 
 export const salesForceImageAPI = async ({
@@ -157,6 +200,7 @@ export const salesForceImageAPI = async ({
         url: endpoint,
         method: type as any,
         data,
+        timeout: SALESFORCE_REQUEST_TIMEOUT_MS,
         headers: {
             "Cache-Control": "no-cache",
             Authorization: `Bearer ${token}`,
@@ -194,6 +238,7 @@ export const salesForceTokenAPI = async ({
         url: endpoint,
         method: type as any,
         data,
+        timeout: SALESFORCE_REQUEST_TIMEOUT_MS,
         headers: {
             "Cache-Control": "no-cache",
             "Content-Type": "application/x-www-form-urlencoded",
