@@ -11,6 +11,7 @@ vi.mock('@/services/api', () => ({
   salesForceImageAPI: vi.fn(),
 }));
 
+import { salesForceAPIWithRefresh } from '@/services/api';
 import stateService from '@/services/stateService';
 import stateListJson from '@/content/_data/site/state_list.json';
 
@@ -71,5 +72,38 @@ describe('stateService.fetchStateImage', () => {
     await expect(stateService.fetchStateImage('not-a-state')).rejects.toThrow(
       'No state map found',
     );
+  });
+});
+
+describe('stateService partner headshots', () => {
+  it('matches case-sensitive Salesforce IDs consistently on every filesystem', async () => {
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValue({
+      status: 200,
+      data: {
+        totalSize: 6,
+        done: true,
+        records: [
+          { Name: 'Kodja Schelte', AccountId_15__c: '0014x00000IFGiQ' },
+          { Name: 'Erica Lehmkuhl', AccountId_15__c: '0014x00000IFGiV' },
+          { Name: 'Chelsea Mack', AccountId_15__c: '0014x00000IFGiX' },
+          { Name: 'Carissa Duran', AccountId_15__c: '0014x00000IFGiq' },
+          { Name: 'Rick Carlson', AccountId_15__c: '0014x00000IFGiv' },
+          { Name: 'Christina Zimmerman', AccountId_15__c: '0014x00000IFGix' },
+        ],
+      },
+    } as never);
+
+    const result = await stateService.fetchAgentsListByState('TX');
+
+    expect(result.records.map((agent) => agent.AccountId_15__c)).toEqual([
+      '0014x00000IFGiV',
+      '0014x00000IFGiq',
+      '0014x00000IFGix',
+    ]);
+    expect(result.records.map((agent) => agent.PhotoUrl)).toEqual([
+      '/images/agents/0014x00000IFGiV.webp',
+      '/images/agents/0014x00000IFGiq.webp',
+      '/images/agents/0014x00000IFGix.webp',
+    ]);
   });
 });
