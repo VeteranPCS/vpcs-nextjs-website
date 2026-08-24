@@ -33,6 +33,11 @@ jobs:
         run: npm run type-check
       - name: Build
         run: npm run build
+        env:
+          # GitHub Actions does not hold Salesforce credentials. Compile the
+          # dynamic state routes here; Vercel and credentialed local builds
+          # still prerender all states and fail closed on upstream errors.
+          SKIP_SALESFORCE_PRERENDER: '1'
       - name: Test
         run: npm test
       - name: Content lint (banned byline)

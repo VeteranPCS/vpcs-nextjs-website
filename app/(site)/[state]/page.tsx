@@ -1,4 +1,3 @@
-import Script from "next/script";
 import StatePageHeroSection from "@/components/StatePage/StatePaheHeroSection/StatePageHeroSection";
 import StatePageHeroSecondSection from "@/components/StatePage/StatePageHeroSecondSection/StatePageHeroSecondSection";
 import StatePageVaLoan from "@/components/StatePage/StatePageVaLoan/StatePageVaLoan";
@@ -10,33 +9,26 @@ import StatePageWhyChooseVetpcs from "@/components/StatePage/StatePageWhyChooseV
 import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
 import { StatePageViewedTracker } from "@/components/Analytics/Trackers";
-import stateService, { StateDetails, AgentsData, LendersData, Lenders } from "@/services/stateService";
+import stateService from "@/services/stateService";
+import { fetchStatePageData } from "@/services/statePageService";
 import {
   buildStateLocalBusiness,
   buildAgentItemList,
   buildBreadcrumbList,
 } from "@/lib/structured-data";
-import {
-  areaAssignmentsInState,
-  groupAgentsByAreaForState,
-  type StateAgentGroups,
-} from "@/lib/stateAgents";
 import { SITE_URL, absoluteUrl } from "@/lib/siteUrl";
 import { getStateGuidePosts } from "@/lib/blog/registry";
 
 const BASE_URL = SITE_URL;
+export const revalidate = 43200;
 
 export async function generateStaticParams() {
-  try {
-    const states = await stateService.fetchStateList();
-    return states.map((state) => ({
-      state: state.state_slug.current,
-    }));
+  if (process.env.SKIP_SALESFORCE_PRERENDER === '1') return [];
 
-  } catch (error) {
-    console.error("Error generating static params:", error);
-    return []; // Return an empty array to avoid breaking the build
-  }
+  const states = await stateService.fetchStateList();
+  return states.map((state) => ({
+    state: state.state_slug.current,
+  }));
 }
 
 export async function generateMetadata(props: { params: Promise<{ state: string }> }) {
@@ -87,52 +79,17 @@ export async function generateMetadata(props: { params: Promise<{ state: string 
 
 export default async function StatePage(props: { params: Promise<{ state: string }> }) {
   const { state } = await props.params;
-  let state_data: StateDetails | null = null;
-  let agents_data: AgentsData | [] = [];
-  let lenders_data: LendersData | [] = [];
-  let formatted_data: StateAgentGroups = {};
-  let state_code = '';
+  const {
+    stateDetails: state_data,
+    stateCode: state_code,
+    agentsData: agents_data,
+    lendersData: lenders_data,
+    agentGroups: formatted_data,
+  } = await fetchStatePageData(state);
 
-  try {
-    state_data = await stateService.fetchStateDetails(state);
-    state_code = state_data?.short_name ?? '';
-  } catch (error) {
-    console.error("Error fetching State Data", error);
-  }
-  try {
-    lenders_data = await stateService.fetchLendersListByState(state_code);
-
-    // Sort lenders based on AA_Score__c for the current state
-    if (lenders_data?.records) {
-      lenders_data.records.forEach((lender: Lenders) => {
-        const stateAssignment = areaAssignmentsInState(lender, state)[0];
-        // Assign the score for the current state, default to 0 if not found
-        (lender as any).currentStateScore = stateAssignment ? stateAssignment.AA_Score__c : 0;
-      });
-
-      // Sort lenders in descending order based on currentStateScore
-      lenders_data.records.sort((a: any, b: any) => b.currentStateScore - a.currentStateScore);
-    }
-
-  } catch (error) {
-    console.error("Error fetching State Agent List", error);
-  }
-
-  try {
-    agents_data = await stateService.fetchAgentsListByState(state_code); // pass state abbreviation; e.g. TX, VA, etc.
-    formatted_data = groupAgentsByAreaForState(agents_data.records ?? [], state);
-
-  } catch (error) {
-    console.error("Error fetching State Agent List", error);
-  }
-
-  if (!state_data) {
-    return <p>Failed to load data for the state.</p>;
-  }
-
-  const stateName = state_data?.state_name || 'Unknown';
-  const agentCount = (agents_data as AgentsData).records?.length ?? 0;
-  const lenderCount = (lenders_data as LendersData).records?.length ?? 0;
+  const stateName = state_data.state_name;
+  const agentCount = agents_data.records.length;
+  const lenderCount = lenders_data.records.length;
   const guidePosts = getStateGuidePosts(state, 6);
 
   const localBusinessJsonLd = buildStateLocalBusiness({
@@ -144,7 +101,7 @@ export default async function StatePage(props: { params: Promise<{ state: string
 
   const agentItemListJsonLd = buildAgentItemList(
     state,
-    ((agents_data as AgentsData).records ?? []).map((agent) => ({
+    agents_data.records.map((agent) => ({
       name: agent.Name,
       brokerage: agent.Brokerage_Name__pc,
       bio: agent.Agent_Bio__pc,
@@ -176,7 +133,7 @@ export default async function StatePage(props: { params: Promise<{ state: string
       <StatePageHeroSection
         stateName={state_data?.state_name || 'Unknown'}
         stateImage={state_data?.state_map}
-        cityList={Object.keys(formatted_data).sort()}
+        cityList={Object.keys(formatted_data).toSorted()}
         stateSlug={state}
         stateCode={state_code}
       />
@@ -194,9 +151,22 @@ export default async function StatePage(props: { params: Promise<{ state: string
         stateCode={state_code}
       />
 
-      {Object.entries(formatted_data).sort().map(([cityName, agents]: [string, any[]]) => (
-        <StatePageCityAgents key={cityName} city={cityName} agent_data={agents} state={state} />
-      ))}
+      {Object.keys(formatted_data).length === 0 ? (
+        <section className="bg-[#F4F4F4] px-5 py-12 text-center">
+          <h2 className="text-[#292F6C] text-[31px] font-bold">
+            {stateName} Real Estate Agents
+          </h2>
+          <p className="text-[#515151] text-[18px] mt-4">
+            No agents are currently listed for this state. Contact us and we will help find the right match.
+          </p>
+        </section>
+      ) : (
+        Object.entries(formatted_data)
+          .toSorted(([left], [right]) => left.localeCompare(right))
+          .map(([cityName, agents]) => (
+            <StatePageCityAgents key={cityName} city={cityName} agent_data={agents} state={state} />
+          ))
+      )}
 
       <StatePageLetFindAgent stateSlug={state} stateCode={state_code} />
       <StatePageWhyChooseVetpcs cityName={state_data?.state_name || 'Unknown'} />

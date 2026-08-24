@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import axios from 'axios';
-import { api, salesForceAPI, RequestType } from '@/services/api';
-import { logError } from '@/services/loggingService';
+import { api, salesForceAPI, salesForceAPIWithRefresh, RequestType } from '@/services/api';
+import { getSalesforceToken } from '@/services/salesForceTokenService';
+import { logDebug, logError } from '@/services/loggingService';
 
 // axios is called as a function (default export) inside the api helpers.
 vi.mock('axios', () => ({ default: vi.fn() }));
@@ -9,6 +10,7 @@ vi.mock('@/services/salesForceTokenService', () => ({
   getSalesforceToken: vi.fn(async () => 'test-token'),
 }));
 vi.mock('@/services/loggingService', () => ({
+  logDebug: vi.fn(),
   logError: vi.fn(),
 }));
 
@@ -26,6 +28,7 @@ async function captureRejection<T>(promise: Promise<T>): Promise<unknown> {
 
 describe('api error handling: HTTP response vs network error', () => {
   beforeEach(() => {
+    vi.useRealTimers();
     vi.clearAllMocks();
   });
 
@@ -93,5 +96,165 @@ describe('api error handling: HTTP response vs network error', () => {
       expect.any(Object),
       networkError,
     );
+  });
+
+  it('sets a bounded timeout on Salesforce requests', async () => {
+    mockedAxios.mockResolvedValueOnce({ status: 200 } as never);
+
+    await salesForceAPI({ endpoint: 'https://sf/query', type: RequestType.GET });
+
+    expect(mockedAxios).toHaveBeenCalledWith(
+      expect.objectContaining({ timeout: 15_000 }),
+    );
+  });
+});
+
+describe('salesForceAPIWithRefresh retry policy', () => {
+  beforeEach(() => {
+    vi.useRealTimers();
+    vi.clearAllMocks();
+  });
+
+  it('retries transient GET responses and returns the eventual success', async () => {
+    vi.useFakeTimers();
+    const unavailable = { status: 503, data: 'unavailable' };
+    const success = { status: 200, data: 'ok' };
+    mockedAxios
+      .mockResolvedValueOnce(unavailable as never)
+      .mockResolvedValueOnce(unavailable as never)
+      .mockResolvedValueOnce(success as never);
+
+    const request = salesForceAPIWithRefresh({
+      endpoint: 'https://sf/query?q=sensitive',
+      type: RequestType.GET,
+    });
+    await vi.runAllTimersAsync();
+
+    await expect(request).resolves.toBe(success);
+    expect(mockedAxios).toHaveBeenCalledTimes(3);
+    expect(logDebug).toHaveBeenCalledWith(
+      'Retrying transient Salesforce GET response',
+      expect.objectContaining({ endpoint: 'https://sf/query', status: 503 }),
+    );
+  });
+
+  it('returns the final transient response after the bounded GET attempts are exhausted', async () => {
+    vi.useFakeTimers();
+    const unavailable = { status: 503, data: 'unavailable' };
+    mockedAxios.mockResolvedValue(unavailable as never);
+
+    const request = salesForceAPIWithRefresh({
+      endpoint: 'https://sf/query',
+      type: RequestType.GET,
+    });
+    await vi.runAllTimersAsync();
+
+    await expect(request).resolves.toBe(unavailable);
+    expect(mockedAxios).toHaveBeenCalledTimes(3);
+  });
+
+  it('retries transient GET network errors and preserves success after recovery', async () => {
+    vi.useFakeTimers();
+    const networkError = Object.assign(new Error('timeout'), { code: 'ETIMEDOUT' });
+    const success = { status: 200, data: 'ok' };
+    mockedAxios
+      .mockRejectedValueOnce(networkError)
+      .mockRejectedValueOnce(networkError)
+      .mockResolvedValueOnce(success as never);
+
+    const request = salesForceAPIWithRefresh({
+      endpoint: 'https://sf/query',
+      type: RequestType.GET,
+    });
+    await vi.runAllTimersAsync();
+
+    await expect(request).resolves.toBe(success);
+    expect(mockedAxios).toHaveBeenCalledTimes(3);
+  });
+
+  it('rejects the final GET network error after the bounded attempts are exhausted', async () => {
+    vi.useFakeTimers();
+    const networkError = Object.assign(new Error('timeout'), { code: 'ETIMEDOUT' });
+    mockedAxios.mockRejectedValue(networkError);
+
+    const request = salesForceAPIWithRefresh({
+      endpoint: 'https://sf/query',
+      type: RequestType.GET,
+    });
+    request.catch(() => undefined);
+    await vi.runAllTimersAsync();
+
+    await expect(request).rejects.toMatchObject({
+      message: 'salesForceAPI request failed',
+      cause: networkError,
+    });
+    expect(mockedAxios).toHaveBeenCalledTimes(3);
+  });
+
+  it('does not retry a non-transient GET response', async () => {
+    const badRequest = { status: 400, data: 'bad request' };
+    mockedAxios.mockResolvedValueOnce(badRequest as never);
+
+    const response = await salesForceAPIWithRefresh({
+      endpoint: 'https://sf/query',
+      type: RequestType.GET,
+    });
+
+    expect(response).toBe(badRequest);
+    expect(mockedAxios).toHaveBeenCalledTimes(1);
+  });
+
+  it('never transiently retries a mutating request', async () => {
+    const unavailable = { status: 503, data: 'unavailable' };
+    mockedAxios.mockResolvedValueOnce(unavailable as never);
+
+    const response = await salesForceAPIWithRefresh({
+      endpoint: 'https://sf/lead/001',
+      type: RequestType.PATCH,
+      data: { OwnerId: '005TEST' },
+    });
+
+    expect(response).toBe(unavailable);
+    expect(mockedAxios).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the one-time 401 token refresh behavior', async () => {
+    const unauthorized = { status: 401, data: 'INVALID_SESSION_ID' };
+    const success = { status: 200, data: 'ok' };
+    mockedAxios
+      .mockResolvedValueOnce(unauthorized as never)
+      .mockResolvedValueOnce(success as never);
+
+    const response = await salesForceAPIWithRefresh({
+      endpoint: 'https://sf/query',
+      type: RequestType.GET,
+    });
+
+    expect(response).toBe(success);
+    expect(getSalesforceToken).toHaveBeenCalledWith({ forceRefresh: true });
+    expect(mockedAxios).toHaveBeenCalledTimes(2);
+  });
+
+  it('never refreshes the token more than once across transient GET retries', async () => {
+    vi.useFakeTimers();
+    const unauthorized = { status: 401, data: 'INVALID_SESSION_ID' };
+    const unavailable = { status: 503, data: 'unavailable' };
+    mockedAxios
+      .mockResolvedValueOnce(unauthorized as never)
+      .mockResolvedValueOnce(unavailable as never)
+      .mockResolvedValueOnce(unauthorized as never);
+
+    const responsePromise = salesForceAPIWithRefresh({
+      endpoint: 'https://sf/query',
+      type: RequestType.GET,
+    });
+
+    await vi.runAllTimersAsync();
+    const response = await responsePromise;
+
+    expect(response).toBe(unauthorized);
+    expect(getSalesforceToken).toHaveBeenCalledWith({ forceRefresh: true });
+    expect(getSalesforceToken).toHaveBeenCalledTimes(4);
+    expect(mockedAxios).toHaveBeenCalledTimes(3);
   });
 });

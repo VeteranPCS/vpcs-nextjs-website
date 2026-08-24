@@ -10,6 +10,8 @@ import { toLegacyImage, type LegacyImage } from '@/lib/content/loader';
 // transitively import this module. Only ever runs server-side. (The module is
 // now also hard server-only via the lib/content/states import above; type-only
 // imports from client components remain fine because they compile away.)
+const headshotFilenameCache = new Map<'agents' | 'lenders', Promise<ReadonlySet<string>>>();
+
 async function resolveHeadshot(
   role: 'agents' | 'lenders',
   salesforceID: string,
@@ -18,8 +20,19 @@ async function resolveHeadshot(
     import('node:fs'),
     import('node:path'),
   ]);
-  const rel = `/images/${role}/${salesforceID}.webp`;
-  return fs.existsSync(path.join(process.cwd(), 'public', rel)) ? rel : null;
+  const filename = `${salesforceID}.webp`;
+  let filenamesPromise = headshotFilenameCache.get(role);
+  if (!filenamesPromise) {
+    const directory = path.join(process.cwd(), 'public', 'images', role);
+    filenamesPromise = fs.promises.readdir(directory).then((filenames) => new Set(filenames));
+    headshotFilenameCache.set(role, filenamesPromise);
+  }
+
+  // Salesforce 15-character IDs are case-sensitive. Reading the directory and
+  // checking its returned names prevents case-insensitive development machines
+  // from assigning one partner's headshot to a different, case-colliding ID.
+  const filenames = await filenamesPromise;
+  return filenames.has(filename) ? `/images/${role}/${filename}` : null;
 }
 
 // One row of the state list, sourced from the repo-committed export
