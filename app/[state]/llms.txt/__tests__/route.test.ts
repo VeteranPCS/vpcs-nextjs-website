@@ -9,7 +9,8 @@ vi.mock('@/services/statePageService', () => ({
 }));
 
 import { fetchStatePageData } from '@/services/statePageService';
-import { GET } from '@/app/[state]/llms.txt/route';
+import stateService from '@/services/stateService';
+import { generateStaticParams, GET } from '@/app/[state]/llms.txt/route';
 
 const stateDetails = {
   _id: 'state-TX',
@@ -24,7 +25,21 @@ const stateDetails = {
 
 describe('GET /[state]/llms.txt', () => {
   beforeEach(() => {
+    vi.unstubAllEnvs();
     vi.clearAllMocks();
+  });
+
+  it('skips Salesforce-backed prerendering only when the CI build flag is explicit', async () => {
+    vi.stubEnv('SKIP_SALESFORCE_PRERENDER', '1');
+
+    await expect(generateStaticParams()).resolves.toEqual([]);
+    expect(stateService.fetchStateList).not.toHaveBeenCalled();
+  });
+
+  it('still resolves configured state params in credentialed builds', async () => {
+    vi.mocked(stateService.fetchStateList).mockResolvedValue([stateDetails]);
+
+    await expect(generateStaticParams()).resolves.toEqual([{ state: 'texas' }]);
   });
 
   it('returns 404 for an unknown state without querying Salesforce', async () => {

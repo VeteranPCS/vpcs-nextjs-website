@@ -10,6 +10,8 @@ export const revalidate = 43200;
 const BASE_URL = SITE_URL;
 
 export async function generateStaticParams() {
+  if (process.env.SKIP_SALESFORCE_PRERENDER === '1') return [];
+
   const states = await stateService.fetchStateList();
   return states.map((state) => ({ state: state.state_slug.current }));
 }
