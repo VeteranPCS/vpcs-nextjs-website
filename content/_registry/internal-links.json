@@ -1,6 +1,6 @@
 {
-  "contentHash": "521af7a44a1a2b4cf72999a52c38a2cf68e08a3d81160942e64e7008bcb6c647",
-  "totalPosts": 362,
+  "contentHash": "d21f37a2bbc631f22fffd7f23cc9b65b202ec716f9136c9557bee9581dc31472",
+  "totalPosts": 363,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -69,6 +69,7 @@
     ],
     "Military Transition Help": [
       "benefits-of-working-with-veteran-real-estate-agents-for-military-veterans",
+      "buying-a-home-after-military-service",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
@@ -447,6 +448,7 @@
     ],
     "military-transition-help": [
       "benefits-of-working-with-veteran-real-estate-agents-for-military-veterans",
+      "buying-a-home-after-military-service",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
@@ -804,6 +806,7 @@
       "what-military-bases-are-in-california"
     ],
     "colorado": [
+      "buying-a-home-after-military-service",
       "colorado-veteran-property-tax-exemptions-2026",
       "pcs-to-air-force-academy-colorado-springs-2026-guide",
       "pcs-to-buckley-sfb-aurora-2026-guide",
@@ -1097,9 +1100,9 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 237,
+    "resolved": 238,
     "bySource": {
-      "author-state-slug": 2,
+      "author-state-slug": 3,
       "frontmatter-state-slug": 214,
       "slug-heuristic": 20,
       "state-map-post": 1
@@ -1992,6 +1995,42 @@
         "What to Watch Before You Offer",
         "Frequently Asked Questions",
         "Turn Your Next PCS Into an Asset"
+      ]
+    },
+    {
+      "slug": "buying-a-home-after-military-service",
+      "title": "Transitioning to Civilian Homeownership: Buying a Home After Military Service",
+      "url": "/blog/buying-a-home-after-military-service",
+      "component": "Military Transition Help",
+      "componentSlug": "military-transition-help",
+      "stateSlug": "colorado",
+      "stateSource": "author-state-slug",
+      "categories": [
+        "Military Transition Help",
+        "VA Loan Help"
+      ],
+      "description": "For the first time in years, you get to choose where you live. Here is how to use your VA loan after service, what to line up first, and who to call.",
+      "publishedAt": "2026-08-27T09:00:00.000Z",
+      "updatedAt": "2026-08-27T00:00:00.000Z",
+      "primaryKeyword": "buying a home after military service",
+      "secondaryKeywords": [
+        "buying a house after leaving the military",
+        "can veterans use va loan after service",
+        "transitioning to civilian homeownership",
+        "va loan after separation",
+        "veteran first time homebuyer"
+      ],
+      "h2Outline": [
+        "Your Transition Checklist",
+        "Can You Still Use Your VA Loan After You Separate?",
+        "What the VA Loan Still Gives You",
+        "How Much House Can You Afford?",
+        "Now You Get to Choose Where You Live",
+        "Mistakes to Avoid in Your First Year Out",
+        "Your VeteranPCS Move-In Bonus",
+        "How VeteranPCS Helps",
+        "Frequently Asked Questions",
+        "Ready to Put Down Roots?"
       ]
     },
     {
