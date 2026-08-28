@@ -1,5 +1,5 @@
 {
-  "contentHash": "d21f37a2bbc631f22fffd7f23cc9b65b202ec716f9136c9557bee9581dc31472",
+  "contentHash": "5ab141123b7f9cc912bae1b19d495e42beffb6a897c68408e2e6b3de83d59eef",
   "totalPosts": 363,
   "byComponent": {
     "Financial Guidance": [
@@ -806,7 +806,6 @@
       "what-military-bases-are-in-california"
     ],
     "colorado": [
-      "buying-a-home-after-military-service",
       "colorado-veteran-property-tax-exemptions-2026",
       "pcs-to-air-force-academy-colorado-springs-2026-guide",
       "pcs-to-buckley-sfb-aurora-2026-guide",
@@ -1100,9 +1099,9 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 238,
+    "resolved": 237,
     "bySource": {
-      "author-state-slug": 3,
+      "author-state-slug": 2,
       "frontmatter-state-slug": 214,
       "slug-heuristic": 20,
       "state-map-post": 1
@@ -2003,8 +2002,8 @@
       "url": "/blog/buying-a-home-after-military-service",
       "component": "Military Transition Help",
       "componentSlug": "military-transition-help",
-      "stateSlug": "colorado",
-      "stateSource": "author-state-slug",
+      "stateSlug": null,
+      "stateSource": null,
       "categories": [
         "Military Transition Help",
         "VA Loan Help"
