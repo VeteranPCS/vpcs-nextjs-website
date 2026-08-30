@@ -63,19 +63,9 @@ Reports land in `docs/blog-migration/editorial-audit-{date}.md`.
 
 ## Component categorization
 
-Canonical `component` labels (sourced from the link registry):
+Canonical `component` labels and URL slugs are sourced from `content/_data/blog-components.json`, with the TypeScript wrapper in `lib/blog/components.ts`. Do not hardcode post counts here; they move with the corpus.
 
-| `component`                    | Posts | Notes                                                |
-|--------------------------------|-------|------------------------------------------------------|
-| `PCS Help`                     | 53    |                                                      |
-| `U.S. Military Bases`          | 44    |                                                      |
-| `VA Loan Help`                 | 22    |                                                      |
-| `Military Transition Help`     | 7     |                                                      |
-| `Things to Do Near You`        | 6     | Lowercase "to". "Things **To** Do" is a known prior typo |
-| `Real Estate Insights`         | 3     |                                                      |
-| `Financial Guidance`           | 3     |                                                      |
-
-The current breakdown lives in `content/_registry/internal-links.json` under `byComponent`. Re-run `node scripts/build-internal-link-registry.mjs` after adding or moving posts.
+The current breakdown lives in `content/_registry/internal-links.json` under `byComponent` and `byComponentSlug`. Re-run `node scripts/build-internal-link-registry.mjs` after adding or moving posts, then use the generated counts only as diagnostics.
 
 URLs are flat (`/blog/{slug}`); `next.config.mjs` carries 301 redirects for the legacy subcategorized paths (`/blog/us-military-bases/...`, `/blog/pcs-help/...`).
 

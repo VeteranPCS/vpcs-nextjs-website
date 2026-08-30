@@ -1,0 +1,185 @@
+---
+# ============================================================================
+# VeteranPCS blog post template
+# Shape extracted from real posts in content/blog/*.mdx (Aug 2026 corpus),
+# cross-checked against lib/blog/types.ts (interface Blog) and
+# .claude/skills/vpcs-blog/SKILL.md. Where the two disagreed, this template
+# follows the real posts (see SKILL.md's own "trust the code" philosophy).
+#
+# Copy this file to content/blog/YOUR-SLUG-HERE.mdx, fill in every
+# ALL_CAPS_WITH_UNDERSCORES placeholder, delete fields you don't need
+# (stateSlug, author.salesforceId), then delete this whole comment block.
+# It is intentionally above the closing "---" so it is invisible to readers
+# and does not affect gray-matter frontmatter parsing.
+# ============================================================================
+
+# title (REQUIRED). Rendered as the page's <h1> automatically.
+# Do NOT also start the body with "# TITLE_HERE"; that trips the
+# body-h1 audit finding (high severity).
+title: 'TITLE_HERE'
+
+# shortTitle: present on ~98% of real posts even though SKILL.md's schema
+# section omits it. Shorter variant for nav/cards where the full title
+# wraps. Set it; only skip if title is already short.
+shortTitle: 'SHORT_TITLE_HERE'
+
+# metaTitle: SERP <title>. Hard band enforced by
+# scripts/audit-blog-editorial.mjs: 50-60 characters.
+metaTitle: 'META_TITLE_HERE_KEEP_BETWEEN_50_AND_60_CHARACTERS'
+
+# metaDescription: SERP snippet. Hard band enforced by the audit script:
+# 150-160 characters. Use the ">-" block style (folds newlines, strips the
+# trailing one); this is the convention in every recent post.
+metaDescription: >-
+  META_DESCRIPTION_HERE_KEEP_BETWEEN_150_AND_160_CHARACTERS_THIS_IS_THE_SERP_SNIPPET_NOT_THE_IN_PAGE_COPY
+
+# description: plain-language card/hero copy. Deliberately different from
+# metaDescription: that one is for SERP ranking, this one is for in-page
+# reading. Falls back to excerpt(content, 250) when omitted, but set it:
+# ~57% of posts do and it reads better than an auto-excerpt.
+description: >-
+  DESCRIPTION_HERE_PLAIN_LANGUAGE_SUMMARY_FOR_THE_CARD_AND_HERO_NOT_THE_SEARCH_SNIPPET
+
+# slug (REQUIRED). Must exactly match this file's name (without .mdx) and
+# be URL-safe: lowercase, hyphen-separated, no spaces or underscores.
+slug: SLUG_HERE
+
+# publishedAt (REQUIRED). ISO datetime string. Use the real publish moment,
+# not a placeholder date, before this post ships.
+publishedAt: 'YYYY-MM-DDTHH:MM:SS.000Z'
+
+# updatedAt: ISO datetime; emitted as JSON-LD dateModified. Set it equal to
+# publishedAt at first publish; bump it on any meaningful later edit/refresh.
+updatedAt: 'YYYY-MM-DDTHH:MM:SS.000Z'
+
+# reviewBy: ISO date the freshness pipeline should re-evaluate this post
+# (figures, BAH/VA-loan limits, base data are the usual rot sources).
+# Common cadence in the corpus is about 6 months out from publishedAt.
+reviewBy: 'YYYY-MM-DD'
+
+# component (REQUIRED). One of the canonical category labels from
+# content/_data/blog-components.json (wrapped by lib/blog/components.ts).
+# Do NOT hardcode this template against a fixed list; labels can change.
+# Check that file for the current set; as of this writing it holds 7 labels
+# (PCS Help, U.S. Military Bases, VA Loan Help, Military Transition Help,
+# Financial Guidance, Things to Do Near You, Real Estate Insights), but
+# treat blog-components.json as the source of truth, not this comment.
+# Casing must match exactly; the audit script hard-fails on case variants
+# of the same label (component-case-collision).
+component: COMPONENT_LABEL_HERE
+
+# stateSlug (OPTIONAL). Only set this for a post about a specific
+# state/base/location (lowercase, hyphenated state name, e.g.
+# "north-carolina"). Delete this line entirely for non-location posts;
+# it appears in only about 59% of the corpus.
+stateSlug: STATE_SLUG_HERE_OR_DELETE_THIS_LINE
+
+# categories (REQUIRED array). Every entry MUST be a canonical label from
+# content/_data/blog-components.json, exact casing. The audit script hard-
+# fails (noncanonical-category) on anything outside that set. This is one
+# of only two checks that block npm run lint:content unconditionally, no
+# --strict needed. Usually just [component]; add a second canonical label
+# only when the post genuinely spans two categories.
+categories:
+  - COMPONENT_LABEL_HERE
+
+# mainImage (REQUIRED). Hero image lives at public/images/blog/{slug}/main.webp;
+# src below must use the same slug as the "slug" field above.
+mainImage:
+  src: /images/blog/SLUG_HERE/main.webp
+  # alt (REQUIRED), meaningful (not decorative; this is the hero image).
+  alt: 'MAIN_IMAGE_ALT_TEXT_HERE'
+
+# author (REQUIRED object). Default byline is "VeteranPCS", never
+# "The VeteranPCS Team" or "VPCS Team" (scripts/audit-blog-editorial.mjs
+# bans that phrase in body copy unconditionally, and lib/blog/authors.ts's
+# FALLBACK_AUTHOR_NAME is "VeteranPCS"). To credit a real agent/lender
+# instead, replace name below and add a salesforceId line; a valid id
+# resolves the headshot and contact link automatically via
+# lib/blog/authors.ts. Get real salesforceId values from the
+# salesforce-schema-researcher agent or an existing post that credits the
+# same person; never invent one.
+author:
+  name: VeteranPCS
+
+# primaryKeyword: GSC join key for SEO performance reports. Plain lowercase
+# phrase, no quotes needed.
+primaryKeyword: PRIMARY_KEYWORD_HERE
+
+# secondaryKeywords: related search terms, plain lowercase phrases.
+secondaryKeywords:
+  - SECONDARY_KEYWORD_HERE
+  - SECONDARY_KEYWORD_HERE_2
+---
+
+<!--
+POST-PUBLISH CHECKLIST. Run from the repo root after the draft is written
+and before committing:
+
+  1. node scripts/build-internal-link-registry.mjs
+     Rebuilds content/_registry/internal-links.json so this post is
+     discoverable for cross-linking and its H2 outline / keywords are
+     indexed. Never hand-edit that JSON file directly.
+
+  2. node scripts/audit-blog-editorial.mjs
+     Writes docs/blog-migration/editorial-audit-{date}.md. Fix any new
+     high or medium finding before commit. Add --strict to exit 1 on any
+     finding (used in CI). A banned byline or a non-canonical "categories"
+     entry fails this even without --strict.
+
+  3. npm run type-check
+     Pre-commit also runs lint + type-check + build; this catches issues
+     earlier.
+
+Delete this comment block before publishing.
+-->
+
+TITLE_ONE_SENTENCE_HOOK_HERE. INTRO_PARAGRAPH_PLACEHOLDER_STATE_THE_PROBLEM_OR_QUESTION_THIS_POST_ANSWERS_IN_PLAIN_LANGUAGE_5TH_TO_7TH_GRADE_READING_LEVEL_NO_EMOJI_NO_URGENCY_TIMERS.
+
+SECOND_INTRO_PARAGRAPH_PLACEHOLDER_PREVIEW_WHAT_THE_POST_COVERS_AND_WHY_IT_MATTERS_FOR_A_MILITARY_FAMILY_DOING_A_PCS_MOVE.
+
+## FIRST_H2_SECTION_HEADING_HERE
+
+BODY_COPY_PLACEHOLDER_PARAGRAPH_ONE. Explain military terms on first use (per .impeccable.md Principle #3): spell out the acronym once, then use it freely.
+
+- BULLET_POINT_PLACEHOLDER_ONE
+- BULLET_POINT_PLACEHOLDER_TWO
+- BULLET_POINT_PLACEHOLDER_THREE
+
+### OPTIONAL_H3_SUBSECTION_HEADING_HERE
+
+Use H3 only for subsections nested under an H2; delete this subsection if the post doesn't need one.
+
+## SECOND_H2_SECTION_HEADING_HERE
+
+BODY_COPY_PLACEHOLDER_PARAGRAPH. Cross-link to related posts using the flat `/blog/{slug}` form; check the link registry (content/_registry/internal-links.json) for relevant posts first, and aim for 2 or more internal links per post. Example: [RELATED_POST_ANCHOR_TEXT_HERE](/blog/RELATED_POST_SLUG_HERE).
+
+## THIRD_H2_SECTION_HEADING_HERE
+
+BODY_COPY_PLACEHOLDER_PARAGRAPH.
+
+<!--
+OPTIONAL mid/end-of-body CTA. Delete this section entirely if the post
+doesn't warrant one. AgentCTA is the only sanctioned in-body CTA component
+(components/Blog/mdx/AgentCTA.tsx); it renders either a "Find an Agent" or
+"Find a Lender" prompt depending on the credited person's role. Use a real
+salesforceId, never a placeholder; pull one from an existing post or the
+salesforce-schema-researcher agent.
+-->
+## OPTIONAL_CTA_SECTION_HEADING_HERE
+
+<AgentCTA salesforceId="SALESFORCE_ID_HERE" name="AGENT_OR_LENDER_NAME_HERE" />
+
+## Frequently Asked Questions
+
+### FAQ_QUESTION_ONE_HERE
+
+FAQ_ANSWER_ONE_PLACEHOLDER_KEEP_IT_SHORT_AND_DIRECT.
+
+### FAQ_QUESTION_TWO_HERE
+
+FAQ_ANSWER_TWO_PLACEHOLDER.
+
+### FAQ_QUESTION_THREE_HERE
+
+FAQ_ANSWER_THREE_PLACEHOLDER.

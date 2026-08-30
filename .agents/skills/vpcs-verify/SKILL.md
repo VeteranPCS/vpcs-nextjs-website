@@ -1,0 +1,1 @@
+../../../.claude/skills/vpcs-verify/SKILL.md
