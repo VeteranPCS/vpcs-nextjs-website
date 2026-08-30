@@ -41,7 +41,7 @@ const Interashipdetails = async () => {
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 justify-center xl:gap-10 lg:gap-10 md:gap-10 sm:gap-2 gap-2 xl:px-10 lg:px-10 md:px-10 sm:px-3 px-3">
             <div className="text-center">
-              <h2 className="text-[#292F6C] text-center lg:text-[45] md:text-[45px] sm:text-[31px] text-[31px] font-bold">
+              <h2 className="text-[#292F6C] text-center lg:text-[45px] md:text-[45px] sm:text-[31px] text-[31px] font-bold">
                 {internshipBenefitData?.title}
               </h2>
               <Image

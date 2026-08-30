@@ -9,7 +9,7 @@
 //   node scripts/audit-blog-editorial.mjs [--strict]
 //
 // Outputs:
-//   docs/blog-migration/editorial-audit-{ISO}.md          (committed)
+//   docs/blog-migration/editorial-audit-{ISO}.md          (gitignored)
 //   docs/blog-migration/raw/editorial-audit-{ISO}.json    (gitignored)
 //
 // Process exit:

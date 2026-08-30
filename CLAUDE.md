@@ -1,8 +1,9 @@
 # CLAUDE.md — VeteranPCS
 
-Operational guide for Claude (and any other AI assistant) working in this repo. Keep this short and load-bearing; long-form context lives in `docs/ai-first/PROJECT.md`.
+Operational guide for Claude (and any other AI assistant) working in this repo. Keep this short and load-bearing; long-form context lives in `docs/PROJECT-STATUS.md`.
 
-> See [docs/ai-first/PROJECT.md](docs/ai-first/PROJECT.md) for the AI-first reimagining: phase status, key decisions, bugs fixed, and what's next.
+> See [docs/PROJECT-STATUS.md](docs/PROJECT-STATUS.md) for phase status, active decisions, open questions, and what's next.
+> (`docs/ai-first/` is a gitignored local journal: not present in worktrees, fresh clones, or CI. Do not rely on it.)
 
 ## What this product is
 
@@ -21,7 +22,7 @@ VeteranPCS is a Next.js site that connects active-duty service members, veterans
 - **Telemetry:** PostHog is the primary funnel telemetry source; GA/GTM is a comparator. Taxonomy and troubleshooting live in `docs/analytics/telemetry-taxonomy.md`.
 - **Rate limit + bot defense:** `@upstash/ratelimit` + Upstash Redis, `botid` (Vercel BotID), both applied in `app/api/chat/route.ts`.
 - **Notifications:** Slack webhook (`actions/sendToSlack.ts`), OpenPhone SMS (`actions/sendOpenPhoneMessage.ts`). No Resend on this branch.
-- **Test runner:** Vitest 4 (Node env, `**/__tests__/**/*.test.ts`). Pre-commit does NOT run tests yet — run `npm test` before pushing AI-touching changes.
+- **Test runner:** Vitest 4, `environment: 'node'` for the whole suite, `**/__tests__/**/*.test.ts`. Tests run in pre-commit and CI. **Nothing in the suite renders a component** (no jsdom, no Testing Library), so a green run says nothing about how a page looks.
 - **Hosting:** Vercel. Use `vercel env` for env management. Prefer Fluid Compute defaults; do not assume edge runtime.
 
 ## Commands
@@ -32,11 +33,12 @@ VeteranPCS is a Next.js site that connects active-duty service members, veterans
 | `npm run build` | Production build (runs in pre-commit hook) |
 | `npm run lint` | ESLint (pre-commit) |
 | `npm run type-check` | `tsc --noEmit` (pre-commit) |
-| `npm test` | Vitest one-shot |
+| `npm test` | Vitest one-shot (pre-commit) |
+| `npm run lint:content` | Blog editorial audit (`scripts/audit-blog-editorial.mjs`); **not** in pre-commit |
 | `npm run test:watch` | Vitest watch mode |
 | `npm run eval` | Concierge eval suites (`vitest run -c vitest.eval.config.ts`); on-demand, not in `npm test` |
 
-Pre-commit hook (`.husky/pre-commit`) runs `lint && type-check && build`. **It does not run tests** — run `npm test` manually for AI/scraper changes. Never use `--no-verify` to bypass it unless the user explicitly asks.
+Pre-commit hook (`.husky/pre-commit`) runs `lint && type-check && test && build`, ordered fastest-failing first. The full suite is ~2s, so tests are cheap; `build` is the slow step and stays because content loaders throw at module load, catching bad JSON the unit suite misses. `npm run lint:content` is **not** in the hook: run it manually after `content/blog/` changes. Never use `--no-verify` to bypass the hook unless the user explicitly asks.
 
 ## Repo layout
 
@@ -73,11 +75,26 @@ components/
 scripts/               Node scripts (audits, ingest, headshot classify, etc.)
 evals/                 on-demand concierge eval suites (npm run eval)
 docs/
-  ai-first/PROJECT.md  AI-first journal — read this for current goals/status
+  PROJECT-STATUS.md    phase status, decisions, open questions (tracked; start here)
+  ai-first/            gitignored local journal, narrative history only
   analytics/           PostHog taxonomy, GA/GTM comparator, Salesforce joins
   REVERSION-PLAN.md    why we stayed on Salesforce (vs. the Attio migration)
   salesforce-schema/   Salesforce field reference (committed .md summaries; raw/ dumps gitignored)
 ```
+
+## Skills
+
+Project skills live in `.claude/skills/`. `.agents/skills/` is a **symlinked mirror** for Codex, not a
+second copy: edit `.claude/` only. Adding a skill means adding the mirror symlink too.
+
+| Skill | Use it when |
+|---|---|
+| `vpcs-verify` | Before claiming any UI, form, or route change is done. Also carries the lead-form safety rule. |
+| `vpcs-blog` | Writing, refreshing, or auditing posts under `content/blog/`. |
+| `vpcs-state-maps` | Processing a state-map update ticket (Linear + Drive + repo). |
+| `vpcs-agent-headshots` | Processing an agent headshot ticket. |
+
+Project subagents live in `.claude/agents/`: `salesforce-schema-researcher`, `blog-corpus-researcher`.
 
 ## Conventions and gotchas
 
@@ -94,8 +111,8 @@ docs/
 
 - **Editing structured content:** edit the type's JSON in `content/_data/site/` directly. Loaders in `lib/content/` validate at module load and **throw** — a typo'd field fails the build, not silently at runtime. Keep `_id` stable; bump `_updatedAt` when you edit (the sitemap's `lastModified` reads it).
 - **Editing rich text** (team bios, FAQ answers, support blurbs): edit the typed `.tsx` content modules colocated with their consumers (`components/About/teamBios.tsx`, FAQ `faqContent.tsx`, `supportVeterenceContent.tsx`). Links/bold/lists are plain JSX. Each module has a parity test that derives its expectations from the exported Portable Text JSON in `content/_data/site/` — for a deliberate content change, update **both** the JSX and its matching JSON document; never weaken the test itself.
-- **State images:** drop the file in `public/images/states/`, update the state's `state_map` entry (path/alt/width/height) in `content/_data/site/state_list.json`, and bump that doc's `_updatedAt`. A test in `lib/content/__tests__/states.test.ts` verifies every `state_map.path` exists on disk — it runs in `npm test` and CI, **not** in pre-commit or the build, so run `npm test` after touching state content.
-- **Deliberate leftovers:** `scripts/export-sanity-content.mjs` (+ its test, + the `@sanity/image-url` devDependency) are retained ONLY for grace-window re-exports while the old Sanity project is kept read-only as rollback (~30 days post-merge). After the window closes, delete all three. Nothing in the app runtime imports Sanity.
+- **State images:** drop the file in `public/images/states/`, update the state's `state_map` entry (path/alt/width/height) in `content/_data/site/state_list.json`, and bump that doc's `_updatedAt`. A test in `lib/content/__tests__/states.test.ts` verifies every `state_map.path` exists on disk; it runs in `npm test`, which is now part of the pre-commit hook and CI.
+- **Deliberate leftovers (grace window EXPIRED ~2026-08-13):** `scripts/export-sanity-content.mjs` (+ its test, + the `@sanity/image-url` devDependency) were retained only for rollback re-exports. The window has closed but the files are still present. Delete all three once the operator confirms the old Sanity project is archived and its token revoked; see `docs/PROJECT-STATUS.md`. Nothing in the app runtime imports Sanity. Note `blog.sanityId` is **not** a leftover: it is live, feeding `contentId` to PostHog `content_id`. Do not delete it.
 - Headshot routing convention: `scripts/classify-headshot-ids.mjs` plus the `public/images/agents/` vs `public/images/lenders/` folders.
 
 ### Concierge (Phase 2)
@@ -114,7 +131,7 @@ docs/
 
 ### Forms & lead routing
 
-- Lead-capture forms write to **both** the Salesforce Person Account (Customer record type) and the appropriate Opportunity. `destination_city` and `current_location` mappings are documented in auto-memory; ask before changing them.
+- Lead-capture forms write to **both** the Salesforce Person Account (Customer record type) and the appropriate Opportunity. `destination_city` and `current_location` mappings are documented in the per-project memory directory `~/.claude/projects/-Users-harperfoley-VPCS-vpcs-nextjs-website/memory/` (the freshest source of project history; read its `MEMORY.md` index first). Ask before changing them.
 - Default blog byline is `VeteranPCS`, never `The VeteranPCS Team`.
 
 ### Middleware (proxy.ts)
@@ -137,15 +154,17 @@ The env vars used on `main`:
 - **Guardrails:** `GUARDRAILS_ENFORCED` (`'0'` = disable all concierge input guardrails; any other value or unset = enforced). Mirrors `LEAD_SPAM_ENFORCED`. Guardrails run in `app/api/chat/route.ts` via `lib/ai/guardrails/evaluateInput`.
 - Notifications: `SLACK_WEBHOOK_URL`, `OPEN_PHONE_API_KEY`, `OPEN_PHONE_FROM_NUMBER`, plus per-partner `*_PHONE_NUMBER`
 - Misc: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID`, Google Reviews creds
+- **Local verification only:** `LEAD_DRY_RUN` (`'1'`/`'true'`) short-circuits every outbound lead side effect (Web-to-Lead POST, Slack, OpenPhone SMS, lead-owner routing, PostHog `lead_conversion_created`) while still building and logging the payload. `lib/lead-dry-run.ts` forces it false when `NODE_ENV === 'production'`, so it is inert in any deployed environment. Read it only via `isLeadDryRun()`; never read `process.env.LEAD_DRY_RUN` directly.
 
-No `RESEND_*` keys on this branch — transactional email is off here. Don't add Resend-based code without checking PROJECT.md first.
+No `RESEND_*` keys on this branch — transactional email is off here. Don't add Resend-based code without checking `docs/PROJECT-STATUS.md` first.
 
 ## Working agreements
 
 - **Diagnose root cause before fixing.** Don't paper over symptoms; trace through `services/`/`lib/` until you understand why.
 - **Verify before recommending.** A memory or plan that names a file/flag may be stale; `grep` or `Read` it before suggesting it to the user.
-- **Don't bypass the pre-commit hook.** Lint, type-check, and build must pass.
-- **Tests are not in pre-commit yet.** Run `npm test` manually for changes to `lib/ai/**`, `lib/bah-scraper.ts`, or `services/**`.
+- **Don't bypass the pre-commit hook.** Lint, type-check, test, and build must all pass.
+- **Green gates are not verification.** No test in this repo renders a component (`vitest.config.ts` sets `environment: 'node'`, and there is no jsdom or Testing Library). For any UI, layout, or Tailwind change, use the `vpcs-verify` skill and look at the rendered page before claiming done.
+- **Never submit a lead form against a live backend.** Local Salesforce config points at the production org and the submit path is non-idempotent. Use `LEAD_DRY_RUN=1 npm run dev`; see `vpcs-verify`.
 - **Use TodoWrite for non-trivial work** — branch state should always reflect a clear punch list.
 - **Force-push requires explicit per-task authorization** (don't reuse a prior session's authorization).
 - **Never commit `.env*` files or anything containing secrets.** Stage files by name rather than `git add -A`.

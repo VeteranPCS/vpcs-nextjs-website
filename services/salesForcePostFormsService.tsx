@@ -12,6 +12,7 @@ import {
     routeSalesforceLeadOwner,
 } from '@/services/salesforceLeadOwnerService';
 import { evaluateLeadSpam, tagSpamSuspected } from '@/lib/spam-protection';
+import { isLeadDryRun } from '@/lib/lead-dry-run';
 import { HP_FIELD, TS_FIELD } from '@/lib/validation/spam-fields';
 import { formatStateLabel, normalizeStateCode, normalizeStateSlug } from '@/lib/states';
 import {
@@ -41,6 +42,8 @@ interface SalesforceSubmissionResult {
     responseText?: string;
     redirectUrl?: string;
     error?: Error;
+    /** Set only when LEAD_DRY_RUN short-circuited the POST; never set on a real submission. */
+    dryRun?: true;
 }
 
 /**
@@ -50,12 +53,29 @@ interface SalesforceSubmissionResult {
  * response body is missing, unexpected, or does not contain the normal redirect
  * script. Retrying after any response can create duplicate Leads, so this helper
  * intentionally performs exactly one POST.
+ *
+ * Dry-run choke point 1 of 2: this is the only place the app POSTs to Web-to-Lead, so
+ * the guard here covers all nine forms.
  */
 async function submitToSalesforceWebToLead(
     url: string,
     formBody: string,
     submissionId: string
 ): Promise<SalesforceSubmissionResult> {
+    if (isLeadDryRun()) {
+        // Dumped with console.log rather than logInfo on purpose: the structured logger
+        // redacts exactly the keys a verifier needs to check here (first_name, last_name,
+        // email, mobile, message, payload). Safe because isLeadDryRun() is inert in
+        // production, so this line is unreachable there.
+        console.log('[LEAD_DRY_RUN] Skipping Salesforce Web-to-Lead POST', {
+            submissionId,
+            url,
+            payload: Object.fromEntries(new URLSearchParams(formBody)),
+        });
+
+        return { success: true, responseText: '', dryRun: true };
+    }
+
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 30000);
@@ -249,6 +269,17 @@ async function captureAcceptedCustomerLead(args: {
     partnerSalesforceId?: string | null;
     guideId?: string;
 }): Promise<void> {
+    // PostHog is the primary funnel telemetry source, so a dry-run submit must not emit a
+    // conversion event. This is the fifth outbound side effect the flag suppresses.
+    if (isLeadDryRun()) {
+        console.log('[LEAD_DRY_RUN] Skipping lead_conversion_created PostHog capture', {
+            submissionId: args.submissionId,
+            formId: args.formId,
+            spamQuarantined: args.spamQuarantined,
+        });
+        return;
+    }
+
     if (args.spamQuarantined) return;
 
     await captureLeadConversionCreated({
@@ -514,6 +545,9 @@ ${formData.additionalComments ? `Additional Comments: ${formData.additionalComme
  * Shared notification path for all nine forms. Slack is dispatched first, then (Family A
  * only, and only when not spam-quarantined) the partner OpenPhone SMS. A rejected promise
  * or a Slack `ok !== true` result is logged uniformly instead of being swallowed.
+ *
+ * Dry-run choke point 2 of 2: this is the only place Slack and OpenPhone are dispatched,
+ * so the guard here covers both remaining outbound sinks for all nine forms.
  */
 async function dispatchNotifications(params: {
     submissionId: string;
@@ -521,6 +555,18 @@ async function dispatchNotifications(params: {
     smsArg?: Parameters<typeof sendOpenPhoneMessage>[0];
 }): Promise<void> {
     const { submissionId, slackArg, smsArg } = params;
+
+    if (isLeadDryRun()) {
+        // See the note in submitToSalesforceWebToLead: console.log keeps the notification
+        // payloads readable, and this branch cannot run in production.
+        console.log('[LEAD_DRY_RUN] Skipping lead notifications', {
+            submissionId,
+            slack: slackArg,
+            sms: smsArg,
+        });
+
+        return;
+    }
 
     const notificationTasks: Array<{ name: 'Slack' | 'OpenPhone'; promise: Promise<unknown> }> = [
         { name: 'Slack', promise: sendToSlack(slackArg) },
@@ -588,7 +634,7 @@ async function dispatchNotifications(params: {
  * Single Web-to-Lead submission engine shared by all nine lead forms. The nine exports
  * are thin wrappers around this: their differences live entirely in the config they pass.
  */
-async function submitWebToLead<TResult>(
+async function submitWebToLead<TResult extends object>(
     config: WebToLeadConfig<TResult>,
     rawFormData: unknown,
     runtime?: { queryString?: string; options?: InternalCallOptions },
@@ -695,6 +741,11 @@ async function submitWebToLead<TResult>(
 
         const formBody = config.buildParams(ctx).toString();
 
+        // Resolved once per submission so the Salesforce POST, the Lead-owner routing, and
+        // the returned marker all agree. Inert in production by construction, see the
+        // invariant on isLeadDryRun().
+        const dryRun = isLeadDryRun();
+
         logDebug('Sending form data to Salesforce Web-to-Lead', {
             submissionId,
             url: SALESFORCE_WEB_TO_LEAD_URL,
@@ -726,8 +777,9 @@ async function submitWebToLead<TResult>(
         const { response, redirectUrl } = submissionResult;
 
         // Family A: post-acceptance Lead-owner routing. Its failure is LOGGED, not thrown,
-        // so a routing hiccup never costs the visitor a successful submission.
-        if (config.location && leadOwner) {
+        // so a routing hiccup never costs the visitor a successful submission. Skipped in a
+        // dry run: it writes to the Salesforce org, and no Lead was created to route.
+        if (config.location && leadOwner && !dryRun) {
             try {
                 await routeSalesforceLeadOwner({
                     submissionId,
@@ -804,7 +856,12 @@ async function submitWebToLead<TResult>(
         }
 
         logInfo('Form submitted successfully', { submissionId, hasRedirectUrl: !!redirectUrl });
-        return config.buildResult(redirectUrl, submissionId);
+
+        const result = config.buildResult(redirectUrl, submissionId);
+
+        // A dry run returns the real success shape so callers exercise the real success path,
+        // but carries an explicit marker so nothing can mistake it for a real submission.
+        return dryRun ? { ...result, dryRun: true as const } : result;
     } catch (error) {
         await updateSubmissionStatus(
             submissionId,

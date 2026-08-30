@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import sendToSlack from '@/actions/sendToSlack';
 import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
 import { routeSalesforceLeadOwner } from '@/services/salesforceLeadOwnerService';
@@ -1262,5 +1262,150 @@ describe('characterization: observable contract for the seven simpler forms', ()
     expect(
       vi.mocked(updateSubmissionStatus).mock.calls.some((call) => call[1] === 'FAILURE'),
     ).toBe(true);
+  });
+});
+
+/**
+ * LEAD_DRY_RUN: the lead-submit path is non-idempotent and fires real outbound side
+ * effects (Salesforce Web-to-Lead POST, Slack webhook, partner OpenPhone SMS, lead-owner
+ * routing, PostHog conversion capture), so it cannot be exercised end to end without
+ * creating a real Lead, texting a real person, and recording a false conversion. These
+ * tests pin the flag's three contracts: it suppresses every sink and marks the result in
+ * a non-production environment, it is inert in production, and it changes nothing when
+ * unset.
+ */
+describe('LEAD_DRY_RUN lead-submit dry run', () => {
+  let consoleLogSpy: MockInstance<typeof console.log>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllEnvs();
+    vi.stubGlobal('fetch', vi.fn());
+    consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    process.env.NEXT_PUBLIC_API_BASE_URL = 'https://www.veteranpcs.com';
+    process.env.OPEN_PHONE_FROM_NUMBER = '+17194153014';
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    consoleLogSpy.mockRestore();
+  });
+
+  function accept200() {
+    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
+      status: 200,
+    });
+  }
+
+  it('suppresses the Salesforce POST, Slack, OpenPhone, owner routing and PostHog, and marks the result', async () => {
+    vi.stubEnv('LEAD_DRY_RUN', '1');
+
+    const result = await contactAgentPostForm(qaPayload(), queryString);
+
+    expect(result).toEqual({
+      message: 'Form submitted successfully!',
+      submissionId: 'submission-test-id',
+      dryRun: true,
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(sendToSlack).not.toHaveBeenCalled();
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(routeSalesforceLeadOwner).not.toHaveBeenCalled();
+    // PostHog is the primary funnel source, so a dry run must not record a false conversion.
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
+    expect(
+      consoleLogSpy.mock.calls.some(
+        (call) => call[0] === '[LEAD_DRY_RUN] Skipping lead_conversion_created PostHog capture',
+      ),
+    ).toBe(true);
+    // The submission is still tracked as accepted so the caller exercises the success path.
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', undefined);
+  });
+
+  it('still builds and logs the full Web-to-Lead payload so field mapping stays verifiable', async () => {
+    vi.stubEnv('LEAD_DRY_RUN', '1');
+
+    await contactAgentPostForm(qaPayload(), queryString);
+
+    const postLog = consoleLogSpy.mock.calls.find(
+      (call) => call[0] === '[LEAD_DRY_RUN] Skipping Salesforce Web-to-Lead POST',
+    );
+    expect(postLog).toBeDefined();
+    // postLog is defined per the assertion above, so the payload argument is present.
+    const logged = postLog![1] as { payload: Record<string, string> };
+    expect(logged.payload.first_name).toBe('QA');
+    expect(logged.payload.last_name).toBe('Concierge Test');
+    expect(logged.payload.email).toBe('tech+qa@veteranpcs.com');
+    // State derivation, submission-id attribution and the lead-owner URL marker all still run.
+    expect(logged.payload['00N4x00000LspV2']).toBe('CO');
+    expect(logged.payload['00NRg00000PjSEfMAN']).toBe('submission-test-id');
+    expect(logged.payload['00N4x00000QQ1LB']).toContain('sid=submission-test-id');
+
+    const notifyLog = consoleLogSpy.mock.calls.find(
+      (call) => call[0] === '[LEAD_DRY_RUN] Skipping lead notifications',
+    );
+    expect(notifyLog).toBeDefined();
+    expect(notifyLog![1]).toEqual(
+      expect.objectContaining({
+        slack: expect.objectContaining({ headerText: '🔔 New Agent Lead', state: 'Colorado' }),
+        sms: expect.objectContaining({ to: ['+17195550100'] }),
+      }),
+    );
+  });
+
+  it('marks the dry run on a simpler form without disturbing its success shape', async () => {
+    vi.stubEnv('LEAD_DRY_RUN', '1');
+
+    const result = await KeepInTouchForm({
+      firstName: 'Test', lastName: 'Touch', email: 'touch@example.com', phone: '8035550100',
+    });
+
+    expect(result).toEqual({
+      success: true,
+      message: 'Form submitted successfully!',
+      submissionId: 'submission-test-id',
+      dryRun: true,
+    });
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(sendToSlack).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+  });
+
+  it('is inert in production: the real path runs even with the flag set', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('LEAD_DRY_RUN', '1');
+    accept200();
+
+    const result = await contactPostForm({
+      firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
+      additionalComments: 'A contact message',
+    });
+
+    expect(result).toEqual({
+      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+    expect(result).not.toHaveProperty('dryRun');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
+  });
+
+  it('changes nothing when the flag is unset', async () => {
+    accept200();
+
+    const result = await contactPostForm({
+      firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
+      additionalComments: 'A contact message',
+    });
+
+    expect(result).toEqual({
+      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+    expect(result).not.toHaveProperty('dryRun');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
+    expect(consoleLogSpy.mock.calls.some((call) => String(call[0]).startsWith('[LEAD_DRY_RUN]'))).toBe(false);
   });
 });

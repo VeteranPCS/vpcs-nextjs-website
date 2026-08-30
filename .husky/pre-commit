@@ -1,4 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm run lint && npm run type-check && npm run build
+# Ordered fastest-failing first. `npm test` is vitest run (non-watch).
+# `next build` is the slowest step and CI runs it too; it stays here because
+# content loaders throw at module load, so build catches bad JSON that the
+# unit suite does not. Drop it if commit latency becomes a problem.
+npm run lint && npm run type-check && npm test && npm run build
