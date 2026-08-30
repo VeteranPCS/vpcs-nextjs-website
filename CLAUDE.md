@@ -154,7 +154,7 @@ The env vars used on `main`:
 - **Guardrails:** `GUARDRAILS_ENFORCED` (`'0'` = disable all concierge input guardrails; any other value or unset = enforced). Mirrors `LEAD_SPAM_ENFORCED`. Guardrails run in `app/api/chat/route.ts` via `lib/ai/guardrails/evaluateInput`.
 - Notifications: `SLACK_WEBHOOK_URL`, `OPEN_PHONE_API_KEY`, `OPEN_PHONE_FROM_NUMBER`, plus per-partner `*_PHONE_NUMBER`
 - Misc: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID`, Google Reviews creds
-- **Local verification only:** `LEAD_DRY_RUN` (`'1'`/`'true'`) short-circuits every outbound lead side effect (Web-to-Lead POST, Slack, OpenPhone SMS, lead-owner routing) while still building and logging the payload. `lib/lead-dry-run.ts` forces it false when `NODE_ENV === 'production'`, so it is inert in any deployed environment. Read it only via `isLeadDryRun()`; never read `process.env.LEAD_DRY_RUN` directly.
+- **Local verification only:** `LEAD_DRY_RUN` (`'1'`/`'true'`) short-circuits every outbound lead side effect (Web-to-Lead POST, Slack, OpenPhone SMS, lead-owner routing, PostHog `lead_conversion_created`) while still building and logging the payload. `lib/lead-dry-run.ts` forces it false when `NODE_ENV === 'production'`, so it is inert in any deployed environment. Read it only via `isLeadDryRun()`; never read `process.env.LEAD_DRY_RUN` directly.
 
 No `RESEND_*` keys on this branch — transactional email is off here. Don't add Resend-based code without checking `docs/PROJECT-STATUS.md` first.
 

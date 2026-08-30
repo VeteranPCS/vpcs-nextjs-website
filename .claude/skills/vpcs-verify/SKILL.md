@@ -54,15 +54,20 @@ enabled in a deployed environment even if the variable is set. That production c
 the single `isLeadDryRun()` helper that every guard calls, so a guard added later cannot forget it.
 Never read `process.env.LEAD_DRY_RUN` anywhere else.
 
-In dry-run the full payload is still constructed, and four outbound side effects are skipped: the
-Salesforce Web-to-Lead POST, the Slack webhook, the OpenPhone SMS, and `routeSalesforceLeadOwner`
-(which also writes to the org). The result carries `dryRun: true` and the caller walks the identical
-success path. Both guards log under the `[LEAD_DRY_RUN]` prefix:
+In dry-run the full payload is still constructed, and five outbound side effects are skipped: the
+Salesforce Web-to-Lead POST, the Slack webhook, the OpenPhone SMS, `routeSalesforceLeadOwner` (which
+also writes to the org), and the PostHog `lead_conversion_created` capture. That last one is the
+easiest to miss and the most damaging: PostHog is the primary funnel telemetry source, so an
+unguarded verification run pollutes conversion data. The result carries `dryRun: true` and the
+caller walks the identical success path. All three guards log under the `[LEAD_DRY_RUN]` prefix:
 
 ```
 [LEAD_DRY_RUN] Skipping Salesforce Web-to-Lead POST
 [LEAD_DRY_RUN] Skipping lead notifications
+[LEAD_DRY_RUN] Skipping lead_conversion_created PostHog capture
 ```
+
+If you add a new outbound sink to the lead path, guard it with `isLeadDryRun()` and add a line here.
 
 Read the logged payload to confirm field mapping. It uses `console.log` rather than `logInfo` on
 purpose: `services/loggingService.ts` sanitizes `first_name`, `last_name`, `email`, `mobile`, and

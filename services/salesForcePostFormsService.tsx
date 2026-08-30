@@ -269,6 +269,17 @@ async function captureAcceptedCustomerLead(args: {
     partnerSalesforceId?: string | null;
     guideId?: string;
 }): Promise<void> {
+    // PostHog is the primary funnel telemetry source, so a dry-run submit must not emit a
+    // conversion event. This is the fifth outbound side effect the flag suppresses.
+    if (isLeadDryRun()) {
+        console.log('[LEAD_DRY_RUN] Skipping lead_conversion_created PostHog capture', {
+            submissionId: args.submissionId,
+            formId: args.formId,
+            spamQuarantined: args.spamQuarantined,
+        });
+        return;
+    }
+
     if (args.spamQuarantined) return;
 
     await captureLeadConversionCreated({

@@ -1266,12 +1266,13 @@ describe('characterization: observable contract for the seven simpler forms', ()
 });
 
 /**
- * LEAD_DRY_RUN: the lead-submit path is non-idempotent and fires three real outbound
- * side effects (Salesforce Web-to-Lead POST, Slack webhook, partner OpenPhone SMS), so
- * it cannot be exercised end to end without creating a real Lead and texting a real
- * person. These tests pin the flag's three contracts: it suppresses all three sinks and
- * marks the result in a non-production environment, it is inert in production, and it
- * changes nothing when unset.
+ * LEAD_DRY_RUN: the lead-submit path is non-idempotent and fires real outbound side
+ * effects (Salesforce Web-to-Lead POST, Slack webhook, partner OpenPhone SMS, lead-owner
+ * routing, PostHog conversion capture), so it cannot be exercised end to end without
+ * creating a real Lead, texting a real person, and recording a false conversion. These
+ * tests pin the flag's three contracts: it suppresses every sink and marks the result in
+ * a non-production environment, it is inert in production, and it changes nothing when
+ * unset.
  */
 describe('LEAD_DRY_RUN lead-submit dry run', () => {
   let consoleLogSpy: MockInstance<typeof console.log>;
@@ -1296,7 +1297,7 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     });
   }
 
-  it('suppresses the Salesforce POST, Slack, OpenPhone and owner routing, and marks the result', async () => {
+  it('suppresses the Salesforce POST, Slack, OpenPhone, owner routing and PostHog, and marks the result', async () => {
     vi.stubEnv('LEAD_DRY_RUN', '1');
 
     const result = await contactAgentPostForm(qaPayload(), queryString);
@@ -1310,6 +1311,14 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     expect(sendToSlack).not.toHaveBeenCalled();
     expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(routeSalesforceLeadOwner).not.toHaveBeenCalled();
+    // PostHog is the primary funnel source, so a dry run must not record a false conversion.
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
+    expect(
+      consoleLogSpy.mock.calls.some(
+        (call) => call[0] === '[LEAD_DRY_RUN] Skipping lead_conversion_created PostHog capture',
+      ),
+    ).toBe(true);
     // The submission is still tracked as accepted so the caller exercises the success path.
     expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', undefined);
   });
@@ -1360,6 +1369,7 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     });
     expect(global.fetch).not.toHaveBeenCalled();
     expect(sendToSlack).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
   });
 
   it('is inert in production: the real path runs even with the flag set', async () => {
@@ -1378,6 +1388,7 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     expect(result).not.toHaveProperty('dryRun');
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
   });
 
   it('changes nothing when the flag is unset', async () => {
@@ -1394,6 +1405,7 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     expect(result).not.toHaveProperty('dryRun');
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
     expect(consoleLogSpy.mock.calls.some((call) => String(call[0]).startsWith('[LEAD_DRY_RUN]'))).toBe(false);
   });
 });
