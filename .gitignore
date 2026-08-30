@@ -55,6 +55,13 @@ docs/migration
 # blog migration raw dumps (recon)
 /docs/blog-migration/raw
 
+# blog editorial audit reports: regenerated on demand by `npm run lint:content`
+# (scripts/audit-blog-editorial.mjs:392, which builds exactly this name). Nothing
+# reads a historical report, and the script recreates the directory itself, so
+# these must never be committed. Scoped to the generated name on purpose: a bare
+# *.md here would silently swallow any real doc added to this directory.
+/docs/blog-migration/editorial-audit-*.md
+
 # blog update raw audit dumps (recon)
 /docs/blog-updates/raw
 
