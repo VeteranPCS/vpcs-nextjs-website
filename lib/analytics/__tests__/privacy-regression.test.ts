@@ -96,6 +96,17 @@ describe('analytics privacy regressions', () => {
       expect(guideSource).toContain("captureAnalyticsEvent('guide_download_started'");
       expect(guideSource).toContain('formTrackingPayload()');
     }
+
+    const coloradoGuide = await source(
+      'components/StatePage/StatePageHeroSecondSection/ColoradoPcsGuidePromo.tsx',
+    );
+
+    expect(coloradoGuide).toContain('captureAnalyticsEvent("guide_download_requested"');
+    expect(coloradoGuide).toContain('captureAnalyticsEvent("guide_download_started"');
+    expect(coloradoGuide).toContain('trackCtaClicked(buildCtaProperties');
+    expect(coloradoGuide).toContain('guide_id: GUIDE_ID');
+    expect(coloradoGuide).toContain('event: "conversion_download"');
+    expect(coloradoGuide).toContain('content: "Colorado PCS Guide"');
   });
 
   it('keeps server-owned PostHog events out of the client event union', async () => {

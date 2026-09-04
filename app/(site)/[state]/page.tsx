@@ -139,6 +139,8 @@ export default async function StatePage(props: { params: Promise<{ state: string
       />
       <StatePageHeroSecondSection
         stateName={state_data?.state_name || 'Unknown'}
+        stateCode={state_code}
+        stateSlug={state}
       />
       <StatePageViewedTracker stateCode={state_code} stateSlug={state} />
       <StatePageVaLoan cityName={state_data?.state_name || 'Unknown'} lendersData={lenders_data} state={state} />

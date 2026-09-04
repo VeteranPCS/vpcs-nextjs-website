@@ -1,11 +1,18 @@
 import React from "react";
 import Image from "next/image";
+import ColoradoPcsGuidePromo from "./ColoradoPcsGuidePromo";
 
 interface StatePageHeroSecondSectionProps {
   stateName: string;
+  stateCode: string;
+  stateSlug: string;
 }
 
-const StatePageHeroSecondSection = ({ stateName }: StatePageHeroSecondSectionProps) => {
+const StatePageHeroSecondSection = ({
+  stateName,
+  stateCode,
+  stateSlug,
+}: StatePageHeroSecondSectionProps) => {
   const benefits = [
     {
       icon: "/icon/userpluswhite.svg",
@@ -28,18 +35,22 @@ const StatePageHeroSecondSection = ({ stateName }: StatePageHeroSecondSectionPro
     <section className="bg-primary text-white" aria-label="VeteranPCS lending support">
       <div className="mx-auto flex flex-col md:flex-row max-w-[1500px] items-stretch">
         <div className="flex w-full md:w-[36%] items-center justify-center bg-primary-hover/25 px-10 py-8 xl:px-14">
-          <div className="flex max-w-[360px] flex-col items-center text-center">
-            <Image
-              src="/icon/VeteranPCSlogo.svg"
-              alt="VeteranPCS"
-              width={500}
-              height={110}
-              className="h-auto w-full max-w-[320px]"
-            />
-            <p className="mt-3 max-w-[280px] font-inter text-sm font-medium leading-6 text-white/90">
-              Your trusted Veteran and military real estate team in {stateName}.
-            </p>
-          </div>
+          {stateSlug === "colorado" ? (
+            <ColoradoPcsGuidePromo stateCode={stateCode} stateSlug={stateSlug} />
+          ) : (
+            <div className="flex max-w-[360px] flex-col items-center text-center">
+              <Image
+                src="/icon/VeteranPCSlogo.svg"
+                alt="VeteranPCS"
+                width={500}
+                height={110}
+                className="h-auto w-full max-w-[320px]"
+              />
+              <p className="mt-3 max-w-[280px] font-inter text-sm font-medium leading-6 text-white/90">
+                Your trusted Veteran and military real estate team in {stateName}.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="flex min-h-[210px] flex-1 items-center px-10 py-8 xl:px-14">

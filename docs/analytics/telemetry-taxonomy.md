@@ -108,8 +108,8 @@ Common optional properties:
 | `form_submit_attempted` | Customer forms before client validation | `form_id`, `has_email`, `has_phone`, optional `guide_id`, state fields |
 | `form_validation_failed` | Customer forms | `form_id`, `failure_stage`, safe field-level `error_codes` |
 | `form_submission_failed` | Customer forms | `form_id`, `failure_stage`, `error_codes` |
-| `guide_download_requested` | Guide forms | `guide_id`, `form_id`, `has_email` |
-| `guide_download_started` | Guide forms after accepted server response | `guide_id`, `form_id` |
+| `guide_download_requested` | Guide forms and direct-download CTAs | `guide_id`, optional `form_id`, `has_email`, and state fields |
+| `guide_download_started` | Guide forms after accepted server response and direct-download CTAs | `guide_id`, optional `form_id`, state fields |
 | `concierge_opened` | Concierge provider open paths | `source_page_path`, optional `input_origin`, `concierge_topic` |
 | `concierge_message_sent` | Concierge widget manual sends, seeded messages, agent-card selections | `query_length`, `query_word_count`, optional `input_origin`, no raw text |
 | `concierge_tool_approval_responded` | Concierge approval UI | `tool_name`, `approved` |
@@ -295,7 +295,7 @@ Known GTM events in the current app:
 | `conversion_contact_lender` | Contact-lender page submission path |
 | `conversion_contact_form` | General contact form |
 | `conversion_keep_in_touch` | Keep-in-touch form |
-| `conversion_download` | Guide download forms |
+| `conversion_download` | Guide download forms and direct-download CTAs; `content` identifies the guide (`Colorado PCS Guide` for `colorado_pcs_guide`) |
 | `moving_bonus_calculator_interaction` | Moving bonus calculator interaction |
 | `moving_bonus_calculator_cta_click` | Moving bonus calculator CTA |
 | `bah_calculator_use` | BAH calculator success |
