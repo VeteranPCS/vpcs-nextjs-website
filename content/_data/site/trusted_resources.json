@@ -33,7 +33,7 @@
     "_id": "22a0ce2d-18fc-46a1-bcc2-268bdb04f556",
     "_type": "trusted_resources",
     "_createdAt": "2024-12-17T08:41:25Z",
-    "_updatedAt": "2025-01-16T00:07:55Z",
+    "_updatedAt": "2026-09-04T02:22:31Z",
     "logo": {
       "_sanityAssetId": "image-9633e614f00be51f6730015e94353e1957961220-194x50-webp",
       "alt": "Porch's Logo",
@@ -42,13 +42,13 @@
       "width": 194
     },
     "name": "Porch",
-    "url": "https://porch.com/advice/expert-moving-tips"
+    "url": "https://porch.com/"
   },
   {
     "_id": "32ee5bfd-5ddd-4ae2-93dd-94d53c3bdf4d",
     "_type": "trusted_resources",
     "_createdAt": "2024-12-17T08:43:52Z",
-    "_updatedAt": "2025-01-16T00:07:30Z",
+    "_updatedAt": "2026-09-04T02:22:31Z",
     "logo": {
       "_sanityAssetId": "image-c5bb3b01f53b44c18dfc9f09a6ae66ef922557b3-480x144-webp",
       "alt": "Instant Teams's Logo",
@@ -56,13 +56,14 @@
       "path": "/images/content/trusted-resources/instant-teams.webp",
       "width": 480
     },
-    "name": "Instant Teams"
+    "name": "Instant Teams",
+    "url": "https://instantteams.com/"
   },
   {
     "_id": "3d7ffb3d-9a7e-4e64-848f-e5463d643129",
     "_type": "trusted_resources",
     "_createdAt": "2024-12-17T08:46:02Z",
-    "_updatedAt": "2025-01-16T00:07:34Z",
+    "_updatedAt": "2026-09-04T02:22:31Z",
     "logo": {
       "_sanityAssetId": "image-8df81cd57e01e646d98cd004e45f648a45966f7c-700x100-webp",
       "alt": "We Are The Mighty's Image",
@@ -70,7 +71,8 @@
       "path": "/images/content/trusted-resources/we-are-the-mighty.webp",
       "width": 700
     },
-    "name": "We Are The Mighty"
+    "name": "We Are The Mighty",
+    "url": "https://www.wearethemighty.com/feature/veteranpcs/"
   },
   {
     "_id": "842ce5ac-55d7-408f-964d-ea10bd4a9650",
@@ -86,21 +88,6 @@
     },
     "name": "Hire Heroes USA",
     "url": "https://www.hireheroesusa.org/"
-  },
-  {
-    "_id": "8ec68a7b-a1af-4b1f-a022-2db3cdafe51e",
-    "_type": "trusted_resources",
-    "_createdAt": "2024-12-17T08:38:34Z",
-    "_updatedAt": "2025-01-16T00:08:37Z",
-    "logo": {
-      "_sanityAssetId": "image-62e8a938d1b8dd33286392fcbf5d908882ea8081-1280x366-webp",
-      "alt": "Packing Props's Logo",
-      "height": 366,
-      "path": "/images/content/trusted-resources/packing-props.webp",
-      "width": 1280
-    },
-    "name": "Packing Props",
-    "url": "https://packingprops.com/"
   },
   {
     "_id": "abf218ee-e786-4727-924a-79b9520c39c0",
@@ -145,21 +132,6 @@
     },
     "name": "Stars and Stripe",
     "url": "https://epub.stripes.com/?issue=Transition-Guide_180523"
-  },
-  {
-    "_id": "d633b94f-0831-461e-b04b-338c6fa89fc4",
-    "_type": "trusted_resources",
-    "_createdAt": "2024-12-17T08:36:26Z",
-    "_updatedAt": "2025-01-16T00:09:11Z",
-    "logo": {
-      "_sanityAssetId": "image-b6ab6e66148651f30d9fae4e8c4e2426a9487de6-240x240-webp",
-      "alt": "Mil - Vets's  Logo",
-      "height": 240,
-      "path": "/images/content/trusted-resources/mil-vets.webp",
-      "width": 240
-    },
-    "name": "Mil - Vets",
-    "url": "https://apps.apple.com/us/app/mil-vets/id1643182823"
   },
   {
     "_id": "d92799f8-238d-4dd7-b9cf-32b89396e6cd",

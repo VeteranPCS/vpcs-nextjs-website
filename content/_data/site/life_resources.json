@@ -19,7 +19,7 @@
     "_id": "5a0b9b72-1531-4846-bd89-6da0acd87946",
     "_type": "life_resources",
     "_createdAt": "2024-12-17T07:10:06Z",
-    "_updatedAt": "2024-12-17T07:10:51Z",
+    "_updatedAt": "2026-09-04T02:22:31Z",
     "description": "Goods from families who give. Shop small, big impact.",
     "logo": {
       "_sanityAssetId": "image-555a171d095625f0ae47c2535161f231cfdb6628-384x111-webp",
@@ -29,7 +29,7 @@
       "width": 384
     },
     "name": "SPOUSELY",
-    "url": "https://stachd.com/"
+    "url": "https://spouse-ly.com/"
   },
   {
     "_id": "88f7ed1d-7d5c-4fc2-ad4c-58125bf07807",
@@ -51,7 +51,7 @@
     "_id": "b0aa5318-4cde-4f9f-8c73-2cd68f050a06",
     "_type": "life_resources",
     "_createdAt": "2024-12-17T07:01:57Z",
-    "_updatedAt": "2024-12-17T07:06:39Z",
+    "_updatedAt": "2026-09-04T02:22:31Z",
     "description": "active duty and veteran military spouse business owners tools and resources",
     "logo": {
       "_sanityAssetId": "image-dbea65f7574c1756d9f863ddcc0fd1e19e3546d6-384x104-webp",
@@ -61,13 +61,13 @@
       "width": 384
     },
     "name": "MILITARY SPOUSE CHAMBER OF COMMERCE",
-    "url": "https://stachd.com/"
+    "url": "https://milspousechamber.org/"
   },
   {
     "_id": "cc78cdbd-b12f-43e0-a10d-3be2ed37ef5c",
     "_type": "life_resources",
     "_createdAt": "2024-12-17T07:07:51Z",
-    "_updatedAt": "2024-12-17T07:09:07Z",
+    "_updatedAt": "2026-09-04T02:22:31Z",
     "description": "The leading free, comprehensive, user- friendly directory of businesses owned by military veterans",
     "logo": {
       "_sanityAssetId": "image-441b3952b6452315d8cec84df850793c92731b50-384x84-webp",
@@ -77,22 +77,6 @@
       "width": 384
     },
     "name": "BUSINESS DIRECTORY",
-    "url": "https://stachd.com/"
-  },
-  {
-    "_id": "f45671c3-bcbe-47f4-973a-4d0d4c79c5cc",
-    "_type": "life_resources",
-    "_createdAt": "2024-12-17T07:10:59Z",
-    "_updatedAt": "2024-12-17T07:11:39Z",
-    "description": "It’s time to course correct.  Veteran entrepreneurship rates plummeted in the 20th century.",
-    "logo": {
-      "_sanityAssetId": "image-289328fdd0016b21c2c894a5240916980fc47df2-384x105-webp",
-      "alt": "Bunker Labs's Logo",
-      "height": 105,
-      "path": "/images/content/life-resources/f45671c3-bcbe-47f4-973a-4d0d4c79c5cc-logo.webp",
-      "width": 384
-    },
-    "name": "Bunker Labs",
-    "url": "https://stachd.com/"
+    "url": "https://www.veteranownedbusiness.com/"
   }
 ]
