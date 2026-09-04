@@ -1,6 +1,6 @@
 {
-  "contentHash": "5ab141123b7f9cc912bae1b19d495e42beffb6a897c68408e2e6b3de83d59eef",
-  "totalPosts": 363,
+  "contentHash": "654f5781bfa7474151f8659fe75bc3186291af2c4b407ef5a79e80436487b258",
+  "totalPosts": 367,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -152,6 +152,7 @@
       "pcs-to-wright-patterson-afb-dayton-2026-guide",
       "pcs-to-your-first-duty-station-guide",
       "pcs-travel-pay-mileage-per-diem-2026",
+      "pcs-vehicle-shipping-guide",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "pcsing-oconus-what-do-i-do-with-my-home",
       "pcsing-to-camp-lejeune-2026-onslow-county-guide",
@@ -203,7 +204,10 @@
       "top-things-to-do-near-san-diego-military-bases"
     ],
     "U.S. Military Bases": [
+      "air-force-bases-in-florida",
       "alabama-military-bases",
+      "army-bases-in-hawaii",
+      "army-bases-in-north-carolina",
       "best-neighborhoods-redstone-arsenal-military",
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "best-places-to-live-near-fort-benning",
@@ -531,6 +535,7 @@
       "pcs-to-wright-patterson-afb-dayton-2026-guide",
       "pcs-to-your-first-duty-station-guide",
       "pcs-travel-pay-mileage-per-diem-2026",
+      "pcs-vehicle-shipping-guide",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "pcsing-oconus-what-do-i-do-with-my-home",
       "pcsing-to-camp-lejeune-2026-onslow-county-guide",
@@ -582,7 +587,10 @@
       "top-things-to-do-near-san-diego-military-bases"
     ],
     "us-military-bases": [
+      "air-force-bases-in-florida",
       "alabama-military-bases",
+      "army-bases-in-hawaii",
+      "army-bases-in-north-carolina",
       "best-neighborhoods-redstone-arsenal-military",
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "best-places-to-live-near-fort-benning",
@@ -822,6 +830,7 @@
       "what-military-bases-are-in-delaware"
     ],
     "florida": [
+      "air-force-bases-in-florida",
       "best-neighborhoods-nas-jacksonville-military-families",
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "discovering-military-friendly-living-in-panama-city-florida",
@@ -850,6 +859,7 @@
       "what-military-bases-are-in-georgia"
     ],
     "hawaii": [
+      "army-bases-in-hawaii",
       "hawaii-veteran-property-tax-exemptions-2026",
       "pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
       "pcs-to-hawaii-with-pets",
@@ -977,6 +987,7 @@
     ],
     "north-carolina": [
       "9-things-to-do-near-ft-bragg",
+      "army-bases-in-north-carolina",
       "buy-vs-rent-near-camp-lejeune",
       "fort-bragg-bah-2026-buy-vs-rent",
       "north-carolina-veteran-property-tax-exemptions-2026",
@@ -1099,10 +1110,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 237,
+    "resolved": 240,
     "bySource": {
       "author-state-slug": 2,
-      "frontmatter-state-slug": 214,
+      "frontmatter-state-slug": 217,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -1131,6 +1142,7 @@
       "pcs-to-kitsap-county-five-things-military-families",
       "pcs-to-your-first-duty-station-guide",
       "pcs-travel-pay-mileage-per-diem-2026",
+      "pcs-vehicle-shipping-guide",
       "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "percheron-colorado-springs-master-planned-community-near-colorado-military-bases",
       "prepare-to-pcs-how-do-i-prepare-for-movers",
@@ -1396,6 +1408,38 @@
       ]
     },
     {
+      "slug": "air-force-bases-in-florida",
+      "title": "Air Force Bases in Florida: A Military Family PCS Guide",
+      "url": "/blog/air-force-bases-in-florida",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Florida has four active-duty Air Force bases, one Reserve base, one Air National Guard base, and two former Air Force installations now run by the Space Force. Here is what each one does and what living nearby is like.",
+      "publishedAt": "2026-08-25T09:00:00.000Z",
+      "updatedAt": "2026-08-30T00:00:00.000Z",
+      "primaryKeyword": "air force bases in florida",
+      "secondaryKeywords": [
+        "eglin air force base",
+        "hurlburt field",
+        "macdill air force base",
+        "patrick space force base",
+        "tyndall air force base"
+      ],
+      "h2Outline": [
+        "The Air Force Bases in Florida, at a Glance",
+        "Air Force or Space Force? What Actually Changed",
+        "Base by Base: What Each Installation Does",
+        "Housing Near the Air Force Bases in Florida",
+        "Frequently Asked Questions",
+        "Getting Help With the Move"
+      ]
+    },
+    {
       "slug": "alabama-military-bases",
       "title": "What Military Bases are in Alabama?",
       "url": "/blog/alabama-military-bases",
@@ -1588,6 +1632,71 @@
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "army-bases-in-hawaii",
+      "title": "Army Bases in Hawaii: A PCS Guide to Every Installation",
+      "url": "/blog/army-bases-in-hawaii",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "hawaii",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Hawaii's Army installations sit on two islands and share one very tight housing market. Here is what each post does, and how families decide where to live once they land.",
+      "publishedAt": "2026-08-23T09:00:00.000Z",
+      "updatedAt": "2026-08-30T00:00:00.000Z",
+      "primaryKeyword": "army bases in hawaii",
+      "secondaryKeywords": [
+        "army base hawaii",
+        "fort shafter",
+        "schofield barracks",
+        "tripler army medical center",
+        "wheeler army airfield"
+      ],
+      "h2Outline": [
+        "Every Army Installation in Hawaii, at a Glance",
+        "What the Army Bases in Hawaii Do Day to Day",
+        "Where Army Families Actually Live",
+        "How to Run Your BAH Math",
+        "Two Rules That Catch New Arrivals",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "army-bases-in-north-carolina",
+      "title": "Army Bases in North Carolina: Fort Bragg and Beyond",
+      "url": "/blog/army-bases-in-north-carolina",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "north-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "A plain guide to every Army installation in North Carolina, the Fort Bragg name change, and the towns families pick when they get orders here.",
+      "publishedAt": "2026-08-27T09:00:00.000Z",
+      "updatedAt": "2026-08-30T00:00:00.000Z",
+      "primaryKeyword": "army bases in north carolina",
+      "secondaryKeywords": [
+        "army base north carolina",
+        "fayetteville nc military",
+        "fort bragg",
+        "military ocean terminal sunny point",
+        "pope army airfield"
+      ],
+      "h2Outline": [
+        "The Army Bases in North Carolina, One by One",
+        "Fort Bragg, Fort Liberty, Then Fort Bragg Again",
+        "Fort Bragg by the Numbers",
+        "Where Fort Bragg Families Actually Live",
+        "Buying or Renting on a Fort Bragg BAH",
+        "Frequently Asked Questions",
+        "Before You Sign Anything"
       ]
     },
     {
@@ -3057,7 +3166,7 @@
       ],
       "description": "Most service members can request up to 10 days of permissive TDY to house hunt before a PCS, without being charged leave. Here is how to ask for it and make every day count.",
       "publishedAt": "2026-06-30T09:00:00.000Z",
-      "updatedAt": "2026-07-05T00:00:00.000Z",
+      "updatedAt": "2026-08-30T00:00:00.000Z",
       "primaryKeyword": "house hunting leave",
       "secondaryKeywords": [
         "house hunting trip pcs",
@@ -8369,6 +8478,41 @@
       ]
     },
     {
+      "slug": "pcs-vehicle-shipping-guide",
+      "title": "Shipping a Car During a PCS: What the Military Pays For",
+      "url": "/blog/pcs-vehicle-shipping-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "The government ships one car overseas at its expense and usually expects you to drive inside the United States. Here is how that split works, and what to do about the second vehicle.",
+      "publishedAt": "2026-08-29T09:00:00.000Z",
+      "updatedAt": "2026-08-30T00:00:00.000Z",
+      "primaryKeyword": "pcs vehicle shipping",
+      "secondaryKeywords": [
+        "military car shipping entitlement",
+        "oconus vehicle shipping",
+        "pov shipment military",
+        "shipping a car during a pcs",
+        "vehicle processing center"
+      ],
+      "h2Outline": [
+        "What the Government Pays For",
+        "Moves Inside the United States: Plan to Drive",
+        "Moves Overseas: One Car, One Contractor",
+        "PCS Vehicle Shipping at a Glance",
+        "Step by Step: The Vehicle Processing Center",
+        "The Second Car, the Motorcycle, and the Boat",
+        "If Your Car Arrives Damaged",
+        "Going Without a Car Changes Your House Hunt",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
       "title": "PCS with Kids: 10 Sanity-Saving Tips Every Military Family Needs to Know",
       "url": "/blog/pcs-with-kids-10-sanity-saving-tips-every-military-family-needs-to-know",
@@ -11341,7 +11485,7 @@
       ],
       "description": "Florida has a long history of military involvement, from the American Revolution to modern defense operations. The state is home to twenty-four active military installations, supporting the Army, Navy, Air Force, Marine Corps, Space Forc...",
       "publishedAt": "2024-06-25T13:58:25.000Z",
-      "updatedAt": "2026-08-09T00:00:00.000Z",
+      "updatedAt": "2026-08-30T00:00:00.000Z",
       "primaryKeyword": "military bases in florida",
       "secondaryKeywords": [
         "air force bases in florida",
