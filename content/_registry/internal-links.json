@@ -1,6 +1,6 @@
 {
-  "contentHash": "654f5781bfa7474151f8659fe75bc3186291af2c4b407ef5a79e80436487b258",
-  "totalPosts": 367,
+  "contentHash": "7fd365bfdb4ab72e0ffeaabfa66f208ce2e1b743f356d0b5b26428a71a59d8e5",
+  "totalPosts": 368,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -362,6 +362,7 @@
       "va-loan-after-foreclosure-or-bankruptcy",
       "va-loan-appraisal-what-to-expect",
       "va-loan-assumption-guide-how-military-families-can-save-thousands-on-their-next-home-purchase",
+      "va-loan-assumption-seller-little-equity-case-study",
       "va-loan-assumptions-a-hidden-strategy-for-military-homebuyers",
       "va-loan-assumptions-the-hidden-entitlement-rule-that-trips-up-military-homebuyers",
       "va-loan-assumptions-what-military-families-must-know",
@@ -745,6 +746,7 @@
       "va-loan-after-foreclosure-or-bankruptcy",
       "va-loan-appraisal-what-to-expect",
       "va-loan-assumption-guide-how-military-families-can-save-thousands-on-their-next-home-purchase",
+      "va-loan-assumption-seller-little-equity-case-study",
       "va-loan-assumptions-a-hidden-strategy-for-military-homebuyers",
       "va-loan-assumptions-the-hidden-entitlement-rule-that-trips-up-military-homebuyers",
       "va-loan-assumptions-what-military-families-must-know",
@@ -919,6 +921,7 @@
       "pcs-to-joint-base-andrews-2026-guide",
       "pcs-to-naval-academy-annapolis-2026-guide",
       "pcs-to-walter-reed-bethesda-2026-neighborhoods-bah",
+      "va-loan-assumption-seller-little-equity-case-study",
       "what-military-bases-are-in-maryland"
     ],
     "massachusetts": [
@@ -1110,9 +1113,9 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 240,
+    "resolved": 241,
     "bySource": {
-      "author-state-slug": 2,
+      "author-state-slug": 3,
       "frontmatter-state-slug": 217,
       "slug-heuristic": 20,
       "state-map-post": 1
@@ -10432,6 +10435,40 @@
         "When VA Loan Assumptions Make Sense",
         "Working with VeteranPCS for VA Loan Assumptions",
         "Bottom Line for Military Families"
+      ]
+    },
+    {
+      "slug": "va-loan-assumption-seller-little-equity-case-study",
+      "title": "Can a VA Loan Assumption Help a Seller With Little Equity? A Case Study in the Numbers",
+      "url": "/blog/va-loan-assumption-seller-little-equity-case-study",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": "maryland",
+      "stateSource": "author-state-slug",
+      "categories": [
+        "Real Estate Insights",
+        "VA Loan Help"
+      ],
+      "description": "A worked example of how a low-rate, assumable VA mortgage may help a seller with little equity avoid bringing cash to closing.",
+      "publishedAt": "2026-09-03T12:00:00.000Z",
+      "updatedAt": null,
+      "primaryKeyword": "va loan assumption for sellers",
+      "secondaryKeywords": [
+        "assumable VA loan",
+        "release of liability",
+        "seller with little equity",
+        "VA entitlement",
+        "VA loan assumption process"
+      ],
+      "h2Outline": [
+        "The Situation",
+        "Why the Mortgage May Have Value",
+        "How the Assumption Is Structured",
+        "Why a Buyer Might Pay a Premium",
+        "Entitlement and Release of Liability",
+        "Servicer Approval, Fees, and Timing",
+        "Questions to Ask First",
+        "The Bottom Line"
       ]
     },
     {
