@@ -1,6 +1,6 @@
 {
-  "contentHash": "7fd365bfdb4ab72e0ffeaabfa66f208ce2e1b743f356d0b5b26428a71a59d8e5",
-  "totalPosts": 368,
+  "contentHash": "d57bd0bbcac8a1948015893da5c0d2a2b2a1a3ee8b456ff89a24ea70036d39b7",
+  "totalPosts": 373,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -111,6 +111,7 @@
       "new-home-builders-offering-low-rates-here-is-the-clarity-you-need-to-know",
       "new-semi-custom-luxury-homes-in-castle-rock-with-breathtaking-views-signature-crystal-valley",
       "offutt-afb-pcs-guide-2025",
+      "pcs-advance-pay-guide",
       "pcs-moves-buying-or-selling-during-relocation",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
@@ -173,6 +174,7 @@
       "should-active-duty-military-buy-a-home-in-hawaii",
       "storage-in-transit-sit-pcs-guide",
       "strategic-refinancing-for-luxury-homeowners-in-castle-rock-co",
+      "temporary-lodging-allowance-tla-oconus-guide",
       "temporary-lodging-expense-tle-pcs-guide",
       "tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state",
       "the-complete-guide-to-luxury-new-home-builders-in-castle-rock-colorado",
@@ -355,10 +357,12 @@
       "two-va-loans-at-once-second-tier-entitlement",
       "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
       "understanding-the-va-funding-fee-a-complete-guide-for-military-families",
+      "using-va-disability-income-to-qualify-for-a-mortgage",
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
       "va-cash-out-refinance-guide",
       "va-energy-efficient-mortgage-guide",
       "va-irrrl-streamline-refinance-guide",
+      "va-joint-loan-non-veteran-co-borrower",
       "va-loan-after-foreclosure-or-bankruptcy",
       "va-loan-appraisal-what-to-expect",
       "va-loan-assumption-guide-how-military-families-can-save-thousands-on-their-next-home-purchase",
@@ -377,6 +381,7 @@
       "va-loan-national-guard-reserve-eligibility",
       "va-loan-occupancy-requirements-pcs",
       "va-loan-refinance-pro-tip-how-to-lock-in-a-lower-rate-before-it-s-too-late",
+      "va-loan-surviving-spouse-eligibility",
       "va-loan-vs-conventional-loan",
       "va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
       "va-specially-adapted-housing-grant-guide",
@@ -495,6 +500,7 @@
       "new-home-builders-offering-low-rates-here-is-the-clarity-you-need-to-know",
       "new-semi-custom-luxury-homes-in-castle-rock-with-breathtaking-views-signature-crystal-valley",
       "offutt-afb-pcs-guide-2025",
+      "pcs-advance-pay-guide",
       "pcs-moves-buying-or-selling-during-relocation",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
@@ -557,6 +563,7 @@
       "should-active-duty-military-buy-a-home-in-hawaii",
       "storage-in-transit-sit-pcs-guide",
       "strategic-refinancing-for-luxury-homeowners-in-castle-rock-co",
+      "temporary-lodging-allowance-tla-oconus-guide",
       "temporary-lodging-expense-tle-pcs-guide",
       "tennessee-military-bases-your-complete-pcs-guide-to-the-volunteer-state",
       "the-complete-guide-to-luxury-new-home-builders-in-castle-rock-colorado",
@@ -739,10 +746,12 @@
       "two-va-loans-at-once-second-tier-entitlement",
       "understand-your-va-loan-entitlement-how-does-va-loan-entitlement-work",
       "understanding-the-va-funding-fee-a-complete-guide-for-military-families",
+      "using-va-disability-income-to-qualify-for-a-mortgage",
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
       "va-cash-out-refinance-guide",
       "va-energy-efficient-mortgage-guide",
       "va-irrrl-streamline-refinance-guide",
+      "va-joint-loan-non-veteran-co-borrower",
       "va-loan-after-foreclosure-or-bankruptcy",
       "va-loan-appraisal-what-to-expect",
       "va-loan-assumption-guide-how-military-families-can-save-thousands-on-their-next-home-purchase",
@@ -761,6 +770,7 @@
       "va-loan-national-guard-reserve-eligibility",
       "va-loan-occupancy-requirements-pcs",
       "va-loan-refinance-pro-tip-how-to-lock-in-a-lower-rate-before-it-s-too-late",
+      "va-loan-surviving-spouse-eligibility",
       "va-loan-vs-conventional-loan",
       "va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
       "va-specially-adapted-housing-grant-guide",
@@ -1139,6 +1149,7 @@
       "military-pcs-weight-allowance-2026",
       "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
+      "pcs-advance-pay-guide",
       "pcs-moves-buying-or-selling-during-relocation",
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-bremerton-naval-base-kitsap-2026-guide",
@@ -3197,9 +3208,9 @@
       "categories": [
         "VA Loan Help"
       ],
-      "description": "The VA loan program offers one of the most beneficial home financing options for eligible service members, veterans, and surviving spouses. With no down payment requirement, competitive interest rates, and no private mortgage insurance (...",
+      "description": "A VA loan lets eligible buyers purchase with no down payment. Here is the mechanism behind it, what it still costs, and what zero down does not cover.",
       "publishedAt": "2024-01-02T15:44:22.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "updatedAt": "2026-09-06T00:00:00.000Z",
       "primaryKeyword": "va home loan 0 down",
       "secondaryKeywords": [
         "minimum down payment for a va loan",
@@ -3209,7 +3220,13 @@
         "zero down va loan"
       ],
       "h2Outline": [
-        "Keep Learning About Your VA Loan"
+        "Why Lenders Accept Zero Down on a VA Loan",
+        "Entitlement Is What Makes It Work",
+        "What You Still Pay With Zero Down",
+        "The Funding Fee, Briefly",
+        "When Putting Money Down Still Makes Sense",
+        "Keep Learning About Your VA Loan",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -3946,7 +3963,7 @@
       ],
       "description": "A plain-language guide to finding military bases near you, by state and branch, with official tools and tips for planning a PCS move to a new installation.",
       "publishedAt": "2026-06-15T09:00:00.000Z",
-      "updatedAt": "2026-08-22T00:00:00.000Z",
+      "updatedAt": "2026-09-06T00:00:00.000Z",
       "primaryKeyword": "military bases near me",
       "secondaryKeywords": [
         "army bases near me",
@@ -4805,6 +4822,38 @@
         "Military Pay and Oregon State Income Tax",
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "pcs-advance-pay-guide",
+      "title": "PCS Advance Pay: How to Get Money Before Your Move",
+      "url": "/blog/pcs-advance-pay-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "A PCS costs money before the reimbursements arrive. Here is how advance pay and advance travel payments work, what you can request, and what each one costs you.",
+      "publishedAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-06T00:00:00.000Z",
+      "primaryKeyword": "pcs advance pay",
+      "secondaryKeywords": [
+        "advance pay military",
+        "advance travel pay pcs",
+        "dla advance",
+        "military pcs advance",
+        "ppm advance payment"
+      ],
+      "h2Outline": [
+        "Two Different Kinds of PCS Advance",
+        "Advance Pay: Borrowing Your Own Paychecks",
+        "Advance Travel Payments: Getting Paid Early",
+        "The Paperwork and the Deadlines",
+        "How Advances Fit a Home Purchase",
         "Frequently Asked Questions"
       ]
     },
@@ -9400,6 +9449,39 @@
       ]
     },
     {
+      "slug": "temporary-lodging-allowance-tla-oconus-guide",
+      "title": "Temporary Lodging Allowance (TLA): Your OCONUS PCS Guide",
+      "url": "/blog/temporary-lodging-allowance-tla-oconus-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "Temporary Lodging Allowance helps pay for hotels during an overseas PCS. Here is how long it lasts, how it is calculated, and how to keep it from expiring.",
+      "publishedAt": "2026-08-30T09:00:00.000Z",
+      "updatedAt": "2026-09-06T00:00:00.000Z",
+      "primaryKeyword": "temporary lodging allowance",
+      "secondaryKeywords": [
+        "oconus pcs lodging",
+        "temporary lodging allowance rules",
+        "tla military overseas",
+        "tla oconus",
+        "tla vs tle"
+      ],
+      "h2Outline": [
+        "What Temporary Lodging Allowance Covers",
+        "When TLA Is Authorized",
+        "The 60-Day Rule",
+        "How the TLA Rate Is Figured",
+        "TLA Versus TLE",
+        "Where TLA Fits in Your PCS Budget",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "temporary-lodging-expense-tle-pcs-guide",
       "title": "Temporary Lodging Expense (TLE): A PCS Money Guide",
       "url": "/blog/temporary-lodging-expense-tle-pcs-guide",
@@ -10175,6 +10257,38 @@
       ]
     },
     {
+      "slug": "using-va-disability-income-to-qualify-for-a-mortgage",
+      "title": "Using VA Disability Income to Qualify for a Mortgage",
+      "url": "/blog/using-va-disability-income-to-qualify-for-a-mortgage",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "VA disability compensation is tax-free income that lenders can use, and it may waive your funding fee. Here is how it works and what to bring to a lender.",
+      "publishedAt": "2026-09-05T09:00:00.000Z",
+      "updatedAt": "2026-09-06T00:00:00.000Z",
+      "primaryKeyword": "va disability income mortgage",
+      "secondaryKeywords": [
+        "disabled veteran home loan",
+        "grossing up va disability income",
+        "qualify for a mortgage with disability pay",
+        "va disability funding fee exemption",
+        "va residual income"
+      ],
+      "h2Outline": [
+        "VA Disability Compensation Counts as Income",
+        "The Gross-Up: Why $2,000 Can Count as $2,500",
+        "Residual Income Is the Real Test",
+        "The Funding Fee Exemption",
+        "Other Benefits Worth Stacking",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
       "title": "Using Your VA Loan in Hawaii: What Oahu Buyers Should Know",
       "url": "/blog/using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
@@ -10335,6 +10449,38 @@
         "Is a VA IRRRL Worth It?",
         "Frequently Asked Questions",
         "The Bottom Line"
+      ]
+    },
+    {
+      "slug": "va-joint-loan-non-veteran-co-borrower",
+      "title": "VA Joint Loans: Buying With a Non-Veteran Co-Borrower",
+      "url": "/blog/va-joint-loan-non-veteran-co-borrower",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Real Estate Insights",
+        "VA Loan Help"
+      ],
+      "description": "Buying with someone who is not your spouse changes how a VA loan works. Here is what a joint VA loan is, why it needs prior approval, and what to ask a lender.",
+      "publishedAt": "2026-09-04T09:00:00.000Z",
+      "updatedAt": "2026-09-06T00:00:00.000Z",
+      "primaryKeyword": "va joint loan",
+      "secondaryKeywords": [
+        "buying a house with a friend va loan",
+        "joint va loan approval",
+        "va loan co borrower rules",
+        "va loan fiance",
+        "va loan with non veteran co borrower"
+      ],
+      "h2Outline": [
+        "What Makes a Loan a \"Joint\" VA Loan",
+        "Rule One: The VA Only Backs the Veteran's Share",
+        "Rule Two: The VA Has to Approve It First",
+        "What Each Borrower Is Actually Signing Up For",
+        "Questions to Ask Before You Commit",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -10922,6 +11068,38 @@
         "How to Get Started with VeteranPCS",
         "Final Takeaway: Don't Wait for the Headlines",
         "Keep Learning About Your VA Loan"
+      ]
+    },
+    {
+      "slug": "va-loan-surviving-spouse-eligibility",
+      "title": "VA Loan Eligibility for Surviving Spouses: How to Qualify",
+      "url": "/blog/va-loan-surviving-spouse-eligibility",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "If your spouse died in service or from a service-connected disability, you may be able to use the VA home loan benefit. Here is how eligibility and the COE work.",
+      "publishedAt": "2026-09-02T09:00:00.000Z",
+      "updatedAt": "2026-09-06T00:00:00.000Z",
+      "primaryKeyword": "va loan surviving spouse",
+      "secondaryKeywords": [
+        "dic va loan",
+        "surviving spouse va home loan",
+        "va form 26-1817",
+        "va loan eligibility surviving spouse",
+        "widow va home loan"
+      ],
+      "h2Outline": [
+        "Who Can Qualify",
+        "Which Form You File Depends on DIC",
+        "The Funding Fee Exemption Is the Big One",
+        "What the Benefit Does and Does Not Do",
+        "Choosing People Who Have Done This Before",
+        "Frequently Asked Questions"
       ]
     },
     {
