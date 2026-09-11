@@ -589,14 +589,13 @@
     "_id": "p1E1t9c6MmuSwvdT93QsZN",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:30:05Z",
-    "_updatedAt": "2025-10-31T13:55:08Z",
+    "_updatedAt": "2026-09-10T15:05:14Z",
     "short_name": "KS",
     "state_map": {
-      "_sanityAssetId": "image-ded5871f64bda9c93db1e3f64affdca028c8c57f-360x360-webp",
       "alt": "Kansas Image",
-      "height": 360,
-      "path": "/images/states/kansas.webp",
-      "width": 360
+      "height": 750,
+      "path": "/images/states/kansas.png",
+      "width": 750
     },
     "state_name": "Kansas",
     "state_slug": {
@@ -966,13 +965,12 @@
     "_id": "zLqbGSDWQtuCHFE15AM5GF",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:30:13Z",
-    "_updatedAt": "2025-05-05T03:26:07Z",
+    "_updatedAt": "2026-09-10T15:05:14Z",
     "short_name": "NY",
     "state_map": {
-      "_sanityAssetId": "image-fde5375f5aa8575063052689ffc27e06432aef51-750x750-webp",
       "alt": "New York Image",
       "height": 750,
-      "path": "/images/states/new-york.webp",
+      "path": "/images/states/new-york.png",
       "width": 750
     },
     "state_name": "New York",
