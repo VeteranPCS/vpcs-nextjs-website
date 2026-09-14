@@ -1,6 +1,6 @@
 {
-  "contentHash": "d57bd0bbcac8a1948015893da5c0d2a2b2a1a3ee8b456ff89a24ea70036d39b7",
-  "totalPosts": 373,
+  "contentHash": "0e9820c11e93971f66beb532a359ba7e6615cedb6c1f3ccce78c373723d36b33",
+  "totalPosts": 377,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -70,6 +70,7 @@
     "Military Transition Help": [
       "benefits-of-working-with-veteran-real-estate-agents-for-military-veterans",
       "buying-a-home-after-military-service",
+      "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
@@ -110,8 +111,11 @@
       "new-costco-and-dawson-trails-development-coming-to-castle-rock-co",
       "new-home-builders-offering-low-rates-here-is-the-clarity-you-need-to-know",
       "new-semi-custom-luxury-homes-in-castle-rock-with-breathtaking-views-signature-crystal-valley",
+      "non-temporary-storage-nts-pcs-guide",
       "offutt-afb-pcs-guide-2025",
       "pcs-advance-pay-guide",
+      "pcs-damage-claim-guide",
+      "pcs-inconvenience-claim-guide",
       "pcs-moves-buying-or-selling-during-relocation",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
@@ -459,6 +463,7 @@
     "military-transition-help": [
       "benefits-of-working-with-veteran-real-estate-agents-for-military-veterans",
       "buying-a-home-after-military-service",
+      "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
@@ -499,8 +504,11 @@
       "new-costco-and-dawson-trails-development-coming-to-castle-rock-co",
       "new-home-builders-offering-low-rates-here-is-the-clarity-you-need-to-know",
       "new-semi-custom-luxury-homes-in-castle-rock-with-breathtaking-views-signature-crystal-valley",
+      "non-temporary-storage-nts-pcs-guide",
       "offutt-afb-pcs-guide-2025",
       "pcs-advance-pay-guide",
+      "pcs-damage-claim-guide",
+      "pcs-inconvenience-claim-guide",
       "pcs-moves-buying-or-selling-during-relocation",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
@@ -1149,7 +1157,10 @@
       "military-pcs-weight-allowance-2026",
       "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
+      "non-temporary-storage-nts-pcs-guide",
       "pcs-advance-pay-guide",
+      "pcs-damage-claim-guide",
+      "pcs-inconvenience-claim-guide",
       "pcs-moves-buying-or-selling-during-relocation",
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-bremerton-naval-base-kitsap-2026-guide",
@@ -2842,6 +2853,42 @@
         "Key Features of Castle Rock's School System",
         "Why Castle Rock Appeals to Affluent Families",
         "Conclusion"
+      ]
+    },
+    {
+      "slug": "final-move-entitlement-separation-retirement",
+      "title": "Your Final Move: HHG Rules for Separation and Retirement",
+      "url": "/blog/final-move-entitlement-separation-retirement",
+      "component": "Military Transition Help",
+      "componentSlug": "military-transition-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Military Transition Help",
+        "PCS Help"
+      ],
+      "description": "The final move out of the military is not a normal PCS. Here is how the eight-year rule, the scheduling deadline, and the one-storage-option limit shape where you can afford to land.",
+      "publishedAt": "2026-09-12T09:00:00.000Z",
+      "updatedAt": "2026-09-13T00:00:00.000Z",
+      "primaryKeyword": "final move entitlement",
+      "secondaryKeywords": [
+        "final pcs move rules",
+        "hhg shipment after separation",
+        "home of selection military",
+        "military retirement move",
+        "separation move 180 days"
+      ],
+      "h2Outline": [
+        "The Eight-Year Line",
+        "The Deadline to Schedule",
+        "You Only Get One Storage Option",
+        "What Does Not Change",
+        "What Does Change: Your Vehicle",
+        "PPM Advances Are Limited by Branch",
+        "The Short-Distance Move Out of Quarters",
+        "Where This Meets the Home Search",
+        "Frequently Asked Questions",
+        "The Bottom Line"
       ]
     },
     {
@@ -4629,6 +4676,41 @@
       ]
     },
     {
+      "slug": "non-temporary-storage-nts-pcs-guide",
+      "title": "Non-Temporary Storage (NTS): The Long-Term PCS Storage Rules",
+      "url": "/blog/non-temporary-storage-nts-pcs-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Military Transition Help",
+        "PCS Help"
+      ],
+      "description": "NTS is the military's long-term storage benefit for overseas and remote assignments. Here is who qualifies, what counts against your weight allowance, what cannot go in the crate, and when the clock runs out.",
+      "publishedAt": "2026-09-10T09:00:00.000Z",
+      "updatedAt": "2026-09-13T00:00:00.000Z",
+      "primaryKeyword": "non-temporary storage military",
+      "secondaryKeywords": [
+        "long term storage pcs",
+        "nts military move",
+        "nts vs sit",
+        "nts weight allowance",
+        "storage for overseas pcs"
+      ],
+      "h2Outline": [
+        "What NTS Is",
+        "NTS vs. SIT: The Difference That Matters",
+        "The Weight Allowance Trap",
+        "When NTS Is and Is Not Authorized",
+        "What You Cannot Put in NTS",
+        "Time Limits and Extensions",
+        "Loss and Damage on an NTS Shipment",
+        "Frequently Asked Questions",
+        "The Bottom Line"
+      ]
+    },
+    {
       "slug": "north-carolina-veteran-property-tax-exemptions-2026",
       "title": "North Carolina Military & Veteran Property Tax Exemptions (2026)",
       "url": "/blog/north-carolina-veteran-property-tax-exemptions-2026",
@@ -4855,6 +4937,78 @@
         "The Paperwork and the Deadlines",
         "How Advances Fit a Home Purchase",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "pcs-damage-claim-guide",
+      "title": "PCS Damage Claim: How to File in DPS and Get Paid",
+      "url": "/blog/pcs-damage-claim-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "Movers broke or lost your things. Here is exactly how a PCS damage claim works in DPS, the two deadlines that decide what you get paid, and the 2026 change that gives most families three extra months to file.",
+      "publishedAt": "2026-09-06T09:00:00.000Z",
+      "updatedAt": "2026-09-13T00:00:00.000Z",
+      "primaryKeyword": "pcs damage claim",
+      "secondaryKeywords": [
+        "dps claim household goods",
+        "full replacement value military move",
+        "military claims office",
+        "military moving claim",
+        "notification of loss and damage"
+      ],
+      "h2Outline": [
+        "The Two Deadlines That Decide What You Get Paid",
+        "What Full Replacement Value Actually Means",
+        "Step 1: Document Everything on Delivery Day",
+        "Step 2: Give Notice of Loss or Damage",
+        "Step 3: File the Itemized Claim in DPS",
+        "What the Moving Company Owes You, and When",
+        "Faster Options: Quick Claim and Essential Items",
+        "When to Transfer Your Claim to the Military Claims Office",
+        "Damage to the House Itself",
+        "Frequently Asked Questions",
+        "The Bottom Line"
+      ]
+    },
+    {
+      "slug": "pcs-inconvenience-claim-guide",
+      "title": "PCS Inconvenience Claim: When Movers Miss Your Dates",
+      "url": "/blog/pcs-inconvenience-claim-guide",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "When a moving company misses your pickup or delivery date, it owes you money. Here is who qualifies for a PCS inconvenience claim, what the 2026 dependent rule changed, and how to file without losing a day.",
+      "publishedAt": "2026-09-08T09:00:00.000Z",
+      "updatedAt": "2026-09-13T00:00:00.000Z",
+      "primaryKeyword": "pcs inconvenience claim",
+      "secondaryKeywords": [
+        "dp3 shipment inconvenience claim form",
+        "inconvenience claim military move",
+        "m&ie per diem inconvenience claim",
+        "movers missed delivery date military",
+        "required delivery date rdd"
+      ],
+      "h2Outline": [
+        "When You Qualify",
+        "When You Do Not Qualify",
+        "What It Pays, and the 2026 Dependent Change",
+        "Expenses Beyond Per Diem",
+        "How to File, Step by Step",
+        "If You Are Not Available for the New Date",
+        "Privately Owned Vehicles Are Their Own Claim",
+        "Frequently Asked Questions",
+        "The Bottom Line"
       ]
     },
     {
@@ -11700,7 +11854,7 @@
       ],
       "description": "Florida has a long history of military involvement, from the American Revolution to modern defense operations. The state is home to twenty-four active military installations, supporting the Army, Navy, Air Force, Marine Corps, Space Forc...",
       "publishedAt": "2024-06-25T13:58:25.000Z",
-      "updatedAt": "2026-08-30T00:00:00.000Z",
+      "updatedAt": "2026-09-13T00:00:00.000Z",
       "primaryKeyword": "military bases in florida",
       "secondaryKeywords": [
         "air force bases in florida",
@@ -12771,7 +12925,7 @@
       ],
       "description": "Washington State sits at the center of America's defense in the Pacific Northwest. It is home to seven major active military installations that support the Army, Navy, Air Force, and Coast Guard. From the South Sound to the Kitsap Penins...",
       "publishedAt": "2026-06-24T09:00:00.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "updatedAt": "2026-09-13T00:00:00.000Z",
       "primaryKeyword": "military bases in washington state",
       "secondaryKeywords": [
         "army bases in washington",
