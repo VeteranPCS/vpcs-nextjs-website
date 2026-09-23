@@ -1,6 +1,6 @@
 {
-  "contentHash": "0e9820c11e93971f66beb532a359ba7e6615cedb6c1f3ccce78c373723d36b33",
-  "totalPosts": 377,
+  "contentHash": "2e41e5c88a979395c306c906eb96edd85a05fcb08532f24688051c5b4d67bf7c",
+  "totalPosts": 382,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -210,10 +210,15 @@
       "top-things-to-do-near-san-diego-military-bases"
     ],
     "U.S. Military Bases": [
+      "air-force-bases-in-california",
       "air-force-bases-in-florida",
       "alabama-military-bases",
+      "army-bases-in-alaska",
+      "army-bases-in-california",
+      "army-bases-in-florida",
       "army-bases-in-hawaii",
       "army-bases-in-north-carolina",
+      "army-bases-in-virginia",
       "best-neighborhoods-redstone-arsenal-military",
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "best-places-to-live-near-fort-benning",
@@ -603,10 +608,15 @@
       "top-things-to-do-near-san-diego-military-bases"
     ],
     "us-military-bases": [
+      "air-force-bases-in-california",
       "air-force-bases-in-florida",
       "alabama-military-bases",
+      "army-bases-in-alaska",
+      "army-bases-in-california",
+      "army-bases-in-florida",
       "army-bases-in-hawaii",
       "army-bases-in-north-carolina",
+      "army-bases-in-virginia",
       "best-neighborhoods-redstone-arsenal-military",
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "best-places-to-live-near-fort-benning",
@@ -797,6 +807,7 @@
     ],
     "alaska": [
       "alaska-veteran-property-tax-exemptions-2026",
+      "army-bases-in-alaska",
       "pcs-to-eielson-afb-fairbanks-2026-guide",
       "pcs-to-fort-wainwright-fairbanks-2026-guide",
       "pcs-to-joint-base-elmendorf-richardson-anchorage-2026-guide",
@@ -817,6 +828,8 @@
       "what-military-bases-are-in-arkansas"
     ],
     "california": [
+      "air-force-bases-in-california",
+      "army-bases-in-california",
       "california-veteran-property-tax-exemptions-2026",
       "pcs-to-beale-afb-2026-guide",
       "pcs-to-edwards-afb-2026-guide",
@@ -851,6 +864,7 @@
     ],
     "florida": [
       "air-force-bases-in-florida",
+      "army-bases-in-florida",
       "best-neighborhoods-nas-jacksonville-military-families",
       "best-places-to-live-near-eglin-air-force-base-veteranpcs",
       "discovering-military-friendly-living-in-panama-city-florida",
@@ -1098,6 +1112,7 @@
       "what-military-bases-are-in-vermont"
     ],
     "virginia": [
+      "army-bases-in-virginia",
       "naval-station-norfolk-bah-2026-buy-vs-rent",
       "pcs-to-fort-belvoir-2026-guide",
       "pcs-to-fort-lee-2026-guide",
@@ -1131,10 +1146,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 241,
+    "resolved": 246,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 217,
+      "frontmatter-state-slug": 222,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -1433,6 +1448,39 @@
       ]
     },
     {
+      "slug": "air-force-bases-in-california",
+      "title": "Air Force Bases in California: A Complete PCS Guide",
+      "url": "/blog/air-force-bases-in-california",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "california",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "California has three active-duty Air Force bases, one Reserve base, and two installations the Space Force took over. Here is what each one does, and what housing costs near it.",
+      "publishedAt": "2026-09-15T09:00:00.000Z",
+      "updatedAt": "2026-09-20T00:00:00.000Z",
+      "primaryKeyword": "air force bases in california",
+      "secondaryKeywords": [
+        "air force base in california",
+        "beale afb",
+        "edwards afb",
+        "travis afb",
+        "vandenberg space force base"
+      ],
+      "h2Outline": [
+        "Every Air Force and Space Force Base in California",
+        "What Each Base Does",
+        "A Note on Vandenberg and Los Angeles",
+        "Air National Guard and Reserve Sites",
+        "What Housing Costs at Each Base",
+        "Rent or Buy in Six Very Different Markets",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "air-force-bases-in-florida",
       "title": "Air Force Bases in Florida: A Military Family PCS Guide",
       "url": "/blog/air-force-bases-in-florida",
@@ -1660,6 +1708,103 @@
       ]
     },
     {
+      "slug": "army-bases-in-alaska",
+      "title": "Army Bases in Alaska: A PCS Guide to Every Installation",
+      "url": "/blog/army-bases-in-alaska",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "alaska",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Alaska has two Army posts, one joint base, and a lot of training land in between. Here is what each one does, what your housing allowance will look like, and how families decide where to live once they land.",
+      "publishedAt": "2026-09-16T09:00:00.000Z",
+      "updatedAt": "2026-09-20T00:00:00.000Z",
+      "primaryKeyword": "army bases in alaska",
+      "secondaryKeywords": [
+        "11th airborne division",
+        "army base in alaska",
+        "fort greely",
+        "fort wainwright",
+        "jber"
+      ],
+      "h2Outline": [
+        "Every Army Installation in Alaska, at a Glance",
+        "What Each Post Does",
+        "The Training Areas",
+        "What Housing Costs: BAH and COLA",
+        "Renting, Buying, or Living On Post in Alaska",
+        "What Makes an Alaska PCS Different",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "army-bases-in-california",
+      "title": "Army Bases in California: A PCS Guide to Every Installation",
+      "url": "/blog/army-bases-in-california",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "california",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "California has only a handful of Army installations, and they sit in very different places, from the Mojave Desert to the Pacific coast. Here is what each one does, and what it costs to live near it.",
+      "publishedAt": "2026-09-13T09:00:00.000Z",
+      "updatedAt": "2026-09-20T00:00:00.000Z",
+      "primaryKeyword": "army bases in california",
+      "secondaryKeywords": [
+        "army base in california",
+        "camp parks",
+        "fort hunter liggett",
+        "fort irwin",
+        "presidio of monterey"
+      ],
+      "h2Outline": [
+        "Every Army Installation in California, at a Glance",
+        "What Each Post Does",
+        "National Guard Sites Are Not Active-Duty Posts",
+        "What It Costs to Live Near an Army Base in California",
+        "On Post, Renting, or Buying",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "army-bases-in-florida",
+      "title": "Army Bases in Florida: Where the Army Actually Is",
+      "url": "/blog/army-bases-in-florida",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Florida has no large active-duty Army post, which surprises a lot of families who get orders here. The Army presence is real, though, spread across Eglin, MacDill, a small garrison in Doral, and the Florida National Guard. Here is where each piece sits and what housing costs nearby.",
+      "publishedAt": "2026-09-19T09:00:00.000Z",
+      "updatedAt": "2026-09-20T00:00:00.000Z",
+      "primaryKeyword": "army bases in florida",
+      "secondaryKeywords": [
+        "7th special forces group eglin",
+        "army base in florida",
+        "army garrison miami",
+        "camp blanding",
+        "military bases in florida"
+      ],
+      "h2Outline": [
+        "Where the Army Actually Is in Florida",
+        "Each Army Location, Explained",
+        "Why Florida Has No Big Army Post",
+        "What Housing Costs Where the Army Sends You",
+        "Four Very Different Florida Housing Markets",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "army-bases-in-hawaii",
       "title": "Army Bases in Hawaii: A PCS Guide to Every Installation",
       "url": "/blog/army-bases-in-hawaii",
@@ -1722,6 +1867,38 @@
         "Buying or Renting on a Fort Bragg BAH",
         "Frequently Asked Questions",
         "Before You Sign Anything"
+      ]
+    },
+    {
+      "slug": "army-bases-in-virginia",
+      "title": "Army Bases in Virginia: Every Post, and What Housing Costs Nearby",
+      "url": "/blog/army-bases-in-virginia",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "virginia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Virginia holds eight Army installations, and three of them changed names twice in three years. Here is the current list, what each post does, and the housing allowance that goes with it.",
+      "publishedAt": "2026-09-18T09:00:00.000Z",
+      "updatedAt": "2026-09-20T00:00:00.000Z",
+      "primaryKeyword": "army bases in virginia",
+      "secondaryKeywords": [
+        "army base in virginia",
+        "fort belvoir",
+        "fort eustis",
+        "joint base myer-henderson hall",
+        "military bases in virginia"
+      ],
+      "h2Outline": [
+        "Every Army Installation in Virginia, at a Glance",
+        "What Each Post Does",
+        "The Base Names That Changed Twice",
+        "What Housing Costs Around Each Post",
+        "Virginia Is Four Housing Markets, Not One",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -4010,7 +4187,7 @@
       ],
       "description": "A plain-language guide to finding military bases near you, by state and branch, with official tools and tips for planning a PCS move to a new installation.",
       "publishedAt": "2026-06-15T09:00:00.000Z",
-      "updatedAt": "2026-09-06T00:00:00.000Z",
+      "updatedAt": "2026-09-20T00:00:00.000Z",
       "primaryKeyword": "military bases near me",
       "secondaryKeywords": [
         "army bases near me",
@@ -4020,6 +4197,7 @@
         "military installations"
       ],
       "h2Outline": [
+        "Jump Straight to Your State",
         "The Fastest Way to Find Military Bases Near You",
         "Finding Military Bases by State",
         "Finding Bases by Branch of Service",
@@ -11737,7 +11915,7 @@
       ],
       "description": "California has the largest military population in the United States, with over 157,000 active-duty personnel and more than 800,000 veterans. The military contributes over $90 billion annually to the state's economy and supports over 700,...",
       "publishedAt": "2023-10-14T01:19:32.000Z",
-      "updatedAt": "2026-07-19T00:00:00.000Z",
+      "updatedAt": "2026-09-20T00:00:00.000Z",
       "primaryKeyword": "california air force bases",
       "secondaryKeywords": [
         "air force bases in california",
@@ -11749,6 +11927,7 @@
         "List of Military Bases in California",
         "Featured Military Bases in California",
         "Moving to California? We Can Help!",
+        "Looking for One Branch Only?",
         "Plan Your PCS to California"
       ]
     },
