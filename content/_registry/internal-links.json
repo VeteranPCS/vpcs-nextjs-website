@@ -1,6 +1,6 @@
 {
-  "contentHash": "2e41e5c88a979395c306c906eb96edd85a05fcb08532f24688051c5b4d67bf7c",
-  "totalPosts": 382,
+  "contentHash": "790e8e970ce049aab6c656d189c3442b7d793a5e75afcb3e334597400bf8cd51",
+  "totalPosts": 386,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -49,6 +49,7 @@
       "ohio-veteran-property-tax-exemptions-2026",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
       "oregon-veteran-property-tax-exemptions-2026",
+      "overseas-housing-allowance-oha-guide",
       "pennsylvania-veteran-property-tax-exemptions-2026",
       "rhode-island-veteran-property-tax-exemptions-2026",
       "san-diego-bah-2026-what-your-allowance-covers",
@@ -196,6 +197,8 @@
       "colorado-springs-housing-market-update-october-2025",
       "huntsville-housing-market-2026-military-buyer",
       "interest-rates-are-falling-heres-what-homebuyers-need-to-know",
+      "is-2026-a-buyers-market-for-military-home-shoppers",
+      "rent-back-agreement-pcs-guide",
       "veteran-and-military-real-estate-expert-in-castle-rock-colorado",
       "why-realtors-still-matter-for-military-homebuyers",
       "wilmingtons-emerging-tech-scene-a-goldmine-for-veteran-property-investors"
@@ -384,6 +387,7 @@
       "va-loan-closing-costs-what-military-buyers-pay",
       "va-loan-condo-approval-guide",
       "va-loan-credit-score-requirements",
+      "va-loan-divorce-entitlement-guide",
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
       "va-loan-huntsville-madison-county-2026",
@@ -447,6 +451,7 @@
       "ohio-veteran-property-tax-exemptions-2026",
       "oklahoma-property-tax-exemption-for-100-disabled-veterans",
       "oregon-veteran-property-tax-exemptions-2026",
+      "overseas-housing-allowance-oha-guide",
       "pennsylvania-veteran-property-tax-exemptions-2026",
       "rhode-island-veteran-property-tax-exemptions-2026",
       "san-diego-bah-2026-what-your-allowance-covers",
@@ -594,6 +599,8 @@
       "colorado-springs-housing-market-update-october-2025",
       "huntsville-housing-market-2026-military-buyer",
       "interest-rates-are-falling-heres-what-homebuyers-need-to-know",
+      "is-2026-a-buyers-market-for-military-home-shoppers",
+      "rent-back-agreement-pcs-guide",
       "veteran-and-military-real-estate-expert-in-castle-rock-colorado",
       "why-realtors-still-matter-for-military-homebuyers",
       "wilmingtons-emerging-tech-scene-a-goldmine-for-veteran-property-investors"
@@ -782,6 +789,7 @@
       "va-loan-closing-costs-what-military-buyers-pay",
       "va-loan-condo-approval-guide",
       "va-loan-credit-score-requirements",
+      "va-loan-divorce-entitlement-guide",
       "va-loan-eligibility-requirements-how-to-know-if-you-qualify-for-the-va-loan",
       "va-loan-home-buying-team-who-you-need-to-know",
       "va-loan-huntsville-madison-county-2026",
@@ -1190,6 +1198,7 @@
       "prepare-to-pcs-what-military-movers-wont-pack-in-2024",
       "preparing-for-an-overseas-pcs-a-guide-for-military-families",
       "preparing-to-pcs-what-you-need-to-know",
+      "rent-back-agreement-pcs-guide",
       "rent-or-sell-your-home-when-you-pcs",
       "short-notice-pcs-move-30-days",
       "storage-in-transit-sit-pcs-guide",
@@ -3879,9 +3888,9 @@
       "categories": [
         "Real Estate Insights"
       ],
-      "description": "Mortgage rates move from week to week, and when they fall it changes the math for buyers, sellers, and anyone holding a mortgage. As of the week of June 18, 2026, the average 30-year fixed rate was 6.47%, according to Freddie Mac's Prima...",
+      "description": "Mortgage rates move from week to week, in both directions, and the math below applies whenever they head down again. As of the week of September 24, 2026, the average 30-year fixed rate was actually 7.03 percent, up from 6.95 percent the...",
       "publishedAt": "2024-01-18T16:27:52.000Z",
-      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "updatedAt": "2026-09-27T00:00:00.000Z",
       "primaryKeyword": "falling interest rates for homebuyers",
       "secondaryKeywords": [
         "homebuyer purchasing power",
@@ -3920,6 +3929,36 @@
         "Military Pay and Iowa State Income Tax",
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "is-2026-a-buyers-market-for-military-home-shoppers",
+      "title": "Is 2026 a Buyer's Market? What Rising Inventory Means for Your PCS",
+      "url": "/blog/is-2026-a-buyers-market-for-military-home-shoppers",
+      "component": "Real Estate Insights",
+      "componentSlug": "real-estate-insights",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "Real Estate Insights"
+      ],
+      "description": "More homes for sale and a higher mortgage rate can both be true at once. Here is what that combination means depending on whether you are buying or selling.",
+      "publishedAt": "2026-09-26T09:00:00.000Z",
+      "updatedAt": "2026-09-27T00:00:00.000Z",
+      "primaryKeyword": "housing market 2026 pcs move",
+      "secondaryKeywords": [
+        "home inventory rising 2026",
+        "is it a buyers market 2026",
+        "mortgage rates 2026 pcs",
+        "should i buy or rent during pcs 2026"
+      ],
+      "h2Outline": [
+        "Rates Climbed Back Above 7 Percent",
+        "Inventory Is the Highest It Has Been in Years",
+        "What This Means If You Are Buying on a PCS",
+        "What This Means If You Are Selling on a PCS",
         "Frequently Asked Questions"
       ]
     },
@@ -5082,6 +5121,38 @@
         "Military Pay and Oregon State Income Tax",
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "overseas-housing-allowance-oha-guide",
+      "title": "Overseas Housing Allowance (OHA): Your Complete OCONUS PCS Guide",
+      "url": "/blog/overseas-housing-allowance-oha-guide",
+      "component": "Financial Guidance",
+      "componentSlug": "financial-guidance",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "Moving OCONUS means trading BAH for OHA. Here is how the rental allowance, utility allowance, and move-in payment fit together, and how to file your lease.",
+      "publishedAt": "2026-09-20T09:00:00.000Z",
+      "updatedAt": "2026-09-27T00:00:00.000Z",
+      "primaryKeyword": "overseas housing allowance guide",
+      "secondaryKeywords": [
+        "dd form 2367",
+        "move-in housing allowance miha",
+        "oconus pcs housing allowance",
+        "oha rates 2026",
+        "oha vs bah"
+      ],
+      "h2Outline": [
+        "What OHA Covers and Who Gets It",
+        "The Three Parts of Your OHA Payment",
+        "OHA vs. BAH: What's Different",
+        "Finding Your Rate and Filing Your Lease",
+        "What Happens If Your Rent Changes, or You PCS Again",
         "Frequently Asked Questions"
       ]
     },
@@ -9405,6 +9476,37 @@
       ]
     },
     {
+      "slug": "rent-back-agreement-pcs-guide",
+      "title": "Rent-Back Agreements: How to Stay in Your Home After Closing on a PCS",
+      "url": "/blog/rent-back-agreement-pcs-guide",
+      "component": "Real Estate Insights",
+      "componentSlug": "real-estate-insights",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "PCS Help",
+        "Real Estate Insights"
+      ],
+      "description": "Selling before your report date doesn't have to mean moving out the same day. Here is how a rent-back, or post-closing occupancy agreement, works.",
+      "publishedAt": "2026-09-22T09:00:00.000Z",
+      "updatedAt": "2026-09-27T00:00:00.000Z",
+      "primaryKeyword": "rent back agreement pcs",
+      "secondaryKeywords": [
+        "how long can a seller stay after closing",
+        "post-closing occupancy agreement",
+        "seller rent back after closing",
+        "va loan occupancy rules rent back"
+      ],
+      "h2Outline": [
+        "What a Rent-Back Agreement Is",
+        "What a Rent-Back Costs",
+        "How Long Can You Stay? The 60-Day Rule",
+        "The VA Loan Exception That Helps Military Buyers and Sellers",
+        "Building a Rent-Back Into Your PCS Timeline",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "rent-or-sell-your-home-when-you-pcs",
       "title": "Rent or Sell Your Home When You PCS? How to Decide in 2026",
       "url": "/blog/rent-or-sell-your-home-when-you-pcs",
@@ -11208,6 +11310,38 @@
         "Why the VA Loan Is Still Worth It at Any Score",
         "Frequently Asked Questions",
         "Talk to Someone Who Sees Files Like Yours Every Week"
+      ]
+    },
+    {
+      "slug": "va-loan-divorce-entitlement-guide",
+      "title": "VA Loan and Divorce: What Happens to Your Home and Entitlement",
+      "url": "/blog/va-loan-divorce-entitlement-guide",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "A divorce decree decides who keeps the house. It does not automatically fix your VA loan or your entitlement. Here is how those get resolved separately.",
+      "publishedAt": "2026-09-24T09:00:00.000Z",
+      "updatedAt": "2026-09-27T00:00:00.000Z",
+      "primaryKeyword": "va loan divorce entitlement",
+      "secondaryKeywords": [
+        "refinance ex-spouse off va loan",
+        "release of liability va loan",
+        "restoration of va entitlement",
+        "va loan after divorce",
+        "what happens to va loan after divorce"
+      ],
+      "h2Outline": [
+        "The Decree Decides the Home. It Does Not Decide the Loan.",
+        "If the Veteran Keeps the Home",
+        "If the Civilian Ex-Spouse Keeps the Home",
+        "Restoring Entitlement for Your Next VA Loan",
+        "What to Have Ready When You Call Your Lender",
+        "Frequently Asked Questions"
       ]
     },
     {
