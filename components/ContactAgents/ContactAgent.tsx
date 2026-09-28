@@ -23,6 +23,7 @@ interface ContactFormProps {
 
 const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionFailed, setSubmissionFailed] = useState(false);
   const {
     control,
     register,
@@ -68,6 +69,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
   };
 
   const handleFormSubmit: SubmitHandler<ContactAgentFormData> = async (data) => {
+    setSubmissionFailed(false);
     setIsSubmitting(true);
     try {
       const response = await onSubmit({ ...data, ...getSpamFields() });
@@ -77,7 +79,9 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
         return;
       }
       trackFormSubmissionFailed('contact_agent', 'server_submission', ['no_success_response']);
+      setSubmissionFailed(true);
     } catch (error) {
+      setSubmissionFailed(true);
       trackFormSubmissionFailed('contact_agent', 'server_submission', ['submission_exception']);
       console.error('Error submitting form:', error);
     } finally {
@@ -111,6 +115,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form
+          noValidate
           onSubmit={(event) => {
             trackSubmitAttempt();
             void handleSubmit(handleFormSubmit, handleInvalidSubmit)(event);
@@ -351,6 +356,11 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
               </div>
             </div>
             {/* Submit Button */}
+            {submissionFailed && (
+              <p role="alert" className="text-red-700 text-sm">
+                We couldn’t confirm your request. Your information is still here. Please try again in a moment.
+              </p>
+            )}
             <div className="flex md:justify-start justify-center flex-col md:items-start items-center gap-3">
               <button
                 type="submit"

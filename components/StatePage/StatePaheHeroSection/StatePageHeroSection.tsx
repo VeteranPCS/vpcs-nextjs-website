@@ -4,6 +4,7 @@ import Button from "@/components/common/Button";
 import CitySelection from "./CitySelection";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 import type { StateDetails } from "@/services/stateService";
+import { buildContactCtaHref } from "@/lib/contactAgentUrl";
 
 interface StatePageHeroSectionProps {
   stateName: string;
@@ -42,7 +43,7 @@ const StatePageHeroSection = ({
               <div className="mt-6">
                 <p className="text-[#292F6C]">Don&apos;t want to browse?</p>
                 <TrackedCtaLink
-                  href="/contact-agent"
+                  href={buildContactCtaHref({ stateSlug, form: 'agent' })}
                   cta={{
                     ctaId: 'state_hero_find_agent',
                     ctaIntent: 'contact_agent',

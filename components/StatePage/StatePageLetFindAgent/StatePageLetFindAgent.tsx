@@ -4,6 +4,8 @@ import React from "react";
 import Button from "@/components/common/Button";
 import Link from "next/link";
 import { trackCtaClicked } from "@/lib/analytics/client";
+import { buildStateContactCtaProperties } from "@/lib/analytics/state-cta";
+import { buildContactCtaHref } from "@/lib/contactAgentUrl";
 
 const StatePageCityAgents = ({
   stateSlug,
@@ -21,16 +23,10 @@ const StatePageCityAgents = ({
           </div>
           <div className="mt-8 sm:mt-0">
             <Link
-              href="/contact-agent"
-              onClick={() => trackCtaClicked({
-                cta_id: 'state_page_find_agent_fallback',
-                cta_intent: 'contact_agent',
-                cta_position: 'state_agent_list_footer',
-                cta_component: 'state_page_let_find_agent',
-                destination_path: '/contact-agent',
-                state_slug: stateSlug,
-                state_code: stateCode,
-              })}
+              href={buildContactCtaHref({ stateSlug, form: 'agent' })}
+              onClick={() => trackCtaClicked(buildStateContactCtaProperties({
+                ctaId: 'state_page_find_agent_fallback', position: 'state_agent_list_footer', state: stateSlug ?? stateCode,
+              }))}
             >
               <Button buttonText="Let us find you an agent" />
             </Link>
