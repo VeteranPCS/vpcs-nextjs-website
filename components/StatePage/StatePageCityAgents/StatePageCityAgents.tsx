@@ -8,6 +8,7 @@ import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
 import { sanitizeCityName } from "@/utils/sanitizeCityName";
 import { Agent } from "@/services/stateService";
 import { trackCtaClicked } from "@/lib/analytics/client";
+import { buildStateContactCtaProperties } from "@/lib/analytics/state-cta";
 import { buildContactCtaHref } from "@/lib/contactAgentUrl";
 
 type Props = {
@@ -97,16 +98,9 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
   });
 
   const trackAgentCta = (agentId: string, position: string) => {
-    trackCtaClicked({
-      cta_id: 'state_agent_card_contact',
-      cta_intent: 'contact_agent',
-      cta_position: position,
-      cta_component: 'state_agent_card',
-      destination_path: '/contact-agent',
-      state_slug: state,
-      partner_type: 'agent',
-      partner_salesforce_id: agentId,
-    });
+    trackCtaClicked(buildStateContactCtaProperties({
+      ctaId: 'state_agent_card_contact', position, state, partnerId: agentId,
+    }));
   };
 
   return (

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { LendersData, Lenders } from "@/services/stateService";
 import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
 import { trackCtaClicked } from "@/lib/analytics/client";
+import { buildStateContactCtaProperties } from "@/lib/analytics/state-cta";
 import { buildContactCtaHref } from "@/lib/contactAgentUrl";
 
 const LenderBio = ({ bio }: { bio: string }) => {
@@ -65,16 +66,9 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
   });
 
   const trackLenderCta = (lenderId: string, position: string) => {
-    trackCtaClicked({
-      cta_id: 'state_lender_card_contact',
-      cta_intent: 'contact_lender',
-      cta_position: position,
-      cta_component: 'state_lender_card',
-      destination_path: '/contact-lender',
-      state_slug: state,
-      partner_type: 'lender',
-      partner_salesforce_id: lenderId,
-    });
+    trackCtaClicked(buildStateContactCtaProperties({
+      ctaId: 'state_lender_card_contact', position, state, partnerId: lenderId,
+    }));
   };
 
   return (

@@ -5,6 +5,8 @@ import classes from "./StatePageCTA.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import { trackCtaClicked } from "@/lib/analytics/client";
+import { buildStateContactCtaProperties } from "@/lib/analytics/state-cta";
+import { buildContactCtaHref } from "@/lib/contactAgentUrl";
 
 const StatePageCTA = ({ cityName, stateSlug }: { cityName: string; stateSlug: string }) => {
   return (
@@ -51,28 +53,18 @@ const StatePageCTA = ({ cityName, stateSlug }: { cityName: string; stateSlug: st
 
             <div className="flex md:justify-start justify-center items-center gap-4">
               <Link
-                href="/contact-agent"
-                onClick={() => trackCtaClicked({
-                  cta_id: 'state_page_agent_cta',
-                  cta_intent: 'contact_agent',
-                  cta_position: 'state_cta_band',
-                  cta_component: 'state_page_cta',
-                  destination_path: '/contact-agent',
-                  state_slug: stateSlug,
-                })}
+                href={buildContactCtaHref({ stateSlug, form: 'agent' })}
+                onClick={() => trackCtaClicked(buildStateContactCtaProperties({
+                  ctaId: 'state_page_agent_cta', position: 'state_cta_band', state: stateSlug,
+                }))}
               >
                 <Button buttonText="Agent" />
               </Link>
               <Link
-                href="/contact-lender"
-                onClick={() => trackCtaClicked({
-                  cta_id: 'state_page_lender_cta',
-                  cta_intent: 'contact_lender',
-                  cta_position: 'state_cta_band',
-                  cta_component: 'state_page_cta',
-                  destination_path: '/contact-lender',
-                  state_slug: stateSlug,
-                })}
+                href={buildContactCtaHref({ stateSlug, form: 'lender' })}
+                onClick={() => trackCtaClicked(buildStateContactCtaProperties({
+                  ctaId: 'state_page_lender_cta', position: 'state_cta_band', state: stateSlug,
+                }))}
               >
                 <button
                   className="items-center border-2 border-[#A3161B] bg-white w-auto inline-flex lg:px-[30px] px-[20px] md:py-[14px] py-[12px] rounded-[16px] text-center tracking-[1px] text-[#A3161B] hover:bg-[#A3161B] hover:text-[#ffffff] all-duration transition-all duration-300 ease-in-out"

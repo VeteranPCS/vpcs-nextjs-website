@@ -7,6 +7,8 @@ import BAHCalculator from '@/components/BAHCalculator';
 import MovingBonusCalculator from '@/components/PcsResources/MovingBonusCalculator/MovingBonusCalculator';
 import type { ResolvedAuthor } from '@/lib/blog/types';
 import type { TocHeading } from '@/lib/blog/mdx';
+import TrackedCtaLink from '@/components/common/TrackedCtaLink';
+import { blogContactTracking, internalBlogHref } from '@/lib/blog/contact-link';
 
 function isExternal(href: string): boolean {
   return /^https?:\/\//i.test(href);
@@ -100,7 +102,7 @@ export const mdxComponents: MDXComponents = {
       <td className="px-4 py-3 align-top leading-6" {...props} />
     ),
     a: ({ href, children, ...rest }) => {
-      const target = href ?? '#';
+      const target = internalBlogHref(href ?? '') ?? href ?? '#';
       if (isExternal(target)) {
         return (
           <a
@@ -143,17 +145,35 @@ export const mdxComponents: MDXComponents = {
 };
 
 type BlogMdxContext = {
+  contentSlug?: string;
   resolvedAuthor?: ResolvedAuthor | null;
   headingIds?: TocHeading[];
 };
 
 export function createBlogMdxComponents({
+  contentSlug,
   resolvedAuthor,
   headingIds = [],
 }: BlogMdxContext = {}): MDXComponents {
   let h2Index = 0;
   return {
     ...mdxComponents,
+    a: ({ href, children, ...rest }) => {
+      const target = internalBlogHref(href ?? '') ?? href ?? '#';
+      const cta = blogContactTracking(target, contentSlug);
+      if (cta) {
+        return (
+          <TrackedCtaLink {...rest} href={target} cta={cta} target="_self" className="text-[#A81F23] underline hover:text-[#871B1C]">
+            {children}
+          </TrackedCtaLink>
+        );
+      }
+      return isExternal(target) || target.startsWith('//') ? (
+        <a {...rest} href={target} target="_blank" rel="noopener noreferrer" className="text-[#A81F23] underline hover:text-[#871B1C]">{children}</a>
+      ) : (
+        <Link {...rest} href={target} className="text-[#A81F23] underline hover:text-[#871B1C]">{children}</Link>
+      );
+    },
     h2: ({ children, ...props }) => {
       const heading = headingIds[h2Index];
       h2Index += 1;

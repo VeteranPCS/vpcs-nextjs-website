@@ -28,6 +28,7 @@ type FormErrors = Partial<Record<keyof ContactLenderFormData, { message?: string
 
 const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateCode }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionFailed, setSubmissionFailed] = useState(false);
   const { open: openConcierge } = useConcierge();
 
   const handleConciergeCta = () => {
@@ -71,13 +72,16 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
 
   // Form submit handler
   const handleFormSubmit: SubmitHandler<ContactLenderFormData> = async (data) => {
+    setSubmissionFailed(false);
     setIsSubmitting(true);
     try {
       const response = await onSubmit({ ...data, ...getSpamFields() });
       if (!response?.success && !response?.redirectUrl) {
         trackFormSubmissionFailed('contact_lender', 'server_submission', ['no_success_response']);
+        setSubmissionFailed(true);
       }
     } catch (error) {
+      setSubmissionFailed(true);
       trackFormSubmissionFailed('contact_lender', 'server_submission', ['submission_exception']);
       console.error('Error submitting form:', error);
     } finally {
@@ -118,6 +122,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form
+          noValidate
           onSubmit={(event) => {
             trackSubmitAttempt();
             void handleSubmit(handleFormSubmit, handleInvalidSubmit)(event);
@@ -287,6 +292,11 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
               </div>
             </div>
 
+            {submissionFailed && (
+              <p role="alert" className="text-red-700 text-sm">
+                We couldn’t confirm your request. Your information is still here. Please try again in a moment.
+              </p>
+            )}
             <div className="flex md:justify-start justify-center flex-col md:items-start items-center gap-3">
               <button
                 type="submit"

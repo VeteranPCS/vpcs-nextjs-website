@@ -5,18 +5,20 @@ import type { ResolvedAuthor } from "@/lib/blog/types";
 import type { TocHeading } from "@/lib/blog/mdx";
 
 type Props = {
+  contentSlug: string;
   bodySecondHalf: string;
   resolvedAuthor: ResolvedAuthor;
   headingIds: TocHeading[];
 };
 
 export default function EndBlogPostDetails({
+  contentSlug,
   bodySecondHalf,
   resolvedAuthor,
   headingIds,
 }: Props) {
   if (!bodySecondHalf) return null;
-  const mdxComponents = createBlogMdxComponents({ resolvedAuthor, headingIds });
+  const mdxComponents = createBlogMdxComponents({ resolvedAuthor, headingIds, contentSlug });
 
   return (
     <div className="relative py-12 md:px-10 px-5">

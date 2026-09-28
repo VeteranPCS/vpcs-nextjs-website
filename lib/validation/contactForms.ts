@@ -1,7 +1,9 @@
 import * as yup from 'yup';
 import { US_STATE_CODES } from '@/constants/usStates';
 
-const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+// Accept the formatting shown in the form and commonly supplied by autofill.
+// Keep 10–15 digits, matching the server's plausible-phone contact requirement.
+const phoneRegex = /^\+?[1-9]\d{9,14}$/;
 
 const blankToUndefined = (value: unknown, originalValue: unknown) => (
   typeof originalValue === 'string' && originalValue.trim() === '' ? undefined : value
@@ -16,8 +18,9 @@ const emailField = yup
 const phoneField = yup
   .string()
   .transform(blankToUndefined)
+  .transform((value: string | undefined) => value?.replace(/[\s().-]/g, ''))
   .matches(phoneRegex, {
-    message: 'Invalid phone number format',
+    message: 'Enter a phone number with 10–15 digits, including the country code if needed.',
     excludeEmptyString: true,
   })
   .optional();

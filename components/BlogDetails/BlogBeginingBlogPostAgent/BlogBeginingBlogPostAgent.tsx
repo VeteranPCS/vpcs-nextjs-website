@@ -23,7 +23,7 @@ export default function BlogBeginningBlogPostAgent({
   tocHeadings,
   headingIds,
 }: Props) {
-  const mdxComponents = createBlogMdxComponents({ resolvedAuthor, headingIds });
+  const mdxComponents = createBlogMdxComponents({ resolvedAuthor, headingIds, contentSlug: blog.slug });
 
   const tocList = (
     <ul className="mt-3 space-y-2">

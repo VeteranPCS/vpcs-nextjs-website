@@ -230,6 +230,7 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
             )}
             <BlogDetailsCta stateSlug={bridgeState} componentSlug={blogComponent?.slug ?? null} contentSlug={slug} />
             <EndBlogPostDetails
+                contentSlug={slug}
                 bodySecondHalf={bodySecondHalf}
                 resolvedAuthor={resolvedAuthor}
                 headingIds={secondHeadingIds}

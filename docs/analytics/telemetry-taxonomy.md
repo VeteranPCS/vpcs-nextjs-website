@@ -1,6 +1,6 @@
 # VeteranPCS Telemetry Taxonomy
 
-Last updated: 2026-07-12
+Last updated: 2026-09-28
 
 This is the durable reference for VeteranPCS web telemetry. Use it when changing analytics code, troubleshooting PostHog, comparing against Google Analytics, or planning Salesforce closed-loop reporting.
 
@@ -176,6 +176,14 @@ Post template (`page_type: blog_post`):
 | `blog_find_agent_in_state` (kept; built via `buildCtaProperties`; renders only on agent-intent, state-matched posts; position `top` only, `bottom` retired) | `top` | `state_agent_search` |
 | `blog_mobile_sticky_agent` (fixed mobile footer on agent-intent posts; added to correct prior documentation drift, the id already fires in code) | `mobile_sticky_footer` | `contact_agent` |
 | `blog_mobile_sticky_lender` (fixed mobile footer on lender-intent posts; new) | `mobile_sticky_footer` | `contact_lender` |
+| `blog_mdx_contact_agent` / `blog_mdx_contact_lender` (ordinary Markdown links to customer contact routes; added 2026-09-28, effective after deployment) | `mdx_body` | `contact_agent` / `contact_lender` |
+
+Ordinary first-party Markdown contact links now carry `content_slug`, `content_type: blog_post`,
+`page_type: blog_post`, and the actual destination's `partner_type`. State context is included when
+present in the link. Query strings and link text are not included in these events. Absolute links
+to VeteranPCS resolve to same-tab internal navigation. These links were previously untracked:
+increased measured CTA coverage after deployment is not by itself conversion improvement.
+The category-selected CTA band and mobile footer keep their existing single-intent behavior.
 
 Blog landing (`page_type: blog_landing`):
 
@@ -228,6 +236,27 @@ Pre/post comparison windows must start no earlier than 2026-06-27, when `cta_cli
 Dashboard disposition: any saved PostHog insight or dashboard tile that filters `cta_id = 'blog_mobile_sticky_agent'` alone now undercounts total mobile sticky footer engagement, because lender-intent posts fire `blog_mobile_sticky_lender` instead. File a follow-up to add `blog_mobile_sticky_lender` to those filters. The same applies to any saved insight built around `blog_find_agent_in_state` that does not segment out the retired `bottom` position.
 
 These ctaId changes are ticketed by the Blog Post CTA Rationalization plan (PR #170, branch `feat/blog-post-cta-rationalization`); this keeps them consistent with the ctaId-stability rule recorded for the homepage cycle in `docs/superpowers/plans/2026-07-08-homepage-followups.md:16`, which requires a ticket for any ctaId change.
+
+### State Contact CTA Payload (2026-09-28)
+
+`buildStateContactCtaProperties` is the shared payload builder for:
+`state_agent_card_contact`, `state_lender_card_contact`, `state_page_agent_cta`,
+`state_page_lender_cta`, and `state_page_find_agent_fallback`. Each includes
+`page_type: state_page`, normalized `state_code` / `state_slug`, `partner_type`,
+`cta_id`, `cta_intent`, existing `cta_position` / `cta_component`, `cta_location`,
+and a query-free `destination_path`. Partner-card events also include
+`partner_salesforce_id`. Established IDs and positions are unchanged.
+
+Before this fix, all five sources omitted `page_type`, and only the fallback carried `state_code`.
+For historical comparisons, use the stable CTA IDs and `state_slug`; do not require the new
+properties before deployment. The hero CTA already carried this context. State hero, band, and
+fallback links now preserve the selected state in their contact-form destination.
+
+Customer agent/lender forms use their shared schema for validation (`noValidate` disables the
+browser's competing validation UI). Thus malformed emails now reach `form_submit_attempted` and
+`form_validation_failed`, instead of being stopped before analytics. Phone formatting is normalized
+before submission, and invalid phone lengths are rejected client-side. Expect a coverage change in
+attempt/error counts after deployment; accepted-lead semantics are unchanged.
 
 ## Customer Form IDs
 
