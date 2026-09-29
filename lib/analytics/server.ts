@@ -1,4 +1,6 @@
 import 'server-only';
+import { featureFlags } from '@/lib/feature-flags';
+import { customerJourneyProperties } from './journey-attribution';
 
 import {
   ANALYTICS_SCHEMA_VERSION,
@@ -68,9 +70,12 @@ function booleanFromContact(value: unknown): boolean {
 export function buildLeadConversionProperties(input: LeadAnalyticsInput): AnalyticsProperties {
   const firstTouch = safeNested(input.formData.first_touch_attribution);
   const lastTouch = safeNested(input.formData.last_touch_attribution);
+  const journey = customerJourneyProperties(input.formId, input.formData, featureFlags.customerJourneyAttributionEnabled);
 
   return {
     form_id: input.formId,
+    ...journey,
+    ...('posthog_session_id' in journey ? { $session_id: journey.posthog_session_id } : {}),
     lead_source: input.leadSource,
     submission_id: input.submissionId,
     vpcs_visitor_id: getVisitorIdFromFormData(input.formData),

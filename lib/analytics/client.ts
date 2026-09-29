@@ -1,6 +1,7 @@
 'use client';
 
 import posthog from 'posthog-js';
+import { customerJourney } from './journey-client';
 import {
   ANALYTICS_SCHEMA_VERSION,
   errorCodesFromErrors,
@@ -84,8 +85,13 @@ export function captureAnalyticsEvent(
   }
 }
 
-export function formTrackingPayload(): Record<string, unknown> {
-  return { ...getClientAnalyticsContext() };
+export function formTrackingPayload(formId?: string): Record<string, unknown> {
+  try {
+    return { ...getClientAnalyticsContext(), ...customerJourney.payload(formId) };
+  } catch {
+    // Optional analytics must not stop a lead when browser storage is blocked.
+    return {};
+  }
 }
 
 export function trackFormStarted(formId: string, properties: AnalyticsProperties = {}): void {
@@ -95,7 +101,7 @@ export function trackFormStarted(formId: string, properties: AnalyticsProperties
 }
 
 export function trackFormSubmitAttempted(formId: string, properties: AnalyticsProperties = {}): void {
-  incrementAnalyticsCounter('form_attempt_count_before_conversion');
+  try { incrementAnalyticsCounter('form_attempt_count_before_conversion'); } catch { /* Analytics is optional. */ }
   captureAnalyticsEvent('form_submit_attempted', { form_id: formId, ...properties });
 }
 

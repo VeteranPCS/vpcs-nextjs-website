@@ -1,3 +1,5 @@
+import { safeSessionEntryPath, validSessionId } from './journey-attribution';
+
 export const ANALYTICS_SCHEMA_VERSION = 1;
 
 export type JourneyStage = 'top' | 'mid' | 'bottom' | 'outcome';
@@ -149,6 +151,8 @@ export function redactAnalyticsText(value: string, maxLength = 512): string | un
 }
 
 function cleanScalar(key: string, value: unknown): AnalyticsValue {
+  if (key === 'posthog_session_id' || key === '$session_id') return validSessionId(value);
+  if (key === 'session_entry_path') return safeSessionEntryPath(value);
   if (value === undefined) return undefined;
   if (value === null || typeof value === 'number' || typeof value === 'boolean') return value;
   if (typeof value !== 'string') return undefined;
@@ -179,6 +183,7 @@ export function sanitizeAnalyticsProperties(
   const clean: SanitizedAnalyticsProperties = {};
 
   for (const [key, value] of Object.entries(properties)) {
+    if (/session_entry.*(?:url|referrer|pathname)/i.test(key)) continue;
     if (isBlockedKey(key)) continue;
 
     if (Array.isArray(value)) {

@@ -29,7 +29,7 @@ export default function ContactLenderPage() {
       });
 
       const result = await submitContactLenderLead(
-        { ...formData, ...formTrackingPayload() },
+        { ...formData, ...formTrackingPayload('contact_lender') },
         fullQueryString,
       );
       if (result.redirectUrl) {

@@ -28,7 +28,7 @@ export default function ContactAgentPage() {
       });
 
       const result = await submitContactAgentLead(
-        { ...formData, ...formTrackingPayload() },
+        { ...formData, ...formTrackingPayload('contact_agent') },
         fullQueryString,
       );
       return result;
