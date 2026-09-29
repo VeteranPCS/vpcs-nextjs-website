@@ -96,6 +96,8 @@ const nextConfig = {
   skipTrailingSlashRedirect: true,
   async redirects() {
     return [
+      { source: "/intership", destination: "/internship", permanent: true },
+      { source: "/intership/", destination: "/internship", permanent: true },
       {
         source: "/blog/us-military-bases/:path*/:slug",
         destination: "/blog/:slug",
