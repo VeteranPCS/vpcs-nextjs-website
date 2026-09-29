@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Controller, useForm, SubmitHandler, Resolver } from 'react-hook-form';
+import { useForm, SubmitHandler, Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import HowDidYouHearAboutUs from '@/components/GetListedLenders/HowDidYouHearAboutUs';
 
@@ -8,7 +8,8 @@ import { ContactLenderFormData } from '@/types';
 import { useConcierge } from '@/components/Concierge';
 import { featureFlags } from '@/lib/feature-flags';
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
-import StateSelect from '@/components/common/StateSelect';
+import { US_STATE_CODES } from '@/constants/usStates';
+import CustomerValidationSummary, { customerErrorProps } from '@/components/common/CustomerValidationSummary';
 import { contactLenderClientSchema } from '@/lib/validation/contactForms';
 import {
   trackFormStarted,
@@ -29,6 +30,7 @@ type FormErrors = Partial<Record<keyof ContactLenderFormData, { message?: string
 const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateCode }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionFailed, setSubmissionFailed] = useState(false);
+  const [focusRequest, setFocusRequest] = useState(0);
   const { open: openConcierge } = useConcierge();
 
   const handleConciergeCta = () => {
@@ -39,7 +41,6 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
   };
 
   const {
-    control,
     register,
     handleSubmit,
     getValues,
@@ -48,6 +49,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
     formState: { errors },
   } = useForm<ContactLenderFormData>({
     resolver: yupResolver(contactLenderClientSchema) as Resolver<ContactLenderFormData>,
+    shouldFocusError: false,
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -90,6 +92,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
   };
 
   const handleInvalidSubmit = (formErrors: typeof errors) => {
+    setFocusRequest((request) => request + 1);
     trackFormValidationFailed('contact_lender', formErrors);
   };
 
@@ -106,7 +109,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
   const renderError = (fieldName: keyof FormErrors) => {
     const error = errors[fieldName];
     return error ? (
-      <span className="text-error">{error.message}</span>
+      <span id={`${fieldName}-error`} className="text-error">{error.message}</span>
     ) : null;
   };
 
@@ -139,6 +142,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
                 This information is strictly used to connect you and the lender directly. Be sure to check your spam/junk folder if you do not receive a confirmation email.
               </p>
             </div>
+            <CustomerValidationSummary errors={errors} focusRequest={focusRequest} />
             <div className="border rounded-lg border-[#E2E4E5] p-8">
               <div>
                 <div className="mb-8 flex flex-col">
@@ -153,6 +157,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     type="text"
                     id="firstName"
+                    {...customerErrorProps(errors, 'firstName')}
                     placeholder="Alexander"
                     autoComplete="given-name"
                   />
@@ -171,6 +176,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     type="text"
                     id="lastName"
+                    {...customerErrorProps(errors, 'lastName')}
                     placeholder="Smith"
                     autoComplete="family-name"
                   />
@@ -188,6 +194,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
                     className="px-2 py-1 w-full border-b border-[#E2E4E5]"
                     type="email"
                     id="email"
+                    {...customerErrorProps(errors, 'email')}
                     placeholder="alex_manager@gmail.com"
                     autoComplete="email"
                   />
@@ -205,6 +212,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
                     className="border-b border-[#E2E4E5] py-1 px-2"
                     type="tel"
                     id="phone"
+                    {...customerErrorProps(errors, 'phone')}
                     placeholder="+1 555 555-1234"
                     autoComplete="tel"
                   />
@@ -222,6 +230,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     type="text"
                     id="currentBase"
+                    {...customerErrorProps(errors, 'currentBase')}
                     placeholder="Current Base/City"
                     autoComplete="off"
                   />
@@ -235,18 +244,15 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
                     >
                       What state are you buying/selling in?*
                     </label>
-                    <Controller
-                      name="state"
-                      control={control}
-                      render={({ field }) => (
-                        <StateSelect
-                          id="state"
-                          value={field.value ?? ''}
-                          onChange={field.onChange}
-                          onBlur={field.onBlur}
-                        />
-                      )}
-                    />
+                    <select
+                      id="state"
+                      {...customerErrorProps(errors, 'state')}
+                      {...register('state')}
+                      className="border-b border-[#E2E4E5] px-2 py-3 min-h-[44px] bg-white"
+                    >
+                      <option value="">Select State</option>
+                      {US_STATE_CODES.map((code) => <option key={code} value={code}>{code}</option>)}
+                    </select>
                     {renderError('state')}
                   </div>
                 )}
@@ -262,6 +268,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     type="text"
                     id="destinationBase"
+                    {...customerErrorProps(errors, 'destinationBase')}
                     placeholder="Destination Base/City"
                     autoComplete="off"
                   />
@@ -279,15 +286,18 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
                     {...register('additionalComments')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     id="additionalComments"
+                    {...customerErrorProps(errors, 'additionalComments')}
                     placeholder="Add comments"
                     autoComplete="off"
                   />
+                  {errors.additionalComments && <p id="additionalComments-error" className="text-error">{errors.additionalComments.message}</p>}
                 </div>
 
                 <HowDidYouHearAboutUs
                   register={register}
                   watch={watch}
                   errors={errors}
+                  customerAccessibility
                 />
               </div>
             </div>
