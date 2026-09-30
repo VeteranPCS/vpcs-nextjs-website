@@ -2,14 +2,13 @@
 import { useEffect, useState } from "react";
 import ContactLender from "@/components/ContactLender/ContactLender";
 import { submitContactLenderLead } from "./actions";
-import { useRouter } from 'next/navigation'
 import { sendGTMEvent } from "@next/third-parties/google";
 import { normalizeStateCode, normalizeStateSlug } from "@/lib/states";
 import { ContactLenderFormData } from "@/types";
 import { formTrackingPayload } from "@/lib/analytics/client";
+import type { CustomerSubmitResult } from "@/lib/leads/submission-outcome";
 
 export default function ContactLenderPage() {
-  const router = useRouter()
   const [derivedStateCode, setDerivedStateCode] = useState<string | null>(null);
 
   useEffect(() => {
@@ -17,28 +16,26 @@ export default function ContactLenderPage() {
     setDerivedStateCode(normalizeStateCode(queryParams.get("state")));
   }, []);
 
-  const handleSubmit = async (formData: ContactLenderFormData): Promise<{ success?: boolean; redirectUrl?: string }> => {
+  const handleSubmit = async (formData: ContactLenderFormData): Promise<CustomerSubmitResult> => {
     const fullQueryString = window.location.search;
     const queryParams = new URLSearchParams(fullQueryString);
 
     try {
-      sendGTMEvent({
+      // Comparator telemetry is optional and must never prevent lead delivery.
+      try { sendGTMEvent({
         event: "conversion_contact_lender",
         agent_id: queryParams.get('id') || "",
         state: normalizeStateSlug(queryParams.get('state')) || "",
-      });
+      }); } catch { /* Keep existing GTM semantics, best effort. */ }
 
       const result = await submitContactLenderLead(
         { ...formData, ...formTrackingPayload('contact_lender') },
         fullQueryString,
       );
-      if (result.redirectUrl) {
-        router.push(result.redirectUrl);
-      }
       return result;
     } catch (error) {
       console.error('Error submitting form:', error);
-      return { success: false };
+      return { success: false, outcome: 'unconfirmed' };
     }
   };
 

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useForm, SubmitHandler, Resolver } from "react-hook-form";
+import { useForm, Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { ContactAgentFormData } from '@/types';
@@ -10,26 +10,22 @@ import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 import { US_STATE_CODES } from '@/constants/usStates';
 import CustomerValidationSummary, { customerErrorProps } from '@/components/common/CustomerValidationSummary';
 import { contactAgentClientSchema } from '@/lib/validation/contactForms';
-import {
-  trackFormStarted,
-  trackFormSubmitAttempted,
-  trackFormSubmissionFailed,
-  trackFormValidationFailed,
-} from '@/lib/analytics/client';
+import { trackFormStarted } from '@/lib/analytics/client';
+import { useCustomerSubmission } from '@/components/common/useCustomerSubmission';
+import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
+import type { CustomerSubmitResponse } from '@/lib/leads/submission-outcome';
 
 interface ContactFormProps {
-  onSubmit: (data: ContactAgentFormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
+  onSubmit: (data: ContactAgentFormData) => Promise<CustomerSubmitResponse>;
   derivedStateCode?: string | null;
 }
 
 const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionFailed, setSubmissionFailed] = useState(false);
-  const [focusRequest, setFocusRequest] = useState(0);
   const {
     register,
     handleSubmit,
     getValues,
+    setError,
     watch,
     reset,
     setValue,
@@ -70,40 +66,12 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
     openConcierge({ topic: 'agent', openingMessage });
   };
 
-  const handleFormSubmit: SubmitHandler<ContactAgentFormData> = async (data) => {
-    setSubmissionFailed(false);
-    setIsSubmitting(true);
-    try {
-      const response = await onSubmit({ ...data, ...getSpamFields() });
-      if (response?.success || response?.redirectUrl) {
-        reset(); // Reset form after successful submission
-        window.location.href = response?.redirectUrl || '/thank-you'; // Immediate redirect
-        return;
-      }
-      trackFormSubmissionFailed('contact_agent', 'server_submission', ['no_success_response']);
-      setSubmissionFailed(true);
-    } catch (error) {
-      setSubmissionFailed(true);
-      trackFormSubmissionFailed('contact_agent', 'server_submission', ['submission_exception']);
-      console.error('Error submitting form:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleInvalidSubmit = (formErrors: typeof errors) => {
-    setFocusRequest((request) => request + 1);
-    trackFormValidationFailed('contact_agent', formErrors);
-  };
-
-  const trackSubmitAttempt = () => {
-    const values = getValues();
-    trackFormSubmitAttempted('contact_agent', {
-      has_email: Boolean(values.email),
-      has_phone: Boolean(values.phone),
-      state_code: values.state,
-    });
-  };
+  const { isSubmitting, focusRequest, onFormSubmit, setSubmitButton, submitLabel, ...feedback } = useCustomerSubmission({
+    formId: 'contact_agent',
+    form: { handleSubmit, getValues, setError, reset },
+    onSubmit,
+    getSpamFields,
+  });
 
   const [agentName, setAgentName] = useState('Us');
 
@@ -119,10 +87,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
       <div className="md:w-[456px] mx-auto my-10">
         <form
           noValidate
-          onSubmit={(event) => {
-            trackSubmitAttempt();
-            void handleSubmit(handleFormSubmit, handleInvalidSubmit)(event);
-          }}
+          onSubmit={onFormSubmit}
           onFocus={() => trackFormStarted('contact_agent')}
         >
           <HoneypotField ref={honeypotRef} />
@@ -367,18 +332,15 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
               </div>
             </div>
             {/* Submit Button */}
-            {submissionFailed && (
-              <p role="alert" className="text-red-700 text-sm">
-                We couldn’t confirm your request. Your information is still here. Please try again in a moment.
-              </p>
-            )}
+            <CustomerSubmissionFeedback {...feedback} isSubmitting={isSubmitting} />
             <div className="flex md:justify-start justify-center flex-col md:items-start items-center gap-3">
               <button
                 type="submit"
+                ref={setSubmitButton}
                 disabled={isSubmitting}
                 className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit'}
+                {submitLabel}
               </button>
               {featureFlags.conciergeEnabled && (
                 <button

@@ -553,6 +553,25 @@ For Opportunity propagation, query Opportunities by `VPCS_Submission_ID__c` from
 
 If no attributed Lead has converted, Opportunity propagation cannot be record-verified yet even if the Salesforce field mapping exists.
 
+## Customer delivery repair release (deployment pending)
+
+- `lead_conversion_created` is attempted once after Web-to-Lead acceptance, independently of
+  routing, Slack, SMS, and their payload construction. Existing event names, submission/visitor
+  identifiers, dry-run suppression, spam exclusions, and attribution gates are unchanged.
+- Earlier email-only leads could be accepted by Salesforce but miss both notification dispatch
+  and accepted capture. A rise in recorded conversions after this release can be repaired capture,
+  not increased actual lead volume. Record the approved deployment timestamp before comparing cohorts.
+- `lead_notification_failed` retains `channel` and `failure_detail`; `failure_stage` distinguishes
+  `construction`, `configuration`, and `delivery`. No provider response, customer input, or webhook
+  URL is added. Failure telemetry is best effort and cannot reverse acceptance.
+- Customer `form_submission_failed` uses safe `not_sent` or `unconfirmed` codes. `not_sent` means a
+  known pre-send failure; `unconfirmed` means delivery may have occurred. Server-side website field
+  failures use `form_validation_failed` with `failure_stage=server_validation`. GTM comparator
+  conversion events retain their existing pre-acceptance timing and are not accepted-lead counts.
+- Submission status `UNCONFIRMED` is a diagnostic log category, not a durable record. The tracker
+  cannot reconcile delivery or deduplicate retries. Warned retries are deliberate new submissions;
+  do not automatically replay failures. Browser in-flight locking is not cross-tab idempotency.
+
 ## Change Checklist
 
 Before changing telemetry:

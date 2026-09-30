@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { useForm, SubmitHandler, Resolver } from 'react-hook-form';
+import { useForm, Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import HowDidYouHearAboutUs from '@/components/GetListedLenders/HowDidYouHearAboutUs';
 
@@ -11,16 +11,14 @@ import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 import { US_STATE_CODES } from '@/constants/usStates';
 import CustomerValidationSummary, { customerErrorProps } from '@/components/common/CustomerValidationSummary';
 import { contactLenderClientSchema } from '@/lib/validation/contactForms';
-import {
-  trackFormStarted,
-  trackFormSubmitAttempted,
-  trackFormSubmissionFailed,
-  trackFormValidationFailed,
-} from '@/lib/analytics/client';
+import { trackFormStarted } from '@/lib/analytics/client';
+import { useCustomerSubmission } from '@/components/common/useCustomerSubmission';
+import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
+import type { CustomerSubmitResponse } from '@/lib/leads/submission-outcome';
 
 // Props type for ContactForm component
 interface ContactFormProps {
-  onSubmit: (data: ContactLenderFormData) => Promise<{ success?: boolean; redirectUrl?: string }> | void;
+  onSubmit: (data: ContactLenderFormData) => Promise<CustomerSubmitResponse> | void;
   derivedStateCode?: string | null;
 }
 
@@ -28,9 +26,6 @@ interface ContactFormProps {
 type FormErrors = Partial<Record<keyof ContactLenderFormData, { message?: string }>>;
 
 const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateCode }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionFailed, setSubmissionFailed] = useState(false);
-  const [focusRequest, setFocusRequest] = useState(0);
   const { open: openConcierge } = useConcierge();
 
   const handleConciergeCta = () => {
@@ -44,6 +39,8 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
     register,
     handleSubmit,
     getValues,
+    setError,
+    reset,
     watch,
     setValue,
     formState: { errors },
@@ -72,38 +69,12 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
     }
   }, [derivedStateCode, setValue]);
 
-  // Form submit handler
-  const handleFormSubmit: SubmitHandler<ContactLenderFormData> = async (data) => {
-    setSubmissionFailed(false);
-    setIsSubmitting(true);
-    try {
-      const response = await onSubmit({ ...data, ...getSpamFields() });
-      if (!response?.success && !response?.redirectUrl) {
-        trackFormSubmissionFailed('contact_lender', 'server_submission', ['no_success_response']);
-        setSubmissionFailed(true);
-      }
-    } catch (error) {
-      setSubmissionFailed(true);
-      trackFormSubmissionFailed('contact_lender', 'server_submission', ['submission_exception']);
-      console.error('Error submitting form:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleInvalidSubmit = (formErrors: typeof errors) => {
-    setFocusRequest((request) => request + 1);
-    trackFormValidationFailed('contact_lender', formErrors);
-  };
-
-  const trackSubmitAttempt = () => {
-    const values = getValues();
-    trackFormSubmitAttempted('contact_lender', {
-      has_email: Boolean(values.email),
-      has_phone: Boolean(values.phone),
-      state_code: values.state,
-    });
-  };
+  const { isSubmitting, focusRequest, onFormSubmit, setSubmitButton, submitLabel, ...feedback } = useCustomerSubmission({
+    formId: 'contact_lender',
+    form: { handleSubmit, getValues, setError, reset },
+    onSubmit,
+    getSpamFields,
+  });
 
   // Error rendering function
   const renderError = (fieldName: keyof FormErrors) => {
@@ -119,17 +90,14 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
     const urlParams = new URLSearchParams(window.location.search);
     const lenderFirstName = urlParams.get('fn') || 'Us';
     setLenderName(lenderFirstName);
-  }, [lenderName])
+  }, [])
 
   return (
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div className="md:w-[456px] mx-auto my-10">
         <form
           noValidate
-          onSubmit={(event) => {
-            trackSubmitAttempt();
-            void handleSubmit(handleFormSubmit, handleInvalidSubmit)(event);
-          }}
+          onSubmit={onFormSubmit}
           onFocus={() => trackFormStarted('contact_lender')}
         >
           <HoneypotField ref={honeypotRef} />
@@ -302,18 +270,15 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
               </div>
             </div>
 
-            {submissionFailed && (
-              <p role="alert" className="text-red-700 text-sm">
-                We couldn’t confirm your request. Your information is still here. Please try again in a moment.
-              </p>
-            )}
+            <CustomerSubmissionFeedback {...feedback} isSubmitting={isSubmitting} />
             <div className="flex md:justify-start justify-center flex-col md:items-start items-center gap-3">
               <button
                 type="submit"
+                ref={setSubmitButton}
                 disabled={isSubmitting}
                 className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit'}
+                {submitLabel}
               </button>
               {featureFlags.conciergeEnabled && (
                 <button

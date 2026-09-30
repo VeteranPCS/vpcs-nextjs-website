@@ -21,6 +21,11 @@ import { logError } from '@/services/loggingService';
 import { captureLeadConversionCreated, captureServerAnalyticsEvent } from '@/lib/analytics/server';
 import { evaluateLeadSpam } from '@/lib/spam-protection';
 import { updateSubmissionStatus } from '@/services/formTrackingService';
+import stateService from '@/services/stateService';
+import * as notificationPayloads from '@/lib/leads/notification-payloads';
+import { contactAgentClientSchema, contactLenderClientSchema } from '@/lib/validation/contactForms';
+import { LeadSubmissionError } from '@/lib/leads/submission-outcome';
+import { submitCustomerWebsiteLead } from '@/lib/leads/customer-action';
 
 vi.mock('server-only', () => ({}));
 
@@ -92,12 +97,114 @@ vi.mock('@/services/formTrackingService', () => ({
     PENDING: 'PENDING',
     SUCCESS: 'SUCCESS',
     FAILURE: 'FAILURE',
+    UNCONFIRMED: 'UNCONFIRMED',
   },
   trackFormSubmission: vi.fn(async () => 'submission-test-id'),
   updateSubmissionStatus: vi.fn(async () => true),
 }));
 
 const queryString = '?form=agent&fn=Jason&id=0014x00000HWTqI&state=colorado';
+
+describe('accepted customer lead regression boundaries', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('', { status: 200 })));
+  });
+  afterEach(() => { vi.restoreAllMocks(); vi.useRealTimers(); });
+
+  describe.each([
+    ['contact_agent', contactAgentClientSchema, contactAgentPostForm],
+    ['contact_lender', contactLenderClientSchema, contactLenderPostForm],
+  ] as const)('%s', (formId, schema, submit) => {
+    it.each(['email', 'phone', 'both'])('accepts real client-normalized %s-only/both payloads', async (method) => {
+      const data = await schema.validate({ ...qaPayload(), state: 'CO', email: method === 'phone' ? '' : 'qa@example.com', phone: method === 'email' ? '' : '(719) 555-0100' });
+      if (method === 'email') expect(data.phone).toBeUndefined();
+      const result = await submitCustomerWebsiteLead(formId, data, queryString, submit);
+      expect(result).toMatchObject({ success: true, outcome: 'accepted', submissionId: 'submission-test-id' });
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(sendToSlack).toHaveBeenCalledTimes(1);
+      expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
+      expect(vi.mocked(sendOpenPhoneMessage).mock.calls[0]?.[0].content).not.toContain('undefined');
+      expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
+      expect(updateSubmissionStatus).toHaveBeenCalledTimes(1);
+      expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.any(Response));
+    });
+
+    it('rejects invalid website input before every outbound effect', async () => {
+      const result = await submitCustomerWebsiteLead(formId, { ...qaPayload(), firstName: '   ' }, queryString, submit);
+      expect(result).toMatchObject({ outcome: 'validation_error', fieldErrors: { firstName: 'First name is required' } });
+      for (const effect of [fetch, sendToSlack, sendOpenPhoneMessage, routeSalesforceLeadOwner, captureLeadConversionCreated]) expect(effect).not.toHaveBeenCalled();
+    });
+  });
+
+  it('an SMS construction exception cannot suppress Slack or accepted capture', async () => {
+    vi.spyOn(notificationPayloads, 'buildPartnerSmsContent').mockImplementationOnce(() => { throw new Error('private payload'); });
+    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toHaveProperty('submissionId');
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
+    expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(expect.objectContaining({ properties: expect.objectContaining({ channel: 'OpenPhone', failure_stage: 'construction' }) }));
+  });
+
+  it('a Slack argument-construction exception cannot suppress partner SMS', async () => {
+    vi.mocked(stateService.fetchAgentById).mockResolvedValueOnce({
+      get Name() { throw new Error('private partner data'); }, PersonMobilePhone: '7195550100',
+    } as never);
+    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toHaveProperty('submissionId');
+    expect(sendToSlack).not.toHaveBeenCalled();
+    expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
+    expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['status', 'analytics', 'routing'] as const)('%s failure after acceptance cannot reverse success or suppress notifications', async (stage) => {
+    if (stage === 'status') vi.mocked(updateSubmissionStatus).mockRejectedValueOnce(new Error('unavailable'));
+    if (stage === 'analytics') vi.mocked(captureLeadConversionCreated).mockRejectedValueOnce(new Error('construction or delivery'));
+    if (stage === 'routing') vi.mocked(routeSalesforceLeadOwner).mockRejectedValueOnce(new Error('unavailable'));
+    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toHaveProperty('submissionId');
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
+    expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(updateSubmissionStatus).mock.calls.every((call) => call[1] === 'SUCCESS')).toBe(true);
+  });
+
+  it('network uncertainty makes one POST, clears its timer, and produces a typed failure', async () => {
+    vi.useFakeTimers();
+    vi.mocked(fetch).mockRejectedValueOnce(new Error('network lost'));
+    await expect(contactAgentPostForm(qaPayload(), queryString)).rejects.toMatchObject({ outcome: 'unconfirmed', submissionId: 'submission-test-id' });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(0);
+    expect(updateSubmissionStatus).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+  });
+
+  it('pre-send failures are typed not_sent and never POST', async () => {
+    await expect(contactAgentPostForm({ email: 'bad' }, '')).rejects.toBeInstanceOf(LeadSubmissionError);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('SMS delivery and failure-telemetry failures cannot undo acceptance or suppress Slack', async () => {
+    vi.mocked(sendOpenPhoneMessage).mockRejectedValueOnce(new Error('transport failed'));
+    vi.mocked(captureServerAnalyticsEvent).mockRejectedValueOnce(new Error('analytics failed'));
+    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toHaveProperty('submissionId');
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
+  });
+
+  it('retains partial-context service callers such as Concierge', async () => {
+    await expect(contactLenderPostForm({ firstName: 'QA', email: 'qa@example.com', state: 'CO' }, '')).resolves.toHaveProperty('submissionId');
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+  });
+
+  it('retains full valid notes in Salesforce', async () => {
+    const notes = 'x'.repeat(5000);
+    await contactAgentPostForm({ ...qaPayload(), additionalComments: notes }, queryString);
+    expect([...salesforceBody().values()]).toContain(notes);
+  });
+});
 
 // The lead-param builders type `formData` as a flat `Record<string, string | undefined>`.
 // These fixtures also carry the analytics passthrough fields (`form_rendered_at`, the
@@ -456,7 +563,7 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
   });
 
   it('does not retry Salesforce when Slack returns a failed result after Salesforce accepts', async () => {
-    vi.mocked(sendToSlack).mockResolvedValueOnce({ ok: false, error: 'invalid_webhook' });
+    vi.mocked(sendToSlack).mockResolvedValueOnce({ ok: false, failureStage: 'configuration' });
     mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
       status: 200,
     });
@@ -472,7 +579,7 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
     expect(logError).toHaveBeenCalledWith(
       'Slack notification failed',
-      expect.objectContaining({ submissionId: 'submission-test-id', error: 'invalid_webhook' }),
+      expect.objectContaining({ submissionId: 'submission-test-id', stage: 'configuration' }),
       expect.any(Error),
     );
     expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(
@@ -1246,7 +1353,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('contactPostForm on a Salesforce HTTP error: throws, no Slack, marks FAILURE', async () => {
+  it('contactPostForm on a Salesforce HTTP error: throws, no Slack, marks UNCONFIRMED', async () => {
     mockSalesforceResponse('server error', { status: 500, statusText: 'Internal Server Error' });
 
     await expect(
@@ -1260,7 +1367,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
     expect(sendToSlack).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
     expect(
-      vi.mocked(updateSubmissionStatus).mock.calls.some((call) => call[1] === 'FAILURE'),
+      vi.mocked(updateSubmissionStatus).mock.calls.some((call) => call[1] === 'UNCONFIRMED'),
     ).toBe(true);
   });
 });

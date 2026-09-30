@@ -1,167 +1,26 @@
 'use server';
-import { formatPhoneNumberForDisplay, formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
+import { buildSlackLeadPayload, type SlackLeadInput } from '@/lib/leads/notification-payloads';
 import fetchWithRetry from '@/utils/fetchWithRetry';
 
-interface SlackBlock {
-    type: string;
-    text?: {
-        type: string;
-        text: string;
-        emoji?: boolean;
-    };
-    fields?: Array<{
-        type: string;
-        text: string;
-    }>;
-    elements?: Array<{
-        type: string;
-        text: string;
-    }>;
-}
-
-export default async function sendToSlack({
-    headerText,
-    name,
-    email,
-    phoneNumber,
-    state,
-    message,
-    agentInfo
-}: {
-    headerText: string,
-    name: string,
-    email: string,
-    phoneNumber: string,
-    state?: string,
-    message: string,
-    agentInfo?: {
-        name: string,
-        email: string,
-        phoneNumber: string,
-        brokerage?: string,
-        state?: string
-    }
-}) {
+export default async function sendToSlack(input: SlackLeadInput) {
     const webhookUrl = process.env.SLACK_WEBHOOK_URL;
+    if (!webhookUrl) return { ok: false, failureStage: 'configuration' as const };
 
-    if (!webhookUrl) {
-        console.error('SLACK_WEBHOOK_URL is not configured');
-        return { ok: false };
+    let payload: ReturnType<typeof buildSlackLeadPayload>;
+    try {
+        payload = buildSlackLeadPayload(input);
+    } catch {
+        return { ok: false, failureStage: 'construction' as const };
     }
-
-    const contactFields = [
-        {
-            type: 'mrkdwn',
-            text: `*Name:*\n${name}`
-        },
-        {
-            type: 'mrkdwn',
-            text: `*Email:*\n${email}`
-        },
-        {
-            type: 'mrkdwn',
-            text: `*Phone Number:*\n<tel:${formatPhoneNumberE164(phoneNumber)}|${formatPhoneNumberForDisplay(phoneNumber)}>`
-        }
-    ];
-
-    if (state) {
-        contactFields.push({
-            type: 'mrkdwn',
-            text: `*Destination State:*\n${state}`
-        });
-    }
-
-    const blocks: SlackBlock[] = [
-        {
-            type: 'header',
-            text: {
-                type: 'plain_text',
-                text: headerText,
-                emoji: true
-            }
-        },
-        {
-            type: 'section',
-            fields: contactFields
-        }
-    ];
-
-    if (message) {
-        blocks.push({
-            type: 'section',
-            text: {
-                type: 'mrkdwn',
-                text: `*Message:*\n${message}`,
-            }
-        });
-    }
-
-    if (agentInfo) {
-        const agentFields = [
-            {
-                type: 'mrkdwn',
-                text: `*Agent Name:*\n${agentInfo.name || ''}`
-            },
-            {
-                type: 'mrkdwn',
-                text: `*Agent Email:*\n${agentInfo.email || ''}`
-            },
-            {
-                type: 'mrkdwn',
-                text: `*Agent Phone:*\n<tel:${formatPhoneNumberE164(agentInfo.phoneNumber)}|${formatPhoneNumberForDisplay(agentInfo.phoneNumber)}>`
-            }
-        ];
-
-        if (agentInfo.brokerage) {
-            agentFields.push({
-                type: 'mrkdwn',
-                text: `*Agent Brokerage:*\n${agentInfo.brokerage}`
-            });
-        }
-
-        if (agentInfo.state) {
-            agentFields.push({
-                type: 'mrkdwn',
-                text: `*State:*\n${agentInfo.state.charAt(0).toUpperCase() + agentInfo.state.slice(1)}`
-            });
-        }
-
-        blocks.push({
-            type: 'section',
-            fields: agentFields
-        });
-    }
-
-    blocks.push({
-        type: 'context',
-        elements: [
-            {
-                type: 'mrkdwn',
-                text: `Submitted: ${new Date().toLocaleString()}`
-            }
-        ]
-    });
-
-    const payload = { blocks };
-
     try {
         const response = await fetchWithRetry(webhookUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
-
-        if (!response.ok) {
-            const errorData = await response.text();
-            console.error('Slack API error:', errorData);
-            return { ok: false, error: errorData };
-        }
-
-        return { ok: true };
-    } catch (error) {
-        console.error('Error sending to Slack:', error);
-        return { ok: false, error: error instanceof Error ? error.message : 'Unknown error' };
+        return response.ok ? { ok: true } : { ok: false, failureStage: 'delivery' as const };
+    } catch {
+        // Never expose webhook URLs or provider bodies to analytics/callers.
+        return { ok: false, failureStage: 'delivery' as const };
     }
 }

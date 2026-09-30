@@ -6,6 +6,7 @@ import { sendGTMEvent } from "@next/third-parties/google";
 import { ContactAgentFormData } from "@/types";
 import { normalizeStateCode, normalizeStateSlug } from "@/lib/states";
 import { formTrackingPayload } from "@/lib/analytics/client";
+import type { CustomerSubmitResult } from "@/lib/leads/submission-outcome";
 
 export default function ContactAgentPage() {
   const [derivedStateCode, setDerivedStateCode] = useState<string | null>(null);
@@ -15,17 +16,18 @@ export default function ContactAgentPage() {
     setDerivedStateCode(normalizeStateCode(queryParams.get("state")));
   }, []);
 
-  const handleSubmit = async (formData: ContactAgentFormData): Promise<{ success?: boolean; redirectUrl?: string }> => {
+  const handleSubmit = async (formData: ContactAgentFormData): Promise<CustomerSubmitResult> => {
     const fullQueryString = window.location.search;
     const queryParams = new URLSearchParams(fullQueryString);
     const queryState = queryParams.get("state");
 
     try {
-      sendGTMEvent({
+      // Comparator telemetry is optional and must never prevent lead delivery.
+      try { sendGTMEvent({
         event: "conversion_contact_agent",
         agent_id: queryParams.get("id") || "",
         state: normalizeStateSlug(queryState) || "",
-      });
+      }); } catch { /* Keep existing GTM semantics, best effort. */ }
 
       const result = await submitContactAgentLead(
         { ...formData, ...formTrackingPayload('contact_agent') },
@@ -34,7 +36,7 @@ export default function ContactAgentPage() {
       return result;
     } catch (error) {
       console.error("Error submitting form:", error);
-      return { success: false };
+      return { success: false, outcome: 'unconfirmed' };
     }
   };
 

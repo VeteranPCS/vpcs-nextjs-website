@@ -10,6 +10,11 @@ const input = { formId: 'contact_agent', leadSource: 'Customer', submissionId: '
   formData: { vpcs_visitor_id: 'vpcs_test_visitor', posthog_session_id: id, session_entry_path: '/california', journey_attribution_version: 1 } };
 afterEach(() => { featureFlags.customerJourneyAttributionEnabled = false; vi.clearAllMocks(); });
 describe('accepted customer session linkage', () => {
+  it('contains attribution-property construction errors as well as transport errors', async () => {
+    const badData = { get first_touch_attribution(): never { throw new Error('unavailable'); } };
+    await expect(captureLeadConversionCreated({ ...input, formData: badData })).resolves.toBeUndefined();
+    expect(captureServerEvent).not.toHaveBeenCalled();
+  });
   it('maps a validated id to the SDK session property on exactly one existing acceptance event', async () => {
     featureFlags.customerJourneyAttributionEnabled = true;
     await captureLeadConversionCreated(input);

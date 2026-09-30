@@ -18,11 +18,11 @@ That is not a discipline failure, it is a tooling gap. Know exactly what our gat
 | `npm run lint` | syntax, import rules, our custom `no-restricted-syntax` rules | anything visual |
 | `npm run type-check` | type errors | every runtime and layout bug |
 | `npm run build` | bad content JSON (loaders throw at module load), broken imports | every visual bug |
-| `npm test` (602 tests, 79 files) | pure functions, route handlers, data shapes | **all DOM rendering** |
+| `npm test` | pure functions, route handlers, data shapes, selected jsdom form interactions | **browser layout and visual rendering** |
 
-`vitest.config.ts` sets `environment: 'node'` for the whole suite and the repo has no jsdom,
-happy-dom, or Testing Library dependency. **No test in this repo renders a component.** A green
-suite says nothing about whether a page looks right.
+`vitest.config.ts` defaults to `environment: 'node'`. Customer-form interaction tests opt into
+jsdom per file and use Testing Library. Those tests exercise focus and retry behavior, not real
+browser layout. A green suite still says nothing about whether a page looks right.
 
 Tailwind widens the gap further. Tailwind 3 JIT silently drops any class it does not recognize,
 with no warning at any stage. `text-leeft`, `lg:w-[600ox]`, and `items-cenetr` all compiled clean
@@ -129,8 +129,8 @@ than rounding up to done.
 
 ## Gotchas
 
-- `npm test` finishing in under two seconds is expected, not a sign the suite was skipped. It is
-  fast because nothing renders.
+- `npm test` is mostly fast Node tests, with selected jsdom interaction tests. Its runtime is
+  not evidence that browser rendering was verified.
 - `npm run lint:content` (`scripts/audit-blog-editorial.mjs`) is a separate gate from `npm run lint`
   and is not run by the pre-commit hook. Run it after any change under `content/blog/`.
 - The pre-commit hook runs lint, type-check, test, and build. It is slow. That is deliberate, since
