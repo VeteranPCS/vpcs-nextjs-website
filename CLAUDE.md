@@ -22,7 +22,7 @@ VeteranPCS is a Next.js site that connects active-duty service members, veterans
 - **Telemetry:** PostHog is the primary funnel telemetry source; GA/GTM is a comparator. Taxonomy and troubleshooting live in `docs/analytics/telemetry-taxonomy.md`.
 - **Rate limit + bot defense:** `@upstash/ratelimit` + Upstash Redis, `botid` (Vercel BotID), both applied in `app/api/chat/route.ts`.
 - **Notifications:** Slack webhook (`actions/sendToSlack.ts`), OpenPhone SMS (`actions/sendOpenPhoneMessage.ts`). No Resend on this branch.
-- **Test runner:** Vitest 4, `environment: 'node'` for the whole suite, `**/__tests__/**/*.test.ts`. Tests run in pre-commit and CI. **Nothing in the suite renders a component** (no jsdom, no Testing Library), so a green run says nothing about how a page looks.
+- **Test runner:** Vitest 4, Node by default, `**/__tests__/**/*.test.{ts,tsx}`. Customer-form interaction tests opt into jsdom per file and use Testing Library. Tests run in pre-commit and CI. DOM assertions do not verify browser layout; rendered browser checks remain required.
 - **Hosting:** Vercel. Use `vercel env` for env management. Prefer Fluid Compute defaults; do not assume edge runtime.
 
 ## Commands
@@ -163,7 +163,7 @@ No `RESEND_*` keys on this branch — transactional email is off here. Don't add
 - **Diagnose root cause before fixing.** Don't paper over symptoms; trace through `services/`/`lib/` until you understand why.
 - **Verify before recommending.** A memory or plan that names a file/flag may be stale; `grep` or `Read` it before suggesting it to the user.
 - **Don't bypass the pre-commit hook.** Lint, type-check, test, and build must all pass.
-- **Green gates are not verification.** No test in this repo renders a component (`vitest.config.ts` sets `environment: 'node'`, and there is no jsdom or Testing Library). For any UI, layout, or Tailwind change, use the `vpcs-verify` skill and look at the rendered page before claiming done.
+- **Green gates are not visual verification.** Customer forms have jsdom interaction tests; most tests use Node. Neither verifies browser layout. For any UI, layout, or Tailwind change, use the `vpcs-verify` skill and look at the rendered page before claiming done.
 - **Never submit a lead form against a live backend.** Local Salesforce config points at the production org and the submit path is non-idempotent. Use `LEAD_DRY_RUN=1 npm run dev`; see `vpcs-verify`.
 - **Use TodoWrite for non-trivial work** — branch state should always reflect a clear punch list.
 - **Force-push requires explicit per-task authorization** (don't reuse a prior session's authorization).

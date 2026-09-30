@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   contactAgentClientSchema,
   contactLenderClientSchema,
+  validateCustomerWebsiteForm,
 } from '@/lib/validation/contactForms';
 
 const baseLead = {
@@ -18,6 +19,24 @@ const baseLead = {
 };
 
 describe('contact form client validation', () => {
+  describe.each([['contact_agent', contactAgentClientSchema], ['contact_lender', contactLenderClientSchema]] as const)('%s website parity', (formId, schema) => {
+    it.each([['firstName', 120], ['lastName', 120], ['currentBase', 255], ['destinationBase', 255], ['additionalComments', 5000], ['tellusMore', 5000]] as const)('bounds %s on both sides', async (field, max) => {
+      const atLimit = { ...baseLead, email: 'qa@example.com', [field]: 'x'.repeat(max) };
+      await expect(schema.validate(atLimit)).resolves.toBeTruthy();
+      expect((await validateCustomerWebsiteForm(atLimit, formId, '')).ok).toBe(true);
+      const over = { ...atLimit, [field]: 'x'.repeat(max + 1) };
+      await expect(schema.validate(over)).rejects.toThrow(`Use ${max} characters or fewer.`);
+      expect(await validateCustomerWebsiteForm(over, formId, '')).toMatchObject({ ok: false, fieldErrors: { [field]: `Use ${max} characters or fewer.` } });
+    });
+    it('normalizes optional null text and retains attribution/spam metadata', async () => {
+      const raw = { ...baseLead, email: 'qa@example.com', additionalComments: null, tellusMore: null, company_website: '', form_rendered_at: 123, vpcs_visitor_id: 'vpcs_test', form_attempt_count_before_conversion: 2 };
+      expect(await validateCustomerWebsiteForm(raw, formId, '')).toMatchObject({ ok: true, data: { additionalComments: '', tellusMore: '', company_website: '', form_rendered_at: 123, vpcs_visitor_id: 'vpcs_test', form_attempt_count_before_conversion: 2 } });
+    });
+    it('rejects whitespace required fields and non-string request values without reflecting input', async () => {
+      expect(await validateCustomerWebsiteForm({ ...baseLead, firstName: '   ' }, formId, '')).toMatchObject({ ok: false, fieldErrors: { firstName: 'First name is required' } });
+      expect(await validateCustomerWebsiteForm({ ...baseLead, firstName: { secret: 'private' } }, formId, '')).toMatchObject({ ok: false, fieldErrors: { firstName: 'Enter a text value.' } });
+    });
+  });
   it('allows email-only and phone-only leads', async () => {
     await expect(contactAgentClientSchema.validate({
       ...baseLead,

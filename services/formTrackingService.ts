@@ -5,6 +5,7 @@ export enum FormSubmissionStatus {
     PENDING = 'PENDING',
     SUCCESS = 'SUCCESS',
     FAILURE = 'FAILURE',
+    UNCONFIRMED = 'UNCONFIRMED',
 }
 
 // Structure of a form submission record (kept for typing purposes)

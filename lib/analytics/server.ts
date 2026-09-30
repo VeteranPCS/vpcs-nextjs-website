@@ -120,8 +120,8 @@ export async function captureServerAnalyticsEvent(args: {
 }
 
 export async function captureLeadConversionCreated(input: LeadAnalyticsInput): Promise<void> {
-  const properties = buildLeadConversionProperties(input);
   try {
+    const properties = buildLeadConversionProperties(input);
     await captureServerAnalyticsEvent({
       event: 'lead_conversion_created',
       distinctId: getVisitorIdFromFormData(input.formData) ?? input.submissionId,

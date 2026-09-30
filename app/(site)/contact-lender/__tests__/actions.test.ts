@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { recordContactLenderLead, submitContactLenderLead } from '../actions';
 import { contactLenderPostForm } from '@/services/salesForcePostFormsService';
-import { logError } from '@/services/loggingService';
 import { ContactLenderFormData } from '@/types';
 
 vi.mock('@/services/salesForcePostFormsService', () => ({
@@ -50,9 +49,11 @@ describe('submitContactLenderLead', () => {
 
     await expect(submitContactLenderLead(payload, '?id=001&state=colorado')).resolves.toEqual({
       success: true,
+      outcome: 'accepted',
+      submissionId: 'submission-test-id',
       redirectUrl: 'https://www.veteranpcs.com/thank-you',
     });
-    expect(contactLenderPostForm).toHaveBeenCalledWith(payload, '?id=001&state=colorado');
+    expect(contactLenderPostForm).toHaveBeenCalledWith(expect.objectContaining({ ...payload, state: 'CO' }), '?id=001&state=colorado');
   });
 
   it('normalizes message-only success to the thank-you route', async () => {
@@ -63,6 +64,8 @@ describe('submitContactLenderLead', () => {
 
     await expect(submitContactLenderLead(payload, '?id=001&state=colorado')).resolves.toEqual({
       success: true,
+      outcome: 'accepted',
+      submissionId: 'submission-test-id',
       redirectUrl: '/thank-you',
     });
   });
@@ -72,11 +75,7 @@ describe('submitContactLenderLead', () => {
 
     await expect(submitContactLenderLead(payload, '?id=001&state=colorado')).resolves.toEqual({
       success: false,
+      outcome: 'unconfirmed',
     });
-    expect(logError).toHaveBeenCalledWith(
-      'contact-lender action failed',
-      undefined,
-      expect.any(Error),
-    );
   });
 });

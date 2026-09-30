@@ -1,7 +1,9 @@
 'use server'
 import sendToSlack from '@/actions/sendToSlack';
 import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
-import { formatPhoneNumberForDisplay, formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
+import { formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
+import { buildPartnerSmsContent } from '@/lib/leads/notification-payloads';
+import { LeadSubmissionError } from '@/lib/leads/submission-outcome';
 import stateService from '@/services/stateService';
 import { logDebug, logError, logInfo } from './loggingService';
 import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
@@ -76,10 +78,9 @@ async function submitToSalesforceWebToLead(
         return { success: true, responseText: '', dryRun: true };
     }
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000);
-
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -156,6 +157,8 @@ async function submitToSalesforceWebToLead(
         }
 
         return { success: false, error };
+    } finally {
+        clearTimeout(timeoutId);
     }
 }
 
@@ -528,105 +531,69 @@ function buildInternshipParams(formData: Record<string, string | undefined>): UR
 function buildContactPartnerSms(ctx: WebToLeadContext): Parameters<typeof sendOpenPhoneMessage>[0] {
     const { formData, effectiveState, agentInfo } = ctx;
     return {
-        content: `New Lead From VeteranPCS:
-${formData.firstName} ${formData.lastName}
-Email: ${formData.email}
-Phone: ${formatPhoneNumberForDisplay(formData.phone!)}
-Destination State: ${effectiveState!.label}
-${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
-${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
-${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`,
+        content: buildPartnerSmsContent(formData, effectiveState!.label),
         from: getAdminPhoneNumberForState(effectiveState!.slug),
         to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)],
     };
 }
 
-/**
- * Shared notification path for all nine forms. Slack is dispatched first, then (Family A
- * only, and only when not spam-quarantined) the partner OpenPhone SMS. A rejected promise
- * or a Slack `ok !== true` result is logged uniformly instead of being swallowed.
- *
- * Dry-run choke point 2 of 2: this is the only place Slack and OpenPhone are dispatched,
- * so the guard here covers both remaining outbound sinks for all nine forms.
- */
+/** Each channel owns construction AND delivery; no eager builder can block its sibling. */
 async function dispatchNotifications(params: {
     submissionId: string;
-    slackArg: Parameters<typeof sendToSlack>[0];
-    smsArg?: Parameters<typeof sendOpenPhoneMessage>[0];
+    buildSlack: () => Parameters<typeof sendToSlack>[0];
+    buildSms?: () => Parameters<typeof sendOpenPhoneMessage>[0];
 }): Promise<void> {
-    const { submissionId, slackArg, smsArg } = params;
-
-    if (isLeadDryRun()) {
-        // See the note in submitToSalesforceWebToLead: console.log keeps the notification
-        // payloads readable, and this branch cannot run in production.
-        console.log('[LEAD_DRY_RUN] Skipping lead notifications', {
-            submissionId,
-            slack: slackArg,
-            sms: smsArg,
-        });
-
-        return;
-    }
-
-    const notificationTasks: Array<{ name: 'Slack' | 'OpenPhone'; promise: Promise<unknown> }> = [
-        { name: 'Slack', promise: sendToSlack(slackArg) },
-    ];
-
-    if (smsArg) {
-        notificationTasks.push({ name: 'OpenPhone', promise: sendOpenPhoneMessage(smsArg) });
-    }
-
-    const notificationResults = await Promise.allSettled(
-        notificationTasks.map((task) => task.promise),
-    );
-
-    // Failed channels collected here, then surfaced to PostHog after the (sync) logging pass.
-    const failedNotifications: Array<{ channel: string; detail: string }> = [];
-
-    notificationResults.forEach((result, index) => {
-        // index is bounded by notificationResults, which is notificationTasks.map(...)
-        // (identical length), so this element is always present.
-        const task = notificationTasks[index]!;
-        if (result.status === 'rejected') {
-            logError(`${task.name} notification failed`, { submissionId }, result.reason);
-            failedNotifications.push({ channel: task.name, detail: 'rejected' });
-            return;
-        }
-
-        if (task.name === 'Slack') {
-            const slackResult = result.value as { ok?: boolean; error?: unknown };
-            if (slackResult?.ok !== true) {
-                logError(
-                    'Slack notification failed',
-                    { submissionId, error: slackResult?.error },
-                    new Error(`Slack returned ok=${String(slackResult?.ok)}`),
-                );
-                failedNotifications.push({ channel: 'Slack', detail: `ok=${String(slackResult?.ok)}` });
+    const { submissionId } = params;
+    const dryRun = isLeadDryRun();
+    const dryPayloads: Record<string, unknown> = {};
+    async function channel<T>(name: 'Slack' | 'OpenPhone', build: () => T, send: (input: T) => Promise<unknown>) {
+        let stage: 'construction' | 'delivery' | 'configuration' = 'construction';
+        let detail = 'construction';
+        try {
+            const payload = build();
+            if (dryRun) {
+                dryPayloads[name === 'Slack' ? 'slack' : 'sms'] = payload;
                 return;
             }
+            stage = 'delivery';
+            detail = 'rejected';
+            const result = await send(payload);
+            if (name === 'Slack' && (result as { ok?: boolean })?.ok !== true) {
+                const reported = (result as { failureStage?: string })?.failureStage;
+                if (reported === 'construction' || reported === 'configuration') stage = reported;
+                detail = 'ok=false';
+                throw new Error('Slack did not confirm delivery');
+            }
+            logInfo(`${name} notification accepted`, { submissionId });
+            return;
+        } catch {
+            logError(`${name} notification failed`, { submissionId, stage }, new Error(detail));
         }
-
-        logInfo(`${task.name} notification accepted`, { submissionId });
-    });
-
-    // Route lead-critical notification failures to PostHog so an accepted lead that never
-    // reached the team/partner is a queryable funnel drop. Awaited (not fire-and-forget) so
-    // the event flushes before the serverless invocation ends; wrapped so a capture failure
-    // can't turn a logged notification hiccup into a thrown request error.
-    for (const failure of failedNotifications) {
-        try {
-            await captureServerAnalyticsEvent({
-                event: 'lead_notification_failed',
-                distinctId: submissionId,
-                properties: {
-                    submission_id: submissionId,
-                    channel: failure.channel,
-                    failure_detail: failure.detail,
-                },
-            });
-        } catch (captureError) {
-            logError('PostHog lead_notification_failed capture failed', { submissionId }, captureError);
+        if (!dryRun) {
+            try {
+                await captureServerAnalyticsEvent({
+                    event: 'lead_notification_failed',
+                    distinctId: submissionId,
+                    properties: { submission_id: submissionId, channel: name, failure_detail: detail, failure_stage: stage },
+                });
+            } catch {
+                logError('Notification failure telemetry unavailable', { submissionId, channel: name });
+            }
         }
+    }
+    await Promise.allSettled([
+        channel('Slack', params.buildSlack, sendToSlack),
+        ...(params.buildSms ? [channel('OpenPhone', params.buildSms, sendOpenPhoneMessage)] : []),
+    ]);
+    if (dryRun) console.log('[LEAD_DRY_RUN] Skipping lead notifications', { submissionId, ...dryPayloads });
+}
+
+/** Optional post-acceptance work cannot change the outcome of a created lead. */
+async function afterAcceptance(submissionId: string, stage: string, work: () => Promise<unknown>): Promise<void> {
+    try {
+        await work();
+    } catch {
+        logError('Post-acceptance work failed', { submissionId, stage });
     }
 }
 
@@ -650,6 +617,8 @@ async function submitWebToLead<TResult extends object>(
     );
 
     logInfo(config.processingMessage, { submissionId });
+    let postInitiated = false;
+    let acceptedResult: TResult | undefined;
 
     try {
         // Validate and normalize the payload before processing. Invalid data is a HARD
@@ -752,6 +721,7 @@ async function submitWebToLead<TResult extends object>(
         });
 
         const submissionStartedAt = new Date();
+        postInitiated = true;
         const submissionResult = await submitToSalesforceWebToLead(
             SALESFORCE_WEB_TO_LEAD_URL,
             formBody,
@@ -759,13 +729,6 @@ async function submitWebToLead<TResult extends object>(
         );
 
         if (!submissionResult.success) {
-            await updateSubmissionStatus(
-                submissionId,
-                FormSubmissionStatus.FAILURE,
-                submissionResult.response || null,
-                submissionResult.error || new Error('Salesforce submission failed'),
-            );
-
             logError('Salesforce Web-to-Lead submission failed', {
                 submissionId,
                 error: submissionResult.error?.message,
@@ -775,7 +738,30 @@ async function submitWebToLead<TResult extends object>(
         }
 
         const { response, redirectUrl } = submissionResult;
-
+        // Build the legacy success shape once. From here on, acceptance cannot be demoted.
+        const result = config.buildResult(redirectUrl, submissionId);
+        acceptedResult = dryRun ? { ...result, dryRun: true as const } : result;
+        await afterAcceptance(submissionId, 'status', () =>
+            updateSubmissionStatus(submissionId, FormSubmissionStatus.SUCCESS, response));
+        if (config.capture) {
+            const capture = config.capture;
+            await afterAcceptance(submissionId, 'accepted_conversion', () => captureAcceptedCustomerLead({
+                spamQuarantined: spam.quarantine,
+                formId: capture.formId,
+                leadSource: capture.leadSource,
+                submissionId,
+                formData,
+                ...(config.location
+                    ? {
+                        stateCode: effectiveState?.code,
+                        stateSlug: effectiveState?.slug,
+                        partnerType: capture.partnerType,
+                        partnerSalesforceId: paramsObj.id || null,
+                    }
+                    : {}),
+                ...(capture.guideId ? { guideId: capture.guideId } : {}),
+            }));
+        }
         // Family A: post-acceptance Lead-owner routing. Its failure is LOGGED, not thrown,
         // so a routing hiccup never costs the visitor a successful submission. Skipped in a
         // dry run: it writes to the Salesforce org, and no Lead was created to route.
@@ -824,54 +810,30 @@ async function submitWebToLead<TResult extends object>(
         }
 
         // Notifications: Slack always; partner SMS only for Family A, suppressed for spam.
-        await dispatchNotifications({
+        const location = config.location;
+        await afterAcceptance(submissionId, 'notifications', () => dispatchNotifications({
             submissionId,
-            slackArg: config.buildSlack(ctx),
-            smsArg: config.location && !spam.quarantine ? config.location.buildSms(ctx) : undefined,
-        });
-
-        await updateSubmissionStatus(
-            submissionId,
-            FormSubmissionStatus.SUCCESS,
-            response,
-        );
-
-        if (config.capture) {
-            await captureAcceptedCustomerLead({
-                spamQuarantined: spam.quarantine,
-                formId: config.capture.formId,
-                leadSource: config.capture.leadSource,
-                submissionId,
-                formData,
-                ...(config.location
-                    ? {
-                        stateCode: effectiveState?.code,
-                        stateSlug: effectiveState?.slug,
-                        partnerType: config.capture.partnerType,
-                        partnerSalesforceId: paramsObj.id || null,
-                    }
-                    : {}),
-                ...(config.capture.guideId ? { guideId: config.capture.guideId } : {}),
-            });
-        }
+            buildSlack: () => config.buildSlack(ctx),
+            buildSms: location && !spam.quarantine ? () => location.buildSms(ctx) : undefined,
+        }));
 
         logInfo('Form submitted successfully', { submissionId, hasRedirectUrl: !!redirectUrl });
 
-        const result = config.buildResult(redirectUrl, submissionId);
-
-        // A dry run returns the real success shape so callers exercise the real success path,
-        // but carries an explicit marker so nothing can mistake it for a real submission.
-        return dryRun ? { ...result, dryRun: true as const } : result;
+        return acceptedResult;
     } catch (error) {
+        if (acceptedResult) {
+            logError('Post-acceptance processing interrupted', { submissionId });
+            return acceptedResult;
+        }
         await updateSubmissionStatus(
             submissionId,
-            FormSubmissionStatus.FAILURE,
+            postInitiated ? FormSubmissionStatus.UNCONFIRMED : FormSubmissionStatus.FAILURE,
             null,
             error instanceof Error ? error : new Error('Unknown error'),
         );
 
         logError(`Error in ${config.formType} submission`, { submissionId }, error);
-        throw new Error('Failed to submit form');
+        throw new LeadSubmissionError(postInitiated ? 'unconfirmed' : 'not_sent', submissionId);
     }
 }
 
