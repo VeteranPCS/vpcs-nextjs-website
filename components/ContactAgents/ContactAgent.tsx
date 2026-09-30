@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Controller, useForm, SubmitHandler, Resolver } from "react-hook-form";
+import { useForm, SubmitHandler, Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { ContactAgentFormData } from '@/types';
 import { useConcierge } from '@/components/Concierge';
 import { featureFlags } from '@/lib/feature-flags';
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
-import StateSelect from '@/components/common/StateSelect';
+import { US_STATE_CODES } from '@/constants/usStates';
+import CustomerValidationSummary, { customerErrorProps } from '@/components/common/CustomerValidationSummary';
 import { contactAgentClientSchema } from '@/lib/validation/contactForms';
 import {
   trackFormStarted,
@@ -24,8 +25,8 @@ interface ContactFormProps {
 const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionFailed, setSubmissionFailed] = useState(false);
+  const [focusRequest, setFocusRequest] = useState(0);
   const {
-    control,
     register,
     handleSubmit,
     getValues,
@@ -35,6 +36,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
     formState: { errors },
   } = useForm<ContactAgentFormData>({
     resolver: yupResolver(contactAgentClientSchema) as Resolver<ContactAgentFormData>,
+    shouldFocusError: false,
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -90,6 +92,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
   };
 
   const handleInvalidSubmit = (formErrors: typeof errors) => {
+    setFocusRequest((request) => request + 1);
     trackFormValidationFailed('contact_agent', formErrors);
   };
 
@@ -135,6 +138,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                 This form is simply used to generate an email with your agent&apos;s information and begin qualifying you for your Move In Bonus after you close.
               </p>
             </div>
+            <CustomerValidationSummary errors={errors} focusRequest={focusRequest} />
             <div className="border rounded-lg border-[#E2E4E5] p-8">
               <div>
                 {/* First Name */}
@@ -150,11 +154,12 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     type="text"
                     id="firstName"
+                    {...customerErrorProps(errors, 'firstName')}
                     placeholder="Alexander"
                     autoComplete="given-name"
                   />
                   {errors.firstName && (
-                    <p className="text-red-500 text-xs mt-1">{errors.firstName.message}</p>
+                    <p id="firstName-error" className="text-red-500 text-xs mt-1">{errors.firstName.message}</p>
                   )}
                 </div>
                 {/* Last Name */}
@@ -170,11 +175,12 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     type="text"
                     id="lastName"
+                    {...customerErrorProps(errors, 'lastName')}
                     placeholder="Smith"
                     autoComplete="family-name"
                   />
                   {errors.lastName && (
-                    <p className="text-red-500 text-xs mt-1">{errors.lastName.message}</p>
+                    <p id="lastName-error" className="text-red-500 text-xs mt-1">{errors.lastName.message}</p>
                   )}
                 </div>
                 {/* Email */}
@@ -190,11 +196,12 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     type="email"
                     id="email"
+                    {...customerErrorProps(errors, 'email')}
                     placeholder="alex_manager@gmail.com"
                     autoComplete="email"
                   />
                   {errors.email && (
-                    <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                    <p id="email-error" className="text-red-500 text-xs mt-1">{errors.email.message}</p>
                   )}
                 </div>
                 {/* Phone */}
@@ -210,11 +217,12 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     type="tel"
                     id="phone"
+                    {...customerErrorProps(errors, 'phone')}
                     placeholder="+1 555 555-1234"
                     autoComplete="tel"
                   />
                   {errors.phone && (
-                    <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>
+                    <p id="phone-error" className="text-red-500 text-xs mt-1">{errors.phone.message}</p>
                   )}
                 </div>
                 {/* Current Base/City */}
@@ -230,11 +238,12 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     type="text"
                     id="currentBase"
+                    {...customerErrorProps(errors, 'currentBase')}
                     placeholder="Current Base/City"
                     autoComplete="off"
                   />
                   {errors.currentBase && (
-                    <p className="text-red-500 text-xs mt-1">{errors.currentBase.message}</p>
+                    <p id="currentBase-error" className="text-red-500 text-xs mt-1">{errors.currentBase.message}</p>
                   )}
                 </div>
                 {/* Destination State */}
@@ -246,20 +255,17 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     >
                       What state are you buying/selling in?*
                     </label>
-                    <Controller
-                      name="state"
-                      control={control}
-                      render={({ field }) => (
-                        <StateSelect
-                          id="state"
-                          value={field.value ?? ''}
-                          onChange={field.onChange}
-                          onBlur={field.onBlur}
-                        />
-                      )}
-                    />
+                    <select
+                      id="state"
+                      {...customerErrorProps(errors, 'state')}
+                      {...register('state')}
+                      className="border-b border-[#E2E4E5] px-2 py-3 min-h-[44px] bg-white"
+                    >
+                      <option value="">Select State</option>
+                      {US_STATE_CODES.map((code) => <option key={code} value={code}>{code}</option>)}
+                    </select>
                     {errors.state && (
-                      <p className="text-red-500 text-xs mt-1">{errors.state.message}</p>
+                      <p id="state-error" className="text-red-500 text-xs mt-1">{errors.state.message}</p>
                     )}
                   </div>
                 )}
@@ -277,11 +283,12 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     type="text"
                     id="destinationBase"
+                    {...customerErrorProps(errors, 'destinationBase')}
                     placeholder="Destination Base/City"
                     autoComplete="off"
                   />
                   {errors.destinationBase && (
-                    <p className="text-red-500 text-xs mt-1">{errors.destinationBase.message}</p>
+                    <p id="destinationBase-error" className="text-red-500 text-xs mt-1">{errors.destinationBase.message}</p>
                   )}
                 </div>
 
@@ -297,6 +304,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     {...register('howDidYouHear')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     id="howDidYouHear"
+                    {...customerErrorProps(errors, 'howDidYouHear')}
                   >
                     <option value="">Select an option</option>
                     <option value="Google">Google</option>
@@ -313,7 +321,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     <option value="Other">Other</option>
                   </select>
                   {errors.howDidYouHear && (
-                    <span className="text-error">{errors.howDidYouHear.message}</span>
+                    <span id="howDidYouHear-error" className="text-error">{errors.howDidYouHear.message}</span>
                   )}
                 </div>
 
@@ -330,10 +338,11 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                       {...register('tellusMore')}
                       className="border-b border-[#E2E4E5] px-2 py-1"
                       id="tellusMore"
+                      {...customerErrorProps(errors, 'tellusMore')}
                       placeholder="Tell us more..."
                     />
                     {errors.tellusMore && (
-                      <span className="text-error">{errors.tellusMore.message}</span>
+                      <span id="tellusMore-error" className="text-error">{errors.tellusMore.message}</span>
                     )}
                   </div>
                 )}
@@ -350,8 +359,10 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                     {...register("additionalComments")}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     id="additionalComments"
+                    {...customerErrorProps(errors, 'additionalComments')}
                     placeholder="Additional Comments"
                   />
+                  {errors.additionalComments && <p id="additionalComments-error" className="text-error">{errors.additionalComments.message}</p>}
                 </div>
               </div>
             </div>

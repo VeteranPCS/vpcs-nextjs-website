@@ -1,14 +1,17 @@
 import React from 'react';
+import { customerErrorProps } from '@/components/common/CustomerValidationSummary';
 import { UseFormRegister, UseFormWatch, FieldErrors } from 'react-hook-form';
 import { ContactLenderFormData } from '@/types';
 
 interface HowDidYouHearAboutUsProps {
+    customerAccessibility?: boolean;
     register: UseFormRegister<ContactLenderFormData>;
     watch: UseFormWatch<ContactLenderFormData>;
     errors: FieldErrors<ContactLenderFormData>;
 }
 
 const HowDidYouHearAboutUs: React.FC<HowDidYouHearAboutUsProps> = ({
+    customerAccessibility = false,
     register,
     watch,
     errors,
@@ -28,6 +31,7 @@ const HowDidYouHearAboutUs: React.FC<HowDidYouHearAboutUsProps> = ({
                     {...register('howDidYouHear')}
                     className="border-b border-[#E2E4E5] px-2 py-1"
                     id="howDidYouHear"
+                    {...(customerAccessibility ? customerErrorProps(errors, 'howDidYouHear') : {})}
                 >
                     <option value="">Select an option</option>
                     <option value="Google">Google</option>
@@ -44,7 +48,7 @@ const HowDidYouHearAboutUs: React.FC<HowDidYouHearAboutUsProps> = ({
                     <option value="Other">Other</option>
                 </select>
                 {errors.howDidYouHear && (
-                    <span className="text-error">{errors.howDidYouHear.message}</span>
+                    <span id={customerAccessibility ? 'howDidYouHear-error' : undefined} className="text-error">{errors.howDidYouHear.message}</span>
                 )}
             </div>
 
@@ -60,10 +64,11 @@ const HowDidYouHearAboutUs: React.FC<HowDidYouHearAboutUsProps> = ({
                         {...register('tellusMore')}
                         className="border-b border-[#E2E4E5] px-2 py-1"
                         id="tellusMore"
+                        {...(customerAccessibility ? customerErrorProps(errors, 'tellusMore') : {})}
                         placeholder="Tell us more..."
                     />
                     {errors.tellusMore && (
-                        <span className="text-error">{errors.tellusMore.message}</span>
+                        <span id={customerAccessibility ? 'tellusMore-error' : undefined} className="text-error">{errors.tellusMore.message}</span>
                     )}
                 </div>
             )}

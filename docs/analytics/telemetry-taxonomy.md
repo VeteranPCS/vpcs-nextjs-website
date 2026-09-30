@@ -1,6 +1,6 @@
 # VeteranPCS Telemetry Taxonomy
 
-Last updated: 2026-09-28
+Last updated: 2026-09-29
 
 This is the durable reference for VeteranPCS web telemetry. Use it when changing analytics code, troubleshooting PostHog, comparing against Google Analytics, or planning Salesforce closed-loop reporting.
 
@@ -31,6 +31,24 @@ Salesforce remains the business source of truth for Leads, Customer Opportunitie
 `submission_id` is the server-minted form submission id. It is the stable join key between an accepted Salesforce Lead and a future Salesforce Opportunity.
 
 Email, name, phone, free text, raw search text, full URL query strings, full ZIP codes, and Salesforce payloads must never be used as PostHog distinct IDs or event properties.
+
+## Optional Customer Session Attribution (version 1; not activated)
+
+`NEXT_PUBLIC_CUSTOMER_JOURNEY_ATTRIBUTION_ENABLED` defaults off. Client and server both check it. Enabling or disabling requires an approved rebuild/deployment; this change does not enable it. Only `contact_agent` and `contact_lender` form payloads receive these optional properties:
+
+- `posthog_session_id`: validated UUID from the initialized SDK, mapped to `$session_id` on the existing accepted-lead event.
+- `session_entry_path`: SDK-provided session-entry URL/pathname, stripped of query/fragment and restricted to known public routes. Never the current page as a fallback.
+- `journey_attribution_version: 1`: behavior marker, not the global event schema version.
+
+The [PostHog session model](https://posthog.com/docs/data/sessions) can span tabs within one browser/device. The [supported SDK APIs](https://posthog.com/docs/references/posthog-js) supply session changes and identity. In-memory entry context clears on rotation/reset; reloads and new tabs require SDK-provided entry properties again. No new cookies, storage keys, retention changes, replay, or consent changes are introduced.
+
+Raw session-entry URL/referrer/pathname properties are removed by the outgoing sanitizer, including when the new flag is off. The allowlist in `content/_registry/journey-paths.json` deliberately omits unknown/private/free-text paths; refresh it with `node scripts/build-journey-paths.mjs` when public routes or the blog registry change. Invalid UUIDs, malformed/oversized/external URLs, and unlisted or encoded paths are omitted. Query strings and fragments never enter this new attribution. The path may be absent even when the session ID is valid.
+
+Unavailable SDK, opt-out, storage read failures, missing entry properties and older payloads are expected missing-link cases, not lead failures. Missing attribution is not zero traffic or proof of a direct visit. Client attribution is untrusted analytics metadata only: never routing, authorization, Salesforce field mapping, or lead qualification. Existing visitor/submission IDs and first/last-touch snapshots remain separate.
+
+Release ledger: implementation prepared 2026-09-29; **no deployment or activation timestamp yet**. Record separate approved deployment timestamps for route/content, accessibility, and attribution, and record flag state/build SHA. Do not combine their measurement windows with PR #195. After approval/deployment, inspect operational continuity at 24–48 hours, matured customer cohorts at 7/14/28 days, and article search results after recrawl and at eight weeks. Monitor missing-link coverage, duplicate submission IDs, failures, mobile agent conversion and lender/desktop guardrails; modest changes at low volume remain inconclusive. No monitoring automation is created.
+
+Rollback: revert the affected change set; for attribution disable the flag and rebuild/deploy with approval. Historical missing entry paths cannot be reconstructed by substituting the current page.
 
 ## Salesforce Attribution Fields
 

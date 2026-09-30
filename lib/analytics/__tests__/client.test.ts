@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   captureAnalyticsEvent,
+  formTrackingPayload,
   trackCtaClicked,
   trackFormSubmitAttempted,
 } from '@/lib/analytics/client';
@@ -33,6 +34,12 @@ vi.mock('@/lib/analytics/visitor', () => ({
 }));
 
 describe('client analytics wrapper', () => {
+  it('keeps form payload and attempt handling functional when browser storage throws', () => {
+    mocks.getClientAnalyticsContext.mockImplementationOnce(() => { throw Error('blocked'); });
+    mocks.incrementAnalyticsCounter.mockImplementationOnce(() => { throw Error('blocked'); });
+    expect(formTrackingPayload('contact_agent')).toEqual({});
+    expect(() => trackFormSubmitAttempted('contact_agent')).not.toThrow();
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.getClientAnalyticsContext.mockReturnValue({

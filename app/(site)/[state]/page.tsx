@@ -18,6 +18,8 @@ import {
 } from "@/lib/structured-data";
 import { SITE_URL, absoluteUrl } from "@/lib/siteUrl";
 import { getStateGuidePosts } from "@/lib/blog/registry";
+import { getStateBySlug } from "@/lib/content/states";
+import { notFound } from "next/navigation";
 
 const BASE_URL = SITE_URL;
 export const revalidate = 43200;
@@ -33,6 +35,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: { params: Promise<{ state: string }> }) {
   const params = await props.params;
+  if (!getStateBySlug(params.state)) notFound();
   const stateName = params.state
     .replace(/-/g, " ") // Replace hyphens with spaces
     .toLowerCase()      // Convert to lowercase
@@ -79,6 +82,7 @@ export async function generateMetadata(props: { params: Promise<{ state: string 
 
 export default async function StatePage(props: { params: Promise<{ state: string }> }) {
   const { state } = await props.params;
+  if (!getStateBySlug(state)) notFound();
   const {
     stateDetails: state_data,
     stateCode: state_code,
