@@ -1,6 +1,6 @@
 {
-  "contentHash": "d19c9ee951fe4abf919fe1bea7eb7c0625734de6807e7da99c0834826ea969cb",
-  "totalPosts": 395,
+  "contentHash": "9c6cbbbbfe4c45040555837b884e9c9291dbf048685376e970cd24b07fd44e2a",
+  "totalPosts": 396,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -197,6 +197,7 @@
     "Real Estate Insights": [
       "buy-vs-rent-near-camp-lejeune",
       "colorado-springs-housing-market-update-october-2025",
+      "how-to-buy-a-home-in-ventura-county-2026",
       "huntsville-housing-market-2026-military-buyer",
       "interest-rates-are-falling-heres-what-homebuyers-need-to-know",
       "is-2026-a-buyers-market-for-military-home-shoppers",
@@ -608,6 +609,7 @@
     "real-estate-insights": [
       "buy-vs-rent-near-camp-lejeune",
       "colorado-springs-housing-market-update-october-2025",
+      "how-to-buy-a-home-in-ventura-county-2026",
       "huntsville-housing-market-2026-military-buyer",
       "interest-rates-are-falling-heres-what-homebuyers-need-to-know",
       "is-2026-a-buyers-market-for-military-home-shoppers",
@@ -857,6 +859,7 @@
       "air-force-bases-in-california",
       "army-bases-in-california",
       "california-veteran-property-tax-exemptions-2026",
+      "how-to-buy-a-home-in-ventura-county-2026",
       "pcs-to-beale-afb-2026-guide",
       "pcs-to-edwards-afb-2026-guide",
       "pcs-to-fort-irwin-2026-guide",
@@ -1181,10 +1184,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 255,
+    "resolved": 256,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 231,
+      "frontmatter-state-slug": 232,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -3762,6 +3765,42 @@
       ],
       "h2Outline": [
         "How to Become a Real Estate Agent After the Military"
+      ]
+    },
+    {
+      "slug": "how-to-buy-a-home-in-ventura-county-2026",
+      "title": "How to Buy a Home in Ventura County: 2026 Guide for Military Buyers",
+      "url": "/blog/how-to-buy-a-home-in-ventura-county-2026",
+      "component": "Real Estate Insights",
+      "componentSlug": "real-estate-insights",
+      "stateSlug": "california",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Real Estate Insights",
+        "VA Loan Help"
+      ],
+      "description": "A step-by-step 2026 guide to buying a home in Ventura County, California, written for service members, veterans, and military families using a VA loan near Naval Base Ventura County.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "how to buy a home in ventura county",
+      "secondaryKeywords": [
+        "buying a home near naval base ventura county",
+        "california home buyer disclosures",
+        "va loan oxnard",
+        "ventura county closing costs",
+        "ventura county va loan limit 2026"
+      ],
+      "h2Outline": [
+        "The Ventura County Market in Fall 2026",
+        "Step 1: Get Pre-Approved and Know Your Loan Limit",
+        "Step 2: Check Down Payment and First-Time Buyer Help",
+        "Step 3: Hire an Agent and Find the Right Home",
+        "Step 4: Make an Offer and Track Your Contingencies",
+        "Step 5: Read California's Required Disclosures",
+        "Step 6: Line Up Insurance Early",
+        "Step 7: Appraisal, Underwriting, and Closing Costs",
+        "Work With Someone Who Knows Ventura County",
+        "Frequently Asked Questions"
       ]
     },
     {
