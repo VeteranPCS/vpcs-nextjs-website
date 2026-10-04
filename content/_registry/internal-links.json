@@ -1,6 +1,6 @@
 {
-  "contentHash": "bb98291e59f54ae10b4c58040b0da90895549167522a73ce20f0bee5859f0433",
-  "totalPosts": 392,
+  "contentHash": "9c6cbbbbfe4c45040555837b884e9c9291dbf048685376e970cd24b07fd44e2a",
+  "totalPosts": 396,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -74,8 +74,10 @@
       "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "myrtle-beach-military-retirement",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
+      "relocating-to-west-texas-midland-odessa-guide",
       "unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach",
       "unlocking-opportunities-a-recap-of-the-jhu-veteranpcs-event"
     ],
@@ -209,6 +211,7 @@
       "9-things-to-do-near-ft-bragg",
       "best-things-to-do-near-nas-jrb-fort-worth",
       "fun-family-and-date-night-activities-near-tinker-afb",
+      "living-near-fort-benning-local-guide",
       "things-to-do-near-fort-riley-a-local-guide",
       "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
       "top-things-to-do-near-san-diego-military-bases"
@@ -364,6 +367,7 @@
       "does-the-va-loan-always-have-the-best-rate",
       "florida-va-loan-benefits-hidden-savings",
       "how-does-a-0-down-va-loan-work",
+      "how-long-does-a-va-appraisal-take-in-oklahoma-city",
       "how-much-house-can-you-afford-on-bah",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
@@ -482,8 +486,10 @@
       "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "myrtle-beach-military-retirement",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
+      "relocating-to-west-texas-midland-odessa-guide",
       "unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach",
       "unlocking-opportunities-a-recap-of-the-jhu-veteranpcs-event"
     ],
@@ -617,6 +623,7 @@
       "9-things-to-do-near-ft-bragg",
       "best-things-to-do-near-nas-jrb-fort-worth",
       "fun-family-and-date-night-activities-near-tinker-afb",
+      "living-near-fort-benning-local-guide",
       "things-to-do-near-fort-riley-a-local-guide",
       "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
       "top-things-to-do-near-san-diego-military-bases"
@@ -772,6 +779,7 @@
       "does-the-va-loan-always-have-the-best-rate",
       "florida-va-loan-benefits-hidden-savings",
       "how-does-a-0-down-va-loan-work",
+      "how-long-does-a-va-appraisal-take-in-oklahoma-city",
       "how-much-house-can-you-afford-on-bah",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
@@ -906,6 +914,7 @@
       "best-places-to-live-near-fort-benning",
       "best-places-to-live-near-ft-gordon-augusta-georgia",
       "georgia-veteran-property-tax-exemptions-2026",
+      "living-near-fort-benning-local-guide",
       "pcs-to-fort-benning-2026-guide",
       "pcs-to-fort-gordon",
       "pcs-to-fort-stewart-hunter-aaf-2026-guide",
@@ -1071,6 +1080,7 @@
       "what-military-bases-are-in-ohio"
     ],
     "oklahoma": [
+      "how-long-does-a-va-appraisal-take-in-oklahoma-city",
       "pcs-to-fort-sill-lawton-2026-guide",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "va-home-loan-disclosure-law-mortgage-application",
@@ -1090,6 +1100,7 @@
       "what-military-bases-are-in-rhode-island"
     ],
     "south-carolina": [
+      "myrtle-beach-military-retirement",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-fort-jackson-columbia-2026-guide",
       "pcs-to-mcas-beaufort-2026-guide",
@@ -1121,6 +1132,7 @@
       "pcs-to-nas-corpus-christi-2026-guide",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
       "pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb",
+      "relocating-to-west-texas-midland-odessa-guide",
       "texas-va-loan-benefits-for-military-homebuyers",
       "texas-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-texas",
@@ -1172,10 +1184,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 252,
+    "resolved": 256,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 228,
+      "frontmatter-state-slug": 232,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -3634,6 +3646,40 @@
       "h2Outline": []
     },
     {
+      "slug": "how-long-does-a-va-appraisal-take-in-oklahoma-city",
+      "title": "How Long Does a VA Appraisal Take in Oklahoma City?",
+      "url": "/blog/how-long-does-a-va-appraisal-take-in-oklahoma-city",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": "oklahoma",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "VA Loan Help"
+      ],
+      "description": "The VA gives Oklahoma County appraisers 8 business days and most other metro counties 10. Here is how the clock works, what comes after the report, and how to set a closing date that fits your report date near Tinker AFB.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "how long does a va appraisal take oklahoma city",
+      "secondaryKeywords": [
+        "tidewater va appraisal",
+        "tinker afb va loan",
+        "va appraisal fee oklahoma 2026",
+        "va appraisal timeline oklahoma",
+        "va notice of value timeline"
+      ],
+      "h2Outline": [
+        "The Official VA Appraisal Timeline for the OKC Metro",
+        "How the VA Appraisal Clock Works",
+        "What Happens After the Report: The Notice of Value",
+        "What Can Slow a VA Appraisal Down",
+        "TJ Courtney's Take: Why the County Line Matters for a PCS Move",
+        "How to Keep Your VA Appraisal on Schedule",
+        "What a VA Appraisal Costs in Oklahoma City",
+        "Planning Your PCS to Tinker AFB",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado",
       "title": "How Major Commercial Developments Drive Luxury Home Values in Castle Rock, Colorado",
       "url": "/blog/how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado",
@@ -4210,6 +4256,43 @@
       ]
     },
     {
+      "slug": "living-near-fort-benning-local-guide",
+      "title": "Living Near Fort Benning: A Local Guide to Columbus and Phenix City",
+      "url": "/blog/living-near-fort-benning-local-guide",
+      "component": "Things to Do Near You",
+      "componentSlug": "things-to-do-near-you",
+      "stateSlug": "georgia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Things to Do Near You",
+        "U.S. Military Bases"
+      ],
+      "description": "A local guide to life near Fort Benning from Haley Howlett, an Army spouse and VeteranPCS agent. Compare the Georgia and Alabama sides, learn the time zone quirk, check school and housing rules, and find places to eat and explore.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "living near fort benning",
+      "secondaryKeywords": [
+        "columbus ga vs phenix city al",
+        "fort benning schools",
+        "fort benning time zone",
+        "restaurants near fort benning",
+        "things to do near fort benning"
+      ],
+      "h2Outline": [
+        "Fort Benning, Fort Moore, and the \"Tri-Community\"",
+        "Living Near Fort Benning: Georgia Side or Alabama Side?",
+        "The Time Zone Quirk Every Newcomer Should Know",
+        "Schools Near Fort Benning: Check the Exact Address",
+        "Living on Post: The Villages of Benning",
+        "Things to Do Near Fort Benning on the Georgia Side",
+        "Things to Do on the Alabama Side",
+        "PCS Tips for Living Near Fort Benning",
+        "Find a Home Near Fort Benning",
+        "Frequently Asked Questions",
+        "About This Guide"
+      ]
+    },
+    {
       "slug": "louisiana-veteran-property-tax-exemptions-2026",
       "title": "Louisiana Military & Veteran Property Tax Exemptions (2026)",
       "url": "/blog/louisiana-veteran-property-tax-exemptions-2026",
@@ -4684,6 +4767,42 @@
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "myrtle-beach-military-retirement",
+      "title": "Why Myrtle Beach, South Carolina Is a Great Place for Military Retirement",
+      "url": "/blog/myrtle-beach-military-retirement",
+      "component": "Military Transition Help",
+      "componentSlug": "military-transition-help",
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance",
+        "Military Transition Help"
+      ],
+      "description": "A retired service member and local agent shares why his family chose Myrtle Beach, plus verified facts on South Carolina's military retirement tax break, disabled veteran property tax exemption, VA care, and veteran life on the Grand Strand.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "myrtle beach military retirement",
+      "secondaryKeywords": [
+        "best places for military retirees in south carolina",
+        "myrtle beach va clinic",
+        "retiring in myrtle beach sc",
+        "south carolina disabled veteran property tax exemption",
+        "south carolina military retirement tax"
+      ],
+      "h2Outline": [
+        "The Short Answer: Why Military Retirees Choose Myrtle Beach",
+        "South Carolina Military Retirement Tax Rules",
+        "VA Health Care and Veteran Support on the Grand Strand",
+        "Military History You Can See and Visit",
+        "Michael's Story: Why Myrtle Beach Became Home",
+        "Outdoor Life Beyond the Beach",
+        "Things to Do When Family Visits",
+        "Things to Weigh Before You Buy",
+        "Frequently Asked Questions",
+        "Ready to See if Myrtle Beach Fits Your Next Chapter?"
       ]
     },
     {
@@ -9660,6 +9779,42 @@
       ]
     },
     {
+      "slug": "relocating-to-west-texas-midland-odessa-guide",
+      "title": "Relocating to West Texas? Here's What You Need to Know",
+      "url": "/blog/relocating-to-west-texas-midland-odessa-guide",
+      "component": "Military Transition Help",
+      "componentSlug": "military-transition-help",
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Military Transition Help",
+        "Real Estate Insights"
+      ],
+      "description": "A veteran Realtor who also works in oil and gas explains what it is really like to buy a home in Midland, Odessa, and the rest of the Permian Basin, from oilfield commutes and storm-tough roofs to VA loan offers and remote home searches.",
+      "publishedAt": "2026-10-03T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "relocating to west texas",
+      "secondaryKeywords": [
+        "buying a home in odessa tx",
+        "midland vs odessa",
+        "moving to midland texas",
+        "permian basin relocation",
+        "va loan west texas"
+      ],
+      "h2Outline": [
+        "The Short Answer: What to Know Before Relocating to West Texas",
+        "Midland vs. Odessa: Close, But Not the Same",
+        "The Oilfield Is Part of Life Here",
+        "West Texas Homes Have Their Own Considerations",
+        "Budget for Insurance and Property Taxes From Day One",
+        "Veterans: Don't Overlook Your VA Home Loan Benefit",
+        "You Don't Have to Be in West Texas Yet to Start Looking",
+        "What Rowdy Tells People About West Texas",
+        "Have a Bulldog in Your Corner",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "rent-back-agreement-pcs-guide",
       "title": "Rent-Back Agreements: How to Stay in Your Home After Closing on a PCS",
       "url": "/blog/rent-back-agreement-pcs-guide",
@@ -11181,7 +11336,7 @@
       ],
       "description": "A plain-language look at the VA loan appraisal: what the appraiser checks, how it differs from a home inspection, what the Tidewater process is, and what happens when a home needs repairs.",
       "publishedAt": "2026-07-07T09:00:00.000Z",
-      "updatedAt": "2026-07-12T00:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
       "primaryKeyword": "va loan appraisal",
       "secondaryKeywords": [
         "tidewater process va",

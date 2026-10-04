@@ -21,9 +21,9 @@ export default function BlogDetailsHeroSection({ blog, resolvedAuthor }: Props) 
                 {blog.title}
               </h1>
               <div>
-                <h6 className="text-white text-sm font-bold mt-10">
+                <p className="inline-block rounded bg-accent-blue px-3 py-1.5 text-white text-sm font-bold mt-10">
                   By {resolvedAuthor.name}
-                </h6>
+                </p>
               </div>
             </div>
           </div>
