@@ -1,6 +1,6 @@
 {
-  "contentHash": "a4fd6317d8b5d09670444c44a42f6b66ff4f3b42de7c9ac044fa5cc72ae88ce2",
-  "totalPosts": 392,
+  "contentHash": "216c770de6df0a34d0560f3e3b3e5b06ab56e80ce156526bdd269a86a8dd7626",
+  "totalPosts": 394,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -74,6 +74,7 @@
       "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "myrtle-beach-military-retirement",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
       "relocating-to-west-texas-midland-odessa-guide",
@@ -364,6 +365,7 @@
       "does-the-va-loan-always-have-the-best-rate",
       "florida-va-loan-benefits-hidden-savings",
       "how-does-a-0-down-va-loan-work",
+      "how-long-does-a-va-appraisal-take-in-oklahoma-city",
       "how-much-house-can-you-afford-on-bah",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
@@ -482,6 +484,7 @@
       "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "myrtle-beach-military-retirement",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
       "relocating-to-west-texas-midland-odessa-guide",
@@ -772,6 +775,7 @@
       "does-the-va-loan-always-have-the-best-rate",
       "florida-va-loan-benefits-hidden-savings",
       "how-does-a-0-down-va-loan-work",
+      "how-long-does-a-va-appraisal-take-in-oklahoma-city",
       "how-much-house-can-you-afford-on-bah",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
@@ -1070,6 +1074,7 @@
       "what-military-bases-are-in-ohio"
     ],
     "oklahoma": [
+      "how-long-does-a-va-appraisal-take-in-oklahoma-city",
       "pcs-to-fort-sill-lawton-2026-guide",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "va-home-loan-disclosure-law-mortgage-application",
@@ -1089,6 +1094,7 @@
       "what-military-bases-are-in-rhode-island"
     ],
     "south-carolina": [
+      "myrtle-beach-military-retirement",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-fort-jackson-columbia-2026-guide",
       "pcs-to-mcas-beaufort-2026-guide",
@@ -1172,10 +1178,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 252,
+    "resolved": 254,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 228,
+      "frontmatter-state-slug": 230,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -3634,6 +3640,40 @@
       "h2Outline": []
     },
     {
+      "slug": "how-long-does-a-va-appraisal-take-in-oklahoma-city",
+      "title": "How Long Does a VA Appraisal Take in Oklahoma City?",
+      "url": "/blog/how-long-does-a-va-appraisal-take-in-oklahoma-city",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": "oklahoma",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "VA Loan Help"
+      ],
+      "description": "The VA gives Oklahoma County appraisers 8 business days and most other metro counties 10. Here is how the clock works, what comes after the report, and how to set a closing date that fits your report date near Tinker AFB.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "how long does a va appraisal take oklahoma city",
+      "secondaryKeywords": [
+        "tidewater va appraisal",
+        "tinker afb va loan",
+        "va appraisal fee oklahoma 2026",
+        "va appraisal timeline oklahoma",
+        "va notice of value timeline"
+      ],
+      "h2Outline": [
+        "The Official VA Appraisal Timeline for the OKC Metro",
+        "How the VA Appraisal Clock Works",
+        "What Happens After the Report: The Notice of Value",
+        "What Can Slow a VA Appraisal Down",
+        "TJ Courtney's Take: Why the County Line Matters for a PCS Move",
+        "How to Keep Your VA Appraisal on Schedule",
+        "What a VA Appraisal Costs in Oklahoma City",
+        "Planning Your PCS to Tinker AFB",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado",
       "title": "How Major Commercial Developments Drive Luxury Home Values in Castle Rock, Colorado",
       "url": "/blog/how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado",
@@ -4648,6 +4688,42 @@
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "myrtle-beach-military-retirement",
+      "title": "Why Myrtle Beach, South Carolina Is a Great Place for Military Retirement",
+      "url": "/blog/myrtle-beach-military-retirement",
+      "component": "Military Transition Help",
+      "componentSlug": "military-transition-help",
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance",
+        "Military Transition Help"
+      ],
+      "description": "A retired service member and local agent shares why his family chose Myrtle Beach, plus verified facts on South Carolina's military retirement tax break, disabled veteran property tax exemption, VA care, and veteran life on the Grand Strand.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "myrtle beach military retirement",
+      "secondaryKeywords": [
+        "best places for military retirees in south carolina",
+        "myrtle beach va clinic",
+        "retiring in myrtle beach sc",
+        "south carolina disabled veteran property tax exemption",
+        "south carolina military retirement tax"
+      ],
+      "h2Outline": [
+        "The Short Answer: Why Military Retirees Choose Myrtle Beach",
+        "South Carolina Military Retirement Tax Rules",
+        "VA Health Care and Veteran Support on the Grand Strand",
+        "Military History You Can See and Visit",
+        "Michael's Story: Why Myrtle Beach Became Home",
+        "Outdoor Life Beyond the Beach",
+        "Things to Do When Family Visits",
+        "Things to Weigh Before You Buy",
+        "Frequently Asked Questions",
+        "Ready to See if Myrtle Beach Fits Your Next Chapter?"
       ]
     },
     {
@@ -11181,7 +11257,7 @@
       ],
       "description": "A plain-language look at the VA loan appraisal: what the appraiser checks, how it differs from a home inspection, what the Tidewater process is, and what happens when a home needs repairs.",
       "publishedAt": "2026-07-07T09:00:00.000Z",
-      "updatedAt": "2026-07-12T00:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
       "primaryKeyword": "va loan appraisal",
       "secondaryKeywords": [
         "tidewater process va",
