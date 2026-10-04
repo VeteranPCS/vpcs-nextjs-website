@@ -1,6 +1,6 @@
 {
-  "contentHash": "0f34171d229cc3e3c3dabd98d006cf8b5cb45a4c4602bfb1540545c0ea9494c3",
-  "totalPosts": 390,
+  "contentHash": "748aba4d43954c18897e30fdfd4db5cb5a362f7fc9d89ecef2301a09d2e4f2aa",
+  "totalPosts": 392,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -74,6 +74,7 @@
       "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "myrtle-beach-military-retirement",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
       "unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach",
@@ -377,6 +378,7 @@
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
       "va-cash-out-refinance-guide",
       "va-energy-efficient-mortgage-guide",
+      "va-home-loan-disclosure-law-mortgage-application",
       "va-irrrl-streamline-refinance-guide",
       "va-joint-loan-non-veteran-co-borrower",
       "va-loan-after-foreclosure-or-bankruptcy",
@@ -480,6 +482,7 @@
       "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "myrtle-beach-military-retirement",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
       "unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach",
@@ -783,6 +786,7 @@
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
       "va-cash-out-refinance-guide",
       "va-energy-efficient-mortgage-guide",
+      "va-home-loan-disclosure-law-mortgage-application",
       "va-irrrl-streamline-refinance-guide",
       "va-joint-loan-non-veteran-co-borrower",
       "va-loan-after-foreclosure-or-bankruptcy",
@@ -1068,6 +1072,7 @@
     "oklahoma": [
       "pcs-to-fort-sill-lawton-2026-guide",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
+      "va-home-loan-disclosure-law-mortgage-application",
       "what-military-bases-are-in-oklahoma"
     ],
     "oregon": [
@@ -1084,6 +1089,7 @@
       "what-military-bases-are-in-rhode-island"
     ],
     "south-carolina": [
+      "myrtle-beach-military-retirement",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-fort-jackson-columbia-2026-guide",
       "pcs-to-mcas-beaufort-2026-guide",
@@ -1166,10 +1172,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 250,
+    "resolved": 252,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 226,
+      "frontmatter-state-slug": 228,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -4642,6 +4648,42 @@
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "myrtle-beach-military-retirement",
+      "title": "Why Myrtle Beach, South Carolina Is a Great Place for Military Retirement",
+      "url": "/blog/myrtle-beach-military-retirement",
+      "component": "Military Transition Help",
+      "componentSlug": "military-transition-help",
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance",
+        "Military Transition Help"
+      ],
+      "description": "A retired service member and local agent shares why his family chose Myrtle Beach, plus verified facts on South Carolina's military retirement tax break, disabled veteran property tax exemption, VA care, and veteran life on the Grand Strand.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "myrtle beach military retirement",
+      "secondaryKeywords": [
+        "best places for military retirees in south carolina",
+        "myrtle beach va clinic",
+        "retiring in myrtle beach sc",
+        "south carolina disabled veteran property tax exemption",
+        "south carolina military retirement tax"
+      ],
+      "h2Outline": [
+        "The Short Answer: Why Military Retirees Choose Myrtle Beach",
+        "South Carolina Military Retirement Tax Rules",
+        "VA Health Care and Veteran Support on the Grand Strand",
+        "Military History You Can See and Visit",
+        "Michael's Story: Why Myrtle Beach Became Home",
+        "Outdoor Life Beyond the Beach",
+        "Things to Do When Family Visits",
+        "Things to Weigh Before You Buy",
+        "Frequently Asked Questions",
+        "Ready to See if Myrtle Beach Fits Your Next Chapter?"
       ]
     },
     {
@@ -10993,6 +11035,40 @@
         "EEM Versus a VA Rehab Loan",
         "How to Ask for It",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "va-home-loan-disclosure-law-mortgage-application",
+      "title": "New Federal Law Requires a VA Home Loan Notice on Mortgage Applications",
+      "url": "/blog/va-home-loan-disclosure-law-mortgage-application",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": "oklahoma",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "VA Loan Help"
+      ],
+      "description": "The 21st Century ROAD to Housing Act adds a military service question and a VA home loan notice to the standard mortgage application. Here is what the law actually says, when it takes effect, and what to ask your lender today.",
+      "publishedAt": "2026-10-03T09:00:00.000Z",
+      "updatedAt": "2026-10-04T00:00:00.000Z",
+      "primaryKeyword": "va home loan disclosure law",
+      "secondaryKeywords": [
+        "road to housing act va loan",
+        "uniform residential loan application military service question",
+        "va loan eligibility oklahoma city",
+        "va loan tinker afb",
+        "valid act va loan"
+      ],
+      "h2Outline": [
+        "Why a VA Home Loan Disclosure Law Was Needed",
+        "What the ROAD to Housing Act Actually Changes",
+        "Key Dates at a Glance",
+        "What the Law Does Not Change",
+        "Why VA Terms Are Worth Comparing",
+        "What This Means If You Are Buying Near Tinker AFB",
+        "What to Ask Your Lender Right Now",
+        "Frequently Asked Questions",
+        "Get Local Help Comparing Your VA Options"
       ]
     },
     {
