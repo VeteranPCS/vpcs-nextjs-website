@@ -1,6 +1,6 @@
 {
-  "contentHash": "411b7f965033aad71aeb3f02f9863e885d069a8d4959facec1a6f8d67697d31f",
-  "totalPosts": 391,
+  "contentHash": "748aba4d43954c18897e30fdfd4db5cb5a362f7fc9d89ecef2301a09d2e4f2aa",
+  "totalPosts": 392,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -74,6 +74,7 @@
       "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "myrtle-beach-military-retirement",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
       "unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach",
@@ -481,6 +482,7 @@
       "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "myrtle-beach-military-retirement",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
       "unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach",
@@ -1087,6 +1089,7 @@
       "what-military-bases-are-in-rhode-island"
     ],
     "south-carolina": [
+      "myrtle-beach-military-retirement",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-fort-jackson-columbia-2026-guide",
       "pcs-to-mcas-beaufort-2026-guide",
@@ -1169,10 +1172,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 251,
+    "resolved": 252,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 227,
+      "frontmatter-state-slug": 228,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -4645,6 +4648,42 @@
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "myrtle-beach-military-retirement",
+      "title": "Why Myrtle Beach, South Carolina Is a Great Place for Military Retirement",
+      "url": "/blog/myrtle-beach-military-retirement",
+      "component": "Military Transition Help",
+      "componentSlug": "military-transition-help",
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance",
+        "Military Transition Help"
+      ],
+      "description": "A retired service member and local agent shares why his family chose Myrtle Beach, plus verified facts on South Carolina's military retirement tax break, disabled veteran property tax exemption, VA care, and veteran life on the Grand Strand.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "myrtle beach military retirement",
+      "secondaryKeywords": [
+        "best places for military retirees in south carolina",
+        "myrtle beach va clinic",
+        "retiring in myrtle beach sc",
+        "south carolina disabled veteran property tax exemption",
+        "south carolina military retirement tax"
+      ],
+      "h2Outline": [
+        "The Short Answer: Why Military Retirees Choose Myrtle Beach",
+        "South Carolina Military Retirement Tax Rules",
+        "VA Health Care and Veteran Support on the Grand Strand",
+        "Military History You Can See and Visit",
+        "Michael's Story: Why Myrtle Beach Became Home",
+        "Outdoor Life Beyond the Beach",
+        "Things to Do When Family Visits",
+        "Things to Weigh Before You Buy",
+        "Frequently Asked Questions",
+        "Ready to See if Myrtle Beach Fits Your Next Chapter?"
       ]
     },
     {
