@@ -84,7 +84,7 @@ export const mdxComponents: MDXComponents = {
         />
       </div>
     ),
-    thead: (props) => <thead className="bg-[#003486] text-white" {...props} />,
+    thead: (props) => <thead className="bg-accent-blue text-white" {...props} />,
     tbody: (props) => (
       <tbody
         className="text-[#495057] [&_tr:nth-child(even)]:bg-[#F8F9FA]"
