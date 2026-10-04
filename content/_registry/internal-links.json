@@ -1,6 +1,6 @@
 {
-  "contentHash": "0f34171d229cc3e3c3dabd98d006cf8b5cb45a4c4602bfb1540545c0ea9494c3",
-  "totalPosts": 390,
+  "contentHash": "411b7f965033aad71aeb3f02f9863e885d069a8d4959facec1a6f8d67697d31f",
+  "totalPosts": 391,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -377,6 +377,7 @@
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
       "va-cash-out-refinance-guide",
       "va-energy-efficient-mortgage-guide",
+      "va-home-loan-disclosure-law-mortgage-application",
       "va-irrrl-streamline-refinance-guide",
       "va-joint-loan-non-veteran-co-borrower",
       "va-loan-after-foreclosure-or-bankruptcy",
@@ -783,6 +784,7 @@
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
       "va-cash-out-refinance-guide",
       "va-energy-efficient-mortgage-guide",
+      "va-home-loan-disclosure-law-mortgage-application",
       "va-irrrl-streamline-refinance-guide",
       "va-joint-loan-non-veteran-co-borrower",
       "va-loan-after-foreclosure-or-bankruptcy",
@@ -1068,6 +1070,7 @@
     "oklahoma": [
       "pcs-to-fort-sill-lawton-2026-guide",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
+      "va-home-loan-disclosure-law-mortgage-application",
       "what-military-bases-are-in-oklahoma"
     ],
     "oregon": [
@@ -1166,10 +1169,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 250,
+    "resolved": 251,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 226,
+      "frontmatter-state-slug": 227,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -10993,6 +10996,40 @@
         "EEM Versus a VA Rehab Loan",
         "How to Ask for It",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "va-home-loan-disclosure-law-mortgage-application",
+      "title": "New Federal Law Requires a VA Home Loan Notice on Mortgage Applications",
+      "url": "/blog/va-home-loan-disclosure-law-mortgage-application",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": "oklahoma",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "VA Loan Help"
+      ],
+      "description": "The 21st Century ROAD to Housing Act adds a military service question and a VA home loan notice to the standard mortgage application. Here is what the law actually says, when it takes effect, and what to ask your lender today.",
+      "publishedAt": "2026-10-03T09:00:00.000Z",
+      "updatedAt": "2026-10-04T00:00:00.000Z",
+      "primaryKeyword": "va home loan disclosure law",
+      "secondaryKeywords": [
+        "road to housing act va loan",
+        "uniform residential loan application military service question",
+        "va loan eligibility oklahoma city",
+        "va loan tinker afb",
+        "valid act va loan"
+      ],
+      "h2Outline": [
+        "Why a VA Home Loan Disclosure Law Was Needed",
+        "What the ROAD to Housing Act Actually Changes",
+        "Key Dates at a Glance",
+        "What the Law Does Not Change",
+        "Why VA Terms Are Worth Comparing",
+        "What This Means If You Are Buying Near Tinker AFB",
+        "What to Ask Your Lender Right Now",
+        "Frequently Asked Questions",
+        "Get Local Help Comparing Your VA Options"
       ]
     },
     {
