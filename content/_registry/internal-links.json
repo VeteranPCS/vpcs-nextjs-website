@@ -1,6 +1,6 @@
 {
-  "contentHash": "411b7f965033aad71aeb3f02f9863e885d069a8d4959facec1a6f8d67697d31f",
-  "totalPosts": 391,
+  "contentHash": "a4fd6317d8b5d09670444c44a42f6b66ff4f3b42de7c9ac044fa5cc72ae88ce2",
+  "totalPosts": 392,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -76,6 +76,7 @@
       "managing-a-pcs-move-with-children-strategies-for-military-families",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
+      "relocating-to-west-texas-midland-odessa-guide",
       "unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach",
       "unlocking-opportunities-a-recap-of-the-jhu-veteranpcs-event"
     ],
@@ -483,6 +484,7 @@
       "managing-a-pcs-move-with-children-strategies-for-military-families",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
+      "relocating-to-west-texas-midland-odessa-guide",
       "unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach",
       "unlocking-opportunities-a-recap-of-the-jhu-veteranpcs-event"
     ],
@@ -1118,6 +1120,7 @@
       "pcs-to-nas-corpus-christi-2026-guide",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
       "pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb",
+      "relocating-to-west-texas-midland-odessa-guide",
       "texas-va-loan-benefits-for-military-homebuyers",
       "texas-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-texas",
@@ -1169,10 +1172,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 251,
+    "resolved": 252,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 227,
+      "frontmatter-state-slug": 228,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -9618,6 +9621,42 @@
       ],
       "h2Outline": [
         "More PCS Planning Resources"
+      ]
+    },
+    {
+      "slug": "relocating-to-west-texas-midland-odessa-guide",
+      "title": "Relocating to West Texas? Here's What You Need to Know",
+      "url": "/blog/relocating-to-west-texas-midland-odessa-guide",
+      "component": "Military Transition Help",
+      "componentSlug": "military-transition-help",
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Military Transition Help",
+        "Real Estate Insights"
+      ],
+      "description": "A veteran Realtor who also works in oil and gas explains what it is really like to buy a home in Midland, Odessa, and the rest of the Permian Basin, from oilfield commutes and storm-tough roofs to VA loan offers and remote home searches.",
+      "publishedAt": "2026-10-03T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "relocating to west texas",
+      "secondaryKeywords": [
+        "buying a home in odessa tx",
+        "midland vs odessa",
+        "moving to midland texas",
+        "permian basin relocation",
+        "va loan west texas"
+      ],
+      "h2Outline": [
+        "The Short Answer: What to Know Before Relocating to West Texas",
+        "Midland vs. Odessa: Close, But Not the Same",
+        "The Oilfield Is Part of Life Here",
+        "West Texas Homes Have Their Own Considerations",
+        "Budget for Insurance and Property Taxes From Day One",
+        "Veterans: Don't Overlook Your VA Home Loan Benefit",
+        "You Don't Have to Be in West Texas Yet to Start Looking",
+        "What Rowdy Tells People About West Texas",
+        "Have a Bulldog in Your Corner",
+        "Frequently Asked Questions"
       ]
     },
     {
