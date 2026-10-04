@@ -15,7 +15,7 @@ VeteranPCS is a Next.js site that connects active-duty service members, veterans
 
 ## Tech stack
 
-- **Framework:** Next.js 16 App Router (Turbopack), React 19.2, Node runtime.
+- **Framework:** Next.js 16 App Router (Turbopack), React 19.2, Node.js 24 runtime (pinned in `package.json` for local, CI, and Vercel builds).
 - **Content:** repo-committed JSON (`content/_data/site/`) read through typed loaders in `lib/content/` (server-only, validated at module load — bad data fails the build). No CMS.
 - **CRM:** Salesforce REST (SOQL); token retrieval via `services/salesForceTokenService.tsx`, queries via `services/api.tsx` + `services/stateService.tsx`.
 - **AI:** Vercel AI SDK v6 (`ai`, `@ai-sdk/react`) routed through **Vercel AI Gateway** (model id `anthropic/claude-sonnet-4.6` in `lib/ai/models.ts`). No direct provider SDK is wired up — use the Gateway.

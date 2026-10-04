@@ -212,13 +212,13 @@
     "_id": "O0syOADLMvCWbGv9htjPSl",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:29:52Z",
-    "_updatedAt": "2026-08-11T16:59:09Z",
+    "_updatedAt": "2026-10-04T16:16:02Z",
     "short_name": "FL",
     "state_map": {
       "alt": "Florida",
-      "height": 750,
+      "height": 1500,
       "path": "/images/states/florida.png",
-      "width": 750
+      "width": 1500
     },
     "state_name": "Florida",
     "state_slug": {
@@ -645,13 +645,13 @@
     "_id": "p1E1t9c6MmuSwvdT93QvUC",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:30:15Z",
-    "_updatedAt": "2026-07-20T19:48:27Z",
+    "_updatedAt": "2026-10-04T16:16:02Z",
     "short_name": "TX",
     "state_map": {
       "alt": "Texas",
-      "height": 360,
-      "path": "/images/states/texas.svg",
-      "width": 360
+      "height": 1500,
+      "path": "/images/states/texas.png",
+      "width": 1500
     },
     "state_name": "Texas",
     "state_slug": {
