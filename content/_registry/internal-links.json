@@ -1,6 +1,6 @@
 {
-  "contentHash": "0f34171d229cc3e3c3dabd98d006cf8b5cb45a4c4602bfb1540545c0ea9494c3",
-  "totalPosts": 390,
+  "contentHash": "f0be8fb8f4cbdf5f3da9b21a55a7cb16b415cee481e036fb27faab249cf1ae2e",
+  "totalPosts": 391,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -363,6 +363,7 @@
       "does-the-va-loan-always-have-the-best-rate",
       "florida-va-loan-benefits-hidden-savings",
       "how-does-a-0-down-va-loan-work",
+      "how-long-does-a-va-appraisal-take-in-oklahoma-city",
       "how-much-house-can-you-afford-on-bah",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
@@ -769,6 +770,7 @@
       "does-the-va-loan-always-have-the-best-rate",
       "florida-va-loan-benefits-hidden-savings",
       "how-does-a-0-down-va-loan-work",
+      "how-long-does-a-va-appraisal-take-in-oklahoma-city",
       "how-much-house-can-you-afford-on-bah",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
@@ -1066,6 +1068,7 @@
       "what-military-bases-are-in-ohio"
     ],
     "oklahoma": [
+      "how-long-does-a-va-appraisal-take-in-oklahoma-city",
       "pcs-to-fort-sill-lawton-2026-guide",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "what-military-bases-are-in-oklahoma"
@@ -1166,10 +1169,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 250,
+    "resolved": 251,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 226,
+      "frontmatter-state-slug": 227,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -3626,6 +3629,40 @@
         "new construction homes castle rock"
       ],
       "h2Outline": []
+    },
+    {
+      "slug": "how-long-does-a-va-appraisal-take-in-oklahoma-city",
+      "title": "How Long Does a VA Appraisal Take in Oklahoma City?",
+      "url": "/blog/how-long-does-a-va-appraisal-take-in-oklahoma-city",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": "oklahoma",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "VA Loan Help"
+      ],
+      "description": "The VA gives Oklahoma County appraisers 8 business days and most other metro counties 10. Here is how the clock works, what comes after the report, and how to set a closing date that fits your report date near Tinker AFB.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "how long does a va appraisal take oklahoma city",
+      "secondaryKeywords": [
+        "tidewater va appraisal",
+        "tinker afb va loan",
+        "va appraisal fee oklahoma 2026",
+        "va appraisal timeline oklahoma",
+        "va notice of value timeline"
+      ],
+      "h2Outline": [
+        "The Official VA Appraisal Timeline for the OKC Metro",
+        "How the VA Appraisal Clock Works",
+        "What Happens After the Report: The Notice of Value",
+        "What Can Slow a VA Appraisal Down",
+        "TJ Courtney's Take: Why the County Line Matters for a PCS Move",
+        "How to Keep Your VA Appraisal on Schedule",
+        "What a VA Appraisal Costs in Oklahoma City",
+        "Planning Your PCS to Tinker AFB",
+        "Frequently Asked Questions"
+      ]
     },
     {
       "slug": "how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado",
