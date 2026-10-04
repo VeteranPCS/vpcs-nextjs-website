@@ -88,6 +88,7 @@ interface PageContextHolder {
 export default function ConciergeWidget() {
   const { isOpen, open, close, pendingSeed, clearPendingSeed } = useConcierge();
   const pathname = usePathname();
+  const hasBlogStickyCta = /^\/blog\/[^/]+\/?$/.test(pathname ?? '');
   const panelRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
@@ -342,7 +343,7 @@ export default function ConciergeWidget() {
           type="button"
           onClick={() => open()}
           aria-label="Open chat with VeteranPCS concierge"
-          className="fixed bottom-6 right-6 z-concierge h-14 w-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center motion-safe:transition-colors hover:bg-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red"
+          className={`fixed ${hasBlogStickyCta ? 'bottom-24 md:bottom-6' : 'bottom-6'} right-6 z-concierge h-14 w-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center motion-safe:transition-colors hover:bg-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red`}
         >
           <ChatBubbleIcon className="h-6 w-6" />
         </button>

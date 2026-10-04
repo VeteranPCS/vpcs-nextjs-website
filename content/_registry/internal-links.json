@@ -1,6 +1,6 @@
 {
-  "contentHash": "6014998f70920b4ec77e111a024bc9cc0159aecd2b8983b20e4600e49b5b8df0",
-  "totalPosts": 392,
+  "contentHash": "d19c9ee951fe4abf919fe1bea7eb7c0625734de6807e7da99c0834826ea969cb",
+  "totalPosts": 395,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -74,8 +74,10 @@
       "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "myrtle-beach-military-retirement",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
+      "relocating-to-west-texas-midland-odessa-guide",
       "unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach",
       "unlocking-opportunities-a-recap-of-the-jhu-veteranpcs-event"
     ],
@@ -364,6 +366,7 @@
       "does-the-va-loan-always-have-the-best-rate",
       "florida-va-loan-benefits-hidden-savings",
       "how-does-a-0-down-va-loan-work",
+      "how-long-does-a-va-appraisal-take-in-oklahoma-city",
       "how-much-house-can-you-afford-on-bah",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
@@ -482,8 +485,10 @@
       "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "myrtle-beach-military-retirement",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
+      "relocating-to-west-texas-midland-odessa-guide",
       "unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach",
       "unlocking-opportunities-a-recap-of-the-jhu-veteranpcs-event"
     ],
@@ -772,6 +777,7 @@
       "does-the-va-loan-always-have-the-best-rate",
       "florida-va-loan-benefits-hidden-savings",
       "how-does-a-0-down-va-loan-work",
+      "how-long-does-a-va-appraisal-take-in-oklahoma-city",
       "how-much-house-can-you-afford-on-bah",
       "how-to-leverage-seller-concessions-to-lower-your-closing-costs",
       "how-to-successfully-navigate-the-real-estate-market-and-score-a-bargain",
@@ -1071,6 +1077,7 @@
       "what-military-bases-are-in-ohio"
     ],
     "oklahoma": [
+      "how-long-does-a-va-appraisal-take-in-oklahoma-city",
       "pcs-to-fort-sill-lawton-2026-guide",
       "pcsing-to-tinker-afb-avoid-costly-housing-mistakes",
       "va-home-loan-disclosure-law-mortgage-application",
@@ -1090,6 +1097,7 @@
       "what-military-bases-are-in-rhode-island"
     ],
     "south-carolina": [
+      "myrtle-beach-military-retirement",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-fort-jackson-columbia-2026-guide",
       "pcs-to-mcas-beaufort-2026-guide",
@@ -1121,6 +1129,7 @@
       "pcs-to-nas-corpus-christi-2026-guide",
       "pcs-to-new-braunfels-a-veterans-guide-to-military-life-near-san-antonio-bases",
       "pcs-to-wichita-falls-military-family-s-guide-to-thriving-near-sheppard-afb",
+      "relocating-to-west-texas-midland-odessa-guide",
       "texas-va-loan-benefits-for-military-homebuyers",
       "texas-veteran-property-tax-exemptions-2026",
       "what-military-bases-are-in-texas",
@@ -1172,10 +1181,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 252,
+    "resolved": 255,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 228,
+      "frontmatter-state-slug": 231,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -3634,6 +3643,40 @@
       "h2Outline": []
     },
     {
+      "slug": "how-long-does-a-va-appraisal-take-in-oklahoma-city",
+      "title": "How Long Does a VA Appraisal Take in Oklahoma City?",
+      "url": "/blog/how-long-does-a-va-appraisal-take-in-oklahoma-city",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": "oklahoma",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "VA Loan Help"
+      ],
+      "description": "The VA gives Oklahoma County appraisers 8 business days and most other metro counties 10. Here is how the clock works, what comes after the report, and how to set a closing date that fits your report date near Tinker AFB.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "how long does a va appraisal take oklahoma city",
+      "secondaryKeywords": [
+        "tidewater va appraisal",
+        "tinker afb va loan",
+        "va appraisal fee oklahoma 2026",
+        "va appraisal timeline oklahoma",
+        "va notice of value timeline"
+      ],
+      "h2Outline": [
+        "The Official VA Appraisal Timeline for the OKC Metro",
+        "How the VA Appraisal Clock Works",
+        "What Happens After the Report: The Notice of Value",
+        "What Can Slow a VA Appraisal Down",
+        "TJ Courtney's Take: Why the County Line Matters for a PCS Move",
+        "How to Keep Your VA Appraisal on Schedule",
+        "What a VA Appraisal Costs in Oklahoma City",
+        "Planning Your PCS to Tinker AFB",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado",
       "title": "How Major Commercial Developments Drive Luxury Home Values in Castle Rock, Colorado",
       "url": "/blog/how-major-commercial-developments-drive-luxury-home-values-in-castle-rock-colorado",
@@ -4685,6 +4728,42 @@
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "myrtle-beach-military-retirement",
+      "title": "Why Myrtle Beach, South Carolina Is a Great Place for Military Retirement",
+      "url": "/blog/myrtle-beach-military-retirement",
+      "component": "Military Transition Help",
+      "componentSlug": "military-transition-help",
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Financial Guidance",
+        "Military Transition Help"
+      ],
+      "description": "A retired service member and local agent shares why his family chose Myrtle Beach, plus verified facts on South Carolina's military retirement tax break, disabled veteran property tax exemption, VA care, and veteran life on the Grand Strand.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "myrtle beach military retirement",
+      "secondaryKeywords": [
+        "best places for military retirees in south carolina",
+        "myrtle beach va clinic",
+        "retiring in myrtle beach sc",
+        "south carolina disabled veteran property tax exemption",
+        "south carolina military retirement tax"
+      ],
+      "h2Outline": [
+        "The Short Answer: Why Military Retirees Choose Myrtle Beach",
+        "South Carolina Military Retirement Tax Rules",
+        "VA Health Care and Veteran Support on the Grand Strand",
+        "Military History You Can See and Visit",
+        "Michael's Story: Why Myrtle Beach Became Home",
+        "Outdoor Life Beyond the Beach",
+        "Things to Do When Family Visits",
+        "Things to Weigh Before You Buy",
+        "Frequently Asked Questions",
+        "Ready to See if Myrtle Beach Fits Your Next Chapter?"
       ]
     },
     {
@@ -9661,6 +9740,42 @@
       ]
     },
     {
+      "slug": "relocating-to-west-texas-midland-odessa-guide",
+      "title": "Relocating to West Texas? Here's What You Need to Know",
+      "url": "/blog/relocating-to-west-texas-midland-odessa-guide",
+      "component": "Military Transition Help",
+      "componentSlug": "military-transition-help",
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Military Transition Help",
+        "Real Estate Insights"
+      ],
+      "description": "A veteran Realtor who also works in oil and gas explains what it is really like to buy a home in Midland, Odessa, and the rest of the Permian Basin, from oilfield commutes and storm-tough roofs to VA loan offers and remote home searches.",
+      "publishedAt": "2026-10-03T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "relocating to west texas",
+      "secondaryKeywords": [
+        "buying a home in odessa tx",
+        "midland vs odessa",
+        "moving to midland texas",
+        "permian basin relocation",
+        "va loan west texas"
+      ],
+      "h2Outline": [
+        "The Short Answer: What to Know Before Relocating to West Texas",
+        "Midland vs. Odessa: Close, But Not the Same",
+        "The Oilfield Is Part of Life Here",
+        "West Texas Homes Have Their Own Considerations",
+        "Budget for Insurance and Property Taxes From Day One",
+        "Veterans: Don't Overlook Your VA Home Loan Benefit",
+        "You Don't Have to Be in West Texas Yet to Start Looking",
+        "What Rowdy Tells People About West Texas",
+        "Have a Bulldog in Your Corner",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "rent-back-agreement-pcs-guide",
       "title": "Rent-Back Agreements: How to Stay in Your Home After Closing on a PCS",
       "url": "/blog/rent-back-agreement-pcs-guide",
@@ -11182,7 +11297,7 @@
       ],
       "description": "A plain-language look at the VA loan appraisal: what the appraiser checks, how it differs from a home inspection, what the Tidewater process is, and what happens when a home needs repairs.",
       "publishedAt": "2026-07-07T09:00:00.000Z",
-      "updatedAt": "2026-07-12T00:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
       "primaryKeyword": "va loan appraisal",
       "secondaryKeywords": [
         "tidewater process va",
