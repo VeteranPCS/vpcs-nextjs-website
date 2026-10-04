@@ -1,6 +1,6 @@
 {
-  "contentHash": "216c770de6df0a34d0560f3e3b3e5b06ab56e80ce156526bdd269a86a8dd7626",
-  "totalPosts": 394,
+  "contentHash": "d19c9ee951fe4abf919fe1bea7eb7c0625734de6807e7da99c0834826ea969cb",
+  "totalPosts": 395,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -210,6 +210,7 @@
       "9-things-to-do-near-ft-bragg",
       "best-things-to-do-near-nas-jrb-fort-worth",
       "fun-family-and-date-night-activities-near-tinker-afb",
+      "living-near-fort-benning-local-guide",
       "things-to-do-near-fort-riley-a-local-guide",
       "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
       "top-things-to-do-near-san-diego-military-bases"
@@ -620,6 +621,7 @@
       "9-things-to-do-near-ft-bragg",
       "best-things-to-do-near-nas-jrb-fort-worth",
       "fun-family-and-date-night-activities-near-tinker-afb",
+      "living-near-fort-benning-local-guide",
       "things-to-do-near-fort-riley-a-local-guide",
       "top-5-family-friendly-outdoor-activities-near-camp-lejeune-for-military-families",
       "top-things-to-do-near-san-diego-military-bases"
@@ -909,6 +911,7 @@
       "best-places-to-live-near-fort-benning",
       "best-places-to-live-near-ft-gordon-augusta-georgia",
       "georgia-veteran-property-tax-exemptions-2026",
+      "living-near-fort-benning-local-guide",
       "pcs-to-fort-benning-2026-guide",
       "pcs-to-fort-gordon",
       "pcs-to-fort-stewart-hunter-aaf-2026-guide",
@@ -1178,10 +1181,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 254,
+    "resolved": 255,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 230,
+      "frontmatter-state-slug": 231,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -4211,6 +4214,43 @@
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "living-near-fort-benning-local-guide",
+      "title": "Living Near Fort Benning: A Local Guide to Columbus and Phenix City",
+      "url": "/blog/living-near-fort-benning-local-guide",
+      "component": "Things to Do Near You",
+      "componentSlug": "things-to-do-near-you",
+      "stateSlug": "georgia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Things to Do Near You",
+        "U.S. Military Bases"
+      ],
+      "description": "A local guide to life near Fort Benning from Haley Howlett, an Army spouse and VeteranPCS agent. Compare the Georgia and Alabama sides, learn the time zone quirk, check school and housing rules, and find places to eat and explore.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "living near fort benning",
+      "secondaryKeywords": [
+        "columbus ga vs phenix city al",
+        "fort benning schools",
+        "fort benning time zone",
+        "restaurants near fort benning",
+        "things to do near fort benning"
+      ],
+      "h2Outline": [
+        "Fort Benning, Fort Moore, and the \"Tri-Community\"",
+        "Living Near Fort Benning: Georgia Side or Alabama Side?",
+        "The Time Zone Quirk Every Newcomer Should Know",
+        "Schools Near Fort Benning: Check the Exact Address",
+        "Living on Post: The Villages of Benning",
+        "Things to Do Near Fort Benning on the Georgia Side",
+        "Things to Do on the Alabama Side",
+        "PCS Tips for Living Near Fort Benning",
+        "Find a Home Near Fort Benning",
+        "Frequently Asked Questions",
+        "About This Guide"
       ]
     },
     {
