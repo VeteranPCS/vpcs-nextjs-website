@@ -1,6 +1,6 @@
 {
-  "contentHash": "9c6cbbbbfe4c45040555837b884e9c9291dbf048685376e970cd24b07fd44e2a",
-  "totalPosts": 396,
+  "contentHash": "864c19fdabca10ba2f83a60f07fb002b518d6cb38df50571094fb3079654d597",
+  "totalPosts": 397,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -74,6 +74,7 @@
       "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "moving-to-orlando-research-park-defense-job",
       "myrtle-beach-military-retirement",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
@@ -486,6 +487,7 @@
       "final-move-entitlement-separation-retirement",
       "how-to-become-a-real-estate-agent-after-the-military",
       "managing-a-pcs-move-with-children-strategies-for-military-families",
+      "moving-to-orlando-research-park-defense-job",
       "myrtle-beach-military-retirement",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
@@ -899,6 +901,7 @@
       "discovering-military-friendly-living-in-panama-city-florida",
       "florida-va-loan-benefits-hidden-savings",
       "florida-veteran-property-tax-exemptions-2026",
+      "moving-to-orlando-research-park-defense-job",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
       "pcs-to-macdill-afb-tampa-2026-guide",
       "pcs-to-nas-pensacola-2026-guide",
@@ -1184,10 +1187,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 256,
+    "resolved": 257,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 232,
+      "frontmatter-state-slug": 233,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -4767,6 +4770,43 @@
         "A Note for Military Spouses: MSRRA",
         "How to Apply and Where to Verify",
         "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "moving-to-orlando-research-park-defense-job",
+      "title": "Moving to Orlando for a Research Park or Defense Job: Where Should You Live?",
+      "url": "/blog/moving-to-orlando-research-park-defense-job",
+      "component": "Military Transition Help",
+      "componentSlug": "military-transition-help",
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Military Transition Help",
+        "U.S. Military Bases"
+      ],
+      "description": "A guide for service members, veterans, and defense civilians moving to Orlando for work at Central Florida Research Park, NSA Orlando, or UCF. Compare East Orlando, Oviedo, Avalon Park, and the eastern edge, with 2026 BAH and commute tips from Ted Moseley, a Navy veteran and VeteranPCS agent.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-04T09:00:00.000Z",
+      "primaryKeyword": "moving to orlando for a defense job",
+      "secondaryKeywords": [
+        "best neighborhoods near ucf research park",
+        "nsa orlando housing",
+        "orlando bah 2026",
+        "oviedo vs waterford lakes commute",
+        "where to live near central florida research park"
+      ],
+      "h2Outline": [
+        "What Is Central Florida Research Park?",
+        "NSA Orlando: A Small Base With a Big Mission",
+        "Who Works Around Research Park?",
+        "2026 BAH for NSA Orlando",
+        "Where Should You Live If You Work Near Research Park?",
+        "How Your Schedule and Household Change the Answer",
+        "Ted's Take: Knowing This Corridor Firsthand",
+        "A Research Park Relocation Checklist",
+        "The Bottom Line",
+        "Frequently Asked Questions",
+        "About This Guide"
       ]
     },
     {
