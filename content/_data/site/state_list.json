@@ -626,14 +626,13 @@
     "_id": "p1E1t9c6MmuSwvdT93QuhK",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:30:11Z",
-    "_updatedAt": "2026-07-10T20:13:43Z",
+    "_updatedAt": "2026-10-06T19:28:55Z",
     "short_name": "VA",
     "state_map": {
-      "_sanityAssetId": "image-efee109e1db942159513cf9add610819c8ab7dbf-1000x1000-webp",
       "alt": "Virginia",
-      "height": 1000,
-      "path": "/images/states/virginia.webp",
-      "width": 1000
+      "height": 1500,
+      "path": "/images/states/virginia.png",
+      "width": 1500
     },
     "state_name": "Virginia",
     "state_slug": {
@@ -645,7 +644,7 @@
     "_id": "p1E1t9c6MmuSwvdT93QvUC",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:30:15Z",
-    "_updatedAt": "2026-10-04T16:16:02Z",
+    "_updatedAt": "2026-10-06T19:28:55Z",
     "short_name": "TX",
     "state_map": {
       "alt": "Texas",
