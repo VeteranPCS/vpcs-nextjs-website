@@ -25,3 +25,30 @@ test('VA posts retain lender intent, subject state and embedded partner attribut
   const contacts=article.getByRole('link',{name:'Find a lender in Texas',exact:true});expect(await contacts.count()).toBeGreaterThanOrEqual(3);for(const href of await contacts.evaluateAll(links=>links.map(link=>link.getAttribute('href'))))expect(href).toBe('/contact-lender?form=lender&state=texas');
   const mdxContacts=article.locator('[data-article-body] a[href*="contact-"]');expect(await mdxContacts.count()).toBeGreaterThan(0);
 });
+
+
+test('bonus promotion loads the exact family image and keeps its blended photo below the CTA', async ({ page }, info) => {
+  await fixtureImpact(page);
+  await page.goto(`/blog/${slug}`);
+  await expect(page.locator('[data-site-header]')).toContainText('$676,500');
+  const promo = page.getByRole('complementary', { name: 'Article resources' }).locator('section').filter({ has: page.getByRole('heading', { name: 'VeteranPCS Bonus' }) });
+  const photo = promo.getByRole('img', { name: 'VeteranPCS family receiving a move-in bonus check' });
+  await promo.scrollIntoViewIfNeeded();
+  await expect.poll(() => photo.evaluate(el => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  expect(await photo.getAttribute('src')).toContain('blog-bonus-family.webp');
+  const cta = promo.getByRole('link', { name: 'Learn More' });
+  await expect(cta).toHaveAttribute('href', '/pcs-resources#move-in-bonus');
+  const ctaBounds = await cta.boundingBox(), photoBounds = await photo.boundingBox(), promoBounds = await promo.boundingBox();
+  expect(photoBounds!.y).toBeGreaterThan(ctaBounds!.y + ctaBounds!.height);
+  expect(photoBounds!.width).toBeLessThanOrEqual(promoBounds!.width);
+  const blend = await photo.evaluate(el => {
+    const parent = el.parentElement!;
+    const layer = getComputedStyle(parent, '::before');
+    return { height: parseFloat(layer.height), imageHeight: el.getBoundingClientRect().height, pointerEvents: layer.pointerEvents, background: layer.backgroundImage };
+  });
+  expect(blend.height).toBeGreaterThan(80);
+  expect(blend.height).toBeLessThan(blend.imageHeight / 2);
+  expect(blend.pointerEvents).toBe('none');
+  expect(blend.background).toContain('linear-gradient');
+  await promo.screenshot({ path: info.outputPath('bonus-photo-blend.png'), caret: 'initial' });
+});

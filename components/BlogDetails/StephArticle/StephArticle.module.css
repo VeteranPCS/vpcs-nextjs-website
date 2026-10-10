@@ -95,7 +95,9 @@
 .bonus h2 { font-size:40px; font-weight:400; margin:0 0 25px; }
 .bonus p { font-size:22px; line-height:1.4; margin:0 0 20px; }
 .bonus strong { font-size:32px; font-weight:750; }
-.bonus img { width:100%; height:auto; margin-top:26px; }
+.bonusPhoto { position:relative; margin-top:26px; }
+.bonusPhoto::before { content:''; position:absolute; inset:0 0 auto; height:45%; background:linear-gradient(to bottom,#292f6c 0%,#292f6cd9 18%,#292f6c66 55%,transparent 100%); pointer-events:none; }
+.bonus img { display:block; width:100%; height:auto; }
 .sticky,.mobileToc { display:none; }
 .srOnly { position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
 @media (max-width:1199px) {
