@@ -28,7 +28,7 @@ test('resources categories, genuine destinations, bonus permalink and guide capt
 
 test('resources composition stays readable across assigned viewport',async({page},testInfo)=>{
  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));await page.goto('/pcs-resources');await expect(page.getByRole('heading',{name:'Military Moving Toolkit',level:1})).toBeVisible();
- expect(await page.getByRole('region',{name:'Military Moving Toolkit'}).evaluate(el=>getComputedStyle(el).backgroundImage)).toContain('resources-hero-clean-region.png');
+ expect(await page.getByRole('region',{name:'Military Moving Toolkit'}).evaluate(el=>getComputedStyle(el).backgroundImage)).toContain('resources-hero-photo-region.png');
  await expect(page.getByRole('navigation',{name:'What do you need today?'}).getByRole('link')).toHaveCount(6);await expect(page.getByRole('region',{name:'FEATURED MILITARY TOOLS'}).getByRole('article')).toHaveCount(4);await expect(page.getByRole('region',{name:'BROWSE RESOURCES BY CATEGORY'}).getByRole('link')).toHaveCount(5);await expect(page.locator('#resource-library article')).toHaveCount(4);
  const featuredImages=page.locator('#resource-library article img');
  for(const [index,name] of ['packing','house','duty-station','signing'].entries()){await expect(featuredImages.nth(index)).toHaveAttribute('src',new RegExp(`resources-featured-${name}`));}
@@ -39,4 +39,24 @@ test('resources composition stays readable across assigned viewport',async({page
  // Scroll sections to load lazy images before recording the whole page.
  for(const id of ['library-title','installations-title','partners-title'])await page.locator(`#${id}`).scrollIntoViewIfNeeded();await page.locator('#resources-title').scrollIntoViewIfNeeded();
  await page.screenshot({path:testInfo.outputPath(`resources-${viewport.width}.png`),fullPage:true});expect(errors).toEqual([]);
+});
+
+// Enter a query in the server-rendered field before client chunks hydrate it.
+test('resources preserves early input through hydration',async({page})=>{
+ await page.route('**/api/v1/impact',route=>route.fulfill({json:{success:true,data:{cashBackAmount:'$720,400',charityAmount:'$69,760',totalVolumeSold:'1',available:true}}}));
+ let release!:()=>void;
+ const ready=new Promise<void>(resolve=>{release=resolve;});
+ await page.route('**/_next/static/**',async route=>{if(route.request().resourceType()==='script')await ready;await route.continue();});
+ try {
+  await page.goto('/pcs-resources',{waitUntil:'commit'});
+  const search=page.getByRole('searchbox',{name:'Search resources, guides, and tools'});
+  await search.fill('PCS checklist');
+  release();
+  // The impact fetch is triggered by mounted client effects, without a timing delay.
+  await expect(page.locator('[data-site-header]')).toContainText('$720,400');
+  await expect(search).toHaveValue('PCS checklist');
+  await page.getByRole('button',{name:'Search resources',exact:true}).click();
+  await expect(page).toHaveURL(/q=PCS\+checklist#resource-library$/);
+  await expect(page.locator('#library-title')).toHaveText('SEARCH RESULTS');
+ } finally {release();}
 });
