@@ -1,6 +1,5 @@
 {
   "baseline": "748f5ce21bc7f69658f627a82763d4ea89f8b7a7",
-  "ignored": "steph editing files",
   "sources": [
     {
       "folder": "homepage",
@@ -213,5 +212,13 @@
       "status": "Exact native photograph strip; flattened badge excluded"
     }
   ],
-  "localReferenceDirectory": "/Users/harperfoley/.codex/visualizations/2026/10/10/01a1238e-ff79-78f3-a921-ff8ccdbb7759/steph-redesign/references"
+  "localReferenceDirectory": "/Users/harperfoley/.codex/visualizations/2026/10/10/01a1238e-ff79-78f3-a921-ff8ccdbb7759/steph-redesign/references",
+  "initiallyExcluded": "steph editing files",
+  "editingSourceInspection": {
+    "authorizedOn": "2026-10-10",
+    "folderId": "1ibt7AVFdX1tbBV6Rs2MiSnkf9S-v3utC",
+    "inventory": "editing-source-inventory.json",
+    "status": "Complete: all40 files retrieved and inspected; exact VA/Resources page PNGs match flattened PDF pixels; no clean replacement originals or deployable font sources found",
+    "report": "editing-source-inspection.md"
+  }
 }

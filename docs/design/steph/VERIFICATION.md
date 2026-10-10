@@ -17,7 +17,7 @@ Six original PDFs and the branding guide are preserved under:
 
 `/Users/harperfoley/.codex/visualizations/2026/10/10/01a1238e-ff79-78f3-a921-ff8ccdbb7759/steph-redesign/references/`
 
-The asset agent searched the permitted page/branding folders, Drive image/font records and repository assets. It recovered exact clean photo regions and confirmed the branding guide specifies Tahoma Regular/Bold. The original lower VA hero is obscured in the flattened PDF. No licensed full webfont files or kit were located. The excluded editing folder remains excluded.
+The asset agent searched the permitted page/branding folders, Drive image/font records and repository assets. It recovered exact clean photo regions and confirmed the branding guide specifies Tahoma Regular/Bold. The original lower VA hero is obscured in the flattened PDF. No licensed full webfont files or kit were located. On 2026-10-10 the user authorized inspection of the editing folder. All 40 files were retrieved and reviewed, including decoded Illustrator private data; the exact Resources/VA PNGs are the same flattened images, and no usable replacements or deployable font sources were found. The audit is in [editing-source-inspection.md](editing-source-inspection.md). This follow-up changes only documentation and source inventory; website rendering and the recorded browser evidence remain unchanged.
 
 ## Automated gates
 

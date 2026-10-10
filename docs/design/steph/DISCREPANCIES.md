@@ -12,7 +12,7 @@ The lane review passes cover implemented behavior and the available reference co
 | All reference typography | Scoped Tahoma-first font stack; existing fallbacks remain available. | Deployable intended webfont files or a supplied font-kit URL. The recovered brand guide specifies Tahoma Regular/Bold; PDF subsets cannot supply complete webfonts. |
 | Resources duty-station tiles | Six real guide destinations use their existing article images. | Intentional image departure from the mock city photos needs acceptance or matching clean originals. |
 
-An asset agent inspected the permitted page folders, branding folder, Drive image/font searches and the repository asset corpus. The original PDFs and branding guide were retrieved and preserved. The explicitly excluded editing folder remains uninspected; the request to inspect it is pending.
+An asset agent inspected the permitted page folders, branding folder, Drive image/font searches and the repository asset corpus. The original PDFs and branding guide were retrieved and preserved. The user authorized editing-folder inspection on 2026-10-10. Two agents retrieved and inspected all 40 files, including standalone images, PDF-compatible Illustrator objects and decoded private Illustrator data. The Resources and VA page PNGs are pixel-identical to the supplied PDFs; no uncovered full hero originals, higher-resolution card/installation originals, or deployable font files/kit were found. The open items above remain unresolved. See [inspection evidence](editing-source-inspection.md).
 
 ## Settled content and behavior adaptations
 

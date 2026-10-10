@@ -2,7 +2,7 @@
 
 Baseline: `748f5ce21bc7f69658f627a82763d4ea89f8b7a7`. Original checkout remains untouched.
 
-Sources: `sources.json`; six reviewed PDFs in the user Downloads folder. Ignore `steph editing files`.
+Sources: `sources.json`; six reviewed PDFs and preserved source files. The user authorized inspection of `steph editing files` on 2026-10-10. All 40 files were retrieved and inspected; see [source inspection](editing-source-inspection.md) and [inventory](editing-source-inventory.json).
 
 ## Lane board
 
