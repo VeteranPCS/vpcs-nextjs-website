@@ -31,3 +31,16 @@ test('VA landing keeps qualified benefits, routes and responsive form usable',as
  for(let y=0;y<await page.evaluate(()=>document.body.scrollHeight);y+=650){await page.evaluate(y=>window.scrollTo(0,y),y);await page.waitForTimeout(50);}await page.evaluate(()=>window.scrollTo(0,0));
  await page.screenshot({path:`/private/tmp/steph-va-loan-${testInfo.project.name}.png`,fullPage:true});
 });
+
+test('VA photo/card grouping and compact desktop contact panel match the bounded correction',async({page},testInfo)=>{
+ await fixtureImpact(page);await page.goto('/va-loan-help');await expect(page.locator('[data-site-header]')).toContainText('$676,500');
+ const width=page.viewportSize()!.width;
+ const photo=await page.locator('img[src*="va-hero-photo-region"]').boundingBox();const invite=await page.getByTestId('va-calculator-invitation').boundingBox();
+ if(width>=768 && width<1200) { expect(invite!.y-(photo!.y+photo!.height)).toBeLessThanOrEqual(1);expect(invite!.y).toBeGreaterThan(photo!.y+photo!.height-35); }
+ const panel=page.getByRole('heading',{name:'Have Questions About VA Loans?'}).locator('../..');
+ if(width>=1200) { expect((await panel.boundingBox())!.height).toBeLessThanOrEqual(450); const email=await page.getByLabel('Email address').boundingBox();const submit=await page.getByRole('button',{name:'Ask a VA Loan Expert'}).boundingBox();expect(Math.abs((email!.y+email!.height)-(submit!.y+submit!.height))).toBeLessThanOrEqual(1); }
+ await assertNoOverflow(page);await panel.scrollIntoViewIfNeeded();await page.screenshot({path:testInfo.outputPath('va-contact-corrected.png'),caret:'initial'});await page.getByRole('heading',{level:1}).scrollIntoViewIfNeeded();await page.screenshot({path:testInfo.outputPath('va-hero-corrected.png'),caret:'initial'});
+ const finalCta=page.getByRole('heading',{name:'Ready to Take the Next Step?'}).locator('..').locator('..');
+ const background=await finalCta.evaluate(node=>({image:getComputedStyle(node).backgroundImage,size:getComputedStyle(node).backgroundSize}));expect(background.image).toContain('linear-gradient');expect(background.image).toContain('flagagent.webp');expect(background.size).toBe('cover, cover');
+ await expect(finalCta.getByRole('link',{name:'Get Pre-Approved'})).toHaveAttribute('href','/contact-lender');await finalCta.scrollIntoViewIfNeeded();await page.screenshot({path:testInfo.outputPath('va-final-cta-corrected.png'),caret:'initial'});
+});

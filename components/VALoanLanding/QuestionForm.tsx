@@ -52,9 +52,9 @@ export default function QuestionForm() {
   return <form className={styles.questionForm} aria-label="Ask a VA loan question" noValidate onSubmit={submit} onFocus={()=>trackFormStarted('contact_form',{page_type:'va_loan_help'})} aria-busy={pending}>
     <HoneypotField ref={honeypotRef}/>
     <label htmlFor="va-question">What’s your question?<textarea id="va-question" name="additionalComments" required aria-label="What’s your question?" placeholder="Type your question here…" rows={3} maxLength={5000} aria-invalid={Boolean(errors.additionalComments)} aria-describedby={errors.additionalComments?'va-question-error':undefined}/>{errors.additionalComments&&<span id="va-question-error" className={styles.error}>{errors.additionalComments}</span>}</label>
-    <div className={styles.fields}>{input('firstName','First name','text','given-name')}{input('lastName','Last name','text','family-name')}{input('email','Email address','email','email')}</div>
+    <div className={styles.fields}>{input('firstName','First name','text','given-name')}{input('lastName','Last name','text','family-name')}</div>
     {error&&<p role="alert" className={styles.error}>{error}</p>}
-    <button type="submit" className="steph-button" disabled={pending}>{pending?'Sending…':'Ask a VA Loan Expert'} <span aria-hidden="true">›</span></button>
+    <div className={styles.submitRow}>{input('email','Email address','email','email')}<button type="submit" className="steph-button" disabled={pending}>{pending?'Sending…':'Ask a VA Loan Expert'} <span aria-hidden="true">›</span></button></div>
     <p className={styles.privacy}>We respect your privacy. <Link href="/privacy-policy">Privacy policy</Link></p>
   </form>;
 }
