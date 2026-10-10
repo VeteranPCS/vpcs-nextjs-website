@@ -4,7 +4,7 @@ import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/re
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks=vi.hoisted(()=>({submit:vi.fn()}));
 vi.mock('@/services/salesForcePostFormsService',()=>({KeepInTouchForm:mocks.submit,vaLoanGuideForm:mocks.submit,homebuyerGuideForm:mocks.submit}));
-vi.mock('@/lib/analytics/client',()=>({captureAnalyticsEvent:vi.fn(),formTrackingPayload:()=>({}),trackFormStarted:vi.fn(),trackFormSubmitAttempted:vi.fn(),trackFormSubmissionFailed:vi.fn()}));
+vi.mock('@/lib/analytics/client',()=>({captureAnalyticsEvent:vi.fn(),formTrackingPayload:()=>({}),trackFormStarted:vi.fn(),trackFormSubmitAttempted:vi.fn(),trackFormSubmissionFailed:vi.fn(),trackCtaClicked:vi.fn()}));
 import LeadCaptureDialog from '../LeadCaptureDialog';
 beforeEach(()=>{mocks.submit.mockReset();HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');};});
 afterEach(cleanup);

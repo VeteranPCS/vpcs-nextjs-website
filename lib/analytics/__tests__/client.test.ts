@@ -51,6 +51,12 @@ describe('client analytics wrapper', () => {
     });
   });
 
+  it('keeps CTA interactions functional when browser storage throws', () => {
+    mocks.incrementAnalyticsCounter.mockImplementationOnce(() => { throw Error('blocked'); });
+    expect(() => trackCtaClicked({ cta_id: 'guide_capture' })).not.toThrow();
+    expect(mocks.capture).toHaveBeenCalledWith('cta_clicked', expect.objectContaining({ cta_id: 'guide_capture' }));
+  });
+
   it('captures sanitized events with shared analytics context', () => {
     captureAnalyticsEvent('cta_clicked', {
       cta_id: 'test_cta',
