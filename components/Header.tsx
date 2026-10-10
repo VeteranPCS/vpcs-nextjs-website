@@ -1,573 +1,163 @@
-"use client";
-import { useState, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
-import Image from "next/image";
-import AgentCtaLink from "@/components/common/AgentCtaLink";
-import LenderCtaLink from "@/components/common/LenderCtaLink";
-import TrackedCtaLink from "@/components/common/TrackedCtaLink";
+'use client';
 
-// The desktop nav renders inline at >=1280px; below that the SAME markup is a
-// right-side, full-width slide-in drawer. We track the breakpoint with matchMedia
-// (not a CSS-only guess) so the drawer-only JS behaviors — scroll lock, focus
-// trap, Escape, `inert` — never run against the visible desktop nav. `isMounted`
-// gates anything that must match between SSR and the first client render (the
-// `inert` attribute in particular): it stays false until after mount.
-const DESKTOP_NAV_MEDIA_QUERY = "(min-width: 1280px)";
+import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import Image from 'next/image';
+import AgentCtaLink from '@/components/common/AgentCtaLink';
+import TrackedCtaLink from '@/components/common/TrackedCtaLink';
+import { BenefitItems, NavLink, Promo } from './navigation/HeaderContent';
+import { navigation, type NavGroup, type NavItem, type NavSection } from './navigation/model';
+import { useImpactMetrics } from '@/components/redesign/ImpactProvider';
+import styles from './navigation/Header.module.css';
 
-const useIsDesktopNav = () => {
-  const [state, setState] = useState({ isMounted: false, isDesktop: false });
-  useEffect(() => {
-    const mql = window.matchMedia(DESKTOP_NAV_MEDIA_QUERY);
-    // Set both flags together so `inert` can never briefly apply to the desktop nav.
-    const update = () => setState({ isMounted: true, isDesktop: mql.matches });
-    update();
-    mql.addEventListener("change", update);
-    return () => mql.removeEventListener("change", update);
-  }, []);
-  return state;
-};
+const desktopQuery = '(min-width: 1280px)';
+const focusableSelector = 'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
-  const [cashBackAmount, setCashBackAmount] = useState("$500,000");
-  const submenuRef = useRef<HTMLLIElement>(null);
-  const submenuToggleRef = useRef<HTMLButtonElement>(null);
-  const navRef = useRef<HTMLDivElement>(null);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
+function MenuIcon({kind}: {kind: NavGroup['icon'] | NavItem['icon']}) {
+  return <svg className={styles.itemIcon} data-menu-icon={kind} aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">{kind === 'giving' ? <><path d="M12 10C5 6 8 1 12 4c4-3 7 2 0 6Z"/><path d="M2 16h5l3-3h6c2 0 2 3 0 3h-5v2h6l5-5 2 2-7 7H2Z"/></> : kind === 'chat' ? <><path d="M5 3h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" strokeWidth="1.6"/><path d="M7 8h10M7 12h8" stroke="currentColor" strokeWidth="1.6"/></> : kind === 'pin' ? <><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Z"/><circle cx="12" cy="9" r="2.5" fill="white"/></> : kind === 'home' ? <path d="m2 11 10-9 10 9-2 2-2-2v11h-5v-7h-2v7H6V11l-2 2Z"/> : kind === 'people' ? <><circle cx="12" cy="7" r="4"/><circle cx="3" cy="9" r="3"/><circle cx="21" cy="9" r="3"/><path d="M5 21v-4a7 7 0 0 1 14 0v4ZM0 19v-3a4 4 0 0 1 4-4v7Zm20 0v-7a4 4 0 0 1 4 4v3Z"/></> : <><circle cx="12" cy="12" r="10"/><path d="m7 12 3 3 7-7" fill="none" stroke="white" strokeWidth="2"/></>}</svg>;
+}
+
+
+function RootIcon({ kind }: { kind: NavSection['icon'] }) {
+  return <svg className={styles.rootIcon} data-root-icon={kind} aria-hidden="true" viewBox="0 0 32 36" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m16 2 6 3 6 3 1 8-1 12-6 4-6 2-6-2-6-4-1-12 1-8 6-3Z" />
+    {kind === 'loan' ? <><path d="m8 17 8-7 8 7M10 16v10h12V16M14 26v-7h4v7" /></> : kind === 'resources' ? <><path d="M12 20c0-3-3-4-3-8a7 7 0 0 1 14 0c0 4-3 5-3 8M12 20h8M13 24h6M14 27h4M16 9v8" /></> : kind === 'mission' ? <><path d="m16 8 6 3v7c0 5-6 8-6 8s-6-3-6-8v-7Z"/><path d="m13 17 2 2 4-5" /></> : <><path d="M8 10h16v11h-8l-5 4v-4H8ZM12 14h8M12 17h6" /></>}
+  </svg>;
+}
+
+export default function Header() {
+  const [desktop, setDesktop] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [sectionId, setSectionId] = useState<string | null>(null);
+  const { metrics } = useImpactMetrics();
+  const impact = metrics?.available ? metrics : null;
+  const headerRef = useRef<HTMLElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const backRef = useRef<HTMLButtonElement>(null);
+  const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const mobileTriggerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const lastMobileSection = useRef<string | null>(null);
   const pathname = usePathname();
-  const { isMounted, isDesktop } = useIsDesktopNav();
-
-  // Shared with the desktop nav. Every mobile rule is scoped so the >=1280px
-  // output stays byte-for-byte identical to before: max-w-fit / whitespace-nowrap /
-  // the smaller text + right-padding only apply at min-[1280px]; the underline
-  // pseudo-element is inert on touch. Mobile rows are full-width tap targets.
-  const navItemClass =
-    "relative py-3.5 text-lg after:absolute after:bottom-0 after:left-0 after:h-1 after:w-0 after:bg-accent-red after:transition-all after:duration-300 hover:after:w-full focus-within:after:w-full min-[1280px]:max-w-fit min-[1280px]:whitespace-nowrap min-[1280px]:py-1 min-[1280px]:pr-0 min-[1280px]:text-base";
-  const navLinkClass =
-    "text-white inline-flex w-full items-center min-h-11 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white min-[1280px]:inline min-[1280px]:w-auto min-[1280px]:min-h-0";
-  // Quieter secondary group (Get Listed) — mobile drawer only (min-[1280px]:hidden).
-  const secondaryNavItemClass = "min-[1280px]:hidden py-2.5 text-base";
-  const secondaryNavLinkClass =
-    "text-white/80 inline-flex w-full items-center min-h-11 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white";
+  const section = navigation.find((item) => item.id === sectionId);
+  const close = () => { setMobileOpen(false); setSectionId(null); };
 
   useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        const response = await fetch('/api/v1/impact');
-        const data = await response.json();
-
-        if (data.success && data.data) {
-          setCashBackAmount(data.data.cashBackAmount);
-        }
-      } catch (error) {
-        console.error('Error fetching impact metrics:', error);
-        // Keep default value on error
-      }
-    };
-
-    // The stat this feeds only renders at 2xl (1536px+); skip the fetch
-    // entirely below that breakpoint until the viewport actually grows into it.
-    const mql = window.matchMedia('(min-width: 1536px)');
-    let fetched = false;
-
-    const fetchOnce = () => {
-      if (fetched) return;
-      fetched = true;
-      fetchMetrics();
-    };
-
-    if (mql.matches) {
-      fetchOnce();
-    } else {
-      mql.addEventListener('change', fetchOnce);
-    }
-
-    return () => mql.removeEventListener('change', fetchOnce);
+    const media = window.matchMedia(desktopQuery);
+    const update = () => { setDesktop(media.matches); setMobileOpen(false); setSectionId(null); };
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
   }, []);
 
-  // Close the Get Listed submenu and the mobile drawer on route change.
-  useEffect(() => {
-    setIsSubmenuOpen(false);
-    setIsMenuOpen(false);
-  }, [pathname]);
+  useEffect(() => { setMobileOpen(false); setSectionId(null); }, [pathname]);
 
-  // Close the Get Listed submenu on Escape or outside click (only while open).
   useEffect(() => {
-    if (!isSubmenuOpen) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsSubmenuOpen(false);
-        submenuToggleRef.current?.focus();
+    if (!mobileOpen || desktop) return;
+    const bodyOverflow = document.body.style.overflow;
+    const htmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    // Native inert also removes the background page from assistive technology.
+    const background: HTMLElement[] = [];
+    // Follow the header's ancestor branch so div-based legacy pages, floating
+    // widgets, and portal roots are covered without making the modal itself inert.
+    let branch: HTMLElement | null = headerRef.current;
+    while (branch && branch !== document.body) {
+      const parent: HTMLElement | null = branch.parentElement;
+      if (!parent) break;
+      for (const sibling of Array.from(parent.children)) {
+        if (sibling !== branch && sibling instanceof HTMLElement && !['SCRIPT', 'STYLE', 'LINK'].includes(sibling.tagName)) background.push(sibling);
       }
-    };
-    const handlePointerDown = (event: PointerEvent) => {
-      if (submenuRef.current && !submenuRef.current.contains(event.target as Node)) {
-        setIsSubmenuOpen(false);
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("pointerdown", handlePointerDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("pointerdown", handlePointerDown);
-    };
-  }, [isSubmenuOpen]);
-
-  // If the viewport grows into the desktop nav while the drawer is open, close it
-  // so the scroll lock (released by the effect cleanup below) can't strand the page.
-  useEffect(() => {
-    if (isDesktop && isMenuOpen) {
-      setIsMenuOpen(false);
+      branch = parent;
     }
-  }, [isDesktop, isMenuOpen]);
-
-  // Lock background scroll while the mobile drawer is open, saving and restoring the
-  // prior inline values so it coexists with AgentFinderPopup's own overflow lock.
-  useEffect(() => {
-    if (!isMenuOpen || isDesktop) return;
-    const previousBodyOverflow = document.body.style.overflow;
-    const previousHtmlOverflow = document.documentElement.style.overflow;
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
+    const previous = background.map((element) => ({ element, inert: element.inert }));
+    background.forEach((element) => { element.inert = true; });
     return () => {
-      document.body.style.overflow = previousBodyOverflow;
-      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = bodyOverflow;
+      document.documentElement.style.overflow = htmlOverflow;
+      previous.forEach(({ element, inert }) => { element.inert = inert; });
     };
-  }, [isMenuOpen, isDesktop]);
+  }, [mobileOpen, desktop]);
 
-  // Mobile drawer focus management: move focus in on open, trap Tab within the
-  // drawer + the hamburger, and close on Escape returning focus to the hamburger.
   useEffect(() => {
-    if (!isMenuOpen || isDesktop) return;
-    const drawer = navRef.current;
+    if (!mobileOpen || desktop) return;
+    const drawer = drawerRef.current;
     if (!drawer) return;
+    drawer.scrollTop = 0;
+    if (sectionId) {
+      lastMobileSection.current = sectionId;
+      backRef.current?.focus();
+    } else {
+      const previous = lastMobileSection.current;
+      (previous ? mobileTriggerRefs.current[previous] : drawer.querySelector<HTMLElement>('button'))?.focus();
+    }
+  }, [mobileOpen, desktop, sectionId]);
 
-    const getFocusable = () =>
-      Array.from(
-        drawer.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        )
-      ).filter((el) => el.offsetParent !== null);
-
-    // First focusable is queried at open time — the CTA pill is lg:hidden, so
-    // between 1024–1279px this is the About link, not the pill. Focus must wait
-    // for the visibility transition to start: at effect time the drawer's
-    // computed visibility is still `hidden` (it only interpolates to `visible`
-    // once transition progress > 0), and .focus() on a hidden element no-ops.
-    // Double rAF lands after the first painted frame of the open transition.
-    let focusFrame = requestAnimationFrame(() => {
-      focusFrame = requestAnimationFrame(() => {
-        getFocusable()[0]?.focus();
-      });
-    });
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsMenuOpen(false);
-        menuButtonRef.current?.focus();
-        return;
+  useEffect(() => {
+    if (!(desktop ? sectionId : mobileOpen)) return;
+    const dismiss = (restore: boolean) => {
+      setMobileOpen(false); setSectionId(null);
+      if (restore) {
+        if (desktop && sectionId) triggerRefs.current[sectionId]?.focus();
+        else requestAnimationFrame(() => toggleRef.current?.focus());
       }
-      if (event.key !== "Tab") return;
-      // Loop = the drawer's focusables followed by the hamburger button.
-      const loop = [...getFocusable(), menuButtonRef.current].filter(
-        (el): el is HTMLElement => el !== null
-      );
-      if (loop.length === 0) return;
-      const active = document.activeElement as HTMLElement | null;
-      const currentIndex = active ? loop.indexOf(active) : -1;
-      // Pull stray focus back into the loop; otherwise wrap at the boundaries.
-      const nextIndex =
-        currentIndex === -1
-          ? 0
-          : event.shiftKey
-            ? (currentIndex - 1 + loop.length) % loop.length
-            : (currentIndex + 1) % loop.length;
-      event.preventDefault();
-      // nextIndex is derived modulo loop.length (> 0), so it is always in-bounds.
-      loop[nextIndex]!.focus();
     };
-
-    document.addEventListener("keydown", handleKeyDown);
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { event.preventDefault(); dismiss(true); return; }
+      if (event.key !== 'Tab' || desktop) return;
+      const drawer = drawerRef.current;
+      if (!drawer) return;
+      const elements = Array.from(drawer.querySelectorAll<HTMLElement>(focusableSelector)).filter((element) => !element.hidden && element.getAttribute('aria-hidden') !== 'true');
+      const loop = elements;
+      const current = loop.indexOf(document.activeElement as HTMLElement);
+      const next = current < 0 ? 0 : (current + (event.shiftKey ? -1 : 1) + loop.length) % loop.length;
+      if (loop[next]) { event.preventDefault(); loop[next].focus(); }
+    };
+    const outside = (event: PointerEvent) => {
+      if (!headerRef.current?.contains(event.target as Node)) dismiss(false);
+    };
+    const focusOutside = (event: FocusEvent) => {
+      if (desktop && !headerRef.current?.contains(event.target as Node)) dismiss(false);
+    };
+    document.addEventListener('keydown', keydown);
+    document.addEventListener('pointerdown', outside);
+    document.addEventListener('focusin', focusOutside);
     return () => {
-      cancelAnimationFrame(focusFrame);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', keydown);
+      document.removeEventListener('pointerdown', outside);
+      document.removeEventListener('focusin', focusOutside);
     };
-  }, [isMenuOpen, isDesktop]);
+  }, [desktop, mobileOpen, sectionId]);
 
-  const onMenuToggle = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const openDesktop = (id: string, focusFirst = false) => {
+    setSectionId((current) => current === id && !focusFirst ? null : id);
+    if (focusFirst) requestAnimationFrame(() => panelRef.current?.querySelector<HTMLElement>(focusableSelector)?.focus());
   };
 
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
+  const contents = (mobile: boolean) => section && <>
+    <div data-section={section.id} className={`${styles.panelContent} ${section.id === 'pcs-resources' ? styles.resourcesContent : ''}`}>
+      <div className={styles.groups}>{section.groups.map((group) => <section className={styles.group} key={group.title} aria-label={group.title}><h2>{group.title}</h2><ul>{group.items.map((item) => <li key={`${item.label}-${item.href}`}><MenuIcon kind={item.icon ?? group.icon} /><NavLink item={item} close={close} className={styles.menuLink} position={mobile ? 'mobile_primary_nav' : 'primary_nav'} /></li>)}</ul></section>)}</div>
+      <Promo kind={section.promo} close={close} impact={impact} position={mobile ? 'mobile_nav_promo' : 'header_nav_promo'} />
+    </div>
+    <BenefitItems impact={impact} footer />
+  </>;
 
-  return (
-    <header className="fixed left-0 top-0 z-nav w-full overflow-x-clip bg-primary px-5 shadow-lg min-[1280px]:px-0">
-      <div className="container mx-auto w-full">
-        <nav className="flex min-h-[64px] justify-between lg:min-h-[80px]" aria-label="Primary navigation">
-          <TrackedCtaLink
-            className="flex w-[130px] shrink-0 items-center md:w-[205px] xl:w-[220px] 2xl:w-[235px]"
-            href="/"
-            onClick={isMenuOpen ? onMenuToggle : undefined}
-            cta={{
-              ctaId: 'header_logo',
-              ctaIntent: 'navigate_home',
-              ctaPosition: 'header_logo',
-              ctaComponent: 'site_header',
-              ctaLabel: 'VeteranPCS logo',
-              destination: '/',
-            }}
-          >
-            <Image
-              width={235}
-              height={63}
-              src="/icon/VeteranPCSlogo.svg"
-              className="w-full h-auto"
-              alt="VeteranPCS logo"
-            />
-          </TrackedCtaLink>
-          <div className="flex min-w-0 items-center lg:gap-5 xl:gap-7">
-            <div
-              id="primary-navigation"
-              ref={navRef}
-              inert={isMounted && !isDesktop && !isMenuOpen}
-              className={`absolute top-full inset-x-0 w-full h-[calc(100vh-64px)] supports-[height:100dvh]:h-[calc(100dvh-64px)] lg:h-[calc(100vh-80px)] lg:supports-[height:100dvh]:h-[calc(100dvh-80px)] overflow-y-auto bg-primary transition-[transform,visibility] ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none min-[1280px]:static min-[1280px]:flex min-[1280px]:h-auto min-[1280px]:w-auto min-[1280px]:min-w-0 min-[1280px]:items-center min-[1280px]:overflow-visible min-[1280px]:bg-transparent min-[1280px]:translate-x-0 min-[1280px]:visible min-[1280px]:transition-none ${isMenuOpen ? "translate-x-0 visible duration-300" : "translate-x-full invisible duration-[225ms]"}`}
-            >
-              <ul className="menu nav mx-auto flex w-full max-w-sm flex-col gap-0 divide-y divide-white/10 px-6 pt-8 pb-12 min-[1280px]:mx-0 min-[1280px]:w-auto min-[1280px]:max-w-none min-[1280px]:flex-row min-[1280px]:items-center min-[1280px]:gap-6 min-[1536px]:gap-8 min-[1280px]:divide-y-0 min-[1280px]:px-0 min-[1280px]:py-0">
-                <li className="mb-4 lg:hidden">
-                  <AgentCtaLink
-                    className="inline-flex w-full min-h-11 justify-center rounded-2xl bg-accent-red px-5 py-3 text-white transition-colors hover:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-                    onClick={closeMenu}
-                    ctaId="header_mobile_find_agent"
-                    ctaPosition="mobile_primary_nav"
-                    ctaComponent="site_header"
-                  >
-                    Match Me With An Agent
-                  </AgentCtaLink>
-                </li>
-                {/* lg–1279px hides the CTA pill above, but divide-y still counts it
-                    as a sibling and would paint a stray hairline above this first
-                    visible row; `!` is needed to out-rank divide-y's compound selector.
-                    max-[1279.98px] (not 1280) so fractional viewports just under the
-                    min-[1280px] desktop cutover are still covered. */}
-                <li className={`${navItemClass} lg:max-[1279.98px]:!border-t-0`}>
-                  <TrackedCtaLink
-                    className={navLinkClass}
-                    href="/about"
-                    onClick={closeMenu}
-                    cta={{
-                      ctaId: 'header_about',
-                      ctaIntent: 'navigate',
-                      ctaPosition: 'primary_nav',
-                      ctaComponent: 'site_header',
-                      ctaLabel: 'About',
-                      destination: '/about',
-                    }}
-                  >
-                    About
-                  </TrackedCtaLink>
-                </li>
-                <li className={navItemClass}>
-                  <TrackedCtaLink
-                    className={navLinkClass}
-                    href="/how-it-works"
-                    onClick={closeMenu}
-                    cta={{
-                      ctaId: 'header_how_it_works',
-                      ctaIntent: 'navigate',
-                      ctaPosition: 'primary_nav',
-                      ctaComponent: 'site_header',
-                      ctaLabel: 'How It Works',
-                      destination: '/how-it-works',
-                    }}
-                  >
-                    How It Works
-                  </TrackedCtaLink>
-                </li>
-                <li className={navItemClass}>
-                  <TrackedCtaLink
-                    className={navLinkClass}
-                    href="/impact"
-                    onClick={closeMenu}
-                    cta={{
-                      ctaId: 'header_impact',
-                      ctaIntent: 'navigate',
-                      ctaPosition: 'primary_nav',
-                      ctaComponent: 'site_header',
-                      ctaLabel: 'Impact',
-                      destination: '/impact',
-                    }}
-                  >
-                    Impact
-                  </TrackedCtaLink>
-                </li>
-                <li className={navItemClass}>
-                  <TrackedCtaLink
-                    className={navLinkClass}
-                    href="/blog"
-                    onClick={closeMenu}
-                    cta={{
-                      ctaId: 'header_blog',
-                      ctaIntent: 'navigate_content',
-                      ctaPosition: 'primary_nav',
-                      ctaComponent: 'site_header',
-                      ctaLabel: 'Blog',
-                      destination: '/blog',
-                    }}
-                  >
-                    Blog
-                  </TrackedCtaLink>
-                </li>
-                <li className={navItemClass}>
-                  <TrackedCtaLink
-                    className={navLinkClass}
-                    href="/pcs-resources"
-                    onClick={closeMenu}
-                    cta={{
-                      ctaId: 'header_pcs_resources',
-                      ctaIntent: 'navigate_content',
-                      ctaPosition: 'primary_nav',
-                      ctaComponent: 'site_header',
-                      ctaLabel: 'PCS Resources',
-                      destination: '/pcs-resources',
-                    }}
-                  >
-                    PCS Resources
-                  </TrackedCtaLink>
-                </li>
-                <li className={navItemClass}>
-                  <LenderCtaLink
-                    className={navLinkClass}
-                    onClick={closeMenu}
-                    ctaId="header_find_lender"
-                    ctaPosition="primary_nav"
-                    ctaComponent="site_header"
-                  >
-                    Find a Lender
-                  </LenderCtaLink>
-                </li>
-                <li className={navItemClass}>
-                  <TrackedCtaLink
-                    className={navLinkClass}
-                    href="/contact"
-                    onClick={closeMenu}
-                    cta={{
-                      ctaId: 'header_contact',
-                      ctaIntent: 'contact_general',
-                      ctaPosition: 'primary_nav',
-                      ctaComponent: 'site_header',
-                      ctaLabel: 'Contact',
-                      destination: '/contact',
-                    }}
-                  >
-                    Contact
-                  </TrackedCtaLink>
-                </li>
-                {/* Get Listed — quieter secondary group in the mobile drawer */}
-                <li className={`mt-4 ${secondaryNavItemClass}`}>
-                  <TrackedCtaLink
-                    className={secondaryNavLinkClass}
-                    href="/get-listed-agents"
-                    onClick={closeMenu}
-                    cta={{
-                      ctaId: 'header_mobile_get_listed_agents',
-                      ctaIntent: 'partner_recruiting_agent',
-                      ctaPosition: 'mobile_primary_nav',
-                      ctaComponent: 'site_header',
-                      ctaLabel: 'Get Listed Agents',
-                      destination: '/get-listed-agents',
-                    }}
-                  >
-                    Get Listed Agents
-                  </TrackedCtaLink>
-                </li>
-                <li className={secondaryNavItemClass}>
-                  <TrackedCtaLink
-                    className={secondaryNavLinkClass}
-                    href="/get-listed-lenders"
-                    onClick={closeMenu}
-                    cta={{
-                      ctaId: 'header_mobile_get_listed_lenders',
-                      ctaIntent: 'partner_recruiting_lender',
-                      ctaPosition: 'mobile_primary_nav',
-                      ctaComponent: 'site_header',
-                      ctaLabel: 'Get Listed Lenders',
-                      destination: '/get-listed-lenders',
-                    }}
-                  >
-                    Get Listed Lenders
-                  </TrackedCtaLink>
-                </li>
-                {/* Get Listed — desktop split control: parent link + submenu toggle */}
-                <li
-                  ref={submenuRef}
-                  data-submenu-open={isSubmenuOpen}
-                  className={`hidden min-[1280px]:block ${navItemClass}`}
-                >
-                  <div className="flex items-center">
-                    <TrackedCtaLink
-                      className={navLinkClass}
-                      href="/get-listed-agents"
-                      cta={{
-                        ctaId: 'header_get_listed',
-                        ctaIntent: 'partner_recruiting',
-                        ctaPosition: 'primary_nav',
-                        ctaComponent: 'site_header',
-                        ctaLabel: 'Get Listed',
-                        destination: '/get-listed-agents',
-                      }}
-                    >
-                      Get Listed
-                    </TrackedCtaLink>
-                    <button
-                      ref={submenuToggleRef}
-                      type="button"
-                      onClick={() => setIsSubmenuOpen((open) => !open)}
-                      aria-expanded={isSubmenuOpen}
-                      aria-controls="get-listed-submenu"
-                      aria-label="Toggle Get Listed submenu"
-                      className="ml-1 inline-flex min-h-11 min-w-11 items-center justify-center text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        aria-hidden="true"
-                        className={`transition-transform duration-200 ${isSubmenuOpen ? "rotate-180" : ""}`}
-                      >
-                        <path
-                          d="M5 8L10 13L15 8"
-                          stroke="#FFFFFF"
-                          strokeWidth={2}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                  <ul className="sub-menu" id="get-listed-submenu">
-                    <li className="px-10 py-3 text-white">
-                      <TrackedCtaLink
-                        className="text-base font-normal"
-                        href="/get-listed-agents"
-                        onClick={() => setIsSubmenuOpen(false)}
-                        cta={{
-                          ctaId: 'header_get_listed_agents',
-                          ctaIntent: 'partner_recruiting_agent',
-                          ctaPosition: 'primary_nav_submenu',
-                          ctaComponent: 'site_header',
-                          ctaLabel: 'Get Listed Agents',
-                          destination: '/get-listed-agents',
-                        }}
-                      >
-                        Get Listed Agents
-                      </TrackedCtaLink>
-                    </li>
-
-                    <li className="px-10 py-3 text-white">
-                      <TrackedCtaLink
-                        className="text-base font-normal"
-                        href="/get-listed-lenders"
-                        onClick={() => setIsSubmenuOpen(false)}
-                        cta={{
-                          ctaId: 'header_get_listed_lenders',
-                          ctaIntent: 'partner_recruiting_lender',
-                          ctaPosition: 'primary_nav_submenu',
-                          ctaComponent: 'site_header',
-                          ctaLabel: 'Get Listed Lenders',
-                          destination: '/get-listed-lenders',
-                        }}
-                      >
-                        Get Listed Lenders
-                      </TrackedCtaLink>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-            <div className="flex items-center gap-2">
-              <AgentCtaLink
-                className="hidden min-h-11 shrink-0 items-center rounded-2xl bg-accent-red px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-red-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:inline-flex"
-                ctaId="header_desktop_find_agent"
-                ctaPosition="desktop_primary_cta"
-                ctaComponent="site_header"
-              >
-                Match With An Agent
-              </AgentCtaLink>
-              <div className="hidden shrink-0 bg-accent-red-dark px-4 text-sm 2xl:block">
-                <div className="text-center py-4">
-                  <p className="text-white text-xl">
-                    <strong className="text-xl text-white font-bold">
-                      {cashBackAmount}
-                    </strong>
-                  </p>
-                  <p className="pt-1 text-white mb-0 pb-0 text-xs">
-                    Given Back to Military Families
-                  </p>
-                </div>
-              </div>
-              <button
-                ref={menuButtonRef}
-                type="button"
-                name={isMenuOpen ? "close" : "menu"}
-                onClick={onMenuToggle}
-                className="relative min-h-11 min-w-11 cursor-pointer text-[30px] min-[1280px]:hidden"
-                aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-                aria-expanded={isMenuOpen}
-                aria-controls="primary-navigation"
-              >
-                <span className="absolute top-1/2 left-1/2 size-12 -translate-x-1/2 -translate-y-1/2 [@media(pointer:fine)]:hidden"></span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="25"
-                  height="18"
-                  viewBox="0 0 25 18"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M1 1H24"
-                    stroke="#FFFFFF"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    className="transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none"
-                    style={{
-                      transformBox: "fill-box",
-                      transformOrigin: "center",
-                      transform: isMenuOpen ? "translateY(8px) rotate(45deg)" : "translateY(0) rotate(0deg)",
-                    }}
-                  />
-                  <path
-                    d="M1 9H24"
-                    stroke="#FFFFFF"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    className={`transition-opacity duration-200 motion-reduce:transition-none ${isMenuOpen ? "opacity-0" : "opacity-100"}`}
-                  />
-                  <path
-                    d="M1 17H24"
-                    stroke="#FFFFFF"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    className="transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none"
-                    style={{
-                      transformBox: "fill-box",
-                      transformOrigin: "center",
-                      transform: isMenuOpen ? "translateY(-8px) rotate(-45deg)" : "translateY(0) rotate(0deg)",
-                    }}
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </nav>
-      </div >
-    </header >
-  );
-};
-
-export default Header;
+  return <>
+    {desktop && section && <div className={styles.backdrop} aria-hidden="true" onClick={close} />}
+    <header ref={headerRef} className={styles.header} data-site-header>
+      <div className={styles.navbar}>
+        <TrackedCtaLink href="/" className={styles.logo} onClick={close} cta={{ ctaId: 'header_logo', ctaIntent: 'navigate_home', ctaPosition: 'header_logo', ctaComponent: 'site_header', ctaLabel: 'VeteranPCS logo', destination: '/' }}><Image src="/icon/VeteranPCSlogo.svg" alt="VeteranPCS logo" width={235} height={55} priority /></TrackedCtaLink>
+        <nav className={styles.desktopNav} aria-label="Primary navigation"><ul>{navigation.map((item) => <li key={item.id}><button type="button" ref={(element) => { triggerRefs.current[item.id] = element; }} aria-expanded={desktop && sectionId === item.id} aria-controls="desktop-navigation-panel" onClick={() => openDesktop(item.id)} onKeyDown={(event) => { if (event.key === 'ArrowDown') { event.preventDefault(); openDesktop(item.id, true); } }} className={sectionId === item.id ? styles.activeTrigger : ''}>{item.label}<span className={styles.chevron} aria-hidden="true" /></button></li>)}</ul><AgentCtaLink className={styles.redButton} ctaId="header_desktop_find_agent" ctaPosition="desktop_primary_cta" ctaComponent="site_header">Find an Agent</AgentCtaLink></nav>
+        <button type="button" ref={toggleRef} className={`${styles.mobileToggle} ${mobileOpen ? styles.hiddenToggle : ''}`} aria-hidden={mobileOpen || undefined} tabIndex={mobileOpen ? -1 : undefined} aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => { if (mobileOpen) { close(); requestAnimationFrame(() => toggleRef.current?.focus()); } else { lastMobileSection.current = null; setSectionId(null); setMobileOpen(true); } }}><span aria-hidden="true" className={mobileOpen ? styles.closeIcon : styles.hamburger} /></button>
+      </div>
+      <div className={styles.benefitStrip}><div className={styles.stripInner}><div className={styles.stripImpact}><Image src="/assets/VeteranPCS-logo.png" alt="" width={46} height={46} /><div><strong>{impact ? impact.cashBackAmount : 'Giving back'}</strong><span>{impact ? 'Given back to military families' : 'To our military community'}</span></div></div><div className={styles.stripDesktop}><BenefitItems impact={impact} /></div><NavLink item={{ label: 'Learn More', href: '/impact' }} close={close} className={styles.learnMore} position="header_benefit_strip" /></div></div>
+      <div id="desktop-navigation-panel" ref={panelRef} className={styles.desktopPanel} data-section={section?.id} hidden={!desktop || !section} aria-label={section ? `${section.label} navigation` : undefined}>{desktop && contents(false)}</div>
+      {!desktop && mobileOpen && <div id="mobile-navigation" role="dialog" aria-modal="true" aria-label="Mobile navigation" ref={drawerRef} className={`${styles.mobileDrawer} ${section ? styles.drilldown : ''}`}>
+        {section ? <><div className={styles.mobileHeading}><button ref={backRef} type="button" onClick={() => setSectionId(null)}><span aria-hidden="true">‹</span> Back</button><h2>{section.label}</h2></div>{contents(true)}</> : <><nav aria-label="Mobile primary navigation" className={styles.mobileRoot}><ul>{navigation.map((item) => <li key={item.id}><button type="button" ref={(element) => { mobileTriggerRefs.current[item.id] = element; }} onClick={() => setSectionId(item.id)}><RootIcon kind={item.icon} /><span>{item.label}</span><span aria-hidden="true">›</span></button></li>)}</ul><AgentCtaLink onClick={close} className={styles.redButton} ctaId="header_mobile_find_agent" ctaPosition="mobile_primary_nav" ctaComponent="site_header">Find an Agent</AgentCtaLink></nav><BenefitItems impact={impact} footer /></>}
+        <button type="button" className={`${styles.mobileToggle} ${styles.dialogClose}`} aria-label="Close navigation" onClick={() => { close(); requestAnimationFrame(() => toggleRef.current?.focus()); }}><span aria-hidden="true" className={styles.closeIcon} /></button>
+      </div>}
+    </header>
+  </>;
+}
