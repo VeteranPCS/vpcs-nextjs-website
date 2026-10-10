@@ -21,3 +21,11 @@ Drive metadata/image searches for hero/resources/family/VA loan/keys and explici
 - Adobe [web font licensing](https://helpx.adobe.com/fonts/web/font-licensing/webfont-licensing.html) describes using a client's own Creative Cloud web font project and says Adobe Fonts files cannot be self-hosted under those terms. No client Adobe web-project CSS/kit URL was found in the searched sources.
 
 These findings identify missing source artifacts; they do not authorize substituting another photo/font or copying installed desktop fonts. No random fonts were installed, external messages sent, source files edited or sharing settings changed.
+
+## Recovered clean native photo regions
+
+The asset agent recovered the Resources family/house/flag photograph at 424×258px from native bitmap bounds [440,94,864,352). It contains no screenshot text or controls. The VA upper photo at 462×223px comes from [430,110,892,333); both faces, house, flag, and upper raised hand are visible. The full lower hand/keys/body composition remains obscured by the flattened calculator card. No missing pixels were invented. Both crop checksums and source IDs are recorded in sources.json.
+
+The clean Resources region replaces the temporary flag-only draft. The clean VA region improves the draft but does not close its full-composition acceptance dependency. Full-resolution imagery and licensed deployable fonts have not been located. The excluded editing folder remains uninspected pending explicit scope clarification.
+
+Final VA hero correction: use `va-hero-photo-region.png`, bounds [430,114,892,333), 462×219px. The extra four top rows were the flattened divider; the new filename also avoids stale optimized image cache. Eight exact clean resource-card photo strips (four per page) are now recorded in sources.json. The Resources hero crop omits part of the child at its left edge; the native strips also retain the PDF's resolution limits.

@@ -64,5 +64,153 @@
     "home-story-family": "home-1-24.png",
     "blog-bonus-family": "blog-1-1.png",
     "flag-waving": "calculator-1-0.png"
-  }
+  },
+  "cleanBitmapRegions": [
+    {
+      "asset": "public/images/redesign/resources-hero-clean-region.png",
+      "sourceDriveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
+      "page": 1,
+      "nativeBitmapDimensions": [
+        864,
+        1821
+      ],
+      "cropBoundsExclusive": [
+        440,
+        94,
+        864,
+        352
+      ],
+      "outputDimensions": [
+        424,
+        258
+      ],
+      "sha256": "f9877e93576bd65be4211e4db06e3c7a6f79826aefaddc7ac7597400baebabf3",
+      "status": "Exact visible family, house and flag photograph; native-resolution crop; no controls/text"
+    },
+    {
+      "asset": "public/images/redesign/va-hero-photo-region.png",
+      "sourceDriveId": "1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu",
+      "page": 1,
+      "nativeBitmapDimensions": [
+        892,
+        1764
+      ],
+      "cropBoundsExclusive": [
+        430,
+        114,
+        892,
+        333
+      ],
+      "outputDimensions": [
+        462,
+        219
+      ],
+      "sha256": "4ff8a952d4b66653b034e8be3ee1fdea08c06a39ebf5cc734457172ac99c5a42",
+      "status": "Exact upper photograph only; lower hand, keys and bodies obscured by PDF calculator remain open"
+    },
+    {
+      "asset": "public/images/redesign/va-resource-guide.png",
+      "sourceDriveId": "1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu",
+      "page": 1,
+      "cropBoundsExclusive": [
+        45,
+        1149,
+        228,
+        1227
+      ],
+      "sha256": "fde4e2880553bcc1da98d69c9119d1b8173943b7a3cdd9443afc595dd27c1e30",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/va-resource-calculator.png",
+      "sourceDriveId": "1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu",
+      "page": 1,
+      "cropBoundsExclusive": [
+        252,
+        1149,
+        436,
+        1227
+      ],
+      "sha256": "121657d21f406167740c5dc421196de80441d2af549049386f9fb278eb6b11fb",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/va-resource-moving.png",
+      "sourceDriveId": "1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu",
+      "page": 1,
+      "cropBoundsExclusive": [
+        459,
+        1149,
+        644,
+        1227
+      ],
+      "sha256": "1bf1115219f04b63ac2c9ceb409722a03a4a256da44e9816501f6bba8e802f0e",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/va-resource-family.png",
+      "sourceDriveId": "1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu",
+      "page": 1,
+      "cropBoundsExclusive": [
+        667,
+        1149,
+        850,
+        1227
+      ],
+      "sha256": "3cff1a1d1bda87dd30c39ae477415e0485d76896a4c61611085ecf07e57f74ea",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/resources-featured-packing.png",
+      "sourceDriveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
+      "page": 1,
+      "cropBoundsExclusive": [
+        39,
+        1045,
+        218,
+        1117
+      ],
+      "sha256": "0b3e0424e38525193c2f044c5785ad06cf8ac8b86d1bd8c31cf59aa9e852440c",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/resources-featured-house.png",
+      "sourceDriveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
+      "page": 1,
+      "cropBoundsExclusive": [
+        237,
+        1045,
+        417,
+        1117
+      ],
+      "sha256": "3ff961c8186cb14e95f863750e634f64ac567d1a503afd93f12038707d33534b",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/resources-featured-duty-station.png",
+      "sourceDriveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
+      "page": 1,
+      "cropBoundsExclusive": [
+        437,
+        1045,
+        616,
+        1117
+      ],
+      "sha256": "70942cbb8e2c53f39a6a8d697ba4cd7bc9a9627e43662199290146992675007e",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/resources-featured-signing.png",
+      "sourceDriveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
+      "page": 1,
+      "cropBoundsExclusive": [
+        637,
+        1045,
+        823,
+        1117
+      ],
+      "sha256": "d3f66abb14cc178c1a446960e60b756498beb7df1c3fe012e654dd5668c6e163",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    }
+  ]
 }

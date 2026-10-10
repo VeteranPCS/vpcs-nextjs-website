@@ -8,13 +8,13 @@ Sources: `sources.json`; six reviewed PDFs in the user Downloads folder. Ignore 
 
 | Lane | Branch | Port | Status |
 |---|---|---|---|
-| Integration / foundation | codex/steph-integration | 3100 | Foundation c4999c0 passed all gates; integrated browser checks running |
+| Integration / foundation | codex/steph-integration | 3100 | Foundation and first three lanes integrated; shared corrections independently verified |
 | Navigation | codex/steph-navigation | 3101 | b751efd passed both independent roles; integrated as 46d47f4 |
 | Homepage | codex/steph-homepage | 3102 | 733bac1 passed both independent roles; integrated as b869e1e |
 | BAH | codex/steph-bah | 3103 | 1318e6f passed both independent roles; integrated as d6c3e92 |
-| Resources | codex/steph-resources | 3104 | Implementing |
-| VA Loan | codex/steph-va-loan | 3105 | Implementing |
-| Blog | codex/steph-blog | 3106 | Implementing |
+| Resources | codex/steph-resources | 3104 | Responsive review passed; desktop interaction review running |
+| VA Loan | codex/steph-va-loan | 3105 | Both independent roles passed functional/layout scope; commit gates running |
+| Blog | codex/steph-blog | 3106 | Both independent roles passed; commit gates running |
 
 ## Accepted design differences
 
@@ -56,3 +56,13 @@ Evidence directories: `/private/tmp/vpcs-steph-qa/navigation-independent`, `/pri
 Run `E2E_BASE_URL=http://127.0.0.1:3100 npm run test:e2e:server` for a local dry-run fixture preview. This test-only launcher selects the versioned, genuine review corpus by omitting remote review credentials; impact and calculator responses use browser route fixtures. No fixture switch is added to application code. Normal development servers provide a separate smoke test of the real data path.
 
 Then run `E2E_BASE_URL=http://127.0.0.1:3100 E2E_LEAD_DRY_RUN=1 npm run test:e2e`. The lead flag in the test runner is an explicit assertion that the chosen development server was launched with LEAD_DRY_RUN=1; never use a production server for submission tests. Artifacts default to a separate temporary folder per port.
+
+## Shared corrections and second-wave review
+
+- Dialog Tab/Shift+Tab wrapping and Spanish narrow-screen overflow: reviewed independently by Homepage and BAH agents; corrected browser checks pass.
+- Blog concierge clearance now follows the article action bar through tablet widths (below1200px); remounted launcher receives focus after Close/Escape. Navigation and Homepage agents independently passed all required viewports.
+- VA Loan: BAH responsive reviewer and coordinator desktop/interaction reviewer passed. One real local dry-run contact submission built the expected Contact Form payload, preserved local return URL and spam fields, and skipped Salesforce writes, notifications and conversion capture. Exact four resource-photo crops replaced drafts; a stray hero divider was removed and rechecked.
+- Blog: Homepage responsive reviewer and coordinator desktop/interaction reviewer passed. The tablet guide button width was corrected and rechecked. Canonical sharing, TOC IDs, real article content, contextual Texas lender attribution, guide prefilling, and related links were exercised.
+- Resources: coordinator responsive review passed all five widths and corrected exact featured photographs. Navigation agent is reviewing desktop interactions.
+
+Source limitations remain explicit: Resources clean hero omits part of the child at the left crop boundary; VA clean hero omits obscured lower hand/keys/body. Native flattened photo strips are low resolution. Full originals and deployable font sources remain unlocated. These are open acceptance items, not final fidelity approvals.

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { featureFlags } from '@/lib/feature-flags';
 import MessageRenderer from './MessageRenderer';
+import styles from './ConciergeWidget.module.css';
 import type { AgentListItem } from './AgentCard';
 import { useConcierge } from './ConciergeProvider';
 import {
@@ -90,6 +91,7 @@ export default function ConciergeWidget() {
   const pathname = usePathname();
   const hasBlogStickyCta = /^\/blog\/[^/]+\/?$/.test(pathname ?? '');
   const panelRef = useRef<HTMLDivElement | null>(null);
+  const launcherRef = useRef<HTMLButtonElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const seedConsumedRef = useRef<boolean>(false);
@@ -216,9 +218,15 @@ export default function ConciergeWidget() {
       document.removeEventListener('keydown', handleKey);
       window.clearTimeout(focusTimer);
       const prev = previousActiveElementRef.current;
-      if (prev && typeof prev.focus === 'function') {
-        prev.focus();
-      }
+      // Closing remounts the launcher, so the old active element may be detached.
+      window.requestAnimationFrame(() => {
+        // Read the newly mounted targets after close, not the nodes from effect setup.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (panelRef.current) return;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        const target = prev?.isConnected && prev !== document.body ? prev : launcherRef.current;
+        target?.focus();
+      });
     };
   }, [isOpen, close]);
 
@@ -341,9 +349,10 @@ export default function ConciergeWidget() {
       {!isOpen ? (
         <button
           type="button"
+          ref={launcherRef}
           onClick={() => open()}
           aria-label="Open chat with VeteranPCS concierge"
-          className={`fixed ${hasBlogStickyCta ? 'bottom-24 md:bottom-6' : 'bottom-6'} right-6 z-concierge h-14 w-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center motion-safe:transition-colors hover:bg-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red`}
+          className={`fixed ${hasBlogStickyCta ? styles.blogLauncher : 'bottom-6'} right-6 z-concierge h-14 w-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center motion-safe:transition-colors hover:bg-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-red`}
         >
           <ChatBubbleIcon className="h-6 w-6" />
         </button>
