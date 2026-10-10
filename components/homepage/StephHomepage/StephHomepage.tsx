@@ -10,11 +10,11 @@ import HomeMap, { Benefits, SectionStar } from './HomeMap';
 import HomeReviews from './HomeReviews';
 import HomeBonus from './HomeBonus';
 import HomeCta from './HomeCta';
-import HomeImpact from './HomeImpact';
+import HomeImpact, { LenderImpactBadge } from './HomeImpact';
 import styles from './StephHomepage.module.css';
 
 function Guide({ lender = false }: { lender?: boolean }) {
-  return <div className={styles.guide}><Image src="/images/redesign/guide-covers.webp" width={136} height={115} alt="Free home buying guides" /><div><h3>{lender ? 'Get the Free VA Loan Guide' : 'FREE HOMEBUYER GUIDE'}</h3>{lender && <p>Everything you need to know about your VA home loan benefits.</p>}<LeadCaptureDialog kind={lender ? 'va-guide' : 'homebuyer-guide'} triggerLabel={lender ? 'Download Guide' : 'Download Now'} className={styles.button} /></div></div>;
+  return <div className={styles.guide}><Image src="/images/redesign/guide-covers.webp" width={136} height={115} alt="Free home buying guides" /><div><h3>{lender ? 'Get the Free VA Loan Guide' : 'FREE HOMEBUYER GUIDE'}</h3>{lender && <p>Everything you need to know about your VA home loan benefits.</p>}{!lender && <LeadCaptureDialog kind={lender ? 'va-guide' : 'homebuyer-guide'} triggerLabel={lender ? 'Download Guide' : 'Download Now'} className={styles.button} />}</div>{lender && <LeadCaptureDialog kind="va-guide" triggerLabel="Download Guide" className={styles.button}/>}</div>;
 }
 export default async function StephHomepage() {
   const { reviews } = await fetchGoogleReviews();
@@ -28,7 +28,7 @@ export default async function StephHomepage() {
     <HomeMap /><HomeBonus /><HomeReviews reviews={written} />
     <HomeImpact />
     <section className={styles.partners} aria-labelledby="home-partners"><SectionStar /><h2 id="home-partners">Features & Partners</h2><div>{logos.map((logo) => <a href={logo.url} key={logo._id} target="_blank" rel="noopener noreferrer"><Image src={logo.mainImage.path} width={logo.mainImage.width} height={logo.mainImage.height} alt={logo.mainImage.alt} loading="eager" /></a>)}</div></section>
-    <section className={styles.lender} aria-labelledby="home-lender-title"><div className={styles.lenderInner}><div className={styles.lenderPhoto}><Image src="/images/redesign/home-lender-family.webp" width={560} height={560} alt="VeteranPCS military family holding their move-in bonus check" loading="eager" /></div><div className={styles.lenderCopy}><SectionStar /><h2 id="home-lender-title">Together, We’ll<br /> Make It <span className={styles.brush}>Home.</span></h2><p>Connect with our veteran and military spouse<br className={styles.desktopOnly} /> VA loan experts to guide you through your next move.</p><Benefits lender /><HomeCta href="/contact-lender" id="homepage_lender_expert" intent="contact_lender">Contact a VA Loan Expert</HomeCta><small>Our service is 100% FREE</small><Guide lender /></div></div></section>
+    <section className={styles.lender} aria-labelledby="home-lender-title"><div className={styles.lenderInner}><div className={styles.lenderPhoto}><LenderImpactBadge/><Image src="/images/redesign/home-lender-family.webp" width={560} height={560} alt="VeteranPCS military family holding their move-in bonus check" loading="eager" /></div><div className={styles.lenderCopy}><SectionStar /><h2 id="home-lender-title">Together, We’ll<br /> Make It <span className={styles.brush}>Home.</span></h2><p>Connect with our veteran and military spouse<br className={styles.desktopOnly} /> VA loan experts to guide you through your next move.</p><Benefits lender /><HomeCta href="/contact-lender" id="homepage_lender_expert" intent="contact_lender">Contact a VA Loan Expert</HomeCta><small>Our service is 100% FREE</small><Guide lender /></div></div></section>
     <div className={styles.legacySections}><AgentLoanExpert /><SkillFuturesBuild /><KeepInTouch /></div>
   </main>;
 }

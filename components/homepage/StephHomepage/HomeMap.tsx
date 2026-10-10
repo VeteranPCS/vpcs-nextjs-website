@@ -9,12 +9,13 @@ import { sendGTMEvent } from '@next/third-parties/google';
 import { trackCtaClicked } from '@/lib/analytics/client';
 import { buildCtaProperties } from '@/lib/analytics/cta';
 import HomeCta from './HomeCta';
+import HomeSymbol from './HomeSymbol';
 import styles from './StephHomepage.module.css';
 const popular = ['Texas', 'Florida', 'California', 'North Carolina', 'Virginia', 'Colorado'];
 export function SectionStar() { return <div className={styles.sectionStar} aria-hidden="true">★</div>; }
 export function Benefits({ lender = false }: { lender?: boolean }) {
   const benefits = lender ? [ ['home-dollar.webp', '0% Down Payment', ''], ['Loan.svg', 'No PMI', ''], ['Agents.svg', 'Local Military Experts', ''] ] : [ ['Agents.svg', 'Local Agents Who Get It', 'Veteran and military spouse agents who get military moves'], ['Loan.svg', 'VA Loan Experts You Can Trust', 'Connect with lenders who specialize in VA loans'], ['Giveback.svg', 'Move With Confidence', 'We help you every step of the way, from base to home'] ];
-  return <div className={`${styles.benefits} ${lender ? styles.lenderBenefits : ''}`}>{benefits.map(([icon, title, description]) => <div key={title}><Image src={`/icon/${icon}`} width={42} height={42} alt="" /><div><h3>{title}</h3><p>{description}</p></div></div>)}</div>;
+  return <div className={`${styles.benefits} ${lender ? styles.lenderBenefits : ''}`}>{benefits.map(([icon, title, description], index) => <div key={title}>{lender && index>0?<span className={styles.lenderBenefitIcon}><HomeSymbol kind={index===1?'shield':'users'}/></span>:<Image src={`/icon/${icon}`} width={42} height={42} alt="" />}<div><h3>{title}</h3><p>{description}</p></div></div>)}</div>;
 }
 export default function HomeMap() {
   const router = useRouter();

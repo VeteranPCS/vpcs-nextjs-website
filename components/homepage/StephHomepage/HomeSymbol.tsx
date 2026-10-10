@@ -1,0 +1,3 @@
+export default function HomeSymbol({kind}:{kind:'users'|'shield'}) {
+ return <svg viewBox="0 0 24 24" aria-hidden="true">{kind==='shield'?<><path d="M12 2 21 6v6c0 5-9 10-9 10S3 17 3 12V6Z" fill="none" stroke="currentColor" strokeWidth="1.7"/><path d="M12 4.5 18.5 7v5c0 3.5-6.5 7.5-6.5 7.5S5.5 15.5 5.5 12V7Z" fill="none" stroke="currentColor" strokeWidth="1"/></>:<g fill="currentColor"><circle cx="12" cy="7" r="3.5"/><circle cx="4.8" cy="8" r="2.7"/><circle cx="19.2" cy="8" r="2.7"/><path d="M6 21v-3c0-3 2.5-5 6-5s6 2 6 5v3ZM0 18v-2c0-2.5 1.8-4 4.5-4 1.5 0 2.5.4 3.3 1.1C5.8 14.2 4.5 16.3 4.5 19H1a1 1 0 0 1-1-1Zm24 0v-2c0-2.5-1.8-4-4.5-4-1.5 0-2.5.4-3.3 1.1 2 1.1 3.3 3.2 3.3 5.9H23a1 1 0 0 0 1-1Z"/></g>}</svg>;
+}
