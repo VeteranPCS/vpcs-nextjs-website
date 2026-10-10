@@ -155,7 +155,7 @@ A valid form submission emits `guide_download_requested` with `download_trigger=
 
 The success-state **Download guide** link emits another requested/started pair with `download_trigger=manual_link`, without submitting another lead. This measures each explicit download initiation; it does **not** prove the user saved or opened the file. Count accepted leads with the existing server-owned `lead_conversion_created` event, not download counts.
 
-The shared sanitizer excludes raw contact fields and query strings. Browser verification enables local SDK capture explicitly, intercepts ingestion before navigation, and uses `LEAD_DRY_RUN=1`; test events and leads must not reach production. Instrumentation follows [PostHog custom-event capture](https://posthog.com/docs/libraries/js/usage#custom-event-capture).
+The shared sanitizer excludes raw contact fields and query strings. The SDK `before_send` privacy pass also covers top-level `$set` and `$set_once` person updates; SDK-added current/initial URLs become path-only fields. Browser verification enables local SDK capture explicitly, intercepts ingestion before navigation, and uses `LEAD_DRY_RUN=1`; test events and leads must not reach production. Instrumentation follows [PostHog custom-event capture](https://posthog.com/docs/libraries/js/usage#custom-event-capture).
 
 ### Bottom Funnel
 

@@ -113,8 +113,8 @@ for (const surface of surfaces) test(`Resources ${surface.name} emits private-sa
     expect(event.properties.$initial_current_url).toBeUndefined();
   }
   expect(downloads().slice(-2).map(event => event.properties.download_trigger)).toEqual(['manual_link', 'manual_link']);
-  const serialized = JSON.stringify(telemetry.events.map(event => event.properties));
-  for (const privateValue of ['TelemetryGiven', 'TelemetryFamily', 'telemetry-private@example.com', 'do-not-record-this']) expect(serialized).not.toContain(privateValue);
+  const serialized = JSON.stringify(telemetry.events);
+  for (const privateValue of ['TelemetryGiven', 'TelemetryFamily', 'telemetry-private@example.com', 'do-not-record-this']) expect(serialized.includes(privateValue), 'Private input must not appear anywhere in the SDK envelope').toBe(false);
   expect(telemetry.events.some(event => event.event === 'lead_conversion_created')).toBe(false);
   // Export only a property allowlist: no project token, distinct/session/device IDs or personal input.
   const keys = ['guide_id', 'form_id', 'cta_id', 'cta_intent', 'cta_location', 'cta_position', 'cta_component', 'page_type', 'source_page_path', 'destination_path', 'download_trigger', 'has_email'];
