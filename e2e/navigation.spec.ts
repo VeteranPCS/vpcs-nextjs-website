@@ -3,6 +3,7 @@ import { test, expect } from '@playwright/test';
 // Browser tests run only against the loopback dry-run server configured by the coordinator.
 // No test submits a lead. The impact fixture exercises a verified response shape.
 test.beforeEach(async ({ page }, testInfo) => {
+  await page.route(/https:\/\/.*(?:posthog|google-analytics|googletagmanager|clarity|vercel-insights)/, route => route.abort());
   const available = !testInfo.title.startsWith('unavailable impact');
   await page.route('**/api/v1/impact', route => route.fulfill({ json: { success: true, data: { available, cashBackAmount: available ? '$712,345' : '$500,000', charityAmount: available ? '$67,890' : '$50,000', totalVolumeSold: '$211 Million' } } }));
   await page.goto('/');
@@ -108,3 +109,32 @@ test('unavailable impact never leaks an unsupported numeric fallback into the he
   await expect(header).not.toContainText('$500,000');
   await expect(header).not.toContainText('$50,000');
 });
+
+for (const width of [1280, 1440, 1920]) {
+  test(`desktop Contact and Mission match reviewed panel proportions at ${width}px`, async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop');
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto('/');
+    const header = page.locator('[data-site-header]');
+    await expect(header).toContainText('$712,345');
+    const panel = header.locator('#desktop-navigation-panel');
+    await header.getByRole('button', { name: 'Contact', exact: true }).click();
+    const contact = panel.getByRole('complementary', { name: 'Contact details' });
+    const contactBounds = await contact.boundingBox();
+    expect(contactBounds?.width).toBeCloseTo(186, 0);
+    expect(contactBounds?.height).toBeCloseTo(239, 0);
+    const panelContent = panel.locator('[data-section="contact"]');
+    expect((await panelContent.boundingBox())?.height).toBeCloseTo(281, -1);
+    for (const link of await contact.getByRole('link').all()) {
+      const bounds = await link.boundingBox();
+      expect(bounds!.x).toBeGreaterThanOrEqual(contactBounds!.x);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(contactBounds!.x + contactBounds!.width);
+      expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(contactBounds!.y + contactBounds!.height);
+    }
+    await page.keyboard.press('Escape');
+    await expect(header.getByRole('button', { name: 'Contact', exact: true })).toBeFocused();
+    await header.getByRole('button', { name: 'Mission', exact: true }).click();
+    expect((await panel.getByRole('complementary', { name: 'Our mission' }).boundingBox())?.width).toBeCloseTo(499, 0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+  });
+}

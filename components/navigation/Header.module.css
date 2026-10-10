@@ -146,3 +146,15 @@
 @media (prefers-reduced-motion: no-preference) { .redButton,.learnMore,.menuLink { transition:background-color .15s,color .15s; } }
 
 .panelContent[data-section="mission"] .itemIcon { color:#292f6c; }
+
+@media (min-width:1280px) {
+ .panelContent[data-section="mission"] { grid-template-columns:minmax(0,1fr) 499px; }
+ .desktopPanel[data-section="contact"] { transform:translateX(28px); }
+ .panelContent[data-section="contact"] { grid-template-columns:minmax(0,455px) 186px; gap:26px; min-height:280px; padding:21px 30px; }
+ .contactPromo { width:186px; height:239px; padding:12px; gap:0; }
+ .contactPromo .promoStar { font-size:20px; line-height:24px; margin-bottom:3px; }
+ .contactPromo h3 { font-size:12px; line-height:1.2; margin:0; }
+ .contactPromo>img { width:36px; height:36px; margin:8px 0 0; }
+ .contactPromo>a:not(.redButton) { min-height:32px; display:flex; align-items:center; font-size:11px; line-height:1.15; }
+ .contactPromo .redButton { margin-top:6px; width:126px; flex-shrink:0; }
+}
