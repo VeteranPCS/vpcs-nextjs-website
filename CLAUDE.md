@@ -36,6 +36,8 @@ VeteranPCS is a Next.js site that connects active-duty service members, veterans
 | `npm test` | Vitest one-shot (pre-commit) |
 | `npm run lint:content` | Blog editorial audit (`scripts/audit-blog-editorial.mjs`); **not** in pre-commit |
 | `npm run test:watch` | Vitest watch mode |
+| `npm run test:e2e:server` | Isolated local dry-run preview; select port with `E2E_BASE_URL` |
+| `npm run test:e2e` | Playwright responsive/interaction suite; requires local `E2E_BASE_URL` and `E2E_LEAD_DRY_RUN=1` for submissions |
 | `npm run eval` | Concierge eval suites (`vitest run -c vitest.eval.config.ts`); on-demand, not in `npm test` |
 
 Pre-commit hook (`.husky/pre-commit`) runs `lint && type-check && test && build`, ordered fastest-failing first. The full suite is ~2s, so tests are cheap; `build` is the slow step and stays because content loaders throw at module load, catching bad JSON the unit suite misses. `npm run lint:content` is **not** in the hook: run it manually after `content/blog/` changes. Never use `--no-verify` to bypass the hook unless the user explicitly asks.

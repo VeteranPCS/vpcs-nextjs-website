@@ -49,7 +49,7 @@ const MilitarySpouseApproved = async () => {
                   block.listItem === "bullet" ? (
                     <li
                       key={block._key}
-                      className="text-[#58595D] roboto lg:text-[20px] md:text-[20px] sm:text-[20px] text-[20px] font-medium list-disc mb-2 lg:w-[500px]"
+                      className="text-[#58595D] roboto lg:text-[20px] md:text-[20px] sm:text-[20px] text-[20px] font-medium list-disc mb-2 lg:w-[500px] max-w-full"
                     >
                       {block.children.map((child) => child.text).join(" ")}
                     </li>

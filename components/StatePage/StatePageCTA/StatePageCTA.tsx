@@ -36,7 +36,7 @@ const StatePageCTA = ({ cityName, stateSlug }: { cityName: string; stateSlug: st
               />
             </div>
             <div>
-              <h2 className="text-white text-[31px] font-bold mt-5 md:text-left text-center lg:w-[500px]">
+              <h2 className="text-white text-[31px] font-bold mt-5 md:text-left text-center lg:w-[500px] max-w-full">
                 Talk to our Agents in {cityName} Today
               </h2>
               <p className="text-white lg:text-[18px] md:text-[19px] text-[16px] font-normal leading-[25px] mt-4 md:text-left text-center">

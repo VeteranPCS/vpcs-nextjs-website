@@ -82,10 +82,12 @@ If you find yourself about to click Submit without that flag set, stop.
 LEAD_DRY_RUN=1 npm run dev     # binds 127.0.0.1:3000, not localhost:3000
 ```
 
-Use **Playwright MCP**, not claude-in-chrome. Harper's Chrome tabs are frequently
-visibility-hidden, which makes screenshots unreliable and silently wrong. Playwright MCP is
-available as a plugin at the agent level; note the repo itself has no Playwright npm dependency, so
-there is nothing to `npm install` and no test file to write against it.
+Use **Playwright MCP** when available, or the repository's pinned Playwright runner. Harper's
+Chrome tabs are frequently visibility-hidden, which makes screenshots unreliable. The repo now
+includes responsive and interaction specifications under `e2e/`; select the isolated local origin
+with `E2E_BASE_URL`. `npm run test:e2e:server` starts a dry-run preview and `npm run test:e2e` runs
+the suite. Set `E2E_LEAD_DRY_RUN=1` only after confirming the selected server uses dry-run mode.
+Keep screenshot fixtures confined to tests and also smoke-test normal application data paths.
 
 For the generic mechanics of driving a browser and what counts as sufficient evidence, use the
 global `agent-browser` and `superpowers:verification-before-completion` skills. This file only

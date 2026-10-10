@@ -28,6 +28,17 @@ for (const route of routes) {
       await assertNoOverflow(page);
       await page.screenshot({ path: testInfo.outputPath('spanish-support.png') });
     }
+    if (route === '/texas' || route === '/guides') {
+      const copy = route === '/texas'
+        ? page.getByRole('heading', { name: 'Talk to our Agents in Texas Today' })
+        : page.getByText('We are military families, helping military families move.', { exact: true });
+      await copy.scrollIntoViewIfNeeded();
+      const bounds = await copy.boundingBox();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+      await assertNoOverflow(page);
+      await page.screenshot({ path: testInfo.outputPath('shared-copy-clearance.png'), caret: 'initial' });
+    }
     expect(errors).toEqual([]);
   });
 }
@@ -45,5 +56,17 @@ test('reduced motion and 200 percent equivalent viewport retain usable navigatio
   await expect(drawer.getByRole('link', { name: 'Explore Free Guides' })).toBeInViewport();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('button', { name: 'Open navigation' })).toBeFocused();
+  await assertNoOverflow(page);
+});
+
+
+test('military spouse resource copy fits its column at the tablet transition', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await fixtureImpact(page);
+  await page.goto('/military-spouse');
+  const copy = page.getByText('Moving can be a huge stressor. Check out these helpful resources.', { exact: true });
+  await copy.scrollIntoViewIfNeeded();
+  const bounds = await copy.boundingBox();
+  expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(1024);
   await assertNoOverflow(page);
 });

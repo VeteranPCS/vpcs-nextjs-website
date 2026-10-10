@@ -1,0 +1,32 @@
+# Steph redesign discrepancy and acceptance ledger
+
+The lane review passes cover implemented behavior and the available reference composition. They do not close the source dependencies below.
+
+## Open fidelity acceptance items
+
+| Reference region | Current implementation | Remaining requirement |
+|---|---|---|
+| Resources PDF, page1 hero | Exact clean native photograph crop, composed with the extracted flag and HTML text. Part of the child on the left is outside the recoverable rectangle. | Clean full-resolution original for the entire family composition. |
+| VA Loan PDF, page1 hero | Exact faces/house/flag/upper-hand crop with an HTML calculator invitation. | Original lower hand, keys and bodies are obscured by the flattened sample calculator; full image is still required. |
+| Resources and VA Loan featured cards | Eight exact native photo strips, with HTML badges and text. | Original-resolution images for crisp larger displays. Native strips are only183–186px wide. |
+| All reference typography | Scoped Tahoma-first font stack; existing fallbacks remain available. | Deployable intended webfont files or a supplied font-kit URL. The recovered brand guide specifies Tahoma Regular/Bold; PDF subsets cannot supply complete webfonts. |
+| Resources duty-station tiles | Six real guide destinations use their existing article images. | Intentional image departure from the mock city photos needs acceptance or matching clean originals. |
+
+An asset agent inspected the permitted page folders, branding folder, Drive image/font searches and the repository asset corpus. The original PDFs and branding guide were retrieved and preserved. The explicitly excluded editing folder remains uninspected; the request to inspect it is pending.
+
+## Settled content and behavior adaptations
+
+- Mobile homepage omits the inline bonus calculator and retains the Resources tool link; recruitment, internship and newsletter follow the illustrated mobile sections.
+- Navigation uses Mission and existing destinations; desktop navigation begins at1280px. Shared header height is128px on phone/tablet and208px on desktop.
+- Mock impact totals, ratings, borrower counts and review identities are replaced by verified values, genuine reviews or nonnumeric copy.
+- BAH uses2026/26, explicit submission and returned dependent rates. Annual allowance is monthly×12. Home price is entered separately for the existing bonus tiers; BAH is not converted into invented affordability.
+- Guide promotions deliver existing documents and collect their existing required fields. The homepage/blog offer correctly names the First-Time Homebuyer Guide. The PCS checklist is an article and says View Checklist.
+- Resources counts and search use the published corpus; Featured replaces unsupported popularity rankings. Verified resource/partner records replace unsupported discount and partnership claims.
+- VA preapproval/eligibility point to contact-lender; Request a Call points to contact. Contact details are719-782-5065 and info@veteranpcs.com. Benefit qualifications and existing contact mappings are retained.
+- Articles retain complete real MDX, author/state attribution, metadata, canonical URLs and structured data. Promotions are inserted at parsed top-level boundaries; short or scope-dependent documents remain intact.
+
+## Corrected review findings
+
+Header proportions, icon visibility, complete background inertness, focus restoration, homepage tablet mission wrapping, pending search cancellation, BAH tablet cards, dialog keyboard wrapping, Spanish overflow, article tablet guide-button width, article/chat action clearance, and flattened hero divider edges were corrected and independently rechecked. Final shared regression also found fixed500px text overflowing its columns on Texas, Guides and Military Spouse pages; targeted max-width constraints preserve the original copy and links.
+
+Only independently approved navigation and BAH regions have committed visual snapshots. Other pages retain responsive screenshots and layout assertions while their listed asset dependencies remain open.

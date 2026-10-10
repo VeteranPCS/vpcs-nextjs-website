@@ -78,7 +78,7 @@ const FamilySupport = async () => {
               <h2 className="text-white poppins md:text-[35px] text-[31px] font-bold mt-5 md:text-left text-center px-0">
                 {storyDetails?.header}
               </h2>
-              <div className="text-white roboto text-[16px] font-medium mt-4 md:w-[500px] w-full">
+              <div className="text-white roboto text-[16px] font-medium mt-4 md:w-[500px] w-full max-w-full">
                 {storyDetails?.description?.map((point, index) => (
                   <SupportContent
                     key={point._id || index}

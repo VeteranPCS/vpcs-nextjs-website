@@ -67,7 +67,7 @@
   },
   "cleanBitmapRegions": [
     {
-      "asset": "public/images/redesign/resources-hero-clean-region.png",
+      "asset": "public/images/redesign/resources-hero-photo-region.png",
       "sourceDriveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
       "page": 1,
       "nativeBitmapDimensions": [
@@ -76,16 +76,16 @@
       ],
       "cropBoundsExclusive": [
         440,
-        94,
+        105,
         864,
         352
       ],
       "outputDimensions": [
         424,
-        258
+        247
       ],
-      "sha256": "f9877e93576bd65be4211e4db06e3c7a6f79826aefaddc7ac7597400baebabf3",
-      "status": "Exact visible family, house and flag photograph; native-resolution crop; no controls/text"
+      "sha256": "7a003e6faf648c0396edc10295e7e56232c466ba22f75e9563a7a22d7684b360",
+      "status": "Exact native photograph crop; header/divider rows removed after independent review; no controls/text"
     },
     {
       "asset": "public/images/redesign/va-hero-photo-region.png",
@@ -212,5 +212,6 @@
       "sha256": "d3f66abb14cc178c1a446960e60b756498beb7df1c3fe012e654dd5668c6e163",
       "status": "Exact native photograph strip; flattened badge excluded"
     }
-  ]
+  ],
+  "localReferenceDirectory": "/Users/harperfoley/.codex/visualizations/2026/10/10/01a1238e-ff79-78f3-a921-ff8ccdbb7759/steph-redesign/references"
 }
