@@ -1,385 +1,150 @@
 'use client';
 
-import { useState, FormEvent, ChangeEvent, useEffect, useRef, useCallback } from 'react';
-import { BAHData } from '@/lib/bah-scraper';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import Link from 'next/link';
-import { sendGTMEvent } from "@next/third-parties/google";
+import { sendGTMEvent } from '@next/third-parties/google';
+import type { BAHData } from '@/lib/bah-scraper';
+import { BAH_API_YEAR, BAH_YEAR } from '@/lib/bah/year';
+import { calculateMovingBonus } from '@/lib/bonus/calculate';
 import { captureAnalyticsEvent } from '@/lib/analytics/client';
 import { zipPrefix } from '@/lib/analytics/sanitizer';
 import { buildCtaProperties } from '@/lib/analytics/cta';
+import styles from './BAHCalculator.module.css';
 
-interface FormData {
-    zipCode: string;
-    year: string;
-    rank: string;
-    dependents: boolean;
+const ranks = ['E-1', 'E-2', 'E-3', 'E-4', 'E-5', 'E-6', 'E-7', 'E-8', 'E-9', 'W-1', 'W-2', 'W-3', 'W-4', 'W-5', 'O1E', 'O2E', 'O3E', 'O-1', 'O-2', 'O-3', 'O-4', 'O-5', 'O-6', 'O-7/O-7+'];
+const money = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
+interface Snapshot { zipCode: string; rank: string; dependents: boolean }
+interface Result { data: BAHData; submitted: Snapshot }
+interface ApiResponse { success: boolean; data?: BAHData; error?: string }
+
+function Icon({ kind = 'calculator' }: { kind?: 'calculator' | 'house' | 'shield' | 'check' | 'star' | 'clipboard' }) {
+    return <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
+        {kind === 'calculator' && <><rect x="11" y="3" width="26" height="42" rx="3" /><path d="M16 9h16v7H16zM16 23h4m5 0h4m-13 8h4m5 0h4m-13 8h4m5 0h4M33 23v16" /></>}
+        {kind === 'clipboard' && <><rect x="9" y="8" width="30" height="37" rx="3" /><path d="M17 8V3h14v5M16 19h16M16 26h16M16 33h16M16 40h16" /></>}
+        {kind === 'house' && <><path d="M3 22 24 5l21 17M9 20v24h12V30h8v14h10V20" /><path d="M34 6v10" /></>}
+        {kind === 'shield' && <path d="M24 3c6 5 12 6 18 7v14c0 10-8 17-18 21C14 41 6 34 6 24V10c6-1 12-2 18-7Z" />}
+        {kind === 'check' && <><circle cx="24" cy="24" r="21" fill="currentColor" /><path d="m14 24 7 7 13-16" stroke="white" strokeWidth="4" /></>}
+        {kind === 'star' && <path d="m24 3 5 15h16L32 28l5 16-13-10-13 10 5-16L3 18h16Z" />}
+    </svg>;
 }
 
-interface APIResponse {
-    success: boolean;
-    data?: BAHData;
-    error?: string;
-}
-
-function getRankDisplayName(rankValue: string): string {
-    const rankMap: { [key: string]: string } = {
-        '1': 'E-1', '2': 'E-2', '3': 'E-3', '4': 'E-4', '5': 'E-5',
-        '6': 'E-6', '7': 'E-7', '8': 'E-8', '9': 'E-9',
-        '10': 'W-1', '11': 'W-2', '12': 'W-3', '13': 'W-4', '14': 'W-5',
-        '15': 'O1E', '16': 'O2E', '17': 'O3E',
-        '18': 'O-1', '19': 'O-2', '20': 'O-3', '21': 'O-4', '22': 'O-5', '23': 'O-6', '24': 'O-7/O-7+'
-    };
-    return rankMap[rankValue] || rankValue;
-}
-
-export default function BAHCalculator() {
-    const [formData, setFormData] = useState<FormData>({
-        zipCode: '',
-        year: '26', // Default to 2026
-        rank: '',
-        dependents: false
-    });
-    const [loading, setLoading] = useState<boolean>(false);
-    const [result, setResult] = useState<BAHData | null>(null);
+export default function BAHCalculator({ fullPage = false }: { fullPage?: boolean }) {
+    const id = useId();
+    const [form, setForm] = useState<Snapshot>({ zipCode: '', rank: '', dependents: false });
+    const [result, setResult] = useState<Result | null>(null);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const lastRequestRef = useRef<string>('');
+    const [fieldErrors, setFieldErrors] = useState<{ rank?: string; zipCode?: string }>({});
+    const [homePrice, setHomePrice] = useState('');
+    const request = useRef<{ sequence: number; controller: AbortController | null; busy: boolean }>({ sequence: 0, controller: null, busy: false });
+    const resultRef = useRef<HTMLDivElement>(null);
+    const rankRef = useRef<HTMLSelectElement>(null);
+    const zipRef = useRef<HTMLInputElement>(null);
 
-    // Currency formatter
-    const formatCurrency = (amount: number): string => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD'
-        }).format(amount);
-    };
+    useEffect(() => () => { request.current.sequence += 1; request.current.controller?.abort(); }, []);
 
-    const trackBahCalculatorUsed = useCallback((data: BAHData): void => {
-        captureAnalyticsEvent('bah_calculator_used', {
-            zip_prefix: zipPrefix(formData.zipCode),
-            paygrade: getRankDisplayName(formData.rank),
-            dependents: formData.dependents,
-            year: data.year,
-            mha: data.mha,
-        });
-    }, [formData.dependents, formData.rank, formData.zipCode]);
-
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
+    function updateLookup(field: 'rank' | 'zipCode', value: string) {
+        request.current.sequence += 1;
+        request.current.controller?.abort();
+        request.current.busy = false;
+        setLoading(false);
         setResult(null);
+        setError(null);
+        setFieldErrors({});
+        setForm(previous => ({ ...previous, [field]: value }));
+    }
 
+    async function submit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        if (request.current.busy) return;
+        const errors = {
+            ...(!ranks[Number(form.rank) - 1] && { rank: 'Select your pay grade.' }),
+            ...(!/^\d{5}$/.test(form.zipCode) && { zipCode: 'Enter a 5-digit duty station ZIP code.' }),
+        };
+        setFieldErrors(errors);
+        if (errors.rank || errors.zipCode) {
+            if (errors.rank) rankRef.current?.focus(); else zipRef.current?.focus();
+            return;
+        }
+        const submitted = { ...form };
+        const sequence = ++request.current.sequence;
+        const controller = new AbortController();
+        request.current.controller?.abort();
+        request.current.controller = controller;
+        request.current.busy = true;
+        setLoading(true);
+        setResult(null);
+        setError(null);
         try {
             const response = await fetch('/api/v1/bah', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    zipCode: formData.zipCode,
-                    year: formData.year,
-                    rank: formData.rank
-                })
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ zipCode: submitted.zipCode, rank: submitted.rank, year: BAH_API_YEAR }),
+                signal: controller.signal,
             });
-
-            const data: APIResponse = await response.json();
-
-            if (data.success && data.data) {
-                setResult(data.data);
-
-                // Send GTM event for successful BAH calculation
-                sendGTMEvent({
-                    event: 'bah_calculator_use',
-                    bah_zip_prefix: zipPrefix(formData.zipCode),
-                    bah_paygrade: getRankDisplayName(formData.rank)
-                });
-                trackBahCalculatorUsed(data.data);
-            } else {
-                setError(data.error || 'Unknown error occurred');
-            }
-        } catch (err) {
-            setError('Failed to calculate BAH. Please try again.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleInputChange = (e: ChangeEvent<HTMLSelectElement>): void => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    const handleZipCodeChange = (e: ChangeEvent<HTMLInputElement>): void => {
-        // Only allow numbers, max 5 digits
-        const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 5);
-        setFormData(prev => ({ ...prev, zipCode: value }));
-    };
-
-    const toggleDependents = (): void => {
-        setFormData(prev => ({ ...prev, dependents: !prev.dependents }));
-    };
-
-    // Auto-submit when all required fields are filled (excluding dependents as it doesn't affect API call)
-    useEffect(() => {
-        if (formData.zipCode && formData.rank && !loading) {
-            // Create a unique request key to prevent duplicate requests (excluding dependents)
-            const requestKey = `${formData.zipCode}-${formData.rank}-${formData.year}`;
-
-            // Don't make the same request twice
-            if (requestKey === lastRequestRef.current) {
+            const payload: ApiResponse = await response.json();
+            if (sequence !== request.current.sequence) return;
+            if (!response.ok || !payload.success || !payload.data) {
+                setError(payload.error || 'We couldn’t find that BAH rate. Check your ZIP code and try again.');
                 return;
             }
-
-            // Auto-submit after a short delay to prevent excessive API calls
-            const timer = setTimeout(async () => {
-                // Check again if this is still the latest request
-                if (requestKey !== `${formData.zipCode}-${formData.rank}-${formData.year}`) {
-                    return;
-                }
-
-                lastRequestRef.current = requestKey;
-
-                try {
-                    setLoading(true);
-                    setError(null);
-                    setResult(null);
-
-                    const response = await fetch('/api/v1/bah', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            zipCode: formData.zipCode,
-                            year: formData.year,
-                            rank: formData.rank
-                        })
-                    });
-
-                    const data: APIResponse = await response.json();
-
-                    if (data.success && data.data) {
-                        setResult(data.data);
-                        trackBahCalculatorUsed(data.data);
-
-                        // Send GTM event for successful BAH calculation
-                        sendGTMEvent({
-                            event: 'bah_calculator_use',
-                            bah_zip_prefix: zipPrefix(formData.zipCode),
-                            bah_paygrade: getRankDisplayName(formData.rank)
-                        });
-                    } else {
-                        setError(data.error || 'Unknown error occurred');
-                    }
-                } catch (err) {
-                    setError('Failed to calculate BAH. Please try again.');
-                } finally {
-                    setLoading(false);
-                }
-            }, 500);
-            return () => clearTimeout(timer);
+            const data = payload.data;
+            if (!data.isValid || Number(data.year.length === 2 ? `20${data.year}` : data.year) !== BAH_YEAR || data.zipCode !== submitted.zipCode || !Number.isFinite(data.withDependents) || !Number.isFinite(data.withoutDependents)) {
+                setError('BAH rates are unavailable for that ZIP code. Check your duty station ZIP code and try again.');
+                return;
+            }
+            setResult({ data, submitted });
+            sendGTMEvent({ event: 'bah_calculator_use', bah_zip_prefix: zipPrefix(submitted.zipCode), bah_paygrade: ranks[Number(submitted.rank) - 1] });
+            captureAnalyticsEvent('bah_calculator_used', {
+                zip_prefix: zipPrefix(submitted.zipCode),
+                paygrade: ranks[Number(submitted.rank) - 1],
+                dependents: submitted.dependents,
+                year: BAH_YEAR.toString(),
+                mha: data.mha,
+            });
+            resultRef.current?.focus();
+        } catch {
+            if (sequence !== request.current.sequence || controller.signal.aborted) return;
+            setError('We couldn’t calculate your BAH. Please try again.');
+        } finally {
+            if (sequence === request.current.sequence) { request.current.busy = false; setLoading(false); }
         }
-    }, [formData.zipCode, formData.rank, formData.year, loading, trackBahCalculatorUsed]);
+    }
 
-    return (
-        <div id="bah-calculator" className="w-full max-w-6xl mx-auto my-8 bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div className="flex flex-col lg:flex-row">
-                {/* Left Column - Calculator Form */}
-                <div className="flex-1 p-6 md:p-10 lg:p-12">
-                    {/* Header with Icon */}
-                    <div className="flex items-start mb-6 md:mb-8">
-                        <div className="mr-4 flex-shrink-0">
-                            {/* House + Calculator Icon */}
-                            <div className="relative">
-                                <svg width="60" height="60" viewBox="0 0 60 60" className="text-blue-900">
-                                    {/* House */}
-                                    <path d="M30 8L12 21v24h12V30h12v15h12V21L30 8z" fill="currentColor" />
-                                    {/* Calculator */}
-                                    <rect x="35" y="32" width="18" height="22" rx="2" fill="currentColor" />
-                                    <rect x="37" y="34" width="14" height="3" fill="white" />
-                                    <circle cx="39" cy="41" r="1.5" fill="white" />
-                                    <circle cx="44" cy="41" r="1.5" fill="white" />
-                                    <circle cx="49" cy="41" r="1.5" fill="white" />
-                                    <circle cx="39" cy="46" r="1.5" fill="white" />
-                                    <circle cx="44" cy="46" r="1.5" fill="white" />
-                                    <circle cx="49" cy="46" r="1.5" fill="white" />
-                                    <circle cx="39" cy="51" r="1.5" fill="white" />
-                                    <circle cx="44" cy="51" r="1.5" fill="white" />
-                                    <circle cx="49" cy="51" r="1.5" fill="white" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="flex-1">
-                            <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-2">BAH Calculator</h2>
-                            <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                                Use the BAH calculator below to find your 2026 BAH rates. Enter your
-                                pay grade, dependent status and duty station ZIP code to see
-                                your monthly and annual BAH amount.
-                            </p>
-                        </div>
+    const monthly = result ? (form.dependents ? result.data.withDependents : result.data.withoutDependents) : null;
+    const price = Number(homePrice.replaceAll(',', ''));
+    const bonus = homePrice && Number.isFinite(price) && price > 0 ? calculateMovingBonus(price) : null;
+    return <div className={`${styles.calculator} ${fullPage ? '' : styles.embedded}`} id="bah-calculator">
+        <div className={styles.cards}>
+            <section className={styles.formCard} aria-labelledby={`${id}-heading`}>
+                <div className={styles.formHeading}><span className={styles.calculatorIcon}><Icon /></span><div><h2 id={`${id}-heading`}>Let’s Calculate your BAH</h2><p>Provide your information below to see your {BAH_YEAR} BAH rate.</p></div></div>
+                <form onSubmit={submit} noValidate>
+                    <div className={styles.inputRow}>
+                        <div><label htmlFor={`${id}-rank`}>Pay Grade</label><select ref={rankRef} id={`${id}-rank`} value={form.rank} onChange={event => updateLookup('rank', event.target.value)} aria-invalid={!!fieldErrors.rank} aria-describedby={fieldErrors.rank ? `${id}-rank-error` : undefined}><option value="">Select</option>{ranks.map((rank, index) => <option key={rank} value={String(index + 1)}>{rank}</option>)}</select>{fieldErrors.rank && <p className={styles.fieldError} id={`${id}-rank-error`}>{fieldErrors.rank}</p>}</div>
+                        <div><label htmlFor={`${id}-dependents`}>Dependents</label><select id={`${id}-dependents`} value={form.dependents ? 'yes' : 'no'} onChange={event => setForm(previous => ({ ...previous, dependents: event.target.value === 'yes' }))}><option value="no">No</option><option value="yes">Yes</option></select></div>
                     </div>
-
-
-                    {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
-                        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-                            {/* Paygrade */}
-                            <div className="flex-1">
-                                <label htmlFor="rank" className="block text-sm md:text-base font-medium text-gray-700 mb-3">
-                                    Paygrade
-                                </label>
-                                <select
-                                    id="rank"
-                                    name="rank"
-                                    value={formData.rank}
-                                    onChange={handleInputChange}
-                                    className="w-full px-4 py-3 md:py-4 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                                    required
-                                >
-                                    {!formData.rank && <option value="">--Select--</option>}
-                                    <option value="1">E-1</option>
-                                    <option value="2">E-2</option>
-                                    <option value="3">E-3</option>
-                                    <option value="4">E-4</option>
-                                    <option value="5">E-5</option>
-                                    <option value="6">E-6</option>
-                                    <option value="7">E-7</option>
-                                    <option value="8">E-8</option>
-                                    <option value="9">E-9</option>
-                                    <option value="10">W-1</option>
-                                    <option value="11">W-2</option>
-                                    <option value="12">W-3</option>
-                                    <option value="13">W-4</option>
-                                    <option value="14">W-5</option>
-                                    <option value="15">O1E</option>
-                                    <option value="16">O2E</option>
-                                    <option value="17">O3E</option>
-                                    <option value="18">O-1</option>
-                                    <option value="19">O-2</option>
-                                    <option value="20">O-3</option>
-                                    <option value="21">O-4</option>
-                                    <option value="22">O-5</option>
-                                    <option value="23">O-6</option>
-                                    <option value="24">O-7/O-7+</option>
-                                </select>
-                            </div>
-
-                            {/* Dependents */}
-                            <div className="flex-1">
-                                <label className="block text-sm md:text-base font-medium text-gray-700 mb-3">
-                                    Dependents
-                                </label>
-                                <button
-                                    type="button"
-                                    onClick={toggleDependents}
-                                    className={`w-full px-4 py-3 md:py-4 text-base border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${formData.dependents
-                                        ? 'bg-blue-600 text-white border-blue-600'
-                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                                        }`}
-                                >
-                                    {formData.dependents ? 'With dependents' : 'No dependents'}
-                                </button>
-                            </div>
-
-                            {/* ZIP Code */}
-                            <div className="flex-1">
-                                <label htmlFor="zipCode" className="block text-sm md:text-base font-medium text-gray-700 mb-3">
-                                    Duty Station ZIP Code
-                                </label>
-                                <input
-                                    type="text"
-                                    inputMode="numeric"
-                                    id="zipCode"
-                                    name="zipCode"
-                                    value={formData.zipCode}
-                                    onChange={handleZipCodeChange}
-                                    placeholder="12345"
-                                    className="w-full px-4 py-3 md:py-4 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    required
-                                />
-                            </div>
-                        </div>
-                    </form>
-
-                    {error && (
-                        <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                            <p className="text-red-700">Error: {error}</p>
-                        </div>
-                    )}
+                    <div className={styles.zipField}><label htmlFor={`${id}-zip`}>Duty Station ZIP Code</label><input ref={zipRef} id={`${id}-zip`} inputMode="numeric" autoComplete="postal-code" maxLength={5} placeholder="e.g. 48329" value={form.zipCode} onChange={event => updateLookup('zipCode', event.target.value.replace(/[^0-9]/g, '').slice(0, 5))} aria-invalid={!!fieldErrors.zipCode} aria-describedby={fieldErrors.zipCode ? `${id}-zip-error` : undefined} />{fieldErrors.zipCode && <p className={styles.fieldError} id={`${id}-zip-error`}>{fieldErrors.zipCode}</p>}</div>
+                    <button className={styles.redButton} type="submit" disabled={loading}>{loading ? 'Calculating…' : 'Calculate My BAH'}<span aria-hidden="true">›</span></button>
+                    <p className={styles.privacy}><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 7V4a4 4 0 0 1 8 0v3h1v9H3V7h1Zm2 0h4V4a2 2 0 0 0-4 0v3Z" /></svg>Your information is secure and never sold.</p>
+                </form>
+            </section>
+            <section className={styles.resultCard} aria-labelledby={`${id}-result-title`}>
+                <h2 id={`${id}-result-title`}>Your {BAH_YEAR} BAH</h2>
+                <div className={styles.resultBody} aria-live="polite" aria-busy={loading} ref={resultRef} tabIndex={-1}>
+                    {loading ? <div className={styles.empty}><span className={styles.spinner} aria-hidden="true" /><h3>Calculating your BAH</h3><p>Looking up {BAH_YEAR} rates for your duty station.</p></div> : error ? <div className={styles.empty}><h3>Let’s try that again</h3><p role="alert">{error}</p><p>Review your information, then select Calculate My BAH to retry.</p></div> : result && monthly !== null ? <>
+                        <p className={styles.resultContext}>{result.data.mha}<br />{ranks[Number(result.submitted.rank) - 1]} · ZIP {result.submitted.zipCode} · {form.dependents ? 'With dependents' : 'Without dependents'}</p>
+                        <p className={styles.monthlyLabel}>Monthly BAH</p><p className={styles.monthly} data-testid="bah-monthly">{money(monthly)}</p>
+                        <div className={styles.annual}><p>Annual Housing Allowance</p><strong data-testid="bah-annual">{money(monthly * 12)}</strong></div>
+                    </> : <div className={styles.empty}><span className={styles.emptyIcon}><Icon kind="house" /></span><h3>Plan your next PCS</h3><p>Enter your pay grade, dependent status, and duty station ZIP code to see your monthly and annual allowance.</p></div>}
+                    <div className={styles.benefits}><div><span><Icon kind="house" /></span><p>Tax free<br />Income</p></div><div><span><Icon kind="clipboard" /></span><p>Updated<br />for {BAH_YEAR}</p></div><div><span><Icon kind="shield" /></span><p>Official<br />Rates</p></div></div>
                 </div>
-
-                {/* Right Column - Results */}
-                <div className="flex-1 bg-red-800 p-6 md:p-10 lg:p-12 text-white">
-                    {loading && (
-                        <div className="flex flex-col items-center justify-center h-full">
-                            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-                            <p className="text-lg">Calculating BAH rates...</p>
-                        </div>
-                    )}
-
-                    {result && !loading && (
-                        <div className="h-full flex flex-col">
-                            <div className="mb-6">
-                                <h2 className="text-2xl font-bold mb-1">{result.mha}</h2>
-                                <p className="text-sm opacity-90">
-                                    {getRankDisplayName(formData.rank)} {formData.dependents ? 'With' : 'Without'} Dependents at {result.zipCode}
-                                </p>
-                                <div className="w-full h-px bg-white opacity-30 mt-4"></div>
-                            </div>
-
-                            <div className="space-y-4 flex-1">
-                                <div>
-                                    <p className="text-sm opacity-90 mb-1">Monthly Allowance</p>
-                                    <p className="text-4xl font-bold leading-none">
-                                        {formatCurrency(formData.dependents ? result.withDependents : result.withoutDependents)}
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <p className="text-sm opacity-90 mb-1">Yearly Allowance</p>
-                                    <p className="text-2xl font-bold leading-none">
-                                        {formatCurrency((formData.dependents ? result.withDependents : result.withoutDependents) * 12)}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="mt-6">
-                                <Link
-                                    href="/contact-lender"
-                                    className="w-full bg-blue-800 text-white py-3 px-6 rounded-lg hover:bg-blue-900 transition-colors font-semibold text-sm"
-                                    onClick={() => captureAnalyticsEvent('calculator_cta_clicked', buildCtaProperties({
-                                        ctaId: 'bah_result_lender_cta',
-                                        ctaIntent: 'contact_lender',
-                                        ctaPosition: 'bah_result',
-                                        ctaComponent: 'bah_calculator',
-                                        ctaLabel: 'Questions about VA Loan?',
-                                        destination: '/contact-lender',
-                                        pageType: 'calculator',
-                                        calculatorId: 'bah_calculator',
-                                        calculatorName: 'BAH Calculator',
-                                        partnerType: 'lender',
-                                    }))}
-                                >
-                                    Questions about VA Loan?
-                                </Link>
-                            </div>
-                        </div>
-                    )}
-
-                    {!result && !loading && (
-                        <div className="flex items-center justify-center">
-                            <div className="text-center">
-                                <h3 className="text-xl lg:text-2xl font-bold mb-4">Calculate Your BAH</h3>
-                                <p className="text-base opacity-90 leading-relaxed">
-                                    Enter your information in the form to see your Basic Allowance for Housing rates.
-                                </p>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
+            </section>
         </div>
-    );
+        {fullPage && <section className={styles.meaning} aria-labelledby={`${id}-meaning`}>
+            <div className={styles.meaningContent}><h2 id={`${id}-meaning`}>What does your BAH mean?</h2><div className={styles.meaningColumns}>
+                <div className={styles.buyingPower}><span className={styles.largeIcon}><Icon kind="house" /></span><div><h3>Explore your buying power</h3><p>Use your BAH alongside your income, debts, and loan details to plan your home budget.</p><Link href="/va-loan-calculator">Open VA Loan Calculator <span aria-hidden="true">›</span></Link></div></div>
+                <div className={styles.bonus}><h3>VeteranPCS Bonus</h3><label htmlFor={`${id}-price`}>Planned home price</label><input id={`${id}-price`} type="text" inputMode="decimal" placeholder="e.g. 420000" value={homePrice} onChange={event => setHomePrice(event.target.value.replace(/[^0-9.,]/g, ''))} /><strong aria-live="polite" data-testid="bah-bonus">{bonus === null ? 'Enter a home price' : money(bonus)}</strong><p>Given back to you at closing when you buy or sell with us. <Link href="/military-pcs-moving-bonus">See bonus details.</Link></p></div>
+            </div></div>
+            <aside className={styles.agentCta}><div><span><Icon kind="star" /></span><h3>Military Families helping<br />Military Families Move.</h3></div><Link className={styles.redButton} href="/contact-agent" onClick={() => captureAnalyticsEvent('calculator_cta_clicked', buildCtaProperties({ ctaId: 'bah_result_agent_cta', ctaIntent: 'contact_agent', ctaPosition: 'bah_interpretation', ctaComponent: 'bah_calculator', ctaLabel: 'Find a Veteran or Mil Spouse Agent', destination: '/contact-agent', pageType: 'calculator', calculatorId: 'bah_calculator', calculatorName: 'BAH Calculator', partnerType: 'agent' }))}>Find a Veteran or Mil Spouse Agent <span aria-hidden="true">›</span></Link><p>It’s free, fast and obligation-free.</p></aside>
+        </section>}
+    </div>;
 }
