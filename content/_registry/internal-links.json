@@ -1,6 +1,6 @@
 {
-  "contentHash": "864c19fdabca10ba2f83a60f07fb002b518d6cb38df50571094fb3079654d597",
-  "totalPosts": 397,
+  "contentHash": "ee4dc3ec86ba27133fed84b09ff7868a591290384793327b501c389dffafcf88",
+  "totalPosts": 398,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -80,7 +80,8 @@
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
       "relocating-to-west-texas-midland-odessa-guide",
       "unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach",
-      "unlocking-opportunities-a-recap-of-the-jhu-veteranpcs-event"
+      "unlocking-opportunities-a-recap-of-the-jhu-veteranpcs-event",
+      "where-to-live-after-military-retirement"
     ],
     "PCS Help": [
       "10-essential-questions-for-first-time-military-home-buyers",
@@ -493,7 +494,8 @@
       "pcsing-to-another-state-how-veteranpcs-eases-the-transition-with-veteran-real-estate-experts",
       "relocating-to-west-texas-midland-odessa-guide",
       "unleashing-veteran-leadership-in-commercial-real-estate-a-mission-driven-approach",
-      "unlocking-opportunities-a-recap-of-the-jhu-veteranpcs-event"
+      "unlocking-opportunities-a-recap-of-the-jhu-veteranpcs-event",
+      "where-to-live-after-military-retirement"
     ],
     "pcs-help": [
       "10-essential-questions-for-first-time-military-home-buyers",
@@ -910,6 +912,7 @@
       "pcs-to-tyndall-afb-panama-city-2026-guide",
       "pcsing-to-florida-military-bases-2026-guide",
       "what-military-bases-are-in-florida",
+      "where-to-live-after-military-retirement",
       "your-first-home-in-florida-a-complete-guide-for-veterans-and-military-families"
     ],
     "georgia": [
@@ -1187,10 +1190,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 257,
+    "resolved": 258,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 233,
+      "frontmatter-state-slug": 234,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -13739,6 +13742,42 @@
         "wyoming military"
       ],
       "h2Outline": []
+    },
+    {
+      "slug": "where-to-live-after-military-retirement",
+      "title": "Your Final PCS: What Should Replace the Base as the Center of Your Life?",
+      "url": "/blog/where-to-live-after-military-retirement",
+      "component": "Military Transition Help",
+      "componentSlug": "military-transition-help",
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "Military Transition Help"
+      ],
+      "description": "When the military no longer picks your next address, what should sit at the center of your life instead? A simple, five-step way to choose where to live after retirement, with Orlando, Florida, as a working example.",
+      "publishedAt": "2026-10-08T09:00:00.000Z",
+      "updatedAt": "2026-10-09T09:00:00.000Z",
+      "primaryKeyword": "where to live after military retirement",
+      "secondaryKeywords": [
+        "choosing where to retire military",
+        "final pcs",
+        "florida homestead exemption veterans",
+        "military retirement orlando",
+        "orlando va medical center lake nona"
+      ],
+      "h2Outline": [
+        "Why the Final PCS Feels Different",
+        "Step 1: Start With Work, Yours and Your Spouse's",
+        "Step 2: Map Healthcare Before You Map Houses",
+        "Step 3: Decide How Much Military Community You Want",
+        "Step 4: Build a Whole-Household Budget",
+        "Step 5: Test an Ordinary Tuesday",
+        "Same Process, Different Answers",
+        "Six Questions for Your Final PCS",
+        "Talk It Through With a Veteran Agent",
+        "Frequently Asked Questions",
+        "About This Guide"
+      ]
     },
     {
       "slug": "why-dallas-fort-worth-is-the-ideal-destination-for-military-members-and-veterans",
