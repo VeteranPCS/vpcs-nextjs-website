@@ -7,6 +7,8 @@ import Button from "@/components/common/Button";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { captureAnalyticsEvent } from "@/lib/analytics/client";
 
+import { calculateMovingBonus } from '@/lib/bonus/calculate';
+
 // Figma assets
 const imgHouse = "/icon/home-calculator-icon.webp";
 
@@ -15,29 +17,6 @@ const MovingBonusCalculator = () => {
     const sliderMinValue = 50000; // $50k - slider starts moving after this
     const sliderMaxValue = 1000000; // $1M - slider maxes out at this
     const absoluteMaxValue = 10000000; // $10M - maximum input allowed
-
-    // Calculate moving bonus based on fixed price ranges
-    const calculateMovingBonus = (value: number) => {
-        if (value < 100000) {
-            return 200;
-        } else if (value >= 100000 && value <= 199999) {
-            return 400;
-        } else if (value >= 200000 && value <= 299999) {
-            return 700;
-        } else if (value >= 300000 && value <= 399999) {
-            return 1000;
-        } else if (value >= 400000 && value <= 499999) {
-            return 1200;
-        } else if (value >= 500000 && value <= 649999) {
-            return 1500;
-        } else if (value >= 650000 && value <= 799999) {
-            return 2000;
-        } else if (value >= 800000 && value <= 999999) {
-            return 3000;
-        } else { // $1,000,000+
-            return 4000;
-        }
-    };
 
     const movingBonus = calculateMovingBonus(homeValue);
 

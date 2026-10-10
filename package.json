@@ -12,7 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "eval": "vitest run -c vitest.eval.config.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@ai-sdk/react": "^3.0.190",
@@ -57,6 +58,7 @@
   },
   "devDependencies": {
     "@google-analytics/data": "^5.2.1",
+    "@playwright/test": "1.62.1",
     "@sanity/image-url": "^1.2.0",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",

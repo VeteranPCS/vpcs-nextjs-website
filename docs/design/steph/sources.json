@@ -1,0 +1,68 @@
+{
+  "baseline": "748f5ce21bc7f69658f627a82763d4ea89f8b7a7",
+  "ignored": "steph editing files",
+  "sources": [
+    {
+      "folder": "homepage",
+      "file": "veteranpcs homepage.pdf",
+      "driveId": "1K848oXfFXuqj4P5ytsNin_T2AG4EOO9R",
+      "source": "https://drive.google.com/file/d/1K848oXfFXuqj4P5ytsNin_T2AG4EOO9R/view",
+      "sha256": "920a83797b494a7ca4c9ae999fbf8330ea8604e7a464872d2258db2db0bd2d4d",
+      "pages": 2,
+      "route": "/"
+    },
+    {
+      "folder": "menus",
+      "file": "vpcs- webpage-update-menu.pdf",
+      "driveId": "1aoTp0Gl-sXtY2fYwI8aBZzt6p6N4cCkO",
+      "source": "https://drive.google.com/file/d/1aoTp0Gl-sXtY2fYwI8aBZzt6p6N4cCkO/view",
+      "sha256": "61061e963c969cf571907ddb7b75bd41c2ca0ebfd007a4efe8028e0c9404fde3",
+      "pages": 2,
+      "route": "shared header"
+    },
+    {
+      "folder": "calculator",
+      "file": "vpcs- webpage-update-calculator.pdf",
+      "driveId": "1Esp-zl7bdD2dlAC2VNK2HZE4z3Hyk6NV",
+      "source": "https://drive.google.com/file/d/1Esp-zl7bdD2dlAC2VNK2HZE4z3Hyk6NV/view",
+      "sha256": "59c2eac658f7bb6e1f3e3cc1bc4839a2ab5c7447b258e7b6931140c75865503c",
+      "pages": 1,
+      "route": "/bah-calculator"
+    },
+    {
+      "folder": "resources",
+      "file": "vpcs- webpage-update-resourses.pdf",
+      "driveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
+      "source": "https://drive.google.com/file/d/1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ/view",
+      "sha256": "19741611908a7970f1d5ac88108c080f28e01987c555bc465e3c33f331bc7504",
+      "pages": 1,
+      "route": "/pcs-resources"
+    },
+    {
+      "folder": "va loan",
+      "file": "vpcs- webpage-update-va-loan.pdf",
+      "driveId": "1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu",
+      "source": "https://drive.google.com/file/d/1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu/view",
+      "sha256": "005f33fc877c80436bac152db2b1174e7d21a0ec2e204363269b5cc1dfa0c0cb",
+      "pages": 1,
+      "route": "/va-loan-help"
+    },
+    {
+      "folder": "blog",
+      "file": "vpcs- webpage-update-blog.pdf",
+      "driveId": "1XI40qDBrvcdLOyHcwpF3P_4jOTkQ8_gL",
+      "source": "https://drive.google.com/file/d/1XI40qDBrvcdLOyHcwpF3P_4jOTkQ8_gL/view",
+      "sha256": "16e7ddaf5a974fdcc81407413b2b24b9d87aa25fa3cad867e47a499e0829e195",
+      "pages": 1,
+      "route": "/blog/[slug]"
+    }
+  ],
+  "assets": {
+    "guide-covers": "menu-1-1.png",
+    "home-hero-family": "home-1-21.png",
+    "home-lender-family": "home-1-13.png",
+    "home-story-family": "home-1-24.png",
+    "blog-bonus-family": "blog-1-1.png",
+    "flag-waving": "calculator-1-0.png"
+  }
+}

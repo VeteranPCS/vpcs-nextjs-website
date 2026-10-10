@@ -7,15 +7,10 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('server-only', () => ({}));
 
 import { MOVE_IN_BONUS } from '@/lib/content/how-it-works';
+import { calculateMovingBonus } from '@/lib/bonus/calculate';
 
-// Invariant: the bonus schedule in content/_data/site/moveInBonus.json
-// (rendered as the How It Works bonus table) and the tiers hard-coded in
-// MovingBonusCalculator.tsx must describe the same bands, so the table copy
-// and the calculator cannot drift apart.
-//
-// MovingBonusCalculator exports only the client component; the tiers live in
-// a function-scoped if/else chain, so we parse them out of the source text -
-// there is no importable export to compare against instead.
+// Keep the published bonus table and the shared calculation consistent.
+// Expected values come from content, independently of the implementation.
 
 const CALCULATOR_SOURCE = fs.readFileSync(
   path.resolve(__dirname, '../MovingBonusCalculator.tsx'),
@@ -56,53 +51,6 @@ const TABLE_BANDS: Band[] = MOVE_IN_BONUS.bonusTable.map((row) => ({
   bonus: parseDollars(row.moveInBonus),
 }));
 
-/** Returns the text between the marker's opening brace and its matching close. */
-function extractFunctionBody(source: string, marker: string): string {
-  const start = source.indexOf(marker);
-  if (start === -1) {
-    throw new Error(`marker not found in MovingBonusCalculator.tsx: ${marker}`);
-  }
-  let depth = 1;
-  let index = start + marker.length;
-  while (depth > 0) {
-    if (index >= source.length) {
-      throw new Error('unbalanced braces after calculateMovingBonus marker');
-    }
-    const char = source.charAt(index);
-    if (char === '{') depth += 1;
-    if (char === '}') depth -= 1;
-    index += 1;
-  }
-  return source.slice(start + marker.length, index - 1);
-}
-
-function extractCalculatorTiers(source: string): Band[] {
-  const body = extractFunctionBody(source, 'const calculateMovingBonus = (value: number) => {');
-  const first = /if\s*\(\s*value\s*<\s*(\d+)\s*\)\s*\{\s*return\s+(\d+)\s*;/.exec(body);
-  if (!first) throw new Error('calculateMovingBonus: opening "value < N" tier not found');
-  const tiers: Band[] = [
-    { min: 0, max: Number(first[1]!) - 1, bonus: Number(first[2]!) }, // mandatory capture groups
-  ];
-  const middle = /value\s*>=\s*(\d+)\s*&&\s*value\s*<=\s*(\d+)\s*\)\s*\{\s*return\s+(\d+)\s*;/g;
-  for (const match of body.matchAll(middle)) {
-    tiers.push({
-      min: Number(match[1]!), // mandatory capture groups
-      max: Number(match[2]!),
-      bonus: Number(match[3]!),
-    });
-  }
-  const last = /else\s*\{[^{}]*?return\s+(\d+)\s*;/.exec(body);
-  if (!last) throw new Error('calculateMovingBonus: closing else tier not found');
-  const previous = tiers[tiers.length - 1];
-  if (!previous || !Number.isFinite(previous.max)) {
-    throw new Error('calculateMovingBonus: no bounded tier before the closing else');
-  }
-  tiers.push({ min: previous.max + 1, max: Infinity, bonus: Number(last[1]!) }); // mandatory capture group
-  return tiers;
-}
-
-const CALCULATOR_TIERS = extractCalculatorTiers(CALCULATOR_SOURCE);
-
 describe('MovingBonusCalculator tiers vs moveInBonus.json bonus table', () => {
   it('table bands are ascending and contiguous from $0 with an open top band', () => {
     expect(TABLE_BANDS.length).toBeGreaterThan(1);
@@ -116,7 +64,15 @@ describe('MovingBonusCalculator tiers vs moveInBonus.json bonus table', () => {
   });
 
   it('calculator tiers match the table bands exactly (boundaries and bonus amounts)', () => {
-    expect(CALCULATOR_TIERS).toEqual(TABLE_BANDS);
+    for (const band of TABLE_BANDS) {
+      expect(calculateMovingBonus(band.min)).toBe(band.bonus);
+      if (Number.isFinite(band.max)) {
+        expect(calculateMovingBonus(band.max)).toBe(band.bonus);
+        expect(calculateMovingBonus((band.min + band.max) / 2)).toBe(band.bonus);
+      } else {
+        expect(calculateMovingBonus(band.min * 2)).toBe(band.bonus);
+      }
+    }
   });
 
   it('charity donation is 10% of the bonus in every band', () => {

@@ -1,4 +1,6 @@
 import "../globals.css";
+import "../steph.css";
+import { ImpactProvider } from "@/components/redesign/ImpactProvider";
 import { BotIdClient } from "botid/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer/Footer"
@@ -13,7 +15,7 @@ export default function RootLayout({
 }>) {
   const conciergeEnabled = featureFlags.conciergeEnabled;
   return (
-    <ConciergeProvider>
+    <ConciergeProvider><ImpactProvider>
       {conciergeEnabled && (
         <BotIdClient
           protect={[
@@ -26,9 +28,9 @@ export default function RootLayout({
         />
       )}
       <Header />
-      {children}
+      <div className="site-header-addition">{children}</div>
       <Footer />
       {conciergeEnabled && <ConciergeWidget />}
-    </ConciergeProvider>
+    </ImpactProvider></ConciergeProvider>
   );
 }
