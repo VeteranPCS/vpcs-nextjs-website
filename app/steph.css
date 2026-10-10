@@ -1,7 +1,7 @@
 /* Scoped visual vocabulary from Steph's September 2026 references. */
 :root{--site-header-height:128px;--legacy-nav-height:64px;--site-header-addition:64px;--steph-navy:#061d41;--steph-ink:#292f6c;--steph-red:#a81f23;--steph-paper:#f4f4f4}
 @media(min-width:1024px){:root{--legacy-nav-height:80px;--site-header-addition:48px}}
-@media(min-width:1280px){:root{--site-header-height:140px;--site-header-addition:60px}}
+@media(min-width:1280px){:root{--site-header-height:208px;--site-header-addition:128px}}
 html{scroll-padding-top:calc(var(--site-header-height) + 16px)}
 .site-header-addition{padding-top:var(--site-header-addition)}
 .steph-design{color:var(--steph-ink);font-family:Tahoma,var(--font-inter),sans-serif;line-height:1.5}

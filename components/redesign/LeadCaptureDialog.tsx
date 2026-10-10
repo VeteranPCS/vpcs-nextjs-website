@@ -45,7 +45,13 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
   }
   return <>
     <button ref={trigger} type="button" className={className || 'steph-button'} onClick={() => { setError(''); setSuccess(false); dialog.current?.showModal(); trackFormStarted(config.formId); }}>{triggerLabel}</button>
-    <dialog ref={dialog} className="steph-capture" aria-labelledby={`${id}-title`} onCancel={event => { if (busy.current) event.preventDefault(); }} onClose={() => trigger.current?.focus()} onClick={event => { if(event.target===event.currentTarget) close(); }}>
+    <dialog ref={dialog} className="steph-capture" aria-labelledby={`${id}-title`} onKeyDown={event => {
+      if (event.key !== 'Tab') return;
+      const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]):not([aria-hidden]),select:not([disabled]),textarea:not([disabled])')).filter(element => element.getClientRects().length > 0);
+      const first = controls[0], last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    }} onCancel={event => { if (busy.current) event.preventDefault(); }} onClose={() => trigger.current?.focus()} onClick={event => { if(event.target===event.currentTarget) close(); }}>
       <div className="steph-capture-inner">
         <button type="button" className="steph-capture-close" aria-label="Close" disabled={pending} onClick={close}>×</button>
         <h2 id={`${id}-title`}>{config.title}</h2>

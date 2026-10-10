@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import styles from "./page.module.css";
 import HeroSection from "@/components/homepage/HeroSection/HeroSection";
 import StateMap from "@/components/homepage/StateMap";
 import VeteranCommunity from "@/components/homepage/VeteranCommunity/VeteranCommunity";
@@ -51,7 +52,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main>
+    <main className={styles.page}>
       <HeroSection
         title="Tu hogar, nuestra mision."
         subTitle="VeteranPCS esta empoderando a los miembros de las fuerzas armadas hispanohablantes y a sus familias al comprar o vender una vivienda."
