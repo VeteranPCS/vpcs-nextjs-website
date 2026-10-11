@@ -88,7 +88,8 @@
 .bonusPhoto { border-radius: 16px; overflow: hidden; }
 .bonusPhoto img { width: 100%; height: 100%; object-fit: cover; }
 .bonusCard { background: #f4f4f4; padding: 32px; border-radius: 18px; }
-.bonusHeading { display: flex; gap: 22px; }
+.bonusHeading { display: flex; align-items: flex-start; gap: 22px; }
+.bonusHeading>img { width:62px; height:62px; object-fit:contain; flex-shrink:0; }
 .bonusHeading h2 { font-size: 28px; }
 .bonusHeading p { color: #3b3b3b; font-size: 12px; line-height: 1.5; margin-top: 10px; }
 .bonusCard input[type='range'] { width: 100%; margin: 33px 0; accent-color: var(--navy); }
@@ -162,7 +163,7 @@
 .fullReview summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; text-decoration: underline; }
 .fullReview p { line-height: 1.5; margin-top: 8px; }
 .reviewArt { min-height: 350px; }
-@media (max-width:767px) { .hero { background-image: linear-gradient(#061c44 0%, #061c44 60%, #061c4480 100%), url('/images/redesign/flag-waving.webp'); background-size: cover, auto 65%; background-position: center, center bottom; } .reviewArt { min-height: 0; } }
+@media (max-width:767px) { .hero { background-image:none; } .heroInner { background-image:linear-gradient(#061c44 0%,#061c44 55%,#061c44c0 65%,#061c4480 85%,#061c44aa 100%),url('/images/redesign/flag-waving.webp'); background-size:cover,auto 75%; background-position:center,center bottom; background-repeat:no-repeat; } .reviewArt { min-height: 0; } }
 .mapGraphic :global([data-name='Texas'] .st0), .mapGraphic :global(a:focus-visible .st0), .mapGraphic :global(.state:hover .st0) { fill: var(--red)!important; }
 @media(min-width:768px) and (max-width:1023px) { .heroArt { min-width: 0; } .heroComposite { width: 100%; left: 0; } .bonusCard { padding: 20px; } .bonusFields { gap: 12px; grid-template-columns: 1fr 1fr; } .bonusFields>.button { grid-column: 1/-1; } }
 
@@ -207,3 +208,12 @@
 @media(max-width:767px) { .impactIcon>svg { width:35px; height:35px; } .lenderBenefitIcon { width:50px; height:50px; } .lenderBenefitIcon>svg { width:30px; height:30px; } }
 
 @media(max-width:767px) { .lenderCopy>.guide { display:grid; grid-template-columns:88px minmax(0,1fr); gap:12px; text-align:left; } .lenderCopy>.guide>.button { grid-column:1/-1; width:100%; margin-left:0; border-left:0; font-size:13px; } }
+
+/* Reuse the repository pictograms and the verified Johns Hopkins crest. */
+.tabPictogram { width:24px; height:24px; flex-shrink:0; color:var(--navy); }
+.missionPictogram { width:44px; height:44px; flex-shrink:0; color:var(--red); background-color:var(--red); mask-position:center; mask-size:contain; mask-repeat:no-repeat; }
+svg.missionPictogram { background:none; }
+.partnerCrest { display:block; width:44px; height:60px; overflow:hidden; }
+.partners .partnerCrest img { width:auto; max-width:none; height:60px; }
+.partnerCrestLink { justify-content:center; }
+@media(max-width:767px) { .missionPictogram { width:29px; height:29px; } .partnerCrest { width:30px; height:40px; } .partners .partnerCrest img { height:40px; } }

@@ -1,12 +1,12 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { US_STATES } from '@/constants/usStates';
 import { trackCtaClicked } from '@/lib/analytics/client';
 import { buildCtaProperties } from '@/lib/analytics/cta';
 import type { LocationSearchResult } from '@/lib/location-search/types';
 import HomeCta from './HomeCta';
+import HomeSymbol from './HomeSymbol';
 import styles from './StephHomepage.module.css';
 
 const popular = ['San Diego, CA', 'Virginia Beach, VA', 'Tampa, FL', 'Colorado Springs, CO'];
@@ -63,7 +63,7 @@ export default function HomeSearch({ guide }: { guide: React.ReactNode }) {
         const next = event.key === 'Home' ? 0 : event.key === 'End' ? 2 : (index + (event.key === 'ArrowRight' ? 1 : 2)) % 3;
         const nextTab = tabs[next]; if (nextTab) selectTab(nextTab);
         document.getElementById(`home-tab-${next}`)?.focus();
-      }}><Image src={index === 0 ? '/icon/Agents.svg' : index === 1 ? '/icon/Mission.svg' : '/icon/Resources.svg'} width={24} height={24} alt="" />{name}</button>)}
+      }}><HomeSymbol kind={index === 0 ? 'home' : index === 1 ? 'pin' : 'users'} className={styles.tabPictogram}/>{name}</button>)}
     </div>
     <div className={styles.searchBody}>
       <div role="tabpanel" id={`home-panel-${tabs.indexOf(tab)}`} aria-labelledby={`home-tab-${tabs.indexOf(tab)}`} className={styles.searchMain}>
