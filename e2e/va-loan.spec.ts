@@ -44,3 +44,26 @@ test('VA photo/card grouping and compact desktop contact panel match the bounded
  const background=await finalCta.evaluate(node=>({image:getComputedStyle(node).backgroundImage,size:getComputedStyle(node).backgroundSize}));expect(background.image).toContain('linear-gradient');expect(background.image).toContain('flagagent.webp');expect(background.size).toBe('cover, cover');
  await expect(finalCta.getByRole('link',{name:'Get Pre-Approved'})).toHaveAttribute('href','/contact-lender');await finalCta.scrollIntoViewIfNeeded();await page.screenshot({path:testInfo.outputPath('va-final-cta-corrected.png'),caret:'initial'});
 });
+
+
+test('VA callback retains its accessible contact route with a decorative calendar', async ({ page }, testInfo) => {
+  await fixtureImpact(page);
+  await page.goto('/va-loan-help');
+  await expect(page.locator('[data-site-header]')).toContainText('$676,500');
+  const callback = page.getByRole('link', { name: 'Request a Call Connect with a VA loan expert.', exact: true });
+  await expect(callback).toHaveAttribute('href', '/contact');
+  await expect(callback).not.toContainText('▦');
+  const calendar = callback.locator('svg');
+  await expect(calendar).toHaveAttribute('aria-hidden', 'true');
+  await expect(calendar.locator('rect')).toHaveCount(1);
+  const bounds = await calendar.boundingBox();
+  expect(bounds?.width).toBe(28);
+  expect(bounds?.height).toBe(28);
+  await callback.focus();
+  await expect(callback).toBeFocused();
+  await callback.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: testInfo.outputPath('va-callback-calendar.png'), caret: 'initial' });
+  await assertNoOverflow(page);
+  await callback.press('Enter');
+  await expect(page).toHaveURL(/\/contact$/);
+});
