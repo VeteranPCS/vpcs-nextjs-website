@@ -1,6 +1,6 @@
 {
-  "contentHash": "96d6f882252e18f606c1afaad98fd183496f60f9ee50a786d9ca313818ae9273",
-  "totalPosts": 398,
+  "contentHash": "fd56700fb43141291d3294f26f647b63dce9f25178ec46b07e09901cb28a7625",
+  "totalPosts": 402,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -219,8 +219,11 @@
       "top-things-to-do-near-san-diego-military-bases"
     ],
     "U.S. Military Bases": [
+      "air-force-bases-in-alaska",
       "air-force-bases-in-california",
+      "air-force-bases-in-colorado",
       "air-force-bases-in-florida",
+      "air-force-bases-in-hawaii",
       "air-force-bases-in-new-mexico",
       "alabama-military-bases",
       "army-bases-in-alaska",
@@ -229,6 +232,7 @@
       "army-bases-in-georgia",
       "army-bases-in-hawaii",
       "army-bases-in-kansas",
+      "army-bases-in-kentucky",
       "army-bases-in-north-carolina",
       "army-bases-in-virginia",
       "army-bases-in-washington-state",
@@ -633,8 +637,11 @@
       "top-things-to-do-near-san-diego-military-bases"
     ],
     "us-military-bases": [
+      "air-force-bases-in-alaska",
       "air-force-bases-in-california",
+      "air-force-bases-in-colorado",
       "air-force-bases-in-florida",
+      "air-force-bases-in-hawaii",
       "air-force-bases-in-new-mexico",
       "alabama-military-bases",
       "army-bases-in-alaska",
@@ -643,6 +650,7 @@
       "army-bases-in-georgia",
       "army-bases-in-hawaii",
       "army-bases-in-kansas",
+      "army-bases-in-kentucky",
       "army-bases-in-north-carolina",
       "army-bases-in-virginia",
       "army-bases-in-washington-state",
@@ -838,6 +846,7 @@
       "settling-down-pcsing-to-birmingham-alabama-with-the-military"
     ],
     "alaska": [
+      "air-force-bases-in-alaska",
       "alaska-veteran-property-tax-exemptions-2026",
       "army-bases-in-alaska",
       "pcs-to-eielson-afb-fairbanks-2026-guide",
@@ -880,6 +889,7 @@
       "what-military-bases-are-in-california"
     ],
     "colorado": [
+      "air-force-bases-in-colorado",
       "colorado-veteran-property-tax-exemptions-2026",
       "pcs-to-air-force-academy-colorado-springs-2026-guide",
       "pcs-to-buckley-sfb-aurora-2026-guide",
@@ -930,6 +940,7 @@
       "what-military-bases-are-in-georgia"
     ],
     "hawaii": [
+      "air-force-bases-in-hawaii",
       "army-bases-in-hawaii",
       "hawaii-veteran-property-tax-exemptions-2026",
       "pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
@@ -969,6 +980,7 @@
       "what-military-bases-are-in-kansas"
     ],
     "kentucky": [
+      "army-bases-in-kentucky",
       "kentucky-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-knox-2026-guide",
       "what-military-bases-are-in-kentucky"
@@ -1190,10 +1202,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 258,
+    "resolved": 262,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 234,
+      "frontmatter-state-slug": 238,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -1493,6 +1505,39 @@
       ]
     },
     {
+      "slug": "air-force-bases-in-alaska",
+      "title": "Air Force Bases in Alaska: JBER, Eielson, Clear and 2026 BAH",
+      "url": "/blog/air-force-bases-in-alaska",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "alaska",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Alaska has two big Air Force bases, one in Anchorage and one near Fairbanks, plus a remote Space Force radar station. Here is what each one does, what life is like, and what your housing allowance covers.",
+      "publishedAt": "2026-10-06T09:00:00.000Z",
+      "updatedAt": "2026-10-11T00:00:00.000Z",
+      "primaryKeyword": "air force bases in alaska",
+      "secondaryKeywords": [
+        "alaska air force base",
+        "clear space force station",
+        "eielson afb",
+        "elmendorf air force base",
+        "jber air force"
+      ],
+      "h2Outline": [
+        "Air Force Bases in Alaska, at a Glance",
+        "Joint Base Elmendorf-Richardson (JBER)",
+        "Eielson Air Force Base",
+        "Clear Space Force Station",
+        "What BAH Covers Near Alaska's Air Force Bases",
+        "Life Near Alaska's Air Force Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "air-force-bases-in-california",
       "title": "Air Force Bases in California: A Complete PCS Guide",
       "url": "/blog/air-force-bases-in-california",
@@ -1526,6 +1571,41 @@
       ]
     },
     {
+      "slug": "air-force-bases-in-colorado",
+      "title": "Air Force Bases in Colorado: The Academy, Space Force Bases and BAH",
+      "url": "/blog/air-force-bases-in-colorado",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "colorado",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Colorado has one Air Force base by name, the Air Force Academy, plus four former Air Force installations that now belong to the Space Force. Here is what each one does and what housing allowance covers nearby.",
+      "publishedAt": "2026-10-04T09:00:00.000Z",
+      "updatedAt": "2026-10-11T00:00:00.000Z",
+      "primaryKeyword": "air force bases in colorado",
+      "secondaryKeywords": [
+        "air force academy colorado springs",
+        "air force base in colorado",
+        "buckley space force base",
+        "colorado air force bases",
+        "peterson space force base"
+      ],
+      "h2Outline": [
+        "Air Force Bases in Colorado, at a Glance",
+        "The U.S. Air Force Academy",
+        "Peterson Space Force Base",
+        "Schriever Space Force Base",
+        "Cheyenne Mountain Space Force Station",
+        "Buckley Space Force Base",
+        "What BAH Covers Near Colorado's Air Force Bases",
+        "Life Near Colorado's Air Force Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "air-force-bases-in-florida",
       "title": "Air Force Bases in Florida: A Military Family PCS Guide",
       "url": "/blog/air-force-bases-in-florida",
@@ -1555,6 +1635,41 @@
         "Housing Near the Air Force Bases in Florida",
         "Frequently Asked Questions",
         "Getting Help With the Move"
+      ]
+    },
+    {
+      "slug": "air-force-bases-in-hawaii",
+      "title": "Air Force Bases in Hawaii: Hickam Field, Bellows and 2026 BAH",
+      "url": "/blog/air-force-bases-in-hawaii",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "hawaii",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Hawaii's Air Force presence centers on Hickam Field, part of Joint Base Pearl Harbor-Hickam on Oahu. Here is what is there, what the smaller sites do, and what your housing allowance covers on the island.",
+      "publishedAt": "2026-10-08T09:00:00.000Z",
+      "updatedAt": "2026-10-11T00:00:00.000Z",
+      "primaryKeyword": "air force bases in hawaii",
+      "secondaryKeywords": [
+        "air force base in hawaii",
+        "bellows air force station",
+        "hawaii air national guard",
+        "hickam air force base",
+        "joint base pearl harbor-hickam"
+      ],
+      "h2Outline": [
+        "Air Force Bases in Hawaii, at a Glance",
+        "Hickam Field at Joint Base Pearl Harbor-Hickam",
+        "The Hawaii Air National Guard's 154th Wing",
+        "Bellows Air Force Station",
+        "Ka'ena Point Space Force Station",
+        "What About Wheeler?",
+        "What BAH Covers on Oahu",
+        "Living Near Hickam Field",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -1975,6 +2090,40 @@
         "Fort Leavenworth: The Army's Schoolhouse",
         "What BAH Covers at Fort Riley and Fort Leavenworth",
         "Where Families Tend to Live",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "army-bases-in-kentucky",
+      "title": "Army Bases in Kentucky: Fort Campbell, Fort Knox and 2026 BAH",
+      "url": "/blog/army-bases-in-kentucky",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "kentucky",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Kentucky is home to two of the Army's best-known posts, Fort Campbell and Fort Knox, plus a munitions depot and the Kentucky Guard headquarters. Here is what each one does and what your housing allowance covers.",
+      "publishedAt": "2026-10-10T09:00:00.000Z",
+      "updatedAt": "2026-10-11T00:00:00.000Z",
+      "primaryKeyword": "army bases in kentucky",
+      "secondaryKeywords": [
+        "army base in kentucky",
+        "blue grass army depot",
+        "fort campbell",
+        "fort knox",
+        "kentucky military bases"
+      ],
+      "h2Outline": [
+        "Army Bases in Kentucky, at a Glance",
+        "Fort Campbell",
+        "Fort Knox",
+        "Blue Grass Army Depot",
+        "Kentucky National Guard",
+        "What BAH Covers Near Kentucky's Army Bases",
+        "Buying a Home Near Kentucky's Army Bases",
         "Frequently Asked Questions"
       ]
     },
@@ -12361,7 +12510,7 @@
       ],
       "description": "Alaska is home to over 30,000 active-duty service members and their families, playing a vital role in national defense and Arctic security. Due to its strategic location, the military presence in Alaska helps protect U.S. interests and a...",
       "publishedAt": "2023-09-26T12:00:00.000Z",
-      "updatedAt": "2026-07-19T00:00:00.000Z",
+      "updatedAt": "2026-10-11T00:00:00.000Z",
       "primaryKeyword": "military bases in alaska",
       "secondaryKeywords": [
         "alaska army base",
@@ -12494,7 +12643,7 @@
       ],
       "description": "Colorado is home to several key military installations that support the U.S. Air Force, Space Force, Army, and national defense operations. Whether you're PCSing (Permanent Change of Station) to Colorado or just curious about the militar...",
       "publishedAt": "2022-09-20T14:35:24.000Z",
-      "updatedAt": "2026-07-19T00:00:00.000Z",
+      "updatedAt": "2026-10-11T00:00:00.000Z",
       "primaryKeyword": "air force bases in colorado",
       "secondaryKeywords": [
         "colorado air force bases",
@@ -12646,7 +12795,7 @@
       ],
       "description": "Hawaii has a rich military history and is home to eleven active military installations spread across multiple islands. With its strategic location in the Pacific, Hawaii has played a critical role in U.S. military operations for over a c...",
       "publishedAt": "2024-06-25T14:58:26.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "updatedAt": "2026-10-11T00:00:00.000Z",
       "primaryKeyword": "what are the 11 military bases in hawaii",
       "secondaryKeywords": [
         "air force bases in hawaii",
@@ -12813,7 +12962,7 @@
       ],
       "description": "Kentucky's strategic location along the Ohio River has made it a key military region throughout U.S. history. The state played a pivotal role in early conflicts, including the French and Indian War, and has remained a vital part of natio...",
       "publishedAt": "2024-07-02T13:40:24.000Z",
-      "updatedAt": "2026-05-02T00:00:00.000Z",
+      "updatedAt": "2026-10-11T00:00:00.000Z",
       "primaryKeyword": "army base in kentucky",
       "secondaryKeywords": [
         "air force base in kentucky",
