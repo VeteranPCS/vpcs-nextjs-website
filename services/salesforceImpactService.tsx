@@ -161,6 +161,7 @@ export async function getAllImpactMetrics(): Promise<{
     cashBackAmount: string;
     charityAmount: string;
     totalVolumeSold: string;
+    available: boolean;
 }> {
     try {
         const data = await fetchImpactData();
@@ -168,6 +169,7 @@ export async function getAllImpactMetrics(): Promise<{
         if (data.records && data.records.length > 0) {
             const record = data.records[0]!;
             return {
+                available: [record.expr0, record.expr1, record.expr2].every(Number.isFinite),
                 cashBackAmount: formatAsUSD(record.expr0 || 0),
                 charityAmount: formatAsUSD(record.expr1 || 0),
                 totalVolumeSold: formatAsMillions(record.expr2 || 0),
@@ -179,6 +181,7 @@ export async function getAllImpactMetrics(): Promise<{
         console.error('Error getting all impact metrics:', error);
         // Return fallback values in case of error
         return {
+            available: false,
             cashBackAmount: '$384,287',
             charityAmount: '$36,000',
             totalVolumeSold: '$136 Million',

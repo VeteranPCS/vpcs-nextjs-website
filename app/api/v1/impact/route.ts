@@ -7,6 +7,7 @@ interface ImpactMetricsResponse {
         cashBackAmount: string;
         charityAmount: string;
         totalVolumeSold: string;
+        available: boolean;
     };
     error?: string;
 }
@@ -30,6 +31,7 @@ export async function GET(): Promise<NextResponse<ImpactMetricsResponse>> {
         return NextResponse.json({
             success: true,
             data: {
+                available: false,
                 cashBackAmount: '$500,000',
                 charityAmount: '$50,000',
                 totalVolumeSold: '$189 Million',

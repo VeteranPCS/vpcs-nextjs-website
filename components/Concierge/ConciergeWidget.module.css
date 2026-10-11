@@ -1,0 +1,5 @@
+/* The article action bar remains visible on phone and tablet layouts. */
+.blogLauncher { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+@media (min-width: 1200px) {
+  .blogLauncher { bottom: 24px; }
+}

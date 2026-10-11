@@ -1,0 +1,235 @@
+{
+  "baseline": "748f5ce21bc7f69658f627a82763d4ea89f8b7a7",
+  "sources": [
+    {
+      "folder": "homepage",
+      "file": "veteranpcs homepage.pdf",
+      "driveId": "1K848oXfFXuqj4P5ytsNin_T2AG4EOO9R",
+      "source": "https://drive.google.com/file/d/1K848oXfFXuqj4P5ytsNin_T2AG4EOO9R/view",
+      "sha256": "920a83797b494a7ca4c9ae999fbf8330ea8604e7a464872d2258db2db0bd2d4d",
+      "pages": 2,
+      "route": "/"
+    },
+    {
+      "folder": "menus",
+      "file": "vpcs- webpage-update-menu.pdf",
+      "driveId": "1aoTp0Gl-sXtY2fYwI8aBZzt6p6N4cCkO",
+      "source": "https://drive.google.com/file/d/1aoTp0Gl-sXtY2fYwI8aBZzt6p6N4cCkO/view",
+      "sha256": "61061e963c969cf571907ddb7b75bd41c2ca0ebfd007a4efe8028e0c9404fde3",
+      "pages": 2,
+      "route": "shared header"
+    },
+    {
+      "folder": "calculator",
+      "file": "vpcs- webpage-update-calculator.pdf",
+      "driveId": "1Esp-zl7bdD2dlAC2VNK2HZE4z3Hyk6NV",
+      "source": "https://drive.google.com/file/d/1Esp-zl7bdD2dlAC2VNK2HZE4z3Hyk6NV/view",
+      "sha256": "59c2eac658f7bb6e1f3e3cc1bc4839a2ab5c7447b258e7b6931140c75865503c",
+      "pages": 1,
+      "route": "/bah-calculator"
+    },
+    {
+      "folder": "resources",
+      "file": "vpcs- webpage-update-resourses.pdf",
+      "driveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
+      "source": "https://drive.google.com/file/d/1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ/view",
+      "sha256": "19741611908a7970f1d5ac88108c080f28e01987c555bc465e3c33f331bc7504",
+      "pages": 1,
+      "route": "/pcs-resources"
+    },
+    {
+      "folder": "va loan",
+      "file": "vpcs- webpage-update-va-loan.pdf",
+      "driveId": "1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu",
+      "source": "https://drive.google.com/file/d/1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu/view",
+      "sha256": "005f33fc877c80436bac152db2b1174e7d21a0ec2e204363269b5cc1dfa0c0cb",
+      "pages": 1,
+      "route": "/va-loan-help"
+    },
+    {
+      "folder": "blog",
+      "file": "vpcs- webpage-update-blog.pdf",
+      "driveId": "1XI40qDBrvcdLOyHcwpF3P_4jOTkQ8_gL",
+      "source": "https://drive.google.com/file/d/1XI40qDBrvcdLOyHcwpF3P_4jOTkQ8_gL/view",
+      "sha256": "16e7ddaf5a974fdcc81407413b2b24b9d87aa25fa3cad867e47a499e0829e195",
+      "pages": 1,
+      "route": "/blog/[slug]"
+    }
+  ],
+  "assets": {
+    "guide-covers": "menu-1-1.png",
+    "home-hero-family": "home-1-21.png",
+    "home-lender-family": "home-1-13.png",
+    "home-story-family": "home-1-24.png",
+    "blog-bonus-family": "blog-1-1.png",
+    "flag-waving": "calculator-1-0.png"
+  },
+  "cleanBitmapRegions": [
+    {
+      "asset": "public/images/redesign/resources-hero-photo-region.png",
+      "sourceDriveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
+      "page": 1,
+      "nativeBitmapDimensions": [
+        864,
+        1821
+      ],
+      "cropBoundsExclusive": [
+        440,
+        105,
+        864,
+        352
+      ],
+      "outputDimensions": [
+        424,
+        247
+      ],
+      "sha256": "7a003e6faf648c0396edc10295e7e56232c466ba22f75e9563a7a22d7684b360",
+      "status": "Exact native photograph crop; header/divider rows removed after independent review; no controls/text"
+    },
+    {
+      "asset": "public/images/redesign/va-hero-photo-region.png",
+      "sourceDriveId": "1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu",
+      "page": 1,
+      "nativeBitmapDimensions": [
+        892,
+        1764
+      ],
+      "cropBoundsExclusive": [
+        430,
+        114,
+        892,
+        333
+      ],
+      "outputDimensions": [
+        462,
+        219
+      ],
+      "sha256": "4ff8a952d4b66653b034e8be3ee1fdea08c06a39ebf5cc734457172ac99c5a42",
+      "status": "Exact upper photograph only; lower hand, keys and bodies obscured by PDF calculator remain open"
+    },
+    {
+      "asset": "public/images/redesign/va-resource-guide.png",
+      "sourceDriveId": "1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu",
+      "page": 1,
+      "cropBoundsExclusive": [
+        45,
+        1149,
+        228,
+        1227
+      ],
+      "sha256": "fde4e2880553bcc1da98d69c9119d1b8173943b7a3cdd9443afc595dd27c1e30",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/va-resource-calculator.png",
+      "sourceDriveId": "1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu",
+      "page": 1,
+      "cropBoundsExclusive": [
+        252,
+        1149,
+        436,
+        1227
+      ],
+      "sha256": "121657d21f406167740c5dc421196de80441d2af549049386f9fb278eb6b11fb",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/va-resource-moving.png",
+      "sourceDriveId": "1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu",
+      "page": 1,
+      "cropBoundsExclusive": [
+        459,
+        1149,
+        644,
+        1227
+      ],
+      "sha256": "1bf1115219f04b63ac2c9ceb409722a03a4a256da44e9816501f6bba8e802f0e",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/va-resource-family.png",
+      "sourceDriveId": "1CwXRIQV_1yswVpJc5uzQ5XVXyPVvJDZu",
+      "page": 1,
+      "cropBoundsExclusive": [
+        667,
+        1149,
+        850,
+        1227
+      ],
+      "sha256": "3cff1a1d1bda87dd30c39ae477415e0485d76896a4c61611085ecf07e57f74ea",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/resources-featured-packing.png",
+      "sourceDriveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
+      "page": 1,
+      "cropBoundsExclusive": [
+        39,
+        1045,
+        218,
+        1117
+      ],
+      "sha256": "0b3e0424e38525193c2f044c5785ad06cf8ac8b86d1bd8c31cf59aa9e852440c",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/resources-featured-house.png",
+      "sourceDriveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
+      "page": 1,
+      "cropBoundsExclusive": [
+        237,
+        1045,
+        417,
+        1117
+      ],
+      "sha256": "3ff961c8186cb14e95f863750e634f64ac567d1a503afd93f12038707d33534b",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/resources-featured-duty-station.png",
+      "sourceDriveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
+      "page": 1,
+      "cropBoundsExclusive": [
+        437,
+        1045,
+        616,
+        1117
+      ],
+      "sha256": "70942cbb8e2c53f39a6a8d697ba4cd7bc9a9627e43662199290146992675007e",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    },
+    {
+      "asset": "public/images/redesign/resources-featured-signing.png",
+      "sourceDriveId": "1OwWxAn55YrD-4WVkM3QvTkseZMoeu2nQ",
+      "page": 1,
+      "cropBoundsExclusive": [
+        637,
+        1045,
+        823,
+        1117
+      ],
+      "sha256": "d3f66abb14cc178c1a446960e60b756498beb7df1c3fe012e654dd5668c6e163",
+      "status": "Exact native photograph strip; flattened badge excluded"
+    }
+  ],
+  "localReferenceDirectory": "/Users/harperfoley/.codex/visualizations/2026/10/10/01a1238e-ff79-78f3-a921-ff8ccdbb7759/steph-redesign/references",
+  "initiallyExcluded": "steph editing files",
+  "editingSourceInspection": {
+    "authorizedOn": "2026-10-10",
+    "folderId": "1ibt7AVFdX1tbBV6Rs2MiSnkf9S-v3utC",
+    "inventory": "editing-source-inventory.json",
+    "status": "Complete: all40 files retrieved and inspected; exact VA/Resources page PNGs match flattened PDF pixels; no clean replacement originals or deployable font sources found",
+    "report": "editing-source-inspection.md"
+  },
+  "supplementalAssetSources": [
+    {
+      "asset": "public/images/redesign/resources-organization-uso.svg",
+      "source": "https://www.uso.org/",
+      "region": "Official site header, inline SVG",
+      "retrieved": "2026-10-10",
+      "sha256": "80b7e5b535cd31de305502109127f98b4ef47f50d2e52277f20a6569b91e966c",
+      "viewBox": "0 0 502.9 276.9",
+      "status": "Clean unchanged official vector; replaces low-resolution flattened design crop. Self-contained paths/rectangles with no external references."
+    }
+  ]
+}

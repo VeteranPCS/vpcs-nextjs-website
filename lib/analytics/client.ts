@@ -133,7 +133,7 @@ export function trackFormSubmissionFailed(
 }
 
 export function trackCtaClicked(properties: AnalyticsProperties): void {
-  incrementAnalyticsCounter('cta_click_count_before_conversion');
+  try { incrementAnalyticsCounter('cta_click_count_before_conversion'); } catch { /* Analytics is optional. */ }
   captureAnalyticsEvent('cta_clicked', properties);
 }
 

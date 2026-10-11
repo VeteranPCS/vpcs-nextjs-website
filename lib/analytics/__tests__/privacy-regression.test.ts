@@ -25,11 +25,11 @@ describe('analytics privacy regressions', () => {
     );
     const trackingProperties = match?.[1] ?? '';
 
-    expect(trackingProperties).toContain('zip_prefix: zipPrefix(formData.zipCode)');
+    expect(trackingProperties).toContain('zip_prefix: zipPrefix(submitted.zipCode)');
     expect(trackingProperties).not.toMatch(/zip(?:Code|_code):/);
     expect(bahCalculator).not.toContain('bah_zip_code');
     expect(bahCalculator).toContain("captureAnalyticsEvent('calculator_cta_clicked'");
-    expect(bahCalculator).toContain('bah_result_lender_cta');
+    expect(bahCalculator).toContain('bah_result_agent_cta');
   });
 
   it('routes first-time homebuyer guide downloads to their own server action', async () => {

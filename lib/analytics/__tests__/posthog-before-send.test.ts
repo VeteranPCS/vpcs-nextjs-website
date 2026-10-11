@@ -37,6 +37,40 @@ describe('PostHog before_send handling', () => {
     });
   });
 
+  it('sanitizes SDK top-level person updates as well as event properties', () => {
+    const original = {
+      ...captureResult('guide_download_started', { guide_id: 'va_loan_guide' }),
+      $set_once: {
+        $initial_current_url: 'http://127.0.0.1:3100/pcs-resources?private_query=do-not-record-this',
+        $current_url: 'http://127.0.0.1:3100/pcs-resources?email=private@example.com',
+        $initial_referrer: 'https://www.google.com/search?q=private-search',
+        email: 'private@example.com',
+        first_name: 'PrivateGivenName',
+        safe_flag: true,
+      },
+      $set: {
+        $referrer: 'https://www.veteranpcs.com/blog?phone=5555551212',
+        $pathname: '/pcs-resources?private_query=do-not-record-this',
+        phone: '5555551212',
+        message: 'Private free text',
+        lead_source: 'VA Loan Guide',
+      },
+    };
+    const result = sanitizePostHogBeforeSendEvent(original, 'vpcs_test_visitor');
+    expect(result?.$set_once).toEqual({ $initial_pathname: '/pcs-resources', $pathname: '/pcs-resources', $initial_referring_path: '/search', safe_flag: true });
+    expect(result?.$set).toEqual({ $referring_path: '/blog', $pathname: '/pcs-resources', lead_source: 'VA Loan Guide' });
+    expect(result?.properties.guide_id).toBe('va_loan_guide');
+    expect(original.$set_once.$initial_current_url).toContain('do-not-record-this');
+    for (const privateValue of ['do-not-record-this', 'private@example.com', 'PrivateGivenName', 'private-search', '5555551212', 'Private free text']) expect(JSON.stringify(result)).not.toContain(privateValue);
+  });
+
+  it('does not skip person-update sanitization when an event lacks properties', () => {
+    const event = { event: '$set', uuid: 'test', $set: { email: 'private@example.com', safe_flag: true } } as unknown as CaptureResult;
+    const result = sanitizePostHogBeforeSendEvent(event, 'vpcs_test_visitor');
+    expect(result?.$set).toEqual({ safe_flag: true });
+    expect(result?.properties.vpcs_visitor_id).toBe('vpcs_test_visitor');
+  });
+
   it('uses exception-specific sanitization for valid exception events', () => {
     const result = sanitizePostHogBeforeSendEvent(
       captureResult('$exception', {

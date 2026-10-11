@@ -1,6 +1,6 @@
 # VeteranPCS Telemetry Taxonomy
 
-Last updated: 2026-09-29
+Last updated: 2026-10-10
 
 This is the durable reference for VeteranPCS web telemetry. Use it when changing analytics code, troubleshooting PostHog, comparing against Google Analytics, or planning Salesforce closed-loop reporting.
 
@@ -135,6 +135,27 @@ Common optional properties:
 | `concierge_tool_completed` | Server-side concierge lead tools | same as submitted plus optional `submission_id` |
 | `concierge_tool_failed` | Server-side concierge lead tools | same as submitted plus `failure_stage`, `error_codes` |
 | `concierge_chat_completed` | Chat route finish | `tokens_used`, `source_page_path` |
+
+### Redesign resource downloads
+
+The Resources hub reuses two existing downloadable assets. It does not create downloadable versions of the checklist or duty-station articles.
+
+| Asset | Stable `guide_id` | File path |
+| --- | --- | --- |
+| VA Loan Guide | `va_loan_guide` | `/downloads/VA-Loan-Guide.pdf` |
+| First-Time Homebuyer Guide | `first_time_homebuyer_guide` | `/downloads/first-time-home-buyer-guide.pdf` |
+
+The shared `LeadCaptureDialog` emits `cta_clicked` when its trigger opens, with `cta_intent=download_guide`. Download events also include `guide_id`, `form_id`, path-only `destination_path`, `cta_component=lead_capture_dialog`, and the original placement. Resources supplies `page_type=pcs_resources` and one of:
+
+- `cta_location=featured_resources`, `cta_position=card`: featured VA guide card.
+- `cta_location=resource_library`, `cta_position=card`: either guide in search, category, or all-resource results.
+- `cta_location=resources_guide_strip`, `cta_position=inline`: either guide in the free-guides strip.
+
+A valid form submission emits `guide_download_requested` with `download_trigger=form_submission`. Only an accepted response initiates the PDF download and emits `guide_download_started`. A pending duplicate submission is suppressed; failures emit no started event. Opening, dismissing, and native-invalid submissions emit no download events.
+
+The success-state **Download guide** link emits another requested/started pair with `download_trigger=manual_link`, without submitting another lead. This measures each explicit download initiation; it does **not** prove the user saved or opened the file. Count accepted leads with the existing server-owned `lead_conversion_created` event, not download counts.
+
+The shared sanitizer excludes raw contact fields and query strings. The SDK `before_send` privacy pass also covers top-level `$set` and `$set_once` person updates; SDK-added current/initial URLs become path-only fields. Browser verification enables local SDK capture explicitly, intercepts ingestion before navigation, and uses `LEAD_DRY_RUN=1`; test events and leads must not reach production. Instrumentation follows [PostHog custom-event capture](https://posthog.com/docs/libraries/js/usage#custom-event-capture).
 
 ### Bottom Funnel
 

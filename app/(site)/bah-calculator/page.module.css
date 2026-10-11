@@ -1,0 +1,23 @@
+.page { color: #292f70; padding-top: var(--legacy-nav-height, 80px); padding-bottom: 70px; }
+.container { width: min(1360px, calc(100% - 64px)); margin: 0 auto; }
+.hero { position: relative; isolation: isolate; padding: 26px 0 30px; background: white; }
+.hero::before { content: ''; position: absolute; z-index: -1; inset: 0; background: url('/images/redesign/flag-waving.webp') right center / cover no-repeat; opacity: .5; }
+.hero::after { content: ''; position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, white 1%, rgba(255,255,255,.9) 28%, transparent 75%); }
+.hero h1 { font-size: clamp(26px,2.7vw,38px); font-weight: 800; letter-spacing: -.8px; line-height: 1.2; }
+.subtitle { font-size: 25px; margin: 14px 0 30px; line-height: 1.35; }
+.tools { margin-top: 30px; }
+.star { display: flex; align-items: center; justify-content: center; gap: 10px; color: #b32025; font-size: 22px; }
+.star::before,.star::after { content: ''; width: 130px; height: 1px; background: #c9cbd0; }
+.tools h2 { font-size: 40px; text-align: center; font-weight: 800; margin: 10px 0 24px; line-height: 1.2; }
+.toolGrid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px; }
+.toolCard { display: flex; align-items: center; gap: 22px; border: 1px solid #d6d7da; border-radius: 20px; padding: 22px 26px; min-height: 122px; text-decoration: none; transition: border-color .15s, background .15s; }
+.toolCard:hover { border-color: #292f70; background: #f8f9fc; }
+.toolCard:focus-visible { outline: 3px solid #3159a5; outline-offset: 3px; }
+.toolIcon { flex: 0 0 54px; height: 54px; color: #b32025; }
+.toolCard h3 { font-size: 22px; line-height: 1.2; font-weight: 750; margin-bottom: 8px; letter-spacing: -.5px; }
+.toolCard p { font-size: 17px; line-height: 1.25; color: #171717; }
+.chevron { margin-left: auto; font-size: 30px; color: #7c859b; }
+@media(max-width: 1050px) { .toolCard { padding: 20px; gap: 14px; } .toolCard h3 { font-size: 19px; } .toolIcon { flex-basis: 42px; height: 42px; } }
+@media(max-width: 900px) { .toolGrid { grid-template-columns: 1fr; gap: 14px; } .toolCard { min-height: 108px; } .toolCard h3 { font-size: 22px; } .toolIcon { flex-basis: 48px; height: 48px; } }
+@media(max-width: 700px) { .page { padding-top: var(--legacy-nav-height, 80px); padding-bottom: 40px; } .container { width: calc(100% - 32px); } .hero { padding-top: 20px; } .subtitle { font-size: 20px; margin-bottom: 24px; } .toolGrid { grid-template-columns: 1fr; gap: 14px; } .tools h2 { font-size: 30px; } .toolCard { min-height: 108px; } .toolCard h3 { font-size: 22px; } .toolIcon { flex-basis: 48px; height: 48px; } }
+@media(prefers-reduced-motion: reduce) { .toolCard { transition: none; } }

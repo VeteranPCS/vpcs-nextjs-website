@@ -16,8 +16,8 @@ const SupportSpanish = async () => {
               data-aos-duration="1000"
             >
               <div className="flex justify-center items-center mt-10">
-                <div className="flex flex-col lg:flex-row md:flex-row gap-8 justify-between items-center">
-                  <div className="lg:text-left sm:text-center text-left flex flex-col gap-4 justify-between px-12">
+                <div className="grid w-full min-w-0 grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                  <div className="lg:text-left sm:text-center text-left flex min-w-0 flex-col gap-4 justify-between px-2 md:px-8">
                     <div>
                       <h2 className="text-[#292F6C] font-bold xl:text-[42px] lg:text-[40px] sm:text-[40px] text-[40px] leading-[54px]">
                         Ayuda con el préstamo VA
@@ -52,7 +52,7 @@ const SupportSpanish = async () => {
                     <Image
                       width={1000}
                       height={1000}
-                      className="w-auto h-auto min-w-[400px] min-h-[400px]"
+                      className="w-full max-w-[400px] h-auto"
                       src={"/assets/agent-image.png"}
                       alt="Move in bonus"
                     />

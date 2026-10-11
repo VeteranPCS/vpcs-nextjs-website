@@ -1,0 +1,2 @@
+/* Keep off-screen reveal animations from widening the viewport. */
+.page { overflow-x: clip; }

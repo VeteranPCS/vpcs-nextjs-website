@@ -1,0 +1,505 @@
+{
+  "folderId": "1ibt7AVFdX1tbBV6Rs2MiSnkf9S-v3utC",
+  "folderName": "steph editing files",
+  "inspectionAuthorizedOn": "2026-10-10",
+  "scope": "Source asset inspection and retrieval, explicitly approved by the user",
+  "fileCount": 40,
+  "subfolderCount": 0,
+  "materializedDirectory": "/Users/harperfoley/.codex/visualizations/2026/10/10/01a1238e-ff79-78f3-a921-ff8ccdbb7759/steph-redesign/assets-retrieval-2",
+  "files": [
+    {
+      "driveId": "1NyDcAsrWKwZuGsmNBsmes2WRvdrkUaAv",
+      "file": "~ai-4946d93c-418e-4e4e-b720-7b88b0309ffc_.tmp",
+      "mimeType": "application/pdf",
+      "bytes": 16234239,
+      "sha256": "7b89f31380637e1afba6c675fba114046af70f26e63e22d6702c171ec599c4be",
+      "localFile": "01-_ai-4946d93c-418e-4e4e-b720-7b88b0309ffc_.tmp",
+      "inspection": "AI/PDF embedded originals/link/font inspection delegated to BAH reviewer"
+    },
+    {
+      "driveId": "1JrBzRZa0LwTpIUTbIGQiSSsbT9GfPf87",
+      "file": "vpcs- webpage-update.ai",
+      "mimeType": "application/postscript",
+      "bytes": 12030169,
+      "sha256": "991d69d264352b484a776fb28673ad171686342355f16d51c651211204b86af9",
+      "localFile": "02-vpcs-_webpage-update.ai",
+      "inspection": "AI/PDF embedded originals/link/font inspection delegated to BAH reviewer"
+    },
+    {
+      "driveId": "1Lw8k7IiSH01VPZo8wB9Eq1ziTs3j-lI1",
+      "file": "ChatGPT Image Aug 24, 2026, 11_28_23 AM.png",
+      "mimeType": "image/png",
+      "bytes": 1677645,
+      "sha256": "b768c413caf8ec360897cbd301e3eecf2e5fb1a965e1228022bd2b70355c8a00",
+      "localFile": "03-ChatGPT_Image_Aug_24__2026__11_28_23_AM.png",
+      "dimensions": [
+        874,
+        1800
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1xAxopIcT1Yh4aUUe_nrABQaKJD3G8YbA",
+      "file": "c17ac8e8-835e-42e9-b81b-55fcb5e275a3.png",
+      "mimeType": "image/png",
+      "bytes": 1660098,
+      "sha256": "f7ef93abb03c639119cce6792e238320d1478a3c278b7f8c9da3da0785d38e1c",
+      "localFile": "04-c17ac8e8-835e-42e9-b81b-55fcb5e275a3.png",
+      "dimensions": [
+        1774,
+        887
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "16BLeImGGqnin8BOKbNko02CG7Vyfr2yO",
+      "file": "Screenshot 2026-08-24 at 9.56.24\u202fAM.png",
+      "mimeType": "image/png",
+      "bytes": 737978,
+      "sha256": "b83510ae0ffe8c122c462198087e019849380d68c8e168a39f862f69dbd5c344",
+      "localFile": "05-Screenshot_2026-08-24_at_9.56.24_AM.png",
+      "dimensions": [
+        2736,
+        918
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "16Kqd1fjUOXSnIb25Nn5gIk1rYuLWJ3QE",
+      "file": "Screenshot 2026-08-24 at 9.55.55\u202fAM.png",
+      "mimeType": "image/png",
+      "bytes": 2648867,
+      "sha256": "597d91dc120785dd1ef5366930ac0b37b55fdb0c7575a195c0f019b2a328e2ad",
+      "localFile": "06-Screenshot_2026-08-24_at_9.55.55_AM.png",
+      "dimensions": [
+        2856,
+        922
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1B-0HMQoeWigOXVWINNGo0-6ZGCriIw6G",
+      "file": "d9d8fc6c-3a91-4cfa-ab0a-d422a411e69c.png",
+      "mimeType": "image/png",
+      "bytes": 1608220,
+      "sha256": "2505ae7b824348b967e5f1b2362485689febb0115d19084a4ba9bebd683c0b65",
+      "localFile": "07-d9d8fc6c-3a91-4cfa-ab0a-d422a411e69c.png",
+      "dimensions": [
+        892,
+        1764
+      ],
+      "inspection": "VA reference: entire flattened source page, pixel-identical to native PDF image object; no resolution improvement or uncovered content"
+    },
+    {
+      "driveId": "1x-cG--21uA_XkBfcNeqSWCOuHwYdMIpC",
+      "file": "fd1d9b78-9327-4e80-9531-a1b51c8e2262.png",
+      "mimeType": "image/png",
+      "bytes": 1609623,
+      "sha256": "26e84290823309a357fe693af6fa6c5410f6a1e527486dbbf60da965dfadd787",
+      "localFile": "08-fd1d9b78-9327-4e80-9531-a1b51c8e2262.png",
+      "dimensions": [
+        864,
+        1821
+      ],
+      "inspection": "Resources reference: entire flattened source page, pixel-identical to native PDF image object; no resolution improvement or uncovered content"
+    },
+    {
+      "driveId": "1GD01zDHsON9nv-9O03U0bRUzu7FXmYiI",
+      "file": "vpcs- webpage.ai",
+      "mimeType": "application/postscript",
+      "bytes": 67514642,
+      "sha256": "002780037753cae6c7d85489d003446f5949b6e514f5643ee84a3f0f76b7b9a7",
+      "localFile": "09-vpcs-_webpage.ai",
+      "inspection": "AI/PDF embedded originals/link/font inspection delegated to BAH reviewer"
+    },
+    {
+      "driveId": "1E-Zx8rDyoQRyJqLTZU_cRVTKnN1WLJ6F",
+      "file": "2eeb03d6-9519-4eaf-8ee4-470876e7c9be.png",
+      "mimeType": "image/png",
+      "bytes": 1442406,
+      "sha256": "f98168dad7410615b0d68e272b61f10fdb5bde56c25b9f9b4013140f6a02b1b9",
+      "localFile": "10-2eeb03d6-9519-4eaf-8ee4-470876e7c9be.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1VeCKvWb0G-ZEkuJG1Fzqb4ebPMdu_Ia9",
+      "file": "d9c5fba0-fd80-40d7-8c40-98bf3ccecc9c.png",
+      "mimeType": "image/png",
+      "bytes": 1616303,
+      "sha256": "576422131488ea95c5607b5314718ac310146db3bdeac49d8c2701458613ae62",
+      "localFile": "11-d9c5fba0-fd80-40d7-8c40-98bf3ccecc9c.png",
+      "dimensions": [
+        941,
+        1672
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1leYkxepFTF23QJC3FV1gcpR8pekQqDN4",
+      "file": "Screenshot 2026-08-20 at 9.24.46\u202fAM.png",
+      "mimeType": "image/png",
+      "bytes": 1467242,
+      "sha256": "cef4eda755342d25064fd74b1219f2497e2dc309c5c1274537cfb1e310227921",
+      "localFile": "12-Screenshot_2026-08-20_at_9.24.46_AM.png",
+      "dimensions": [
+        2846,
+        796
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "169Ye7WKcE3qSP_Z_WIQdegJEiTJBZvy6",
+      "file": "Screenshot 2026-08-20 at 9.24.36\u202fAM.png",
+      "mimeType": "image/png",
+      "bytes": 154390,
+      "sha256": "6f27c6aca34733046ed5f79c024f72629603b48fe5469f238d186466a5e6f6bd",
+      "localFile": "13-Screenshot_2026-08-20_at_9.24.36_AM.png",
+      "dimensions": [
+        2852,
+        918
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1mff3T19tqlOTiGnI6MSqlXB4vtwUbPEX",
+      "file": "Screenshot 2026-08-20 at 9.24.25\u202fAM.png",
+      "mimeType": "image/png",
+      "bytes": 1574472,
+      "sha256": "fb078495c7adf60458bbde1ed49e4993e5a6cd5e46fa213aa258a61183c5d5e6",
+      "localFile": "14-Screenshot_2026-08-20_at_9.24.25_AM.png",
+      "dimensions": [
+        2852,
+        660
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1BbhBrLC8kfRi14tHqmSlkMCWzMrmBHkV",
+      "file": "6218f104-46f8-40d1-9cab-3d1a0e3a0704.png",
+      "mimeType": "image/png",
+      "bytes": 1694096,
+      "sha256": "64c9ac13cadc6282775357b2103b044e1cd5da77e461c9f307c7c62e0081e1fe",
+      "localFile": "15-6218f104-46f8-40d1-9cab-3d1a0e3a0704.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1XS7t5n2sQnRl-GQI6uWMotybNDNcRshe",
+      "file": "c998c3a2-4246-43e2-8be4-6c15332644a3.png",
+      "mimeType": "image/png",
+      "bytes": 1686615,
+      "sha256": "2b17b874e53b85030b259d87c9060f04ad6f1e11d82d14e9e9a0a7ebcfb34290",
+      "localFile": "16-c998c3a2-4246-43e2-8be4-6c15332644a3.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1UJfWqdl3CmDZnOtQ9Ta5oSzUA9GQv4Ih",
+      "file": "bf7cfdc2-c4e3-4797-b345-e3d7bce2eddd.png",
+      "mimeType": "image/png",
+      "bytes": 1447197,
+      "sha256": "30bc88e949b4eca224fb531346725d97c241911474b38da479fada7874ab6f34",
+      "localFile": "17-bf7cfdc2-c4e3-4797-b345-e3d7bce2eddd.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1e0FkyVXgObhFhLJfZGGfMIMSj-bKJjaV",
+      "file": "Screenshot 2026-08-17 at 2.22.18\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 156986,
+      "sha256": "6b4e296fe0adbde68a419fbd8571dc2b80128fb293eefbe5cac06ca81f6eff8c",
+      "localFile": "18-Screenshot_2026-08-17_at_2.22.18_PM.png",
+      "dimensions": [
+        2856,
+        1010
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1NqFG3JqWJKbuUH0ib5G6dZvy9fl4_7Oq",
+      "file": "Screenshot 2026-08-17 at 2.22.10\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 1512015,
+      "sha256": "5ea701245f94856937d049c818dd32b08e241a5dc31855d328ac69324afcbb05",
+      "localFile": "19-Screenshot_2026-08-17_at_2.22.10_PM.png",
+      "dimensions": [
+        2828,
+        630
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1p_a0QFL2AL1KkDaz5JlHHZyJ6tCzA2jz",
+      "file": "Screenshot 2026-08-17 at 2.22.04\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 1466068,
+      "sha256": "62a2626076f430630d2db3ea67424c5730037443f5749d31bcf19ac912f8112d",
+      "localFile": "20-Screenshot_2026-08-17_at_2.22.04_PM.png",
+      "dimensions": [
+        2828,
+        806
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1vRR-1vFmwQJk7M0O3ZTpxRxJ4BR20i6E",
+      "file": "Screenshot 2026-08-17 at 2.21.57\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 166395,
+      "sha256": "9f8343bc387b125f6f90631a124bca0167bff9fb3eea02b3831b2021682b1e1d",
+      "localFile": "21-Screenshot_2026-08-17_at_2.21.57_PM.png",
+      "dimensions": [
+        2822,
+        972
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1r9-kptnPpvIHCFWfkjgQek6dUVXsYRG0",
+      "file": "Screenshot 2026-08-17 at 2.21.52\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 4516,
+      "sha256": "f9c7c0d200d2954905f279dac9ef621cfc8a3f4191b95af33e87eceb4f3b4652",
+      "localFile": "22-Screenshot_2026-08-17_at_2.21.52_PM.png",
+      "dimensions": [
+        212,
+        94
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1JhyPlttaZYvm_4AYpwG8KE4awPyPTou-",
+      "file": "Screenshot 2026-08-17 at 2.21.22\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 146031,
+      "sha256": "ef16609c47f1aee4f4ae9a98d7fac79e137cf590ca04af60aecfe6f56504342e",
+      "localFile": "23-Screenshot_2026-08-17_at_2.21.22_PM.png",
+      "dimensions": [
+        2852,
+        856
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "11pwegdZz2jTSuv_GK-wcMj2rftLDNu9p",
+      "file": "Screenshot 2026-08-17 at 2.21.16\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 339329,
+      "sha256": "ea5cbcd22cc73203943ade5310d3df6c502f03e95e7ebd156e1968e0ca2aef8c",
+      "localFile": "24-Screenshot_2026-08-17_at_2.21.16_PM.png",
+      "dimensions": [
+        2866,
+        1194
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1G51SNat7Yq9DfBTup0XgsSxRAguJ8sqF",
+      "file": "Screenshot 2026-08-17 at 2.21.09\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 2644790,
+      "sha256": "b881de09f0bc3d887747c4e0007008014e29514864e674ef2fb905f08150b065",
+      "localFile": "25-Screenshot_2026-08-17_at_2.21.09_PM.png",
+      "dimensions": [
+        2858,
+        1172
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1ee7iLWia_wpzuxPZ-rDZTGbyuXh0wcZY",
+      "file": "Screenshot 2026-08-17 at 2.21.01\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 2629348,
+      "sha256": "878f127da0d4b0317c4da79ee4af3ce027678596fd40fd9a3f5fe8bacae70019",
+      "localFile": "26-Screenshot_2026-08-17_at_2.21.01_PM.png",
+      "dimensions": [
+        2860,
+        926
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1AGTzjQJFSnADlBrmu4l0NJMMXsktPcR4",
+      "file": "Screenshot 2026-08-17 at 2.20.20\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 399146,
+      "sha256": "4259ff2580f1ceeec4aceac584bceacb52f485e4e262d699c6313b9d3548501c",
+      "localFile": "27-Screenshot_2026-08-17_at_2.20.20_PM.png",
+      "dimensions": [
+        2838,
+        1226
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1sYfJhfAkhTmWsEKi7U3Sd003gD-qIcMp",
+      "file": "menus.pdf",
+      "mimeType": "application/pdf",
+      "bytes": 2924035,
+      "sha256": "2e0d7e8fb5bdb64ed1c6fe98bc7efe3092780b98a91f4c4ca0a764dd69f34b37",
+      "localFile": "28-menus.pdf",
+      "inspection": "AI/PDF embedded originals/link/font inspection delegated to BAH reviewer"
+    },
+    {
+      "driveId": "1-HeqsG31OiexXhxCfUi0TrcXSyxCt9Km",
+      "file": "Screenshot 2026-08-17 at 1.31.52\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 192866,
+      "sha256": "5aa8a22058f9a4a81f4155c8e1bb318482bc0ced21f1ef41545fab5c8d1f0465",
+      "localFile": "29-Screenshot_2026-08-17_at_1.31.52_PM.png",
+      "dimensions": [
+        1028,
+        1096
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1DLSp-egntzRSnPDhKy4F3eWATOX6b1oN",
+      "file": "actual menu design.png",
+      "mimeType": "image/png",
+      "bytes": 155539,
+      "sha256": "58854d150bd64b468ee8ff9da08b7e89310d1e162a2b7b5addff2317e5755b9f",
+      "localFile": "30-actual_menu_design.png",
+      "dimensions": [
+        1536,
+        680
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1HxBkFZTZHIawaxWXUlUHX2golrTjyqmP",
+      "file": "Screenshot 2026-08-06 at 1.00.04\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 853564,
+      "sha256": "3b5b2bb4e090e45107adeb23029081e3219664f8a10b6be3cb7bb9d4bb694698",
+      "localFile": "31-Screenshot_2026-08-06_at_1.00.04_PM.png",
+      "dimensions": [
+        760,
+        1110
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1h_FQ1Wrh8n9UadjFqfs6ky4U6d2lPWDV",
+      "file": "Screenshot 2026-08-06 at 12.45.08\u202fPM.png",
+      "mimeType": "image/png",
+      "bytes": 303973,
+      "sha256": "b6089f469c2c770484f5c22641928907c9a82ab259701db0e4adfe88863a7980",
+      "localFile": "32-Screenshot_2026-08-06_at_12.45.08_PM.png",
+      "dimensions": [
+        1554,
+        718
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1OVST2fQLhXesCiYV5VjeXH-ubyHcgEj6",
+      "file": "example of what I like for about us:mission.png",
+      "mimeType": "image/png",
+      "bytes": 1506563,
+      "sha256": "94a303004bece549dae3765ec42fb17142571ed98aff2e846bebb269ce328460",
+      "localFile": "33-example_of_what_I_like_for_about_us_mission.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "10n9P2-DcvsoWlda8tbvULiZrwG0yShPs",
+      "file": "b626cdf3-fba9-41bf-8f68-583b41b3749f.png",
+      "mimeType": "image/png",
+      "bytes": 1472919,
+      "sha256": "95cecc6eb07a3c0f54c6c604d99a9d9344f6ba759e26a3b63c8210b7db72430f",
+      "localFile": "34-b626cdf3-fba9-41bf-8f68-583b41b3749f.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1yrtMBwMhcoC4MITO7thgGkvGH7_yMIvV",
+      "file": "Screenshot 2026-08-05 at 11.14.24\u202fAM.png",
+      "mimeType": "image/png",
+      "bytes": 63636,
+      "sha256": "1b9c359a15e5d336d101b64de2571edd7c56795ce9455de655b8d9b213f8b53a",
+      "localFile": "35-Screenshot_2026-08-05_at_11.14.24_AM.png",
+      "dimensions": [
+        2870,
+        146
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1GJbvw7Fw4dqfFuE91IJlZn3RulUxpFNR",
+      "file": "vpcs- webpage.pdf",
+      "mimeType": "application/pdf",
+      "bytes": 10928313,
+      "sha256": "cfbd8420ba26554ff2f699b50edf8038a91e54c1c7dfee2577d0ea83aa74cdd2",
+      "localFile": "36-vpcs-_webpage.pdf",
+      "inspection": "AI/PDF embedded originals/link/font inspection delegated to BAH reviewer"
+    },
+    {
+      "driveId": "1eCpyZdBQbsSMSLKQdtWp9dxiLMDXN2d8",
+      "file": "blog webpage.ai",
+      "mimeType": "application/postscript",
+      "bytes": 5240914,
+      "sha256": "66508a09ad5f02600c589e3af9aea6ed6881ef44aad58f5872ed69894f23c01a",
+      "localFile": "37-blog_webpage.ai",
+      "inspection": "AI/PDF embedded originals/link/font inspection delegated to BAH reviewer"
+    },
+    {
+      "driveId": "1ps-k5wH2KQgAzTs6tR0fqtThkmyQM8P5",
+      "file": "webpage.ai",
+      "mimeType": "application/postscript",
+      "bytes": 6594631,
+      "sha256": "8f5f91e2be74a17a269942d222d8c695dca5529d720179d2e99162b6e0ecba55",
+      "localFile": "38-webpage.ai",
+      "inspection": "AI/PDF embedded originals/link/font inspection delegated to BAH reviewer"
+    },
+    {
+      "driveId": "1Real_yK9dbqJ_hNKiY8bbiaxugAoiF3o",
+      "file": "91a3a9fe-26ef-4019-aad7-4df3f08d5c82.png",
+      "mimeType": "image/png",
+      "bytes": 1483728,
+      "sha256": "bf01e9322d0bef139c15b3b5eb4be0901b683be2f67ac05a41a49956ac8ecf91",
+      "localFile": "39-91a3a9fe-26ef-4019-aad7-4df3f08d5c82.png",
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "inspection": "Flattened UI mockup or website screenshot; no clean requested original found by visual inspection"
+    },
+    {
+      "driveId": "1uOT-wjKCy2F_0EOIbV5rSYwWL9sZ7kUn",
+      "file": "IMG_20260405_085024.jpg",
+      "mimeType": "image/jpeg",
+      "bytes": 5382171,
+      "sha256": "c5bf358801a088e8c23203993cf78cc91179803501534b758dac273a3a9c7355",
+      "localFile": "40-IMG_20260405_085024.jpg",
+      "dimensions": [
+        4032,
+        3024
+      ],
+      "inspection": "Unrelated clean family portrait; does not match requested hero, card or duty-station images"
+    }
+  ],
+  "result": "No usable replacement for the requested missing photo or font sources found; see editing-source-inspection.md",
+  "privateDataScope": "PDF objects and decoded native Illustrator headers/linked-source records inspected; proprietary binary raster payloads not exhaustively reconstructed"
+}

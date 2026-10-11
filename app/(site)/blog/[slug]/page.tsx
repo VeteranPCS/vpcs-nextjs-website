@@ -1,40 +1,24 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { cache } from "react";
 import { BlogPosting, WithContext } from "schema-dts";
-import BlogDetailsHeroSection from "@/components/BlogDetails/BlogDetailsHeroSection/BlogDetailsHeroSection";
-import BlogBeginingPostAgent from "@/components/BlogDetails/BlogBeginingBlogPostAgent/BlogBeginingBlogPostAgent";
-import BlogDetailsCta from "@/components/BlogDetails/BlogDetailsCta/BlogDetailsCta";
-import EndBlogPostDetails from "@/components/BlogDetails/EndBlogPostDetails/EndBlogPostDetails";
-import FrequentlyAskedQuestion from "@/components/stories/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
-import KeepInTouch from "@/components/homepage/KeepInTouch/KeepInTouch";
-import CommonBlog from "@/components/BlogPage/BlogPage/BlogCTA/CommonBlog";
-import FindAgentInState from "@/components/Blog/FindAgentInState";
 import { ContentViewedTracker } from "@/components/Analytics/Trackers";
-import BlogCard from "@/components/Blog/BlogCard/BlogCard";
-import BlogSearchForm from "@/components/BlogPage/BlogSearchForm";
 import {
     componentSlugForBlog,
-    extractTocHeadings,
     getAllBlogs,
     getBlogBySlug,
     getBlogSlugs,
-    readingTimeMinutes,
 } from "@/lib/blog/mdx";
 import { getBlogComponentBySlug, getBlogCtaIntent } from "@/lib/blog/components";
-import { toBlogCardData } from "@/lib/blog/cards";
-import { pickNextGuide, rankRelatedBlogs } from "@/lib/blog/related";
+import { pickRelated, rankRelatedBlogs } from "@/lib/blog/related";
 import { resolveAuthor } from "@/lib/blog/authors";
 import {
-    getStateDisplayName,
     resolveBlogStateSlug,
 } from "@/lib/blog/state";
-import { splitMdxAtMidpoint } from "@/lib/blog/splitMdxAtMidpoint";
 import { formatDate } from "@/utils/helper";
 import { buildBreadcrumbList } from "@/lib/structured-data";
 import { SITE_URL } from "@/lib/siteUrl";
-import { buildContactCtaHref } from "@/lib/contactAgentUrl";
-import TrackedCtaLink from "@/components/common/TrackedCtaLink";
+
+import StephArticle from '@/components/BlogDetails/StephArticle/StephArticle';
 
 const BASE_URL = SITE_URL;
 
@@ -91,25 +75,12 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
     }
 
     const { blog, resolvedAuthor } = pageData;
-    const { first: bodyFirstHalf, second: bodySecondHalf } = splitMdxAtMidpoint(blog.content);
     const bridgeState = resolveBlogStateSlug(blog);
-    const tocHeadings = extractTocHeadings(blog.content);
-    const firstHeadingCount = extractTocHeadings(bodyFirstHalf).length;
-    const firstHeadingIds = tocHeadings.slice(0, firstHeadingCount);
-    const secondHeadingIds = tocHeadings.slice(firstHeadingCount);
-    const readingMinutes = readingTimeMinutes(blog.content);
     const blogComponent = getBlogComponentBySlug(componentSlugForBlog(blog));
     const ctaIntent = getBlogCtaIntent(blogComponent?.slug);
-    const contactHref = buildContactCtaHref({ stateSlug: bridgeState, form: ctaIntent });
-    const partnerLabel = ctaIntent === 'agent' ? 'an agent' : 'a lender';
-    const ctaLabel = bridgeState
-        ? `Find ${partnerLabel} in ${getStateDisplayName(bridgeState)}`
-        : `Find ${partnerLabel}`;
-    const stickyCtaId = ctaIntent === 'agent' ? 'blog_mobile_sticky_agent' : 'blog_mobile_sticky_lender';
-    const stickyCtaIntent = ctaIntent === 'agent' ? 'contact_agent' : 'contact_lender';
     const allBlogs = await getAllBlogs();
     const rankedRelated = rankRelatedBlogs(allBlogs, blog);
-    const nextGuide = pickNextGuide(rankedRelated);
+    const related = pickRelated(rankedRelated, { limit: 4, crossComponentMin: 1 });
 
     const heroImageUrl = blog.mainImage?.src
         ? `${BASE_URL}${blog.mainImage.src}`
@@ -170,7 +141,7 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
     ]);
 
     return (
-        <div className="pb-20 md:pb-0">
+        <div>
             <script
                 id={`json-ld-blog-${slug}`}
                 type="application/ld+json"
@@ -187,114 +158,7 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                 contentType="blog_post"
                 topicCluster={blog.component || blog.categories?.[0]}
             />
-            <BlogDetailsHeroSection blog={blog} resolvedAuthor={resolvedAuthor} />
-            <nav className="container mx-auto px-5 pt-8 text-sm text-[#6C757D]" aria-label="Breadcrumb">
-                <Link href="/" className="hover:text-[#292F6C] inline-flex items-center min-h-11">Home</Link>
-                <span className="mx-2">/</span>
-                <Link href="/blog" className="hover:text-[#292F6C] inline-flex items-center min-h-11">Blog</Link>
-                {blogComponent && (
-                    <>
-                        <span className="mx-2">/</span>
-                        <TrackedCtaLink
-                            href={`/blog/category/${blogComponent.slug}`}
-                            className="hover:text-[#292F6C] inline-flex items-center min-h-11"
-                            cta={{
-                                ctaId: 'blog_breadcrumb_category',
-                                ctaIntent: 'content_navigation',
-                                ctaPosition: 'blog_post_breadcrumb',
-                                ctaComponent: 'blog_breadcrumb',
-                                ctaLabel: blogComponent.label,
-                                destination: `/blog/category/${blogComponent.slug}`,
-                                pageType: 'blog_post',
-                                contentSlug: slug,
-                                contentType: 'blog_post',
-                            }}
-                        >
-                            {blogComponent.label}
-                        </TrackedCtaLink>
-                    </>
-                )}
-                <span className="mx-2">/</span>
-                <span className="text-[#292F6C]">{blog.title}</span>
-            </nav>
-            <BlogBeginingPostAgent
-                blog={blog}
-                bodyFirstHalf={bodyFirstHalf}
-                resolvedAuthor={resolvedAuthor}
-                readingMinutes={readingMinutes}
-                tocHeadings={tocHeadings}
-                headingIds={firstHeadingIds}
-            />
-            {bridgeState && ctaIntent === 'agent' && (
-                <FindAgentInState state={bridgeState} blogSlug={slug} />
-            )}
-            <BlogDetailsCta stateSlug={bridgeState} componentSlug={blogComponent?.slug ?? null} contentSlug={slug} />
-            <EndBlogPostDetails
-                contentSlug={slug}
-                bodySecondHalf={bodySecondHalf}
-                resolvedAuthor={resolvedAuthor}
-                headingIds={secondHeadingIds}
-            />
-            {nextGuide && (
-                <div className="container mx-auto px-5 my-12">
-                    <h2 className="text-[#292F6C] md:text-[32px] text-[24px] font-bold mb-6">
-                        Up next
-                    </h2>
-                    <div className="overflow-hidden rounded-custom border border-[#E5E7EB] bg-white">
-                        <BlogCard
-                            data={toBlogCardData(nextGuide)}
-                            variant="horizontal"
-                            cta={{
-                                ctaId: 'blog_next_guide',
-                                ctaPosition: 'blog_post_after_body',
-                                pageType: 'blog_post',
-                            }}
-                        />
-                    </div>
-                </div>
-            )}
-            <CommonBlog
-                component={blog.component || ""}
-                blog={blog}
-                excludeSlugs={nextGuide ? [nextGuide.slug] : []}
-            />
-            <div className="container mx-auto px-5 my-12">
-                <div className="mx-auto max-w-xl text-center">
-                    <h2 className="text-[#292F6C] text-[24px] font-bold mb-2">
-                        Looking for something else?
-                    </h2>
-                    <p className="text-[#6C757D] roboto text-sm mb-4">
-                        Search all VeteranPCS PCS and VA loan guides.
-                    </p>
-                    <BlogSearchForm />
-                </div>
-            </div>
-            <FrequentlyAskedQuestion />
-            <KeepInTouch />
-            <div
-                className="fixed inset-x-0 bottom-0 z-40 border-t border-[#E5E7EB] bg-white/95 px-5 py-3 shadow-lg md:hidden"
-                data-cta-id={stickyCtaId}
-            >
-                <TrackedCtaLink
-                    href={contactHref}
-                    className="block min-h-11 rounded-custom bg-[#a81f23] px-5 py-3 text-center text-sm font-bold text-white"
-                    cta={{
-                        ctaId: stickyCtaId,
-                        ctaIntent: stickyCtaIntent,
-                        ctaPosition: 'mobile_sticky_footer',
-                        ctaComponent: 'blog_mobile_sticky_cta',
-                        ctaLabel,
-                        destination: contactHref,
-                        pageType: 'blog_post',
-                        stateSlug: bridgeState,
-                        contentSlug: slug,
-                        contentType: 'blog_post',
-                        partnerType: ctaIntent,
-                    }}
-                >
-                    {ctaLabel}
-                </TrackedCtaLink>
-            </div>
+            <StephArticle blog={blog} resolvedAuthor={resolvedAuthor} stateSlug={bridgeState} intent={ctaIntent} category={blogComponent ? {label:blogComponent.label,slug:blogComponent.slug} : null} related={related} />
         </div>
     );
 }
