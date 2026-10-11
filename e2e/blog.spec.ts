@@ -52,3 +52,30 @@ test('bonus promotion loads the exact family image and keeps its blended photo b
   expect(blend.background).toContain('linear-gradient');
   await promo.screenshot({ path: info.outputPath('bonus-photo-blend.png'), caret: 'initial' });
 });
+
+
+test('sidebar resources retain content height beside the taller bonus promotion', async ({ page }, info) => {
+  await fixtureImpact(page);
+  await page.goto(`/blog/${slug}`);
+  await expect(page.locator('[data-site-header]')).toContainText('$676,500');
+  const sidebar = page.getByRole('complementary', { name: 'Article resources' });
+  const resources = sidebar.getByRole('region', { name: 'More helpful resources' });
+  const bonus = sidebar.locator('section').filter({ has: page.getByRole('heading', { name: 'VeteranPCS Bonus' }) });
+  const photo = bonus.getByRole('img');
+  await resources.scrollIntoViewIfNeeded();
+  await expect.poll(() => photo.evaluate(el => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  const geometry = await resources.evaluate(el => {
+    const rect = el.getBoundingClientRect();
+    const lastLink = el.querySelector(':scope > a')!.getBoundingClientRect();
+    const style = getComputedStyle(el);
+    return { top: rect.top, bottom: rect.bottom, height: rect.height, trailingSpace: rect.bottom - lastLink.bottom, expectedSpace: parseFloat(style.paddingBottom) + parseFloat(style.borderBottomWidth) };
+  });
+  const bonusRect = await bonus.boundingBox();
+  expect(Math.abs(geometry.trailingSpace - geometry.expectedSpace)).toBeLessThanOrEqual(2);
+  expect(geometry.height).toBeLessThan(bonusRect!.height);
+  const width = page.viewportSize()!.width;
+  if (width >= 768 && width < 1200) expect(Math.abs(geometry.top - bonusRect!.y)).toBeLessThanOrEqual(2);
+  else expect(bonusRect!.y).toBeGreaterThanOrEqual(geometry.bottom);
+  await assertNoOverflow(page);
+  await resources.screenshot({ path: info.outputPath('sidebar-resources-content-height.png'), caret: 'initial' });
+});

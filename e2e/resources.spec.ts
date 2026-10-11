@@ -111,3 +111,25 @@ test('guide strip triggers do not restyle the dialog close control',async({page}
  await expect(dialog.getByRole('heading',{name:'Free VA Loan Guide'})).toHaveCSS('font-size','26px');await expect(close).toHaveCSS('padding','0px');expect((await close.boundingBox())!.width).toBeLessThanOrEqual(48);
  await page.screenshot({path:info.outputPath('guide-strip-dialog.png'),caret:'initial'});await close.click();await expect(trigger).toBeFocused();
 });
+
+
+test('download guide actions wrap together and preserve both accessible dialogs',async({page},info)=>{
+ await page.goto('/pcs-resources');
+ const strip=page.getByRole('region',{name:'Free downloadable guides'});
+ const actions=strip.getByRole('group',{name:'Guide downloads'});
+ await expect(actions.getByRole('button')).toHaveCount(2);
+ const first=actions.getByRole('button',{name:'Get Homebuyer Guide',exact:true});
+ const second=actions.getByRole('button',{name:'Get VA Loan Guide',exact:true});
+ await actions.scrollIntoViewIfNeeded();
+ const a=(await first.boundingBox())!,b=(await second.boundingBox())!,group=(await actions.boundingBox())!;
+ if(page.viewportSize()!.width>=768)expect(Math.abs(a.y-b.y),'Both guide actions must share a row after the strip wraps').toBeLessThan(2);
+ else {expect(b.y).toBeGreaterThanOrEqual(a.y+a.height);expect(Math.abs(a.x-b.x)).toBeLessThan(2);expect(Math.abs(a.width-b.width)).toBeLessThan(2);}
+ expect(a.x).toBeGreaterThanOrEqual(group.x);expect(b.x+b.width).toBeLessThanOrEqual(group.x+group.width+1);
+ await page.screenshot({path:info.outputPath('guide-actions-grouped.png'),caret:'initial'});
+ for(const [trigger,title] of [[first,'Free First-Time Homebuyer Guide'],[second,'Free VA Loan Guide']] as const){
+  await trigger.click();const dialog=page.getByRole('dialog',{name:title});await expect(dialog.getByLabel('First name')).toBeVisible();await dialog.press('Escape');await expect(trigger).toBeFocused();
+ }
+ const selector=page.getByRole('navigation',{name:'What do you need today?'});
+ await expect(selector.getByRole('link',{name:'VA Loan Help',exact:true}).locator('svg')).toHaveAttribute('data-resource-icon','dollar');
+ await expect(selector.getByRole('link',{name:'Duty Station Guides',exact:true}).locator('svg')).toHaveAttribute('data-resource-icon','pin');
+});

@@ -27,6 +27,17 @@ const EMAIL_GLOBAL_RE = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
 const LONG_PHONE_RE = /(?:\+?1[\s.-]?)?(?:\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}/;
 const LONG_PHONE_GLOBAL_RE = /(?:\+?1[\s.-]?)?(?:\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}/g;
 const FULL_ZIP_RE = /^\d{5}(?:-\d{4})?$/;
+
+// Generated identifiers can contain ten consecutive decimal digits. Validate
+// their format before applying the free-text phone heuristic; PostHog requires
+// distinct_id for ingestion. This exception never applies to contact fields.
+const ANONYMOUS_ID_KEYS = new Set(['distinct_id', '$device_id', '$anon_distinct_id', '$window_id', 'vpcs_visitor_id']);
+function isGeneratedAnonymousId(value: string): boolean {
+  const uuid = value.startsWith('vpcs_') ? value.slice(5) : value;
+  return Boolean(validSessionId(uuid))
+    || /^vpcs_[a-z0-9]{8,12}-[a-z0-9]{8,16}$/.test(value);
+}
+
 const FULL_ZIP_GLOBAL_RE = /\b\d{5}(?:-\d{4})?\b/g;
 const UNSAFE_URL_RE = /^https?:\/\/.+[?&][^#]+/i;
 const URL_GLOBAL_RE = /https?:\/\/[^\s"'<>]+/gi;
@@ -171,6 +182,8 @@ function cleanScalar(key: string, value: unknown): AnalyticsValue {
   if (key === 'state_code') {
     return /^[A-Z]{2}$/.test(trimmed.toUpperCase()) ? trimmed.toUpperCase() : undefined;
   }
+
+  if (ANONYMOUS_ID_KEYS.has(key) && isGeneratedAnonymousId(trimmed)) return trimmed;
 
   if (hasPii(trimmed)) return undefined;
 

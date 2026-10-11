@@ -68,7 +68,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
     } finally { busy.current=false; setPending(false); }
   }
   return <>
-    <button ref={trigger} type="button" className={className || 'steph-button'} onClick={() => { setError(''); setSuccess(false); dialog.current?.showModal(); trackCtaClicked(ctaProperties); trackFormStarted(config.formId, guideProperties); }}>{triggerLabel}</button>
+    <button ref={trigger} type="button" disabled={!portalRoot} className={className || 'steph-button'} onClick={() => { setError(''); setSuccess(false); dialog.current?.showModal(); trackCtaClicked(ctaProperties); trackFormStarted(config.formId, guideProperties); }}>{triggerLabel}</button>
     {portalRoot && createPortal(<dialog ref={dialog} className="steph-capture" aria-labelledby={`${id}-title`} onKeyDown={event => {
       if (event.key !== 'Tab') return;
       const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]):not([aria-hidden]),select:not([disabled]),textarea:not([disabled])')).filter(element => element.getClientRects().length > 0);
