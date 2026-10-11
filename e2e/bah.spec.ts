@@ -42,3 +42,18 @@ test('BAH calculator is explicit, accessible, and responsive', async ({ page }, 
     await expect(page.getByRole('link', { name: /PCS Checklists/ })).toHaveAttribute('href', '/blog/the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel');
     await expect(page.getByRole('link', { name: /First Time Home Buyer Guide/ })).toHaveAttribute('href', '/guides#homebuyer-guide');
 });
+
+
+test('BAH bonus details opens the real explanation page', async ({ page }, testInfo) => {
+    await page.goto('/bah-calculator');
+    const details = page.getByRole('link', { name: 'See bonus details.', exact: true });
+    await expect(details).toHaveAttribute('href', '/how-it-works');
+    await details.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath('bonus-details-link.png'), caret: 'initial' });
+    await details.click();
+    await expect(page).toHaveURL(/\/how-it-works$/);
+    await expect(page.getByRole('heading', { name: 'How the VeteranPCS Bonus Works', exact: true })).toBeVisible();
+    expect((await page.request.get('/how-it-works')).status()).toBe(200);
+    await expect(page.getByText('404 - Page Not Found', { exact: true })).not.toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath('bonus-details-destination.png'), caret: 'initial' });
+});
