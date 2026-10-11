@@ -8,6 +8,16 @@ import {
 } from '@/lib/analytics/sanitizer';
 
 describe('analytics sanitizer', () => {
+  it.each(['distinct_id', '$device_id', '$anon_distinct_id', '$window_id', 'vpcs_visitor_id'])('preserves generated anonymous %s values with phone-like digit runs', (key) => {
+    for (const id of ['vpcs_d8a351ef-9f74-43bc-826a-6111857758b5', '01912345-6789-7123-8123-123456789012', 'vpcs_m1234567-1234567890ab']) {
+      expect(sanitizeAnalyticsProperties({ [key]: id })[key]).toBe(id);
+    }
+    for (const pii of ['5555551212', 'alex@example.com', 'vpcs_alex@example.com', 'https://example.com/?email=alex@example.com']) {
+      expect(sanitizeAnalyticsProperties({ [key]: pii })).not.toHaveProperty(key);
+    }
+    expect(sanitizeAnalyticsProperties({ email: 'vpcs_d8a351ef-9f74-43bc-826a-6111857758b5' })).not.toHaveProperty('email');
+  });
+
   it('drops direct PII keys and PII-looking values while keeping safe flags', () => {
     const clean = sanitizeAnalyticsProperties({
       email: 'alex@example.com',

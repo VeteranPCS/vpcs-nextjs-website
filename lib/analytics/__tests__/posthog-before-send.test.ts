@@ -14,6 +14,18 @@ function captureResult(event: string, properties: Record<string, unknown>): Capt
 }
 
 describe('PostHog before_send handling', () => {
+  it('retains the required anonymous distinct id in a real guide event envelope', () => {
+    const id = 'vpcs_d8a351ef-9f74-43bc-826a-6111857758b5';
+    const result = sanitizePostHogBeforeSendEvent(captureResult('guide_download_started', {
+      distinct_id: id, $device_id: '01912345-6789-7123-8123-123456789012',
+      guide_id: 'va_loan_guide', email: 'private@example.com',
+    }), id);
+    expect(result?.properties.distinct_id).toBe(id);
+    expect(result?.properties.vpcs_visitor_id).toBe(id);
+    expect(result?.properties.$device_id).toBe('01912345-6789-7123-8123-123456789012');
+    expect(result?.properties.email).toBeUndefined();
+  });
+
   it('sanitizes normal events with path-only URL metadata and visitor id', () => {
     const result = sanitizePostHogBeforeSendEvent(
       captureResult('$pageview', {

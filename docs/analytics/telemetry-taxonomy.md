@@ -604,3 +604,7 @@ Before changing telemetry:
 5. Add a source-level privacy regression test if a flow touches forms, concierge messages, ZIPs, or search queries.
 6. Update this document.
 7. Run `npm run type-check`, `npm run lint`, `npm test`, and `npm run build` for code changes.
+
+### Generated anonymous identifiers
+
+Anonymous `distinct_id`, device/window IDs, and `vpcs_visitor_id` retain their validated UUID or generated visitor-ID formats even when they contain ten consecutive digits. The generic phone-number filter must not remove these IDs: PostHog rejects events missing `distinct_id`. Contact fields and phone/email values remain filtered. The regression suite includes the digit-heavy UUID discovered during the October 10, 2026 production download verification.

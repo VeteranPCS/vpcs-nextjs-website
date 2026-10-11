@@ -23,6 +23,8 @@ async function interceptTelemetry(page: Page) {
   const events: CapturedEvent[] = [], decodeFailures: string[] = [];
   // Installed before navigation: no request is ever proxied to real ingestion.
   await page.addInitScript(() => {
+    // Reproduce the live UUID whose decimal run was mistaken for a phone number.
+    localStorage.setItem('vpcs_visitor_id', 'vpcs_d8a351ef-9f74-43bc-826a-6111857758b5');
     Object.defineProperty(navigator, 'webdriver', { get: () => false });
     Object.defineProperty(navigator, 'userAgentData', { get: () => undefined });
   });
@@ -108,6 +110,7 @@ for (const surface of surfaces) test(`Resources ${surface.name} emits private-sa
   const openingEvent = telemetry.events.find(event => event.event === 'cta_clicked' && event.properties.guide_id === guideId);
   expect(openingEvent?.properties).toMatchObject({ cta_intent: 'download_guide', cta_location: surface.location });
   for (const event of downloads()) {
+    expect(event.properties.distinct_id).toBe('vpcs_d8a351ef-9f74-43bc-826a-6111857758b5');
     expect(event.properties).toMatchObject({ guide_id: guideId, form_id: guideId, source_page_path: '/pcs-resources', destination_path: `/downloads/${file}`, cta_component: 'lead_capture_dialog', cta_location: surface.location, cta_position: surface.position, page_type: 'pcs_resources' });
     expect(event.properties.$current_url).toBeUndefined();
     expect(event.properties.$initial_current_url).toBeUndefined();
