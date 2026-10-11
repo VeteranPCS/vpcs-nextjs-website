@@ -1,6 +1,6 @@
 # VeteranPCS Telemetry Taxonomy
 
-Last updated: 2026-09-29
+Last updated: 2026-10-10
 
 This is the durable reference for VeteranPCS web telemetry. Use it when changing analytics code, troubleshooting PostHog, comparing against Google Analytics, or planning Salesforce closed-loop reporting.
 

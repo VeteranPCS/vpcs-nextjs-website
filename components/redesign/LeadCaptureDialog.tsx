@@ -1,6 +1,7 @@
 "use client";
 import Link from 'next/link';
-import { useId, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { KeepInTouchForm, vaLoanGuideForm, homebuyerGuideForm } from '@/services/salesForcePostFormsService';
 import { HoneypotField, useHoneypot } from '@/components/common/honeypot';
 import { captureAnalyticsEvent, formTrackingPayload, trackFormStarted, trackFormSubmitAttempted, trackFormSubmissionFailed, trackCtaClicked } from '@/lib/analytics/client';
@@ -17,6 +18,10 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const busy = useRef(false);
+  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
+  // Native dialogs enter the top layer but still inherit their DOM ancestors' CSS.
+  // Mount after hydration and keep shared form styling independent of its card.
+  useEffect(() => { setPortalRoot(document.body); }, []);
   const id = useId();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
@@ -64,7 +69,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
   }
   return <>
     <button ref={trigger} type="button" className={className || 'steph-button'} onClick={() => { setError(''); setSuccess(false); dialog.current?.showModal(); trackCtaClicked(ctaProperties); trackFormStarted(config.formId, guideProperties); }}>{triggerLabel}</button>
-    <dialog ref={dialog} className="steph-capture" aria-labelledby={`${id}-title`} onKeyDown={event => {
+    {portalRoot && createPortal(<dialog ref={dialog} className="steph-capture" aria-labelledby={`${id}-title`} onKeyDown={event => {
       if (event.key !== 'Tab') return;
       const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]):not([aria-hidden]),select:not([disabled]),textarea:not([disabled])')).filter(element => element.getClientRects().length > 0);
       const first = controls[0], last = controls[controls.length - 1];
@@ -85,6 +90,6 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
           <p className="steph-small">Your information is never sold. <Link href="/privacy-policy">Privacy policy</Link></p>
         </form>}
       </div>
-    </dialog>
+    </dialog>, portalRoot)}
   </>;
 }

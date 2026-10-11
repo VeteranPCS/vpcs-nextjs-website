@@ -96,3 +96,21 @@ npm run build
 ```
 
 No article content files changed, so the conditional editorial audit was not needed. The integration worktree is retained for review. All six lane servers are stopped. Managed archival was attempted for all six lane worktrees, but Codex returned: “This worktree is protected by a pinned task or workspace.” The worktrees remain intact; no manual deletion or unpinning was performed. Their committed changes and external evidence are preserved. The integration server is also stopped following the 222-test passing browser run.
+
+## 2026-10-10 composition and telemetry follow-up
+
+This section supersedes the earlier gate totals for the integrated correction set. The detailed review is in `FIDELITY-REVIEW-2026-10-10.md`.
+
+- All six surfaces received a fresh source comparison. Navigation, Homepage, Resources, VA and Blog corrections each received two independent review roles before integration. BAH received regression and composition review with no new material finding.
+- The final combined product at `17a9c13` plus approved shared-dialog patch `6a3bcea2b65d9816e698292c88d96e50e640247be574304145833b499d4f3010` passed **274 browser checks** across six viewports in 5.8 minutes. Zero failed or flaky. The 50 intentional skips are 30 SDK-capture tests that require their separate intercepted server mode, 15 duplicate desktop-menu project combinations, and five duplicate wide-hero project combinations.
+- Lint: zero errors, two existing test-image mock warnings. Type checking passed. **913 unit/component tests across 109 files** passed. The final normal commit hook repeats these gates and runs the production build after the server is stopped.
+- Independent final reviewers exercised the combined application and viewed fresh captures. BAH reviewer covered Homepage/VA at all six widths and Navigation/Blog at390/1440; Navigation reviewer covered Resources at all six widths and Homepage/VA/BAH at390/1440; Homepage reviewer covered Navigation/Blog at all six widths and Resources at390/1440. Reviewers did not author their assigned pages.
+- The shared dialog portal passed 18 focused browser tests, seven focused DOM tests, and two independent reviews of 30 and18 fresh dialogs. This includes all five Resources placements and cross-page Homepage, VA and Blog forms.
+- Normal unmocked local impact and Texas location-resolution endpoints returned HTTP200 with successful/ resolved data.
+- All lead submissions used local dry-run development servers. Logs confirm skipped Salesforce writes, notifications and PostHog conversion capture. Outgoing SDK events are intercepted before navigation in their dedicated audit mode.
+
+Follow-up evidence: `evidence/fidelity-review-2026-10-10/`, including `integrated-suite/results.json`, each reviewer’s final integration report, the SDK audit, and `normal-path-smoke.json`. The original asset limits remain open; fonts are explicitly lower priority. No production deployment was performed.
+
+The final dedicated SDK rerun passed **30/30 cases** in136.6 seconds, with zero skipped, failed or flaky tests. It used the final portal and integrated code. Each case inspected the complete outgoing SDK envelope, actual PDF downloads, and placement metadata; success screenshots were viewed at all six widths. Interception was installed before navigation. The server recorded30 skipped Salesforce POSTs,30 skipped notification paths and30 skipped conversion captures. Evidence: `fidelity-review-2026-10-10/final-sdk/REPORT.md`, `results.json`, `sanitized-events.json`, and `lead-dry-run-counts.json`.
+
+All owned servers on3100–3106 are stopped. The final normal commit hook supplies the production-build gate; its immutable commit and counts are recorded in `fidelity-review-2026-10-10/final-gates.json`. Managed worktrees remain recoverable and intact because prior archive attempts were refused by pinned-task/workspace protection.

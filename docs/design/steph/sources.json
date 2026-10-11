@@ -220,5 +220,16 @@
     "inventory": "editing-source-inventory.json",
     "status": "Complete: all40 files retrieved and inspected; exact VA/Resources page PNGs match flattened PDF pixels; no clean replacement originals or deployable font sources found",
     "report": "editing-source-inspection.md"
-  }
+  },
+  "supplementalAssetSources": [
+    {
+      "asset": "public/images/redesign/resources-organization-uso.svg",
+      "source": "https://www.uso.org/",
+      "region": "Official site header, inline SVG",
+      "retrieved": "2026-10-10",
+      "sha256": "80b7e5b535cd31de305502109127f98b4ef47f50d2e52277f20a6569b91e966c",
+      "viewBox": "0 0 502.9 276.9",
+      "status": "Clean unchanged official vector; replaces low-resolution flattened design crop. Self-contained paths/rectangles with no external references."
+    }
+  ]
 }
