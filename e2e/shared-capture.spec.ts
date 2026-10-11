@@ -33,3 +33,30 @@ test('guide capture validates, traps focus, submits once, and restores focus', a
   await expect(dialog).not.toBeVisible();
   await expect(trigger).toBeFocused();
 });
+
+test('guide triggers wait for their dialog to mount before accepting input', async ({ page }) => {
+  let releaseScripts!: () => void;
+  const scriptsReady = new Promise<void>(resolve => { releaseScripts = resolve; });
+  await page.route('**/*', async route => {
+    if (route.request().resourceType() === 'script' && new URL(route.request().url()).pathname.startsWith('/_next/')) await scriptsReady;
+    await route.continue();
+  });
+  await fixtureImpact(page);
+  try {
+    await page.goto('/pcs-resources', { waitUntil: 'commit' });
+    const trigger = page.getByRole('region', { name: 'Free downloadable guides' }).getByRole('button', { name: 'Get VA Loan Guide' });
+    await expect(trigger).toBeVisible();
+    // Server-rendered controls must not silently accept a click before the
+    // client portal exists. Release the real scripts; no hydration state is mocked.
+    await expect(trigger).toBeDisabled();
+    releaseScripts();
+    await expect(trigger).toBeEnabled();
+    await trigger.click();
+    const dialog = page.getByRole('dialog', { name: 'Free VA Loan Guide' });
+    await expect(dialog).toBeVisible();
+    await dialog.press('Escape');
+    await expect(trigger).toBeFocused();
+  } finally {
+    releaseScripts();
+  }
+});
