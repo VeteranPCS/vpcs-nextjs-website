@@ -81,7 +81,11 @@ function resolveHeadshotPath(salesforceId: string, isLender: boolean): string | 
   for (const folder of folders) {
     for (const ext of IMAGE_EXTENSIONS) {
       const rel = `/images/${folder}/${salesforceId}.${ext}`;
-      const abs = path.join(process.cwd(), 'public', rel);
+      // Keep the directories literal so Next traces headshots instead of every
+      // image in public/ into each blog function (which exceeds Vercel's limit).
+      const abs = folder === 'agents'
+        ? path.join(process.cwd(), 'public/images/agents', `${salesforceId}.${ext}`)
+        : path.join(process.cwd(), 'public/images/lenders', `${salesforceId}.${ext}`);
       if (fs.existsSync(abs)) return rel;
     }
   }

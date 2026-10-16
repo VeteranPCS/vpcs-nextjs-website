@@ -1,4 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
 
 vi.mock('server-only', () => ({}));
 
@@ -52,6 +54,8 @@ function account(overrides: Record<string, unknown> = {}) {
 }
 
 describe('resolveAuthor', () => {
+  afterEach(() => vi.restoreAllMocks());
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -94,6 +98,33 @@ describe('resolveAuthor', () => {
     expect(author.contactHref).toBe(
       `/contact-lender?form=lender&fn=Lee&id=${LENDER_ID}&state=hawaii`,
     );
+  });
+
+  it.each([
+    { isLender: false, folder: 'agents' },
+    { isLender: true, folder: 'lenders' },
+  ])('prefers the $folder portrait when both roles have a file', async ({ isLender, folder }) => {
+    vi.spyOn(fs, 'existsSync').mockImplementation((file) =>
+      ['agents', 'lenders'].some((role) =>
+        file === path.join(process.cwd(), 'public/images', role, `${AGENT_ID}.webp`),
+      ),
+    );
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce(
+      queryResponse([account({ isLender__pc: isLender })]) as never,
+    );
+
+    expect((await resolveAuthor({ salesforceId: AGENT_ID })).headshotPath)
+      .toBe(`/images/${folder}/${AGENT_ID}.webp`);
+  });
+
+  it('finds an author portrait in the secondary folder', async () => {
+    vi.spyOn(fs, 'existsSync').mockImplementation((file) =>
+      file === path.join(process.cwd(), 'public/images/lenders', `${AGENT_ID}.jpg`),
+    );
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce(queryResponse([account()]) as never);
+
+    expect((await resolveAuthor({ salesforceId: AGENT_ID })).headshotPath)
+      .toBe(`/images/lenders/${AGENT_ID}.jpg`);
   });
 
   it('falls back to VeteranPCS when a Salesforce author is inactive', async () => {
