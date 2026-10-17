@@ -14,13 +14,27 @@ import type { Review } from '@/components/homepage/ReviewTestimonial/ReviewTesti
 const review = (name: string): Review => ({ comment: `${name} review text`, createTime: '2025-01-01', reviewId: name, reviewer: { displayName: name, profilePhotoUrl: '' }, starRating: 'FIVE' });
 describe('homepage interactions', () => {
   beforeEach(() => { cleanup(); push.mockReset(); vi.unstubAllGlobals(); });
-  it('switches tabs with arrows and exposes the bonus access on resources', () => {
+  it('moves tab focus with arrows and activates a panel explicitly', () => {
     render(<HomeSearch guide={<span>Guide</span>} />);
     const first = screen.getByRole('tab', { name: 'Find an Agent' });
     fireEvent.keyDown(first, { key: 'ArrowRight' });
-    expect(screen.getByRole('tab', { name: 'Browse by State' }).getAttribute('aria-selected')).toBe('true');
-    fireEvent.keyDown(screen.getByRole('tab', { name: 'Browse by State' }), { key: 'ArrowRight' });
-    expect(screen.getByRole('link', { name: 'Move-In Bonus Calculator' }).getAttribute('href')).toBe('/pcs-resources#move-in-bonus');
+    expect(screen.getByRole('tab', { name: 'Browse by State' }).getAttribute('aria-selected')).toBe('false');
+    expect(document.activeElement).toBe(screen.getByRole('tab', { name: 'Browse by State' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Browse Resources' }));
+    expect(screen.getByRole('link', { name: 'VeteranPCS Bonus' }).getAttribute('href')).toBe('/pcs-resources#move-in-bonus');
+  });
+  it('normalizes resource queries and keeps the agent query independent', () => {
+    render(<HomeSearch guide={null} />);
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'San Diego' } });
+    fireEvent.click(screen.getByRole('tab', { name: 'Browse Resources' }));
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: '  VA   loan  ' } });
+    fireEvent.submit(screen.getByRole('searchbox').closest('form')!);
+    expect(push).toHaveBeenLastCalledWith('/pcs-resources?q=VA+loan#resource-library');
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: '   ' } });
+    fireEvent.submit(screen.getByRole('searchbox').closest('form')!);
+    expect(push).toHaveBeenLastCalledWith('/pcs-resources?view=all#resource-library');
+    fireEvent.click(screen.getByRole('tab', { name: 'Find an Agent' }));
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe('San Diego');
   });
   it('retains ambiguous city input, requests state, and navigates to resolved destination', async () => {
     const fetch = vi.fn().mockResolvedValueOnce({ ok: true, json: async () => ({ outcome: 'needs_state', message: 'Which state?', states: [] }) }).mockResolvedValueOnce({ ok: true, json: async () => ({ outcome: 'resolved', href: '/virginia', stateSlug: 'virginia' }) });
@@ -45,7 +59,7 @@ describe('homepage interactions', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Find an Agent' }));
     const signal = (fetch.mock.calls[0] as unknown as [string, RequestInit])[1].signal;
     if (method === 'click') fireEvent.click(screen.getByRole('tab', { name: 'Browse Resources' }));
-    else fireEvent.keyDown(screen.getByRole('tab', { name: 'Find an Agent' }), { key: 'End' });
+    else { fireEvent.keyDown(screen.getByRole('tab', { name: 'Find an Agent' }), { key: 'End' }); fireEvent.click(document.activeElement!); }
     expect(signal?.aborted).toBe(true);
     await act(async () => { resolve({ ok: true, json: async () => ({ outcome: 'resolved', href: '/texas', stateSlug: 'texas' }) }); });
     expect(push).not.toHaveBeenCalled();

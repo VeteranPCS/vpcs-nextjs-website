@@ -143,7 +143,7 @@ const KeepInTouch = () => {
                   <li key={acc._id}>
                     <TrackedCtaLink
                       href={acc.link}
-                      className="bg-[#A81F23] rounded-[8px] inline-flex items-center justify-center min-h-11 min-w-11"
+                      className="bg-[#a91f23] rounded-[8px] inline-flex items-center justify-center min-h-11 min-w-11"
                       cta={{
                         ctaId: 'keep_in_touch_social',
                         ctaIntent: 'social_navigation',

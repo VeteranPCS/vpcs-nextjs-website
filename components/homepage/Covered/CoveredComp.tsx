@@ -68,7 +68,7 @@ const Covered: React.FC<CoveredProps> = ({ card }) => {
             <span className="text-[#000000] text-xs md:text-sm mt-1 block">
               {subTitle}
             </span>
-            <span className="text-[#A81F23] text-xs md:text-base mt-0.5 md:mt-2 block">
+            <span className="text-[#a91f23] text-xs md:text-base mt-0.5 md:mt-2 block">
               Learn more
             </span>
           </div>
