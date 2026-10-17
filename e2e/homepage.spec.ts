@@ -6,6 +6,7 @@ test('homepage keeps its core mobile and desktop paths usable', async ({ page },
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Together, We’ll Make It Home.', exact: true, level: 1 })).toBeVisible();
+  await expect(page.getByRole('img', { name: 'Military family holding their VeteranPCS Bonus check in front of their home', exact: true })).toBeVisible();
   await expect(page.locator('p[class*="heroSubtitle"]')).not.toContainText('You Can Trust');
   await expect(page.locator('div[class*="mobileviewkissplogo"] p')).not.toContainText('You Can Trust');
   await expect(page.locator('section[aria-labelledby="home-map-title"] > div[class*="benefits"]')).not.toContainText('You Can Trust');
