@@ -111,10 +111,46 @@ describe('BAH calculator interactions', () => {
     it('calculates the published moving bonus only from an entered home price', async () => {
         render(<BAHCalculator fullPage />);
         expect(screen.getByTestId('bah-bonus').textContent).toBe('Enter a home price');
-        fireEvent.change(screen.getByLabelText('Planned home price'), { target: { value: '420,000' } });
+        fireEvent.change(screen.getByLabelText('Estimated Home Price'), { target: { value: '420,000' } });
         expect(screen.getByTestId('bah-bonus').textContent).toBe('$1,200');
         expect(screen.getByRole('link', { name: /Open VA Loan Calculator/ }).getAttribute('href')).toBe('/va-loan-calculator');
         expect(screen.getByRole('link', { name: /Find a Veteran or Mil Spouse Agent/ }).getAttribute('href')).toBe('/contact-agent');
         expect(fetch).not.toHaveBeenCalled();
     });
+    it.each(['', '0', '-100', 'invalid', '420.00.00', '4,,200', 'Infinity'])('keeps bonus guidance for an empty or invalid price: %s', value => {
+        render(<BAHCalculator fullPage />);
+        fireEvent.change(screen.getByLabelText('Estimated Home Price'), { target: { value } });
+        expect(screen.getByTestId('bah-bonus').textContent).toBe('Enter a home price');
+        expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it.each([
+        ['99,999', '$200'], ['100000', '$400'], ['199999', '$400'], ['200000', '$700'],
+        ['299999', '$700'], ['300000', '$1,000'], ['399999', '$1,000'], ['400000', '$1,200'],
+        ['499999', '$1,200'], ['500000', '$1,500'], ['649999', '$1,500'], ['650000', '$2,000'],
+        ['799999', '$2,000'], ['800000', '$3,000'], ['999999', '$3,000'], ['1000000', '$4,000'],
+    ])('updates the published bonus tier for %s', (value, expected) => {
+        render(<BAHCalculator fullPage />);
+        fireEvent.change(screen.getByLabelText('Estimated Home Price'), { target: { value } });
+        expect(screen.getByTestId('bah-bonus').textContent).toBe(expected);
+        expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it('orders the price before the bonus and agent CTA and keeps BAH results when the price changes', async () => {
+        render(<BAHCalculator fullPage />); fill(); await userEvent.click(button());
+        await screen.findByTestId('bah-monthly');
+        const price = screen.getByLabelText('Estimated Home Price');
+        const bonus = screen.getByTestId('bah-bonus');
+        const agent = screen.getByRole('link', { name: /Find a Veteran or Mil Spouse Agent/ });
+        expect(price.compareDocumentPosition(bonus) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        expect(bonus.compareDocumentPosition(agent) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        fireEvent.change(price, { target: { value: '420,000' } });
+        expect(bonus.textContent).toBe('$1,200');
+        expect(screen.getByTestId('bah-monthly').textContent).toBe('$2,400');
+        expect(fetch).toHaveBeenCalledTimes(1);
+        expect(captureAnalyticsEvent).toHaveBeenCalledTimes(1);
+        await userEvent.click(agent);
+        expect(captureAnalyticsEvent).toHaveBeenCalledWith('calculator_cta_clicked', expect.objectContaining({ cta_id: 'bah_result_agent_cta', calculator_name: 'BAH Calculator' }));
+    });
+
 });

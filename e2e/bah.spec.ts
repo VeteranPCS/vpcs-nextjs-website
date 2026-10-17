@@ -22,22 +22,41 @@ test('BAH calculator is explicit, accessible, and responsive', async ({ page }, 
     await expect(page.getByTestId('bah-monthly')).toHaveText('$2,842');
     await expect(page.getByTestId('bah-annual')).toHaveText('$34,104');
     expect(calls).toBe(1);
-    await page.getByLabel('Planned home price').fill('420000');
+    await page.getByLabel('Estimated Home Price').fill('420000');
     await expect(page.getByTestId('bah-bonus')).toHaveText('$1,200');
-    for (const width of [1440, 768, 390]) {
+    expect(calls).toBe(1);
+    for (const width of [360, 390, 767, 768, 1024, 1440, 1920]) {
         await page.setViewportSize({ width, height: 1000 });
         await expect(page.getByRole('button', { name: 'Calculate My BAH' })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
         const form = await page.locator('form').filter({ has: page.getByLabel('Duty Station ZIP Code') }).boundingBox();
         const result = await page.getByRole('heading', { name: 'Your 2026 BAH', exact: true }).boundingBox();
         expect(form).not.toBeNull(); expect(result).not.toBeNull();
-        if (form && result && width === 390) expect(result.y).toBeGreaterThan(form.y + form.height);
+        if (form && result && width < 768) expect(result.y).toBeGreaterThan(form.y + form.height);
         if (width === 768) {
             const guide = await page.getByRole('link', { name: /First Time Home Buyer Guide/ }).boundingBox();
             expect(guide).not.toBeNull();
             if (guide) expect(guide.width).toBeGreaterThanOrEqual(width - 80);
         }
+        const price = await page.getByLabel('Estimated Home Price').boundingBox();
+        const bonus = await page.getByTestId('bah-bonus').boundingBox();
+        const agent = await page.getByRole('link', { name: /Find a Veteran or Mil Spouse Agent/ }).boundingBox();
+        expect(price).not.toBeNull(); expect(bonus).not.toBeNull(); expect(agent).not.toBeNull();
+        if (price && bonus && agent) {
+            if (width < 768) {
+                expect(bonus.y).toBeGreaterThan(price.y + price.height);
+                expect(agent.y).toBeGreaterThan(bonus.y + bonus.height);
+            } else {
+                expect(bonus.x).toBeGreaterThan(price.x + price.width);
+                expect(agent.x).toBeGreaterThan(bonus.x + bonus.width);
+            }
+        }
+        await page.evaluate(() => window.scrollTo(0, 0));
+        const title = await page.getByRole('heading', { level: 1 }).boundingBox();
+        const header = await page.locator('[data-site-header]').boundingBox();
+        if (title && header) expect(title.y).toBeGreaterThanOrEqual(header.y + header.height);
         await page.screenshot({ path: testInfo.outputPath(`bah-${width}.png`), fullPage: true });
+        await page.getByRole('region', { name: 'What does your BAH mean?' }).screenshot({ path: testInfo.outputPath(`bah-interpretation-${width}.png`) });
     }
     await expect(page.getByRole('link', { name: /PCS Checklists/ })).toHaveAttribute('href', '/blog/the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel');
     await expect(page.getByRole('link', { name: /First Time Home Buyer Guide/ })).toHaveAttribute('href', '/guides#homebuyer-guide');
