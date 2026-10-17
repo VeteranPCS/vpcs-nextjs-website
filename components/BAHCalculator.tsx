@@ -118,7 +118,7 @@ export default function BAHCalculator({ fullPage = false }: { fullPage?: boolean
     return <div className={`${styles.calculator} ${fullPage ? '' : styles.embedded}`} id="bah-calculator">
         <div className={styles.cards}>
             <section className={styles.formCard} aria-labelledby={`${id}-heading`}>
-                <div className={styles.formHeading}><span className={styles.calculatorIcon}><Icon kind="clipboard" /></span><div><h2 id={`${id}-heading`}>Let’s Calculate your BAH</h2><p>Provide your information below to see your {BAH_YEAR} BAH rate.</p></div></div>
+                <div className={styles.formHeading}><span className={styles.calculatorIcon}><Image src="/images/steph/vet-675/icons/calculator.svg" width={105.95} height={156.25} alt="" aria-hidden="true" /></span><div><h2 id={`${id}-heading`}>Let’s Calculate your BAH</h2><p>Provide your information below to see your {BAH_YEAR} BAH rate.</p></div></div>
                 <form onSubmit={submit} noValidate>
                     <div className={styles.inputRow}>
                         <div><label htmlFor={`${id}-rank`}>Pay Grade</label><select ref={rankRef} id={`${id}-rank`} value={form.rank} onChange={event => updateLookup('rank', event.target.value)} aria-invalid={!!fieldErrors.rank} aria-describedby={fieldErrors.rank ? `${id}-rank-error` : undefined}><option value="">Select</option>{ranks.map((rank, index) => <option key={rank} value={String(index + 1)}>{rank}</option>)}</select>{fieldErrors.rank && <p className={styles.fieldError} id={`${id}-rank-error`}>{fieldErrors.rank}</p>}</div>
@@ -144,12 +144,13 @@ export default function BAHCalculator({ fullPage = false }: { fullPage?: boolean
         {fullPage && <section className={styles.meaning} aria-labelledby={`${id}-meaning`}>
             <div className={styles.meaningContent}><h2 id={`${id}-meaning`}>What does your BAH mean?</h2><div className={styles.meaningColumns}>
                 <div className={styles.buyingPower}>
+                    <span className={styles.homeIcon}><Icon kind="house" /></span><div className={styles.interpretationText}>
                     <label htmlFor={`${id}-price`}>Estimated Home Price</label>
-                    <div className={styles.priceInput}><span><Icon kind="house" /></span><input id={`${id}-price`} type="text" inputMode="decimal" placeholder="e.g. 420,000" value={homePrice} onChange={event => setHomePrice(event.target.value)} /></div>
-                    <p>Use your BAH alongside your income, debts, and loan details to plan your home budget.</p>
+                    <div className={styles.priceInput}><input id={`${id}-price`} type="text" inputMode="decimal" placeholder="e.g. 420,000" value={homePrice} onChange={event => setHomePrice(event.target.value)} /></div>
+                    <p>Plan your home budget with BAH, income, debts, and loan details.</p>
                     <Link href="/va-loan-calculator">Open VA Loan Calculator <span aria-hidden="true">›</span></Link>
-                </div>
-                <div className={styles.bonus}><span className={styles.bonusIcon}><Icon kind="bonus" /></span><h3>VeteranPCS Bonus</h3><strong aria-live="polite" data-testid="bah-bonus">{bonus === null ? 'Enter a home price' : money(bonus)}</strong><p><span className={styles.checkIcon}><Icon kind="check" /></span>Given back to you at closing when you buy or sell with us. <Link href="/how-it-works">See bonus details.</Link></p></div>
+                </div></div>
+                <div className={styles.bonus}><span className={styles.bonusIcon}><Icon kind="bonus" /></span><div className={styles.interpretationText}><h3>VeteranPCS Bonus</h3><strong className={bonus === null ? styles.bonusEmpty : undefined} aria-live="polite" data-testid="bah-bonus">{bonus === null ? 'Enter a home price' : money(bonus)}</strong><p><span className={styles.checkIcon}><Icon kind="check" /></span>Given back to you at closing when you buy or sell with us. <Link href="/how-it-works">See bonus details.</Link></p></div></div>
             </div></div>
             <aside className={styles.agentCta}><div><span><Icon kind="star" /></span><h3>Military Families helping<br />Military Families Move.</h3></div><Link className={styles.redButton} href="/contact-agent" onClick={() => captureAnalyticsEvent('calculator_cta_clicked', buildCtaProperties({ ctaId: 'bah_result_agent_cta', ctaIntent: 'contact_agent', ctaPosition: 'bah_interpretation', ctaComponent: 'bah_calculator', ctaLabel: 'Find a Veteran or Mil Spouse Agent', destination: '/contact-agent', pageType: 'calculator', calculatorId: 'bah_calculator', calculatorName: 'BAH Calculator', partnerType: 'agent' }))}>Find a Veteran or Mil Spouse Agent <span aria-hidden="true">›</span></Link><p>It’s free, fast and obligation-free.</p></aside>
         </section>}

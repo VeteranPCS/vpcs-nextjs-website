@@ -13,6 +13,9 @@ test('BAH calculator is explicit, accessible, and responsive', async ({ page }, 
     await expect(page).toHaveTitle(/2026 BAH Calculator/);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('2026 Basic Allowance For Housing (BAH)');
     await expect(page.locator('#bah-calculator')).toHaveCount(1);
+    await expect(page.locator('#bah-calculator img[src*="calculator.svg"]')).toHaveCount(1);
+    await expect(page.getByRole('link', { name: /VA Loan Calculator Estimate/ }).locator('img')).toHaveAttribute('src', /asset-28\.svg/);
+    await expect(page.locator('section[aria-labelledby="bah-tools-title"] > div > img')).toHaveAttribute('src', /icons(?:%2F|\/)star\.svg/);
     await page.getByLabel('Pay Grade', { exact: true }).selectOption('5');
     await page.getByLabel('Duty Station ZIP Code').fill('01234');
     await page.waitForTimeout(650); expect(calls).toBe(0);
@@ -48,8 +51,17 @@ test('BAH calculator is explicit, accessible, and responsive', async ({ page }, 
                 expect(agent.y).toBeGreaterThan(bonus.y + bonus.height);
             } else {
                 expect(bonus.x).toBeGreaterThan(price.x + price.width);
-                expect(agent.x).toBeGreaterThan(bonus.x + bonus.width);
+                if (width >= 1024) expect(agent.x).toBeGreaterThan(bonus.x + bonus.width);
+                else expect(agent.y).toBeGreaterThan(bonus.y + bonus.height);
             }
+        }
+        const meaning = page.getByRole('region', { name: 'What does your BAH mean?' });
+        const homeIcon = await meaning.locator('img[src*="asset-26.svg"]').boundingBox();
+        const bonusIcon = await meaning.locator('img[src*="asset-28.svg"]').boundingBox();
+        if (homeIcon && bonusIcon && price && bonus) {
+            expect(homeIcon.x + homeIcon.width).toBeLessThan(price.x);
+            expect(bonusIcon.x + bonusIcon.width).toBeLessThan(bonus.x);
+            expect(homeIcon.width).toBeGreaterThanOrEqual(width >= 1101 ? 100 : 70);
         }
         await page.evaluate(() => window.scrollTo(0, 0));
         const title = await page.getByRole('heading', { level: 1 }).boundingBox();

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 const tools = [
     { title: 'PCS Checklists', description: 'Check out our PCS checklists', href: '/blog/the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel', icon: 27, width: 30.64, height: 43.56 },
-    { title: 'VA Loan Calculator', description: 'Estimate your VA loan payment and buying power', href: '/va-loan-calculator', icon: 26, width: 66.04, height: 66.04 },
+    { title: 'VA Loan Calculator', description: 'Estimate your VA loan payment and buying power', href: '/va-loan-calculator', icon: 28, width: 37.96, height: 34.26 },
     { title: 'First Time Home Buyer Guide', description: 'Step-by-step guidance for military buyers', href: '/guides#homebuyer-guide', icon: 29, width: 28.99, height: 28.91 },
 ];
 
@@ -29,7 +29,7 @@ export default function BAHPage() {
             <BAHCalculator fullPage />
         </div></section>
         <section className={`${styles.tools} ${styles.container}`} aria-labelledby="bah-tools-title">
-            <div className={styles.star} aria-hidden="true"><Image src="/images/steph/vet-675/bah/asset-25.svg" width={35.48} height={33.75} alt="" /></div><h2 id="bah-tools-title">Other Helpful Tools</h2>
+            <div className={styles.star} aria-hidden="true"><Image src="/images/steph/vet-675/icons/star.svg" width={29.2} height={27.77} alt="" /></div><h2 id="bah-tools-title">Other Helpful Tools</h2>
             <div className={styles.toolGrid}>{tools.map(tool => <Link className={styles.toolCard} href={tool.href} key={tool.href}><span className={styles.toolIcon} aria-hidden="true"><Image src={`/images/steph/vet-675/bah/asset-${tool.icon}.svg`} width={tool.width} height={tool.height} alt="" /></span><div><h3>{tool.title}</h3><p>{tool.description}</p></div><span className={styles.chevron} aria-hidden="true">›</span></Link>)}</div>
         </section>
     </div>;
