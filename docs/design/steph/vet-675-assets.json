@@ -17,7 +17,10 @@
       "deployedWidth": 29,
       "deployedHeight": 29,
       "status": "imported",
-      "use": "BAH helpful-tool check illustration."
+      "use": "BAH helpful-tool check illustration.",
+      "sourceBytes": 1814,
+      "deployedBytes": 1814,
+      "deployedSha256": "7a6b25431af5691ea7e39945490e9a5b5cf7951f234cf9dad01a3995f4769934"
     },
     {
       "id": "1x5RIe9EpgbfwBDJJCVK_fJXWVeUaVd6L",
@@ -33,7 +36,10 @@
       "deployedWidth": 38,
       "deployedHeight": 34,
       "status": "imported",
-      "use": "BAH interpretation bonus group and VA Loan Calculator helpful-tool house-dollar illustration."
+      "use": "BAH interpretation bonus group and VA Loan Calculator helpful-tool house-dollar illustration.",
+      "sourceBytes": 1630,
+      "deployedBytes": 1630,
+      "deployedSha256": "c4606fa2b32caa8897d5bdf1d3170a35d6b97a9286c4758c41493f738b5b85e2"
     },
     {
       "id": "16uw-ntMHADhsQ79K6oKu1KN4qfurslVL",
@@ -49,7 +55,10 @@
       "deployedWidth": 31,
       "deployedHeight": 44,
       "status": "imported",
-      "use": "BAH helpful-tool clipboard illustration."
+      "use": "BAH helpful-tool clipboard illustration.",
+      "sourceBytes": 2093,
+      "deployedBytes": 2093,
+      "deployedSha256": "331da5411b7409bef1e26c6a5dc273481e1fe2c9a6b5542ed3e5b047bbe5328d"
     },
     {
       "id": "1EDjOBvV1DAXk2KjFjMSfP96LB99-9Mfg",
@@ -65,7 +74,10 @@
       "deployedWidth": 66,
       "deployedHeight": 66,
       "status": "imported",
-      "use": "BAH interpretation home-price group complete navy house circle."
+      "use": "BAH interpretation home-price group complete navy house circle.",
+      "sourceBytes": 1682,
+      "deployedBytes": 1682,
+      "deployedSha256": "0870809b751a474d027c499e60cf46003e6ab8ddf99f42de06493387ec6cdfd2"
     },
     {
       "id": "1yAVIPaxQZGSUd_Vl4u5Upv23rqvTwGv0",
@@ -81,7 +93,10 @@
       "deployedWidth": 35,
       "deployedHeight": 34,
       "status": "imported",
-      "use": "BAH agent CTA outlined star."
+      "use": "BAH agent CTA outlined star.",
+      "sourceBytes": 771,
+      "deployedBytes": 771,
+      "deployedSha256": "d6b69597aef4dac2fb85bbb96bc9443394594308fe79fba93c5189c9886a0994"
     },
     {
       "id": "1pqeHwVjnOHJeSMcZwXK8dip-_gAv3ZXB",
@@ -97,7 +112,10 @@
       "deployedWidth": 30,
       "deployedHeight": 30,
       "status": "imported",
-      "use": "BAH official DTMO complete circular badge."
+      "use": "BAH official DTMO complete circular badge.",
+      "sourceBytes": 1499,
+      "deployedBytes": 1499,
+      "deployedSha256": "c231b980e61211159ef5efe98c0da15bdf8e4f6d51e165325a42e00fcdf85ddb"
     },
     {
       "id": "1C0ix1AZpBY1Lk-cLM5wjO2rJW3tfOoOD",
@@ -113,7 +131,10 @@
       "deployedWidth": 30,
       "deployedHeight": 30,
       "status": "imported",
-      "use": "BAH current-year rates complete circular badge."
+      "use": "BAH current-year rates complete circular badge.",
+      "sourceBytes": 2242,
+      "deployedBytes": 2242,
+      "deployedSha256": "9d6c65df32d43bb14786fcd4734c17cc9436994d4d3c5ecc4e3e5e8e0511aa8d"
     },
     {
       "id": "1CzKnwxBPGrw6vW5w5FuC_XxOsTSmk6S9",
@@ -129,7 +150,10 @@
       "deployedWidth": 30,
       "deployedHeight": 30,
       "status": "imported",
-      "use": "BAH Tax-Free Allowance complete circular badge."
+      "use": "BAH Tax-Free Allowance complete circular badge.",
+      "sourceBytes": 1778,
+      "deployedBytes": 1778,
+      "deployedSha256": "5b9fd566676a54e2675a56143e511ea3f8040eea95ddbb66a73fba5a7e9a8fd7"
     },
     {
       "id": "1TKhpdktMtEDvTIbhC-y5XkCGe-ZPoxm0",
@@ -145,7 +169,10 @@
       "deployedWidth": 357,
       "deployedHeight": 79,
       "status": "imported",
-      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image."
+      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image.",
+      "sourceBytes": 45062,
+      "deployedBytes": 16138,
+      "deployedSha256": "2fc92442010f25adad833d6588b2092306519ed7dcd72d9de8405218810fd12d"
     },
     {
       "id": "1jang4VqC5gEu5ACnAVi_IWsmZJ8lkrHP",
@@ -161,7 +188,10 @@
       "deployedWidth": 750,
       "deployedHeight": 350,
       "status": "imported",
-      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image. Also replaces the Resources featured MSCC logo and its source record."
+      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image. Also replaces the Resources featured MSCC logo and its source record.",
+      "sourceBytes": 84100,
+      "deployedBytes": 29622,
+      "deployedSha256": "97f862186dabb43bc29852d7c55dfbebbfc781ca1c15b13d6a682c236eee5809"
     },
     {
       "id": "1oSKielXtAj0PjY6ylZgDrRayP2pIMHs8",
@@ -177,7 +207,10 @@
       "deployedWidth": 194,
       "deployedHeight": 50,
       "status": "imported",
-      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image."
+      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image.",
+      "sourceBytes": 1758,
+      "deployedBytes": 1930,
+      "deployedSha256": "9047a9968bed06ef771c3ca0973e407a3937bb18bd31928a169a70a985d68e82"
     },
     {
       "id": "1hm10Onz4PSHLpKKLQYWns_FfpwCM9cVt",
@@ -193,7 +226,10 @@
       "deployedWidth": 1124,
       "deployedHeight": 418,
       "status": "imported",
-      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image."
+      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image.",
+      "sourceBytes": 11433,
+      "deployedBytes": 12310,
+      "deployedSha256": "2ef7866a1d1f127d6a6183934f683fb757b38e46695073417a796b8bb7983613"
     },
     {
       "id": "1fou_IHB-OJn_CeeExoqOAzi31cNhM8Vy",
@@ -209,7 +245,10 @@
       "deployedWidth": 273,
       "deployedHeight": 113,
       "status": "imported",
-      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image."
+      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image.",
+      "sourceBytes": 2226,
+      "deployedBytes": 3352,
+      "deployedSha256": "8d71f0fc3a88c5c83551bdd56a435d4f38c216a97591fdb9ce96852528b0efcd"
     },
     {
       "id": "1D2if88eEiG1D0Hy4pcDu4TV0NQ4vYDll",
@@ -225,7 +264,10 @@
       "deployedWidth": 587,
       "deployedHeight": 176,
       "status": "imported",
-      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image."
+      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image.",
+      "sourceBytes": 3316,
+      "deployedBytes": 6688,
+      "deployedSha256": "861d7340ceddbefb80c76ae3e42ccd1105898456dd2233b0806678c6351391c1"
     },
     {
       "id": "1zHqMM0Sektg8zS40vVK-k1qKnUOYw2ck",
@@ -241,7 +283,10 @@
       "deployedWidth": 450,
       "deployedHeight": 129,
       "status": "imported",
-      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image."
+      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image.",
+      "sourceBytes": 2776,
+      "deployedBytes": 3814,
+      "deployedSha256": "a81dd58d2400b19ad1c9e5388ab6eb27214a95638356100274d74986183636c7"
     },
     {
       "id": "1XzDWC79WLi8XhO0iYstf58s_PQC833oN",
@@ -257,7 +302,10 @@
       "deployedWidth": 1200,
       "deployedHeight": 756,
       "status": "imported",
-      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image."
+      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image.",
+      "sourceBytes": 35034,
+      "deployedBytes": 14006,
+      "deployedSha256": "32796ea7b55125366ba0a483635c8f94d56e19561756a28338ed0a4a97ac4194"
     },
     {
       "id": "1F3Z7wmbsl54DcXSnq5lba2SNE2VPm3aB",
@@ -273,7 +321,10 @@
       "deployedWidth": 1166,
       "deployedHeight": 262,
       "status": "imported",
-      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image."
+      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image.",
+      "sourceBytes": 4780,
+      "deployedBytes": 4780,
+      "deployedSha256": "a2056f07f0df63ebe8474b25e3e9b71c1af4b9ba51d62b076395babda8e6e905"
     },
     {
       "id": "1PNX5nVXqghh3xe0sUMuOtB9LDJFjkTuY",
@@ -289,7 +340,10 @@
       "deployedWidth": 750,
       "deployedHeight": 352,
       "status": "imported",
-      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image."
+      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image.",
+      "sourceBytes": 24526,
+      "deployedBytes": 18430,
+      "deployedSha256": "1e9f2cea482fc156126dc33bac9afa4468a666dc4263892c6e95c7d3ecb44b8b"
     },
     {
       "id": "1kRwnbR3jrSkWl-XcrKHFOv9tGZIjZu0S",
@@ -305,7 +359,10 @@
       "deployedWidth": 700,
       "deployedHeight": 100,
       "status": "imported",
-      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image."
+      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image.",
+      "sourceBytes": 26741,
+      "deployedBytes": 15334,
+      "deployedSha256": "c1c6dcf189f6b09b426277d07dc7cbda98c685233f2607ec4a32859de7a648fd"
     },
     {
       "id": "1_ZxGmC4PEnjUZbUx1Ook4lvNedzCioK2",
@@ -321,7 +378,10 @@
       "deployedWidth": 1200,
       "deployedHeight": 159,
       "status": "imported",
-      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image."
+      "use": "Homepage carousel supplied organization logo; preserve original third-party colors and complete uncropped image.",
+      "sourceBytes": 163630,
+      "deployedBytes": 51682,
+      "deployedSha256": "e3c86ab3ef25098c204b5a1db94944f63d5a7606af36010aebbcc50ab4549139"
     },
     {
       "id": "1diiLWzTqXtZ2oQmGbCEw0jwcNjDRaKGg",
@@ -337,7 +397,10 @@
       "deployedWidth": null,
       "deployedHeight": null,
       "status": "duplicate-organization-smaller-alternative",
-      "use": "Use stars and stripes feature.png (2884\u00d7382), same organization."
+      "use": "Use stars and stripes feature.png (2884\u00d7382), same organization.",
+      "sourceBytes": 8122,
+      "deployedBytes": null,
+      "deployedSha256": null
     },
     {
       "id": "1ZibFcfJB1xsKnk1l4QjSYhXx_Bk_mMU6",
@@ -353,7 +416,10 @@
       "deployedWidth": 2200,
       "deployedHeight": 1595,
       "status": "imported",
-      "use": "Homepage hero transparent house/family/check composition; replaces the image with stray colored blocks."
+      "use": "Homepage hero transparent house/family/check composition; replaces the image with stray colored blocks.",
+      "sourceBytes": 1678138,
+      "deployedBytes": 292316,
+      "deployedSha256": "a1b8578e6cfb4d7e60c2dcbaf667081a3561f36b480a71d21a878e5042b02b76"
     },
     {
       "id": "1-xgr4pGJ0GbqhuLkRDXTTGB3BnT6Vyxw",
@@ -369,7 +435,10 @@
       "deployedWidth": 2200,
       "deployedHeight": 1370,
       "status": "imported",
-      "use": "Homepage hero background, including the supplied red lower edge; replaces the approximate background and duplicate CSS wave."
+      "use": "Homepage hero background, including the supplied red lower edge; replaces the approximate background and duplicate CSS wave.",
+      "sourceBytes": 613307,
+      "deployedBytes": 86186,
+      "deployedSha256": "bf6435b5059213c5a0e1dc439db661c73f9200aed3837453a40807ce164fff64"
     },
     {
       "id": "1Eg1YhiP55ldOvuhedeKMtCOpzWRttu-N",
@@ -385,7 +454,10 @@
       "deployedWidth": 34,
       "deployedHeight": 34,
       "status": "imported",
-      "use": "Homepage military-family/people impact pictogram."
+      "use": "Homepage military-family/people impact pictogram.",
+      "sourceBytes": 1403,
+      "deployedBytes": 1403,
+      "deployedSha256": "6b7f44834008493cb5d8a1d273eb62b01e0a604e55888391caadff276f7cfec7"
     },
     {
       "id": "10LKa9x1TUxTvvCsEo0ADnJn0cCZAWFwq",
@@ -401,7 +473,10 @@
       "deployedWidth": 34,
       "deployedHeight": 34,
       "status": "imported",
-      "use": "Homepage charity/giveback impact pictogram."
+      "use": "Homepage charity/giveback impact pictogram.",
+      "sourceBytes": 1233,
+      "deployedBytes": 1233,
+      "deployedSha256": "6c327dcb60fd5233cbb683df0ddd1f008cea8ab61b7ce23ce04e6402737ba66e"
     },
     {
       "id": "1IFH38AHTieykGRdN2j5MWe3qlWnGLpS8",
@@ -417,7 +492,10 @@
       "deployedWidth": null,
       "deployedHeight": null,
       "status": "inventoried-unused-navigation-variant",
-      "use": "No navigation redesign in this ticket."
+      "use": "No navigation redesign in this ticket.",
+      "sourceBytes": 4172,
+      "deployedBytes": null,
+      "deployedSha256": null
     },
     {
       "id": "13rT7RMFGoeUJxqJNU1Fqk2tnEAw5-i5V",
@@ -433,7 +511,10 @@
       "deployedWidth": null,
       "deployedHeight": null,
       "status": "unusable-external-local-image-reference",
-      "use": "Retain existing /images/redesign/guide-covers.webp; SVG references designer local PNG."
+      "use": "Retain existing /images/redesign/guide-covers.webp; SVG references designer local PNG.",
+      "sourceBytes": 359,
+      "deployedBytes": null,
+      "deployedSha256": null
     },
     {
       "id": "1B-1tczJACcnx6IQ-FtZ9ZckHn8Sa-uFQ",
@@ -449,7 +530,10 @@
       "deployedWidth": null,
       "deployedHeight": null,
       "status": "inventoried-unused-navigation-variant",
-      "use": "No navigation redesign in this ticket."
+      "use": "No navigation redesign in this ticket.",
+      "sourceBytes": 4172,
+      "deployedBytes": null,
+      "deployedSha256": null
     },
     {
       "id": "1zlrzfFVF_jARqx2ZjT512nuIoPwKVMXm",
@@ -465,7 +549,10 @@
       "deployedWidth": 29,
       "deployedHeight": 28,
       "status": "imported",
-      "use": "Homepage section separators and BAH helpful-tools separator."
+      "use": "Homepage section separators and BAH helpful-tools separator.",
+      "sourceBytes": 434,
+      "deployedBytes": 434,
+      "deployedSha256": "5bf94a21f44747d77a634e21559713d918df7c34b5e42a4a345e55b286a87442"
     },
     {
       "id": "1E6DXyDpFIerbru41_hn2ZFMVwhahfZvl",
@@ -481,7 +568,10 @@
       "deployedWidth": 23,
       "deployedHeight": 29,
       "status": "imported",
-      "use": "Homepage VA-loan benefit."
+      "use": "Homepage VA-loan benefit.",
+      "sourceBytes": 1354,
+      "deployedBytes": 1354,
+      "deployedSha256": "1702b18cb131303f3a03eb884657feed4c10cfeca604bc0cdca1ca12d937a6c1"
     },
     {
       "id": "1lq1hcQnR72wisaKKlUv8dp9aRK21DdnV",
@@ -497,7 +587,10 @@
       "deployedWidth": 28,
       "deployedHeight": 24,
       "status": "imported",
-      "use": "Imported self-contained heart variant; the flag-heart is used for Move With Confidence."
+      "use": "Imported self-contained heart variant; the flag-heart is used for Move With Confidence.",
+      "sourceBytes": 533,
+      "deployedBytes": 533,
+      "deployedSha256": "052310fe223d0b24f768a206fc67168536f79b03fde3d806444a5f5ad8268265"
     },
     {
       "id": "1PZkOT_NBlMI-thB26QuBTc0oyj_ljSv-",
@@ -513,7 +606,10 @@
       "deployedWidth": null,
       "deployedHeight": null,
       "status": "unusable-external-local-image-reference",
-      "use": "Retain existing /images/redesign/guide-covers.webp; SVG references designer local PNG."
+      "use": "Retain existing /images/redesign/guide-covers.webp; SVG references designer local PNG.",
+      "sourceBytes": 373,
+      "deployedBytes": null,
+      "deployedSha256": null
     },
     {
       "id": "1frt-Ll4ier63Oqkrw-kj_pa7Xp4gDJ-_",
@@ -529,7 +625,10 @@
       "deployedWidth": 15,
       "deployedHeight": 14,
       "status": "imported",
-      "use": "Homepage search magnifier."
+      "use": "Homepage search magnifier.",
+      "sourceBytes": 1104,
+      "deployedBytes": 1104,
+      "deployedSha256": "c18224fe7ca28aee169c2e0d80ccfed3c995cc4b27704036bb124b542873fd00"
     },
     {
       "id": "1Xi4yc84l2xHfgI6FiKqdkHviLrfL66RZ",
@@ -545,7 +644,10 @@
       "deployedWidth": 19,
       "deployedHeight": 13,
       "status": "imported",
-      "use": "Homepage people pictogram in resource/search navigation and benefits."
+      "use": "Homepage people pictogram in resource/search navigation and benefits.",
+      "sourceBytes": 1255,
+      "deployedBytes": 1255,
+      "deployedSha256": "a9681d11258a7109cb86f98d067e5f56e3f20c46820f9fbbad57901a42d3a3e4"
     },
     {
       "id": "1_TylmYiSKM5CbUvVgwcg4vx-_vLb_rJW",
@@ -561,7 +663,10 @@
       "deployedWidth": 11,
       "deployedHeight": 15,
       "status": "imported",
-      "use": "Homepage location pictogram in state/search navigation."
+      "use": "Homepage location pictogram in state/search navigation.",
+      "sourceBytes": 784,
+      "deployedBytes": 784,
+      "deployedSha256": "cb342c166450043f4c2444b8f81e240ef2b7c284ce6fbd0ea0fc16532afef5c9"
     },
     {
       "id": "1qG9UzMScqPXwT9oKd81gkqqzZNOGYIaq",
@@ -577,7 +682,10 @@
       "deployedWidth": 16,
       "deployedHeight": 13,
       "status": "imported",
-      "use": "Homepage house pictogram in tabs and VA-loan benefits."
+      "use": "Homepage house pictogram in tabs and VA-loan benefits.",
+      "sourceBytes": 1531,
+      "deployedBytes": 1531,
+      "deployedSha256": "d6854c91b12adc5d0d2f3b5a02d076bdfc6064f90776baf9ca7cb315ee347585"
     },
     {
       "id": "1YWO7BMY_XgaVV8kT-bbb44DWbpb3qVzs",
@@ -593,7 +701,10 @@
       "deployedWidth": 14,
       "deployedHeight": 14,
       "status": "imported",
-      "use": "Homepage hero check badges."
+      "use": "Homepage hero check badges.",
+      "sourceBytes": 1814,
+      "deployedBytes": 1814,
+      "deployedSha256": "c2607ceea72644532e3896a9fc6dd967e5eb9cf7002d0e73911d35a4b44e5b0d"
     },
     {
       "id": "1WNMwZAqaDDhwEEgN4q6Q7IanBMlp6VIr",
@@ -609,7 +720,10 @@
       "deployedWidth": 128,
       "deployedHeight": 9,
       "status": "imported",
-      "use": "Decorative underline beneath HTML Home text in the hero and lower lender heading."
+      "use": "Decorative underline beneath HTML Home text in the hero and lower lender heading.",
+      "sourceBytes": 490,
+      "deployedBytes": 490,
+      "deployedSha256": "a16f7098516c3ce5debc14fe7639c083f4fb1829bb01a89679a7e797c7c2bd5f"
     },
     {
       "id": "1w1_dBGFLAe1dqI_5OGlHVYRmaM8FX2aC",
@@ -625,7 +739,10 @@
       "deployedWidth": 122,
       "deployedHeight": 8,
       "status": "imported",
-      "use": "Imported self-contained decorative variant; no new placement is required by the feedback."
+      "use": "Imported self-contained decorative variant; no new placement is required by the feedback.",
+      "sourceBytes": 492,
+      "deployedBytes": 492,
+      "deployedSha256": "324e4cce1ed81d6c12127102ab3ba28d48a37ed64d53f83ea88b9ee8595fee21"
     },
     {
       "id": "16OPd7jttFMzBPgkgcF8_lrjd1p2A9KKA",
@@ -641,7 +758,10 @@
       "deployedWidth": 106,
       "deployedHeight": 156,
       "status": "imported",
-      "use": "Homepage bonus calculator and BAH form heading."
+      "use": "Homepage bonus calculator and BAH form heading.",
+      "sourceBytes": 3553,
+      "deployedBytes": 3553,
+      "deployedSha256": "976eed1f1c50bab59223db8ad5ed437709134cb33d28e8fd177f9979a4b97ceb"
     },
     {
       "id": "1cnMbOUAZsk8kFzvZcv1yo8UApHCiTlQs",
@@ -657,7 +777,10 @@
       "deployedWidth": null,
       "deployedHeight": null,
       "status": "inventoried-unused-navigation-variant",
-      "use": "No navigation redesign in this ticket."
+      "use": "No navigation redesign in this ticket.",
+      "sourceBytes": 1133,
+      "deployedBytes": null,
+      "deployedSha256": null
     },
     {
       "id": "1LuSljjG1_LfOxuuNoyc8LguzaRf2SH0d",
@@ -673,7 +796,10 @@
       "deployedWidth": 71,
       "deployedHeight": 37,
       "status": "imported",
-      "use": "Homepage Move With Confidence benefit flag-heart."
+      "use": "Homepage Move With Confidence benefit flag-heart.",
+      "sourceBytes": 114190,
+      "deployedBytes": 114190,
+      "deployedSha256": "15bc23c7b64a2208b43e4cfe335d2e10a59f473524d9305fd5de34020a517df8"
     },
     {
       "id": "15AvALeZZyTaJ3lLwLls40-e7RhUqm8_s",
@@ -689,7 +815,10 @@
       "deployedWidth": 29,
       "deployedHeight": 29,
       "status": "imported",
-      "use": "Homepage local-agent benefit."
+      "use": "Homepage local-agent benefit.",
+      "sourceBytes": 919,
+      "deployedBytes": 919,
+      "deployedSha256": "11df9e081c97bf3c063fc99c5282032fb2cb11d121d1131f2745b51cf87ef5e9"
     },
     {
       "id": "1CavZZWv6ojxvSNpaliwrD_BAwkB8ZnlD",
@@ -705,7 +834,13 @@
       "deployedWidth": 34,
       "deployedHeight": 34,
       "status": "imported",
-      "use": "Homepage expert/star impact pictogram."
+      "use": "Homepage expert/star impact pictogram.",
+      "sourceBytes": 577,
+      "deployedBytes": 577,
+      "deployedSha256": "042601a59dccafcf69ea0674f1a715544ca96e7cba6c380027226026f3a4bedc"
     }
-  ]
+  ],
+  "importedCount": 38,
+  "totalDeployedBytes": 701763,
+  "totalSourceBytes": 2860333
 }

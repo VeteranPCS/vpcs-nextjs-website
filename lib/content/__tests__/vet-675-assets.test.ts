@@ -1,6 +1,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import sharp from 'sharp';
+import { createHash } from 'node:crypto';
 import { expect, it } from 'vitest';
 import manifest from '@/docs/design/steph/vet-675-assets.json';
 
@@ -12,6 +13,9 @@ it('delivers decodable assets with preserved ratios and no designer-local SVG de
     if (!asset.deployedPath) continue;
     const path = join(process.cwd(), 'public', asset.deployedPath);
     expect(existsSync(path), asset.deployedPath).toBe(true);
+    const bytes=readFileSync(path);
+    expect(bytes.byteLength).toBe(asset.deployedBytes);
+    expect(createHash('sha256').update(bytes).digest('hex')).toBe(asset.deployedSha256);
     const image = await sharp(path).metadata();
     expect(image.width).toBe(asset.deployedWidth);
     expect(image.height).toBe(asset.deployedHeight);
