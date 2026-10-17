@@ -41,7 +41,7 @@ const VeteranPCSWorksComp: React.FC<VeteranPCSWorksCompProps> = ({
             alt=""
           />
         </div>
-        <h4 className="text-[#A81F23] lg:text-2xl md:text-xl text-lg font-bold mt-5 mb-2">
+        <h4 className="text-[#a91f23] lg:text-2xl md:text-xl text-lg font-bold mt-5 mb-2">
           {title}
         </h4>
         <p className="text-[#5A5A5A] lg:text-base md:text-base text-sm font-normal">

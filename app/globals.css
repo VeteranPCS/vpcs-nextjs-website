@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+:root { --brand-red: #a91f23; }
+
 /* Reset Styles */
 * {
   @apply p-0 m-0 box-border;
@@ -176,7 +178,7 @@ blockquote {
 }
 
 .slick-active:nth-child(1) {
-  background-color: #a81f23;
+  background-color: #a91f23;
 }
 
 .slick-active:nth-child(6) {
@@ -233,7 +235,7 @@ blockquote {
 
 /* List Styles */
 .list-disc li::marker {
-  color: #a81f23;
+  color: #a91f23;
   font-size: 1.5rem;
   margin-right: 8px;
 }

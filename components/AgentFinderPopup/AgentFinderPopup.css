@@ -60,7 +60,7 @@
 }
 
 .agent-finder-popup__close:focus-visible {
-  outline: 2px solid #a81f23;
+  outline: 2px solid #a91f23;
   outline-offset: 2px;
 }
 
@@ -122,9 +122,9 @@
 }
 
 .agent-finder-popup__select:focus {
-  outline: 2px solid #a81f23;
+  outline: 2px solid #a91f23;
   outline-offset: 2px;
-  border-color: #a81f23;
+  border-color: #a91f23;
   box-shadow: none;
 }
 
@@ -135,7 +135,7 @@
 }
 
 .agent-finder-popup__submit {
-  background-color: #a81f23;
+  background-color: #a91f23;
   color: white;
   border: none;
   padding: 14px 24px;
@@ -154,7 +154,7 @@
 }
 
 .agent-finder-popup__submit:focus-visible {
-  outline: 2px solid #a81f23;
+  outline: 2px solid #a91f23;
   outline-offset: 3px;
 }
 

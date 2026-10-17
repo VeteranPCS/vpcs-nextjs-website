@@ -89,7 +89,7 @@ const ReviewCard: React.FC<{ review: Review }> = ({ review }) => {
         {shouldShowReadMore && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="mt-2 text-[#A81F23] hover:text-[#8a1a1d] font-medium transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A81F23]"
+            className="mt-2 text-[#a91f23] hover:text-[#8a1a1d] font-medium transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a91f23]"
           >
             {isExpanded ? 'Show less' : 'Read more'}
           </button>

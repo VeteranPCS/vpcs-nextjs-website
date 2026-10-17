@@ -11,8 +11,8 @@ import type { Metadata } from "next";
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
-const META_TITLE = "Veteran-Founded Real Estate Network - Up to $4,000 Move-In Bonus";
-const META_DESCRIPTION = "Founded by military veterans who experienced the PCS struggle firsthand. Our nationwide network of veteran and military spouse agents understand your BAH, timeline constraints, and VA loan requirements. Earn up to $4,000 in Move-In Bonuses while supporting veteran charities with every transaction.";
+const META_TITLE = "Veteran-Founded Real Estate Network - Up to $4,000 VeteranPCS Bonus";
+const META_DESCRIPTION = "Founded by military veterans who experienced the PCS struggle firsthand. Our nationwide network of veteran and military spouse agents understand your BAH, timeline constraints, and VA loan requirements. Earn up to $4,000 in VeteranPCS Bonuses while supporting veteran charities with every transaction.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),

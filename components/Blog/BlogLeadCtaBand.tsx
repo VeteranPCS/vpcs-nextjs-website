@@ -28,7 +28,7 @@ export default function BlogLeadCtaBand({ pageType, ctaPosition, agentCtaId, len
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
             <TrackedCtaLink
               href="/contact-agent"
-              className="inline-flex min-h-11 items-center rounded-custom bg-[#a81f23] px-6 py-3 text-sm font-bold text-white"
+              className="inline-flex min-h-11 items-center rounded-custom bg-[#a91f23] px-6 py-3 text-sm font-bold text-white"
               cta={{
                 ctaId: agentCtaId,
                 ctaIntent: 'contact_agent',

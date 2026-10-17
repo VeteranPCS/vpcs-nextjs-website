@@ -26,13 +26,13 @@ const MilitaryHomePage = () => {
             </p>
             <ul className="text-[#7A7A7A] mb-8 pl-4">
               <div className="flex items-baseline">
-                <span className="w-2 h-2 min-w-2 min-h-2 rounded-full bg-[#a81f23] inline-block mr-2"></span>
+                <span className="w-2 h-2 min-w-2 min-h-2 rounded-full bg-[#a91f23] inline-block mr-2"></span>
                 <li className="list-none text-[17px] md:font-medium sm:font-normal font-normal roboto">
                   Some companies do not understand military moves, VA loans, or PCS timing.
                 </li>
               </div>
               <div className="flex items-baseline">
-                <span className="w-2 h-2 min-w-2 min-h-2 rounded-full bg-[#a81f23] inline-block mr-2"></span>
+                <span className="w-2 h-2 min-w-2 min-h-2 rounded-full bg-[#a91f23] inline-block mr-2"></span>
                 <li className="list-none text-[17px] md:font-medium sm:font-normal font-normal roboto">
                   We&apos;ve hand-selected veteran and military spouse VA loan
                   experts to help guide you whether you&apos;re a first-time home

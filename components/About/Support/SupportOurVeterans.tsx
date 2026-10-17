@@ -87,7 +87,7 @@ const SupportOurVeterans = async () => {
                                                 pageData?.image?.asset?.image_url ||
                                                 "/assets/military-image-2.png"
                                             }
-                                            alt="Move in bonus"
+                                            alt="VeteranPCS Bonus"
                                         />
                                     </div>
                                 </div>

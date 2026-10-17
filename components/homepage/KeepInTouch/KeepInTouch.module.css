@@ -9,9 +9,9 @@
   font-size: 1rem;
 
   &:focus {
-    outline: 2px solid #a81f23;
+    outline: 2px solid #a91f23;
     outline-offset: 2px;
-    border-color: #a81f23;
+    border-color: #a91f23;
     box-shadow: none;
   }
 }

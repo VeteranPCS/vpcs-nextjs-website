@@ -1,6 +1,6 @@
 .page { color:#292f6c; background:#fff; padding:calc(var(--legacy-nav-height,80px) + 40px) 40px 0; }
 .page * { min-width:0; }
-.page a:focus-visible,.page button:focus-visible,.page input:focus-visible,.page summary:focus-visible { outline:3px solid #b51f24; outline-offset:4px; }
+.page a:focus-visible,.page button:focus-visible,.page input:focus-visible,.page summary:focus-visible { outline:3px solid #a91f23; outline-offset:4px; }
 .grid { max-width:1360px; margin:0 auto; display:grid; grid-template-columns:minmax(0,1fr) 310px; gap:26px; }
 .articleHeader { display:grid; grid-template-columns:1.1fr 1fr; gap:28px; align-items:stretch; }
 .breadcrumb { font-size:12px; display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
@@ -13,18 +13,19 @@
 .heroImage { width:100%; height:100%; min-height:380px; max-height:640px; object-fit:cover; border-radius:7px; }
 .share { display:flex; align-items:center; flex-wrap:wrap; gap:10px; color:#222; font-size:14px; }
 .share a { border-radius:50%; min-width:36px; min-height:36px; display:flex; justify-content:center; align-items:center; background:#292f6c; color:#fff; font-size:20px; font-weight:700; }
-.button { display:inline-flex; justify-content:center; align-items:center; min-height:44px; padding:10px 20px; background:#b51f24; color:#fff; border-radius:4px; font-size:14px; font-weight:700; text-align:center; line-height:1.3; }
+.button { display:inline-flex; justify-content:center; align-items:center; min-height:44px; padding:10px 20px; background:#a91f23; color:#fff; border-radius:4px; font-size:14px; font-weight:700; text-align:center; line-height:1.3; }
 .button:hover { background:#951a1f; }
 .icon { width:36px; height:36px; flex-shrink:0; }
 .resources { margin:40px 0 32px; }
 .resources h2,.related>h2 { margin:0 0 20px; font-size:26px; font-weight:750; }
 .resources>div { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
 .resources a { display:flex; gap:10px; padding:16px 12px; background:#f7f7f8; color:#292f6c; }
-.resources .icon { color:#b51f24; width:28px; height:28px; }
+.resources .icon { color:#a91f23; width:28px; height:28px; }
 .resources strong { font-size:15px; line-height:1.15; display:block; }
 .resources p { font-size:13px; color:#222; line-height:1.35; margin:7px 0 16px; }
 .resources small { font-size:11px; color:#222; }
 .body { font-size:18px; line-height:1.65; color:#252525; overflow-wrap:break-word; }
+.body [data-article-body] [data-legacy-heading-anchor] { display:block; scroll-margin-top:calc(var(--site-header-height,208px) + 24px); }
 .body [data-article-body] h2 { color:#292f6c; font-size:28px; scroll-margin-top:calc(var(--site-header-height,208px) + 24px); }
 .body [data-article-body] h3,.body [data-article-body] h4 { color:#292f6c; }
 .body [data-article-body] p,.body [data-article-body] ul,.body [data-article-body] ol { font-size:18px; line-height:1.65; color:#252525; }
@@ -67,7 +68,7 @@
 .related img { width:100%; height:165px; object-fit:cover; border-radius:4px; }
 .related h3 { font-size:19px; font-weight:750; line-height:1.2; margin:12px 0 8px; overflow-wrap:break-word; }
 .related p { font-size:14px; color:#888; }
-.finalCta { background:#f7f7f8; text-align:center; padding:36px 25px 26px; border-bottom:8px solid #b51f24; }
+.finalCta { background:#f7f7f8; text-align:center; padding:36px 25px 26px; border-bottom:8px solid #a91f23; }
 .finalCta h2 { font-weight:750; font-size:28px; margin:0 0 8px; }
 .finalCta p { color:#222; font-size:15px; margin:0 0 18px; }
 .finalCta>div { display:flex; justify-content:center; flex-wrap:wrap; gap:12px 28px; font-size:12px; margin-top:30px; }
@@ -88,7 +89,7 @@
 .follow p { color:#222; font-size:16px; line-height:1.35; }
 .sidebarResources>div { display:grid; gap:4px; }
 .sidebarResources>div>a { display:flex; align-items:center; gap:12px; min-height:44px; color:#222; font-size:14px; }
-.sidebarResources .icon { width:25px; height:25px; color:#b51f24; }
+.sidebarResources .icon { width:25px; height:25px; color:#a91f23; }
 .sidebarResources>div strong { font-weight:400; }
 .sidebarResources>a { display:flex; min-height:44px; align-items:center; margin-top:22px; color:#222; font-size:14px; }
 .sidebar .bonus { color:#fff; background:#292f6c; padding:28px 0 0; border:0; overflow:hidden; text-align:center; }

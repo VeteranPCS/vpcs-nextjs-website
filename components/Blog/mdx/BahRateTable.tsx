@@ -28,7 +28,7 @@ export default function BahRateTable({ base, year, title }: Props) {
           Verify current rates at{' '}
           <a
             href="https://www.travel.dod.mil/Allowances/Basic-Allowance-for-Housing/BAH-Rate-Lookup/"
-            className="font-bold text-[#A81F23] underline"
+            className="font-bold text-[#a91f23] underline"
             target="_blank"
             rel="noopener noreferrer"
           >

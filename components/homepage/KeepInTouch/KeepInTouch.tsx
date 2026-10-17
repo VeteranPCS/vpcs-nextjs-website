@@ -134,7 +134,7 @@ const KeepInTouch = () => {
               />
               <p className="text-[#292F6C] text-lg font-normal leading-[30px] lg:max-w-[300px] my-7">
                 Together we&apos;ll make it home. Veteran & Military Spouse Real
-                Estate Agents and VA Loan Experts You Can Trust
+                Estate Agents and VA Loan Experts
               </p>
             </div>
             <div className="flex justify-center md:justify-start">
@@ -143,7 +143,7 @@ const KeepInTouch = () => {
                   <li key={acc._id}>
                     <TrackedCtaLink
                       href={acc.link}
-                      className="bg-[#A81F23] rounded-[8px] inline-flex items-center justify-center min-h-11 min-w-11"
+                      className="bg-[#a91f23] rounded-[8px] inline-flex items-center justify-center min-h-11 min-w-11"
                       cta={{
                         ctaId: 'keep_in_touch_social',
                         ctaIntent: 'social_navigation',

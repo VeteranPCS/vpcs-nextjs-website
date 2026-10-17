@@ -34,7 +34,7 @@ export default async function AgentContactLink({
   return (
     <TrackedCtaLink
       href={href}
-      className="text-[#A81F23] underline hover:text-[#871B1C]"
+      className="text-[#a91f23] underline hover:text-[#871B1C]"
       cta={{
         ctaId: 'blog_mdx_agent_contact',
         ctaIntent: 'contact_agent',

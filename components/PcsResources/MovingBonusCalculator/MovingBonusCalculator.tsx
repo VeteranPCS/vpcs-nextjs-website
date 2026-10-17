@@ -160,7 +160,7 @@ const MovingBonusCalculator = () => {
 	                                            aria-label="Estimated home price"
                                             className={`w-full h-3 rounded-md appearance-none cursor-pointer outline-none ${styles.sliderThumb}`}
                                             style={{
-                                                background: `linear-gradient(to right, #A81F23 0%, #A81F23 ${sliderPercentage}%, #8B8B8B ${sliderPercentage}%, #8B8B8B 100%)`
+                                                background: `linear-gradient(to right, #a91f23 0%, #a91f23 ${sliderPercentage}%, #8B8B8B ${sliderPercentage}%, #8B8B8B 100%)`
                                             }}
                                         />
                                     </div>

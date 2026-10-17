@@ -59,7 +59,7 @@ export const HOW_IT_WORKS_CONTENT: Readonly<
             Your agent pays VeteranPCS a <strong>30% referral fee</strong> at closing.
           </li>
           <li>
-            You receive a <strong>Move-In or Military Bonus</strong> of $200 to $4,000 when
+            You receive a <strong>VeteranPCS Bonus</strong> of $200 to $4,000 when
             your state allows it.
           </li>
           <li>

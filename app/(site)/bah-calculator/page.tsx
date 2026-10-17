@@ -1,5 +1,6 @@
 import BAHCalculator from '@/components/BAHCalculator';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { BAH_YEAR } from '@/lib/bah/year';
 import styles from './page.module.css';
@@ -16,9 +17,9 @@ export const metadata: Metadata = {
 };
 
 const tools = [
-    { title: 'PCS Checklists', description: 'Check out our PCS checklists', href: '/blog/the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel', icon: 'clipboard' },
-    { title: 'VA Loan Calculator', description: 'Estimate your VA loan payment and buying power', href: '/va-loan-calculator', icon: 'house' },
-    { title: 'First Time Home Buyer Guide', description: 'Step-by-step guidance for military buyers', href: '/guides#homebuyer-guide', icon: 'check' },
+    { title: 'PCS Checklists', description: 'Check out our PCS checklists', href: '/blog/the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel', icon: 27, width: 30.64, height: 43.56 },
+    { title: 'VA Loan Calculator', description: 'Estimate your VA loan payment and buying power', href: '/va-loan-calculator', icon: 28, width: 37.96, height: 34.26 },
+    { title: 'First Time Home Buyer Guide', description: 'Step-by-step guidance for military buyers', href: '/guides#homebuyer-guide', icon: 29, width: 28.99, height: 28.91 },
 ];
 
 export default function BAHPage() {
@@ -28,8 +29,8 @@ export default function BAHPage() {
             <BAHCalculator fullPage />
         </div></section>
         <section className={`${styles.tools} ${styles.container}`} aria-labelledby="bah-tools-title">
-            <div className={styles.star} aria-hidden="true">★</div><h2 id="bah-tools-title">Other Helpful Tools</h2>
-            <div className={styles.toolGrid}>{tools.map(tool => <Link className={styles.toolCard} href={tool.href} key={tool.href}><span className={styles.toolIcon} aria-hidden="true">{tool.icon === 'check' ? <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="23" fill="currentColor" /><path d="m14 24 7 7 14-17" fill="none" stroke="white" strokeWidth="4" /></svg> : <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2.5">{tool.icon === 'house' ? <path d="M3 22 24 5l21 17M9 20v24h12V30h8v14h10V20M34 6v10" /> : <><rect x="8" y="8" width="32" height="37" rx="3" /><path d="M17 8V3h14v5M16 19h16M16 27h16M16 35h16" /></>}</svg>}</span><div><h3>{tool.title}</h3><p>{tool.description}</p></div><span className={styles.chevron} aria-hidden="true">›</span></Link>)}</div>
+            <div className={styles.star} aria-hidden="true"><Image src="/images/steph/vet-675/icons/star.svg" width={29.2} height={27.77} alt="" /></div><h2 id="bah-tools-title">Other Helpful Tools</h2>
+            <div className={styles.toolGrid}>{tools.map(tool => <Link className={styles.toolCard} href={tool.href} key={tool.href}><span className={styles.toolIcon} aria-hidden="true"><Image src={`/images/steph/vet-675/bah/asset-${tool.icon}.svg`} width={tool.width} height={tool.height} alt="" /></span><div><h3>{tool.title}</h3><p>{tool.description}</p></div><span className={styles.chevron} aria-hidden="true">›</span></Link>)}</div>
         </section>
     </div>;
 }

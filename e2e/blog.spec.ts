@@ -32,7 +32,7 @@ test('bonus promotion loads the exact family image and keeps its blended photo b
   await page.goto(`/blog/${slug}`);
   await expect(page.locator('[data-site-header]')).toContainText('$676,500');
   const promo = page.getByRole('complementary', { name: 'Article resources' }).locator('section').filter({ has: page.getByRole('heading', { name: 'VeteranPCS Bonus' }) });
-  const photo = promo.getByRole('img', { name: 'VeteranPCS family receiving a move-in bonus check' });
+  const photo = promo.getByRole('img', { name: 'VeteranPCS family receiving a VeteranPCS Bonus check' });
   await promo.scrollIntoViewIfNeeded();
   await expect.poll(() => photo.evaluate(el => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   expect(await photo.getAttribute('src')).toContain('blog-bonus-family.webp');
@@ -78,4 +78,25 @@ test('sidebar resources retain content height beside the taller bonus promotion'
   else expect(bonusRect!.y).toBeGreaterThanOrEqual(geometry.bottom);
   await assertNoOverflow(page);
   await resources.screenshot({ path: info.outputPath('sidebar-resources-content-height.png'), caret: 'initial' });
+});
+
+
+test('renamed bonus heading preserves both historical and current article fragments', async ({ page }) => {
+  const route='/blog/buying-a-home-after-military-service';
+  await page.goto(route);
+  const heading=page.getByRole('heading',{name:'Your VeteranPCS Bonus',exact:true});
+  await expect(heading).toHaveAttribute('id','your-veteranpcs-bonus');
+  await expect(page.locator('#your-veteranpcs-move-in-bonus')).toHaveCount(1);
+  expect(await page.locator('a[href="#your-veteranpcs-bonus"]').count()).toBeGreaterThan(0);
+  for (const fragment of ['your-veteranpcs-move-in-bonus','your-veteranpcs-bonus']) {
+    await page.goto(`${route}#${fragment}`);
+    await expect(heading).toBeInViewport();
+    await expect.poll(async()=>{
+      const top=await heading.evaluate(node=>node.getBoundingClientRect().top);
+      const header=await page.locator('[data-site-header]').evaluate(node=>node.getBoundingClientRect().bottom);
+      return top-header;
+    }).toBeGreaterThanOrEqual(-1);
+    expect(new URL(page.url()).hash).toBe(`#${fragment}`);
+  }
+  await assertNoOverflow(page);
 });

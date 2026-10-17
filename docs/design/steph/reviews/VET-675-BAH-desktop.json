@@ -1,0 +1,55 @@
+{
+  "status": "PASS",
+  "frozenCommit": "125a95f0385bf3f33261af5fafb1b0dc8e5f8224",
+  "primaryReference": "/private/tmp/steph-vet675-inspection/doc-screenshots/kix.2qep0z2mxxgw.png",
+  "viewports": [
+    1440,
+    768,
+    390
+  ],
+  "requests": 4,
+  "checks": [
+    "empty state",
+    "explicit calculation",
+    "validation focus",
+    "leading-zero ZIP",
+    "two-digit API year",
+    "loading state",
+    "monthly and annual arithmetic",
+    "result focus",
+    "dependents local update",
+    "bonus tiers and invalid price",
+    "stale lookup suppression",
+    "failure retry",
+    "linked destinations",
+    "no overflow",
+    "no page errors"
+  ],
+  "errors": [],
+  "independentReviewer": "homepage agent; did not author BAH",
+  "sourceEdits": false,
+  "compositionStatus": "PASS",
+  "normalHeaderClearance": "PASS at 1440, 768 and 390",
+  "compositionObservations": [
+    "Large navy house circle and red bonus circle sit left of their values, matching the updated Doc.",
+    "The calculator pictogram and result header are navy; benefit icons use the supplied red artwork.",
+    "The red checklist, VA loan and guide artwork and filled red separator star are correct.",
+    "Desktop retains the interpretation row; tablet places the CTA below two columns; phone stacks price, bonus and CTA without horizontal overflow."
+  ],
+  "dataMode": "Synthetic local API fixtures; this review does not assert live DTMO rate availability.",
+  "screenshotContext": "Clean hero section captures hide only the fixed header and development badge to avoid screenshot stitching overlays. Full-page captures preserve the normal header; header clearance was verified in the browser.",
+  "screenshots": [
+    "/private/tmp/vet675-bah-independent-hero-clean-1440.png",
+    "/private/tmp/vet675-bah-independent-interpretation-1440.png",
+    "/private/tmp/vet675-bah-independent-tools-1440.png",
+    "/private/tmp/vet675-bah-independent-page-1440.png",
+    "/private/tmp/vet675-bah-independent-hero-clean-768.png",
+    "/private/tmp/vet675-bah-independent-interpretation-768.png",
+    "/private/tmp/vet675-bah-independent-tools-768.png",
+    "/private/tmp/vet675-bah-independent-page-768.png",
+    "/private/tmp/vet675-bah-independent-hero-clean-390.png",
+    "/private/tmp/vet675-bah-independent-interpretation-390.png",
+    "/private/tmp/vet675-bah-independent-tools-390.png",
+    "/private/tmp/vet675-bah-independent-page-390.png"
+  ]
+}

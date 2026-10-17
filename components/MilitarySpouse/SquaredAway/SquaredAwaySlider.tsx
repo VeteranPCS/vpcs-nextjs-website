@@ -34,7 +34,7 @@ const Slider = ({ companies }: SliderProps) => {
           key={slide._id}
           className={`px-4 py-2 flex border-b-2  transition-colors duration-300 ${
             activeIndex === index
-              ? "border-[#A81F23] text-[#A81F23]"
+              ? "border-[#a91f23] text-[#a91f23]"
               : "border-[#F4F3F7] text-[[#F4F3F7]"
           }`}
         >

@@ -1,12 +1,13 @@
 'use client';
+import HomeIcon from './HomeIcon';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { US_STATES } from '@/constants/usStates';
 import { trackCtaClicked } from '@/lib/analytics/client';
 import { buildCtaProperties } from '@/lib/analytics/cta';
 import type { LocationSearchResult } from '@/lib/location-search/types';
+import { normalizeResourceQuery } from '@/lib/resources/catalogue';
 import HomeCta from './HomeCta';
-import HomeSymbol from './HomeSymbol';
 import styles from './StephHomepage.module.css';
 
 const popular = ['San Diego, CA', 'Virginia Beach, VA', 'Tampa, FL', 'Colorado Springs, CO'];
@@ -15,6 +16,8 @@ export default function HomeSearch({ guide }: { guide: React.ReactNode }) {
   const router = useRouter();
   const [tab, setTab] = useState<(typeof tabs)[number]>('Find an Agent');
   const [query, setQuery] = useState('');
+  const [resourceQuery, setResourceQuery] = useState('');
+  const [focusedTab, setFocusedTab] = useState(0);
   const [state, setState] = useState('');
   const [result, setResult] = useState<LocationSearchResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -29,9 +32,23 @@ export default function HomeSearch({ guide }: { guide: React.ReactNode }) {
     setResult(null);
   }
   function selectTab(name: (typeof tabs)[number]) {
-    if (name === tab) return;
     invalidateSearch();
     setTab(name);
+    setFocusedTab(tabs.indexOf(name));
+    if (name === 'Browse by State') {
+      document.getElementById('home-map-title')?.focus({ preventScroll: true });
+      document.getElementById('state-map')?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+    }
+  }
+  function searchResources(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    invalidateSearch();
+    const normalized = normalizeResourceQuery(resourceQuery);
+    setResourceQuery(normalized);
+    const params = new URLSearchParams(normalized ? { q: normalized } : { view: 'all' });
+    const destination = `/pcs-resources?${params}#resource-library`;
+    trackCtaClicked(buildCtaProperties({ ctaId: 'homepage_resources_search', ctaIntent: 'resources_navigation', ctaPosition: 'hero_search', ctaComponent: 'steph_homepage_search', ctaLabel: 'Search Resources', destination, pageType: 'homepage' }));
+    router.push(destination);
   }
   async function search(value = query, hint = state) {
     pendingRequest.current?.abort();
@@ -57,23 +74,23 @@ export default function HomeSearch({ guide }: { guide: React.ReactNode }) {
   }
   return <div className={styles.searchCard}>
     <div className={styles.tabs} role="tablist" aria-label="Find your next home">
-      {tabs.map((name, index) => <button key={name} role="tab" id={`home-tab-${index}`} aria-controls={`home-panel-${index}`} aria-selected={tab === name} tabIndex={tab === name ? 0 : -1} onClick={() => selectTab(name)} onKeyDown={(event) => {
+      {tabs.map((name, index) => <button key={name} role="tab" id={`home-tab-${index}`} aria-controls={`home-panel-${index}`} aria-selected={tab === name} tabIndex={focusedTab === index ? 0 : -1} onFocus={() => setFocusedTab(index)} onClick={() => selectTab(name)} onKeyDown={(event) => {
         if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return;
         event.preventDefault();
         const next = event.key === 'Home' ? 0 : event.key === 'End' ? 2 : (index + (event.key === 'ArrowRight' ? 1 : 2)) % 3;
-        const nextTab = tabs[next]; if (nextTab) selectTab(nextTab);
+        setFocusedTab(next);
         document.getElementById(`home-tab-${next}`)?.focus();
-      }}><HomeSymbol kind={index === 0 ? 'home' : index === 1 ? 'pin' : 'users'} className={styles.tabPictogram}/>{name}</button>)}
+      }}><HomeIcon name={index === 0 ? 'home' : index === 1 ? 'location' : 'people'} pictogram={index === 0 ? 'home' : index === 1 ? 'pin' : 'users'} className={styles.tabPictogram}/>{name}</button>)}
     </div>
     <div className={styles.searchBody}>
       <div role="tabpanel" id={`home-panel-${tabs.indexOf(tab)}`} aria-labelledby={`home-tab-${tabs.indexOf(tab)}`} className={styles.searchMain}>
         {tab === 'Find an Agent' && <><form onSubmit={(event) => { event.preventDefault(); void search(); }}>
-          <label className={styles.searchInput}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 5 5" /></svg><span className={styles.srOnly}>City, state, base, or ZIP code</span><input value={query} onChange={(event) => { invalidateSearch(); setQuery(event.target.value); setState(''); setResult(null); }} placeholder="Enter city or state" required maxLength={120} /></label>
+          <label className={styles.searchInput}><HomeIcon name="search" /><span className={styles.srOnly}>City, state, base, or ZIP code</span><input value={query} onChange={(event) => { invalidateSearch(); setQuery(event.target.value); setState(''); setResult(null); }} placeholder="Enter city or state" required maxLength={120} /></label>
           <button className={styles.button} disabled={loading}>{loading ? 'Searching…' : 'Find an Agent'}</button>
           {result?.outcome === 'needs_state' && <label className={styles.stateClarification}>Choose a state<select value={state} onChange={(event) => setState(event.target.value)} required><option value="">Select a state</option>{(result.states.length ? result.states : US_STATES).map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select></label>}
         </form><p className={styles.popular}><strong>Popular Searches:</strong> {popular.map((city) => <button key={city} onClick={() => { setQuery(city); setState(''); void search(city, ''); }}>{city}</button>)}</p></>}
         {tab === 'Browse by State' && <div className={styles.tabLinks}><p>Find military-friendly agents and VA loan experts in your destination state.</p><HomeCta href="#state-map" id="homepage_browse_map" intent="state_map">Choose your state</HomeCta></div>}
-        {tab === 'Browse Resources' && <div className={styles.resourceLinks}><HomeCta href="/pcs-resources" id="homepage_resources" intent="resources_navigation">PCS Resources</HomeCta><HomeCta href="/pcs-resources#move-in-bonus" id="homepage_bonus_resource" intent="resources_navigation">Move-In Bonus Calculator</HomeCta><HomeCta href="/va-loan-help" id="homepage_va_resource" intent="resources_navigation">VA Loan Guide</HomeCta></div>}
+        {tab === 'Browse Resources' && <><form onSubmit={searchResources} role="search" aria-label="Homepage resources"><label className={styles.searchInput}><HomeIcon name="search" /><span className={styles.srOnly}>Search resources, guides, and tools</span><input type="search" value={resourceQuery} onChange={(event) => setResourceQuery(event.target.value)} placeholder="Search resources, guides, tools…" maxLength={160}/></label><button className={styles.button}>Search Resources</button></form><div className={styles.resourceLinks}><HomeCta href="/pcs-resources" id="homepage_resources" intent="resources_navigation">PCS Resources</HomeCta><HomeCta href="/pcs-resources#move-in-bonus" id="homepage_bonus_resource" intent="resources_navigation">VeteranPCS Bonus</HomeCta><HomeCta href="/va-loan-help" id="homepage_va_resource" intent="resources_navigation">VA Loan Guide</HomeCta></div></>}
         {result && result.outcome !== 'resolved' && <p role="status" className={styles.searchStatus}>{result.message}</p>}
       </div><div className={styles.searchGuide}>{guide}</div>
     </div>

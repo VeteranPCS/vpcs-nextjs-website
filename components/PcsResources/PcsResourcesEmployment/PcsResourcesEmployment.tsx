@@ -28,7 +28,7 @@ const WhyVeteranPcs = () => {
                     height={465}
                     className="w-full h-full"
                     src="/assets/military-image-2.png"
-                    alt="Move in bonus"
+                    alt="VeteranPCS Bonus"
                   />
                 </div>
               </div>
@@ -40,7 +40,7 @@ const WhyVeteranPcs = () => {
                       height={75}
                       className="w-[250px] h-[75px]"
                       src="/assets/hiring-our-heros.png"
-                      alt="Move in bonus"
+                      alt="VeteranPCS Bonus"
                     />
                   </Link>
                   <div>
@@ -59,7 +59,7 @@ const WhyVeteranPcs = () => {
                       height={75}
                       className="w-[250px] h-[75px]"
                       src="/assets/hiring-our-heros2.png"
-                      alt="Move in bonus"
+                      alt="VeteranPCS Bonus"
                     />
                   </Link>
                   <div>

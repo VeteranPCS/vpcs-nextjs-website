@@ -3,7 +3,7 @@ import Image from "next/image";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 
 const reasons = [
-  { icon: "/icon/Moveinbonus.svg", label: "MOVE IN BONUS" },
+  { icon: "/icon/Moveinbonus.svg", label: "VETERANPCS BONUS" },
   { icon: "/icon/checkblue.svg", label: "FREE TO USE" },
   { icon: "/icon/Giveback.svg", label: "GIVE BACK" },
   { icon: "/icon/valoanexperts.svg", label: "VA LOAN EXPERTS" },

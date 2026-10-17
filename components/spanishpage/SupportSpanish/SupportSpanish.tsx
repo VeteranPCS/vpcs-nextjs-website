@@ -54,7 +54,7 @@ const SupportSpanish = async () => {
                       height={1000}
                       className="w-full max-w-[400px] h-auto"
                       src={"/assets/agent-image.png"}
-                      alt="Move in bonus"
+                      alt="VeteranPCS Bonus"
                     />
                   </div>
                 </div>

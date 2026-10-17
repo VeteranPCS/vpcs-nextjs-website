@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 35.48 33.75">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #292f6b;
+        stroke-miterlimit: 10;
+        stroke-width: 3px;
+      }
+    </style>
+    <symbol id="star_blue" data-name="star blue" viewBox="0 0 48.13 45.78">
+      <polygon class="cls-1" points="24.07 4.85 28.66 18.99 43.52 18.99 31.5 27.72 36.09 41.85 24.07 33.12 12.05 41.85 16.64 27.72 4.62 18.99 19.47 18.99 24.07 4.85"/>
+    </symbol>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <use width="48.13" height="45.78" transform="translate(1.5 1.58) scale(.67)" xlink:href="#star_blue"/>
+  </g>
+</svg>

@@ -100,7 +100,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
                 No spam mail, no fees. VeteranPCS is free to use.
               </h2>
               <p className="text-[#575F6E] roboto text-base font-black mt-8">
-                This form is simply used to generate an email with your agent&apos;s information and begin qualifying you for your Move In Bonus after you close.
+                This form is simply used to generate an email with your agent&apos;s information and begin qualifying you for your VeteranPCS Bonus after you close.
               </p>
             </div>
             <CustomerValidationSummary errors={errors} focusRequest={focusRequest} />

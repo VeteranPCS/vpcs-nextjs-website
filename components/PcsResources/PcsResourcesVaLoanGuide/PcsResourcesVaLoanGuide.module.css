@@ -1,5 +1,5 @@
 .pcsresourcesvaloanguide {
-  background: linear-gradient(113deg, #7E1618 41%, #D22230 100%);
+  background: linear-gradient(113deg, #7E1618 41%, var(--brand-red) 100%);
   padding: 60px 0px;
 }
 
