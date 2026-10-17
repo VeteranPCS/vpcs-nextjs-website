@@ -66,7 +66,6 @@
 .mapGraphic :global(.st0) { fill: var(--navy); stroke: white; stroke-width: 1px; }
 .mapGraphic :global(.st1),.mapGraphic :global(.st2) { fill: white; }
 .mapGraphic :global(.state:hover .st0),.mapGraphic :global(.state:focus-within .st0) { fill: var(--red); }
-.mapGraphic :global(#Texas .st0) { fill: var(--red); }
 .mapGraphic svg { aspect-ratio: 1766/1067; width: 100%; }
 .stateCard { border: 1px solid #d4d5dc; padding: 27px 18px 20px; border-radius: 9px; background: white; text-align: left; }
 .stateCard h3 { font-size: 24px; text-align: center; margin-bottom: 22px; }
@@ -164,7 +163,6 @@
 .fullReview p { line-height: 1.5; margin-top: 8px; }
 .reviewArt { min-height: 350px; }
 @media (max-width:767px) { .hero { background-image:none; } .heroInner { background-image:linear-gradient(#061c44 0%,#061c44 55%,#061c44c0 65%,#061c4480 85%,#061c44aa 100%),url('/images/redesign/flag-waving.webp'); background-size:cover,auto 75%; background-position:center,center bottom; background-repeat:no-repeat; } .reviewArt { min-height: 0; } }
-.mapGraphic :global([data-name='Texas'] .st0), .mapGraphic :global(a:focus-visible .st0), .mapGraphic :global(.state:hover .st0) { fill: var(--red)!important; }
 @media(min-width:768px) and (max-width:1023px) { .heroArt { min-width: 0; } .heroComposite { width: 100%; left: 0; } .bonusCard { padding: 20px; } .bonusFields { gap: 12px; grid-template-columns: 1fr 1fr; } .bonusFields>.button { grid-column: 1/-1; } }
 
 @media (min-width:768px) and (max-width:1199px) { .mission { grid-template-columns: 1fr; } }
@@ -210,7 +208,7 @@
 @media(max-width:767px) { .lenderCopy>.guide { display:grid; grid-template-columns:88px minmax(0,1fr); gap:12px; text-align:left; } .lenderCopy>.guide>.button { grid-column:1/-1; width:100%; margin-left:0; border-left:0; font-size:13px; } }
 
 /* Homepage source artwork and responsive interaction surfaces. */
-.hero { background-image: url('/images/steph/vet-675/hero-background.webp'); background-size: cover; }
+.hero { background-image: url('/images/steph/vet-675/hero-background.webp'); background-size:cover; background-position:center bottom; }
 .brush::after { height: 14px; bottom: -15px; background: url('/images/steph/vet-675/icons/home-line.svg') center / 100% 100% no-repeat; clip-path:none; }
 .hero::after { display:none; }
 .tabPictogram { width:24px; height:24px; flex-shrink:0; object-fit:contain; }
@@ -218,9 +216,10 @@
 .resourceLinks { margin-top: 18px; }
 .resourceLinks .button { background: transparent; color: var(--navy); padding: 4px 0; text-decoration: underline; }
 .benefits { border:0; }
-.mapGraphic :global(.st0), .mapGraphic :global(.st2), .mapGraphic :global(.st3),
+.mapGraphic :global(.st0), .mapGraphic :global(.st2), .mapGraphic :global(.st3) { fill:var(--navy)!important; }
 .mapGraphic :global(a:hover .st0), .mapGraphic :global(a:hover .st2), .mapGraphic :global(a:hover .st3),
-.mapGraphic :global(a:focus-visible .st0), .mapGraphic :global(a:focus-visible .st2), .mapGraphic :global(a:focus-visible .st3) { fill:var(--red)!important; }
+.mapGraphic :global(a:focus-visible .st0), .mapGraphic :global(a:focus-visible .st2), .mapGraphic :global(a:focus-visible .st3),
+.mapGraphic :global(a:active .st0), .mapGraphic :global(a:active .st2), .mapGraphic :global(a:active .st3) { fill:var(--red)!important; }
 .mapGraphic :global(.st1) { fill:white!important; }
 .mapSection h2:focus { outline:3px solid var(--red); outline-offset:8px; }
 .partnerViewport { max-width:1120px; margin:40px auto 24px; overflow:hidden; }
@@ -271,3 +270,11 @@
 @media(max-width:767px) { .benefits img.flagHeartIcon { width:66px; height:33px; } }
 
 @media(max-width:767px) { .bonusFields { grid-template-columns:1fr; } .bonusFields output { text-align:left; } }
+
+.home .searchInput input:focus-visible { outline:3px solid var(--navy); outline-offset:3px; }
+.mapSection>.benefits>div { position:relative; }
+.mapSection>.benefits>div+div::before { content:''; position:absolute; left:-13px; top:0; bottom:0; width:1px; background:#d4d5dc; }
+@media(max-width:767px) { .mapSection>.benefits>div+div::before { left:-7px; } }
+
+/* Reveal the supplied background’s transparent area below its red edge. */
+@media(min-width:768px) { .hero { background-color:white; } }

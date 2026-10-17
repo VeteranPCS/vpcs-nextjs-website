@@ -1,10 +1,14 @@
 import { expect, test } from '@playwright/test';
+import sharp from 'sharp';
 import { fixtureImpact } from './helpers';
 test('homepage keeps its core mobile and desktop paths usable', async ({ page }, testInfo) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Together, We’ll Make It Home.', exact: true, level: 1 })).toBeVisible();
+  await expect(page.locator('p[class*="heroSubtitle"]')).not.toContainText('You Can Trust');
+  await expect(page.locator('div[class*="mobileviewkissplogo"] p')).not.toContainText('You Can Trust');
+  await expect(page.locator('section[aria-labelledby="home-map-title"] > div[class*="benefits"]')).not.toContainText('You Can Trust');
   await expect(page.getByTestId('homepage-state-map').locator('svg')).toBeVisible();
   await expect(page.getByTestId('homepage-state-map').getByRole('link', { name: 'View VeteranPCS agents in Texas' })).toHaveAttribute('href', '/texas');
   await expect(page.getByRole('combobox', { name: 'Select a State' })).toBeVisible();
@@ -75,16 +79,18 @@ test('homepage explicit map activation, source art and responsive content', asyn
   await expect(page.getByRole('heading', { name: 'Where are you moving?' })).toBeFocused();
   const map = page.getByTestId('homepage-state-map');
   await expect(map.getByRole('link')).toHaveCount(52);
+  await page.mouse.move(0, 0);
+  const navy = await page.locator('main').evaluate(node => getComputedStyle(node).color);
   const fills = await map.locator('.st0,.st2,.st3').evaluateAll(nodes => [...new Set(nodes.map(node => getComputedStyle(node).fill))]);
-  expect(fills).toEqual(['rgb(169, 31, 35)']);
+  expect(fills).toEqual([navy]);
   const bonus = page.getByRole('region', { name: 'Estimated VeteranPCS Bonus' });
   await expect(bonus).toBeVisible();
   if (width < 768) {
     // Read together: explicit map activation may still be smoothly scrolling.
     const fields = await bonus.evaluate(node => {
-      const price = node.querySelector('input[type="number"]')!.getBoundingClientRect();
-      const amount = node.querySelector('output')!.getBoundingClientRect();
-      const action = node.querySelector('a')!.getBoundingClientRect();
+      const priceNode = node.querySelector('input[type="number"]'), amountNode = node.querySelector('output'), actionNode = node.querySelector('a');
+      if (!priceNode || !amountNode || !actionNode) throw new Error('Calculator fields must be rendered');
+      const price = priceNode.getBoundingClientRect(), amount = amountNode.getBoundingClientRect(), action = actionNode.getBoundingClientRect();
       return { priceBottom: price.bottom, amountTop: amount.top, amountBottom: amount.bottom, actionTop: action.top };
     });
     expect(fields.amountTop).toBeGreaterThan(fields.priceBottom);
@@ -109,10 +115,19 @@ test('homepage resources search preserves inputs and navigates with normalized q
   await page.goto('/');
   await expect(page.locator('section[aria-labelledby="home-hero-title"] form img[src*="search.svg"]')).toBeVisible();
   const tabs = page.getByRole('tablist', { name: 'Find your next home' });
+  const navy = await page.locator('main').evaluate(node => getComputedStyle(node).color);
+  await tabs.getByRole('tab', { name: 'Find an Agent' }).focus();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('textbox', { name: 'City, state, base, or ZIP code' })).toBeFocused();
+  await expect(page.getByRole('textbox', { name: 'City, state, base, or ZIP code' })).toHaveCSS('outline-color', navy);
   await page.getByRole('textbox', { name: 'City, state, base, or ZIP code' }).fill('San Diego');
   await tabs.getByRole('tab', { name: 'Browse Resources' }).click();
   await expect(page.getByRole('search', { name: 'Homepage resources' }).locator('img[src*="search.svg"]')).toBeVisible();
   const resource = page.getByRole('searchbox', { name: 'Search resources, guides, and tools' });
+  await tabs.getByRole('tab', { name: 'Browse Resources' }).focus();
+  await page.keyboard.press('Tab');
+  await expect(resource).toBeFocused();
+  await expect(resource).toHaveCSS('outline-color', navy);
   await resource.fill('  VA    loan  ');
   await tabs.getByRole('tab', { name: 'Find an Agent' }).click();
   await expect(page.getByRole('textbox', { name: 'City, state, base, or ZIP code' })).toHaveValue('San Diego');
@@ -183,12 +198,70 @@ test('homepage responsive boundaries keep only the experts impact column mobile-
   }
 });
 
-test('every homepage state preserves red fill through keyboard focus and pointer hover', async ({ page }, testInfo) => {
+test('every homepage state rests navy and turns red only during interaction', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', 'Complete state interaction coverage runs once.');
-  await page.goto('/'); const map = page.getByTestId('homepage-state-map'); await map.scrollIntoViewIfNeeded();
-  for (const link of await map.getByRole('link').all()) {
-    await link.focus(); await link.hover({ force: true });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/'); const map = page.getByTestId('homepage-state-map');
+  const navy = await page.locator('main').evaluate(node => getComputedStyle(node).color);
+  const red = 'rgb(169, 31, 35)';
+  const fills = () => map.locator('.st0,.st2,.st3').evaluateAll(nodes => [...new Set(nodes.map(node => getComputedStyle(node).fill))]);
+  await page.mouse.move(0, 0); await expect.poll(fills).toEqual([navy]);
+  await page.getByRole('heading', { name: 'Where are you moving?' }).focus();
+  const links = await map.getByRole('link').all();
+  for (const link of links) {
+    await page.keyboard.press('Tab'); await expect(link).toBeFocused();
     const colors = await link.locator('.st0,.st2,.st3').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).fill));
-    expect(colors.length).toBeGreaterThan(0); expect(colors.every(color => color === 'rgb(169, 31, 35)')).toBe(true);
+    expect(colors.length).toBeGreaterThan(0); expect(colors.every(color => color === red)).toBe(true);
+    const otherColors = await map.locator('a:not(:focus-visible) .st0,a:not(:focus-visible) .st2,a:not(:focus-visible) .st3').evaluateAll(nodes => [...new Set(nodes.map(node => getComputedStyle(node).fill))]);
+    expect(otherColors).toEqual([navy]);
   }
+  await page.keyboard.press('Tab'); await expect.poll(fills).toEqual([navy]);
+  await map.evaluate(node => {
+    const headerHeight = document.querySelector('[data-site-header]')?.getBoundingClientRect().height ?? 0;
+    window.scrollBy({ top: node.getBoundingClientRect().top - headerHeight - 24, behavior: 'instant' });
+  });
+  await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => resolve())));
+  for (const link of links) {
+    const point = await link.evaluate(anchor => {
+      const samples = [10, 9, 11, 8, 12, 7, 13, 6, 14, 5, 15, 4, 16, 3, 17, 2, 18, 1, 19];
+      for (const shape of anchor.querySelectorAll<SVGGeometryElement>('.st0,.st2,.st3')) {
+        const box = shape.getBBox(), matrix = shape.getScreenCTM(); if (!matrix) continue;
+        for (const row of samples) for (const column of samples) {
+          const local = new DOMPoint(box.x + box.width * column / 20, box.y + box.height * row / 20);
+          if (!shape.isPointInFill(local)) continue;
+          const client = local.matrixTransform(matrix);
+          if (document.elementFromPoint(client.x, client.y)?.closest('a') === anchor) return { x: client.x, y: client.y };
+        }
+      }
+      throw new Error('State link has no filled pointer target');
+    });
+    await page.mouse.move(point.x, point.y);
+    expect(await link.evaluate(node => node.matches(':hover')), await link.getAttribute('href') ?? 'state hover').toBe(true);
+    const colors = await link.locator('.st0,.st2,.st3').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).fill));
+    expect(colors.every(color => color === red)).toBe(true);
+  }
+  await page.mouse.down(); await page.mouse.move(0, 0);
+  const active = map.locator('a:active'); await expect(active).toHaveCount(1);
+  expect(await active.locator('.st0,.st2,.st3').evaluateAll(nodes => [...new Set(nodes.map(node => getComputedStyle(node).fill))])).toEqual([red]);
+  await page.mouse.up(); await expect.poll(fills).toEqual([navy]);
+  expect(await map.locator('.st1').evaluateAll(nodes => [...new Set(nodes.map(node => getComputedStyle(node).fill))])).toEqual(['rgb(255, 255, 255)']);
+});
+
+test('the supplied hero background keeps its red lower edge visible', async ({ page }, testInfo) => {
+  test.skip((page.viewportSize()?.width ?? 0) < 768, 'Phone artwork uses the separate hero inner background.');
+  await page.goto('/'); const hero = page.locator('section[aria-labelledby="home-hero-title"]');
+  await hero.locator('img').evaluateAll(images => Promise.all(images.map(image => (image as HTMLImageElement).decode())));
+  expect(await hero.evaluate(node => getComputedStyle(node, '::after').display)).toBe('none');
+  const pixels = await hero.screenshot(); const metadata = await sharp(pixels).metadata();
+  if (!metadata.height || !metadata.width) throw new Error('Hero screenshot must have dimensions');
+  const height = Math.min(100, metadata.height);
+  const { data, info } = await sharp(pixels).extract({ left: 0, top: metadata.height - height, width: metadata.width, height }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const redColumns = new Set<number>();
+  for (let y = 0; y < info.height; y++) for (let x = 0; x < info.width; x++) {
+    const offset = (y * info.width + x) * info.channels;
+    const r = data[offset] ?? 0, g = data[offset + 1] ?? 255, b = data[offset + 2] ?? 255;
+    if (r > 120 && g < 70 && b < 85 && r > g * 2) redColumns.add(x);
+  }
+  expect(redColumns.size / info.width).toBeGreaterThan(0.2);
+  await testInfo.attach('hero-source-edge', { body: pixels, contentType: 'image/png' });
 });

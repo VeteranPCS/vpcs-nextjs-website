@@ -134,7 +134,7 @@ const KeepInTouch = () => {
               />
               <p className="text-[#292F6C] text-lg font-normal leading-[30px] lg:max-w-[300px] my-7">
                 Together we&apos;ll make it home. Veteran & Military Spouse Real
-                Estate Agents and VA Loan Experts You Can Trust
+                Estate Agents and VA Loan Experts
               </p>
             </div>
             <div className="flex justify-center md:justify-start">
