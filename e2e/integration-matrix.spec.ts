@@ -51,8 +51,7 @@ test('adjacent responsive boundaries preserve header and content clearance', asy
     const header = await page.locator('[data-site-header]').boundingBox();
     const title = await page.getByRole('heading', { level: 1 }).boundingBox();
     expect(title!.y).toBeGreaterThanOrEqual(header!.height);
-    if (width < 768) await expect(page.getByRole('heading', { name: 'Estimated VeteranPCS Bonus' })).toBeHidden();
-    else await expect(page.getByRole('heading', { name: 'Estimated VeteranPCS Bonus' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Estimated VeteranPCS Bonus' })).toBeVisible();
     if (width < 1280) await expect(page.getByRole('button', { name: 'Open navigation' })).toBeVisible();
     else await expect(page.getByRole('button', { name: 'Open navigation' })).toBeHidden();
   }

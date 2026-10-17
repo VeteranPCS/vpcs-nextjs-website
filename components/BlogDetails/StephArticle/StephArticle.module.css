@@ -25,6 +25,7 @@
 .resources p { font-size:13px; color:#222; line-height:1.35; margin:7px 0 16px; }
 .resources small { font-size:11px; color:#222; }
 .body { font-size:18px; line-height:1.65; color:#252525; overflow-wrap:break-word; }
+.body [data-article-body] [data-legacy-heading-anchor] { display:block; scroll-margin-top:calc(var(--site-header-height,208px) + 24px); }
 .body [data-article-body] h2 { color:#292f6c; font-size:28px; scroll-margin-top:calc(var(--site-header-height,208px) + 24px); }
 .body [data-article-body] h3,.body [data-article-body] h4 { color:#292f6c; }
 .body [data-article-body] p,.body [data-article-body] ul,.body [data-article-body] ol { font-size:18px; line-height:1.65; color:#252525; }

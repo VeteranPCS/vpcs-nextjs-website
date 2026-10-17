@@ -9,7 +9,7 @@ const read = (path: string) => readFileSync(path, 'utf8');
 describe('VeteranPCS Bonus editorial compatibility', () => {
   it('keeps old article links while the table of contents targets the renamed heading', () => {
     const article = read('content/blog/buying-a-home-after-military-service.mdx');
-    expect(article).toContain('<span id="your-veteranpcs-move-in-bonus" />\n\n## Your VeteranPCS Bonus');
+    expect(article).toContain('<span id="your-veteranpcs-move-in-bonus" data-legacy-heading-anchor />\n\n## Your VeteranPCS Bonus');
     expect(extractTocHeadings(article)).toContainEqual({ id: 'your-veteranpcs-bonus', text: 'Your VeteranPCS Bonus' });
     const registry = JSON.parse(read('content/_registry/internal-links.json'));
     expect(JSON.stringify(registry)).toContain('Your VeteranPCS Bonus');
