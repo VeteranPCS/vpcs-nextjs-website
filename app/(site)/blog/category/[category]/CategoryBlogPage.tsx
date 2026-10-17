@@ -141,7 +141,7 @@ export async function CategoryBlogPage({ category, page = 1 }: Props) {
               {isLenderCategory ? (
                 <TrackedCtaLink
                   href="/contact-lender"
-                  className="rounded-custom bg-[#a81f23] px-5 py-3 text-sm font-bold text-white"
+                  className="rounded-custom bg-[#a91f23] px-5 py-3 text-sm font-bold text-white"
                   cta={{
                     ctaId: 'blog_category_find_lender',
                     ctaIntent: 'contact_lender',
@@ -159,7 +159,7 @@ export async function CategoryBlogPage({ category, page = 1 }: Props) {
               ) : (
                 <TrackedCtaLink
                   href="/contact-agent"
-                  className="rounded-custom bg-[#a81f23] px-5 py-3 text-sm font-bold text-white"
+                  className="rounded-custom bg-[#a91f23] px-5 py-3 text-sm font-bold text-white"
                   cta={{
                     ctaId: 'blog_category_find_agent',
                     ctaIntent: 'contact_agent',

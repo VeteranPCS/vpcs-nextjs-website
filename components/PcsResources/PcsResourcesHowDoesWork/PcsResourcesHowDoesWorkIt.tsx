@@ -9,7 +9,7 @@ const PcsResourcesHowDoesWorkIt = () => {
       <div className="mx-auto text-center w-full max-w-[700px] px-5 py-10">
         <div>
           <h2 className="text-[#FFFFFF] text-center roboto md:text-[45px] text-[35px] font-bold px-10 sm:px-0">
-            How Does The Move-In-Bonus Work?
+            How Does The VeteranPCS Bonus Work?
           </h2>
           <p className="text-[#FFFFFF] text-center roboto md:text-[16px] text-[14px] font-medium my-3">
             The Bonus is available in most states, and only possible when

@@ -218,7 +218,7 @@ export default function VaLoanCalculatorPage() {
             {
                 label: "Interest Paid (cumulative)",
                 data: totalInterestArr,
-                borderColor: "#A81F23", // Red color from button
+                borderColor: "#a91f23", // Red color from button
                 backgroundColor: "rgba(168, 31, 35, 0.1)", // Optional: light red fill
                 borderWidth: 2, // Slightly thicker line
                 pointRadius: 0, // Hide points for cleaner look

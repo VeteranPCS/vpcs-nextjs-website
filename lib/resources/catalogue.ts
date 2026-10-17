@@ -13,7 +13,7 @@ export const CHECKLIST_SLUG = 'the-ultimate-pcs-checklist-and-timeline-for-activ
 export const RESOURCE_TOOLS: Resource[] = [
   { id:'bah',title:'BAH Calculator',description:'Calculate your Basic Allowance for Housing based on rank, dependents, and location.',href:'/bah-calculator',categories:['military-finance'],keywords:'bah allowance housing calculator pay grade ZIP',kind:'tool' },
   { id:'va-calculator',title:'VA Loan Calculator',description:'Estimate your monthly payment and explore your buying power with a VA home loan.',href:'/va-loan-calculator',categories:['va-loan-help'],keywords:'mortgage payment interest loan calculator',kind:'tool' },
-  { id:'bonus',title:'Move-In Bonus Calculator',description:'See how much you can receive when you buy or sell with a trusted VeteranPCS agent.',href:'/pcs-resources#move-in-bonus',categories:['buying-home'],keywords:'moving bonus cash back calculator',kind:'tool' },
+  { id:'bonus',title:'VeteranPCS Bonus Calculator',description:'See how much you can receive when you buy or sell with a trusted VeteranPCS agent.',href:'/pcs-resources#move-in-bonus',categories:['buying-home'],keywords:'moving bonus cash back calculator',kind:'tool' },
 ];
 export const RESOURCE_DOWNLOADS: Resource[] = [
   { id:'va-guide',title:'Free VA Loan Guide',description:'Understand your VA home loan benefits and the steps to home ownership.',href:'/guides#va-loan-guide',categories:['va-loan-help'],keywords:'download pdf guide',kind:'download',download:'va-guide' },

@@ -51,14 +51,14 @@
     "_id": "b0aa5318-4cde-4f9f-8c73-2cd68f050a06",
     "_type": "life_resources",
     "_createdAt": "2024-12-17T07:01:57Z",
-    "_updatedAt": "2026-09-04T02:22:31Z",
+    "_updatedAt": "2026-10-17T00:00:00Z",
     "description": "active duty and veteran military spouse business owners tools and resources",
     "logo": {
       "_sanityAssetId": "image-dbea65f7574c1756d9f863ddcc0fd1e19e3546d6-384x104-webp",
-      "alt": "MILITARY SPOUSE CHAMBER OF COMMERCE Image",
-      "height": 104,
-      "path": "/images/content/life-resources/movinglifeimg1.webp",
-      "width": 384
+      "alt": "Military Spouse Chamber of Commerce logo",
+      "height": 350,
+      "path": "/images/steph/vet-675/partners/mscc.webp",
+      "width": 750
     },
     "name": "MILITARY SPOUSE CHAMBER OF COMMERCE",
     "url": "https://milspousechamber.org/"

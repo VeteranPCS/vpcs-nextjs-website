@@ -33,7 +33,7 @@ const PcsResourcesMilitarySpouse = () => {
                     height={465}
                     className="w-full h-full"
                     src="/assets/MIlSpacefamily.png"
-                    alt="Move in bonus"
+                    alt="VeteranPCS Bonus"
                   />
                 </div>
               </div>
@@ -45,7 +45,7 @@ const PcsResourcesMilitarySpouse = () => {
                       height={85}
                       className="md:w-[250px] sm:w-[100px] sm:h-[85px] w-[150px] h-[65px] md:mb-0 mb-4"
                       src="/assets/milspaceous.png"
-                      alt="Move in bonus"
+                      alt="VeteranPCS Bonus"
                     />
                   </Link>
                   <div>

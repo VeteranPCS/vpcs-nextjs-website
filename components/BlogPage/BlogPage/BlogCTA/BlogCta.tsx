@@ -48,7 +48,7 @@ const StatePageHeroSecondSection = () => {
                     </div>
                     <div>
                         <div>
-                            <Image src="/assets/blogpcsright.png" alt="VeteranPCS move-in bonus check presented to a military family" width={1000} height={1000} sizes="710px" className="w-auto h-auto object-cover" />
+                            <Image src="/assets/blogpcsright.png" alt="VeteranPCS Bonus check presented to a military family" width={1000} height={1000} sizes="710px" className="w-auto h-auto object-cover" />
                         </div>
                     </div>
                 </div>

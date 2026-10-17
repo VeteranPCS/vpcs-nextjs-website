@@ -17,7 +17,7 @@ const config: Config = {
         },
         accent: {
           red: {
-            DEFAULT: '#a81f23',
+            DEFAULT: '#a91f23',
             dark: '#7e1618',
             light: '#d22230',
           },

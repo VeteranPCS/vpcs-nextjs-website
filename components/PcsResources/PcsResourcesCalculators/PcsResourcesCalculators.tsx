@@ -56,7 +56,7 @@ const PcsResourcesCalculators = () => {
               <p className="text-[#333333] roboto text-sm lg:text-base font-normal mb-6 leading-relaxed">
                 Calculate your Basic Allowance for Housing (BAH) for your next duty station.
               </p>
-              <span className="text-[#A81F23] roboto text-sm lg:text-base font-medium hover:text-[#8B2D2D] transition-colors duration-300">
+              <span className="text-[#a91f23] roboto text-sm lg:text-base font-medium hover:text-[#8B2D2D] transition-colors duration-300">
                 Learn more
               </span>
             </Link>
@@ -92,7 +92,7 @@ const PcsResourcesCalculators = () => {
               <p className="text-[#333333] roboto text-sm lg:text-base font-normal mb-6 leading-relaxed">
                 Calculate your VA loan eligibility and estimated monthly payment.
               </p>
-              <span className="text-[#A81F23] roboto text-sm lg:text-base font-medium hover:text-[#8B2D2D] transition-colors duration-300">
+              <span className="text-[#a91f23] roboto text-sm lg:text-base font-medium hover:text-[#8B2D2D] transition-colors duration-300">
                 Learn more
               </span>
             </Link>

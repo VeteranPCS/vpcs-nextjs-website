@@ -5,7 +5,7 @@
 .logo { flex-shrink:0; display:flex; align-items:center; width:200px; min-height:44px; }
 .logo img { width:100%; height:auto; }
 .desktopNav { display:none; }
-.redButton, .learnMore { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 24px; border-radius:4px; background:#b51f24; color:white; font-weight:700; text-align:center; line-height:1.25; }
+.redButton, .learnMore { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 24px; border-radius:4px; background:#a91f23; color:white; font-weight:700; text-align:center; line-height:1.25; }
 .redButton:hover, .learnMore:hover { background:#951a1f; }
 .mobileToggle { display:flex; justify-content:center; align-items:center; width:48px; height:48px; flex-shrink:0; }
 .hiddenToggle { visibility:hidden; }
@@ -21,7 +21,7 @@
 .stripInner { max-width:1440px; margin:auto; display:flex; align-items:center; justify-content:space-between; height:100%; padding:0 20px; gap:14px; }
 .stripImpact { display:flex; align-items:center; gap:8px; min-width:0; }
 .stripImpact img { width:32px; height:36px; object-fit:contain; }
-.stripImpact strong { display:block; font-size:21px; color:#b51f24; font-weight:800; letter-spacing:-.5px; line-height:1; }
+.stripImpact strong { display:block; font-size:21px; color:#a91f23; font-weight:800; letter-spacing:-.5px; line-height:1; }
 .stripImpact span { display:block; font-size:8px; font-weight:800; text-transform:uppercase; margin-top:3px; }
 .stripDesktop { display:none; }
 .learnMore { font-size:11px; min-height:32px; padding:8px 12px; white-space:nowrap; }
@@ -36,17 +36,17 @@
 .rootIcon { width:28px; height:32px; flex-shrink:0; color:#fff; }
 .mobileRoot .redButton { width:100%; margin-top:24px; min-height:54px; font-size:18px; }
 .mobileHeading { padding:20px 28px 0; }
-.mobileHeading button { color:#b51f24; display:flex; align-items:center; gap:8px; min-height:44px; font-weight:700; font-size:18px; }
+.mobileHeading button { color:#a91f23; display:flex; align-items:center; gap:8px; min-height:44px; font-weight:700; font-size:18px; }
 .mobileHeading button span { font-size:32px; }
-.mobileHeading h2 { font-size:21px; color:#b51f24; margin:4px 0 14px; font-weight:750; }
+.mobileHeading h2 { font-size:21px; color:#a91f23; margin:4px 0 14px; font-weight:750; }
 .panelContent { padding:20px 28px 28px; }
 .groups { display:grid; gap:28px; }
 .group h2 { font-size:14px; text-transform:uppercase; font-weight:800; margin:0 0 12px; line-height:1.3; }
 .group ul { margin:0; padding:0; list-style:none; }
 .group li { display:flex; align-items:flex-start; gap:12px; }
-.itemIcon { color:#b51f24; display:flex; align-items:center; justify-content:center; width:20px; height:44px; flex-shrink:0; font-size:19px; font-weight:800; }
+.itemIcon { color:#a91f23; display:flex; align-items:center; justify-content:center; width:20px; height:44px; flex-shrink:0; font-size:19px; font-weight:800; }
 .menuLink { display:flex; flex-direction:column; justify-content:center; min-height:44px; padding:8px 0; font-size:14px; line-height:1.35; }
-.menuLink:hover { color:#b51f24; text-decoration:underline; }
+.menuLink:hover { color:#a91f23; text-decoration:underline; }
 .menuLink small { display:block; margin-top:3px; font-size:12px; font-weight:400; }
 .promo { border:1px solid #d8d8dd; border-radius:18px; padding:20px; background:#fff; margin-top:28px; }
 .promo h3 { font-size:22px; font-weight:850; margin:0 0 10px; line-height:1.12; }
@@ -58,20 +58,20 @@
 .contactPromo h3 { font-size:16px; }
 .contactPromo>a:not(.redButton) { min-height:32px; font-size:14px; font-weight:700; }
 .contactPromo .redButton { margin-top:8px; }
-.promoStar { color:#b51f24; font-size:24px; display:block; margin-bottom:8px; }
+.promoStar { color:#a91f23; font-size:24px; display:block; margin-bottom:8px; }
 .missionPromo { display:grid; grid-template-columns:1fr; gap:24px; text-align:center; }
 .missionPromo>div { display:flex; flex-direction:column; align-items:center; }
 .missionPromo>div+div { border-top:1px solid #d8d8dd; padding-top:24px; }
 .missionPromo h3 { font-size:15px; }
-.missionPromo h3 span { color:#b51f24; font-size:12px; }
+.missionPromo h3 span { color:#a91f23; font-size:12px; }
 .missionPromo p { font-size:12px; margin:8px 0 14px; }
-.metric { display:block; color:#b51f24; font-size:28px; line-height:1.15; margin-top:8px; }
+.metric { display:block; color:#a91f23; font-size:28px; line-height:1.15; margin-top:8px; }
 .benefitFooter { display:grid; padding:20px 28px; }
 .benefit { display:flex; align-items:center; gap:18px; min-height:82px; border-bottom:1px solid #dcdce3; padding:14px 0; }
 .benefit:last-child { border-bottom:0; }
 .benefit img,.shieldIcon { width:38px; height:38px; object-fit:contain; flex-shrink:0; }
 .benefit img { filter:brightness(0) saturate(100%) invert(18%) sepia(92%) saturate(2127%) hue-rotate(340deg) brightness(87%) contrast(92%); }
-.shieldIcon { color:#b51f24; }
+.shieldIcon { color:#a91f23; }
 .benefit strong, .benefit span { display:block; font-size:14px; line-height:1.25; font-weight:700; }
 .drilldown>.benefitFooter { background:#071f42; color:#fff; }
 .drilldown>.benefitFooter .benefit { border-bottom-color:#ffffff2e; }
@@ -84,7 +84,7 @@
  .desktopNav { display:flex; align-items:center; gap:40px; }
  .desktopNav ul { display:flex; align-items:center; gap:30px; margin:0; padding:0; list-style:none; }
  .desktopNav li>button { height:116px; display:flex; align-items:center; gap:10px; border-bottom:5px solid transparent; padding:5px 0 0; font-size:20px; white-space:nowrap; }
- .desktopNav li>button:hover, .desktopNav li>.activeTrigger { border-bottom-color:#b51f24; }
+ .desktopNav li>button:hover, .desktopNav li>.activeTrigger { border-bottom-color:#a91f23; }
  .chevron { height:10px; width:10px; border-right:2px solid; border-bottom:2px solid; transform:rotate(45deg); margin-top:-5px; }
  .desktopNav .redButton { min-width:214px; min-height:48px; font-size:18px; }
  .benefitStrip { height:92px; }

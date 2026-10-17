@@ -16,7 +16,7 @@ An asset agent inspected the permitted page folders, branding folder, Drive imag
 
 ## Settled content and behavior adaptations
 
-- Mobile homepage omits the inline bonus calculator and retains the Resources tool link; recruitment, internship and newsletter follow the illustrated mobile sections.
+- VET-675 restores the inline VeteranPCS Bonus calculator immediately after the map on mobile. This supersedes the earlier mobile omission; recruitment, internship and newsletter remain after the illustrated sections.
 - Navigation uses Mission and existing destinations; desktop navigation begins at1280px. Shared header height is128px on phone/tablet and208px on desktop.
 - Mock impact totals, ratings, borrower counts and review identities are replaced by verified values, genuine reviews or nonnumeric copy.
 - BAH uses2026/26, explicit submission and returned dependent rates. Annual allowance is monthly×12. Home price is entered separately for the existing bonus tiers; BAH is not converted into invented affordability.

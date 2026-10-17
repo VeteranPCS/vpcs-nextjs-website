@@ -100,7 +100,7 @@ export default function HowItWorksDetails() {
                   Home Price
                 </th>
                 <th scope="col" className={tableHeaderCell}>
-                  Move-In Bonus
+                  VeteranPCS Bonus
                 </th>
                 <th scope="col" className={tableHeaderCell}>
                   Charity Donation

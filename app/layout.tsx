@@ -38,8 +38,8 @@ const lora = Lora({
     variable: '--font-lora',
 });
 
-const META_TITLE = "Military PCS Moves: Veteran Real Estate Agents & $4,000 Move-In Bonus";
-const META_DESCRIPTION = "PCSing? Connect with military-experienced real estate agents who understand your BAH, VA loans, and base requirements. Earn up to $4,000 in Move-In Bonuses, support veteran charities, and make your next PCS your best PCS—at zero cost to you.";
+const META_TITLE = "Military PCS Moves: Veteran Real Estate Agents & $4,000 VeteranPCS Bonus";
+const META_DESCRIPTION = "PCSing? Connect with military-experienced real estate agents who understand your BAH, VA loans, and base requirements. Earn up to $4,000 in VeteranPCS Bonuses, support veteran charities, and make your next PCS your best PCS—at zero cost to you.";
 
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL || "https://veteranpcs.com"),
