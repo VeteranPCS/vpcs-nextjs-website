@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import type { Metadata } from "next";
 import Link from "next/link";
 import stateService, { type Agent, type StateList } from "@/services/stateService";
@@ -57,6 +58,10 @@ async function loadDirectory(): Promise<StateAgentsGroup[]> {
 }
 
 export default async function AgentsDirectoryPage() {
+  // Credential-free CI builds defer these reads to a request, never an empty directory.
+  // Normal deployments retain static generation and the 24-hour revalidation policy.
+  if (process.env.SKIP_SALESFORCE_PRERENDER === '1') await connection();
+
   const groups = await loadDirectory();
 
   const populatedGroups = groups.filter((group) => group.agents.length > 0);

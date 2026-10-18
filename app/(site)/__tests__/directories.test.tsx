@@ -1,10 +1,12 @@
 import React from 'react';
+import { connection } from 'next/server';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import stateService from '@/services/stateService';
 import AgentsPage, { revalidate as agentsRevalidate } from '../agents/page';
 import LendersPage, { revalidate as lendersRevalidate } from '../lenders/page';
 
+vi.mock('next/server', () => ({ connection: vi.fn() }));
 vi.mock('@/services/stateService', () => ({ default: {
   fetchStateList: vi.fn(), fetchAgentsListByState: vi.fn(), fetchLendersListByState: vi.fn(),
 } }));
@@ -22,10 +24,11 @@ const records = [
 
 beforeEach(() => {
   vi.resetAllMocks();
+  vi.stubEnv('SKIP_SALESFORCE_PRERENDER', '');
   vi.stubGlobal('fetch', vi.fn(() => { throw new Error('Unexpected network access'); }));
   vi.mocked(stateService.fetchStateList).mockResolvedValue(states as never);
 });
-afterEach(() => { vi.unstubAllGlobals(); });
+afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 describe.each([
   ['agents', AgentsPage, stateService.fetchAgentsListByState, agentsRevalidate],
@@ -35,11 +38,41 @@ describe.each([
     vi.mocked(fetchRecords).mockResolvedValue({ records } as never);
     const html = renderToStaticMarkup(await Page());
     expect(revalidate).toBe(86400);
+    expect(connection).not.toHaveBeenCalled();
     expect(html.indexOf('Colorado')).toBeLessThan(html.indexOf('Texas'));
     expect(html.indexOf('Alice Example')).toBeLessThan(html.indexOf('Zelda Example'));
     expect(html).not.toContain('Duplicate Example');
     expect(html).toContain('href="/colorado"');
     expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('defers credential-free builds before any reads, then loads real request data', async () => {
+    vi.stubEnv('SKIP_SALESFORCE_PRERENDER', '1');
+    let resume!: () => void; // The Promise executor assigns this synchronously.
+    vi.mocked(connection).mockReturnValue(new Promise<void>((resolve) => { resume = resolve; }));
+    vi.mocked(fetchRecords).mockResolvedValue({ records } as never);
+    const pending = Page();
+    expect(connection).toHaveBeenCalledOnce();
+    expect(stateService.fetchStateList).not.toHaveBeenCalled();
+    expect(fetchRecords).not.toHaveBeenCalled();
+    resume();
+    expect(renderToStaticMarkup(await pending)).toContain('Alice Example');
+    expect(fetchRecords).toHaveBeenCalledTimes(states.length);
+  });
+
+  it('lets the framework stop prerendering without fetching or returning empty success', async () => {
+    vi.stubEnv('SKIP_SALESFORCE_PRERENDER', '1');
+    vi.mocked(connection).mockRejectedValue(new Error('Framework prerender bailout'));
+    await expect(Page()).rejects.toThrow('Framework prerender bailout');
+    expect(stateService.fetchStateList).not.toHaveBeenCalled();
+    expect(fetchRecords).not.toHaveBeenCalled();
+  });
+
+  it('still rejects Salesforce failures after a deferred request begins', async () => {
+    vi.stubEnv('SKIP_SALESFORCE_PRERENDER', '1');
+    vi.mocked(connection).mockResolvedValue(undefined);
+    vi.mocked(fetchRecords).mockRejectedValue(new Error('CRM outage'));
+    await expect(Page()).rejects.toThrow('CRM outage');
   });
 
   it('renders a genuine empty result normally', async () => {

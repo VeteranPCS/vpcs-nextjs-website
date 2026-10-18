@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import Link from "next/link";
 import type { Metadata } from "next";
 import stateService, {
@@ -72,6 +73,10 @@ function formatLenderLine(lender: Lenders): string {
 }
 
 export default async function LendersDirectoryPage() {
+  // Credential-free CI builds defer these reads to a request, never an empty directory.
+  // Normal deployments retain static generation and the 24-hour revalidation policy.
+  if (process.env.SKIP_SALESFORCE_PRERENDER === '1') await connection();
+
   const directory = await getDirectoryData();
 
   return (
