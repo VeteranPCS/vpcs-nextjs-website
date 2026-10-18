@@ -1,6 +1,6 @@
 {
-  "contentHash": "fd56700fb43141291d3294f26f647b63dce9f25178ec46b07e09901cb28a7625",
-  "totalPosts": 402,
+  "contentHash": "1924e89a5b5e7a413d6a101e5e5c396355e6b87ca1198cfc688da5f7c56bfc44",
+  "totalPosts": 406,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -225,6 +225,7 @@
       "air-force-bases-in-florida",
       "air-force-bases-in-hawaii",
       "air-force-bases-in-new-mexico",
+      "air-force-bases-in-texas",
       "alabama-military-bases",
       "army-bases-in-alaska",
       "army-bases-in-california",
@@ -233,7 +234,9 @@
       "army-bases-in-hawaii",
       "army-bases-in-kansas",
       "army-bases-in-kentucky",
+      "army-bases-in-new-york",
       "army-bases-in-north-carolina",
+      "army-bases-in-texas",
       "army-bases-in-virginia",
       "army-bases-in-washington-state",
       "best-neighborhoods-redstone-arsenal-military",
@@ -244,6 +247,7 @@
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
       "military-bases-near-me-how-to-find-bases-by-state",
+      "naval-bases-in-washington-state",
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-aberdeen-proving-ground-2026-guide",
       "pcs-to-air-force-academy-colorado-springs-2026-guide",
@@ -643,6 +647,7 @@
       "air-force-bases-in-florida",
       "air-force-bases-in-hawaii",
       "air-force-bases-in-new-mexico",
+      "air-force-bases-in-texas",
       "alabama-military-bases",
       "army-bases-in-alaska",
       "army-bases-in-california",
@@ -651,7 +656,9 @@
       "army-bases-in-hawaii",
       "army-bases-in-kansas",
       "army-bases-in-kentucky",
+      "army-bases-in-new-york",
       "army-bases-in-north-carolina",
+      "army-bases-in-texas",
       "army-bases-in-virginia",
       "army-bases-in-washington-state",
       "best-neighborhoods-redstone-arsenal-military",
@@ -662,6 +669,7 @@
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
       "military-bases-near-me-how-to-find-bases-by-state",
+      "naval-bases-in-washington-state",
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-aberdeen-proving-ground-2026-guide",
       "pcs-to-air-force-academy-colorado-springs-2026-guide",
@@ -1066,6 +1074,7 @@
       "what-military-bases-are-in-new-mexico"
     ],
     "new-york": [
+      "army-bases-in-new-york",
       "new-york-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-drum-watertown-2026-guide",
       "pcs-to-west-point-2026-guide",
@@ -1138,6 +1147,8 @@
       "tennessee-veteran-property-tax-exemptions-2026"
     ],
     "texas": [
+      "air-force-bases-in-texas",
+      "army-bases-in-texas",
       "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-fort-hood",
       "best-things-to-do-near-nas-jrb-fort-worth",
@@ -1180,6 +1191,7 @@
     ],
     "washington": [
       "army-bases-in-washington-state",
+      "naval-bases-in-washington-state",
       "pcs-to-fairchild-afb-spokane-2026-guide",
       "pcs-to-joint-base-lewis-mcchord-jblm-2026-guide",
       "pcs-to-nas-whidbey-island-oak-harbor-2026-guide",
@@ -1202,10 +1214,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 262,
+    "resolved": 266,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 238,
+      "frontmatter-state-slug": 242,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -1706,6 +1718,42 @@
       ]
     },
     {
+      "slug": "air-force-bases-in-texas",
+      "title": "Air Force Bases in Texas: JBSA, Dyess, Sheppard and 2026 BAH",
+      "url": "/blog/air-force-bases-in-texas",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Texas has five Air Force-run bases, from basic training at Lackland to bombers at Dyess and pilot training at Sheppard and Laughlin. Here is what each base does and what 2026 BAH looks like nearby.",
+      "publishedAt": "2026-10-15T09:00:00.000Z",
+      "updatedAt": "2026-10-18T00:00:00.000Z",
+      "primaryKeyword": "air force bases in texas",
+      "secondaryKeywords": [
+        "air force base in texas",
+        "dyess afb",
+        "jbsa lackland",
+        "sheppard afb",
+        "texas air force bases"
+      ],
+      "h2Outline": [
+        "Air Force Bases in Texas, at a Glance",
+        "Joint Base San Antonio (JBSA)",
+        "Dyess AFB (Abilene)",
+        "Sheppard AFB (Wichita Falls)",
+        "Goodfellow AFB (San Angelo)",
+        "Laughlin AFB (Del Rio)",
+        "NAS JRB Fort Worth and the 301st Fighter Wing",
+        "What BAH Covers Near Texas Air Force Bases",
+        "Buying a Home Near Texas Air Force Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "alabama-military-bases",
       "title": "What Military Bases are in Alabama?",
       "url": "/blog/alabama-military-bases",
@@ -2128,6 +2176,41 @@
       ]
     },
     {
+      "slug": "army-bases-in-new-york",
+      "title": "Army Bases in New York: Fort Drum, West Point and 2026 BAH",
+      "url": "/blog/army-bases-in-new-york",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "new-york",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "New York has four active Army installations, from snowy Fort Drum up north to Fort Hamilton in Brooklyn. See what each post does, how 2026 housing allowance compares, and how to plan your move.",
+      "publishedAt": "2026-10-11T09:00:00.000Z",
+      "updatedAt": "2026-10-18T00:00:00.000Z",
+      "primaryKeyword": "army bases in new york",
+      "secondaryKeywords": [
+        "army base in new york",
+        "fort drum",
+        "fort hamilton",
+        "new york army bases",
+        "west point"
+      ],
+      "h2Outline": [
+        "Army Bases in New York, at a Glance",
+        "Fort Drum: Home of the 10th Mountain Division",
+        "West Point: America's Oldest Army Post",
+        "Fort Hamilton: The Army in New York City",
+        "Watervliet Arsenal: The Nation's Oldest Active Arsenal",
+        "New York Army National Guard Sites",
+        "What BAH Covers Near New York's Army Bases",
+        "Buying a Home Near New York's Army Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "army-bases-in-north-carolina",
       "title": "Army Bases in North Carolina: Fort Bragg and Beyond",
       "url": "/blog/army-bases-in-north-carolina",
@@ -2158,6 +2241,42 @@
         "Buying or Renting on a Fort Bragg BAH",
         "Frequently Asked Questions",
         "Before You Sign Anything"
+      ]
+    },
+    {
+      "slug": "army-bases-in-texas",
+      "title": "Army Bases in Texas: Fort Hood, Fort Bliss and 2026 BAH",
+      "url": "/blog/army-bases-in-texas",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Texas is home to some of the Army's biggest posts, plus two major depots. Here is where each one sits, what it does, and what 2026 housing pay looks like nearby.",
+      "publishedAt": "2026-10-13T09:00:00.000Z",
+      "updatedAt": "2026-10-18T00:00:00.000Z",
+      "primaryKeyword": "army bases in texas",
+      "secondaryKeywords": [
+        "army base in texas",
+        "fort bliss",
+        "fort hood",
+        "joint base san antonio fort sam houston",
+        "texas army bases"
+      ],
+      "h2Outline": [
+        "Army Bases in Texas, at a Glance",
+        "Fort Hood (Killeen)",
+        "Fort Bliss (El Paso)",
+        "JBSA-Fort Sam Houston (San Antonio)",
+        "Red River Army Depot (Texarkana)",
+        "Corpus Christi Army Depot",
+        "Camp Mabry (Austin)",
+        "What BAH Covers Near Texas Army Bases",
+        "Buying a Home Near Texas Army Bases",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -2645,7 +2764,7 @@
       ],
       "description": "For the first time in years, you get to choose where you live. Here is how to use your VA loan after service, what to line up first, and who to call.",
       "publishedAt": "2026-08-27T09:00:00.000Z",
-      "updatedAt": "2026-08-27T00:00:00.000Z",
+      "updatedAt": "2026-10-17T00:00:00.000Z",
       "primaryKeyword": "buying a home after military service",
       "secondaryKeywords": [
         "buying a house after leaving the military",
@@ -4998,6 +5117,40 @@
       ]
     },
     {
+      "slug": "naval-bases-in-washington-state",
+      "title": "Naval Bases in Washington State: Kitsap, Whidbey and Everett",
+      "url": "/blog/naval-bases-in-washington-state",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "washington",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Washington is home to four major Navy installations, from submarine piers on Hood Canal to Growler jets on Whidbey Island. Here is what each base does, where it sits, and what 2026 housing pay looks like nearby.",
+      "publishedAt": "2026-10-17T09:00:00.000Z",
+      "updatedAt": "2026-10-18T00:00:00.000Z",
+      "primaryKeyword": "naval bases in washington state",
+      "secondaryKeywords": [
+        "nas whidbey island",
+        "naval base kitsap",
+        "naval station everett",
+        "navy base in washington state",
+        "navy bases in washington"
+      ],
+      "h2Outline": [
+        "Naval Bases in Washington State, at a Glance",
+        "Naval Base Kitsap",
+        "NAS Whidbey Island",
+        "Naval Station Everett",
+        "Naval Magazine Indian Island",
+        "What BAH Covers Near Washington's Navy Bases",
+        "Buying a Home Near Washington's Navy Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "naval-station-norfolk-bah-2026-buy-vs-rent",
       "title": "Naval Station Norfolk BAH 2026: Buy vs. Rent Guide",
       "url": "/blog/naval-station-norfolk-bah-2026-buy-vs-rent",
@@ -6010,7 +6163,7 @@
       ],
       "description": "A 2026 Bremerton and Naval Base Kitsap PCS guide covering neighborhoods, schools, BAH, commute realities, food, recreation, and local housing choices.",
       "publishedAt": "2026-06-12T12:00:00.000Z",
-      "updatedAt": "2026-06-18T12:00:00.000Z",
+      "updatedAt": "2026-10-17T00:00:00.000Z",
       "primaryKeyword": "pcsing to bremerton wa",
       "secondaryKeywords": [
         "bremerton vs silverdale",
@@ -13380,7 +13533,7 @@
       ],
       "description": "New York has played a pivotal role in U.S. military history, dating back to the Revolutionary War. The state is home to West Point, the oldest continuously occupied military post in the United States, which served as a key stronghold for...",
       "publishedAt": "2024-07-10T14:45:55.000Z",
-      "updatedAt": "2026-07-19T00:00:00.000Z",
+      "updatedAt": "2026-10-18T00:00:00.000Z",
       "primaryKeyword": "military bases in new york",
       "secondaryKeywords": [
         "army base in new york",
@@ -13680,7 +13833,7 @@
       ],
       "description": "Texas has one of the largest military footprints in the country. The state is home to eleven major active installations, supporting the Army, Air Force, and Navy, plus reserve and joint units that train alongside them. Whether you are PC...",
       "publishedAt": "2026-06-22T09:00:00.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "updatedAt": "2026-10-18T00:00:00.000Z",
       "primaryKeyword": "military bases in texas",
       "secondaryKeywords": [
         "air force bases in texas",
@@ -13803,7 +13956,7 @@
       ],
       "description": "Washington State sits at the center of America's defense in the Pacific Northwest. It is home to seven major active military installations that support the Army, Navy, Air Force, and Coast Guard. From the South Sound to the Kitsap Penins...",
       "publishedAt": "2026-06-24T09:00:00.000Z",
-      "updatedAt": "2026-10-04T00:00:00.000Z",
+      "updatedAt": "2026-10-18T00:00:00.000Z",
       "primaryKeyword": "military bases in washington state",
       "secondaryKeywords": [
         "army bases in washington",
