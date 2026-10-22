@@ -19,10 +19,11 @@ const contactFormSchema = yup.object().shape({
 import { AgentListingFormData } from '@/types';
 
 interface ContactFormProps {
+  initialValues?: Partial<AgentListingFormData>;
   onSubmit: (formData: AgentListingFormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
 }
 
-const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
+const GetListedAgents = ({ initialValues, onSubmit }: ContactFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
@@ -31,6 +32,7 @@ const GetListedAgents = ({ onSubmit }: ContactFormProps) => {
     formState: { errors },
   } = useForm<AgentListingFormData>({
     resolver: yupResolver(contactFormSchema),
+    defaultValues: initialValues,
   });
 
   const handleFormSubmit: SubmitHandler<AgentListingFormData> = async (data) => {

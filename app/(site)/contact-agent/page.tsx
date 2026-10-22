@@ -22,17 +22,20 @@ export default function ContactAgentPage() {
     const queryState = queryParams.get("state");
 
     try {
-      // Comparator telemetry is optional and must never prevent lead delivery.
-      try { sendGTMEvent({
-        event: "conversion_contact_agent",
-        agent_id: queryParams.get("id") || "",
-        state: normalizeStateSlug(queryState) || "",
-      }); } catch { /* Keep existing GTM semantics, best effort. */ }
-
       const result = await submitContactAgentLead(
         { ...formData, ...formTrackingPayload('contact_agent') },
         fullQueryString,
       );
+      if (result.success) {
+        // Optional conversion telemetry must not undo accepted capture.
+        try {
+          sendGTMEvent({
+            event: "conversion_contact_agent",
+            agent_id: queryParams.get("id") || "",
+            state: normalizeStateSlug(queryState) || "",
+          });
+        } catch { /* Best effort. */ }
+      }
       return result;
     } catch (error) {
       console.error("Error submitting form:", error);

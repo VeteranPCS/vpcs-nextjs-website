@@ -1,5 +1,6 @@
 'use client';
 
+import { useIntakeMaintenanceFeedback } from './IntakeMaintenance';
 import { useCallback, useRef, useState, type FormEvent } from 'react';
 import type { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { trackFormSubmitAttempted, trackFormSubmissionFailed, trackFormValidationFailed } from '@/lib/analytics/client';
@@ -15,6 +16,7 @@ export function useCustomerSubmission<T extends FieldValues>({ formId, form, onS
   onSubmit: (data: T) => Promise<CustomerSubmitResponse> | void;
   getSpamFields: () => Record<string, unknown>;
 }) {
+  const { maintenanceNotice, handleMaintenanceResult } = useIntakeMaintenanceFeedback();
   const busy = useRef(false);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
   const setSubmitButton = useCallback((node: HTMLButtonElement | null) => { submitButtonRef.current = node; }, []);
@@ -57,6 +59,7 @@ export function useCustomerSubmission<T extends FieldValues>({ formId, form, onS
           unconfirmed();
           return;
         }
+        if (handleMaintenanceResult(response)) return;
         if (response?.success || (response && 'redirectUrl' in response && response.redirectUrl)) {
           accepted = true;
           form.reset();
@@ -99,7 +102,7 @@ export function useCustomerSubmission<T extends FieldValues>({ formId, form, onS
   }
 
   return {
-    isSubmitting, notice, hasUnconfirmed, confirmRetry, focusRequest, submissionId, setSubmitButton,
+    maintenanceNotice, isSubmitting, notice, hasUnconfirmed, confirmRetry, focusRequest, submissionId, setSubmitButton,
     submitLabel: isSubmitting ? 'Submitting...' : hasUnconfirmed ? 'Review and retry' : 'Submit',
     onFormSubmit: (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); void attempt(false); },
     sendAgain: () => { if (confirmRetry) void attempt(true); },

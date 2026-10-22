@@ -1,13 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import axios from 'axios';
 import { api, salesForceAPI, salesForceAPIWithRefresh, RequestType } from '@/services/api';
-import { getSalesforceToken } from '@/services/salesForceTokenService';
+import { getSalesforceToken, getSalesforceTokenSnapshot } from '@/services/salesForceTokenService';
 import { logDebug, logError } from '@/services/loggingService';
 
 // axios is called as a function (default export) inside the api helpers.
 vi.mock('axios', () => ({ default: vi.fn() }));
 vi.mock('@/services/salesForceTokenService', () => ({
   getSalesforceToken: vi.fn(async () => 'test-token'),
+  getSalesforceTokenSnapshot: vi.fn(async () => ({ token: 'test-token', generation: 1 })),
+  invalidateSalesforceToken: vi.fn(),
 }));
 vi.mock('@/services/loggingService', () => ({
   logDebug: vi.fn(),
@@ -231,7 +233,7 @@ describe('salesForceAPIWithRefresh retry policy', () => {
     });
 
     expect(response).toBe(success);
-    expect(getSalesforceToken).toHaveBeenCalledWith({ forceRefresh: true });
+    expect(getSalesforceTokenSnapshot).toHaveBeenCalledWith({ rejectedGeneration: 1 });
     expect(mockedAxios).toHaveBeenCalledTimes(2);
   });
 
@@ -253,8 +255,8 @@ describe('salesForceAPIWithRefresh retry policy', () => {
     const response = await responsePromise;
 
     expect(response).toBe(unauthorized);
-    expect(getSalesforceToken).toHaveBeenCalledWith({ forceRefresh: true });
-    expect(getSalesforceToken).toHaveBeenCalledTimes(4);
+    expect(getSalesforceTokenSnapshot).toHaveBeenCalledWith({ rejectedGeneration: 1 });
+    expect(getSalesforceTokenSnapshot).toHaveBeenCalledTimes(3);
     expect(mockedAxios).toHaveBeenCalledTimes(3);
   });
 });

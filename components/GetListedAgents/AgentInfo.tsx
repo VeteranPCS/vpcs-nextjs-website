@@ -1,5 +1,5 @@
 "use client";
-import { useState, FormEvent } from "react";
+import { FormEvent } from "react";
 import { Controller, useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -21,9 +21,11 @@ export type HowDidYouHearOptions =
   | "Other"
   | "";
 interface ContactFormProps {
+  initialValues?: Partial<yup.InferType<typeof schema>>;
   onSubmit: (data: any) => void;
-  onBack: () => void;
+  onBack: (data: yup.InferType<typeof schema>) => void;
   shouldSubmit: () => void;
+  isSubmitting: boolean;
 }
 
 const howDidYouHearOptions: HowDidYouHearOptions[] = [
@@ -73,24 +75,24 @@ const schema = yup.object().shape({
   }),
 });
 
-const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+const AgentInfo = ({ initialValues, onSubmit, onBack, shouldSubmit, isSubmitting }: ContactFormProps) => {
   const {
     register,
+    getValues,
     handleSubmit,
     control,
     formState: { errors },
     watch,
-  } = useForm({
+  } = useForm<yup.InferType<typeof schema>>({
     resolver: yupResolver(schema),
+    defaultValues: { otherStates: [], ...initialValues },
   });
 
   const howDidYouHearValue = watch("howDidYouHear");
 
   const onSubmitHandler: SubmitHandler<any> = (data) => {
     if (isSubmitting) return;
-    setIsSubmitting(true);
+
     onSubmit(data);
     shouldSubmit();
   };
@@ -432,7 +434,7 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
         </form>
         <div className="flex md:justify-start justify-center mt-8">
           <button
-            onClick={onBack}
+            onClick={() => onBack(getValues())}
             className="rounded-md border border-[#BBBFC1] bg-white px-8 py-3 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
           >
             <svg
