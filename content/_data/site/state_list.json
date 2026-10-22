@@ -496,14 +496,13 @@
     "_id": "p1E1t9c6MmuSwvdT93QnHw",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:29:55Z",
-    "_updatedAt": "2025-10-31T13:53:41Z",
+    "_updatedAt": "2026-10-22T06:49:47Z",
     "short_name": "CT",
     "state_map": {
-      "_sanityAssetId": "image-c1ed667986438ffe02b28f3cca3898c696a94f68-360x360-webp",
       "alt": "Connecticut Image",
-      "height": 360,
-      "path": "/images/states/connecticut.webp",
-      "width": 360
+      "height": 750,
+      "path": "/images/states/connecticut.png",
+      "width": 750
     },
     "state_name": "Connecticut",
     "state_slug": {
