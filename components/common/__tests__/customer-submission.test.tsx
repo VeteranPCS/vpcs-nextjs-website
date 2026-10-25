@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import AgentForm from '@/components/ContactAgents/ContactAgent';
 import LenderForm from '@/components/ContactLender/ContactLender';
 import { navigateCustomerSuccess } from '@/lib/leads/customer-navigation';
+import { maintenanceNotSent } from '@/lib/leads/intake-maintenance';
 import type { CustomerSubmitResponse } from '@/lib/leads/submission-outcome';
 
 vi.mock('@/components/Concierge', () => ({ useConcierge: () => ({ open: vi.fn() }) }));
@@ -86,6 +87,23 @@ describe.each([['agent', AgentForm], ['lender', LenderForm]] as const)('%s custo
     fireEvent.change(input('firstName'), { target: { value: 'Synthetic' } });
     await userEvent.click(screen.getByRole('button', { name: 'Review and retry' }));
     await userEvent.click(screen.getByRole('button', { name: 'Send again' }));
+    await waitFor(() => expect(navigateCustomerSuccess).toHaveBeenCalledTimes(1));
+    expect(submit).toHaveBeenCalledTimes(2);
+  });
+
+  it('preserves details and explicitly reports maintenance without navigating or automatic retry', async () => {
+    const submit = vi.fn().mockResolvedValueOnce(maintenanceNotSent()).mockResolvedValueOnce({ success: true, outcome: 'accepted', redirectUrl: '/thank-you' });
+    render(<Form onSubmit={submit} derivedStateCode="CO" />); fill();
+    await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+    const alert = await screen.findByRole('alert');
+    expect(alert.textContent).toContain('Your request was not sent');
+    expect(alert.textContent).toContain('not been saved or queued');
+    expect(document.activeElement).toBe(alert);
+    expect(input('firstName').value).toBe('Synthetic');
+    expect(input('email').value).toBe('qa@example.com');
+    expect(navigateCustomerSuccess).not.toHaveBeenCalled();
+    expect(submit).toHaveBeenCalledTimes(1);
+    await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     await waitFor(() => expect(navigateCustomerSuccess).toHaveBeenCalledTimes(1));
     expect(submit).toHaveBeenCalledTimes(2);
   });

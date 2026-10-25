@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useIntakeMaintenanceFeedback } from '@/components/common/IntakeMaintenance';
+import { useEffect, useState, useRef } from "react";
 import GetListedLenders from "@/components/GetListedLenders/GetListedLenders";
 import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListedLendersProfileInfo";
 import GetListedLendersProfileInfoWantShareMore from "@/components/GetListedLenders/GetListedLendersProfileInfoWantShareMore";
@@ -23,6 +24,9 @@ interface ContactAgentsProps {
 }
 
 export default function GetListedLendersPage() {
+  const { maintenanceNotice, handleMaintenanceResult } = useIntakeMaintenanceFeedback();
+  const submissionBusy = useRef(false);
+  const requestStarted = useRef(false);
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState({});
@@ -31,7 +35,8 @@ export default function GetListedLendersPage() {
   const { ref: honeypotRef, getSpamFields } = useHoneypot();
 
   const shouldSubmit = () => {
-    if (isSubmitting) return;
+    if (submissionBusy.current) return;
+    submissionBusy.current = true;
     setIsSubmitting(true);
     setShouldSubmitForm(true);
   }
@@ -42,36 +47,46 @@ export default function GetListedLendersPage() {
 
   useEffect(() => {
     const handleFormSubmission = async () => {
+      let accepted = false;
       try {
-        sendGTMEvent({
-          event: 'conversion_get_listed_lenders',
-        });
         const server_response = await GetListedLendersPostForm({ ...formData, ...getSpamFields() });
-
+        if (handleMaintenanceResult(server_response)) return;
         // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
         if (server_response?.redirectUrl) {
+          // Stay locked even if navigation is slow or throws after acceptance.
+          accepted = true;
+          try {
+            sendGTMEvent({ event: 'conversion_get_listed_lenders' });
+          } catch { /* Optional telemetry must not undo accepted capture. */ }
           router.push(server_response.redirectUrl);
         } else {
           console.error('No redirect URL found');
-          setIsSubmitting(false);
-          setShouldSubmitForm(false);
         }
       } catch (error) {
         console.error('Error submitting form:', error);
-        setIsSubmitting(false);
+      } finally {
         setShouldSubmitForm(false);
+        if (!accepted) {
+          requestStarted.current = false;
+          submissionBusy.current = false;
+          setIsSubmitting(false);
+        }
       }
     };
-    if (shouldSubmitForm) {
+    if (shouldSubmitForm && !requestStarted.current) {
+      requestStarted.current = true;
       handleFormSubmission();
     }
-  }, [formData, shouldSubmitForm, router, getSpamFields]);
+  }, [formData, shouldSubmitForm, router, getSpamFields, handleMaintenanceResult]);
 
-  const handleBack = () => {
+  const handleBack = (stepData: object) => {
+    if (submissionBusy.current) return;
+    setFormData(prev => ({ ...prev, ...stepData }));
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
   const handleSubmit = async (stepData: any): Promise<{ success?: boolean; redirectUrl?: string }> => {
+    if (submissionBusy.current) return {};
     setFormData(prev => ({
       ...prev,
       ...stepData
@@ -130,17 +145,20 @@ export default function GetListedLendersPage() {
         </div>
 
         <div className="md:w-[456px] w-auto md:mx-auto md:-mt-6 mt-10 mx-5">
+          {maintenanceNotice}
           {renderProgressBar()}
         </div>
 
         {currentStep === 1 && (
           <GetListedLenders
+            initialValues={formData}
             onSubmit={handleSubmit}
           />
         )}
 
         {currentStep === 2 && (
           <GetListedLendersProfileInfo
+            initialValues={formData}
             onSubmit={handleSubmit}
             onBack={handleBack}
             shouldValidate={true}
@@ -149,6 +167,7 @@ export default function GetListedLendersPage() {
 
         {currentStep === 3 && (
           <GetListedLendersProfileInfoWantShareMore
+            initialValues={formData}
             onSubmit={handleSubmit}
             onBack={handleBack}
           />
@@ -156,6 +175,8 @@ export default function GetListedLendersPage() {
 
         {currentStep === 4 && (
           <MortgageCompanyInfo
+            initialValues={formData}
+            isSubmitting={isSubmitting}
             onBack={handleBack}
             onSubmit={handleSubmit}
             shouldSubmit={shouldSubmit}

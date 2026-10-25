@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { submitCustomerWebsiteLead } from '../customer-action';
+import { maintenanceNotSent } from '../intake-maintenance';
 import { LeadSubmissionError } from '../submission-outcome';
 
 const payload = { firstName: 'QA', lastName: 'Test', email: 'qa@example.com', currentBase: 'Denver', destinationBase: 'Boulder', state: 'CO' };
@@ -8,6 +9,10 @@ describe.each(['contact_agent', 'contact_lender'] as const)('%s action outcome b
     const submit = vi.fn().mockRejectedValue(new LeadSubmissionError(outcome, 'test-reference'));
     expect(await submitCustomerWebsiteLead(formId, payload, '', submit)).toEqual({ success: false, outcome, submissionId: 'test-reference' });
     expect(submit).toHaveBeenCalledTimes(1);
+  });
+  it('preserves the serializable maintenance response rather than treating it as accepted', async () => {
+    const submit = vi.fn().mockResolvedValue(maintenanceNotSent());
+    expect(await submitCustomerWebsiteLead(formId, payload, '', submit)).toEqual(maintenanceNotSent());
   });
   it('treats unknown failures and missing success responses as uncertain', async () => {
     const submit = vi.fn().mockRejectedValueOnce(new Error('private provider response')).mockResolvedValueOnce({});

@@ -1,4 +1,5 @@
 "use client"
+import { useIntakeMaintenanceFeedback } from '@/components/common/IntakeMaintenance';
 import Button from "@/components/common/Button";
 import classes from "./ContactForm.module.css";
 import Image from "next/image";
@@ -40,6 +41,7 @@ const contactFormSchema = yup.object().shape({
 });
 
 const ContactForm = () => {
+  const { maintenanceNotice, handleMaintenanceResult } = useIntakeMaintenanceFeedback();
   const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,16 +74,18 @@ const ContactForm = () => {
   async function onSubmit(data: ContactFormData) {
     setIsSubmitting(true);
     try {
-      sendGTMEvent({
-        event: 'contact_form_submission',
-      });
-
       const server_response = await contactPostForm({
         ...data,
         ...getSpamFields(),
         ...formTrackingPayload(),
       });
+      if (handleMaintenanceResult(server_response)) return;
       if (server_response?.success || server_response?.message) {
+        try {
+          sendGTMEvent({
+            event: 'contact_form_submission',
+          });
+        } catch { /* Optional telemetry must not undo accepted capture. */ }
         reset();
         window.location.href = `${BASE_URL}/thank-you`;
         return;
@@ -265,6 +269,7 @@ const ContactForm = () => {
             }}
             onFocus={() => trackFormStarted('contact_form')}
           >
+            {maintenanceNotice}
             <div className={classes.FormContainer}>
               <div className="w-full">
                 <div className="grid md:grid-cols-2 grid-cols-1 gap-5 mb-10">

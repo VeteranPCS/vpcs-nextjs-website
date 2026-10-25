@@ -1,4 +1,6 @@
 import 'server-only';
+import { getIntakeMaintenanceStatus } from '@/lib/leads/intake-maintenance-server';
+import { isIntakeMaintenanceResult, INTAKE_CONCIERGE_NOT_SENT_MESSAGE } from '@/lib/leads/intake-maintenance';
 import { tool } from 'ai';
 import {
   contactAgentPostForm,
@@ -94,6 +96,10 @@ const submitAgentRequestTool = tool({
   inputSchema: agentRequestSchema,
   needsApproval: true,
   execute: async (input): Promise<ToolResult<LeadSuccess>> => {
+    if (process.env.VERCEL_ENV === 'preview' || process.env.VERCEL_ENV === 'development') {
+      return { ok: false, error: 'Your request was not sent. Submissions are disabled in this environment.' };
+    }
+    if ((await getIntakeMaintenanceStatus()).active) return { ok: false, error: INTAKE_CONCIERGE_NOT_SENT_MESSAGE };
     const toolName = 'submitAgentRequest';
     const stateCode = normalizeStateCode(input.destinationState) ?? undefined;
     const stateSlug = normalizeStateSlug(input.destinationState) ?? undefined;
@@ -126,6 +132,7 @@ const submitAgentRequestTool = tool({
         hasMessage: Boolean(input.message),
       });
       const serverResponse = await contactAgentPostForm(formData, '', { internalCallToken: INTERNAL_CALL_TOKEN });
+      if (isIntakeMaintenanceResult(serverResponse)) return { ok: false, error: INTAKE_CONCIERGE_NOT_SENT_MESSAGE };
       await captureToolTelemetry('concierge_tool_completed', toolName, {
         form_id: 'contact_agent',
         lead_source: 'Contact Agent',
@@ -163,6 +170,10 @@ const submitLenderRequestTool = tool({
   inputSchema: lenderRequestSchema,
   needsApproval: true,
   execute: async (input): Promise<ToolResult<LeadSuccess>> => {
+    if (process.env.VERCEL_ENV === 'preview' || process.env.VERCEL_ENV === 'development') {
+      return { ok: false, error: 'Your request was not sent. Submissions are disabled in this environment.' };
+    }
+    if ((await getIntakeMaintenanceStatus()).active) return { ok: false, error: INTAKE_CONCIERGE_NOT_SENT_MESSAGE };
     const toolName = 'submitLenderRequest';
     const stateCode = normalizeStateCode(input.destinationState) ?? undefined;
     const stateSlug = normalizeStateSlug(input.destinationState) ?? undefined;
@@ -194,6 +205,7 @@ const submitLenderRequestTool = tool({
         hasMessage: Boolean(input.message),
       });
       const serverResponse = await contactLenderPostForm(formData, '', { internalCallToken: INTERNAL_CALL_TOKEN });
+      if (isIntakeMaintenanceResult(serverResponse)) return { ok: false, error: INTAKE_CONCIERGE_NOT_SENT_MESSAGE };
       await captureToolTelemetry('concierge_tool_completed', toolName, {
         form_id: 'contact_lender',
         lead_source: 'Contact Lender',
@@ -231,6 +243,10 @@ const submitGeneralInquiryTool = tool({
   inputSchema: generalInquirySchema,
   needsApproval: true,
   execute: async (input): Promise<ToolResult<LeadSuccess>> => {
+    if (process.env.VERCEL_ENV === 'preview' || process.env.VERCEL_ENV === 'development') {
+      return { ok: false, error: 'Your request was not sent. Submissions are disabled in this environment.' };
+    }
+    if ((await getIntakeMaintenanceStatus()).active) return { ok: false, error: INTAKE_CONCIERGE_NOT_SENT_MESSAGE };
     const toolName = 'submitGeneralInquiry';
     try {
       await captureToolTelemetry('concierge_tool_submitted', toolName, {
@@ -254,6 +270,7 @@ const submitGeneralInquiryTool = tool({
         hasSubject: Boolean(input.subject),
       });
       const serverResponse = await contactPostForm(formData, { internalCallToken: INTERNAL_CALL_TOKEN });
+      if (isIntakeMaintenanceResult(serverResponse)) return { ok: false, error: INTAKE_CONCIERGE_NOT_SENT_MESSAGE };
       await captureToolTelemetry('concierge_tool_completed', toolName, {
         form_id: 'contact_form',
         lead_source: 'Contact Form',
@@ -283,6 +300,10 @@ const submitVALoanGuideRequestTool = tool({
   inputSchema: vaLoanGuideSchema,
   needsApproval: true,
   execute: async (input): Promise<ToolResult<LeadSuccess>> => {
+    if (process.env.VERCEL_ENV === 'preview' || process.env.VERCEL_ENV === 'development') {
+      return { ok: false, error: 'Your request was not sent. Submissions are disabled in this environment.' };
+    }
+    if ((await getIntakeMaintenanceStatus()).active) return { ok: false, error: INTAKE_CONCIERGE_NOT_SENT_MESSAGE };
     const toolName = 'submitVALoanGuideRequest';
     const stateCode = normalizeStateCode(input.destinationState) ?? undefined;
     const stateSlug = normalizeStateSlug(input.destinationState) ?? undefined;
@@ -311,6 +332,7 @@ const submitVALoanGuideRequestTool = tool({
         hasState: Boolean(input.destinationState),
       });
       const serverResponse = await vaLoanGuideForm(formData, { internalCallToken: INTERNAL_CALL_TOKEN });
+      if (isIntakeMaintenanceResult(serverResponse)) return { ok: false, error: INTAKE_CONCIERGE_NOT_SENT_MESSAGE };
       await captureToolTelemetry('concierge_tool_completed', toolName, {
         form_id: 'va_loan_guide',
         lead_source: 'VA Loan Guide',

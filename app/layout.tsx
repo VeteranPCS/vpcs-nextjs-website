@@ -1,3 +1,4 @@
+import { IntakeMaintenanceProvider } from '@/components/common/IntakeMaintenance';
 import type { Metadata } from "next";
 import { Inter, Poppins, Roboto, Lora } from "next/font/google";
 import "./globals.css";
@@ -165,7 +166,7 @@ export default function RootLayout({
                 <Suspense fallback={null}>
                     <PageviewTracker />
                 </Suspense>
-                {children}
+                <IntakeMaintenanceProvider>{children}</IntakeMaintenanceProvider>
                 <SpeedInsights />
             </body>
         </html>
