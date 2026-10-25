@@ -1,6 +1,6 @@
 {
-  "contentHash": "1924e89a5b5e7a413d6a101e5e5c396355e6b87ca1198cfc688da5f7c56bfc44",
-  "totalPosts": 406,
+  "contentHash": "9da2cc1db67d5b37c4747dcfcec9148e51ddeab72c911342a0661a7e70a16fde",
+  "totalPosts": 410,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -246,7 +246,11 @@
       "best-places-to-live-near-ft-gordon-augusta-georgia",
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
+      "marine-corps-bases-in-north-carolina",
       "military-bases-near-me-how-to-find-bases-by-state",
+      "naval-bases-in-california",
+      "naval-bases-in-florida",
+      "naval-bases-in-virginia",
       "naval-bases-in-washington-state",
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-aberdeen-proving-ground-2026-guide",
@@ -668,7 +672,11 @@
       "best-places-to-live-near-ft-gordon-augusta-georgia",
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
+      "marine-corps-bases-in-north-carolina",
       "military-bases-near-me-how-to-find-bases-by-state",
+      "naval-bases-in-california",
+      "naval-bases-in-florida",
+      "naval-bases-in-virginia",
       "naval-bases-in-washington-state",
       "pcs-redstone-arsenal-huntsville-guide",
       "pcs-to-aberdeen-proving-ground-2026-guide",
@@ -881,6 +889,7 @@
       "army-bases-in-california",
       "california-veteran-property-tax-exemptions-2026",
       "how-to-buy-a-home-in-ventura-county-2026",
+      "naval-bases-in-california",
       "pcs-to-beale-afb-2026-guide",
       "pcs-to-edwards-afb-2026-guide",
       "pcs-to-fort-irwin-2026-guide",
@@ -922,6 +931,7 @@
       "florida-va-loan-benefits-hidden-savings",
       "florida-veteran-property-tax-exemptions-2026",
       "moving-to-orlando-research-park-defense-job",
+      "naval-bases-in-florida",
       "pcs-to-florida-a-military-familys-guide-to-polk-county",
       "pcs-to-macdill-afb-tampa-2026-guide",
       "pcs-to-nas-pensacola-2026-guide",
@@ -1085,6 +1095,7 @@
       "army-bases-in-north-carolina",
       "buy-vs-rent-near-camp-lejeune",
       "fort-bragg-bah-2026-buy-vs-rent",
+      "marine-corps-bases-in-north-carolina",
       "north-carolina-veteran-property-tax-exemptions-2026",
       "pcs-to-fort-bragg-2026-guide",
       "pcs-to-mcas-cherry-point-2026-guide",
@@ -1179,6 +1190,7 @@
     ],
     "virginia": [
       "army-bases-in-virginia",
+      "naval-bases-in-virginia",
       "naval-station-norfolk-bah-2026-buy-vs-rent",
       "pcs-to-fort-belvoir-2026-guide",
       "pcs-to-fort-lee-2026-guide",
@@ -1214,10 +1226,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 266,
+    "resolved": 270,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 242,
+      "frontmatter-state-slug": 246,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -4661,6 +4673,39 @@
       ]
     },
     {
+      "slug": "marine-corps-bases-in-north-carolina",
+      "title": "Marine Corps Bases in North Carolina: Lejeune, New River, Cherry Point",
+      "url": "/blog/marine-corps-bases-in-north-carolina",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "north-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "North Carolina's coast is home to the largest group of Marines on the East Coast. Here is what Camp Lejeune, MCAS New River and MCAS Cherry Point each do, where they sit, and what 2026 housing pay looks like nearby.",
+      "publishedAt": "2026-10-24T09:00:00.000Z",
+      "updatedAt": "2026-10-25T00:00:00.000Z",
+      "primaryKeyword": "marine corps bases in north carolina",
+      "secondaryKeywords": [
+        "camp lejeune",
+        "marine base in nc",
+        "marine bases in north carolina",
+        "mcas cherry point",
+        "mcas new river"
+      ],
+      "h2Outline": [
+        "Marine Corps Bases in North Carolina, at a Glance",
+        "Marine Corps Base Camp Lejeune",
+        "MCAS New River",
+        "MCAS Cherry Point",
+        "What BAH Covers Near North Carolina's Marine Bases",
+        "Buying a Home Near North Carolina's Marine Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "maryland-veteran-property-tax-exemptions-2026",
       "title": "Maryland Military & Veteran Property Tax Exemptions (2026)",
       "url": "/blog/maryland-veteran-property-tax-exemptions-2026",
@@ -5114,6 +5159,111 @@
         "Things to Weigh Before You Buy",
         "Frequently Asked Questions",
         "Ready to See if Myrtle Beach Fits Your Next Chapter?"
+      ]
+    },
+    {
+      "slug": "naval-bases-in-california",
+      "title": "Naval Bases in California: San Diego, Lemoore, Ventura and More",
+      "url": "/blog/naval-bases-in-california",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "california",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "California is home to the Navy's largest West Coast fleet, plus jet bases, test ranges and a graduate school. Here is what each naval base does, where it sits, and how far 2026 housing pay goes nearby.",
+      "publishedAt": "2026-10-20T09:00:00.000Z",
+      "updatedAt": "2026-10-25T00:00:00.000Z",
+      "primaryKeyword": "naval bases in california",
+      "secondaryKeywords": [
+        "nas lemoore",
+        "naval base coronado",
+        "naval base san diego",
+        "naval base ventura county",
+        "navy bases in california"
+      ],
+      "h2Outline": [
+        "Naval Bases in California, at a Glance",
+        "The San Diego Bases",
+        "NAS Lemoore",
+        "NAWS China Lake",
+        "Naval Base Ventura County",
+        "NSA Monterey and Seal Beach",
+        "What BAH Covers Near California's Navy Bases",
+        "Buying a Home Near California's Navy Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "naval-bases-in-florida",
+      "title": "Naval Bases in Florida: Jacksonville, Mayport, Pensacola and More",
+      "url": "/blog/naval-bases-in-florida",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "florida",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Florida's Navy bases run from the First Coast to the Panhandle to the Keys. Here is what each one does, which town it is near, and what 2026 housing pay looks like in each area.",
+      "publishedAt": "2026-10-22T09:00:00.000Z",
+      "updatedAt": "2026-10-25T00:00:00.000Z",
+      "primaryKeyword": "naval bases in florida",
+      "secondaryKeywords": [
+        "nas jacksonville",
+        "nas pensacola",
+        "nas whiting field",
+        "naval station mayport",
+        "navy bases in florida"
+      ],
+      "h2Outline": [
+        "Naval Bases in Florida, at a Glance",
+        "The Jacksonville Bases",
+        "The Panhandle Bases",
+        "NAS Key West",
+        "What BAH Covers Near Florida's Navy Bases",
+        "Buying a Home Near Florida's Navy Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "naval-bases-in-virginia",
+      "title": "Naval Bases in Virginia: Norfolk, Oceana, Little Creek and More",
+      "url": "/blog/naval-bases-in-virginia",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "virginia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Virginia has more Navy than any other state, and most of it sits around Hampton Roads. Here is what each naval base does, which town it is near, and what 2026 housing pay looks like nearby.",
+      "publishedAt": "2026-10-18T09:00:00.000Z",
+      "updatedAt": "2026-10-25T00:00:00.000Z",
+      "primaryKeyword": "naval bases in virginia",
+      "secondaryKeywords": [
+        "jeb little creek-fort story",
+        "nas oceana",
+        "naval station norfolk",
+        "navy bases in virginia",
+        "norfolk naval shipyard"
+      ],
+      "h2Outline": [
+        "Naval Bases in Virginia, at a Glance",
+        "Naval Station Norfolk",
+        "NAS Oceana and Dam Neck Annex",
+        "Joint Expeditionary Base Little Creek-Fort Story",
+        "Norfolk Naval Shipyard",
+        "Naval Support Activity Hampton Roads",
+        "Naval Weapons Station Yorktown",
+        "Naval Support Facility Dahlgren",
+        "What BAH Covers Near Virginia's Navy Bases",
+        "Buying a Home Near Virginia's Navy Bases",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -12767,7 +12917,7 @@
       ],
       "description": "California has the largest military population in the United States, with over 157,000 active-duty personnel and more than 800,000 veterans. The military contributes over $90 billion annually to the state's economy and supports over 700,...",
       "publishedAt": "2023-10-14T01:19:32.000Z",
-      "updatedAt": "2026-09-29T16:47:00.000Z",
+      "updatedAt": "2026-10-25T00:00:00.000Z",
       "primaryKeyword": "california air force bases",
       "secondaryKeywords": [
         "air force bases in california",
@@ -12883,9 +13033,9 @@
       "categories": [
         "U.S. Military Bases"
       ],
-      "description": "Florida has a long history of military involvement, from the American Revolution to modern defense operations. The state is home to twenty-four active military installations, supporting the Army, Navy, Air Force, Marine Corps, Space Forc...",
+      "description": "Florida has a long history of military involvement, from the American Revolution to modern defense operations. The state is home to more than twenty active military installations, supporting the Army, Navy, Air Force, Marine Corps, Space...",
       "publishedAt": "2024-06-25T13:58:25.000Z",
-      "updatedAt": "2026-09-13T00:00:00.000Z",
+      "updatedAt": "2026-10-25T00:00:00.000Z",
       "primaryKeyword": "military bases in florida",
       "secondaryKeywords": [
         "air force bases in florida",
@@ -13554,11 +13704,12 @@
       "categories": [
         "U.S. Military Bases"
       ],
-      "description": "North Carolina has a rich and diverse military presence, with ten major military installations across the state. Each base plays a crucial role in supporting national defense, training, and logistics operations.",
+      "description": "North Carolina is home to the Army's largest installation, the Marine Corps' biggest East Coast base, an Air Force fighter wing and a major Coast Guard aviation hub. Here is every base, what it does, and what 2026 housing pay looks like nearby.",
       "publishedAt": "2022-10-18T02:18:27.000Z",
-      "updatedAt": "2026-09-29T16:47:00.000Z",
+      "updatedAt": "2026-10-25T00:00:00.000Z",
       "primaryKeyword": "military bases in north carolina",
       "secondaryKeywords": [
+        "army base in north carolina",
         "how many military bases are in north carolina",
         "how many military bases in north carolina",
         "military bases nc",
@@ -13566,19 +13717,13 @@
       ],
       "h2Outline": [
         "List of Military Bases in North Carolina",
-        "1. Coast Guard Aviation Logistics Center",
-        "2. Coast Guard Air Station Elizabeth City",
-        "3. Coast Guard Sector North Carolina",
-        "4. Fort Bragg (Formerly Fort Liberty)",
-        "5. Marine Corps Air Station Cherry Point",
-        "6. Marine Corps Air Station New River",
-        "7. Marine Corps Base Camp Lejeune",
-        "8. Military Ocean Terminal Sunny Point",
-        "9. Pope Army Airfield",
-        "10. Seymour Johnson Air Force Base",
-        "Moving to North Carolina? We Can Help!",
+        "Army Bases in North Carolina",
+        "Marine Corps Bases in North Carolina",
+        "Air Force Bases in North Carolina",
+        "Coast Guard Bases in North Carolina",
+        "What BAH Looks Like Across North Carolina",
         "Plan Your PCS to North Carolina",
-        "Frequently Asked Questions (FAQ)"
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -13925,7 +14070,7 @@
       ],
       "description": "Virginia has one of the deepest military histories in the country, and it is still one of the most active military states today. The state is home to eleven major military installations, supporting the Navy, Marine Corps, Army, and Air F...",
       "publishedAt": "2026-06-23T09:00:00.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "updatedAt": "2026-10-25T00:00:00.000Z",
       "primaryKeyword": "military bases in virginia",
       "secondaryKeywords": [
         "army bases in virginia",
