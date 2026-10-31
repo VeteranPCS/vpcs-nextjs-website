@@ -3,13 +3,12 @@
     "_id": "O0syOADLMvCWbGv9htjOdZ",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:29:25Z",
-    "_updatedAt": "2026-06-02T19:00:59Z",
+    "_updatedAt": "2026-10-31T00:58:05Z",
     "short_name": "IL",
     "state_map": {
-      "_sanityAssetId": "image-e65d4e10c2fb0c29ae2ee491335caa3d4b4dbb47-750x750-webp",
       "alt": "Illinois",
       "height": 750,
-      "path": "/images/states/illinois.webp",
+      "path": "/images/states/illinois.png",
       "width": 750
     },
     "state_name": "Illinois",
@@ -496,7 +495,7 @@
     "_id": "p1E1t9c6MmuSwvdT93QnHw",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:29:55Z",
-    "_updatedAt": "2026-10-22T06:49:47Z",
+    "_updatedAt": "2026-10-31T00:58:05Z",
     "short_name": "CT",
     "state_map": {
       "alt": "Connecticut Image",
