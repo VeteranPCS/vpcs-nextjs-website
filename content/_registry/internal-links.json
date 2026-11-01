@@ -1,6 +1,6 @@
 {
-  "contentHash": "9da2cc1db67d5b37c4747dcfcec9148e51ddeab72c911342a0661a7e70a16fde",
-  "totalPosts": 410,
+  "contentHash": "3d6965766c443cace6ac5d285a03fcd457a410d38b6d7c845951933831a9f6f2",
+  "totalPosts": 414,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -220,6 +220,7 @@
     ],
     "U.S. Military Bases": [
       "air-force-bases-in-alaska",
+      "air-force-bases-in-arizona",
       "air-force-bases-in-california",
       "air-force-bases-in-colorado",
       "air-force-bases-in-florida",
@@ -246,10 +247,12 @@
       "best-places-to-live-near-ft-gordon-augusta-georgia",
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
+      "marine-corps-bases-in-california",
       "marine-corps-bases-in-north-carolina",
       "military-bases-near-me-how-to-find-bases-by-state",
       "naval-bases-in-california",
       "naval-bases-in-florida",
+      "naval-bases-in-hawaii",
       "naval-bases-in-virginia",
       "naval-bases-in-washington-state",
       "pcs-redstone-arsenal-huntsville-guide",
@@ -418,6 +421,7 @@
       "va-loan-national-guard-reserve-eligibility",
       "va-loan-occupancy-requirements-pcs",
       "va-loan-refinance-pro-tip-how-to-lock-in-a-lower-rate-before-it-s-too-late",
+      "va-loan-residual-income-requirements",
       "va-loan-surviving-spouse-eligibility",
       "va-loan-vs-conventional-loan",
       "va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
@@ -646,6 +650,7 @@
     ],
     "us-military-bases": [
       "air-force-bases-in-alaska",
+      "air-force-bases-in-arizona",
       "air-force-bases-in-california",
       "air-force-bases-in-colorado",
       "air-force-bases-in-florida",
@@ -672,10 +677,12 @@
       "best-places-to-live-near-ft-gordon-augusta-georgia",
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
+      "marine-corps-bases-in-california",
       "marine-corps-bases-in-north-carolina",
       "military-bases-near-me-how-to-find-bases-by-state",
       "naval-bases-in-california",
       "naval-bases-in-florida",
+      "naval-bases-in-hawaii",
       "naval-bases-in-virginia",
       "naval-bases-in-washington-state",
       "pcs-redstone-arsenal-huntsville-guide",
@@ -844,6 +851,7 @@
       "va-loan-national-guard-reserve-eligibility",
       "va-loan-occupancy-requirements-pcs",
       "va-loan-refinance-pro-tip-how-to-lock-in-a-lower-rate-before-it-s-too-late",
+      "va-loan-residual-income-requirements",
       "va-loan-surviving-spouse-eligibility",
       "va-loan-vs-conventional-loan",
       "va-rehab-loans-the-most-powerful-va-loan-you-ve-never-heard-of",
@@ -871,6 +879,7 @@
       "what-military-bases-are-in-alaska"
     ],
     "arizona": [
+      "air-force-bases-in-arizona",
       "arizona-pcs-guide",
       "arizona-veteran-property-tax-exemptions-2026",
       "pcs-to-arizona-a-comprehensive-guide-for-active-duty-military-personnel-moving-to-arizona",
@@ -889,6 +898,7 @@
       "army-bases-in-california",
       "california-veteran-property-tax-exemptions-2026",
       "how-to-buy-a-home-in-ventura-county-2026",
+      "marine-corps-bases-in-california",
       "naval-bases-in-california",
       "pcs-to-beale-afb-2026-guide",
       "pcs-to-edwards-afb-2026-guide",
@@ -961,6 +971,7 @@
       "air-force-bases-in-hawaii",
       "army-bases-in-hawaii",
       "hawaii-veteran-property-tax-exemptions-2026",
+      "naval-bases-in-hawaii",
       "pcs-to-hawaii-what-active-duty-service-members-need-to-know-about-buying-a-home",
       "pcs-to-hawaii-with-pets",
       "pcs-to-joint-base-pearl-harbor-hickam-2026-guide",
@@ -1226,10 +1237,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 270,
+    "resolved": 273,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 246,
+      "frontmatter-state-slug": 249,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -1558,6 +1569,39 @@
         "Clear Space Force Station",
         "What BAH Covers Near Alaska's Air Force Bases",
         "Life Near Alaska's Air Force Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "air-force-bases-in-arizona",
+      "title": "Air Force Bases in Arizona: Luke, Davis-Monthan and the Guard Bases",
+      "url": "/blog/air-force-bases-in-arizona",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "arizona",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Arizona has two active-duty Air Force bases and two Air National Guard bases, split between Phoenix and Tucson. Here is what each one does, what changed at Davis-Monthan in 2026, and what housing pay looks like.",
+      "publishedAt": "2026-10-29T09:00:00.000Z",
+      "updatedAt": "2026-11-01T00:00:00.000Z",
+      "primaryKeyword": "air force bases in arizona",
+      "secondaryKeywords": [
+        "arizona military bases",
+        "davis-monthan air force base",
+        "goldwater air national guard base",
+        "luke air force base",
+        "morris air national guard base"
+      ],
+      "h2Outline": [
+        "Air Force Bases in Arizona, at a Glance",
+        "Luke Air Force Base",
+        "Davis-Monthan Air Force Base",
+        "Arizona's Air National Guard Bases",
+        "What BAH Covers Near Arizona's Air Force Bases",
+        "Buying a Home Near Arizona's Air Force Bases",
         "Frequently Asked Questions"
       ]
     },
@@ -4673,6 +4717,39 @@
       ]
     },
     {
+      "slug": "marine-corps-bases-in-california",
+      "title": "Marine Corps Bases in California: Pendleton, Miramar, 29 Palms and More",
+      "url": "/blog/marine-corps-bases-in-california",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "california",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "California has six Marine Corps installations, from the beaches of North County San Diego to the Mojave Desert and the Sierra Nevada. Here is what each base does, where families live, and what 2026 housing pay looks like.",
+      "publishedAt": "2026-10-25T09:00:00.000Z",
+      "updatedAt": "2026-11-01T00:00:00.000Z",
+      "primaryKeyword": "marine corps bases in california",
+      "secondaryKeywords": [
+        "camp pendleton",
+        "marine bases in california",
+        "mcas miramar",
+        "mclb barstow",
+        "twentynine palms"
+      ],
+      "h2Outline": [
+        "Marine Corps Bases in California, at a Glance",
+        "The Coastal Bases",
+        "The Desert Bases",
+        "The Mountain Base: MCMWTC Bridgeport",
+        "What BAH Covers Near California's Marine Corps Bases",
+        "Buying a Home Near California's Marine Corps Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "marine-corps-bases-in-north-carolina",
       "title": "Marine Corps Bases in North Carolina: Lejeune, New River, Cherry Point",
       "url": "/blog/marine-corps-bases-in-north-carolina",
@@ -5226,6 +5303,40 @@
         "NAS Key West",
         "What BAH Covers Near Florida's Navy Bases",
         "Buying a Home Near Florida's Navy Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "naval-bases-in-hawaii",
+      "title": "Naval Bases in Hawaii: Pearl Harbor, Barking Sands and More",
+      "url": "/blog/naval-bases-in-hawaii",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "hawaii",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Most Navy families in Hawaii land on Oahu, but a few head to Kauai. Here is what each Navy installation does, where families live, and what 2026 housing pay looks like on each island.",
+      "publishedAt": "2026-10-27T09:00:00.000Z",
+      "updatedAt": "2026-11-01T00:00:00.000Z",
+      "primaryKeyword": "naval bases in hawaii",
+      "secondaryKeywords": [
+        "joint base pearl harbor-hickam",
+        "navy bases in hawaii",
+        "navy housing oahu",
+        "pacific missile range facility",
+        "pearl harbor naval shipyard"
+      ],
+      "h2Outline": [
+        "Naval Bases in Hawaii, at a Glance",
+        "Joint Base Pearl Harbor-Hickam",
+        "Pacific Missile Range Facility Barking Sands",
+        "NCTAMS PAC in Wahiawa",
+        "Navy Health Care and Housing on Oahu",
+        "What BAH and COLA Cover in Hawaii",
+        "Buying a Home Near Hawaii's Navy Bases",
         "Frequently Asked Questions"
       ]
     },
@@ -6451,7 +6562,7 @@
       ],
       "description": "A 2026 guide for military families moving to Davis-Monthan AFB, covering where to live, BAH, schools, healthcare, and life in Tucson, Arizona.",
       "publishedAt": "2026-03-08T09:00:00.000Z",
-      "updatedAt": "2026-06-22T00:00:00.000Z",
+      "updatedAt": "2026-11-01T00:00:00.000Z",
       "primaryKeyword": "pcs to davis-monthan afb",
       "secondaryKeywords": [
         "davis-monthan afb bah",
@@ -12405,6 +12516,41 @@
       ]
     },
     {
+      "slug": "va-loan-residual-income-requirements",
+      "title": "VA Loan Residual Income Requirements: 2026 Chart and Examples",
+      "url": "/blog/va-loan-residual-income-requirements",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "Residual income is the money left over each month after your house payment, taxes and bills. The VA uses it to make sure your family can afford life after closing. Here is the official chart and how to check your own number.",
+      "publishedAt": "2026-10-31T09:00:00.000Z",
+      "updatedAt": "2026-11-01T00:00:00.000Z",
+      "primaryKeyword": "va loan residual income requirements",
+      "secondaryKeywords": [
+        "residual income military",
+        "va debt-to-income ratio",
+        "va loan residual income calculator",
+        "va loan underwriting",
+        "va residual income chart"
+      ],
+      "h2Outline": [
+        "What Is VA Residual Income?",
+        "The VA Residual Income Chart for 2026",
+        "Who Counts in Your Family Size?",
+        "The 5% Military Rule",
+        "How Residual Income Works With Your DTI Ratio",
+        "A Simple Example",
+        "How to Improve Your Residual Income",
+        "Frequently Asked Questions",
+        "Get Help Running Your Numbers"
+      ]
+    },
+    {
       "slug": "va-loan-surviving-spouse-eligibility",
       "title": "VA Loan Eligibility for Surviving Spouses: How to Qualify",
       "url": "/blog/va-loan-surviving-spouse-eligibility",
@@ -12850,7 +12996,7 @@
       ],
       "description": "Arizona is home to a large and active military community, with over 100,000 active-duty service members, reservists, and National Guard members. The state's military installations play a crucial role in national defense, aviation trainin...",
       "publishedAt": "2023-07-19T14:40:58.000Z",
-      "updatedAt": "2026-07-19T00:00:00.000Z",
+      "updatedAt": "2026-11-01T00:00:00.000Z",
       "primaryKeyword": "military bases in az",
       "secondaryKeywords": [
         "air force bases in arizona",
@@ -12917,7 +13063,7 @@
       ],
       "description": "California has the largest military population in the United States, with over 157,000 active-duty personnel and more than 800,000 veterans. The military contributes over $90 billion annually to the state's economy and supports over 700,...",
       "publishedAt": "2023-10-14T01:19:32.000Z",
-      "updatedAt": "2026-10-25T00:00:00.000Z",
+      "updatedAt": "2026-11-01T00:00:00.000Z",
       "primaryKeyword": "california air force bases",
       "secondaryKeywords": [
         "air force bases in california",
@@ -13098,7 +13244,7 @@
       ],
       "description": "Hawaii has a rich military history and is home to eleven active military installations spread across multiple islands. With its strategic location in the Pacific, Hawaii has played a critical role in U.S. military operations for over a c...",
       "publishedAt": "2024-06-25T14:58:26.000Z",
-      "updatedAt": "2026-10-11T00:00:00.000Z",
+      "updatedAt": "2026-11-01T00:00:00.000Z",
       "primaryKeyword": "what are the 11 military bases in hawaii",
       "secondaryKeywords": [
         "air force bases in hawaii",
