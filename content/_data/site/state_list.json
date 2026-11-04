@@ -438,14 +438,13 @@
     "_id": "p1E1t9c6MmuSwvdT93QjVM",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:29:45Z",
-    "_updatedAt": "2026-01-30T20:00:59Z",
+    "_updatedAt": "2026-11-04T01:33:41Z",
     "short_name": "OH",
     "state_map": {
-      "_sanityAssetId": "image-dd7a72ec656eca882a530f42686e60d9e69db3dd-1500x1500-webp",
       "alt": "Ohio",
-      "height": 1500,
-      "path": "/images/states/ohio.webp",
-      "width": 1500
+      "height": 750,
+      "path": "/images/states/ohio.png",
+      "width": 750
     },
     "state_name": "Ohio",
     "state_slug": {
