@@ -7,8 +7,9 @@ import { US_STATE_CODES } from '@/constants/usStates';
 import StateSelect from '@/components/common/StateSelect';
 
 interface ContactFormProps {
+  initialValues?: Partial<LenderInfoProps>;
   onSubmit: (formData: LenderInfoProps) => void;
-  onBack: () => void;
+  onBack: (data: LenderInfoProps) => void;
 }
 
 interface LenderInfoProps {
@@ -30,14 +31,15 @@ const schema = yup.object({
   nmlsId: yup.string(),
 });
 
-const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactFormProps) => {
-  const { register, handleSubmit, control, formState: { errors } } = useForm<LenderInfoProps>({
+const GetListedLendersProfileInfoWantShareMore = ({ initialValues, onSubmit, onBack }: ContactFormProps) => {
+  const { register, getValues, handleSubmit, control, formState: { errors } } = useForm<LenderInfoProps>({
     resolver: yupResolver(schema) as Resolver<LenderInfoProps>,
     defaultValues: {
       primaryState: '',
       otherStates: [],
       localCities: '',
       nmlsId: '',
+      ...initialValues,
     },
   });
 
@@ -49,7 +51,7 @@ const GetListedLendersProfileInfoWantShareMore = ({ onSubmit, onBack }: ContactF
   // Handle back action
   const handleBack = (e: FormEvent) => {
     e.preventDefault();
-    onBack();
+    onBack(getValues());
   };
 
   return (

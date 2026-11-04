@@ -1,3 +1,4 @@
+import type { IntakeMaintenanceResult } from './intake-maintenance';
 /** Internal failure category, never inferred from provider error messages. */
 export class LeadSubmissionError extends Error {
   constructor(public readonly outcome: 'not_sent' | 'unconfirmed', public readonly submissionId: string) {
@@ -7,6 +8,7 @@ export class LeadSubmissionError extends Error {
 }
 
 export type CustomerSubmitResult =
+  | IntakeMaintenanceResult
   | { success: true; outcome: 'accepted'; redirectUrl: string; submissionId?: string }
   | { success: false; outcome: 'validation_error'; fieldErrors: Record<string, string> }
   | { success: false; outcome: 'not_sent' | 'unconfirmed'; submissionId?: string };

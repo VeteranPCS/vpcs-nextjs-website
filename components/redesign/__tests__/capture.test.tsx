@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks=vi.hoisted(()=>({submit:vi.fn()}));
 vi.mock('@/services/salesForcePostFormsService',()=>({KeepInTouchForm:mocks.submit,vaLoanGuideForm:mocks.submit,homebuyerGuideForm:mocks.submit}));
 vi.mock('@/lib/analytics/client',()=>({captureAnalyticsEvent:vi.fn(),formTrackingPayload:()=>({}),trackFormStarted:vi.fn(),trackFormSubmitAttempted:vi.fn(),trackFormSubmissionFailed:vi.fn(),trackCtaClicked:vi.fn()}));
+import { maintenanceNotSent } from '@/lib/leads/intake-maintenance';
 import LeadCaptureDialog from '../LeadCaptureDialog';
 beforeEach(()=>{mocks.submit.mockReset();HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');};});
 afterEach(cleanup);
@@ -13,4 +14,17 @@ describe('shared capture',()=>{
  it('opens with email prefilled and collects genuine name fields',async()=>{mocks.submit.mockResolvedValue({success:true});render(<LeadCaptureDialog kind="newsletter" initialEmail="test@example.com" triggerLabel="Subscribe"/>);fireEvent.click(screen.getByText('Subscribe'));expect((screen.getByLabelText('Email') as HTMLInputElement).value).toBe('test@example.com');fill();fireEvent.submit(screen.getByLabelText('Email').closest('form')!);await waitFor(()=>expect(screen.getByRole('status').textContent).toContain('received'));expect(mocks.submit).toHaveBeenCalledWith(expect.objectContaining({firstName:'Test',lastName:'Family',email:'test@example.com'}));});
  it('preserves entered details on failure and permits explicit retry',async()=>{mocks.submit.mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce({success:true});render(<LeadCaptureDialog kind="newsletter" initialEmail="test@example.com" triggerLabel="Subscribe"/>);fireEvent.click(screen.getByText('Subscribe'));fill();fireEvent.submit(screen.getByLabelText('Email').closest('form')!);await screen.findByRole('alert');expect((screen.getByLabelText('First name') as HTMLInputElement).value).toBe('Test');fireEvent.submit(screen.getByLabelText('Email').closest('form')!);await screen.findByRole('status');expect(mocks.submit).toHaveBeenCalledTimes(2);});
  it('suppresses duplicate submissions while a request is pending',async()=>{mocks.submit.mockReturnValue(new Promise(()=>{}));render(<LeadCaptureDialog kind="newsletter" initialEmail="test@example.com" triggerLabel="Subscribe"/>);fireEvent.click(screen.getByText('Subscribe'));fill();const form=screen.getByLabelText('Email').closest('form')!;fireEvent.submit(form);fireEvent.submit(form);expect(mocks.submit).toHaveBeenCalledTimes(1);expect((screen.getByText('Sending…') as HTMLButtonElement).disabled).toBe(true);});
+});
+
+it.each(['newsletter','va-guide','homebuyer-guide'] as const)('%s preserves fields without success or download during maintenance', async (kind) => {
+ mocks.submit.mockResolvedValue(maintenanceNotSent());
+ render(<LeadCaptureDialog kind={kind} initialEmail="test@example.com" triggerLabel="Open"/>);
+ fireEvent.click(screen.getByText('Open')); fill();
+ fireEvent.submit(screen.getByLabelText('Email').closest('form')!);
+ expect((await screen.findByRole('alert')).textContent).toContain('Your request was not sent');
+ expect((screen.getByLabelText('First name') as HTMLInputElement).value).toBe('Test');
+ expect((screen.getByLabelText('Email') as HTMLInputElement).value).toBe('test@example.com');
+ expect(screen.queryByRole('status')).toBeNull();
+ expect(document.querySelector('a[download]')).toBeNull();
+ expect(mocks.submit).toHaveBeenCalledTimes(1);
 });

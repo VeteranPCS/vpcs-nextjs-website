@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import type { Metadata } from "next";
 import Link from "next/link";
 import stateService, { type Agent, type StateList } from "@/services/stateService";
@@ -33,58 +34,35 @@ interface StateAgentsGroup {
   agents: Agent[];
 }
 
-async function loadDirectory(): Promise<StateAgentsGroup[] | null> {
-  try {
-    const states = await stateService.fetchStateList();
+async function loadDirectory(): Promise<StateAgentsGroup[]> {
+  const states = await stateService.fetchStateList();
+  const groups = await Promise.all(
+    states.map(async (state): Promise<StateAgentsGroup> => {
+      const data = await stateService.fetchAgentsListByState(state.short_name);
+      if (!Array.isArray(data?.records)) throw new Error('Invalid agent directory response');
 
-    const groups = await Promise.all(
-      states.map(async (state): Promise<StateAgentsGroup> => {
-        try {
-          const data = await stateService.fetchAgentsListByState(state.short_name);
-          const records = data?.records ?? [];
-
-          // Dedupe by AccountId_15__c within this state, then sort by Name.
-          const seen = new Set<string>();
-          const unique = records.filter((agent) => {
-            const key = agent.AccountId_15__c;
-            if (!key || seen.has(key)) return false;
-            seen.add(key);
-            return true;
-          });
-
-          unique.sort((a, b) => (a.Name ?? "").localeCompare(b.Name ?? ""));
-
-          return { state, agents: unique };
-        } catch (err) {
-          console.error("Failed to fetch agents for state %s:", state.short_name, err);
-          return { state, agents: [] };
-        }
-      }),
-    );
-
-    // Sort states alphabetically by state_name.
-    groups.sort((a, b) =>
-      (a.state.state_name ?? "").localeCompare(b.state.state_name ?? ""),
-    );
-
-    return groups;
-  } catch (err) {
-    console.error("Failed to load agent directory:", err);
-    return null;
-  }
+      // Preserve valid empty results, but let upstream failures abort regeneration.
+      const seen = new Set<string>();
+      const agents = data.records.filter((agent) => {
+        const key = agent.AccountId_15__c;
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      agents.sort((a, b) => (a.Name ?? '').localeCompare(b.Name ?? ''));
+      return { state, agents };
+    }),
+  );
+  groups.sort((a, b) => (a.state.state_name ?? '').localeCompare(b.state.state_name ?? ''));
+  return groups;
 }
 
 export default async function AgentsDirectoryPage() {
-  const groups = await loadDirectory();
+  // Credential-free CI builds defer these reads to a request, never an empty directory.
+  // Normal deployments retain static generation and the 24-hour revalidation policy.
+  if (process.env.SKIP_SALESFORCE_PRERENDER === '1') await connection();
 
-  if (!groups) {
-    return (
-      <main className="max-w-4xl mx-auto px-4 py-12 space-y-8">
-        <h1 className="text-3xl font-bold">Veteran Real Estate Agent Directory</h1>
-        <p className="text-gray-700">Directory temporarily unavailable. Please check back soon.</p>
-      </main>
-    );
-  }
+  const groups = await loadDirectory();
 
   const populatedGroups = groups.filter((group) => group.agents.length > 0);
 

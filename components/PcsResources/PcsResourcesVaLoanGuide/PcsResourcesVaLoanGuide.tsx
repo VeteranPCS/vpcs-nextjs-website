@@ -1,4 +1,5 @@
 "use client";
+import { useIntakeMaintenanceFeedback } from '@/components/common/IntakeMaintenance';
 import React from "react";
 import Link from "next/link";
 import classes from "./PcsResourcesVaLoanGuide.module.css";
@@ -27,6 +28,7 @@ type FormInputs = {
 type FormErrors = Partial<Record<keyof FormInputs, { message?: string }>>;
 
 const PcsResourcesVaLoanGuide = () => {
+  const { maintenanceNotice, handleMaintenanceResult } = useIntakeMaintenanceFeedback();
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required('First name is required'),
     lastName: Yup.string().required('Last name is required'),
@@ -51,17 +53,19 @@ const PcsResourcesVaLoanGuide = () => {
       has_email: Boolean(data.email),
     });
     try {
-      sendGTMEvent({
-        event: "conversion_download",
-        content: "VA Loan Guide",
-      });
-
       const server_response = await vaLoanGuideForm({
         ...data,
         ...getSpamFields(),
         ...formTrackingPayload(),
       });
+      if (handleMaintenanceResult(server_response)) return;
       if (server_response?.success) {
+        try {
+          sendGTMEvent({
+            event: "conversion_download",
+            content: "VA Loan Guide",
+          });
+        } catch { /* Optional telemetry must not undo accepted capture. */ }
         setValue('firstName', '');
         setValue('lastName', '');
         setValue('email', '');
@@ -115,6 +119,7 @@ const PcsResourcesVaLoanGuide = () => {
             }}
             onFocus={() => trackFormStarted('va_loan_guide', { guide_id: 'va_loan_guide' })}
           >
+            {maintenanceNotice}
             <HoneypotField ref={honeypotRef} />
             <div className="lg:px-20 mg:px-20 sm:px-10 px-10 order-2 sm:order-1">
               <div className="text-center">

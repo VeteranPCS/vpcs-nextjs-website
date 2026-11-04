@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 
-export default function CustomerSubmissionFeedback({ notice, hasUnconfirmed, confirmRetry, isSubmitting, submissionId, sendAgain, cancelRetry }: {
+export default function CustomerSubmissionFeedback({ maintenanceNotice, notice, hasUnconfirmed, confirmRetry, isSubmitting, submissionId, sendAgain, cancelRetry }: {
+  maintenanceNotice?: ReactNode;
   notice: 'not_sent' | 'unconfirmed' | null;
   hasUnconfirmed: boolean;
   confirmRetry: boolean;
@@ -14,6 +15,7 @@ export default function CustomerSubmissionFeedback({ notice, hasUnconfirmed, con
   const confirmation = useRef<HTMLDivElement>(null);
   useEffect(() => { if (confirmRetry) confirmation.current?.focus(); }, [confirmRetry]);
   return <>
+    {maintenanceNotice}
     {notice === 'not_sent' && <p role="alert" className="text-red-700 text-sm">
       We couldn’t send your request. Your information is still here. Please try again.
     </p>}
