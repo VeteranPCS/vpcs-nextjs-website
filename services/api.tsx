@@ -1,6 +1,7 @@
 import { EventEmitter } from "node:events";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { getSalesforceToken } from "@/services/salesForceTokenService";
+import { getSalesforceToken, getSalesforceTokenSnapshot, invalidateSalesforceToken } from "@/services/salesForceTokenService";
+import { SalesforceTokenError } from "@/lib/salesforce/token-error";
 import { logDebug, logError } from "@/services/loggingService";
 
 // Next spawns fresh worker processes for static generation — globals set in
@@ -97,15 +98,13 @@ export const api = async ({
 };
 // ***** end - Api function for calling any type of APIs *****
 
-export const salesForceAPI = async ({
+const requestSalesforceAPI = async ({
     endpoint,
     data,
     type,
     customHeader
-}: ApiParams): Promise<AxiosResponse | undefined> => {
+}: ApiParams, token: string): Promise<AxiosResponse | undefined> => {
     let res: AxiosResponse | undefined;
-
-    const token = await getSalesforceToken();
 
     const config: AxiosRequestConfig = {
         url: endpoint,
@@ -136,6 +135,9 @@ export const salesForceAPI = async ({
     return res;  // Return the response or error
 };
 
+export const salesForceAPI = async (params: ApiParams): Promise<AxiosResponse | undefined> =>
+    requestSalesforceAPI(params, await getSalesforceToken());
+
 // Keeps the existing one-time 401 refresh for every request type. Safe GETs also
 // retry bounded transient failures so a momentary Salesforce/network issue does
 // not poison a statically generated or ISR state page with an empty result.
@@ -150,12 +152,18 @@ export const salesForceAPIWithRefresh = async (
 
     for (let attempt = 1; attempt <= attempts; attempt += 1) {
         try {
-            let response = await salesForceAPI(params);
+            let token = await getSalesforceTokenSnapshot();
+            let response = await requestSalesforceAPI(params, token.token);
 
             if (response?.status === 401 && !didRefreshAuth) {
                 didRefreshAuth = true;
-                await getSalesforceToken({ forceRefresh: true });
-                response = await salesForceAPI(params);
+                token = await getSalesforceTokenSnapshot({ rejectedGeneration: token.generation });
+                response = await requestSalesforceAPI(params, token.token);
+            }
+
+            if (response?.status === 401) {
+                invalidateSalesforceToken(token.generation);
+                return response;
             }
 
             const shouldRetry = response?.status !== undefined
@@ -171,7 +179,7 @@ export const salesForceAPIWithRefresh = async (
                 maxAttempts: attempts,
             });
         } catch (error) {
-            if (!isRetryableGet || attempt >= attempts) throw error;
+            if (error instanceof SalesforceTokenError || !isRetryableGet || attempt >= attempts) throw error;
 
             logDebug('Retrying transient Salesforce GET error', {
                 endpoint: logSafeEndpoint(params.endpoint),

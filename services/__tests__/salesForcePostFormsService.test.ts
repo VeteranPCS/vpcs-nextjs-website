@@ -28,6 +28,8 @@ import { LeadSubmissionError } from '@/lib/leads/submission-outcome';
 import { submitCustomerWebsiteLead } from '@/lib/leads/customer-action';
 
 vi.mock('server-only', () => ({}));
+vi.mock('@/lib/leads/intake-reopening-store', () => ({ isIntakeExplicitlyReopened: vi.fn(async () => false) }));
+import { isIntakeExplicitlyReopened } from '@/lib/leads/intake-reopening-store';
 
 vi.mock('@/actions/sendToSlack', () => ({
   default: vi.fn(async () => ({ ok: true })),
@@ -1514,5 +1516,171 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
     expect(consoleLogSpy.mock.calls.some((call) => String(call[0]).startsWith('[LEAD_DRY_RUN]'))).toBe(false);
+  });
+});
+
+
+describe('non-production Vercel submission guard', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal('fetch', vi.fn(() => { throw new Error('Unexpected network access'); }));
+  });
+  afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
+
+  const submissions = [
+    ['contact agent', () => contactAgentPostForm(qaPayload(), queryString)],
+    ['contact lender', () => contactLenderPostForm(lenderPayload(), queryString)],
+    ['listed agent', () => GetListedAgentsPostForm({})],
+    ['listed lender', () => GetListedLendersPostForm({})],
+    ['keep in touch', () => KeepInTouchForm({})],
+    ['contact', () => contactPostForm({})],
+    ['VA guide', () => vaLoanGuideForm({})],
+    ['homebuyer guide', () => homebuyerGuideForm({})],
+    ['internship', () => internshipFormSubmission({})],
+  ] as const;
+
+  describe.each(['preview', 'development'])('%s', (environment) => {
+    it.each(submissions)('blocks %s before remote processing even with dry-run enabled', async (_name, submit) => {
+      vi.stubEnv('VERCEL_ENV', environment);
+      vi.stubEnv('LEAD_INTAKE_MAINTENANCE', 'scheduled');
+      vi.spyOn(Date, 'now').mockReturnValue(Date.parse('2026-11-08T10:00:00Z'));
+      vi.stubEnv('NODE_ENV', 'production');
+      vi.stubEnv('LEAD_DRY_RUN', '1');
+      await expect(submit()).rejects.toMatchObject({ outcome: 'not_sent', submissionId: 'submission-test-id' });
+      expect(isIntakeExplicitlyReopened).not.toHaveBeenCalled();
+      expect(fetch).not.toHaveBeenCalled();
+      expect(evaluateLeadSpam).not.toHaveBeenCalled();
+      expect(stateService.fetchAgentById).not.toHaveBeenCalled();
+      expect(routeSalesforceLeadOwner).not.toHaveBeenCalled();
+      expect(sendToSlack).not.toHaveBeenCalled();
+      expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+      expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+      expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
+      expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'FAILURE', null, expect.objectContaining({ message: 'Lead submissions are disabled in non-production Vercel environments' }));
+    });
+  });
+
+  it('retains real production behavior with mocked sinks', async () => {
+    vi.stubEnv('VERCEL_ENV', 'production');
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('LEAD_DRY_RUN', '1');
+    vi.mocked(fetch).mockResolvedValue(new Response('', { status: 200 }));
+    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toMatchObject({ message: 'Form submitted successfully!', submissionId: 'submission-test-id' });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(routeSalesforceLeadOwner).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('maintenance intake guard for all nine forms', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(isIntakeExplicitlyReopened).mockReset().mockResolvedValue(false);
+    vi.stubEnv('LEAD_INTAKE_MAINTENANCE', 'on');
+    vi.stubEnv('VERCEL_ENV', 'production');
+    vi.stubEnv('LEAD_DRY_RUN', '1');
+    vi.stubGlobal('fetch', vi.fn(() => { throw new Error('Unexpected network access'); }));
+  });
+  afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.useRealTimers(); });
+
+  const submissions = [
+    ['contact agent', () => contactAgentPostForm(qaPayload(), queryString)],
+    ['contact lender', () => contactLenderPostForm(lenderPayload(), queryString)],
+    ['listed agent', () => GetListedAgentsPostForm({})],
+    ['listed lender', () => GetListedLendersPostForm({})],
+    ['keep in touch', () => KeepInTouchForm({})],
+    ['contact', () => contactPostForm({})],
+    ['VA guide', () => vaLoanGuideForm({})],
+    ['homebuyer guide', () => homebuyerGuideForm({})],
+    ['internship', () => internshipFormSubmission({})],
+  ] as const;
+
+  it.each(submissions)('returns an explicit serializable not-sent result for %s without any outbound effects', async (_name, submit) => {
+    const result = JSON.parse(JSON.stringify(await submit()));
+    expect(result).toMatchObject({ success: false, outcome: 'not_sent', reason: 'maintenance', maintenanceMessage: expect.stringContaining('Your request was not sent') });
+    expect(result.message).toBeUndefined();
+    expect(result.redirectUrl).toBeUndefined();
+    expect(result.submissionId).toBeUndefined();
+    expect(fetch).not.toHaveBeenCalled();
+    expect(evaluateLeadSpam).not.toHaveBeenCalled();
+    expect(stateService.fetchAgentById).not.toHaveBeenCalled();
+    expect(routeSalesforceLeadOwner).not.toHaveBeenCalled();
+    expect(sendToSlack).not.toHaveBeenCalled();
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
+    expect(updateSubmissionStatus).not.toHaveBeenCalled();
+  });
+
+  it('cannot be bypassed by a trusted concierge caller', async () => {
+    const { INTERNAL_CALL_TOKEN } = await import('@/lib/internal-call-token');
+    await expect(contactAgentPostForm(qaPayload(), queryString, { internalCallToken: INTERNAL_CALL_TOKEN }))
+      .resolves.toMatchObject({ outcome: 'not_sent', reason: 'maintenance' });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('rechecks the scheduled boundary after async preflight, before the POST', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-08T07:44:59Z'));
+    vi.stubEnv('LEAD_INTAKE_MAINTENANCE', 'scheduled');
+    vi.mocked(evaluateLeadSpam).mockImplementationOnce(async () => {
+      vi.setSystemTime(new Date('2026-11-08T07:45:00Z'));
+      return { quarantine: false, reasons: [] };
+    });
+    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toMatchObject({ reason: 'maintenance' });
+    expect(fetch).not.toHaveBeenCalled();
+    expect(routeSalesforceLeadOwner).not.toHaveBeenCalled();
+    expect(sendToSlack).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+  });
+});
+
+
+describe('shared scheduled reopening across all nine submission entry points', () => {
+  const formData = { firstName: 'Alex', lastName: 'Example', email: 'alex@example.test', phone: '7195550100', state: 'CO' };
+  const submitters = [
+    ['agent', () => contactAgentPostForm({ ...formData }, '?state=colorado')],
+    ['lender', () => contactLenderPostForm({ ...formData }, '?state=colorado')],
+    ['listed agent', () => GetListedAgentsPostForm({ ...formData })],
+    ['listed lender', () => GetListedLendersPostForm({ ...formData })],
+    ['newsletter', () => KeepInTouchForm({ ...formData })],
+    ['contact', () => contactPostForm({ ...formData })],
+    ['VA guide', () => vaLoanGuideForm({ ...formData })],
+    ['homebuyer guide', () => homebuyerGuideForm({ ...formData })],
+    ['internship', () => internshipFormSubmission({ ...formData })],
+  ] as const;
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useFakeTimers(); vi.setSystemTime(new Date('2026-11-08T10:00:00Z'));
+    vi.stubEnv('LEAD_INTAKE_MAINTENANCE', 'scheduled');
+    vi.stubEnv('VERCEL_ENV', 'production'); vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('LEAD_DRY_RUN', '1'); // Cannot bypass the pause or make a deployed dry run.
+    vi.mocked(isIntakeExplicitlyReopened).mockReset().mockResolvedValue(false);
+    vi.stubGlobal('fetch', vi.fn(() => { throw new Error('Unexpected network'); }));
+  });
+  afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.useRealTimers(); });
+
+  it.each(submitters)('%s blocks, explicitly retries once, then observes re-pausing', async (_name, submit) => {
+    await expect(submit()).resolves.toMatchObject({ outcome: 'not_sent', reason: 'maintenance' });
+    for (const effect of [fetch, evaluateLeadSpam, stateService.fetchAgentById, routeSalesforceLeadOwner, sendToSlack, sendOpenPhoneMessage, captureLeadConversionCreated, captureServerAnalyticsEvent, updateSubmissionStatus]) expect(effect).not.toHaveBeenCalled();
+    vi.mocked(isIntakeExplicitlyReopened).mockResolvedValue(true);
+    await Promise.resolve();
+    expect(fetch).not.toHaveBeenCalled(); // Opening never initiates a submission.
+    vi.mocked(fetch).mockResolvedValueOnce(new Response('', { status: 200 }));
+    const accepted = await submit();
+    expect(accepted).not.toHaveProperty('reason');
+    expect(accepted).toHaveProperty('message');
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(isIntakeExplicitlyReopened).toHaveBeenCalledTimes(3); // paused + entry + before POST
+    vi.mocked(isIntakeExplicitlyReopened).mockResolvedValue(false);
+    await expect(submit()).resolves.toMatchObject({ outcome: 'not_sent' });
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+  it.each(submitters)('%s stops if the flag closes during async preflight', async (_name, submit) => {
+    vi.mocked(isIntakeExplicitlyReopened).mockResolvedValueOnce(true).mockResolvedValue(false);
+    await expect(submit()).resolves.toMatchObject({ outcome: 'not_sent', reason: 'maintenance' });
+    expect(isIntakeExplicitlyReopened).toHaveBeenCalledTimes(2);
+    expect(evaluateLeadSpam).toHaveBeenCalledTimes(1);
+    for (const effect of [fetch, routeSalesforceLeadOwner, sendToSlack, sendOpenPhoneMessage, captureLeadConversionCreated, captureServerAnalyticsEvent]) expect(effect).not.toHaveBeenCalled();
   });
 });

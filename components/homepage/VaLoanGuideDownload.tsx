@@ -1,4 +1,5 @@
 "use client";
+import { useIntakeMaintenanceFeedback } from '@/components/common/IntakeMaintenance';
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import * as Yup from 'yup';
@@ -26,6 +27,7 @@ interface FormInputs {
 }
 
 const VaLoanGuideDownload = () => {
+  const { maintenanceNotice, handleMaintenanceResult } = useIntakeMaintenanceFeedback();
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -64,7 +66,6 @@ const VaLoanGuideDownload = () => {
             has_email: Boolean(data.email),
         });
         try {
-            sendGTMEvent({ event: "conversion_download", content: "VA Loan Guide" });
             // Split name into first/last for Salesforce
             const [firstName, ...lastArr] = data.name.trim().split(' ');
             const lastName = lastArr.join(' ');
@@ -78,7 +79,11 @@ const VaLoanGuideDownload = () => {
                 ...getSpamFields(),
                 ...formTrackingPayload(),
             });
+            if (handleMaintenanceResult(server_response)) return;
             if (server_response?.success) {
+                try {
+                  sendGTMEvent({ event: "conversion_download", content: "VA Loan Guide" });
+                } catch { /* Optional telemetry must not undo accepted capture. */ }
                 setSuccess(true);
                 reset();
                 captureAnalyticsEvent('guide_download_started', {
@@ -144,6 +149,7 @@ const VaLoanGuideDownload = () => {
                     onFocus={() => trackFormStarted('va_loan_guide', { guide_id: 'va_loan_guide' })}
                     className="mb-6"
                 >
+                  {maintenanceNotice}
                     <HoneypotField ref={honeypotRef} />
                     <div className="flex flex-col md:flex-row gap-4 mb-4">
                         <input

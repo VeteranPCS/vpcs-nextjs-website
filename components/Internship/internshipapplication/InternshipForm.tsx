@@ -1,4 +1,5 @@
 "use client";
+import { useIntakeMaintenanceFeedback } from '@/components/common/IntakeMaintenance';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -81,6 +82,7 @@ const schema = yup.object().shape({
 });
 
 const WebToLeadForm = () => {
+  const { maintenanceNotice, handleMaintenanceResult } = useIntakeMaintenanceFeedback();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const {
         register,
@@ -135,6 +137,7 @@ const WebToLeadForm = () => {
             };
 
             const response = await internshipFormSubmission({ ...apiData, ...getSpamFields() });
+            if (handleMaintenanceResult(response)) { setIsSubmitting(false); return; }
             if (response.redirectUrl) {
                 router.push(response.redirectUrl);
             } else {
@@ -166,6 +169,7 @@ const WebToLeadForm = () => {
                 <form
                     onSubmit={handleSubmit(handleFormSubmit)}
                 >
+                  {maintenanceNotice}
                     <input
                         type="hidden"
                         name="00N4x00000QQ1LB"

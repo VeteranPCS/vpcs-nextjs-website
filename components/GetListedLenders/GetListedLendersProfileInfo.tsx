@@ -7,8 +7,9 @@ import { MilitaryServiceInfo, MilitaryStatusOptions, MilitaryBranchOptions, type
 type ContactFormData = MilitaryServiceInfo;
 
 interface ContactFormProps {
+  initialValues?: Partial<ContactFormData>;
   onSubmit: (data: ContactFormData) => void;
-  onBack: () => void;
+  onBack: (data: ContactFormData) => void;
   shouldValidate: boolean;
 }
 
@@ -51,9 +52,10 @@ const contactFormSchema = (shouldValidate: boolean) => yup.object().shape({
     .oneOf(DischargeStatusOptions, 'Invalid option selected') : yup.string(),
 });
 
-const GetListedLendersProfileInfo = ({ onSubmit, onBack, shouldValidate }: ContactFormProps) => {
+const GetListedLendersProfileInfo = ({ initialValues, onSubmit, onBack, shouldValidate }: ContactFormProps) => {
   const {
     register,
+    getValues,
     handleSubmit,
     formState: { errors },
     setValue,
@@ -63,6 +65,7 @@ const GetListedLendersProfileInfo = ({ onSubmit, onBack, shouldValidate }: Conta
       status_select: '',
       branch_select: '',
       discharge_status: '',
+      ...initialValues,
     },
   });
 
@@ -187,7 +190,7 @@ const GetListedLendersProfileInfo = ({ onSubmit, onBack, shouldValidate }: Conta
         </form>
         <div className="flex md:justify-start justify-center mt-8">
           <button
-            onClick={onBack}
+            onClick={() => onBack(getValues())}
             className="rounded-md border border-[#BBBFC1] bg-white px-8 py-3 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
           >
             <svg

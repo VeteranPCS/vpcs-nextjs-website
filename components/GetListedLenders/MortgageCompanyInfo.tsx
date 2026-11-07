@@ -1,5 +1,5 @@
 "use client";
-import { useState, FormEvent } from 'react';
+import { FormEvent } from 'react';
 import { useForm, Controller, Resolver } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -49,9 +49,11 @@ const howDidYouHearOptions: HowDidYouHearOptions[] = [
 ];
 
 interface ContactFormProps {
+  initialValues?: Partial<FormData>;
   onSubmit: (data: FormData) => void;
-  onBack: () => void;
+  onBack: (data: FormData) => void;
   shouldSubmit: () => void;
+  isSubmitting: boolean;
 }
 
 // Validation schema using yup
@@ -75,10 +77,8 @@ const schema = yup.object({
   }),
 });
 
-const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const { register, handleSubmit, control, watch, formState: { errors } } = useForm<FormData>({
+const MortgageCompanyInfo = ({ initialValues, onSubmit, onBack, shouldSubmit, isSubmitting }: ContactFormProps) => {
+  const { register, getValues, handleSubmit, control, watch, formState: { errors } } = useForm<FormData>({
     resolver: yupResolver(schema) as Resolver<FormData>,
     defaultValues: {
       name: '',
@@ -89,6 +89,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
       zip: '',
       howDidYouHear: '',
       tellusMore: '',
+      ...initialValues,
     },
   });
 
@@ -96,14 +97,14 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
 
   const onFormSubmit = (data: FormData) => {
     if (isSubmitting) return;
-    setIsSubmitting(true);
+
     onSubmit(data);
     shouldSubmit();
   };
 
   const handleBack = (e: FormEvent) => {
     e.preventDefault();
-    onBack();
+    onBack(getValues());
   };
 
   return (

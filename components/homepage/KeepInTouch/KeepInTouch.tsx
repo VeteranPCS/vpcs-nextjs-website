@@ -1,4 +1,5 @@
 "use client";
+import { useIntakeMaintenanceFeedback } from '@/components/common/IntakeMaintenance';
 import React, { useState, useEffect, useCallback } from "react"; // No need for useState or useEffect
 import classes from "./KeepInTouch.module.css";
 import Image from "next/image";
@@ -38,6 +39,7 @@ const contactFormSchema = yup.object().shape({
 const KeepInTouch = () => {
   const router = useRouter()
   const pathname = usePathname()
+  const { maintenanceNotice, handleMaintenanceResult } = useIntakeMaintenanceFeedback();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -62,16 +64,19 @@ const KeepInTouch = () => {
   const handleFormSubmission = async (data: ContactFormData) => {
     setIsSubmitting(true);
     try {
-      sendGTMEvent({
-        event: 'keep_in_touch_form_submission',
-        page: pathname,
-      });
       const server_response = await KeepInTouchForm({
         ...data,
         ...getSpamFields(),
         ...formTrackingPayload(),
       });
+      if (handleMaintenanceResult(server_response)) return;
       if (server_response?.success) {
+        try {
+          sendGTMEvent({
+            event: 'keep_in_touch_form_submission',
+            page: pathname,
+          });
+        } catch { /* Optional telemetry must not undo accepted capture. */ }
         reset();
         window.location.href = `${BASE_URL}/thank-you`;
         return;
@@ -176,6 +181,7 @@ const KeepInTouch = () => {
                 }}
                 onFocus={() => trackFormStarted('keep_in_touch')}
               >
+                {maintenanceNotice}
                 <h2 className="lg:text-[36px] text-[25px] poppins font-bold text-primary md:text-left text-center">
                   Keep In Touch
                 </h2>

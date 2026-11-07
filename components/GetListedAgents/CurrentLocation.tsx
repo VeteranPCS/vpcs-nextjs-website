@@ -10,8 +10,9 @@ interface FormData {
 }
 
 interface ContactFormProps {
+  initialValues?: Partial<FormData>;
   onSubmit: (formData: FormData) => void;
-  onBack: () => void;
+  onBack: (data: FormData) => void;
 }
 
 // Validation schema
@@ -23,9 +24,10 @@ const contactFormSchema = yup.object().shape({
     .matches(/^[a-zA-Z\s]+$/, "City must contain only letters"),
 });
 
-const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
+const CurrentLocation = ({ initialValues, onSubmit, onBack }: ContactFormProps) => {
   const {
     register,
+    getValues,
     handleSubmit,
     control,
     formState: { errors },
@@ -34,6 +36,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
     defaultValues: {
       state: "",
       city: "",
+      ...initialValues,
     },
   });
 
@@ -131,7 +134,7 @@ const CurrentLocation = ({ onSubmit, onBack }: ContactFormProps) => {
         {/* Back Button */}
         <div className="flex md:justify-start justify-center mt-8">
           <button
-            onClick={onBack}
+            onClick={() => onBack(getValues())}
             className="rounded-md border border-[#BBBFC1] bg-white px-8 py-3 text-center text-[#242731] font-medium flex items-center gap-2 shadow-lg"
           >
             <svg
