@@ -1,6 +1,6 @@
 {
-  "contentHash": "3d6965766c443cace6ac5d285a03fcd457a410d38b6d7c845951933831a9f6f2",
-  "totalPosts": 414,
+  "contentHash": "5ebb30f81210f2c9eed42b6f809429306a1d6f682d8a20eaae4a907b457facbf",
+  "totalPosts": 418,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -88,6 +88,7 @@
       "12-tips-for-a-successful-pcs-move-or-home-relocation",
       "a-decade-of-growth-the-appreciation-of-home-prices-in-castle-rock",
       "arizona-pcs-guide",
+      "bah-during-pcs-move",
       "best-neighborhoods-nas-jacksonville-military-families",
       "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-philadelphia-military-bases",
@@ -224,8 +225,10 @@
       "air-force-bases-in-california",
       "air-force-bases-in-colorado",
       "air-force-bases-in-florida",
+      "air-force-bases-in-georgia",
       "air-force-bases-in-hawaii",
       "air-force-bases-in-new-mexico",
+      "air-force-bases-in-north-carolina",
       "air-force-bases-in-texas",
       "alabama-military-bases",
       "army-bases-in-alaska",
@@ -249,6 +252,7 @@
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
       "marine-corps-bases-in-california",
       "marine-corps-bases-in-north-carolina",
+      "marine-corps-bases-in-south-carolina",
       "military-bases-near-me-how-to-find-bases-by-state",
       "naval-bases-in-california",
       "naval-bases-in-florida",
@@ -518,6 +522,7 @@
       "12-tips-for-a-successful-pcs-move-or-home-relocation",
       "a-decade-of-growth-the-appreciation-of-home-prices-in-castle-rock",
       "arizona-pcs-guide",
+      "bah-during-pcs-move",
       "best-neighborhoods-nas-jacksonville-military-families",
       "best-neighborhoods-near-nas-jrb-fort-worth",
       "best-places-to-live-near-philadelphia-military-bases",
@@ -654,8 +659,10 @@
       "air-force-bases-in-california",
       "air-force-bases-in-colorado",
       "air-force-bases-in-florida",
+      "air-force-bases-in-georgia",
       "air-force-bases-in-hawaii",
       "air-force-bases-in-new-mexico",
+      "air-force-bases-in-north-carolina",
       "air-force-bases-in-texas",
       "alabama-military-bases",
       "army-bases-in-alaska",
@@ -679,6 +686,7 @@
       "discover-the-best-places-to-live-near-hill-air-force-base-utah",
       "marine-corps-bases-in-california",
       "marine-corps-bases-in-north-carolina",
+      "marine-corps-bases-in-south-carolina",
       "military-bases-near-me-how-to-find-bases-by-state",
       "naval-bases-in-california",
       "naval-bases-in-florida",
@@ -954,6 +962,7 @@
       "your-first-home-in-florida-a-complete-guide-for-veterans-and-military-families"
     ],
     "georgia": [
+      "air-force-bases-in-georgia",
       "army-bases-in-georgia",
       "best-places-to-live-near-fort-benning",
       "best-places-to-live-near-ft-gordon-augusta-georgia",
@@ -1103,6 +1112,7 @@
     ],
     "north-carolina": [
       "9-things-to-do-near-ft-bragg",
+      "air-force-bases-in-north-carolina",
       "army-bases-in-north-carolina",
       "buy-vs-rent-near-camp-lejeune",
       "fort-bragg-bah-2026-buy-vs-rent",
@@ -1149,6 +1159,7 @@
       "what-military-bases-are-in-rhode-island"
     ],
     "south-carolina": [
+      "marine-corps-bases-in-south-carolina",
       "myrtle-beach-military-retirement",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-fort-jackson-columbia-2026-guide",
@@ -1237,16 +1248,17 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 273,
+    "resolved": 276,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 249,
+      "frontmatter-state-slug": 252,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
     "unmappedHighIntent": [
       "12-tips-for-a-successful-pcs-move-or-home-relocation",
       "2026-bah-rates-what-changed-and-how-to-check-yours",
+      "bah-during-pcs-move",
       "best-places-to-live-near-philadelphia-military-bases",
       "buying-a-home-sight-unseen-during-a-pcs-move",
       "choosing-the-best-relocation-method-for-your-pcs",
@@ -1383,7 +1395,7 @@
       ],
       "description": "Your 2026 BAH went up an average of 4.2%. Here is what changed, why you may still pay a little out of pocket, and how to confirm your exact rate.",
       "publishedAt": "2026-06-29T09:00:00.000Z",
-      "updatedAt": "2026-06-23T12:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z",
       "primaryKeyword": "2026 bah rates",
       "secondaryKeywords": [
         "bah increase 2026",
@@ -1706,6 +1718,40 @@
       ]
     },
     {
+      "slug": "air-force-bases-in-georgia",
+      "title": "Air Force Bases in Georgia: Robins, Moody, Dobbins and Savannah",
+      "url": "/blog/air-force-bases-in-georgia",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "georgia",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Georgia has two active-duty Air Force bases and two busy Reserve and Guard bases. Here is what Robins, Moody, Dobbins and Savannah each do, where they sit, and what 2026 housing pay looks like nearby.",
+      "publishedAt": "2026-11-03T09:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z",
+      "primaryKeyword": "air force bases in georgia",
+      "secondaryKeywords": [
+        "air force base in georgia",
+        "dobbins air reserve base",
+        "moody afb",
+        "robins afb",
+        "warner robins"
+      ],
+      "h2Outline": [
+        "Air Force Bases in Georgia, at a Glance",
+        "Robins AFB in Warner Robins",
+        "Moody AFB in Valdosta",
+        "Dobbins Air Reserve Base in Marietta",
+        "Savannah Air National Guard Base",
+        "What BAH Covers Near Georgia's Air Force Bases",
+        "Buying a Home Near Georgia's Air Force Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "air-force-bases-in-hawaii",
       "title": "Air Force Bases in Hawaii: Hickam Field, Bellows and 2026 BAH",
       "url": "/blog/air-force-bases-in-hawaii",
@@ -1770,6 +1816,39 @@
         "Cannon Air Force Base",
         "What BAH Covers at New Mexico's Air Force Bases",
         "Life Near New Mexico's Air Force Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "air-force-bases-in-north-carolina",
+      "title": "Air Force Bases in North Carolina: Seymour Johnson, Pope and More",
+      "url": "/blog/air-force-bases-in-north-carolina",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "north-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "North Carolina has one major Air Force base and two other spots where Airmen serve. Here is what Seymour Johnson AFB, Pope Field and Charlotte's Air Guard base do, where they sit, and what 2026 housing pay looks like nearby.",
+      "publishedAt": "2026-11-01T09:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z",
+      "primaryKeyword": "air force bases in north carolina",
+      "secondaryKeywords": [
+        "916th air refueling wing",
+        "air force base in nc",
+        "goldsboro nc air force base",
+        "pope field",
+        "seymour johnson afb"
+      ],
+      "h2Outline": [
+        "Air Force Bases in North Carolina, at a Glance",
+        "Seymour Johnson AFB in Goldsboro",
+        "Pope Field at Fort Bragg",
+        "Charlotte Air National Guard Base",
+        "What BAH Covers Near North Carolina's Air Force Bases",
+        "Buying a Home Near North Carolina's Air Force Bases",
         "Frequently Asked Questions"
       ]
     },
@@ -2397,6 +2476,39 @@
         "Camp Murray",
         "What BAH Covers Near Washington's Army Sites",
         "Where JBLM Families Tend to Live",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "bah-during-pcs-move",
+      "title": "BAH During a PCS Move: Which Rate You Get and When It Changes",
+      "url": "/blog/bah-during-pcs-move",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "Your housing allowance does not switch the day you get orders. Here is which BAH rate you get while you move, when the new rate kicks in, how advance BAH works, and what happens if your family stays behind.",
+      "publishedAt": "2026-11-07T09:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z",
+      "primaryKeyword": "bah during pcs",
+      "secondaryKeywords": [
+        "advance bah",
+        "bah dependents stay behind",
+        "bah during pcs move",
+        "bah in transit",
+        "when does bah change after pcs"
+      ],
+      "h2Outline": [
+        "BAH During a PCS: The Timeline",
+        "Advance BAH for a New Lease",
+        "When Your Family Stays Behind",
+        "BAH and Overseas Moves",
+        "When 2027 BAH Rates Come Out",
+        "Turning Your New BAH Into a Housing Plan",
         "Frequently Asked Questions"
       ]
     },
@@ -4779,6 +4891,39 @@
         "MCAS Cherry Point",
         "What BAH Covers Near North Carolina's Marine Bases",
         "Buying a Home Near North Carolina's Marine Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "marine-corps-bases-in-south-carolina",
+      "title": "Marine Corps Bases in South Carolina: MCAS Beaufort and Parris Island",
+      "url": "/blog/marine-corps-bases-in-south-carolina",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Both of South Carolina's Marine Corps bases sit in the Lowcountry around Beaufort. Here is what MCAS Beaufort and MCRD Parris Island do, what graduation week looks like for families, and what 2026 housing pay covers nearby.",
+      "publishedAt": "2026-11-05T09:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z",
+      "primaryKeyword": "marine corps bases in south carolina",
+      "secondaryKeywords": [
+        "beaufort sc military",
+        "laurel bay housing",
+        "marine base in south carolina",
+        "mcas beaufort",
+        "parris island"
+      ],
+      "h2Outline": [
+        "Marine Corps Bases in South Carolina, at a Glance",
+        "MCAS Beaufort",
+        "MCRD Parris Island",
+        "Naval Hospital Beaufort",
+        "What BAH Covers Near Beaufort and Parris Island",
+        "Buying a Home in the Beaufort Area",
         "Frequently Asked Questions"
       ]
     },
@@ -13212,7 +13357,7 @@
       ],
       "description": "Georgia has played a pivotal role in U.S. military history, from the American Revolution to modern-day defense operations. With nine major military installations, the state remains a key hub for national security, training, and logistics...",
       "publishedAt": "2024-06-25T13:47:49.000Z",
-      "updatedAt": "2026-10-04T00:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z",
       "primaryKeyword": "military forts in georgia",
       "secondaryKeywords": [
         "air force base georgia",
@@ -13852,7 +13997,7 @@
       ],
       "description": "North Carolina is home to the Army's largest installation, the Marine Corps' biggest East Coast base, an Air Force fighter wing and a major Coast Guard aviation hub. Here is every base, what it does, and what 2026 housing pay looks like nearby.",
       "publishedAt": "2022-10-18T02:18:27.000Z",
-      "updatedAt": "2026-10-25T00:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z",
       "primaryKeyword": "military bases in north carolina",
       "secondaryKeywords": [
         "army base in north carolina",
@@ -14062,7 +14207,7 @@
       ],
       "description": "South Carolina has a long and proud military history, and it is still a busy training hub today. The state is home to six major active-duty installations, supporting the Army, Navy, Air Force, and Marine Corps, along with an Air National...",
       "publishedAt": "2026-06-26T09:00:00.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "updatedAt": "2026-11-08T00:00:00.000Z",
       "primaryKeyword": "military bases in south carolina",
       "secondaryKeywords": [
         "army bases in south carolina",
