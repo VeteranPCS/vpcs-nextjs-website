@@ -381,14 +381,13 @@
     "_id": "p1E1t9c6MmuSwvdT93Qg7D",
     "_type": "state_list",
     "_createdAt": "2025-03-15T15:29:24Z",
-    "_updatedAt": "2026-03-16T19:00:59Z",
+    "_updatedAt": "2026-11-14T19:58:44Z",
     "short_name": "AR",
     "state_map": {
-      "_sanityAssetId": "image-3ce1eab78ff1b40a8d39325ee229b457e209f880-750x750-png",
       "alt": "Arkansas",
-      "height": 750,
+      "height": 1500,
       "path": "/images/states/arkansas.png",
-      "width": 750
+      "width": 1500
     },
     "state_name": "Arkansas",
     "state_slug": {
