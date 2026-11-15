@@ -1,6 +1,6 @@
 {
-  "contentHash": "3d6965766c443cace6ac5d285a03fcd457a410d38b6d7c845951933831a9f6f2",
-  "totalPosts": 414,
+  "contentHash": "408b8dbc46ffca40cd6427d38e8939d01d6436b07a9eee880282e42c4d74ebb1",
+  "totalPosts": 418,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -226,6 +226,7 @@
       "air-force-bases-in-florida",
       "air-force-bases-in-hawaii",
       "air-force-bases-in-new-mexico",
+      "air-force-bases-in-south-carolina",
       "air-force-bases-in-texas",
       "alabama-military-bases",
       "army-bases-in-alaska",
@@ -237,6 +238,7 @@
       "army-bases-in-kentucky",
       "army-bases-in-new-york",
       "army-bases-in-north-carolina",
+      "army-bases-in-south-carolina",
       "army-bases-in-texas",
       "army-bases-in-virginia",
       "army-bases-in-washington-state",
@@ -253,6 +255,7 @@
       "naval-bases-in-california",
       "naval-bases-in-florida",
       "naval-bases-in-hawaii",
+      "naval-bases-in-texas",
       "naval-bases-in-virginia",
       "naval-bases-in-washington-state",
       "pcs-redstone-arsenal-huntsville-guide",
@@ -399,6 +402,7 @@
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
       "va-cash-out-refinance-guide",
       "va-energy-efficient-mortgage-guide",
+      "va-funding-fee-refund",
       "va-home-loan-disclosure-law-mortgage-application",
       "va-irrrl-streamline-refinance-guide",
       "va-joint-loan-non-veteran-co-borrower",
@@ -656,6 +660,7 @@
       "air-force-bases-in-florida",
       "air-force-bases-in-hawaii",
       "air-force-bases-in-new-mexico",
+      "air-force-bases-in-south-carolina",
       "air-force-bases-in-texas",
       "alabama-military-bases",
       "army-bases-in-alaska",
@@ -667,6 +672,7 @@
       "army-bases-in-kentucky",
       "army-bases-in-new-york",
       "army-bases-in-north-carolina",
+      "army-bases-in-south-carolina",
       "army-bases-in-texas",
       "army-bases-in-virginia",
       "army-bases-in-washington-state",
@@ -683,6 +689,7 @@
       "naval-bases-in-california",
       "naval-bases-in-florida",
       "naval-bases-in-hawaii",
+      "naval-bases-in-texas",
       "naval-bases-in-virginia",
       "naval-bases-in-washington-state",
       "pcs-redstone-arsenal-huntsville-guide",
@@ -829,6 +836,7 @@
       "using-your-va-loan-in-hawaii-what-oahu-buyers-should-know",
       "va-cash-out-refinance-guide",
       "va-energy-efficient-mortgage-guide",
+      "va-funding-fee-refund",
       "va-home-loan-disclosure-law-mortgage-application",
       "va-irrrl-streamline-refinance-guide",
       "va-joint-loan-non-veteran-co-borrower",
@@ -1149,6 +1157,8 @@
       "what-military-bases-are-in-rhode-island"
     ],
     "south-carolina": [
+      "air-force-bases-in-south-carolina",
+      "army-bases-in-south-carolina",
       "myrtle-beach-military-retirement",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-fort-jackson-columbia-2026-guide",
@@ -1175,6 +1185,7 @@
       "best-places-to-live-near-fort-hood",
       "best-things-to-do-near-nas-jrb-fort-worth",
       "buying-a-home-near-joint-base-san-antonio-top-5-things-to-know",
+      "naval-bases-in-texas",
       "pcs-to-dyess-afb-abilene-2026-guide",
       "pcs-to-fort-bliss-el-paso-2026-guide",
       "pcs-to-fort-hood-killeen-2026-guide",
@@ -1237,10 +1248,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 273,
+    "resolved": 276,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 249,
+      "frontmatter-state-slug": 252,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -1774,6 +1785,39 @@
       ]
     },
     {
+      "slug": "air-force-bases-in-south-carolina",
+      "title": "Air Force Bases in South Carolina: Shaw, Charleston and McEntire",
+      "url": "/blog/air-force-bases-in-south-carolina",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "South Carolina has fighter jets in Sumter, cargo jets in Charleston and Guard fighters near Columbia. Here is what each Air Force base does and what 2026 housing pay looks like nearby.",
+      "publishedAt": "2026-11-10T09:00:00.000Z",
+      "updatedAt": "2026-11-15T00:00:00.000Z",
+      "primaryKeyword": "air force bases in south carolina",
+      "secondaryKeywords": [
+        "joint base charleston",
+        "mcentire joint national guard base",
+        "sc air force base",
+        "shaw afb",
+        "south carolina air force bases list"
+      ],
+      "h2Outline": [
+        "Air Force Bases in South Carolina, at a Glance",
+        "Shaw Air Force Base",
+        "Joint Base Charleston",
+        "McEntire Joint National Guard Base",
+        "What BAH Covers Near South Carolina Air Force Bases",
+        "Buying a Home Near South Carolina Air Force Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "air-force-bases-in-texas",
       "title": "Air Force Bases in Texas: JBSA, Dyess, Sheppard and 2026 BAH",
       "url": "/blog/air-force-bases-in-texas",
@@ -2297,6 +2341,39 @@
         "Buying or Renting on a Fort Bragg BAH",
         "Frequently Asked Questions",
         "Before You Sign Anything"
+      ]
+    },
+    {
+      "slug": "army-bases-in-south-carolina",
+      "title": "Army Bases in South Carolina: Fort Jackson and Beyond",
+      "url": "/blog/army-bases-in-south-carolina",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Fort Jackson trains about half of all new Soldiers, and Third Army runs its headquarters out of Sumter. Here is where the Army works in South Carolina and what 2026 housing pay looks like nearby.",
+      "publishedAt": "2026-11-12T09:00:00.000Z",
+      "updatedAt": "2026-11-15T00:00:00.000Z",
+      "primaryKeyword": "army bases in south carolina",
+      "secondaryKeywords": [
+        "army base in columbia sc",
+        "fort jackson",
+        "fort jackson bah",
+        "south carolina army installations",
+        "u.s. army central shaw afb"
+      ],
+      "h2Outline": [
+        "Army Bases in South Carolina, at a Glance",
+        "Fort Jackson",
+        "U.S. Army Central at Shaw Air Force Base",
+        "Army Units at Joint Base Charleston",
+        "What BAH Covers Near South Carolina Army Sites",
+        "Buying a Home Near South Carolina Army Sites",
+        "Frequently Asked Questions"
       ]
     },
     {
@@ -5337,6 +5414,39 @@
         "Navy Health Care and Housing on Oahu",
         "What BAH and COLA Cover in Hawaii",
         "Buying a Home Near Hawaii's Navy Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "naval-bases-in-texas",
+      "title": "Naval Bases in Texas: Corpus Christi, Kingsville and Fort Worth",
+      "url": "/blog/naval-bases-in-texas",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "texas",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Texas is where many Navy and Marine Corps pilots earn their wings. Here is what each naval air station does, which town it is near, and what 2026 housing pay looks like nearby.",
+      "publishedAt": "2026-11-08T09:00:00.000Z",
+      "updatedAt": "2026-11-15T00:00:00.000Z",
+      "primaryKeyword": "naval bases in texas",
+      "secondaryKeywords": [
+        "nas corpus christi",
+        "nas jrb fort worth",
+        "nas kingsville",
+        "navy bases in texas",
+        "navy flight training texas"
+      ],
+      "h2Outline": [
+        "Naval Bases in Texas, at a Glance",
+        "NAS Corpus Christi",
+        "NAS Kingsville",
+        "NAS JRB Fort Worth",
+        "What BAH Covers Near Texas Naval Bases",
+        "Buying a Home Near Texas Naval Bases",
         "Frequently Asked Questions"
       ]
     },
@@ -10222,7 +10332,7 @@
       ],
       "description": "A personally procured move (PPM or DITY) can pay you to move your own household goods. Here is how the 2026 incentive works and how to maximize it.",
       "publishedAt": "2026-06-30T09:00:00.000Z",
-      "updatedAt": "2026-06-23T12:00:00.000Z",
+      "updatedAt": "2026-11-15T00:00:00.000Z",
       "primaryKeyword": "ppm move",
       "secondaryKeywords": [
         "dity move 2026",
@@ -10233,6 +10343,7 @@
       ],
       "h2Outline": [
         "What a PPM Move Actually Pays",
+        "What Changed for PCS Moves in 2026",
         "How the Payment Is Calculated",
         "The PPM Process, Step by Step",
         "How to Maximize Your PPM Payout",
@@ -11795,6 +11906,39 @@
         "Using an EEM on a Refinance",
         "EEM Versus a VA Rehab Loan",
         "How to Ask for It",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "va-funding-fee-refund",
+      "title": "VA Funding Fee Refund: Who Qualifies and How It Works",
+      "url": "/blog/va-funding-fee-refund",
+      "component": "VA Loan Help",
+      "componentSlug": "va-loan-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "VA Loan Help"
+      ],
+      "description": "A disability rating that comes after you close can still get your VA funding fee back, but only if the effective date lands before your closing date. Here is how the rule works and what to do.",
+      "publishedAt": "2026-11-14T09:00:00.000Z",
+      "updatedAt": "2026-11-15T00:00:00.000Z",
+      "primaryKeyword": "va funding fee refund",
+      "secondaryKeywords": [
+        "funding fee refund after disability rating",
+        "how to get va funding fee refund",
+        "va funding fee exemption",
+        "va funding fee purple heart",
+        "va funding fee refund effective date"
+      ],
+      "h2Outline": [
+        "What the VA Funding Fee Is",
+        "Who Does Not Pay the Fee at All",
+        "When You Can Get a VA Funding Fee Refund",
+        "How the Refund Gets Paid",
+        "Watch Out for Refund Scams and Myths",
+        "How to Avoid Paying the Fee in the First Place",
         "Frequently Asked Questions"
       ]
     },
@@ -14124,7 +14268,7 @@
       ],
       "description": "Texas has one of the largest military footprints in the country. The state is home to eleven major active installations, supporting the Army, Air Force, and Navy, plus reserve and joint units that train alongside them. Whether you are PC...",
       "publishedAt": "2026-06-22T09:00:00.000Z",
-      "updatedAt": "2026-10-18T00:00:00.000Z",
+      "updatedAt": "2026-11-15T00:00:00.000Z",
       "primaryKeyword": "military bases in texas",
       "secondaryKeywords": [
         "air force bases in texas",
