@@ -20,7 +20,10 @@ if (shouldInitializePostHog(hostname)) {
         distinctID: visitorId,
       },
       autocapture: false,
-      capture_pageview: true,
+      // 'history_change' sends a $pageview on App Router navigations as well as
+      // on the initial load. `true` records full page loads only.
+      capture_pageview: 'history_change',
+      capture_pageleave: true,
       capture_exceptions: true,
       disable_session_recording: true,
       mask_all_text: true,
