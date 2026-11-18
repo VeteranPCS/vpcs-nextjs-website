@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 const push = vi.hoisted(() => vi.fn());
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
 vi.mock('next/image', () => ({ default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} /> }));
@@ -13,7 +13,11 @@ import HomeReviews from '../HomeReviews';
 import type { Review } from '@/components/homepage/ReviewTestimonial/ReviewTestimonial';
 const review = (name: string): Review => ({ comment: `${name} review text`, createTime: '2025-01-01', reviewId: name, reviewer: { displayName: name, profilePhotoUrl: '' }, starRating: 'FIVE' });
 describe('homepage interactions', () => {
-  beforeEach(() => { cleanup(); push.mockReset(); vi.unstubAllGlobals(); });
+  beforeEach(() => { push.mockReset(); });
+  afterEach(() => {
+    cleanup();
+    vi.unstubAllGlobals();
+  });
   it('moves tab focus with arrows and activates a panel explicitly', () => {
     render(<HomeSearch guide={<span>Guide</span>} />);
     const first = screen.getByRole('tab', { name: 'Find an Agent' });
@@ -42,12 +46,13 @@ describe('homepage interactions', () => {
     render(<HomeSearch guide={null} />);
     const input = screen.getByRole('textbox', { name: 'City, state, base, or ZIP code' });
     fireEvent.change(input, { target: { value: 'Springfield' } });
-    fireEvent.submit(input.closest('form')!);
-    await screen.findByText('Which state?');
+    const form = input.closest('form')!;
+    await act(async () => { fireEvent.submit(form); });
+    expect(screen.getByText('Which state?')).toBeTruthy();
     expect((input as HTMLInputElement).value).toBe('Springfield');
     fireEvent.change(screen.getByRole('combobox', { name: 'Choose a state' }), { target: { value: 'VA' } });
-    fireEvent.submit(input.closest('form')!);
-    await waitFor(() => expect(push).toHaveBeenCalledWith('/virginia'));
+    await act(async () => { fireEvent.submit(form); });
+    expect(push).toHaveBeenCalledWith('/virginia');
     expect(fetch.mock.calls[1]?.[0]).toContain('query=Springfield&state=VA');
   });
   it.each(['click', 'keyboard'])('cancels pending navigation when tabs change by %s', async (method) => {
@@ -72,8 +77,8 @@ describe('homepage interactions', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network')));
     render(<HomeSearch guide={null} />);
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Texas' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Find an Agent' }));
-    await screen.findByText(/Search is unavailable/);
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Find an Agent' })); });
+    expect(screen.getByText(/Search is unavailable/)).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Find an Agent' }).hasAttribute('disabled')).toBe(false);
   });
   it('updates established bonus tiers using a typed price', () => {

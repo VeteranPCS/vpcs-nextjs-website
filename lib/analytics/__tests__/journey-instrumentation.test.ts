@@ -33,6 +33,13 @@ describe('production SDK wiring with mocked delivery', () => {
     expect(customerJourney.payload('contact_agent')).toEqual({ posthog_session_id: id, session_entry_path: '/california', journey_attribution_version: 1 });
     expect(customerJourney.payload('get_listed_agents')).toEqual({});
   });
+  it('captures a pageview on client-side navigations, not only on full page loads', async () => {
+    await import('../../../instrumentation-client');
+    const options = mocks.init.mock.calls[0]![1] as PostHogConfig;
+    // `true` silently drops every App Router navigation; see docs/analytics/telemetry-taxonomy.md.
+    expect(options.capture_pageview).toBe('history_change');
+    expect(options.capture_pageleave).toBe(true);
+  });
   it('does not throw or initialize the SDK when existing visitor storage fails', async () => {
     mocks.visitor.mockImplementationOnce(() => { throw Error('storage blocked'); });
     await expect(import('../../../instrumentation-client')).resolves.toBeDefined();
