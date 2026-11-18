@@ -2,10 +2,10 @@
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
-const push = vi.hoisted(() => vi.fn());
+const { push, capture } = vi.hoisted(() => ({ push: vi.fn(), capture: vi.fn() }));
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
 vi.mock('next/image', () => ({ default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} /> }));
-vi.mock('@/lib/analytics/client', () => ({ trackCtaClicked: vi.fn(), captureAnalyticsEvent: vi.fn() }));
+vi.mock('@/lib/analytics/client', () => ({ trackCtaClicked: vi.fn(), captureAnalyticsEvent: capture }));
 vi.mock('@next/third-parties/google', () => ({ sendGTMEvent: vi.fn() }));
 import HomeSearch from '../HomeSearch';
 import HomeBonus from '../HomeBonus';
@@ -13,7 +13,7 @@ import HomeReviews from '../HomeReviews';
 import type { Review } from '@/components/homepage/ReviewTestimonial/ReviewTestimonial';
 const review = (name: string): Review => ({ comment: `${name} review text`, createTime: '2025-01-01', reviewId: name, reviewer: { displayName: name, profilePhotoUrl: '' }, starRating: 'FIVE' });
 describe('homepage interactions', () => {
-  beforeEach(() => { push.mockReset(); });
+  beforeEach(() => { push.mockReset(); capture.mockReset(); });
   afterEach(() => {
     cleanup();
     vi.unstubAllGlobals();
@@ -54,6 +54,10 @@ describe('homepage interactions', () => {
     await act(async () => { fireEvent.submit(form); });
     expect(push).toHaveBeenCalledWith('/virginia');
     expect(fetch.mock.calls[1]?.[0]).toContain('query=Springfield&state=VA');
+    expect(capture.mock.calls).toEqual([
+      ['homepage_location_search_completed', { outcome: 'needs_state' }],
+      ['homepage_location_search_completed', { outcome: 'resolved' }],
+    ]);
   });
   it.each(['click', 'keyboard'])('cancels pending navigation when tabs change by %s', async (method) => {
     let resolve!: (response: unknown) => void;
@@ -68,6 +72,7 @@ describe('homepage interactions', () => {
     expect(signal?.aborted).toBe(true);
     await act(async () => { resolve({ ok: true, json: async () => ({ outcome: 'resolved', href: '/texas', stateSlug: 'texas' }) }); });
     expect(push).not.toHaveBeenCalled();
+    expect(capture).not.toHaveBeenCalled();
     expect(screen.queryByRole('status')).toBeNull();
     fireEvent.click(screen.getByRole('tab', { name: 'Find an Agent' }));
     expect(screen.getByRole('button', { name: 'Find an Agent' }).hasAttribute('disabled')).toBe(false);
@@ -79,6 +84,7 @@ describe('homepage interactions', () => {
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Texas' } });
     await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Find an Agent' })); });
     expect(screen.getByText(/Search is unavailable/)).toBeTruthy();
+    expect(capture.mock.calls).toEqual([['homepage_location_search_completed', { outcome: 'error' }]]);
     expect(screen.getByRole('button', { name: 'Find an Agent' }).hasAttribute('disabled')).toBe(false);
   });
   it('updates established bonus tiers using a typed price', () => {

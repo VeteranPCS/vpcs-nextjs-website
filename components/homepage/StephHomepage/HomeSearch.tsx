@@ -3,7 +3,7 @@ import HomeIcon from './HomeIcon';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { US_STATES } from '@/constants/usStates';
-import { trackCtaClicked } from '@/lib/analytics/client';
+import { captureAnalyticsEvent, trackCtaClicked } from '@/lib/analytics/client';
 import { buildCtaProperties } from '@/lib/analytics/cta';
 import type { LocationSearchResult } from '@/lib/location-search/types';
 import { normalizeResourceQuery } from '@/lib/resources/catalogue';
@@ -64,12 +64,16 @@ export default function HomeSearch({ guide }: { guide: React.ReactNode }) {
       const data: LocationSearchResult = await response.json();
       if (id !== requestId.current) return;
       setResult(data);
+      captureAnalyticsEvent('homepage_location_search_completed', { outcome: data.outcome });
       if (data.outcome === 'resolved') {
         trackCtaClicked(buildCtaProperties({ ctaId: 'homepage_location_search', ctaIntent: 'state_page', ctaPosition: 'hero_search', ctaComponent: 'steph_homepage_search', ctaLabel: 'Find an Agent', destination: data.href, pageType: 'homepage', stateSlug: data.stateSlug }));
         router.push(data.href);
       }
     } catch {
-      if (id === requestId.current) setResult({ outcome: 'not_found', message: 'Search is unavailable right now. Please try again or browse by state.' });
+      if (id === requestId.current) {
+        captureAnalyticsEvent('homepage_location_search_completed', { outcome: 'error' });
+        setResult({ outcome: 'not_found', message: 'Search is unavailable right now. Please try again or browse by state.' });
+      }
     } finally { if (id === requestId.current) setLoading(false); }
   }
   return <div className={styles.searchCard}>

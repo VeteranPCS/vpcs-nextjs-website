@@ -114,6 +114,7 @@ Common optional properties:
 | `state_page_viewed` | State landing pages | `state_code`, `state_slug`, `source_content_type` |
 | `blog_search_submitted` | Blog search results pages | `query_length`, `query_word_count`, `query_word_count_bucket`, `result_count`, `result_bucket` |
 | `blog_search_results` | Blog search results pages | `result_count`, `result_bucket`, `page` |
+| `homepage_location_search_completed` | Homepage location search | `outcome` is `resolved`, `needs_state`, `not_found`, or `error`. Canceled searches and search text are omitted. |
 | `bah_calculator_used` | BAH calculator success | `zip_prefix`, `paygrade`, `dependents`, `year`, `mha` |
 | `moving_bonus_calculated` | Moving bonus calculator | `home_value_bucket`, `bonus_amount`, `charity_amount` |
 
@@ -124,6 +125,17 @@ Pageview rules to know before building a funnel:
 - **`$current_url` and `$referrer` never reach PostHog.** `sanitizePostHogBeforeSendEvent` replaces them with the path-only `$pathname` and `$referring_path`. `$referring_path` is taken from `document.referrer`, so it stays at the session's original value on in-site navigations. Use `$prev_pageview_pathname` for "which page did they come from".
 - **`$pageleave` is one per tab, not one per page.** On an in-site navigation the SDK attaches the leave data for the previous page to the next `$pageview` as `$prev_pageview_pathname` and `$prev_pageview_duration`. Expect far fewer `$pageleave` than `$pageview` events.
 - **Headless and automated browsers send nothing.** The SDK drops all events when `navigator.webdriver` is true or the user agent is a known bot.
+
+### Scoped replay and heatmap pilot
+
+`NEXT_PUBLIC_POSTHOG_REPLAY_PILOT_START` is an ISO timestamp controlling a 14-day window.
+The pilot is off when unset or expired. A stable 20% sample of eligible SDK sessions can
+record on the clean `/blog/category/va-loan-help` URL. Only browsers with the Navigation
+API and CSS selector support are eligible. The app stops recording before navigation
+and blocks forms, search fields, overlays, iframes, and the surrounding site shell.
+Heatmaps use clicks within the permitted content. Console recording and network
+payload capture are disabled. Roll back by removing the production setting and rebuilding.
+Verify via intercepted local telemetry before activating.
 
 ### Mid Funnel
 

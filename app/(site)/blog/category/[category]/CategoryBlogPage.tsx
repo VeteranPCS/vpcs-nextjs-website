@@ -109,7 +109,7 @@ export async function CategoryBlogPage({ category, page = 1 }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
-      <main className="bg-white">
+      <main className="bg-white" data-vpcs-replay-pilot={category === 'va-loan-help' && page === 1 ? '' : undefined}>
         <section className="border-b border-[#E5E7EB] px-5 py-10 md:py-14">
           <div className="container mx-auto">
             <nav className="mb-6 text-sm text-[#6C757D]" aria-label="Breadcrumb">
