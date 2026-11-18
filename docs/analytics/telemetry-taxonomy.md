@@ -108,13 +108,22 @@ Common optional properties:
 
 | Event | Emitted By | Key Properties |
 |---|---|---|
-| `$pageview` | PostHog SDK | `$pathname`, `vpcs_visitor_id` when initialized after telemetry deploy |
+| `$pageview` | PostHog SDK, on the initial load and on every client-side path change (`capture_pageview: 'history_change'`) | `$pathname`, `$prev_pageview_pathname` and `navigation_type` on in-site navigations, `vpcs_visitor_id` when initialized after telemetry deploy |
+| `$pageleave` | PostHog SDK, once when the tab unloads | `$pathname`, `$prev_pageview_pathname`, `$prev_pageview_duration` |
 | `content_viewed` | Blog posts | `content_id`, `content_slug`, `content_type`, `topic_cluster` |
 | `state_page_viewed` | State landing pages | `state_code`, `state_slug`, `source_content_type` |
 | `blog_search_submitted` | Blog search results pages | `query_length`, `query_word_count`, `query_word_count_bucket`, `result_count`, `result_bucket` |
 | `blog_search_results` | Blog search results pages | `result_count`, `result_bucket`, `page` |
 | `bah_calculator_used` | BAH calculator success | `zip_prefix`, `paygrade`, `dependents`, `year`, `mha` |
 | `moving_bonus_calculated` | Moving bonus calculator | `home_value_bucket`, `bonus_amount`, `charity_amount` |
+
+Pageview rules to know before building a funnel:
+
+- **In-site navigations were not recorded before the `history_change` fix.** Until it deployed, `instrumentation-client.ts` set `capture_pageview: true`, which sends a `$pageview` on full page loads only. Any `$pageview` funnel that spans that deploy date undercounts the earlier period.
+- **Query-string-only and hash-only changes do not send a `$pageview`.** The SDK compares `location.pathname`. `/contact-agent` to `/contact-agent?form=agent` is one pageview.
+- **`$current_url` and `$referrer` never reach PostHog.** `sanitizePostHogBeforeSendEvent` replaces them with the path-only `$pathname` and `$referring_path`. `$referring_path` is taken from `document.referrer`, so it stays at the session's original value on in-site navigations. Use `$prev_pageview_pathname` for "which page did they come from".
+- **`$pageleave` is one per tab, not one per page.** On an in-site navigation the SDK attaches the leave data for the previous page to the next `$pageview` as `$prev_pageview_pathname` and `$prev_pageview_duration`. Expect far fewer `$pageleave` than `$pageview` events.
+- **Headless and automated browsers send nothing.** The SDK drops all events when `navigator.webdriver` is true or the user agent is a known bot.
 
 ### Mid Funnel
 
@@ -435,6 +444,23 @@ WHERE timestamp >= toDateTime('YYYY-MM-DD HH:MM:SS')
 GROUP BY event
 ORDER BY events DESC
 LIMIT 100
+```
+
+### Check In-Site Pageview Coverage
+
+In-site navigations carry `navigation_type` (`pushState`, `replaceState` or `popstate`) and `$prev_pageview_pathname`. If `in_site_pageviews` is 0, client-side navigations are not being recorded.
+
+```sql
+SELECT
+  toDate(timestamp) AS day,
+  count() AS pageviews,
+  countIf(properties.navigation_type IS NOT NULL) AS in_site_pageviews,
+  round(count() / uniq(properties.$session_id), 2) AS pageviews_per_session
+FROM events
+WHERE event = '$pageview'
+  AND timestamp >= now() - INTERVAL 14 DAY
+GROUP BY day
+ORDER BY day DESC
 ```
 
 ### Check CTA Coverage By Surface
