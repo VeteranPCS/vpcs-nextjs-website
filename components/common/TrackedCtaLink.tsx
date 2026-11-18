@@ -4,6 +4,7 @@ import Link, { type LinkProps } from 'next/link';
 import type { AnchorHTMLAttributes, MouseEvent, ReactNode } from 'react';
 import { trackCtaClicked } from '@/lib/analytics/client';
 import { buildCtaProperties, type CtaTrackingInput } from '@/lib/analytics/cta';
+import { isSameContactAgentPage } from '@/lib/contactAgentUrl';
 
 type Props = LinkProps
   & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps | 'href' | 'onClick'>
@@ -31,6 +32,16 @@ export default function TrackedCtaLink({
       destination: cta.destination ?? hrefToPathCandidate(href),
     }));
     onClick?.(event);
+
+    // A link back to the agent contact page, clicked on that page, must not navigate: the
+    // lead is submitted with the current query string, and navigating would replace it and
+    // drop the selected agent. Returning to the top keeps what the visitor saw before.
+    const opensElsewhere = event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
+      || (props.target !== undefined && props.target !== '_self');
+    if (event.defaultPrevented || opensElsewhere) return;
+    if (!isSameContactAgentPage(hrefToPathCandidate(href), window.location.pathname)) return;
+    event.preventDefault();
+    window.scrollTo(0, 0);
   };
 
   return (

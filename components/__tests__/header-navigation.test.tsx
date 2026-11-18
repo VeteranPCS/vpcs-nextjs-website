@@ -131,6 +131,25 @@ describe('Header navigation', () => {
     expect(track).toHaveBeenCalledWith(expect.objectContaining({ cta_intent: 'contact_agent', cta_id: 'header_mobile_find_agent', destination_path: '/contact-agent' }));
   });
 
+  it('keeps the selected agent in the address when Find an Agent is clicked on the contact page', () => {
+    const selected = '/contact-agent?form=agent&fn=Test&id=partner-fixture&state=texas';
+    pathname = '/contact-agent'; window.history.replaceState(null, '', selected);
+    const scrollTo = vi.fn(); vi.stubGlobal('scrollTo', scrollTo);
+    try {
+      render(<ImpactProvider><Header /></ImpactProvider>);
+      const dialog = openMobile();
+      expect(fireEvent.click(within(dialog).getByRole('link', { name: 'Find an Agent' }))).toBe(false);
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(track).toHaveBeenCalledWith(expect.objectContaining({ cta_id: 'header_mobile_find_agent', destination_path: '/contact-agent' }));
+      desktop = true; act(() => mediaListener?.());
+      const primary = screen.getByRole('navigation', { name: 'Primary navigation' });
+      expect(fireEvent.click(within(primary).getByRole('link', { name: 'Find an Agent' }))).toBe(false);
+      expect(track).toHaveBeenCalledWith(expect.objectContaining({ cta_id: 'header_desktop_find_agent', destination_path: '/contact-agent' }));
+      expect(window.location.pathname + window.location.search).toBe(selected);
+      expect(scrollTo).toHaveBeenCalledTimes(2);
+    } finally { window.history.replaceState(null, '', '/'); }
+  });
+
   it('never displays unavailable numeric impact fallbacks', async () => {
     render(<ImpactProvider><Header /></ImpactProvider>);
     await waitFor(() => expect(fetch).toHaveBeenCalled());
