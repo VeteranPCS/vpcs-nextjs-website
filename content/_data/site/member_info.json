@@ -3,7 +3,7 @@
     "_id": "041a0c49-ae79-47a4-9d74-e8c5651df4fd",
     "_type": "member_info",
     "_createdAt": "2024-12-10T06:08:25Z",
-    "_updatedAt": "2024-12-10T06:41:49Z",
+    "_updatedAt": "2026-11-19T00:42:37.952Z",
     "description": [
       {
         "_key": "b345d9aa178b",
@@ -22,11 +22,10 @@
     ],
     "designation": "Chief Creative Officer",
     "image": {
-      "_sanityAssetId": "image-9db0cc634b555fc84b508b926c0dcfd427fc363a-640x475-webp",
-      "alt": "Stephanie Camfield Image",
-      "height": 475,
-      "path": "/images/content/member-info/digitalpasteimage.webp",
-      "width": 640
+      "alt": "Stephanie Camfield",
+      "height": 750,
+      "path": "/images/content/member-info/stephanie-camfield-2026.webp",
+      "width": 750
     },
     "name": "Stephanie Camfield",
     "roles": "digital_innovation"
@@ -241,7 +240,7 @@
     "_id": "f5d054e5-6011-4e04-a564-680fa94c1552",
     "_type": "member_info",
     "_createdAt": "2024-12-10T06:16:53Z",
-    "_updatedAt": "2024-12-10T06:17:58Z",
+    "_updatedAt": "2026-11-19T00:42:37.952Z",
     "description": [
       {
         "_key": "d495fb751988",
@@ -260,11 +259,10 @@
     ],
     "designation": "Chief Administrative Officer",
     "image": {
-      "_sanityAssetId": "image-e912f8df670c8524ffbb5ed37ca099e9305e0ef3-640x474-webp",
-      "alt": "Beth Soldner Profile Image",
-      "height": 474,
-      "path": "/images/content/member-info/adminpasteimage.webp",
-      "width": 640
+      "alt": "Beth Soldner",
+      "height": 750,
+      "path": "/images/content/member-info/beth-soldner-2026.webp",
+      "width": 750
     },
     "name": "Beth Soldner",
     "roles": "administration"
