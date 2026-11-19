@@ -24,6 +24,14 @@ export function buildContactCtaHref({
   return `${route}?${params.toString()}`;
 }
 
+/**
+ * Dispatched on `window` (cancelable) when a link back to the agent contact page is clicked
+ * on that page. A listener that handles the click calls preventDefault(); otherwise the link
+ * returns the visitor to the top of the page.
+ */
+export const SAME_PAGE_CONTACT_CTA_EVENT = 'vpcs:same-page-contact-cta';
+export type SamePageContactCtaDetail = { ctaId: string };
+
 const CONTACT_AGENT_PATH = '/contact-agent';
 const withoutTrailingSlash = (path: string) => (path.length > 1 ? path.replace(/\/+$/, '') : path);
 

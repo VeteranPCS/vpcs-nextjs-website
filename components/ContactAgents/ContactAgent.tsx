@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import Image from "next/image";
 import { useForm, Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -14,13 +15,22 @@ import { trackFormStarted } from '@/lib/analytics/client';
 import { useCustomerSubmission } from '@/components/common/useCustomerSubmission';
 import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import type { CustomerSubmitResponse } from '@/lib/leads/submission-outcome';
+import {
+  CONTACT_AGENT_FORM_REGION_ID,
+  readSelectedAgent,
+  type AppliedContactAgentVariant,
+  type SelectedAgent,
+} from '@/lib/experiments/desktop-contact-agent';
+import v2 from './ContactAgentV2.module.css';
 
 interface ContactFormProps {
   onSubmit: (data: ContactAgentFormData) => Promise<CustomerSubmitResponse>;
   derivedStateCode?: string | null;
+  /** desktop-contact-agent-v2 experiment. Only `test` adds markup; CSS limits it to desktop. */
+  variant?: AppliedContactAgentVariant | null;
 }
 
-const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
+const ContactAgentForm = ({ onSubmit, derivedStateCode, variant }: ContactFormProps) => {
   const {
     register,
     handleSubmit,
@@ -81,21 +91,54 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
     setAgentName(agentFirstName);
   }, [])
 
+  // Treatment only. Read before paint so the heading and agent panel never flash in late.
+  const treatment = variant === 'test';
+  const [selection, setSelection] = useState<{ agent: SelectedAgent | null; firstName: string | null }>({ agent: null, firstName: null });
+  useLayoutEffect(() => {
+    if (!treatment) return;
+    const urlParams = new URLSearchParams(window.location.search);
+    setSelection({ agent: readSelectedAgent(urlParams.get('id')), firstName: urlParams.get('fn') });
+  }, [treatment]);
+  const treatmentHeading = selection.agent
+    ? `Contact ${selection.agent.name}`
+    : selection.firstName
+      ? `Contact ${selection.firstName}`
+      : "Tell us where you're moving. We'll match you with an agent.";
+
 
   return (
     <div className="md:py-12 py-4 md:px-0 px-5">
-      <div className="md:w-[456px] mx-auto my-10">
+      <div id={CONTACT_AGENT_FORM_REGION_ID} aria-labelledby="contact-agent-heading" className={`md:w-[456px] mx-auto my-10 ${v2.region}`}>
         <form
           noValidate
           onSubmit={onFormSubmit}
           onFocus={() => trackFormStarted('contact_agent')}
         >
           <HoneypotField ref={honeypotRef} />
-          <div className="flex flex-col gap-8">
-            <div className="md:text-left text-center">
-              <h1 className="text-[#7E1618] lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
-                Contact {agentName}
+          <div className={`flex flex-col gap-8 ${v2.stack}`}>
+            <div className={`md:text-left text-center ${v2.intro}`}>
+              <h1 id="contact-agent-heading" className="text-[#7E1618] lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
+                <span className={v2.controlOnly}>Contact {agentName}</span>
+                {treatment && <span className={v2.testOnly}>{treatmentHeading}</span>}
               </h1>
+              {treatment && selection.agent && (selection.agent.photo || selection.agent.service || selection.agent.brokerage) && (
+                <div className={v2.agentPanel} data-selected-agent-panel>
+                  {selection.agent.photo && (
+                    <Image
+                      src={selection.agent.photo}
+                      alt={`${selection.agent.name}'s profile picture`}
+                      width={200}
+                      height={200}
+                      sizes="(min-width: 768px) 200px, 100px"
+                      className={v2.agentPhoto}
+                    />
+                  )}
+                  <div>
+                    {selection.agent.service && <p className={v2.agentService}>{selection.agent.service}</p>}
+                    {selection.agent.brokerage && <p className={v2.agentBrokerage}>{selection.agent.brokerage}</p>}
+                  </div>
+                </div>
+              )}
               <h2 className="text-[#242426] my-2 lg:text-[23px] md:text-[22px] sm:text-[18px] text-[18px] font-bold leading-6">
                 No spam mail, no fees. VeteranPCS is free to use.
               </h2>
@@ -104,7 +147,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
               </p>
             </div>
             <CustomerValidationSummary errors={errors} focusRequest={focusRequest} />
-            <div className="border rounded-lg border-[#E2E4E5] p-8">
+            <div className={`border rounded-lg border-[#E2E4E5] p-8 ${v2.card}`}>
               <div>
                 {/* First Name */}
                 <div className="mb-8 flex flex-col">
@@ -333,12 +376,12 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode }: ContactFormProps) => {
             </div>
             {/* Submit Button */}
             <CustomerSubmissionFeedback {...feedback} isSubmitting={isSubmitting} />
-            <div className="flex md:justify-start justify-center flex-col md:items-start items-center gap-3">
+            <div className={`flex md:justify-start justify-center flex-col md:items-start items-center gap-3 ${v2.actions}`}>
               <button
                 type="submit"
                 ref={setSubmitButton}
                 disabled={isSubmitting}
-                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
+                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg ${v2.submit}`}
               >
                 {submitLabel}
               </button>

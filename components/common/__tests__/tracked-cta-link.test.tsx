@@ -35,6 +35,20 @@ describe('TrackedCtaLink on the agent contact page', () => {
     expect(track).toHaveBeenCalledWith(expect.objectContaining({ cta_id: 'header_desktop_find_agent', destination_path: '/contact-agent' }));
   });
 
+  it('lets the page handle the click instead of returning to the top', () => {
+    window.history.replaceState(null, '', selectedAgent);
+    const seen: unknown[] = [];
+    const handle = (event: Event) => { seen.push((event as CustomEvent).detail); event.preventDefault(); };
+    window.addEventListener('vpcs:same-page-contact-cta', handle);
+    try {
+      render(<TrackedCtaLink href="/contact-agent?form=agent" cta={cta}>Find an Agent</TrackedCtaLink>);
+      expect(click().defaultPrevented).toBe(true);
+      expect(seen).toEqual([{ ctaId: 'header_desktop_find_agent' }]);
+      expect(scrollTo).not.toHaveBeenCalled();
+      expect(window.location.pathname + window.location.search).toBe(selectedAgent);
+    } finally { window.removeEventListener('vpcs:same-page-contact-cta', handle); }
+  });
+
   it('also covers the bare footer link', () => {
     window.history.replaceState(null, '', selectedAgent);
     render(<TrackedCtaLink href="/contact-agent" cta={cta}>Find an Agent</TrackedCtaLink>);

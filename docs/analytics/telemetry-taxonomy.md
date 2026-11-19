@@ -1,6 +1,6 @@
 # VeteranPCS Telemetry Taxonomy
 
-Last updated: 2026-10-10
+Last updated: 2026-11-19
 
 This is the durable reference for VeteranPCS web telemetry. Use it when changing analytics code, troubleshooting PostHog, comparing against Google Analytics, or planning Salesforce closed-loop reporting.
 
@@ -23,6 +23,7 @@ Salesforce remains the business source of truth for Leads, Customer Opportunitie
 | Page/content/search trackers | `components/Analytics/Trackers.tsx` |
 | Salesforce Web-to-Lead attribution fields | `services/salesforceLeadParams.ts`, `services/salesForcePostFormsService.tsx` |
 | Server-side PostHog delivery | `lib/posthog-server.ts` |
+| Experiments (PostHog feature flags) | `lib/experiments/desktop-contact-agent.ts`, `components/ContactAgents/useDesktopContactAgentVariant.ts` |
 
 ## Identity And Join Keys
 
@@ -305,6 +306,58 @@ browser's competing validation UI). Thus malformed emails now reach `form_submit
 `form_validation_failed`, instead of being stopped before analytics. Phone formatting is normalized
 before submission, and invalid phone lengths are rejected client-side. Expect a coverage change in
 attempt/error counts after deployment; accepted-lead semantics are unchanged.
+
+### Agent Contact Page Same-Page Links (2026-11)
+
+On `/contact-agent`, links that point back at the page (header "Find an Agent" on desktop and in the mobile menu, "Match With an Agent", footer "Find an Agent") do not navigate. The lead is submitted with the query string in the address bar, so navigating would drop the selected agent `id`. `components/common/TrackedCtaLink.tsx` leaves the address alone and returns to the top of the page. The `cta_clicked` event for the clicked link is unchanged.
+
+| `cta_id` | Fired by | Notes |
+|---|---|---|
+| `contact_agent_header_scroll` | `components/ContactAgents/useDesktopContactAgentVariant.ts` | Test variant of `desktop-contact-agent-v2` only, desktop only. Sent in addition to the header link's own `cta_clicked` (`header_desktop_find_agent`, `header_mobile_find_agent` or `header_match_with_an_agent`), so repeat header clicks stay comparable between arms. `cta_position` is `contact_agent_form`, `cta_component` is `contact_agent_page`. It does not increment `cta_click_count_before_conversion`. |
+
+## Experiments (PostHog Feature Flags)
+
+### `desktop-contact-agent-v2` (2026-11)
+
+A desktop-only A/B test of `/contact-agent`. Code: `lib/experiments/desktop-contact-agent.ts`, `components/ContactAgents/useDesktopContactAgentVariant.ts`, `components/ContactAgents/ContactAgentV2.module.css`.
+
+- **Flag setup (done by a person in PostHog, not from code):** a multivariate flag with the variant keys `control` and `test`. Any other value, including a plain boolean, renders control and is never exposed. With the flag missing or off, every visitor gets the current page.
+- **Who can see the treatment:** only desktop-class devices, defined in CSS as `(min-width: 1024px) and (hover: hover) and (pointer: fine)`. Phones and touch tablets always get the unchanged page.
+- **No layout switch after paint.** In-site navigations read the flag the SDK already holds. Hard loads read a first-party copy of the variant (`localStorage` key `vpcs_exp_desktop_contact_agent_v2`, refreshed whenever PostHog reports flags) before the form is parsed. If neither is available before first paint, the visitor gets control for that view.
+- **Exposure:** `$feature_flag_called` with `$feature_flag = 'desktop-contact-agent-v2'`. It is sent at most once per page view, and only when all three hold: the variant was known before paint, the device is desktop-class, and PostHog's current assignment matches the page the visitor is looking at. Visitors who fail any of these are in neither arm.
+- **`$feature/desktop-contact-agent-v2` is on every client event** once flags load, on every device. Use the exposure event, not this property, to decide who is in the experiment.
+- **Unit of analysis:** the visitor (`distinct_id`, which is `vpcs_visitor_id`). The flag is assigned per visitor.
+- **Primary metric:** exposed visitors with `form_started` where `form_id = 'contact_agent'` after exposure, divided by exposed visitors, by variant.
+- **`form_started` definition is unchanged.** It fires when the visitor moves focus into the form themselves. The treatment's header-click behaviour moves keyboard focus to the wrapper around the form (`#contact-agent-form`), never to an element inside the `<form>`, so it cannot register a form start. Tests in `components/ContactAgents/__tests__/desktop-variant.test.tsx` and `e2e/contact-agent-variant.spec.ts` enforce this. Do not add `.focus()` calls on form fields.
+- **Server-side `lead_conversion_created`** has no flag property. Join it to exposed visitors on `distinct_id`.
+- **Agent panel data** is public listing data (name, headshot path, military status, brokerage) passed from the state page card through `sessionStorage` key `vpcs_selected_agent`. It is never sent to PostHog.
+
+Exposed visitors and form starts by variant:
+
+```sql
+WITH exposed AS (
+  SELECT distinct_id, argMin(properties.$feature_flag_response, timestamp) AS variant, min(timestamp) AS exposed_at
+  FROM events
+  WHERE event = '$feature_flag_called'
+    AND properties.$feature_flag = 'desktop-contact-agent-v2'
+    AND timestamp >= now() - INTERVAL 60 DAY
+  GROUP BY distinct_id
+)
+SELECT
+  exposed.variant AS variant,
+  count() AS exposed_visitors,
+  countIf(started.last_start >= exposed.exposed_at) AS visitors_who_started_after_exposure
+FROM exposed
+LEFT JOIN (
+  SELECT distinct_id, max(timestamp) AS last_start
+  FROM events
+  WHERE event = 'form_started' AND properties.form_id = 'contact_agent' AND timestamp >= now() - INTERVAL 60 DAY
+  GROUP BY distinct_id
+) AS started ON started.distinct_id = exposed.distinct_id
+GROUP BY variant
+```
+
+Apply the bot and automation exclusions in `docs/analytics-context.md` before reading the result.
 
 ## Customer Form IDs
 

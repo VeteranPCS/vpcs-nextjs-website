@@ -152,4 +152,23 @@ describe('PostHog before_send handling', () => {
     expect(shouldInitializePostHog('127.0.0.1', { enableLocalCapture: true })).toBe(true);
     expect(shouldInitializePostHog('localhost', { enableLocalCapture: true })).toBe(true);
   });
+
+  it('keeps experiment exposure and flag properties, which the A/B analysis depends on', () => {
+    const exposure = sanitizePostHogBeforeSendEvent(captureResult('$feature_flag_called', {
+      $feature_flag: 'desktop-contact-agent-v2',
+      $feature_flag_response: 'test',
+      '$feature/desktop-contact-agent-v2': 'test',
+      $current_url: 'https://www.veteranpcs.com/contact-agent?fn=Private&id=partner',
+    }), 'vpcs_test_visitor');
+    expect(exposure?.properties).toMatchObject({
+      $feature_flag: 'desktop-contact-agent-v2',
+      $feature_flag_response: 'test',
+      '$feature/desktop-contact-agent-v2': 'test',
+      $pathname: '/contact-agent',
+    });
+    const started = sanitizePostHogBeforeSendEvent(captureResult('form_started', {
+      form_id: 'contact_agent', '$feature/desktop-contact-agent-v2': 'control', $active_feature_flags: ['desktop-contact-agent-v2'],
+    }), 'vpcs_test_visitor');
+    expect(started?.properties['$feature/desktop-contact-agent-v2']).toBe('control');
+  });
 });

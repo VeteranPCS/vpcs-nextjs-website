@@ -4,7 +4,7 @@ import Link, { type LinkProps } from 'next/link';
 import type { AnchorHTMLAttributes, MouseEvent, ReactNode } from 'react';
 import { trackCtaClicked } from '@/lib/analytics/client';
 import { buildCtaProperties, type CtaTrackingInput } from '@/lib/analytics/cta';
-import { isSameContactAgentPage } from '@/lib/contactAgentUrl';
+import { SAME_PAGE_CONTACT_CTA_EVENT, isSameContactAgentPage, type SamePageContactCtaDetail } from '@/lib/contactAgentUrl';
 
 type Props = LinkProps
   & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps | 'href' | 'onClick'>
@@ -41,7 +41,11 @@ export default function TrackedCtaLink({
     if (event.defaultPrevented || opensElsewhere) return;
     if (!isSameContactAgentPage(hrefToPathCandidate(href), window.location.pathname)) return;
     event.preventDefault();
-    window.scrollTo(0, 0);
+    const notHandled = window.dispatchEvent(new CustomEvent<SamePageContactCtaDetail>(SAME_PAGE_CONTACT_CTA_EVENT, {
+      cancelable: true,
+      detail: { ctaId: cta.ctaId },
+    }));
+    if (notHandled) window.scrollTo(0, 0);
   };
 
   return (
