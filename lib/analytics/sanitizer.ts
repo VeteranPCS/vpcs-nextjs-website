@@ -163,6 +163,7 @@ export function redactAnalyticsText(value: string, maxLength = 512): string | un
 
 function cleanScalar(key: string, value: unknown): AnalyticsValue {
   if (key === 'posthog_session_id' || key === '$session_id') return validSessionId(value);
+  if (key === 'contact_agent_experiment_view_id') return validSessionId(value);
   if (key === 'session_entry_path') return safeSessionEntryPath(value);
   if (value === undefined) return undefined;
   if (value === null || typeof value === 'number' || typeof value === 'boolean') return value;

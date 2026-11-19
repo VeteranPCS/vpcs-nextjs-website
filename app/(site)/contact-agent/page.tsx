@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ContactAgents from "@/components/ContactAgents/ContactAgent";
 import { submitContactAgentLead } from "./actions";
@@ -8,11 +8,9 @@ import { ContactAgentFormData } from "@/types";
 import { normalizeStateCode, normalizeStateSlug } from "@/lib/states";
 import { formTrackingPayload } from "@/lib/analytics/client";
 import type { CustomerSubmitResult } from "@/lib/leads/submission-outcome";
-import { CONTACT_AGENT_PREPAINT_SCRIPT, CONTACT_AGENT_VARIANT_ATTRIBUTE } from "@/lib/experiments/desktop-contact-agent";
+import { CONTACT_AGENT_VARIANT_ATTRIBUTE } from "@/lib/experiments/desktop-contact-agent";
 import { useDesktopContactAgentVariant } from "@/components/ContactAgents/useDesktopContactAgentVariant";
 import v2 from "@/components/ContactAgents/ContactAgentV2.module.css";
-
-const subscribeToNothing = () => () => {};
 
 /**
  * Reports the page's current query string, including changes made without a page load (a link
@@ -37,11 +35,7 @@ export default function ContactAgentPage() {
     () => (search === null ? null : normalizeStateCode(new URLSearchParams(search).get("state"))),
     [search],
   );
-  const container = useRef<HTMLDivElement>(null);
-  const variant = useDesktopContactAgentVariant(container);
-  // True for the server render and hydration only. The pre-paint script has to be in the
-  // static HTML, and React must not create it again on in-site navigations.
-  const inStaticHtml = useSyncExternalStore(subscribeToNothing, () => false, () => true);
+  const experiment = useDesktopContactAgentVariant();
 
   const handleSubmit = async (formData: ContactAgentFormData): Promise<CustomerSubmitResult> => {
     const fullQueryString = window.location.search;
@@ -84,15 +78,10 @@ export default function ContactAgentPage() {
   // };
 
   return (
-    // suppressHydrationWarning: on a hard load the pre-paint script marks this container with
-    // the variant before React hydrates it, so the first paint already has the right layout.
     <div
-      ref={container}
       className={`container mx-auto w-full ${v2.root}`}
-      {...{ [CONTACT_AGENT_VARIANT_ATTRIBUTE]: variant ?? undefined }}
-      suppressHydrationWarning
+      {...{ [CONTACT_AGENT_VARIANT_ATTRIBUTE]: experiment?.variant }}
     >
-      {inStaticHtml && <script dangerouslySetInnerHTML={{ __html: CONTACT_AGENT_PREPAINT_SCRIPT }} />}
       <div className={`flex flex-wrap md:flex-nowrap justify-between items-center md:pt-[140px] pt-[80px] md:mx-0 mx-5 ${v2.spacer}`}>
       </div>
       <Suspense fallback={null}>
@@ -102,7 +91,7 @@ export default function ContactAgentPage() {
         onSubmit={handleSubmit}
         derivedStateCode={derivedStateCode}
         urlSearch={search}
-        variant={variant}
+        experiment={experiment}
       />
     </div>
   );

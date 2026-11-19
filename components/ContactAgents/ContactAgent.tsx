@@ -11,14 +11,14 @@ import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 import { US_STATE_CODES } from '@/constants/usStates';
 import CustomerValidationSummary, { customerErrorProps } from '@/components/common/CustomerValidationSummary';
 import { contactAgentClientSchema } from '@/lib/validation/contactForms';
-import { trackFormStarted } from '@/lib/analytics/client';
+import { captureAnalyticsEvent, trackFormStarted } from '@/lib/analytics/client';
 import { useCustomerSubmission } from '@/components/common/useCustomerSubmission';
 import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import type { CustomerSubmitResponse } from '@/lib/leads/submission-outcome';
 import {
   CONTACT_AGENT_FORM_REGION_ID,
   readSelectedAgent,
-  type AppliedContactAgentVariant,
+  type ContactAgentExperiment,
   type SelectedAgent,
 } from '@/lib/experiments/desktop-contact-agent';
 import v2 from './ContactAgentV2.module.css';
@@ -32,10 +32,10 @@ interface ContactFormProps {
    */
   urlSearch?: string | null;
   /** desktop-contact-agent-v2 experiment. Only `test` adds markup; CSS limits it to desktop. */
-  variant?: AppliedContactAgentVariant | null;
+  experiment?: ContactAgentExperiment | null;
 }
 
-const ContactAgentForm = ({ onSubmit, derivedStateCode, urlSearch, variant }: ContactFormProps) => {
+const ContactAgentForm = ({ onSubmit, derivedStateCode, urlSearch, experiment }: ContactFormProps) => {
   const {
     register,
     handleSubmit,
@@ -105,13 +105,13 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode, urlSearch, variant }: Co
   }, [urlSearch])
 
   // Treatment only. Read before paint so the heading and agent panel never flash in late.
-  const treatment = variant === 'test';
+  const treatment = experiment?.variant === 'test';
   const [selection, setSelection] = useState<{ agent: SelectedAgent | null; firstName: string | null }>({ agent: null, firstName: null });
   useLayoutEffect(() => {
     if (!treatment) return;
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(urlSearch ?? window.location.search);
     setSelection({ agent: readSelectedAgent(urlParams.get('id')), firstName: urlParams.get('fn') });
-  }, [treatment]);
+  }, [treatment, urlSearch]);
   const treatmentHeading = selection.agent
     ? `Contact ${selection.agent.name}`
     : selection.firstName
@@ -119,19 +119,30 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode, urlSearch, variant }: Co
       : "Tell us where you're moving. We'll match you with an agent.";
 
 
+  const startedExperiment = useRef<string | null>(null);
+  const onFormFocus = () => {
+    trackFormStarted('contact_agent');
+    if (!experiment || startedExperiment.current === experiment.viewId) return;
+    startedExperiment.current = experiment.viewId;
+    captureAnalyticsEvent('contact_agent_experiment_form_started', {
+      form_id: 'contact_agent',
+      contact_agent_experiment_view_id: experiment.viewId,
+    });
+  };
+
   return (
     <div className="md:py-12 py-4 md:px-0 px-5">
       <div id={CONTACT_AGENT_FORM_REGION_ID} aria-labelledby="contact-agent-heading" className={`md:w-[456px] mx-auto my-10 ${v2.region}`}>
         <form
           noValidate
           onSubmit={onFormSubmit}
-          onFocus={() => trackFormStarted('contact_agent')}
+          onFocus={onFormFocus}
         >
           <HoneypotField ref={honeypotRef} />
           <div className={`flex flex-col gap-8 ${v2.stack}`}>
             <div className={`md:text-left text-center ${v2.intro}`}>
               <h1 id="contact-agent-heading" className="text-[#7E1618] lg:text-[32px] md:text-[32px] sm:text-[24px] text-[24px] font-bold leading-8">
-                <span className={v2.controlOnly}>Contact {agentName}</span>
+                <span className={treatment ? v2.controlOnly : undefined}>Contact {agentName}</span>
                 {treatment && <span className={v2.testOnly}>{treatmentHeading}</span>}
               </h1>
               {treatment && selection.agent && (selection.agent.photo || selection.agent.service || selection.agent.brokerage) && (

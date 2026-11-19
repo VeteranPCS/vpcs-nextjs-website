@@ -6,7 +6,6 @@ import {
   sanitizePostHogBeforeSendEvent,
   shouldInitializePostHog,
 } from '@/lib/analytics/posthog-before-send';
-import { syncContactAgentVariantCache } from '@/lib/experiments/desktop-contact-agent';
 
 const hostname = typeof window !== 'undefined' ? window.location.hostname : undefined;
 
@@ -45,7 +44,6 @@ if (shouldInitializePostHog(hostname)) {
         customerJourney.initialize(client);
         client.register({ vpcs_visitor_id: visitorId });
         replayPilot.attach(client);
-        syncContactAgentVariantCache(client);
       },
       debug: process.env.NODE_ENV === 'development',
     });

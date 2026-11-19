@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import TrackedCtaLink from '@/components/common/TrackedCtaLink';
+import { rememberSelectedAgent } from '@/lib/experiments/desktop-contact-agent';
 
 export interface AgentListItem {
   id: string;
@@ -161,6 +162,13 @@ export default function AgentCard({ list, kind, onSelect }: Props) {
                 {item.contactHref ? (
                   <TrackedCtaLink
                     href={item.contactHref}
+                    onClick={kind === 'agent' ? () => rememberSelectedAgent({
+                      id: item.id,
+                      name: item.name,
+                      photo: item.photoUrl,
+                      service: militaryLine(item),
+                      brokerage: item.brokerage,
+                    }) : undefined}
                     className="inline-flex min-h-[44px] items-center justify-center rounded-md bg-accent-red px-3 py-2 text-center text-sm font-medium text-white motion-safe:transition-colors hover:bg-accent-red-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     cta={{
                       ctaId: 'concierge_partner_contact',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useState, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { captureAnalyticsEvent } from '@/lib/analytics/client';
 import { buildCtaProperties } from '@/lib/analytics/cta';
 import { SAME_PAGE_CONTACT_CTA_EVENT, type SamePageContactCtaDetail } from '@/lib/contactAgentUrl';
@@ -8,11 +8,14 @@ import {
   CONTACT_AGENT_FORM_REGION_ID,
   isDesktopContactAgentDevice,
   recordContactAgentExposure,
-  resolveContactAgentVariant,
-  type AppliedContactAgentVariant,
+  resolveContactAgentExperiment,
+  type ContactAgentExperiment,
 } from '@/lib/experiments/desktop-contact-agent';
 
 const HIGHLIGHT_MS = 1600;
+const subscribeToNothing = () => () => {};
+const clientSnapshot = () => true;
+const serverSnapshot = () => false;
 
 /**
  * Brings the form into view after the header "Find an Agent" button is clicked on this page.
@@ -40,22 +43,29 @@ export function revealContactAgentForm(region: HTMLElement): boolean {
 }
 
 /**
- * Resolves the desktop-contact-agent-v2 variant for this view of the page and, in the test
- * variant on a desktop-class device, takes over same-page header "Find an Agent" clicks.
- * The caller renders the result as the container's data-contact-agent-variant attribute.
- * Returns null until resolved, which always happens before first paint on the client.
+ * Enrolls only in-site entries with a fresh desktop assignment before paint. A hard load
+ * uses the server snapshot and stays in control for this view, even after PostHog loads.
  */
-export function useDesktopContactAgentVariant(container: RefObject<Element | null>): AppliedContactAgentVariant | null {
-  const [variant, setVariant] = useState<AppliedContactAgentVariant | null>(null);
+export function useDesktopContactAgentVariant(): ContactAgentExperiment | null {
+  const canEnroll = useSyncExternalStore(subscribeToNothing, clientSnapshot, serverSnapshot);
+  const [experiment, setExperiment] = useState<ContactAgentExperiment | null>(null);
+  const resolved = useRef(false);
+  const exposureRecorded = useRef(false);
 
   useLayoutEffect(() => {
-    const applied = resolveContactAgentVariant(container.current);
-    setVariant(applied);
-    return recordContactAgentExposure(applied);
-  }, [container]);
+    if (resolved.current) return;
+    resolved.current = true;
+    if (canEnroll) setExperiment(resolveContactAgentExperiment());
+  }, [canEnroll]);
+
+  useLayoutEffect(() => {
+    if (!experiment || exposureRecorded.current) return;
+    exposureRecorded.current = true;
+    recordContactAgentExposure(experiment);
+  }, [experiment]);
 
   useEffect(() => {
-    if (variant !== 'test') return;
+    if (experiment?.variant !== 'test') return;
     const onSamePageCta = (event: Event) => {
       const detail = (event as CustomEvent<SamePageContactCtaDetail>).detail;
       if (!detail?.ctaId?.startsWith('header_') || !isDesktopContactAgentDevice()) return;
@@ -76,7 +86,7 @@ export function useDesktopContactAgentVariant(container: RefObject<Element | nul
     };
     window.addEventListener(SAME_PAGE_CONTACT_CTA_EVENT, onSamePageCta);
     return () => window.removeEventListener(SAME_PAGE_CONTACT_CTA_EVENT, onSamePageCta);
-  }, [variant]);
+  }, [experiment]);
 
-  return variant;
+  return experiment;
 }

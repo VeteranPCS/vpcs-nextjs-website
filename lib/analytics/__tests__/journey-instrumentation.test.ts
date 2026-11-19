@@ -40,21 +40,6 @@ describe('production SDK wiring with mocked delivery', () => {
     expect(options.capture_pageview).toBe('history_change');
     expect(options.capture_pageleave).toBe(true);
   });
-  it('mirrors the contact-agent experiment flag into first-party storage when flags arrive', async () => {
-    await import('../../../instrumentation-client');
-    const options = mocks.init.mock.calls[0]![1] as PostHogConfig;
-    let flagsArrived = () => {};
-    const sdk = { onSessionId: () => vi.fn(), get_session_id: () => id, has_opted_out_capturing: () => false, register: vi.fn(),
-      onFeatureFlags: (fn: () => void) => { flagsArrived = fn; return vi.fn(); },
-      getFeatureFlag: vi.fn(() => 'test') };
-    options.loaded(sdk as unknown as Parameters<PostHogConfig['loaded']>[0]);
-    const store = new Map<string, string>();
-    vi.stubGlobal('window', { localStorage: { setItem: (k: string, v: string) => store.set(k, v), removeItem: (k: string) => store.delete(k) } });
-    flagsArrived();
-    expect(store.get('vpcs_exp_desktop_contact_agent_v2')).toBe('test');
-    // Reading the flag for the cache must never count as an experiment exposure.
-    expect(sdk.getFeatureFlag).toHaveBeenCalledWith('desktop-contact-agent-v2', { send_event: false });
-  });
   it('does not throw or initialize the SDK when existing visitor storage fails', async () => {
     mocks.visitor.mockImplementationOnce(() => { throw Error('storage blocked'); });
     await expect(import('../../../instrumentation-client')).resolves.toBeDefined();

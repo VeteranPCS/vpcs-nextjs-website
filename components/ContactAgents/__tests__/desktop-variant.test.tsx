@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Page from '@/app/(site)/contact-agent/page';
 import { captureAnalyticsEvent, trackFormStarted } from '@/lib/analytics/client';
 
-const sdk = vi.hoisted(() => ({ __loaded: true, flag: undefined as unknown, getFeatureFlag: vi.fn(), onFeatureFlags: vi.fn(() => () => {}) }));
+const sdk = vi.hoisted(() => ({ __loaded: true, flag: undefined as unknown, getFeatureFlag: vi.fn(), get_property: vi.fn(), capture: vi.fn() }));
 vi.mock('posthog-js', () => ({ default: sdk }));
 vi.mock('next/image', () => ({ default: (props: Record<string, unknown>) => <span data-image={String(props.src)} role="img" aria-label={String(props.alt)} /> }));
 vi.mock('@/app/(site)/contact-agent/actions', () => ({ submitContactAgentLead: vi.fn() }));
@@ -42,7 +42,7 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); window.sessionStorage.clear(); window.history.replaceState(null, '', '/'); });
 
 describe('desktop-contact-agent-v2 on the contact page', () => {
-  it.each([['control', 'control'], [undefined, 'unknown'], [true, 'unknown']])('renders the unchanged page for flag value %o', (flag, applied) => {
+  it.each([['control', 'control'], [undefined, null], [true, null]])('renders the unchanged page for flag value %o', (flag, applied) => {
     const view = open('/contact-agent?form=agent&fn=Test&id=partner&state=texas', flag);
     expect(variantOf(view)).toBe(applied);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Contact Test');
@@ -93,6 +93,11 @@ describe('desktop-contact-agent-v2 on the contact page', () => {
     fireEvent.focus(document.getElementById('firstName')!);
     expect(trackFormStarted).toHaveBeenCalledTimes(1);
     expect(trackFormStarted).toHaveBeenCalledWith('contact_agent');
+    const props = sdk.capture.mock.calls[0]![1];
+    expect(captureAnalyticsEvent).toHaveBeenCalledWith('contact_agent_experiment_form_started', {
+      form_id: 'contact_agent',
+      contact_agent_experiment_view_id: props.contact_agent_experiment_view_id,
+    });
   });
 
   it('leaves footer links and non-desktop devices on the default behaviour', () => {
@@ -106,11 +111,11 @@ describe('desktop-contact-agent-v2 on the contact page', () => {
 
   it('records an exposure only on a desktop-class device with a known variant', () => {
     open('/contact-agent', 'test');
-    expect(sdk.onFeatureFlags).toHaveBeenCalled();
-    cleanup(); sdk.onFeatureFlags.mockClear();
+    expect(sdk.capture).toHaveBeenCalledTimes(1);
+    cleanup(); sdk.capture.mockClear();
     desktop = false; open('/contact-agent', 'test');
     cleanup();
     desktop = true; open('/contact-agent', undefined);
-    expect(sdk.onFeatureFlags).not.toHaveBeenCalled();
+    expect(sdk.capture).not.toHaveBeenCalled();
   });
 });

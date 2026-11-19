@@ -3,139 +3,67 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const sdk = vi.hoisted(() => ({
   __loaded: true,
-  flag: undefined as unknown,
-  handlers: [] as Array<() => void>,
   getFeatureFlag: vi.fn(),
-  onFeatureFlags: vi.fn(),
+  get_property: vi.fn(),
+  capture: vi.fn(),
 }));
 vi.mock('posthog-js', () => ({ default: sdk }));
 
 import {
-  CONTACT_AGENT_PREPAINT_SCRIPT,
-  parseContactAgentVariant,
-  readCachedContactAgentVariant,
   readSelectedAgent,
   recordContactAgentExposure,
   rememberSelectedAgent,
-  resolveContactAgentVariant,
-  syncContactAgentVariantCache,
+  resolveContactAgentExperiment,
 } from '@/lib/experiments/desktop-contact-agent';
 
 const FLAG = 'desktop-contact-agent-v2';
-const CACHE = 'vpcs_exp_desktop_contact_agent_v2';
 let desktop = true;
-const exposures = () => sdk.getFeatureFlag.mock.calls.filter((call) => call.length === 1);
-
 beforeEach(() => {
-  desktop = true; sdk.__loaded = true; sdk.flag = undefined; sdk.handlers = [];
-  sdk.getFeatureFlag.mockReset().mockImplementation(() => sdk.flag);
-  sdk.onFeatureFlags.mockReset().mockImplementation((handler: () => void) => { sdk.handlers.push(handler); return () => { sdk.handlers = sdk.handlers.filter((h) => h !== handler); }; });
+  desktop = true;
+  sdk.__loaded = true;
+  vi.resetAllMocks();
   vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: desktop })));
 });
-afterEach(() => { vi.unstubAllGlobals(); window.localStorage.clear(); window.sessionStorage.clear(); document.body.innerHTML = ''; });
+afterEach(() => { vi.unstubAllGlobals(); window.sessionStorage.clear(); });
 
-function container(attribute?: string) {
-  const element = document.createElement('div');
-  if (attribute !== undefined) element.setAttribute('data-contact-agent-variant', attribute);
-  return element;
-}
-
-describe('variant values', () => {
-  it.each([['test', 'test'], ['control', 'control'], [true, null], ['Test', null], [undefined, null], ['v2', null]])('parses %o as %o', (value, expected) => {
-    expect(parseContactAgentVariant(value)).toBe(expected);
-  });
-});
-
-describe('resolving the variant before paint', () => {
-  it.each(['test', 'control', 'unknown'] as const)('keeps what the pre-paint script painted (%s), whatever the SDK says now', (painted) => {
-    sdk.flag = painted === 'test' ? 'control' : 'test';
-    expect(resolveContactAgentVariant(container(painted))).toBe(painted);
+describe('desktop contact experiment', () => {
+  it.each(['test', 'control'])('resolves confirmed %s without sending an exposure', (variant) => {
+    sdk.getFeatureFlag.mockReturnValue(variant);
+    const experiment = resolveContactAgentExperiment();
+    expect(experiment).toEqual({ variant, viewId: expect.any(String) });
+    expect(sdk.getFeatureFlag).toHaveBeenCalledWith(FLAG, { fresh: true, send_event: false });
+    expect(sdk.capture).not.toHaveBeenCalled();
   });
 
-  it('reads the flag the SDK already holds on an in-site navigation, without an exposure', () => {
-    sdk.flag = 'test';
-    expect(resolveContactAgentVariant(container())).toBe('test');
-    expect(sdk.getFeatureFlag).toHaveBeenCalledWith(FLAG, { send_event: false });
-    expect(exposures()).toHaveLength(0);
+  it.each([true, false, undefined, 'unrecognized'])('falls back to control without enrolling for %o', (variant) => {
+    sdk.getFeatureFlag.mockReturnValue(variant);
+    expect(resolveContactAgentExperiment()).toBeNull();
   });
 
-  it.each([
-    ['the flag does not exist', () => { sdk.flag = undefined; }],
-    ['the flag is a plain boolean', () => { sdk.flag = true; }],
-    ['the SDK never started', () => { sdk.__loaded = false; sdk.flag = 'test'; }],
-    ['the SDK throws', () => { sdk.getFeatureFlag.mockImplementation(() => { throw new Error('blocked'); }); }],
-  ])('falls back to unknown (control, unexposed) when %s', (_name, arrange) => {
-    arrange();
-    expect(resolveContactAgentVariant(container())).toBe('unknown');
-  });
-});
-
-describe('pre-paint script', () => {
-  function run(readyState: DocumentReadyState, cached?: string) {
-    if (cached) window.localStorage.setItem(CACHE, cached);
-    const host = container();
-    const script = document.createElement('script');
-    host.appendChild(script); document.body.appendChild(host);
-    const state = vi.spyOn(document, 'readyState', 'get').mockReturnValue(readyState);
-    const current = vi.spyOn(document, 'currentScript', 'get').mockReturnValue(script);
-    try { new Function(CONTACT_AGENT_PREPAINT_SCRIPT)(); } finally { state.mockRestore(); current.mockRestore(); }
-    return host.getAttribute('data-contact-agent-variant');
-  }
-
-  it.each([['test', 'test'], ['control', 'control'], [undefined, 'unknown'], ['<img onerror=1>', 'unknown']])('marks the container from the cached value %o as %s while the page is loading', (cached, expected) => {
-    expect(run('loading', cached)).toBe(expected);
+  it.each(['connection_error', 'errors_while_computing_flags', 'quota_limited'])('rejects a retained flag after %s', (error) => {
+    sdk.get_property.mockReturnValue([error]);
+    sdk.getFeatureFlag.mockReturnValue('test');
+    expect(resolveContactAgentExperiment()).toBeNull();
+    expect(sdk.getFeatureFlag).not.toHaveBeenCalled();
   });
 
-  it('does nothing on in-site navigations, where the page is already loaded', () => {
-    expect(run('complete', 'test')).toBeNull();
-    expect(run('interactive', 'test')).toBeNull();
-  });
-});
-
-describe('experiment exposure', () => {
-  it('is sent once, only after PostHog confirms the variant the visitor is looking at', () => {
-    sdk.flag = 'test';
-    const stop = recordContactAgentExposure('test');
-    expect(exposures()).toHaveLength(0);
-    sdk.handlers.forEach((handler) => handler());
-    sdk.handlers.forEach((handler) => handler());
-    expect(exposures()).toEqual([[FLAG]]);
-    stop();
-    expect(sdk.handlers).toHaveLength(0);
+  it('does not require the SDK or enroll a phone', () => {
+    sdk.__loaded = false;
+    expect(resolveContactAgentExperiment()).toBeNull();
+    sdk.__loaded = true;
+    desktop = false;
+    expect(resolveContactAgentExperiment()).toBeNull();
+    expect(sdk.getFeatureFlag).not.toHaveBeenCalled();
   });
 
-  it('is not sent when a stale cached variant disagrees with the current assignment', () => {
-    sdk.flag = 'control';
-    recordContactAgentExposure('test');
-    sdk.handlers.forEach((handler) => handler());
-    expect(exposures()).toHaveLength(0);
-  });
-
-  it('is never sent for an unknown variant, on a phone or tablet, or without the SDK', () => {
-    sdk.flag = 'test';
-    recordContactAgentExposure('unknown');
-    desktop = false; recordContactAgentExposure('test'); desktop = true;
-    sdk.__loaded = false; recordContactAgentExposure('test');
-    expect(sdk.onFeatureFlags).not.toHaveBeenCalled();
-    expect(exposures()).toHaveLength(0);
-  });
-});
-
-describe('cached variant for hard loads', () => {
-  it('follows the flag as PostHog reports it and clears when the flag goes away', () => {
-    syncContactAgentVariantCache(sdk);
-    sdk.flag = 'test'; sdk.handlers.forEach((handler) => handler());
-    expect(readCachedContactAgentVariant()).toBe('test');
-    sdk.flag = 'control'; sdk.handlers.forEach((handler) => handler());
-    expect(readCachedContactAgentVariant()).toBe('control');
-    sdk.flag = undefined; sdk.handlers.forEach((handler) => handler());
-    expect(window.localStorage.getItem(CACHE)).toBeNull();
-    expect(exposures()).toHaveLength(0);
-  });
-
-  it('tolerates SDK clients without flag support', () => {
-    expect(() => syncContactAgentVariantCache({})).not.toThrow();
-    expect(() => syncContactAgentVariantCache(null)).not.toThrow();
+  it('sends the rendered assignment with the experiment view identifier', () => {
+    const viewId = '01994000-0000-7000-8000-123456789012';
+    recordContactAgentExposure({ variant: 'test', viewId });
+    expect(sdk.capture).toHaveBeenCalledWith('$feature_flag_called', {
+      $feature_flag: FLAG,
+      $feature_flag_response: 'test',
+      contact_agent_experiment_view_id: viewId,
+    }, { send_instantly: true });
   });
 });
 
