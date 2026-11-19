@@ -8,68 +8,95 @@ const FLAG = 'desktop-contact-agent-v2';
 const selectedAgent = { id: 'E2EAGENT0000001', name: 'Fixture Agent', photo: null, service: 'Army Veteran', brokerage: 'Fixture Realty' };
 const selectedUrl = '/contact-agent?form=agent&fn=Fixture&id=E2EAGENT0000001&state=texas';
 const variantSelector = '[data-contact-agent-variant]';
-const requiresLocalCapture = () => test.skip(process.env.E2E_POSTHOG_LOCAL_CAPTURE !== '1', 'Requires explicit local PostHog capture');
+const localCapture = process.env.E2E_POSTHOG_LOCAL_CAPTURE === '1';
+const requiresLocalCapture = () => test.skip(!localCapture, 'Requires explicit local PostHog capture');
 const isDesktop = (page: Page) => (page.viewportSize()?.width ?? 0) >= 1024;
 const hasDesktopHeader = (page: Page) => (page.viewportSize()?.width ?? 0) >= 1280;
 const heading = (page: Page) => page.getByRole('heading', { level: 1 });
+const isFlagsRequest = (url: URL) => /\/flags\/?$/.test(url.pathname);
 
-async function mockTelemetry(page: Page, flag: 'test' | 'control' | undefined) {
+async function mockTelemetry(page: Page, flags: Record<string, string | boolean>) {
   await fixtureImpact(page);
-  const { events, decodeFailures } = await interceptTelemetry(page, flag ? { [FLAG]: flag } : {});
+  const { events, decodeFailures } = await interceptTelemetry(page, flags);
   return {
     exposures: () => events.filter(e => e.event === '$feature_flag_called' && e.properties.$feature_flag === FLAG),
     starts: () => events.filter(e => e.event === 'contact_agent_experiment_form_started'),
+    formStarts: () => events.filter(e => e.event === 'form_started' && e.properties.form_id === 'contact_agent'),
+    headerScrolls: () => events.filter(e => e.event === 'cta_clicked' && e.properties.cta_id === 'contact_agent_header_scroll'),
+    contactPageviews: () => events.filter(e => e.event === '$pageview' && e.properties.$pathname === '/contact-agent'),
     decodeFailures,
   };
 }
 
+async function expectCachedAssignment(page: Page, expected: 'test' | 'control' | null) {
+  await expect.poll(() => page.evaluate(flag => {
+    const key = Object.keys(localStorage).find(key => key.startsWith('ph_') && key.endsWith('_posthog'));
+    if (!key) return undefined;
+    return JSON.parse(localStorage.getItem(key) ?? '{}').$enabled_feature_flags?.[flag] ?? null;
+  }, FLAG)).toBe(expected);
+}
+
 async function startOnAnotherPage(page: Page, expected: 'test' | 'control') {
   await page.goto('/how-it-works');
-  await expect.poll(() => page.evaluate(({ flag, expected }) => {
-    return Object.keys(localStorage).some(key => {
-      if (!key.startsWith('ph_')) return false;
-      try {
-        return JSON.parse(localStorage.getItem(key) ?? '{}').$enabled_feature_flags?.[flag] === expected;
-      } catch { return false; }
-    });
-  }, { flag: FLAG, expected })).toBe(true);
+  await expectCachedAssignment(page, expected);
   await expect(heading(page)).toBeVisible();
 }
 
 async function openFromHeader(page: Page) {
-  if (hasDesktopHeader(page)) {
-    await page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Find an Agent', exact: true }).click();
-  } else {
-    await page.getByRole('button', { name: 'Open navigation' }).click();
-    await page.getByRole('dialog', { name: 'Mobile navigation' }).getByRole('link', { name: 'Find an Agent', exact: true }).click();
-  }
-  await expect(page).toHaveURL(/\/contact-agent/);
-  await expect(page.locator('#firstName')).toBeVisible();
+  await page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Find an Agent', exact: true }).click();
 }
 
 async function navigateToSelection(page: Page, url: string) {
-  await page.evaluate((href) => (window as unknown as { next: { router: { push(href: string): void } } }).next.router.push(href), url);
-  await expect(page).toHaveURL(url);
+  const timeOrigin = await page.evaluate(() => performance.timeOrigin);
+  // The framework can expose its test router before hydration can handle a push.
+  await expect(async () => {
+    await page.evaluate(href => {
+      if (window.location.href === new URL(href, window.location.href).href) return;
+      const { next } = window as Window & { next?: { router?: { push(href: string): void } } };
+      next?.router?.push(href);
+    }, url);
+    await expect(page).toHaveURL(url, { timeout: 2000 });
+  }).toPass({ timeout: 20000 });
+  expect(await page.evaluate(() => performance.timeOrigin)).toBe(timeOrigin);
 }
 
-test('hard loads keep a visible control heading before and after hydration', async ({ page }) => {
-  await fixtureImpact(page);
+test('a hard load keeps the control layout through delayed hydration', async ({ page }) => {
+  const telemetry = await mockTelemetry(page, { [FLAG]: 'test' });
   await page.addInitScript(() => localStorage.setItem('vpcs_exp_desktop_contact_agent_v2', 'test'));
-  const scripts = (url: URL) => url.pathname.startsWith('/_next/static/') && url.pathname.endsWith('.js');
-  await page.route(scripts, route => route.abort());
-  await page.goto(selectedUrl);
-  await expect(heading(page)).toHaveText('Contact Us');
-  await expect(page.locator(variantSelector)).toHaveCount(0);
-  await page.unroute(scripts);
-  await page.reload();
+  let releaseScripts = () => {};
+  const scriptsReady = new Promise<void>(resolve => { releaseScripts = resolve; });
+  await page.route(url => url.pathname.startsWith('/_next/static/') && url.pathname.endsWith('.js'), async route => {
+    await scriptsReady;
+    await route.fallback();
+  });
+  const firstFieldTop = () => page.locator('#firstName').evaluate(element => element.getBoundingClientRect().top);
+  let initialTop: number;
+  try {
+    await page.goto(selectedUrl, { waitUntil: 'commit' });
+    await expect(heading(page)).toBeVisible();
+    await expect(heading(page)).toHaveText('Contact Us');
+    await expect(page.locator(variantSelector)).toHaveCount(0);
+    await page.evaluate(async () => { await document.fonts.ready; });
+    initialTop = await firstFieldTop();
+  } finally {
+    releaseScripts();
+  }
+
   await expect(heading(page)).toHaveText('Contact Fixture');
+  if (localCapture) {
+    await expectCachedAssignment(page, 'test');
+    await expect.poll(() => telemetry.contactPageviews().length).toBeGreaterThan(0);
+  }
+  await expect(heading(page)).toBeVisible();
   await expect(page.locator(variantSelector)).toHaveCount(0);
+  expect(Math.abs(await firstFieldTop() - initialTop)).toBeLessThanOrEqual(2);
+  expect(telemetry.exposures()).toHaveLength(0);
 });
 
 for (const arm of ['test', 'control'] as const) {
   test(`confirmed ${arm} records the rendered desktop exposure and only the first real start`, async ({ page }, testInfo) => {
     requiresLocalCapture();
-    const telemetry = await mockTelemetry(page, arm);
+    const telemetry = await mockTelemetry(page, { [FLAG]: arm });
     await page.addInitScript(agent => sessionStorage.setItem('vpcs_selected_agent', JSON.stringify(agent)), selectedAgent);
     await startOnAnotherPage(page, arm);
     await navigateToSelection(page, selectedUrl);
@@ -107,7 +134,10 @@ for (const arm of ['test', 'control'] as const) {
     if (arm === 'test' && hasDesktopHeader(page)) {
       await openFromHeader(page);
       await expect(page.locator('#contact-agent-form')).toBeFocused();
+      await expect(page.locator('#firstName')).toBeInViewport();
+      await expect.poll(() => telemetry.headerScrolls().length).toBe(1);
     }
+    expect(telemetry.formStarts()).toHaveLength(0);
     expect(telemetry.starts()).toHaveLength(0);
     const viewport = page.viewportSize()!;
     await page.setViewportSize({ width: 780, height: viewport.height });
@@ -119,7 +149,7 @@ for (const arm of ['test', 'control'] as const) {
     expect(telemetry.starts()).toHaveLength(0);
     await page.locator('#firstName').click();
     await page.locator('#lastName').click();
-    await expect.poll(() => telemetry.starts().length).toBe(1);
+    await expect.poll(() => [telemetry.formStarts().length, telemetry.starts().length]).toEqual([1, 1]);
     expect(telemetry.starts()[0]!.properties.contact_agent_experiment_view_id).toBe(exposure.properties.contact_agent_experiment_view_id);
     expect(telemetry.exposures()).toHaveLength(1);
     expect(telemetry.decodeFailures).toEqual([]);
@@ -129,18 +159,43 @@ for (const arm of ['test', 'control'] as const) {
 for (const failure of ['partial', 'blocked'] as const) {
   test(`a ${failure} flag response cannot promote a stale assignment`, async ({ page }) => {
     requiresLocalCapture();
-    const telemetry = await mockTelemetry(page, 'test');
+    const telemetry = await mockTelemetry(page, { [FLAG]: 'test' });
     await startOnAnotherPage(page, 'test');
-    const isFlags = (url: URL) => /\/flags\/?$/.test(url.pathname);
-    await page.route(isFlags, route => failure === 'partial'
+    await page.route(isFlagsRequest, route => failure === 'partial'
       ? route.fulfill({ json: { featureFlags: {}, errorsWhileComputingFlags: true } })
       : route.abort());
     const failed = failure === 'partial'
-      ? page.waitForResponse(response => isFlags(new URL(response.url())))
-      : page.waitForEvent('requestfailed', { predicate: request => isFlags(new URL(request.url())) });
+      ? page.waitForResponse(response => isFlagsRequest(new URL(response.url())))
+      : page.waitForEvent('requestfailed', { predicate: request => isFlagsRequest(new URL(request.url())) });
     await Promise.all([failed, page.reload()]);
-    await openFromHeader(page);
+    await navigateToSelection(page, selectedUrl);
+    await expect(heading(page)).toHaveText('Contact Fixture');
     await expect(page.locator(variantSelector)).toHaveCount(0);
     expect(telemetry.exposures()).toHaveLength(0);
   });
 }
+
+test('a fresh flag-off response replaces a stored test assignment', async ({ page }) => {
+  requiresLocalCapture();
+  test.skip(!isDesktop(page), 'Desktop visitors can enter the experiment before the flag is turned off');
+  const flags: Record<string, string | boolean> = { [FLAG]: 'test' };
+  const telemetry = await mockTelemetry(page, flags);
+  await startOnAnotherPage(page, 'test');
+  await navigateToSelection(page, selectedUrl);
+  await expect(page.locator(variantSelector)).toHaveAttribute('data-contact-agent-variant', 'test');
+  await expect.poll(() => telemetry.exposures().length).toBe(1);
+  await expect.poll(() => telemetry.contactPageviews().length).toBeGreaterThan(0);
+  const priorViews = telemetry.contactPageviews().length;
+
+  delete flags[FLAG];
+  // Keep the legacy cache alongside the SDK's previously stored assignment.
+  await page.evaluate(() => localStorage.setItem('vpcs_exp_desktop_contact_agent_v2', 'test'));
+  await Promise.all([page.waitForResponse(response => isFlagsRequest(new URL(response.url()))), page.goto('/how-it-works')]);
+  await expectCachedAssignment(page, null);
+  await navigateToSelection(page, selectedUrl);
+  await expect(heading(page)).toHaveText('Contact Fixture');
+  await expect(page.locator(variantSelector)).toHaveCount(0);
+  await expect.poll(() => telemetry.contactPageviews().length).toBeGreaterThan(priorViews);
+  expect(telemetry.exposures()).toHaveLength(1);
+  expect(telemetry.decodeFailures).toEqual([]);
+});
