@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import Link from "next/link";
 import type { Metadata } from "next";
 import stateService, {
@@ -40,36 +41,19 @@ async function getDirectoryData(): Promise<StateWithLenders[]> {
 
   const results = await Promise.all(
     states.map(async (state) => {
-      try {
-        const data = await stateService.fetchLendersListByState(
-          state.short_name,
-        );
-        const records = data?.records ?? [];
+      const data = await stateService.fetchLendersListByState(state.short_name);
+      if (!Array.isArray(data?.records)) throw new Error('Invalid lender directory response');
 
-        // Dedupe by AccountId_15__c
-        const seen = new Set<string>();
-        const deduped: Lenders[] = [];
-        for (const lender of records) {
-          const key = lender.AccountId_15__c;
-          if (!key || seen.has(key)) continue;
-          seen.add(key);
-          deduped.push(lender);
-        }
-
-        // Sort alphabetically by Name
-        deduped.sort((a, b) =>
-          (a.Name ?? "").localeCompare(b.Name ?? ""),
-        );
-
-        return { state, lenders: deduped };
-      } catch (error) {
-        console.error(
-          "Failed to fetch lenders for state:",
-          state.short_name,
-          error,
-        );
-        return { state, lenders: [] };
-      }
+      // Preserve valid empty results, but let upstream failures abort regeneration.
+      const seen = new Set<string>();
+      const deduped = data.records.filter((lender) => {
+        const key = lender.AccountId_15__c;
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      deduped.sort((a, b) => (a.Name ?? '').localeCompare(b.Name ?? ''));
+      return { state, lenders: deduped };
     }),
   );
 
@@ -89,15 +73,11 @@ function formatLenderLine(lender: Lenders): string {
 }
 
 export default async function LendersDirectoryPage() {
-  let directory: StateWithLenders[] | null = null;
-  let hasError = false;
+  // Credential-free CI builds defer these reads to a request, never an empty directory.
+  // Normal deployments retain static generation and the 24-hour revalidation policy.
+  if (process.env.SKIP_SALESFORCE_PRERENDER === '1') await connection();
 
-  try {
-    directory = await getDirectoryData();
-  } catch (error) {
-    console.error("Failed to load lenders directory:", error);
-    hasError = true;
-  }
+  const directory = await getDirectoryData();
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-12 space-y-8">
@@ -113,12 +93,7 @@ export default async function LendersDirectoryPage() {
         </p>
       </header>
 
-      {hasError || !directory ? (
-        <p className="text-gray-700">
-          Our lender directory is temporarily unavailable. Please check back
-          shortly.
-        </p>
-      ) : directory.length === 0 ? (
+      {directory.length === 0 ? (
         <p className="text-gray-700">
           No lenders are currently listed. Please check back soon.
         </p>

@@ -3,6 +3,8 @@ import sendToSlack from '@/actions/sendToSlack';
 import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
 import { formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
 import { buildPartnerSmsContent } from '@/lib/leads/notification-payloads';
+import { getIntakeMaintenanceStatus } from '@/lib/leads/intake-maintenance-server';
+import { maintenanceNotSent, type IntakeMaintenanceResult } from '@/lib/leads/intake-maintenance';
 import { LeadSubmissionError } from '@/lib/leads/submission-outcome';
 import stateService from '@/services/stateService';
 import { logDebug, logError, logInfo } from './loggingService';
@@ -605,7 +607,10 @@ async function submitWebToLead<TResult extends object>(
     config: WebToLeadConfig<TResult>,
     rawFormData: unknown,
     runtime?: { queryString?: string; options?: InternalCallOptions },
-): Promise<TResult> {
+): Promise<TResult | IntakeMaintenanceResult> {
+    const nonProduction = process.env.VERCEL_ENV === 'preview' || process.env.VERCEL_ENV === 'development';
+    // Non-production rejection below must precede even a production Redis read.
+    if (!nonProduction && (await getIntakeMaintenanceStatus()).active) return maintenanceNotSent();
     const options = runtime?.options;
     const queryString = runtime?.queryString ?? '';
 
@@ -621,6 +626,12 @@ async function submitWebToLead<TResult extends object>(
     let acceptedResult: TResult | undefined;
 
     try {
+        // Preview/development deployments share production CRM credentials today.
+        // Reject before any remote validation, lookup, write, notification or analytics.
+        if (nonProduction) {
+            throw new Error('Lead submissions are disabled in non-production Vercel environments');
+        }
+
         // Validate and normalize the payload before processing. Invalid data is a HARD
         // reject here — never written to Salesforce.
         const validation = parseLeadForm(config.schema, rawFormData);
@@ -720,6 +731,8 @@ async function submitWebToLead<TResult extends object>(
             url: SALESFORCE_WEB_TO_LEAD_URL,
         });
 
+        // Recheck after async preflight: the scheduled pause may have started meanwhile.
+        if ((await getIntakeMaintenanceStatus()).active) return maintenanceNotSent();
         const submissionStartedAt = new Date();
         postInitiated = true;
         const submissionResult = await submitToSalesforceWebToLead(

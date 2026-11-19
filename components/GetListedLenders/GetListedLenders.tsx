@@ -18,10 +18,11 @@ const lenderPersonalDataSchema = yup.object().shape({
 });
 
 interface ContactFormProps {
+  initialValues?: Partial<LenderListingFormData>;
   onSubmit: (formData: LenderListingFormData) => Promise<{ success?: boolean; redirectUrl?: string; }>;
 }
 
-const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
+const GetListedLenders = ({ initialValues, onSubmit }: ContactFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
@@ -30,6 +31,7 @@ const GetListedLenders = ({ onSubmit }: ContactFormProps) => {
     formState: { errors },
   } = useForm<LenderListingFormData>({
     resolver: yupResolver(lenderPersonalDataSchema),
+    defaultValues: initialValues,
   });
 
   // Handle form submission

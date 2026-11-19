@@ -21,17 +21,20 @@ export default function ContactLenderPage() {
     const queryParams = new URLSearchParams(fullQueryString);
 
     try {
-      // Comparator telemetry is optional and must never prevent lead delivery.
-      try { sendGTMEvent({
-        event: "conversion_contact_lender",
-        agent_id: queryParams.get('id') || "",
-        state: normalizeStateSlug(queryParams.get('state')) || "",
-      }); } catch { /* Keep existing GTM semantics, best effort. */ }
-
       const result = await submitContactLenderLead(
         { ...formData, ...formTrackingPayload('contact_lender') },
         fullQueryString,
       );
+      if (result.success) {
+        // Optional conversion telemetry must not undo accepted capture.
+        try {
+          sendGTMEvent({
+            event: "conversion_contact_lender",
+            agent_id: queryParams.get("id") || "",
+            state: normalizeStateSlug(queryParams.get('state')) || "",
+          });
+        } catch { /* Best effort. */ }
+      }
       return result;
     } catch (error) {
       console.error('Error submitting form:', error);

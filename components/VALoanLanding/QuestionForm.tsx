@@ -1,4 +1,5 @@
 'use client';
+import { useIntakeMaintenanceFeedback } from '@/components/common/IntakeMaintenance';
 import Link from 'next/link';
 import { useRef, useState, type FormEvent } from 'react';
 import { z } from 'zod';
@@ -15,6 +16,7 @@ const schema = z.object({
 });
 type Field = keyof z.infer<typeof schema>;
 export default function QuestionForm() {
+  const { maintenanceNotice, handleMaintenanceResult } = useIntakeMaintenanceFeedback();
   const busy = useRef(false);
   const [pending,setPending] = useState(false);
   const [success,setSuccess] = useState(false);
@@ -39,6 +41,7 @@ export default function QuestionForm() {
     busy.current=true;setPending(true);setErrors({});setError('');
     try {
       const response=await contactPostForm({...parsed.data,...getSpamFields(),...formTrackingPayload()});
+      if (handleMaintenanceResult(response)) return;
       if(!response?.success) throw new Error('Submission unsuccessful');
       sendGTMEvent({event:'contact_form_submission'});
       setSuccess(true);
@@ -50,6 +53,7 @@ export default function QuestionForm() {
   if(success) return <div role="status" className={styles.success}><h3>Thank you for reaching out.</h3><p>We received your VA loan question and will get back to you within two business days.</p></div>;
   const input=(field:Field,label:string,type='text',autoComplete='off')=><label htmlFor={`va-${field}`}>{label}<input id={`va-${field}`} name={field} required aria-label={label} type={type} autoComplete={autoComplete} maxLength={field==='email'?200:120} aria-invalid={Boolean(errors[field])} aria-describedby={errors[field]?`va-${field}-error`:undefined}/>{errors[field]&&<span id={`va-${field}-error`} className={styles.error}>{errors[field]}</span>}</label>;
   return <form className={styles.questionForm} aria-label="Ask a VA loan question" noValidate onSubmit={submit} onFocus={()=>trackFormStarted('contact_form',{page_type:'va_loan_help'})} aria-busy={pending}>
+    {maintenanceNotice}
     <HoneypotField ref={honeypotRef}/>
     <label htmlFor="va-question">What’s your question?<textarea id="va-question" name="additionalComments" required aria-label="What’s your question?" placeholder="Type your question here…" rows={3} maxLength={5000} aria-invalid={Boolean(errors.additionalComments)} aria-describedby={errors.additionalComments?'va-question-error':undefined}/>{errors.additionalComments&&<span id="va-question-error" className={styles.error}>{errors.additionalComments}</span>}</label>
     <div className={styles.fields}>{input('firstName','First name','text','given-name')}{input('lastName','Last name','text','family-name')}</div>

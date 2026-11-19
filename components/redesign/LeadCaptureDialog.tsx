@@ -1,4 +1,5 @@
 "use client";
+import { useIntakeMaintenanceFeedback } from '@/components/common/IntakeMaintenance';
 import Link from 'next/link';
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
@@ -15,6 +16,7 @@ const settings = {
   'homebuyer-guide': { title:'Free First-Time Homebuyer Guide', formId:'first_time_homebuyer_guide', action:homebuyerGuideForm, file:'first-time-home-buyer-guide.pdf' },
 };
 export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabel, className = '', placement }: { kind:Kind; initialEmail?:string; triggerLabel:string; className?:string; placement?:CapturePlacement }) {
+  const { maintenanceNotice, handleMaintenanceResult } = useIntakeMaintenanceFeedback();
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const busy = useRef(false);
@@ -56,6 +58,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
     if(config.file) trackDownload('guide_download_requested', 'form_submission');
     try {
       const response = await config.action({ firstName,lastName,email,...getSpamFields(),...formTrackingPayload(config.formId) });
+      if (handleMaintenanceResult(response)) return;
       if (!response?.success) throw new Error('Submission unsuccessful');
       setSuccess(true);
       if(config.file) {
@@ -80,6 +83,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
         <button type="button" className="steph-capture-close" aria-label="Close" disabled={pending} onClick={close}>×</button>
         <h2 id={`${id}-title`}>{config.title}</h2>
         {success ? <div role="status"><p>{config.file ? 'Your guide is ready.' : 'Thank you. We received your request.'}</p>{config.file && <a className="steph-button" href={downloadPath} download onClick={() => { trackDownload('guide_download_requested', 'manual_link'); trackDownload('guide_download_started', 'manual_link'); }}>Download guide</a>}<button type="button" onClick={close}>Close</button></div> : <form onSubmit={submit}>
+          {maintenanceNotice}
           <p>Enter your details to {config.file ? 'get your free guide' : 'keep in touch'}.</p>
           <HoneypotField ref={honeypotRef}/>
           <label htmlFor={`${id}-first`}>First name<input id={`${id}-first`} name="firstName" autoComplete="given-name" required maxLength={120}/></label>

@@ -1,8 +1,13 @@
 import { salesForceTokenAPI, RequestType } from '@/services/api';
 import { SALESFORCE_LOGIN_BASE_URL } from '@/constants/api';
+import { SalesforceTokenError } from '@/lib/salesforce/token-error';
 
-type CachedSalesforceToken = {
-    token: string;
+export type SalesforceTokenSnapshot = {
+    readonly token: string;
+    readonly generation: number;
+};
+
+type CachedSalesforceToken = SalesforceTokenSnapshot & {
     instanceUrl: string | null;
     expiresAt: number;
 };
@@ -13,6 +18,7 @@ type CachedSalesforceToken = {
 // correctness backstop if a token dies before the TTL elapses.
 const TOKEN_TTL_MS = 55 * 60 * 1000; // 55 min, safely under Salesforce's default 2h session
 
+let generation = 0;
 let cached: CachedSalesforceToken | null = null;
 let inflight: Promise<CachedSalesforceToken> | null = null;
 
@@ -37,9 +43,10 @@ async function requestSalesforceToken(): Promise<CachedSalesforceToken> {
         type: RequestType.POST,
     });
 
-    if (response?.status === 200 && response.data?.access_token) {
+    if (response?.status === 200 && typeof response.data?.access_token === 'string' && response.data.access_token) {
         return {
             token: response.data.access_token,
+            generation: ++generation,
             instanceUrl: response.data.instance_url ?? null,
             expiresAt: Date.now() + TOKEN_TTL_MS,
         };
@@ -48,24 +55,41 @@ async function requestSalesforceToken(): Promise<CachedSalesforceToken> {
     throw new Error('Failed to FETCH Salesforce Token');
 }
 
-export async function getSalesforceToken(options?: { forceRefresh?: boolean }): Promise<string> {
-    if (!options?.forceRefresh && cached && cached.expiresAt > Date.now()) {
-        return cached.token;
+/** Invalidate only the rejected generation: a late 401 must not evict a newer token. */
+export function invalidateSalesforceToken(rejectedGeneration: number): void {
+    if (cached?.generation === rejectedGeneration) cached = null;
+}
+
+export async function getSalesforceTokenSnapshot(options?: {
+    forceRefresh?: boolean;
+    rejectedGeneration?: number;
+}): Promise<SalesforceTokenSnapshot> {
+    if (options?.rejectedGeneration !== undefined) {
+        invalidateSalesforceToken(options.rejectedGeneration);
+    } else if (options?.forceRefresh) {
+        cached = null;
     }
 
-    // Collapse concurrent fetches (cold-start fan-out across the state pages) into a
-    // single in-flight OAuth request; every waiter resolves to the same fresh token.
+    if (cached && cached.expiresAt > Date.now()) return cached;
+
+    // Cold calls and refreshes share one OAuth request within this process.
     if (!inflight) {
         inflight = requestSalesforceToken()
             .then((result) => {
                 cached = result;
                 return result;
             })
+            .catch(() => {
+                // Do not retain/log Axios config, response bodies, or credentials.
+                throw new SalesforceTokenError();
+            })
             .finally(() => {
                 inflight = null;
             });
     }
+    return inflight;
+}
 
-    const result = await inflight;
-    return result.token;
+export async function getSalesforceToken(options?: { forceRefresh?: boolean }): Promise<string> {
+    return (await getSalesforceTokenSnapshot(options)).token;
 }

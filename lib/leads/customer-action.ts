@@ -1,3 +1,4 @@
+import { isIntakeMaintenanceResult, type IntakeMaintenanceResult } from './intake-maintenance';
 import { validateCustomerWebsiteForm } from '@/lib/validation/contactForms';
 import { LeadSubmissionError, type CustomerSubmitResult } from './submission-outcome';
 
@@ -6,7 +7,7 @@ export async function submitCustomerWebsiteLead(
   formId: 'contact_agent' | 'contact_lender',
   raw: unknown,
   queryString: string,
-  submit: (data: unknown, query: string) => Promise<{ message?: string; redirectUrl?: string; submissionId?: string }>,
+  submit: (data: unknown, query: string) => Promise<{ message?: string; redirectUrl?: string; submissionId?: string } | IntakeMaintenanceResult>,
 ): Promise<CustomerSubmitResult> {
   let invoked = false;
   try {
@@ -14,6 +15,7 @@ export async function submitCustomerWebsiteLead(
     if (!validation.ok) return { success: false, outcome: 'validation_error', fieldErrors: validation.fieldErrors };
     invoked = true;
     const result = await submit(validation.data, queryString);
+    if (isIntakeMaintenanceResult(result)) return result;
     if (result?.redirectUrl || result?.message) {
       return { success: true, outcome: 'accepted', redirectUrl: result.redirectUrl || '/thank-you', submissionId: result.submissionId };
     }

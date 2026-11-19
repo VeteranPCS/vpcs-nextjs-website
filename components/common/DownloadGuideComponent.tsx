@@ -1,4 +1,5 @@
 "use client";
+import { useIntakeMaintenanceFeedback } from '@/components/common/IntakeMaintenance';
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import * as Yup from 'yup';
@@ -53,6 +54,7 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
     guideId,
     className = "",
 }) => {
+  const { maintenanceNotice, handleMaintenanceResult } = useIntakeMaintenanceFeedback();
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -93,10 +95,6 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
             has_email: Boolean(data.email),
         });
         try {
-            if (gtmEventContent) {
-                sendGTMEvent({ event: "conversion_download", content: gtmEventContent });
-            }
-
             const payload = {
                 firstName: data.firstName,
                 lastName: data.lastName,
@@ -108,7 +106,13 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                 ...getSpamFields(),
                 ...formTrackingPayload(),
             });
+            if (handleMaintenanceResult(server_response)) return;
             if (server_response?.success) {
+                if (gtmEventContent) {
+                    try {
+                      sendGTMEvent({ event: "conversion_download", content: gtmEventContent });
+                    } catch { /* Optional telemetry must not undo accepted capture. */ }
+                }
                 setSuccess(true);
                 reset();
                 captureAnalyticsEvent('guide_download_started', {
@@ -183,6 +187,7 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                     onFocus={() => trackFormStarted(resolvedGuideId, { guide_id: resolvedGuideId })}
                     className="mb-6"
                 >
+                  {maintenanceNotice}
                     <HoneypotField ref={honeypotRef} />
                     <div className="flex flex-col md:flex-row gap-4 mb-4">
                         <div className="flex-1">

@@ -35,7 +35,7 @@ jobs:
         run: npm run build
         env:
           # GitHub Actions does not hold Salesforce credentials. Compile the
-          # dynamic state routes here; Vercel and credentialed local builds
+          # state routes and defer nationwide directories here; Vercel builds
           # still prerender all states and fail closed on upstream errors.
           SKIP_SALESFORCE_PRERENDER: '1'
       - name: Test
