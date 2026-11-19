@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useSearchParams } from "next/navigation";
 import ContactAgents from "@/components/ContactAgents/ContactAgent";
 import { submitContactAgentLead } from "./actions";
 import { sendGTMEvent } from "@next/third-parties/google";
@@ -13,18 +14,34 @@ import v2 from "@/components/ContactAgents/ContactAgentV2.module.css";
 
 const subscribeToNothing = () => () => {};
 
+/**
+ * Reports the page's current query string, including changes made without a page load (a link
+ * to another agent, Back and Forward). It renders nothing and sits in its own Suspense
+ * boundary so that only this component opts out of static rendering; the form itself stays in
+ * the prerendered HTML.
+ */
+function QueryStringWatcher({ onChange }: { onChange: (search: string) => void }) {
+  const searchParams = useSearchParams();
+  const query = searchParams ? searchParams.toString() : null;
+  useEffect(() => {
+    onChange(query === null ? window.location.search : query ? `?${query}` : '');
+  }, [query, onChange]);
+  return null;
+}
+
 export default function ContactAgentPage() {
-  const [derivedStateCode, setDerivedStateCode] = useState<string | null>(null);
+  // null until the browser has reported the address; the selected agent and state live there.
+  const [search, setSearch] = useState<string | null>(null);
+  const followAddress = useCallback((next: string) => setSearch(next), []);
+  const derivedStateCode = useMemo(
+    () => (search === null ? null : normalizeStateCode(new URLSearchParams(search).get("state"))),
+    [search],
+  );
   const container = useRef<HTMLDivElement>(null);
   const variant = useDesktopContactAgentVariant(container);
   // True for the server render and hydration only. The pre-paint script has to be in the
   // static HTML, and React must not create it again on in-site navigations.
   const inStaticHtml = useSyncExternalStore(subscribeToNothing, () => false, () => true);
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    setDerivedStateCode(normalizeStateCode(queryParams.get("state")));
-  }, []);
 
   const handleSubmit = async (formData: ContactAgentFormData): Promise<CustomerSubmitResult> => {
     const fullQueryString = window.location.search;
@@ -78,9 +95,13 @@ export default function ContactAgentPage() {
       {inStaticHtml && <script dangerouslySetInnerHTML={{ __html: CONTACT_AGENT_PREPAINT_SCRIPT }} />}
       <div className={`flex flex-wrap md:flex-nowrap justify-between items-center md:pt-[140px] pt-[80px] md:mx-0 mx-5 ${v2.spacer}`}>
       </div>
+      <Suspense fallback={null}>
+        <QueryStringWatcher onChange={followAddress} />
+      </Suspense>
       <ContactAgents
         onSubmit={handleSubmit}
         derivedStateCode={derivedStateCode}
+        urlSearch={search}
         variant={variant}
       />
     </div>

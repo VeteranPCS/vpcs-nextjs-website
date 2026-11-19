@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useForm, Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -26,11 +26,16 @@ import v2 from './ContactAgentV2.module.css';
 interface ContactFormProps {
   onSubmit: (data: ContactAgentFormData) => Promise<CustomerSubmitResponse>;
   derivedStateCode?: string | null;
+  /**
+   * The page's current query string, passed by the page so the form follows a change of
+   * selected agent without a page load. Omitted or null: read the address once on mount.
+   */
+  urlSearch?: string | null;
   /** desktop-contact-agent-v2 experiment. Only `test` adds markup; CSS limits it to desktop. */
   variant?: AppliedContactAgentVariant | null;
 }
 
-const ContactAgentForm = ({ onSubmit, derivedStateCode, variant }: ContactFormProps) => {
+const ContactAgentForm = ({ onSubmit, derivedStateCode, urlSearch, variant }: ContactFormProps) => {
   const {
     register,
     handleSubmit,
@@ -62,9 +67,17 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode, variant }: ContactFormPr
   const { open: openConcierge } = useConcierge();
   const { ref: honeypotRef, getSpamFields } = useHoneypot();
 
+  // The state follows the address. When a new address stops naming one, the value the old
+  // address supplied is cleared so the visitor picks, rather than silently keeping a state
+  // that belonged to the previous agent. A state the visitor picked themselves is kept.
+  const stateCameFromAddress = useRef(false);
   useEffect(() => {
     if (derivedStateCode) {
       setValue('state', derivedStateCode, { shouldValidate: true });
+      stateCameFromAddress.current = true;
+    } else if (stateCameFromAddress.current) {
+      setValue('state', '');
+      stateCameFromAddress.current = false;
     }
   }, [derivedStateCode, setValue]);
 
@@ -86,10 +99,10 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode, variant }: ContactFormPr
   const [agentName, setAgentName] = useState('Us');
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(urlSearch ?? window.location.search);
     const agentFirstName = urlParams.get('fn') || 'Us';
     setAgentName(agentFirstName);
-  }, [])
+  }, [urlSearch])
 
   // Treatment only. Read before paint so the heading and agent panel never flash in late.
   const treatment = variant === 'test';

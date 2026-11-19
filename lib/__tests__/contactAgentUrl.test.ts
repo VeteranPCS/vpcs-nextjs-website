@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildContactCtaHref, isSameContactAgentPage } from '@/lib/contactAgentUrl';
+import { buildContactCtaHref, isGenericSameContactAgentLink } from '@/lib/contactAgentUrl';
 import { normalizeStateCode } from '@/lib/states';
 
 describe('state contact destinations', () => {
@@ -19,20 +19,29 @@ describe('state contact destinations', () => {
   });
 });
 
-describe('links back to the agent contact page', () => {
+describe('generic links back to the agent contact page', () => {
   it.each([
     '/contact-agent',
     '/contact-agent?form=agent',
     '/contact-agent/',
     buildContactCtaHref({ form: 'agent' }),
     new URL('https://www.veteranpcs.com/contact-agent?form=agent'),
-  ])('treats %s as the same page while on /contact-agent', (target) => {
-    expect(isSameContactAgentPage(target, '/contact-agent')).toBe(true);
-    expect(isSameContactAgentPage(target, '/contact-agent/')).toBe(true);
+  ])('holds %s on the page, so the current agent and state survive', (target) => {
+    expect(isGenericSameContactAgentLink(target, '/contact-agent')).toBe(true);
+    expect(isGenericSameContactAgentLink(target, '/contact-agent/')).toBe(true);
+  });
+
+  it.each([
+    ['another agent', buildContactCtaHref({ form: 'agent', firstName: 'Bravo', salesforceId: 'partner-b', stateSlug: 'florida' })],
+    ['an agent id alone', '/contact-agent?form=agent&id=partner-b'],
+    ['a first name alone', '/contact-agent?fn=Bravo'],
+    ['a state request', buildContactCtaHref({ form: 'agent', stateSlug: 'florida' })],
+  ])('lets a link that names %s navigate', (_name, target) => {
+    expect(isGenericSameContactAgentLink(target, '/contact-agent')).toBe(false);
   });
 
   it.each(['/', '/texas', '/contact', '/contact-lender', '/contact-agent-info'])('navigates normally from %s', (current) => {
-    expect(isSameContactAgentPage('/contact-agent?form=agent', current)).toBe(false);
+    expect(isGenericSameContactAgentLink('/contact-agent?form=agent', current)).toBe(false);
   });
 
   it.each([
@@ -45,6 +54,6 @@ describe('links back to the agent contact page', () => {
     null,
     { pathname: '/contact-agent' },
   ])('leaves %s alone while on /contact-agent', (target) => {
-    expect(isSameContactAgentPage(target, '/contact-agent')).toBe(false);
+    expect(isGenericSameContactAgentLink(target, '/contact-agent')).toBe(false);
   });
 });

@@ -55,6 +55,17 @@ describe('TrackedCtaLink on the agent contact page', () => {
     expect(click().defaultPrevented).toBe(true);
   });
 
+  it.each([
+    ['another agent', '/contact-agent?form=agent&fn=Bravo&id=partner-b&state=florida'],
+    ['a state request', '/contact-agent?form=agent&state=florida'],
+  ])('lets a link that names %s navigate while an agent is selected', (_name, href) => {
+    window.history.replaceState(null, '', selectedAgent);
+    render(<TrackedCtaLink href={href} cta={{ ...cta, ctaId: 'concierge_partner_contact' }}>Start intake with Bravo</TrackedCtaLink>);
+    expect(click().defaultPrevented).toBe(false);
+    expect(scrollTo).not.toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith(expect.objectContaining({ cta_id: 'concierge_partner_contact', destination_path: '/contact-agent' }));
+  });
+
   it('navigates normally to the page from anywhere else', () => {
     window.history.replaceState(null, '', '/texas');
     render(<TrackedCtaLink href="/contact-agent?form=agent" cta={cta}>Find an Agent</TrackedCtaLink>);

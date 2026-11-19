@@ -83,3 +83,47 @@ test('the selected agent reaches the lead submission after a header click', asyn
   await expect(page).toHaveURL(/\/thank-you/);
   expect(submissions).toHaveLength(1);
 });
+
+// A link that names another agent (a Concierge card's "Start intake", for example) is a
+// deliberate new choice. The page must follow it, and the lead must go to the new agent.
+test('choosing agent B while agent A is selected submits the lead to agent B', async ({ page }) => {
+  test.skip(process.env.E2E_LEAD_DRY_RUN !== '1', 'Requires an explicitly provisioned dry-run development server');
+  const AGENT_B = 'E2EAGENT0000002';
+  const agentBUrl = `/contact-agent?form=agent&fn=Bravo&id=${AGENT_B}&state=florida`;
+  const submissions: string[] = [];
+  page.on('request', request => { if (request.method() === 'POST' && request.headers()['next-action']) submissions.push(request.postData() ?? ''); });
+  await openSelectedAgent(page);
+  await page.evaluate(() => { (window as unknown as { __sameDocument: boolean }).__sameDocument = true; });
+  await page.locator('#firstName').fill('RoutingFix');
+  await page.locator('#email').fill('routing-fix-verification@example.com');
+
+  // The same client-side navigation a next/link to agent B performs on this page.
+  await page.evaluate((url) => (window as unknown as { next: { router: { push: (href: string) => void } } }).next.router.push(url), agentBUrl);
+  await expect(page).toHaveURL(new RegExp(`id=${AGENT_B}`));
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Contact Bravo');
+  expect(await page.evaluate(() => (window as unknown as { __sameDocument?: boolean }).__sameDocument)).toBe(true);
+  // What the visitor already typed survives the change of agent.
+  await expect(page.locator('#firstName')).toHaveValue('RoutingFix');
+  await expect(page.locator('#email')).toHaveValue('routing-fix-verification@example.com');
+  // The state came from the address both times, so the picker stays hidden.
+  await expect(page.locator('#state')).toHaveCount(0);
+
+  // Back returns to agent A, forward to agent B: the page follows the address either way.
+  await page.goBack();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Contact Test');
+  await page.goForward();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Contact Bravo');
+
+  await page.locator('#lastName').fill('Verification');
+  await page.locator('#currentBase').fill('Fixture Base');
+  await page.locator('#destinationBase').fill('Fixture Destination');
+  await page.getByRole('button', { name: 'Submit', exact: true }).click();
+  await expect.poll(() => submissions.length).toBe(1);
+  expect(submissions[0]).toContain(`id=${AGENT_B}`);
+  expect(submissions[0]).toContain('state=florida');
+  expect(submissions[0]).toContain('"state":"FL"');
+  expect(submissions[0]).not.toContain(AGENT_ID);
+  expect(submissions[0]).not.toContain('texas');
+  await expect(page).toHaveURL(/\/thank-you/);
+  expect(submissions).toHaveLength(1);
+});
