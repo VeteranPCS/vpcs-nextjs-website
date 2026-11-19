@@ -36,6 +36,16 @@
 .contextCta p,.guide p { margin:0; color:#222; font-size:17px; line-height:1.4; }
 .contextCta small { display:block; font-size:12px; margin-top:14px; font-weight:700; text-align:right; }
 .contextCta .button { width:100%; }
+.stateHub { display:grid; grid-template-columns:52px minmax(0,1fr) minmax(200px,auto); align-items:center; gap:20px; background:#292f6c; color:#fff; border-radius:7px; padding:26px 24px; margin:42px 0; }
+.stateHub .icon { width:48px; height:48px; color:#fff; }
+.stateHub h2 { color:#fff; font-size:24px; font-weight:750; line-height:1.2; margin:0 0 8px; }
+.stateHub p { color:#fff; font-size:17px; line-height:1.4; margin:0; }
+.stateHubButton { display:inline-flex; justify-content:center; align-items:center; min-height:48px; padding:12px 22px; background:#fff; color:#292f6c; border-radius:4px; font-size:15px; font-weight:750; text-align:center; line-height:1.3; cursor:pointer; }
+.stateHubButton:hover { background:#e9eaf3; }
+.stateHubPicker { display:grid; gap:10px; min-width:220px; }
+.stateHubPicker select { min-height:48px; width:100%; padding:10px 12px; border:1px solid #fff; border-radius:4px; background:#fff; color:#222; font-size:16px; }
+.stateHubPicker small { color:#fff; font-size:13px; font-weight:700; }
+.page .stateHub a:focus-visible,.page .stateHub button:focus-visible,.page .stateHub select:focus-visible { outline:3px solid #fff; outline-offset:3px; }
 .guide { border:1px solid #d8d8de; background:#f3f3f5; border-radius:7px; padding:26px; display:grid; grid-template-columns:200px minmax(0,1fr); gap:25px; align-items:center; margin:40px 0; color:#292f6c; }
 .guide>img { width:100%; height:auto; }
 .guide p { margin-bottom:24px; }
@@ -134,6 +144,12 @@
  .contextCta h2,.guide h2 { font-size:22px; }
  .contextCta p,.guide p { font-size:15px; }
  .contextCta small { text-align:center; }
+ .stateHub { grid-template-columns:36px minmax(0,1fr); padding:20px; gap:12px; margin:30px 0; }
+ .stateHub .icon { width:36px; height:36px; }
+ .stateHub h2 { font-size:22px; }
+ .stateHub p { font-size:15px; }
+ .stateHub>.stateHubButton,.stateHubPicker { grid-column:1/-1; }
+ .stateHubButton { width:100%; }
  .guide { grid-template-columns:1fr; padding:20px; gap:16px; }
  .guide>img { width:145px; margin:auto; }
  .capture { flex-direction:column; gap:10px; }

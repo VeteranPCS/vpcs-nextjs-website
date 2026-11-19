@@ -5,6 +5,9 @@ import { createBlogMdxComponents } from '@/mdx-components';
 import { mdxOptions } from '@/lib/blog/mdx-options';
 import { extractTocHeadings, readingTimeMinutes } from '@/lib/blog/mdx';
 import { splitMdxAtMidpoint } from '@/lib/blog/splitMdxAtMidpoint';
+import { splitMdxAfterFirstSection } from '@/lib/blog/splitMdxAfterFirstSection';
+import { getStateDisplayName } from '@/lib/blog/state';
+import { stateHubCtaAudience } from '@/lib/blog/stateHubCta';
 import { buildContactCtaHref } from '@/lib/contactAgentUrl';
 import type { BlogPost, ResolvedAuthor } from '@/lib/blog/types';
 import { formatDate } from '@/utils/helper';
@@ -13,6 +16,7 @@ import accounts from '@/content/_data/site/media_account.json';
 import reviews from '@/public/json/reviews.json';
 import ArticleLink, { type ArticleContext } from './ArticleLink';
 import { ArticleCapture, ArticleShare, ArticleTestimonial, ArticleToc } from './ArticleActions';
+import StateHubCta from './StateHubCta';
 import styles from './StephArticle.module.css';
 const resources=[
   {title:'PCS Checklist',description:'Step-by-step checklist to keep your move stress-free.',href:'/blog/the-ultimate-pcs-checklist-and-timeline-for-active-duty-military-personnel',label:'Get the checklist',icon:'checklist'},
@@ -32,13 +36,17 @@ function ContextCta({ context, label, href }: { context:ArticleContext; label:st
 }
 function GuidePromo() {return <section className={styles.guide} aria-label="Free homebuyer guide"><Image src="/images/redesign/guide-covers.webp" width={200} height={160} alt="First-Time Homebuyer and VA Loan guide covers"/><div><h2>Free First-Time Homebuyer Guide</h2><p>Make your move less stressful with our step-by-step first-time homebuyer guide.</p><ArticleCapture kind="homebuyer-guide" button="Get My Free Guide"/><small>We respect your privacy. Unsubscribe anytime.</small></div></section>;}
 function Bonus({ context }: { context:ArticleContext }) {return <section className={styles.bonus}><h2>VeteranPCS<br/>Bonus</h2><p>Receive up to<br/><strong>$4,000 BACK</strong></p><p>When you buy or sell<br/>with VeteranPCS</p><ArticleLink href="/pcs-resources#move-in-bonus" id="blog_sidebar_bonus" context={context} className={styles.button}>Learn More</ArticleLink><div className={styles.bonusPhoto}><Image src="/images/redesign/blog-bonus-family.webp" alt="VeteranPCS family receiving a VeteranPCS Bonus check" width={1200} height={1800}/></div></section>;}
-export default function StephArticle({ blog, resolvedAuthor, stateSlug, intent, category, related }: { blog:BlogPost; resolvedAuthor:ResolvedAuthor; stateSlug:string|null; intent:'agent'|'lender'; category:{label:string;slug:string}|null; related:BlogPost[] }) {
+export default function StephArticle({ blog, resolvedAuthor, stateSlug, hubStateSlug=null, intent, category, related }: { blog:BlogPost; resolvedAuthor:ResolvedAuthor; stateSlug:string|null; hubStateSlug?:string|null; intent:'agent'|'lender'; category:{label:string;slug:string}|null; related:BlogPost[] }) {
   const context:ArticleContext={contentSlug:blog.slug,stateSlug,partnerType:intent};
   const href=buildContactCtaHref({stateSlug,form:intent});
   const stateName=stateSlug ? stateSlug.split('-').map(word=>word.charAt(0).toUpperCase()+word.slice(1)).join(' ') : null;
   const label=`Find ${intent==='agent'?'an agent':'a lender'}${stateName?` in ${stateName}`:''}`;
   const firstSplit=splitMdxAtMidpoint(blog.content), secondSplit=splitMdxAtMidpoint(firstSplit.second);
-  const parts=[firstSplit.first,secondSplit.first,secondSplit.second];
+  // The state hub block sits after the intro and first section, inside the lead
+  // fragment, so the two existing promotions keep their positions.
+  const leadSplit=splitMdxAfterFirstSection(firstSplit.first);
+  const parts=[leadSplit.first,leadSplit.second,secondSplit.first,secondSplit.second];
+  const hub={stateSlug:hubStateSlug,stateName:hubStateSlug?getStateDisplayName(hubStateSlug):null,contentSlug:blog.slug,partnerType:intent,audience:stateHubCtaAudience(category?.slug)};
   const headings=extractTocHeadings(blog.content);let headingOffset=0;
   const bodies=parts.map((part,index)=>{const count=extractTocHeadings(part).length;const ids=headings.slice(headingOffset,headingOffset+count);headingOffset+=count;return part?<div key={index} data-article-body={index}><MDXRemote source={part} components={createBlogMdxComponents({resolvedAuthor,headingIds:ids,contentSlug:blog.slug})} options={mdxOptions}/></div>:null;});
   const quotes=reviews.reviews.filter(review=>['Breanna Walker','Hailey Jensen'].includes(review.reviewer.displayName)&&review.comment).map(review=>({name:review.reviewer.displayName,text:review.comment??''}));
@@ -46,7 +54,8 @@ export default function StephArticle({ blog, resolvedAuthor, stateSlug, intent, 
     <div className={styles.grid}><div className={styles.mainColumn}>
       <header className={styles.articleHeader}><div><nav aria-label="Breadcrumb" className={styles.breadcrumb}><Link href="/">Home</Link><span>/</span><Link href="/blog">Blog</Link>{category&&<><span>/</span><ArticleLink href={`/blog/category/${category.slug}`} context={context} id="blog_breadcrumb_category">{category.label}</ArticleLink></>}</nav><span className={styles.category}>{category?.label??'PCS Tips'}</span><h1>{blog.title}</h1><div className={styles.byline}>{resolvedAuthor.kind==='salesforce'?<ArticleLink href={resolvedAuthor.contactHref} context={{...context,stateSlug:resolvedAuthor.stateSlug,partnerType:resolvedAuthor.role}} id="blog_author_contact" intent={`contact_${resolvedAuthor.role}`} partnerSalesforceId={resolvedAuthor.salesforceId}>By {resolvedAuthor.name}</ArticleLink>:<span>By VeteranPCS</span>}<span>•</span><time dateTime={blog.publishedAt}>{formatDate(blog.publishedAt)}</time><span>•</span><span>{readingTimeMinutes(blog.content)} min read</span></div><p className={styles.summary}>{blog.description??blog.metaDescription}</p><ArticleShare title={blog.title} url={`${SITE_URL}/blog/${blog.slug}`} image={`${SITE_URL}${blog.mainImage?.src??'/assets/BlogpostImage.png'}`}/></div><Image src={blog.mainImage?.src??'/assets/BlogpostImage.png'} alt={blog.mainImage?.alt??blog.title} width={620} height={600} priority className={styles.heroImage}/></header>
       <HelpfulResources context={context}/><ArticleToc headings={headings} mobile/>
-      <article className={styles.body} aria-label="Article body">{bodies[0]}<ContextCta context={context} label={label} href={href}/>{bodies[1]}<GuidePromo/>{bodies[2]}</article>
+      <article className={styles.body} aria-label="Article body">{bodies[0]}{leadSplit.second&&<StateHubCta placement="inline" {...hub}/>}{bodies[1]}<ContextCta context={context} label={label} href={href}/>{bodies[2]}<GuidePromo/>{bodies[3]}</article>
+      <StateHubCta placement="end" {...hub}/>
       <ArticleTestimonial quotes={quotes}/>
       <section className={styles.conversions} aria-label="Your next steps"><div><Icon kind="home"/><h2>Ready to Move?</h2><p>Let us connect you with {intent==='agent'?'an agent':'a VA loan expert'} for your next duty station.</p><ArticleLink href={href} id="blog_conversion_contact" intent={`contact_${intent}`} context={context} className={styles.button}>{label}</ArticleLink><small>It’s free. No obligation.</small>{stateSlug&&intent==='agent'&&<ArticleLink href={`/${stateSlug}?source=blog&blog_slug=${encodeURIComponent(blog.slug)}`} id="blog_find_agent_in_state" intent="state_agent_search" context={context}>Browse {stateName} agents →</ArticleLink>}</div><div><Icon kind="checklist"/><h2>Not Moving Yet?</h2><p>Get PCS tips, VA loan advice, and duty station updates delivered to you.</p><ArticleCapture compact/><small>Unsubscribe anytime.</small></div><div><Icon kind="follow"/><h2>Follow VeteranPCS</h2><p>Daily tips, videos, and resources made for military families.</p><Socials/><ArticleLink href="#article-social-platforms" id="blog_social_all" context={context}>See all platforms →</ArticleLink></div><div><Icon kind="loan"/><h2>VeteranPCS Bonus</h2><p>Receive up to $4,000 back when you buy or sell with us!</p><ArticleLink href="/pcs-resources#move-in-bonus" id="blog_conversion_bonus" context={context} className={styles.button}>Learn More</ArticleLink></div></section>
       <section className={styles.related} aria-label="Related articles"><h2>Other Articles You May Also Like</h2><div>{related.slice(0,4).map(post=><ArticleLink href={`/blog/${post.slug}`} id="blog_related_card" context={{...context,contentSlug:post.slug}} key={post.slug}><Image src={post.mainImage?.src??'/assets/BlogpostImage.png'} alt={post.mainImage?.alt??post.title} width={320} height={220}/><h3>{post.shortTitle??post.title}</h3><p>{readingTimeMinutes(post.content)} min read</p></ArticleLink>)}</div></section>

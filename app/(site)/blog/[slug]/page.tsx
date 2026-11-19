@@ -13,6 +13,7 @@ import { pickRelated, rankRelatedBlogs } from "@/lib/blog/related";
 import { resolveAuthor } from "@/lib/blog/authors";
 import {
     resolveBlogStateSlug,
+    resolveBlogSubjectState,
 } from "@/lib/blog/state";
 import { formatDate } from "@/utils/helper";
 import { buildBreadcrumbList } from "@/lib/structured-data";
@@ -158,7 +159,7 @@ export default async function Home(props: { params: Promise<{ slug: string }> })
                 contentType="blog_post"
                 topicCluster={blog.component || blog.categories?.[0]}
             />
-            <StephArticle blog={blog} resolvedAuthor={resolvedAuthor} stateSlug={bridgeState} intent={ctaIntent} category={blogComponent ? {label:blogComponent.label,slug:blogComponent.slug} : null} related={related} />
+            <StephArticle blog={blog} resolvedAuthor={resolvedAuthor} stateSlug={bridgeState} hubStateSlug={resolveBlogSubjectState(blog)?.stateSlug ?? null} intent={ctaIntent} category={blogComponent ? {label:blogComponent.label,slug:blogComponent.slug} : null} related={related} />
         </div>
     );
 }

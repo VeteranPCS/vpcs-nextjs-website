@@ -21,6 +21,7 @@ export type AnalyticsEventName =
   | 'state_page_viewed'
   | 'blog_search_submitted'
   | 'blog_search_results'
+  | 'homepage_location_search_completed'
   | 'bah_calculator_used'
   | 'moving_bonus_calculated'
   | 'calculator_cta_clicked'
@@ -40,6 +41,7 @@ const EVENT_STAGE: Record<AnalyticsEventName, JourneyStage> = {
   state_page_viewed: 'top',
   blog_search_submitted: 'top',
   blog_search_results: 'top',
+  homepage_location_search_completed: 'top',
   bah_calculator_used: 'top',
   moving_bonus_calculated: 'top',
   calculator_cta_clicked: 'mid',
