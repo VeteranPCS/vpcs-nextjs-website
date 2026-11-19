@@ -234,6 +234,7 @@ Post template (`page_type: blog_post`):
 | `blog_next_guide` | `blog_post_after_body` | `content_navigation` |
 | `blog_related_card` / `blog_related_card_view_all` (`blog_related_card_view_all` is documented, not yet wired in code; see PR #169) | `blog_post_related_rail` | `content_navigation` |
 | `blog_find_agent_in_state` (kept; built via `buildCtaProperties`; renders only on agent-intent, state-matched posts; position `top` only, `bottom` retired) | `top` | `state_agent_search` |
+| `blog_state_hub_cta` (new 2026-11; links to the state hub page; rendered only for the variant of the `blog-state-hub-cta` PostHog flag; fires on agent-intent and lender-intent posts; see "Blog State Hub CTA Experiment" below) | `inline_after_intro` / `article_end` | `state_agent_search` |
 | `blog_mobile_sticky_agent` (fixed mobile footer on agent-intent posts; added to correct prior documentation drift, the id already fires in code) | `mobile_sticky_footer` | `contact_agent` |
 | `blog_mobile_sticky_lender` (fixed mobile footer on lender-intent posts; new) | `mobile_sticky_footer` | `contact_lender` |
 | `blog_mdx_contact_agent` / `blog_mdx_contact_lender` (ordinary Markdown links to customer contact routes; added 2026-09-28, effective after deployment) | `mdx_body` | `contact_agent` / `contact_lender` |
@@ -281,6 +282,28 @@ Search results (`page_type: blog_search`):
 Retired ids (stop appearing after the refactor deploy): `blog_article_card` (hub grid), `blog_search_result_image`, `blog_search_result_title`. `pcs_resources_blog_card` no longer fires on post pages (the related rail now emits `blog_related_card`) but still fires on `/va-loan-help`, `/pcs-resources`, and `/thank-you`.
 
 The single-intent CTA rationalization change (branch `feat/blog-post-cta-rationalization`, pending deploy as of 2026-07-12) retires `blog_find_agent_in_state` position `bottom`. Only position `top` continues to fire, and only on agent-intent, state-matched posts. This does not retire the `blog_find_agent_in_state` id itself, only the `bottom` position value.
+
+### Blog State Hub CTA Experiment (2026-11)
+
+`blog_state_hub_cta` sends blog readers to the matching state hub page (`/texas`, `/north-carolina`). It is the first PostHog feature flag in the codebase.
+
+- **Flag:** `blog-state-hub-cta`, read in the browser by `lib/analytics/useFeatureFlagVariant.ts`. Variant `test` (or boolean `true`) shows the block. `control`, any other value, and flags that never load show the current page. Bucketing is by `vpcs_visitor_id`, because that is the PostHog distinct id.
+- **Exposure:** `$feature_flag_called` for this key. The flag is only read on blog post pages, so exposure means "viewed a blog post".
+- **Where it renders:** `components/BlogDetails/StephArticle/StateHubCta.tsx`, once after the intro and first section (`placement: inline`) and once after the article body (`placement: end`). The mobile sticky footer is unchanged and still goes to the contact form.
+- **Which state:** `resolveBlogSubjectState` in `lib/blog/state.ts`. It uses the post's own state (frontmatter, `content/_data/blog-state-map.json`, `content/_data/blog-subject-state-map.json`, slug rules) and never the author's state. Posts with no state show a state picker instead.
+
+Properties in addition to the standard CTA set:
+
+| Property | Values | Meaning |
+|---|---|---|
+| `placement` | `inline`, `end` | Which block was clicked. `cta_position` carries the same fact as `inline_after_intro` / `article_end`. |
+| `state_source` | `post`, `picker` | `post`: the state came from the post. `picker`: the reader chose it; `state_slug` is the chosen state. |
+
+`partner_type` still carries the post's category intent, so the agent-intent and lender-intent denominators in the next section apply. The GTM event `blog_to_state_cta_click` also fires, with `position` set to the placement, for the GA comparator.
+
+The primary metric is the share of exposed blog visitors who reach a state hub in their first eligible session during the experiment, reported separately for `control` and `test`. An eligible session contains a blog `content_viewed` event (`content_type = blog_post`) and a `$feature_flag_called` event for `blog-state-hub-cta` with a `control` or `test` response. Use `vpcs_visitor_id` to select one session per visitor and use that session’s flag response as the assignment. Count a visitor as converted when `state_page_viewed` occurs after both events with the same `$session_id`. Apply the same outcome to both arms. Using the first eligible session matches visitor-level assignment and avoids treating repeat visits as independent exposures.
+
+Use `cta_clicked` with `cta_id = blog_state_hub_cta` to compare `placement` and `state_source` within the test arm. Monitor the existing mobile sticky CTA and agent form starts as guardrails. Report agent leads as a directional secondary outcome.
 
 ### Blog Post CTA Comparability (2026-07 single-intent rationalization)
 

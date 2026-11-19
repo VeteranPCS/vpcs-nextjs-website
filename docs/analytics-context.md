@@ -107,6 +107,8 @@ Copy this file into the site repo as `docs/analytics-context.md`. It summarises 
 - **Reserved new event names.** Don't invent others without noting them here.
   - `cta_clicked` with CTA id `blog_state_hub_cta` (Task C) and `contact_agent_header_scroll` (Task B).
   - Feature flag keys: `desktop-contact-agent-v2` (Task B) and `blog-state-hub-cta` (Task C).
+  - Added by Task C: `cta_clicked` properties `placement` (`inline`, `end`) and `state_source` (`post`, `picker`) on `blog_state_hub_cta`. Details are in `docs/analytics/telemetry-taxonomy.md`, "Blog State Hub CTA Experiment".
+  - Added by Task C: `lib/analytics/useFeatureFlagVariant.ts`, a generic client hook for reading a PostHog flag. Task B can reuse it instead of adding its own.
 - All three tasks may touch the PostHog provider/init module. Keep edits there minimal and isolated to reduce merge conflicts.
 - **Never submit real leads.** Forms write to Salesforce. Test against local dev with submission mocked or stubbed, or use whatever test mode the repo provides.
 - No PostHog dashboards, insights or settings changes from code tasks. PostHog bot rules and annotations are done by a human in the PostHog UI.

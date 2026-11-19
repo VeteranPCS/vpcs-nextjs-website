@@ -1,4 +1,5 @@
 import stateMap from '@/content/_data/blog-state-map.json';
+import subjectStateMap from '@/content/_data/blog-subject-state-map.json';
 import type { BlogPost } from '@/lib/blog/types';
 import { getStateForBlog, getStateDisplayName as displayNameFromSlug } from '@/lib/blog/getStateForBlog';
 import { normalizeStateSlug, formatStateLabel } from '@/lib/states';
@@ -14,6 +15,7 @@ export type BlogStateSource =
   | 'author-state-slug'
   | 'author-state'
   | 'state-map-post'
+  | 'subject-state-map'
   | 'slug-heuristic'
   | 'state-map-alias';
 
@@ -23,6 +25,9 @@ export type ResolvedBlogState = {
 };
 
 const BLOG_STATE_MAP = stateMap as BlogStateMap;
+// Hub-CTA-only pins. blog-state-map.json also feeds the guide lists on state
+// hub pages, so posts that should not appear there are mapped here instead.
+const SUBJECT_STATE_MAP = subjectStateMap as { posts: Record<string, string> };
 
 function slugify(value: string): string {
   return value
@@ -88,6 +93,22 @@ export function resolveBlogState(post: Pick<BlogPost, 'slug' | 'stateSlug' | 'st
 
 export function resolveBlogStateSlug(post: Pick<BlogPost, 'slug' | 'stateSlug' | 'state' | 'author'>): string | null {
   return resolveBlogState(post)?.stateSlug ?? null;
+}
+
+/**
+ * The state a post is about, for links to that state's hub page. Unlike
+ * `resolveBlogState`, the author's home state is never used: an agent based in
+ * Maryland can write a national article.
+ */
+export function resolveBlogSubjectState(post: Pick<BlogPost, 'slug' | 'stateSlug' | 'state'>): ResolvedBlogState | null {
+  return (
+    firstValidState(post.stateSlug, 'frontmatter-state-slug') ??
+    firstValidState(post.state, 'frontmatter-state') ??
+    resolveFromPostMap(post.slug) ??
+    firstValidState(SUBJECT_STATE_MAP.posts[post.slug], 'subject-state-map') ??
+    firstValidState(getStateForBlog(post.slug), 'slug-heuristic') ??
+    resolveFromAliasMap(post.slug)
+  );
 }
 
 export function getStateDisplayName(value: string): string {
