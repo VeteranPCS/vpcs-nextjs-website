@@ -10,6 +10,7 @@ import { Agent } from "@/services/stateService";
 import { trackCtaClicked } from "@/lib/analytics/client";
 import { buildStateContactCtaProperties } from "@/lib/analytics/state-cta";
 import { buildContactCtaHref } from "@/lib/contactAgentUrl";
+import { rememberSelectedAgent } from "@/lib/experiments/desktop-contact-agent";
 
 type Props = {
   city: string;
@@ -97,9 +98,17 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
     form: 'agent',
   });
 
-  const trackAgentCta = (agentId: string, position: string) => {
+  const trackAgentCta = (agent: Agent, position: string) => {
+    // Public listing details only, so the contact page can show who was chosen.
+    rememberSelectedAgent({
+      id: agent.AccountId_15__c,
+      name: agent.Name,
+      photo: agent.PhotoUrl,
+      service: orderMilitaryServiceInfo(agent.Military_Status__pc || "", agent.Military_Service__pc || ""),
+      brokerage: agent.Brokerage_Name__pc,
+    });
     trackCtaClicked(buildStateContactCtaProperties({
-      ctaId: 'state_agent_card_contact', position, state, partnerId: agentId,
+      ctaId: 'state_agent_card_contact', position, state, partnerId: agent.AccountId_15__c,
     }));
   };
 
@@ -126,7 +135,7 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                     <div className="rounded-full bg-[#E1EDFB] md:w-[200px] md:h-[200px] w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-4 sm:mb-0">
                       <Link
                         href={contactHref}
-                        onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_image')}
+                        onClick={() => trackAgentCta(agent, 'card_image')}
                       >
                         <Image
                           src={agent?.PhotoUrl || ""}
@@ -140,7 +149,7 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                     </div>
                     <Link
                       href={contactHref}
-                      onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_button')}
+                      onClick={() => trackAgentCta(agent, 'card_button')}
                     >
                       <Button buttonText="Contact Now" />
                     </Link>
@@ -149,7 +158,7 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                     <div>
                       <Link
                         href={contactHref}
-                        onClick={() => trackAgentCta(agent.AccountId_15__c, 'card_heading')}
+                        onClick={() => trackAgentCta(agent, 'card_heading')}
                       >
                         <h3 className="text-[#292F6C] md:text-[34px] text-[20px] font-bold">
                           {agent?.Name}

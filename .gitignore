@@ -71,3 +71,6 @@ docs/migration
 
 # AI-first project journal — local only
 docs/ai-first/
+
+# Local audit screenshots and measurements
+tmp/

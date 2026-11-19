@@ -1,6 +1,6 @@
 # VeteranPCS Telemetry Taxonomy
 
-Last updated: 2026-10-10
+Last updated: 2026-11-19
 
 This is the durable reference for VeteranPCS web telemetry. Use it when changing analytics code, troubleshooting PostHog, comparing against Google Analytics, or planning Salesforce closed-loop reporting.
 
@@ -23,6 +23,7 @@ Salesforce remains the business source of truth for Leads, Customer Opportunitie
 | Page/content/search trackers | `components/Analytics/Trackers.tsx` |
 | Salesforce Web-to-Lead attribution fields | `services/salesforceLeadParams.ts`, `services/salesForcePostFormsService.tsx` |
 | Server-side PostHog delivery | `lib/posthog-server.ts` |
+| Experiments (PostHog feature flags) | `lib/experiments/desktop-contact-agent.ts`, `components/ContactAgents/useDesktopContactAgentVariant.ts` |
 
 ## Identity And Join Keys
 
@@ -340,6 +341,64 @@ browser's competing validation UI). Thus malformed emails now reach `form_submit
 `form_validation_failed`, instead of being stopped before analytics. Phone formatting is normalized
 before submission, and invalid phone lengths are rejected client-side. Expect a coverage change in
 attempt/error counts after deployment; accepted-lead semantics are unchanged.
+
+### Agent Contact Page Same-Page Links (2026-11)
+
+On `/contact-agent`, generic header, menu, and footer links that point back at the page without naming an agent or state keep the current address. An explicit link to an agent or state navigates and updates the form. The lead is submitted with the query string in the address bar, so navigating would drop the selected agent `id`. `components/common/TrackedCtaLink.tsx` leaves the address alone and returns to the top of the page. The `cta_clicked` event for the clicked link is unchanged.
+
+| `cta_id` | Fired by | Notes |
+|---|---|---|
+| `contact_agent_header_scroll` | `components/ContactAgents/useDesktopContactAgentVariant.ts` | Test variant of `desktop-contact-agent-v2` only, desktop only. Sent in addition to the header link's own `cta_clicked` (`header_desktop_find_agent`, `header_mobile_find_agent` or `header_match_with_an_agent`), so repeat header clicks stay comparable between arms. `cta_position` is `contact_agent_form`, `cta_component` is `contact_agent_page`. It does not increment `cta_click_count_before_conversion`. |
+
+## Experiments (PostHog Feature Flags)
+
+### `desktop-contact-agent-v2` (2026-11)
+
+Test whether the two-column desktop contact-agent layout increases first form interaction. Use a 50/50 visitor-level PostHog split between `control` and `test`. Keep the flag off until the experiment is ready to launch.
+
+- Eligible entries are in-site navigations to `/contact-agent` on a device matching `(min-width: 1024px) and (hover: hover) and (pointer: fine)` with a confirmed `control` or `test` assignment before the contact page paints.
+- Hard loads, mobile and touch-only devices, and visits with missing, blocked or failed flag evaluation see control without exposure. A later eligible in-site entry can enroll the visitor.
+- A rendered exposure sends `$feature_flag_called` with `$feature_flag = 'desktop-contact-agent-v2'`, `$feature_flag_response`, and `contact_agent_experiment_view_id`. Changes to the agent or viewport within that visit do not create another exposure.
+- The primary outcome is the share of unique exposed visitors who move focus into the contact form on their first exposed view, by arm. Use `contact_agent_experiment_form_started` with the same `contact_agent_experiment_view_id`. Both variants use the same event. The ordinary `form_started` event keeps its document-level deduplication.
+- Monitor accepted agent leads as a separate directional guardrail, joined to exposed visitors by `vpcs_visitor_id`. The test-only header-scroll click is diagnostic. Its focus target is outside the form.
+- Apply the bot and automation exclusions in `docs/analytics-context.md` to both arms. Record the start and end times before analyzing results. Estimate the required exposed sample from the current eligible traffic and contact-start baseline before launch. Unexposed direct loads and mobile visits are outside the population measured by this experiment.
+
+Use this query with the experiment's real start and end parameters:
+
+```sql
+WITH first_exposure AS (
+  SELECT
+    properties.vpcs_visitor_id AS visitor_id,
+    argMin(properties.$feature_flag_response, timestamp) AS variant,
+    argMin(properties.contact_agent_experiment_view_id, timestamp) AS view_id,
+    min(timestamp) AS exposed_at
+  FROM events
+  WHERE event = '$feature_flag_called'
+    AND properties.$feature_flag = 'desktop-contact-agent-v2'
+    AND properties.$feature_flag_response IN ('control', 'test')
+    AND notEmpty(properties.vpcs_visitor_id)
+    AND notEmpty(properties.contact_agent_experiment_view_id)
+    AND timestamp >= {start}
+    AND timestamp < {end}
+  GROUP BY visitor_id
+), starts AS (
+  SELECT
+    properties.vpcs_visitor_id AS visitor_id,
+    properties.contact_agent_experiment_view_id AS view_id,
+    min(timestamp) AS started_at
+  FROM events
+  WHERE event = 'contact_agent_experiment_form_started'
+    AND properties.form_id = 'contact_agent'
+    AND timestamp >= {start}
+    AND timestamp < {end}
+  GROUP BY visitor_id, view_id
+)
+SELECT exposure.variant, count() AS visitors,
+       countIf(starts.started_at >= exposure.exposed_at) AS visitors_who_started
+FROM first_exposure AS exposure
+LEFT JOIN starts ON starts.visitor_id = exposure.visitor_id AND starts.view_id = exposure.view_id
+GROUP BY exposure.variant
+```
 
 ## Customer Form IDs
 

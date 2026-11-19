@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import ContactAgents from "@/components/ContactAgents/ContactAgent";
 import { submitContactAgentLead } from "./actions";
 import { sendGTMEvent } from "@next/third-parties/google";
@@ -7,14 +8,34 @@ import { ContactAgentFormData } from "@/types";
 import { normalizeStateCode, normalizeStateSlug } from "@/lib/states";
 import { formTrackingPayload } from "@/lib/analytics/client";
 import type { CustomerSubmitResult } from "@/lib/leads/submission-outcome";
+import { CONTACT_AGENT_VARIANT_ATTRIBUTE } from "@/lib/experiments/desktop-contact-agent";
+import { useDesktopContactAgentVariant } from "@/components/ContactAgents/useDesktopContactAgentVariant";
+import v2 from "@/components/ContactAgents/ContactAgentV2.module.css";
+
+/**
+ * Reports the page's current query string, including changes made without a page load (a link
+ * to another agent, Back and Forward). It renders nothing and sits in its own Suspense
+ * boundary so that only this component opts out of static rendering; the form itself stays in
+ * the prerendered HTML.
+ */
+function QueryStringWatcher({ onChange }: { onChange: (search: string) => void }) {
+  const searchParams = useSearchParams();
+  const query = searchParams ? searchParams.toString() : null;
+  useEffect(() => {
+    onChange(query === null ? window.location.search : query ? `?${query}` : '');
+  }, [query, onChange]);
+  return null;
+}
 
 export default function ContactAgentPage() {
-  const [derivedStateCode, setDerivedStateCode] = useState<string | null>(null);
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    setDerivedStateCode(normalizeStateCode(queryParams.get("state")));
-  }, []);
+  // null until the browser has reported the address; the selected agent and state live there.
+  const [search, setSearch] = useState<string | null>(null);
+  const followAddress = useCallback((next: string) => setSearch(next), []);
+  const derivedStateCode = useMemo(
+    () => (search === null ? null : normalizeStateCode(new URLSearchParams(search).get("state"))),
+    [search],
+  );
+  const experiment = useDesktopContactAgentVariant();
 
   const handleSubmit = async (formData: ContactAgentFormData): Promise<CustomerSubmitResult> => {
     const fullQueryString = window.location.search;
@@ -57,12 +78,20 @@ export default function ContactAgentPage() {
   // };
 
   return (
-    <div className="container mx-auto w-full">
-      <div className="flex flex-wrap md:flex-nowrap justify-between items-center md:pt-[140px] pt-[80px] md:mx-0 mx-5">
+    <div
+      className={`container mx-auto w-full ${v2.root}`}
+      {...{ [CONTACT_AGENT_VARIANT_ATTRIBUTE]: experiment?.variant }}
+    >
+      <div className={`flex flex-wrap md:flex-nowrap justify-between items-center md:pt-[140px] pt-[80px] md:mx-0 mx-5 ${v2.spacer}`}>
       </div>
+      <Suspense fallback={null}>
+        <QueryStringWatcher onChange={followAddress} />
+      </Suspense>
       <ContactAgents
         onSubmit={handleSubmit}
         derivedStateCode={derivedStateCode}
+        urlSearch={search}
+        experiment={experiment}
       />
     </div>
   );

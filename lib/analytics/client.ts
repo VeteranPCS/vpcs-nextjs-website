@@ -27,6 +27,7 @@ export type AnalyticsEventName =
   | 'calculator_cta_clicked'
   | 'cta_clicked'
   | 'form_started'
+  | 'contact_agent_experiment_form_started'
   | 'form_submit_attempted'
   | 'form_validation_failed'
   | 'form_submission_failed'
@@ -47,6 +48,7 @@ const EVENT_STAGE: Record<AnalyticsEventName, JourneyStage> = {
   calculator_cta_clicked: 'mid',
   cta_clicked: 'mid',
   form_started: 'mid',
+  contact_agent_experiment_form_started: 'mid',
   form_submit_attempted: 'mid',
   form_validation_failed: 'mid',
   form_submission_failed: 'mid',
