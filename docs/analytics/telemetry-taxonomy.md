@@ -301,7 +301,9 @@ Properties in addition to the standard CTA set:
 
 `partner_type` still carries the post's category intent, so the agent-intent and lender-intent denominators in the next section apply. The GTM event `blog_to_state_cta_click` also fires, with `position` set to the placement, for the GA comparator.
 
-Primary metric: blog sessions (`content_viewed`, `content_type = blog_post`) with a later `cta_clicked` where `cta_id = blog_state_hub_cta`, or a later `state_page_viewed`, divided by blog sessions, by variant. Neither event depends on `$pageview`.
+The primary metric is the share of exposed blog sessions that reach a state hub, reported separately for `control` and `test`. Include sessions with a blog `content_viewed` event (`content_type = blog_post`) and a `$feature_flag_called` event for `blog-state-hub-cta` with a `control` or `test` response. Group by `$session_id` and count each session once. Count a session as converted when `state_page_viewed` occurs after both events in the same session. Apply the same outcome to both arms.
+
+Use `cta_clicked` with `cta_id = blog_state_hub_cta` to compare `placement` and `state_source` within the test arm. Monitor the existing mobile sticky CTA and agent form starts as guardrails. Report agent leads as a directional secondary outcome.
 
 ### Blog Post CTA Comparability (2026-07 single-intent rationalization)
 

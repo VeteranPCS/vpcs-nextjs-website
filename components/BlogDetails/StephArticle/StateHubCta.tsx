@@ -36,7 +36,7 @@ function copyFor(placement: StateHubCtaPlacement, audience: StateHubCtaAudience,
   if (placement === 'end') {
     return {
       heading: `Ready to find your ${stateName} agent?`,
-      line: `Browse vetted agents in ${stateName} and get up to $4,000 back with the VeteranPCS Bonus.`,
+      line: `Browse vetted agents in ${stateName}. Get up to $4,000 back when you close on a home with a VeteranPCS agent.`,
       button: `See ${stateName} agents`,
     };
   }
