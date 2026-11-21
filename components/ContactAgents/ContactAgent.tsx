@@ -15,6 +15,7 @@ import { captureAnalyticsEvent, trackFormStarted } from '@/lib/analytics/client'
 import { useCustomerSubmission } from '@/components/common/useCustomerSubmission';
 import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import type { CustomerSubmitResponse } from '@/lib/leads/submission-outcome';
+import { consumeContactPrefill } from '@/lib/leads/contact-prefill';
 import {
   CONTACT_AGENT_FORM_REGION_ID,
   readSelectedAgent,
@@ -40,6 +41,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode, urlSearch, experiment }:
     register,
     handleSubmit,
     getValues,
+    getFieldState,
     setError,
     watch,
     reset,
@@ -61,6 +63,22 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode, urlSearch, experiment }:
       additionalComments: '',
     },
   });
+
+  // Only a deliberate guide-success contact click supplies this one-time handoff.
+  // Apply once across experiment/query rerenders and never replace edited/autofilled fields.
+  const checkedPrefill = useRef(false);
+  useEffect(() => {
+    if (checkedPrefill.current) return;
+    checkedPrefill.current = true;
+    const params = new URLSearchParams(urlSearch ?? window.location.search);
+    const details = consumeContactPrefill(params.get('id'));
+    if (!details) return;
+    for (const field of ['firstName', 'lastName', 'email'] as const) {
+      if (!getFieldState(field).isDirty && !getValues(field)) {
+        setValue(field, details[field]);
+      }
+    }
+  }, [urlSearch, getFieldState, getValues, setValue]);
 
   const howDidYouHearValue = watch("howDidYouHear");
   const destinationBaseValue = watch("destinationBase");

@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { test, expect, type Page } from '@playwright/test';
 import { COLORADO_RELOCATION_GUIDE as guide } from '../lib/guides/colorado-relocation';
+import { CONTACT_PREFILL_STORAGE_KEY } from '../lib/leads/contact-prefill';
 import { assertNoOverflow, interceptTelemetry } from './helpers';
 
 const PDF_SHA256 = 'b816103bade949338238a93ec77ad930f95a65a04128fbb04d95aa4bf95227e1';
@@ -27,6 +28,11 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
   const telemetry = await interceptTelemetry(page);
   const downloads = () => telemetry.events.filter(event => event.event.startsWith('guide_download_'));
   let attempts = 0;
+  let contactSubmissions = 0;
+  await page.route('**/contact-agent**', async route => {
+    if (route.request().method() === 'POST') { contactSubmissions += 1; await route.abort('blockedbyclient'); return; }
+    await route.continue();
+  });
   let releaseAcceptedRequest: (() => void) | undefined;
   const acceptedRequestGate = new Promise<void>(resolve => { releaseAcceptedRequest = resolve; });
   await page.route('**/colorado**', async route => {
@@ -47,6 +53,14 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     await expect(trigger).toBeEnabled();
     await assertNoOverflow(page);
     const promotion = page.getByRole('region', { name: guide.title, exact: true });
+    const placement = await promotion.evaluate(section => ({
+      precedingRegion: section.previousElementSibling?.getAttribute('aria-label'),
+      bannerBottom: section.previousElementSibling?.getBoundingClientRect().bottom,
+      guideTop: section.getBoundingClientRect().top,
+    }));
+    expect(placement.precedingRegion).toBe('VeteranPCS lending support');
+    expect(placement.bannerBottom).toBeDefined();
+    expect(placement.guideTop).toBeGreaterThanOrEqual(placement.bannerBottom ?? Number.POSITIVE_INFINITY);
     await promotion.scrollIntoViewIfNeeded();
     await promotion.screenshot({ path: testInfo.outputPath('colorado-guide-promotion.png'), caret: 'initial' });
     const contact = page.getByRole('link', { name: 'Contact Tyler', exact: true });
@@ -111,7 +125,8 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     await dialog.locator('form').evaluate(form => form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })));
     expect(attempts).toBe(2);
     releaseAcceptedRequest?.();
-    await expect(dialog.getByRole('status')).toContainText('Your guide is ready');
+    await expect(dialog.getByRole('status')).toContainText('Your download has started.');
+    await expect(dialog.getByRole('region', { name: 'Meet Tyler Parker' }).getByRole('link', { name: 'Contact Tyler', exact: true })).toBeFocused();
     const downloaded = await automaticDownload;
     expect(downloaded.suggestedFilename()).toBe(guide.fileName);
     expect(await downloaded.failure()).toBeNull();
@@ -124,7 +139,7 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     expect(await googleDownloads(page)).toEqual([expect.objectContaining({ event: 'conversion_download', content: guide.gaContent })]);
 
     const manualDownload = page.waitForEvent('download');
-    await dialog.getByRole('link', { name: 'Download guide', exact: true }).click();
+    await dialog.getByRole('link', { name: 'Download again', exact: true }).click();
     const repeatedDownload = await manualDownload;
     expect(repeatedDownload.suggestedFilename()).toBe(guide.fileName);
     expect(await repeatedDownload.failure()).toBeNull();
@@ -134,7 +149,16 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     ]);
     expect(attempts).toBe(2);
     expect(await googleDownloads(page)).toHaveLength(1);
-    await expect(dialog.getByRole('link', { name: 'Contact Tyler', exact: true })).toBeVisible();
+    const authorCard = dialog.getByRole('region', { name: 'Meet Tyler Parker' });
+    await expect(authorCard.getByRole('heading', { name: guide.author, exact: true })).toBeVisible();
+    await expect(authorCard).toContainText('Air Force Veteran');
+    await expect(authorCard).toContainText(guide.brokerage);
+    const portrait = authorCard.getByRole('img', { name: guide.author, exact: true });
+    await expect(portrait).toBeVisible();
+    await expect.poll(() => portrait.evaluate(element => element instanceof HTMLImageElement && element.complete && element.naturalWidth > 0)).toBe(true);
+    await expect(authorCard.getByRole('link', { name: 'Contact Tyler', exact: true })).toBeVisible();
+    // Accepted details are not persisted until the visitor chooses to contact Tyler.
+    expect(await page.evaluate(key => sessionStorage.getItem(key), CONTACT_PREFILL_STORAGE_KEY)).toBeNull();
     await assertNoOverflow(page);
     await page.screenshot({ path: testInfo.outputPath('colorado-guide-success.png'), caret: 'initial' });
 
@@ -144,12 +168,12 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     expect(oldBytes.subarray(0, 5).toString()).toBe('%PDF-');
     expect(createHash('sha256').update(oldBytes).digest('hex')).toBe('de08483cf591ba9f8dcad0436c12894423726258491ac20cbdefed554530db76');
     const openingEvent = telemetry.events.find(event => event.event === 'cta_clicked' && event.properties.guide_id === guide.id);
-    expect(openingEvent?.properties).toMatchObject({ cta_intent: 'download_guide', cta_location: 'state_hero_secondary' });
+    expect(openingEvent?.properties).toMatchObject({ cta_intent: 'download_guide', cta_location: 'state_guide_section' });
     for (const event of downloads()) {
       expect(event.properties).toMatchObject({
         guide_id: guide.id, form_id: guide.id, state_code: 'CO', state_slug: 'colorado',
         source_page_path: '/colorado', destination_path: guide.path,
-        cta_component: 'lead_capture_dialog', cta_location: 'state_hero_secondary',
+        cta_component: 'lead_capture_dialog', cta_location: 'state_guide_section',
         cta_position: 'inline', page_type: 'state_page',
         distinct_id: 'vpcs_d8a351ef-9f74-43bc-826a-6111857758b5',
       });
@@ -177,7 +201,26 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
       && url.searchParams.get('id') === guide.authorSalesforceId
       && url.searchParams.get('state') === guide.stateSlug);
     await expect(page.getByRole('heading', { level: 1, name: /Contact Tyler/ })).toBeVisible();
+    await expect(page.locator('#firstName')).toHaveValue('ColoradoTelemetryGiven');
+    await expect(page.locator('#lastName')).toHaveValue('ColoradoTelemetryFamily');
+    await expect(page.locator('#email')).toHaveValue('colorado-telemetry-private@example.com');
+    expect(await page.evaluate(key => sessionStorage.getItem(key), CONTACT_PREFILL_STORAGE_KEY)).toBeNull();
+    for (const privateValue of privateValues) expect(decodeURIComponent(page.url()).includes(privateValue), 'Contact prefill must not enter the URL').toBe(false);
+    await expect.poll(() => telemetry.events.some(event => event.event === 'cta_clicked'
+      && event.properties.cta_id === 'colorado_relocation_guide_contact_tyler'
+      && event.properties.cta_location === 'guide_download_success'), { timeout: 15000 }).toBe(true);
+    const handoffAnalytics = JSON.stringify({ posthog: telemetry.events, google: await googleDownloads(page) });
+    for (const privateValue of privateValues) expect(handoffAnalytics.includes(privateValue), 'Contact prefill must not enter analytics').toBe(false);
+    expect(contactSubmissions).toBe(0);
     expect(attempts).toBe(2);
+
+    // The single-use hand-off is consumed; a fresh mount does not reuse contact details.
+    await page.reload();
+    await expect(page.getByRole('heading', { level: 1, name: /Contact Tyler/ })).toBeVisible();
+    await expect(page.locator('#firstName')).toHaveValue('');
+    await expect(page.locator('#lastName')).toHaveValue('');
+    await expect(page.locator('#email')).toHaveValue('');
+    expect(contactSubmissions).toBe(0);
     expect(pageErrors).toEqual([]);
   } finally {
     releaseAcceptedRequest?.();

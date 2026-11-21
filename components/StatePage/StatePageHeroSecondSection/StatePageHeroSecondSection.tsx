@@ -12,7 +12,6 @@ const StatePageHeroSecondSection = ({
   stateName,
   stateSlug,
 }: StatePageHeroSecondSectionProps) => {
-  const hasColoradoGuide = stateSlug === "colorado";
   const benefits = [
     {
       icon: "/icon/userpluswhite.svg",
@@ -32,12 +31,10 @@ const StatePageHeroSecondSection = ({
   ];
 
   return (
+    <>
     <section className="bg-primary text-white" aria-label="VeteranPCS lending support">
-      <div className={`mx-auto flex max-w-[1500px] flex-col items-stretch ${hasColoradoGuide ? "lg:flex-row" : "md:flex-row"}`}>
-        <div className={`flex w-full items-center justify-center bg-primary-hover/25 px-10 py-8 xl:px-14 ${hasColoradoGuide ? "lg:w-[40%] xl:w-[36%]" : "md:w-[36%]"}`}>
-          {hasColoradoGuide ? (
-            <ColoradoPcsGuidePromo />
-          ) : (
+      <div className="mx-auto flex max-w-[1500px] flex-col items-stretch md:flex-row">
+        <div className="flex w-full items-center justify-center bg-primary-hover/25 px-10 py-8 md:w-[36%] xl:px-14">
             <div className="flex max-w-[360px] flex-col items-center text-center">
               <Image
                 src="/icon/VeteranPCSlogo.svg"
@@ -50,7 +47,6 @@ const StatePageHeroSecondSection = ({
                 Your trusted Veteran and military real estate team in {stateName}.
               </p>
             </div>
-          )}
         </div>
 
         <div className="flex min-h-[210px] flex-1 items-center px-10 py-8 xl:px-14">
@@ -76,6 +72,8 @@ const StatePageHeroSecondSection = ({
         </div>
       </div>
     </section>
+    {stateSlug === "colorado" && <ColoradoPcsGuidePromo />}
+    </>
   );
 };
 

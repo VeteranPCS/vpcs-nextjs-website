@@ -2,7 +2,7 @@
 
 ## Behavior and provenance
 
-The Colorado page promotes Tyler Parker's 22-page Colorado Relocation Guide. Download Now opens the shared guide dialog and requires first name, last name, and email. An accepted Salesforce Web-to-Lead response starts the PDF download; the success state's manual link downloads again without another submission. Contact Tyler is a separate action using his existing VeteranPCS agent record (`001Rg00000pmUUk`). A download does not request an agent introduction.
+The Colorado page promotes Tyler Parker's 22-page Colorado Relocation Guide in its own section immediately below the lending-support banner. Download Now opens the shared guide dialog and requires first name, last name, and email. An accepted Salesforce Web-to-Lead response starts the PDF download; the success state shows Tyler's portrait and agent card with Contact Tyler as the primary next step. A subordinate Download again link handles a blocked or missed download without another submission. Contact Tyler is a separate action using his existing VeteranPCS agent record (`001Rg00000pmUUk`). A download does not request an agent introduction. Clicking Contact Tyler from the success card carries the accepted first name, last name, and email into his contact form through a one-time, target-scoped sessionStorage handoff that expires after 15 minutes. It is written only on that explicit click, never placed in a URL or analytics, and never submits the contact form automatically.
 
 - New asset: `/downloads/colorado-relocation-guide-tyler-parker-v7.pdf`.
 - Source: `Colorado_Relocation_Guide_Tyler_Parker_V7.pdf`, provided by Jason Anderson on November 20, 2026. The PDF is unchanged.
@@ -22,7 +22,7 @@ A successful HTTP response and `lead_conversion_created` mean the Web-to-Lead en
 
 ## Automated local verification
 
-Use an isolated loopback dev server. Never run these submissions against a live deployment. Keep Google and PostHog ingestion intercepted in browser tests; local dry-run suppresses CRM writes, notifications, owner routing, and server conversion events.
+Use an isolated loopback dev server. Never run these submissions against a live deployment. Keep Google and PostHog ingestion intercepted in browser tests; local dry-run suppresses CRM writes, notifications, owner routing, server conversion events, and shared Redis lead rate-limit writes. Other spam signals remain evaluated; production rate limiting is unchanged.
 
 ```sh
 E2E_BASE_URL=http://127.0.0.1:3107 NEXT_PUBLIC_POSTHOG_ENABLE_LOCAL_CAPTURE=1 npm run test:e2e:server
@@ -73,13 +73,24 @@ Vercel previews are visual-review surfaces for this task. They are not Salesforc
 
 ## Release boundary
 
-This change starts from committed main, leaving the original checkout's maintenance/form work untouched. Rebase and reconcile any intake changes before a production release. Production deployment is separate from branch implementation; live acceptance remains pending until the user-run check above is completed.
+This change starts from committed main, leaving the original checkout's maintenance/form work untouched. Rebase and reconcile any intake changes before a production release. Production deployment is separate from branch implementation; the acceptance evidence below records the user-run check and its remaining analytics limitations.
 
 ## Automated verification recorded November 21, 2026
 
 - Lint passed with two existing warnings in the unrelated homepage test image mock; type-check and production build passed.
-- Vitest: 122 files, 1,101 tests passed.
-- Colorado browser flow: 360px, 768px, and 1440px passed, including actual PDF hashes, both analytics envelopes, keyboard/focus, duplicate suppression, error/retry, and Contact Tyler navigation. No uncaught browser errors.
+- Vitest: 125 files, 1,127 tests passed after the placement and prefill revision.
+- Colorado browser flow: 360px, 768px, and 1440px passed, including actual PDF hashes, both analytics envelopes, keyboard/focus, duplicate suppression, error/retry, and Contact Tyler navigation with one-time name/email prefill. The card uses the verified Tyler headshot; the guide section follows the intact lending banner. A reload leaves the contact fields empty, and no contact-form POST occurs during handoff. No uncaught browser errors.
 - Existing Resources guide regressions: all five VA/homebuyer entry points passed at 360px and 1440px (10 cases).
-- Promotion, form, and success screenshots were visually reviewed; layout, labels, buttons, and fallback delivery were readable without clipping or horizontal overflow.
+- Revised promotion, form, and success screenshots were visually reviewed at phone, tablet, and desktop sizes. The dedicated light section is distinct from the navy lending banner; Contact Tyler is primary on the success card, with Download again subordinate. Labels, buttons, and fallback delivery are readable without clipping or horizontal overflow.
 - All automated submissions used local dry-run and intercepted analytics. Live Salesforce persistence and real PostHog/GA ingestion are not claimed by these checks.
+
+## User-run live acceptance recorded November 21, 2026
+
+The user submitted once from the local branch at 20:49 UTC (12:49 PM Pacific). The assistant performed read-only verification. Test contact values are omitted.
+
+- Submission ID: `mwqvs0jt-k3z89p`.
+- Salesforce: exactly one Lead, `00Qjf000000XcphEAC`, created at `2026-11-21T20:49:02Z`; first name, last name, and email populated; LeadSource `Colorado Relocation Guide`; WebFormURL `https://www.veteranpcs.com/colorado`; V7/author/CO description correct. Status `New:_Not_Contacted`; unconverted; visitor/submission IDs persisted.
+- PostHog project 480186: one `guide_download_requested` at `20:49:00.844Z` and one `guide_download_started` at `20:49:02.688Z`, joined by the Salesforce visitor ID. Both carry `colorado_relocation_guide`, `/colorado`, `CO`, `colorado`, and `download_trigger=form_submission`.
+- The server log recorded `rate-limit` quarantine, so the existing spam rule intentionally suppressed `lead_conversion_created`. No server conversion receipt is claimed. The automated dry-run checks had consumed shared Redis buckets; this branch now skips those writes only during local dry-run, with a regression test proving production still enforces rate limits even when the dry-run variable is set. A clean user-run acceptance after the 10-minute rate window is still needed to prove server conversion ingestion.
+- GA4 property 289589120: realtime API returned exactly one `conversion_download` in the test minute. Live guide-specific `content`/page-path attribution is not yet proven by this result; realtime does not expose that event-scoped custom dimension. Automated browser tests verify the exact outgoing `content=Colorado Relocation Guide` payload.
+- The live server was stopped before further changes and automated testing. No replay of the lead POST or synthetic production conversion was performed.

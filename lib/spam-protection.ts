@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { isTrustedInternalCall, type InternalCallOptions } from '@/lib/internal-call-token';
 import { containsLink } from '@/lib/validation/leadForms';
 import { formLimiter } from '@/lib/rate-limit';
+import { isLeadDryRun } from '@/lib/lead-dry-run';
 import { MIN_SUBMIT_MS } from '@/lib/validation/spam-fields';
 import { logError } from '@/services/loggingService';
 
@@ -65,22 +66,26 @@ export async function evaluateLeadSpam(args: EvaluateLeadSpamArgs): Promise<Lead
     reasons.push('link-in-freetext');
   }
 
-  // 3b. Rate-limit checks (fail open on any error).
-  try {
-    const ip = await callerIp();
-    const ipRes = await formLimiter.limit('lead:ip:' + ip);
+  // 3b. Rate-limit checks (fail open on any error). Local dry-run verification
+  // must not consume shared Redis buckets and quarantine a later real submission.
+  // Other spam signals still run; isLeadDryRun() is always false in production.
+  if (!isLeadDryRun()) {
+    try {
+      const ip = await callerIp();
+      const ipRes = await formLimiter.limit('lead:ip:' + ip);
 
-    let emailRes: { success: boolean } | undefined;
-    if (args.email) {
-      emailRes = await formLimiter.limit('lead:email:' + args.email.trim().toLowerCase());
-    }
+      let emailRes: { success: boolean } | undefined;
+      if (args.email) {
+        emailRes = await formLimiter.limit('lead:email:' + args.email.trim().toLowerCase());
+      }
 
-    if (!ipRes.success || (emailRes && !emailRes.success)) {
-      reasons.push('rate-limit');
+      if (!ipRes.success || (emailRes && !emailRes.success)) {
+        reasons.push('rate-limit');
+      }
+    } catch (err) {
+      logError('evaluateLeadSpam: rate-limit check failed — failing open', undefined, err);
+      // Intentionally push nothing; fail open.
     }
-  } catch (err) {
-    logError('evaluateLeadSpam: rate-limit check failed — failing open', undefined, err);
-    // Intentionally push nothing; fail open.
   }
 
   // 3c. Honeypot — a non-empty hidden field means an automated filler set it.

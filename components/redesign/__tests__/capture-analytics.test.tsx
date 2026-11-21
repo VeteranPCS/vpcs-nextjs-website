@@ -24,7 +24,7 @@ function openAndFill(kind: 'va-guide' | 'homebuyer-guide' | 'newsletter' | 'colo
   const colorado = kind === 'colorado-relocation-guide';
   if (colorado) window.history.replaceState({}, '', '/colorado?private-query=do-not-record');
   render(<LeadCaptureDialog kind={kind} initialEmail="private-person@example.com" triggerLabel="Get guide" placement={colorado
-    ? { location: 'state_hero_secondary', position: 'inline', pageType: 'state_page' }
+    ? { location: 'state_guide_section', position: 'inline', pageType: 'state_page' }
     : { location: 'featured_resources', position: 'card', pageType: 'pcs_resources' }} />);
   fireEvent.click(screen.getByRole('button', { name: 'Get guide' }));
   fireEvent.change(screen.getByLabelText('First name'), { target: { value: 'PrivateGivenName' } });
@@ -59,7 +59,7 @@ describe('guide capture analytics', () => {
     expect(downloadEvents().map(([event]) => event)).toEqual(['guide_download_requested', 'guide_download_started']);
     expect(mocks.gtm).toHaveBeenCalledExactlyOnceWith({ event: 'conversion_download', content: gaContent });
     expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(1);
-    fireEvent.click(screen.getByRole('link', { name: 'Download guide' }));
+    fireEvent.click(screen.getByRole('link', { name: colorado ? 'Download again' : 'Download guide' }));
     expect(downloadEvents().map(([event]) => event)).toEqual(['guide_download_requested', 'guide_download_started', 'guide_download_requested', 'guide_download_started']);
     expect(mocks.submit).toHaveBeenCalledTimes(1);
     expect(mocks.gtm).toHaveBeenCalledTimes(1);
@@ -70,7 +70,7 @@ describe('guide capture analytics', () => {
         source_page_path: colorado ? '/colorado' : '/pcs-resources',
         destination_path: destination,
         cta_component: 'lead_capture_dialog',
-        cta_location: colorado ? 'state_hero_secondary' : 'featured_resources',
+        cta_location: colorado ? 'state_guide_section' : 'featured_resources',
         cta_position: colorado ? 'inline' : 'card',
         page_type: colorado ? 'state_page' : 'pcs_resources',
         ...(colorado ? { state_code: 'CO', state_slug: 'colorado' } : {}),
@@ -112,7 +112,8 @@ describe('guide capture analytics', () => {
     vi.mocked(HTMLAnchorElement.prototype.click).mockImplementation(() => { throw new Error('Download blocked'); });
     fireEvent.submit(openAndFill('colorado-relocation-guide'));
     await screen.findByRole('status');
-    expect(screen.getByRole('link', { name: 'Download guide' }).getAttribute('href')).toBe('/downloads/colorado-relocation-guide-tyler-parker-v7.pdf');
+    expect(screen.getByRole('link', { name: 'Download again' }).getAttribute('href')).toBe('/downloads/colorado-relocation-guide-tyler-parker-v7.pdf');
+    expect(screen.getByRole('status').textContent).toContain('Your guide is ready.');
     expect(screen.queryByRole('alert')).toBeNull();
     expect(mocks.submit).toHaveBeenCalledTimes(1);
   });
@@ -136,7 +137,14 @@ describe('guide capture analytics', () => {
     fireEvent.submit(openAndFill('colorado-relocation-guide'));
     await screen.findByRole('status');
     expect(sessionStorage.getItem('vpcs_selected_agent')).toBeNull();
+    expect(screen.getByRole('status').textContent).toContain('Your download has started.');
+    expect(screen.getByRole('img', { name: 'Tyler Parker' }).getAttribute('src')).toContain('001Rg00000pmUUk.webp');
+    expect(screen.getByRole('region', { name: 'Meet Tyler Parker' }).textContent).toContain('Air Force Veteran');
+    expect(screen.getByRole('link', { name: 'Download again' }).classList.contains('steph-button')).toBe(false);
     const contact = screen.getByRole('link', { name: 'Contact Tyler' });
+    expect(contact.classList.contains('steph-button')).toBe(true);
+    expect(document.activeElement).toBe(contact);
+    expect(window.location.pathname).toBe('/colorado');
     expect(contact.getAttribute('href')).toBe('/contact-agent?form=agent&fn=Tyler&id=001Rg00000pmUUk&state=colorado');
     // Prevent jsdom navigation after exercising the link's normal click handler.
     contact.addEventListener('click', event => event.preventDefault());

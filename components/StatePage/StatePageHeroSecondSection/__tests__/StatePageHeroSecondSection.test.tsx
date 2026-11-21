@@ -7,7 +7,7 @@ vi.mock('@/services/salesForcePostFormsService', () => ({ KeepInTouchForm: vi.fn
 import StatePageHeroSecondSection from "@/components/StatePage/StatePageHeroSecondSection/StatePageHeroSecondSection";
 
 describe("StatePageHeroSecondSection", () => {
-  it("replaces the logo panel with the Colorado relocation guide promo", () => {
+  it("places the Colorado relocation guide below the intact lending support banner", () => {
     const html = renderToStaticMarkup(
       <StatePageHeroSecondSection
         stateName="Colorado"
@@ -25,7 +25,12 @@ describe("StatePageHeroSecondSection", () => {
     expect(html).toContain("state=colorado");
     expect(html).toContain("colorado-relocation-guide-tyler-parker-v7.webp");
     expect(html).not.toContain("/downloads/colorado-pcs-guide.pdf");
-    expect(html).not.toContain("/icon/VeteranPCSlogo.svg");
+    expect(html).toContain("/icon/VeteranPCSlogo.svg");
+    expect(html).toContain("real estate team in Colorado");
+    expect(html).toContain("VA Loan Lender");
+    expect(html).toContain("Assistance");
+    // The guide is a sibling section after the complete support banner.
+    expect(html).toMatch(/VeteranPCS lending support[\s\S]*Assistance[\s\S]*<\/section><section aria-labelledby="colorado-relocation-guide-title"/);
   });
 
   it("keeps the existing VeteranPCS panel for other states", () => {

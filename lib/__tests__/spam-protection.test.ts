@@ -125,6 +125,33 @@ describe('spam-protection', () => {
   // -----------------------------------------------------------------------
   // Rate-limit — IP bucket over limit
   // -----------------------------------------------------------------------
+  describe('dry-run rate-limit isolation', () => {
+    it('keeps local dry-run submissions out of shared rate-limit buckets while retaining spam signals', async () => {
+      vi.stubEnv('NODE_ENV', 'development');
+      vi.stubEnv('LEAD_DRY_RUN', '1');
+      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
+
+      expect(await evaluateLeadSpam({ email: 'test@example.com', freeText: 'Moving to Colorado' }))
+        .toEqual({ quarantine: false, reasons: [] });
+      expect(await evaluateLeadSpam({ email: 'test@example.com', honeypot: 'filled' }))
+        .toEqual({ quarantine: true, reasons: ['honeypot'] });
+      expect(mockLimit).not.toHaveBeenCalled();
+      expect(mockHeaders).not.toHaveBeenCalled();
+    });
+
+    it('enforces real rate limits in production even if LEAD_DRY_RUN is set', async () => {
+      vi.stubEnv('NODE_ENV', 'production');
+      vi.stubEnv('LEAD_DRY_RUN', '1');
+      setupIpFail();
+      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
+
+      expect(await evaluateLeadSpam({ email: 'test@example.com' }))
+        .toEqual({ quarantine: true, reasons: ['rate-limit'] });
+      expect(mockLimit).toHaveBeenCalledTimes(2);
+      expect(mockHeaders).toHaveBeenCalledOnce();
+    });
+  });
+
   describe('rate-limit: ip bucket over limit', () => {
     it('quarantines and includes rate-limit in reasons', async () => {
       setupIpFail();

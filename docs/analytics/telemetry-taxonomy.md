@@ -183,7 +183,7 @@ The shared sanitizer excludes raw contact fields and query strings. The SDK `bef
 
 ### Colorado relocation guide
 
-Tyler Parker's V7 guide is captured from `/colorado` through the shared dialog. Its identity is separate from the previous ungated Colorado PCS guide:
+Tyler Parker's V7 guide appears in its own section below the lending-support banner on `/colorado` and is captured through the shared dialog. Its identity is separate from the previous ungated Colorado PCS guide:
 
 | Property | Value |
 | --- | --- |
@@ -192,15 +192,15 @@ Tyler Parker's V7 guide is captured from `/colorado` through the shared dialog. 
 | `source_page_path` | `/colorado` |
 | `state_code`, `state_slug` | `CO`, `colorado` |
 | `page_type` | `state_page` |
-| `cta_location`, `cta_position` | `state_hero_secondary`, `inline` |
+| `cta_location`, `cta_position` | `state_guide_section`, `inline` |
 | `cta_component` | `lead_capture_dialog` |
 | GTM event / `content` | `conversion_download` / `Colorado Relocation Guide` |
 
-Opening **Download Now** emits `cta_clicked` and the existing deduplicated `form_started`. A valid first-name, last-name, and email submission emits `form_submit_attempted` and `guide_download_requested`. An accepted response initiates the PDF, emits `guide_download_started`, and sends the single GTM conversion. Manual **Download guide** clicks emit another requested/started pair only; they never submit another Salesforce lead. Download initiation is not proof the visitor saved or read the PDF.
+Opening **Download Now** emits `cta_clicked` and the existing deduplicated `form_started`. A valid first-name, last-name, and email submission emits `form_submit_attempted` and `guide_download_requested`. An accepted response initiates the PDF, emits `guide_download_started`, and sends the single GTM conversion. Manual **Download again** clicks emit another requested/started pair only; they never submit another Salesforce lead. Download initiation is not proof the visitor saved or read the PDF.
 
 The server supplies the fixed Colorado page/state attribution and emits `lead_conversion_created` after accepted Web-to-Lead intake, excluding dry-run and spam-quarantined submissions. It carries the guide/form ID, anonymous visitor ID, and server-minted submission ID. The submission ID joins to Salesforce `VPCS_Submission_ID__c`; HTTP acceptance alone does not prove that the expected CRM record exists. Guide events do not extend the agent/lender-only session journey attribution feature.
 
-**Contact Tyler** is a separate `cta_clicked` with `cta_intent=contact_agent`, `partner_type=agent`, Tyler's public Salesforce partner ID, and `cta_location=state_hero_secondary` or `guide_download_success`. Downloading does not select Tyler, submit a contact request, or route the lead to him.
+**Contact Tyler** is a separate `cta_clicked` with `cta_intent=contact_agent`, `partner_type=agent`, Tyler's public Salesforce partner ID, and `cta_location=state_guide_section` or `guide_download_success`. Downloading does not select Tyler, submit a contact request, or route the lead to him. Only an explicit success-card Contact Tyler click places the accepted name/email in a 15-minute, same-tab sessionStorage hand-off for that agent. The contact form consumes and removes it once, fills only empty fields, and still requires its own submission. These contact details never enter the URL or analytics; a promo Contact Tyler click has no details to prefill.
 
 The old `/downloads/colorado-pcs-guide.pdf` remains available for existing links. Historical `guide_id=colorado_pcs_guide` and GTM `content=Colorado PCS Guide` refer to that older ungated promotion; do not combine them with the new guide when measuring accepted captures.
 

@@ -9,7 +9,8 @@ import { HoneypotField, useHoneypot } from '@/components/common/honeypot';
 import { captureAnalyticsEvent, formTrackingPayload, trackFormStarted, trackFormSubmitAttempted, trackFormSubmissionFailed, trackCtaClicked } from '@/lib/analytics/client';
 import { buildCtaProperties } from '@/lib/analytics/cta';
 import { COLORADO_RELOCATION_GUIDE } from '@/lib/guides/colorado-relocation';
-import ColoradoGuideContactLink from './ColoradoGuideContactLink';
+import type { ContactPrefillDetails } from '@/lib/leads/contact-prefill';
+import ColoradoGuideAuthorCard from './ColoradoGuideAuthorCard';
 
 export type CapturePlacement = { location: string; position?: string; pageType?: string };
 type Kind = 'newsletter' | 'va-guide' | 'homebuyer-guide' | 'colorado-relocation-guide';
@@ -43,9 +44,16 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [downloadStarted, setDownloadStarted] = useState(false);
+  const [acceptedContactDetails, setAcceptedContactDetails] = useState<ContactPrefillDetails>();
   const { ref: honeypotRef, getSpamFields } = useHoneypot();
   const config = settings[kind];
   const isColorado = kind === COLORADO_RELOCATION_GUIDE.kind;
+  useEffect(() => {
+    if (!isColorado || !success) return;
+    // The submitted form is gone; keep keyboard focus on the next intended action.
+    dialog.current?.querySelector<HTMLAnchorElement>('[data-guide-contact-card] a[href]')?.focus();
+  }, [isColorado, success]);
   const downloadPath = config.file ? `/downloads/${config.file}` : undefined;
   const ctaProperties = buildCtaProperties({
     ctaId: `${config.formId}_capture`,
@@ -108,6 +116,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
       return;
     }
 
+    if (isColorado) setAcceptedContactDetails({ firstName, lastName, email });
     setSuccess(true);
     busy.current = false;
     setPending(false);
@@ -122,6 +131,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
         link.download = config.file;
         document.body.appendChild(link);
         link.click();
+        setDownloadStarted(true);
       } catch { /* Use the manual download link. */ } finally { link.remove(); }
     }
   }
@@ -130,6 +140,8 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
     <button ref={trigger} type="button" disabled={!portalRoot} className={className || 'steph-button'} onClick={() => {
       setError('');
       setSuccess(false);
+      setDownloadStarted(false);
+      setAcceptedContactDetails(undefined);
       dialog.current?.showModal();
       trackSafely(() => trackCtaClicked(guideProperties));
       trackSafely(() => trackFormStarted(config.formId, guideProperties));
@@ -145,12 +157,18 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
         <button type="button" className="steph-capture-close" aria-label="Close" disabled={pending} onClick={close}>×</button>
         <h2 id={`${id}-title`}>{config.title}</h2>
         {success ? <div role="status">
-          <p>{config.file ? 'Your guide is ready.' : 'Thank you. We received your request.'}</p>
-          {config.file && <a className="steph-button" href={downloadPath} download onClick={() => {
+          <p>{isColorado && downloadStarted ? 'Your download has started.' : config.file ? 'Your guide is ready.' : 'Thank you. We received your request.'}</p>
+          {isColorado && <ColoradoGuideAuthorCard contactDetails={acceptedContactDetails} />}
+          {config.file && (isColorado ? <p className="text-sm">
+            Download didn’t start?{' '}
+            <a className="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4" href={downloadPath} download onClick={() => {
+              trackDownload('guide_download_requested', 'manual_link');
+              trackDownload('guide_download_started', 'manual_link');
+            }}>Download again</a>
+          </p> : <a className="steph-button" href={downloadPath} download onClick={() => {
             trackDownload('guide_download_requested', 'manual_link');
             trackDownload('guide_download_started', 'manual_link');
-          }}>Download guide</a>}
-          {isColorado && <ColoradoGuideContactLink location="guide_download_success" className="inline-flex min-h-11 items-center justify-center font-semibold text-primary underline underline-offset-4" />}
+          }}>Download guide</a>)}
           <button type="button" className="min-h-11" onClick={close}>Close</button>
         </div> : <form onSubmit={submit}>
           <p>Enter your details to {config.file ? 'get your free guide' : 'keep in touch'}.</p>
