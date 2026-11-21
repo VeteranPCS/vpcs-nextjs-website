@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
     parseLeadForm,
     simpleLeadSchema,
+    coloradoRelocationGuideSchema,
     contactAgentSchema,
     contactLenderSchema,
     getListedAgentsSchema,
@@ -221,5 +222,30 @@ describe('hasPlausiblePhone', () => {
 
     it('formatted "(555) 123-4567" (10 digits) → true', () => {
         expect(hasPlausiblePhone('(555) 123-4567')).toBe(true);
+    });
+});
+
+
+describe('coloradoRelocationGuideSchema', () => {
+    it('trims all required fields and accepts exact Salesforce field limits', () => {
+        const result = parseLeadForm(coloradoRelocationGuideSchema, {
+            firstName: ` ${'a'.repeat(40)} `,
+            lastName: ` ${'b'.repeat(80)} `,
+            email: ` ${'a'.repeat(68)}@example.com `,
+        });
+        expect(result.ok).toBe(true);
+        if (result.ok) {
+            expect(result.data.firstName).toHaveLength(40);
+            expect(result.data.lastName).toHaveLength(80);
+            expect(result.data.email).toHaveLength(80);
+        }
+    });
+
+    it.each(['firstName', 'lastName', 'email'])('requires %s with a string value', field => {
+        for (const value of [undefined, '', '   ', 123, {}, []]) {
+            expect(parseLeadForm(coloradoRelocationGuideSchema, {
+                firstName: 'Alex', lastName: 'Example', email: 'alex@example.test', [field]: value,
+            }).ok).toBe(false);
+        }
     });
 });

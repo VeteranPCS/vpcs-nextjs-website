@@ -101,12 +101,32 @@ describe('analytics privacy regressions', () => {
       'components/StatePage/StatePageHeroSecondSection/ColoradoPcsGuidePromo.tsx',
     );
 
-    expect(coloradoGuide).toContain('captureAnalyticsEvent("guide_download_requested"');
-    expect(coloradoGuide).toContain('captureAnalyticsEvent("guide_download_started"');
-    expect(coloradoGuide).toContain('trackCtaClicked(buildCtaProperties');
-    expect(coloradoGuide).toContain('guide_id: GUIDE_ID');
-    expect(coloradoGuide).toContain('event: "conversion_download"');
-    expect(coloradoGuide).toContain('content: "Colorado PCS Guide"');
+    const captureDialog = await source('components/redesign/LeadCaptureDialog.tsx');
+    const guideMetadata = await source('lib/guides/colorado-relocation.ts');
+
+    // Colorado now enters the same capture flow as the Resources guides.
+    expect(coloradoGuide).toContain('<LeadCaptureDialog');
+    expect(coloradoGuide).toContain('kind={guide.kind}');
+    expect(guideMetadata).toContain("kind: 'colorado-relocation-guide'");
+    expect(guideMetadata).toContain("id: 'colorado_relocation_guide'");
+    expect(captureDialog).toContain('action: coloradoRelocationGuideForm');
+    expect(captureDialog).toContain("trackDownload('guide_download_requested', 'form_submission')");
+    expect(captureDialog).toContain("trackDownload('guide_download_started', 'form_submission')");
+    expect(captureDialog).toContain('formTrackingPayload(config.formId)');
+    expect(captureDialog).toContain('trackCtaClicked(guideProperties)');
+    expect(captureDialog).toContain("sendGTMEvent({ event: 'conversion_download', content: config.gaContent })");
+    expect(guideMetadata).toContain("gaContent: 'Colorado Relocation Guide'");
+
+    // Personal fields belong only in the server action, never download telemetry.
+    const downloadPayload = captureDialog.match(/captureAnalyticsEvent\(event, \{([^\n]+)\}\)/)?.[1];
+    expect(downloadPayload).toBeDefined();
+    expect(downloadPayload).toContain('...guideProperties');
+    expect(downloadPayload).toContain('has_email: true');
+    expect(downloadPayload).not.toMatch(/\b(email|firstName|lastName|first_name|last_name)\s*:/);
+    const guideProperties = captureDialog.match(/const guideProperties = \{([\s\S]*?)\n  \};/)?.[1];
+    expect(guideProperties).toContain('...ctaProperties');
+    expect(guideProperties).toContain('source_page_path: COLORADO_RELOCATION_GUIDE.pagePath');
+    expect(guideProperties).not.toMatch(/\b(email|firstName|lastName|first_name|last_name)\s*:/);
   });
 
   it('keeps server-owned PostHog events out of the client event union', async () => {

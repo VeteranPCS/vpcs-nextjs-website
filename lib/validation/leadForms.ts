@@ -114,6 +114,13 @@ export const simpleLeadSchema = requireContactMethod(
         .passthrough(),
 );
 
+/** Colorado guide capture requires the three contact fields, within Salesforce limits. */
+export const coloradoRelocationGuideSchema = z.object({
+    firstName: z.string().trim().min(1, 'First name is required').max(40),
+    lastName: z.string().trim().min(1, 'Last name is required').max(80),
+    email: z.string().trim().min(1, 'Email is required').max(80).email(),
+}).passthrough();
+
 /**
  * Contact-an-agent lead. Superset of the simple lead with PCS/property fields.
  * Used by contactAgentPostForm.
