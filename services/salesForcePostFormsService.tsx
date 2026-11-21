@@ -22,6 +22,7 @@ import {
     buildLenderLeadParams,
 } from '@/services/salesforceLeadParams';
 import { SF_ORG_ID, SF_RECORD_TYPE } from '@/lib/salesforce/ids';
+import { COLORADO_RELOCATION_GUIDE } from '@/lib/guides/colorado-relocation';
 import {
     appendSalesforceAttributionParams,
     captureLeadConversionCreated,
@@ -30,6 +31,7 @@ import {
 import {
     parseLeadForm,
     simpleLeadSchema,
+    coloradoRelocationGuideSchema,
     contactAgentSchema,
     contactLenderSchema,
     getListedAgentsSchema,
@@ -57,7 +59,7 @@ interface SalesforceSubmissionResult {
  * intentionally performs exactly one POST.
  *
  * Dry-run choke point 1 of 2: this is the only place the app POSTs to Web-to-Lead, so
- * the guard here covers all nine forms.
+ * the guard here covers all ten forms.
  */
 async function submitToSalesforceWebToLead(
     url: string,
@@ -266,6 +268,7 @@ async function captureAcceptedCustomerLead(args: {
     leadSource: string;
     submissionId: string;
     formData: Record<string, unknown>;
+    sourcePagePath?: string;
     stateCode?: string;
     stateSlug?: string;
     partnerType?: 'agent' | 'lender';
@@ -290,6 +293,7 @@ async function captureAcceptedCustomerLead(args: {
         leadSource: args.leadSource,
         submissionId: args.submissionId,
         formData: args.formData,
+        ...(args.sourcePagePath ? { sourcePagePath: args.sourcePagePath } : {}),
         stateCode: args.stateCode,
         stateSlug: args.stateSlug,
         partnerType: args.partnerType,
@@ -335,6 +339,10 @@ interface WebToLeadLocation {
 interface WebToLeadCapture {
     formId: string;
     leadSource: string;
+    /** Fixed content attribution does not opt a guide into partner routing or SMS. */
+    sourcePagePath?: string;
+    stateCode?: string;
+    stateSlug?: string;
     guideId?: string;
     partnerType?: 'agent' | 'lender';
 }
@@ -494,6 +502,26 @@ function buildHomebuyerGuideParams(formData: Record<string, string | undefined>,
     return appendSalesforceAttributionParams(params, formData, submissionId);
 }
 
+const COLORADO_GUIDE_DESCRIPTION = `${COLORADO_RELOCATION_GUIDE.title} (${COLORADO_RELOCATION_GUIDE.version}) by ${COLORADO_RELOCATION_GUIDE.author}; Colorado (${COLORADO_RELOCATION_GUIDE.stateCode}); source: ${COLORADO_RELOCATION_GUIDE.pagePath}.`;
+
+function buildColoradoRelocationGuideParams(formData: Record<string, string | undefined>, submissionId: string): URLSearchParams {
+    const params = new URLSearchParams({
+        oid: SF_ORG_ID,
+        retURL: `${BASE_URL}/thank-you`,
+        recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
+        lead_source: COLORADO_RELOCATION_GUIDE.leadSource,
+        first_name: formData.firstName || '',
+        last_name: formData.lastName || '',
+        email: formData.email || '',
+        // Content attribution is server-owned; visiting Colorado does not imply a move there.
+        '00N4x00000QQ1LB': COLORADO_RELOCATION_GUIDE.sourceUrl,
+        description: COLORADO_GUIDE_DESCRIPTION,
+        'g-recaptcha-response': '',
+        captcha_settings: '',
+    });
+    return appendSalesforceAttributionParams(params, formData, submissionId);
+}
+
 function buildInternshipParams(formData: Record<string, string | undefined>): URLSearchParams {
     return new URLSearchParams({
         oid: SF_ORG_ID,
@@ -598,7 +626,7 @@ async function afterAcceptance(submissionId: string, stage: string, work: () => 
 }
 
 /**
- * Single Web-to-Lead submission engine shared by all nine lead forms. The nine exports
+ * Single Web-to-Lead submission engine shared by all ten lead forms. The ten exports
  * are thin wrappers around this: their differences live entirely in the config they pass.
  */
 async function submitWebToLead<TResult extends object>(
@@ -751,6 +779,9 @@ async function submitWebToLead<TResult extends object>(
                 leadSource: capture.leadSource,
                 submissionId,
                 formData,
+                ...(capture.sourcePagePath ? { sourcePagePath: capture.sourcePagePath } : {}),
+                ...(capture.stateCode ? { stateCode: capture.stateCode } : {}),
+                ...(capture.stateSlug ? { stateSlug: capture.stateSlug } : {}),
                 ...(config.location
                     ? {
                         stateCode: effectiveState?.code,
@@ -837,7 +868,7 @@ async function submitWebToLead<TResult extends object>(
     }
 }
 
-// ── Per-form configs + thin wrappers (nine exports, signatures unchanged) ────────────
+// ── Per-form configs + thin wrappers (existing signatures unchanged) ────────────
 
 const contactAgentConfig = defineWebToLeadConfig({
     formType: 'contactAgent',
@@ -1058,6 +1089,34 @@ const homebuyerGuideConfig = defineWebToLeadConfig({
 
 export async function homebuyerGuideForm(formData: unknown, options?: InternalCallOptions) {
     return submitWebToLead(homebuyerGuideConfig, formData, { options });
+}
+
+const coloradoRelocationGuideConfig = defineWebToLeadConfig({
+    formType: 'coloradoRelocationGuide',
+    processingMessage: 'Processing Colorado relocation guide form submission',
+    schema: coloradoRelocationGuideSchema,
+    buildParams: (ctx) => buildColoradoRelocationGuideParams(ctx.formData, ctx.submissionId),
+    buildSlack: (ctx) => ({
+        headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Colorado Relocation Guide Download' : '🔔 New Colorado Relocation Guide Download',
+        name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
+        email: ctx.formData.email || '',
+        phoneNumber: '',
+        message: COLORADO_GUIDE_DESCRIPTION,
+    }),
+    capture: {
+        formId: COLORADO_RELOCATION_GUIDE.id,
+        leadSource: COLORADO_RELOCATION_GUIDE.leadSource,
+        guideId: COLORADO_RELOCATION_GUIDE.id,
+        sourcePagePath: COLORADO_RELOCATION_GUIDE.pagePath,
+        stateCode: COLORADO_RELOCATION_GUIDE.stateCode,
+        stateSlug: COLORADO_RELOCATION_GUIDE.stateSlug,
+    },
+    buildResult: (_redirectUrl, submissionId) =>
+        ({ success: true, message: 'Form submitted successfully!', submissionId }),
+});
+
+export async function coloradoRelocationGuideForm(formData: unknown, options?: InternalCallOptions) {
+    return submitWebToLead(coloradoRelocationGuideConfig, formData, { options });
 }
 
 const internshipConfig = defineWebToLeadConfig({

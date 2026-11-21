@@ -2,75 +2,157 @@
 import React from 'react';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-const mocks = vi.hoisted(() => ({ submit: vi.fn(), capture: vi.fn() }));
+const mocks = vi.hoisted(() => ({ submit: vi.fn(), capture: vi.fn(), gtm: vi.fn() }));
 vi.mock('posthog-js', () => ({ default: { capture: mocks.capture } }));
-vi.mock('@/services/salesForcePostFormsService', () => ({ KeepInTouchForm: mocks.submit, vaLoanGuideForm: mocks.submit, homebuyerGuideForm: mocks.submit }));
+vi.mock('@next/third-parties/google', () => ({ sendGTMEvent: mocks.gtm }));
+vi.mock('@/services/salesForcePostFormsService', () => ({ KeepInTouchForm: mocks.submit, vaLoanGuideForm: mocks.submit, homebuyerGuideForm: mocks.submit, coloradoRelocationGuideForm: mocks.submit }));
 import LeadCaptureDialog from '../LeadCaptureDialog';
 
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.submit.mockReset();
+  mocks.capture.mockReset();
+  mocks.gtm.mockReset();
   window.history.replaceState({}, '', '/pcs-resources?q=private-query');
+  window.sessionStorage.clear();
   HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', ''); };
   HTMLDialogElement.prototype.close = function () { this.removeAttribute('open'); };
   vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
-function openAndFill(kind: 'va-guide' | 'homebuyer-guide' | 'newsletter' = 'va-guide') {
-  render(<LeadCaptureDialog kind={kind} initialEmail="private-person@example.com" triggerLabel="Get guide" placement={{ location: 'featured_resources', position: 'card', pageType: 'pcs_resources' }} />);
+function openAndFill(kind: 'va-guide' | 'homebuyer-guide' | 'newsletter' | 'colorado-relocation-guide' = 'va-guide') {
+  const colorado = kind === 'colorado-relocation-guide';
+  if (colorado) window.history.replaceState({}, '', '/colorado?private-query=do-not-record');
+  render(<LeadCaptureDialog kind={kind} initialEmail="private-person@example.com" triggerLabel="Get guide" placement={colorado
+    ? { location: 'state_hero_secondary', position: 'inline', pageType: 'state_page' }
+    : { location: 'featured_resources', position: 'card', pageType: 'pcs_resources' }} />);
   fireEvent.click(screen.getByRole('button', { name: 'Get guide' }));
   fireEvent.change(screen.getByLabelText('First name'), { target: { value: 'PrivateGivenName' } });
   fireEvent.change(screen.getByLabelText('Last name'), { target: { value: 'PrivateFamilyName' } });
-  return screen.getByLabelText('Email').closest('form')!;
+  const form = screen.getByLabelText('Email').closest('form');
+  if (!form) throw new Error('Expected guide form');
+  return form;
 }
 const downloadEvents = () => mocks.capture.mock.calls.filter(([event]) => event.startsWith('guide_download_'));
 
-describe('guide capture PostHog events', () => {
+describe('guide capture analytics', () => {
   it.each([
-    ['va-guide', 'va_loan_guide', '/downloads/VA-Loan-Guide.pdf'],
-    ['homebuyer-guide', 'first_time_homebuyer_guide', '/downloads/first-time-home-buyer-guide.pdf'],
-  ] as const)('tracks %s requests, successful starts and manual downloads with placement and safe properties', async (kind, guideId, destination) => {
-    let finish!: (result: { success: boolean }) => void;
+    ['va-guide', 'va_loan_guide', '/downloads/VA-Loan-Guide.pdf', 'VA Loan Guide'],
+    ['homebuyer-guide', 'first_time_homebuyer_guide', '/downloads/first-time-home-buyer-guide.pdf', 'First Time Home Buyer Guide'],
+    ['colorado-relocation-guide', 'colorado_relocation_guide', '/downloads/colorado-relocation-guide-tyler-parker-v7.pdf', 'Colorado Relocation Guide'],
+  ] as const)('tracks %s requests, successful starts and manual downloads without personal input', async (kind, guideId, destination, gaContent) => {
+    let finish: ((result: { success: boolean }) => void) | undefined;
     mocks.submit.mockReturnValue(new Promise(resolve => { finish = resolve; }));
     const form = openAndFill(kind);
-    expect(mocks.capture).toHaveBeenCalledWith('cta_clicked', expect.objectContaining({ cta_intent: 'download_guide', guide_id: guideId, cta_location: 'featured_resources' }));
-    // Opening or invalid input alone must not report a download.
+    const colorado = kind === 'colorado-relocation-guide';
+    expect(mocks.capture).toHaveBeenCalledWith('cta_clicked', expect.objectContaining({ cta_intent: 'download_guide', guide_id: guideId }));
     expect(downloadEvents()).toHaveLength(0);
+    expect(mocks.gtm).not.toHaveBeenCalled();
     fireEvent.submit(form);
     fireEvent.submit(form);
     expect(mocks.submit).toHaveBeenCalledTimes(1);
     expect(downloadEvents().map(([event]) => event)).toEqual(['guide_download_requested']);
+    expect(mocks.gtm).not.toHaveBeenCalled();
+    if (!finish) throw new Error('Expected pending submission');
     finish({ success: true });
     await screen.findByRole('status');
     expect(downloadEvents().map(([event]) => event)).toEqual(['guide_download_requested', 'guide_download_started']);
+    expect(mocks.gtm).toHaveBeenCalledExactlyOnceWith({ event: 'conversion_download', content: gaContent });
     expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(1);
     fireEvent.click(screen.getByRole('link', { name: 'Download guide' }));
     expect(downloadEvents().map(([event]) => event)).toEqual(['guide_download_requested', 'guide_download_started', 'guide_download_requested', 'guide_download_started']);
     expect(mocks.submit).toHaveBeenCalledTimes(1);
+    expect(mocks.gtm).toHaveBeenCalledTimes(1);
     for (const [, properties] of downloadEvents()) {
-      expect(properties).toMatchObject({ guide_id: guideId, form_id: guideId, source_page_path: '/pcs-resources', destination_path: destination, cta_component: 'lead_capture_dialog', cta_location: 'featured_resources', cta_position: 'card', page_type: 'pcs_resources' });
+      expect(properties).toMatchObject({
+        guide_id: guideId,
+        form_id: guideId,
+        source_page_path: colorado ? '/colorado' : '/pcs-resources',
+        destination_path: destination,
+        cta_component: 'lead_capture_dialog',
+        cta_location: colorado ? 'state_hero_secondary' : 'featured_resources',
+        cta_position: colorado ? 'inline' : 'card',
+        page_type: colorado ? 'state_page' : 'pcs_resources',
+        ...(colorado ? { state_code: 'CO', state_slug: 'colorado' } : {}),
+      });
     }
     expect(downloadEvents().map(([, properties]) => properties.download_trigger)).toEqual(['form_submission', 'form_submission', 'manual_link', 'manual_link']);
-    const serialized = JSON.stringify(mocks.capture.mock.calls);
-    for (const privateValue of ['private-person', 'PrivateGivenName', 'PrivateFamilyName', 'private-query']) expect(serialized).not.toContain(privateValue);
+    const serialized = JSON.stringify([...mocks.capture.mock.calls, ...mocks.gtm.mock.calls]);
+    for (const privateValue of ['private-person', 'PrivateGivenName', 'PrivateFamilyName', 'private-query', 'do-not-record']) expect(serialized).not.toContain(privateValue);
     expect(serialized).not.toContain('lead_conversion_created');
   });
-  it('does not report a started download after a failed request; explicit retry is tracked', async () => {
+
+  it('does not report conversion after a failed request; explicit retry is tracked', async () => {
     mocks.submit.mockResolvedValueOnce({ success: false }).mockResolvedValueOnce({ success: true });
-    const form = openAndFill();
+    const form = openAndFill('colorado-relocation-guide');
     fireEvent.submit(form);
     await screen.findByRole('alert');
     expect(downloadEvents().map(([event]) => event)).toEqual(['guide_download_requested']);
+    expect(mocks.gtm).not.toHaveBeenCalled();
     expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
     fireEvent.submit(form);
     await screen.findByRole('status');
     expect(downloadEvents().map(([event]) => event)).toEqual(['guide_download_requested', 'guide_download_requested', 'guide_download_started']);
+    expect(mocks.gtm).toHaveBeenCalledTimes(1);
   });
+
+  it('preserves success and downloading when both analytics providers throw', async () => {
+    mocks.submit.mockResolvedValue({ success: true });
+    mocks.capture.mockImplementation(() => { throw new Error('PostHog blocked'); });
+    mocks.gtm.mockImplementation(() => { throw new Error('GTM blocked'); });
+    fireEvent.submit(openAndFill('colorado-relocation-guide'));
+    await screen.findByRole('status');
+    expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(mocks.submit).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the manual link after the browser blocks the automatic download', async () => {
+    mocks.submit.mockResolvedValue({ success: true });
+    vi.mocked(HTMLAnchorElement.prototype.click).mockImplementation(() => { throw new Error('Download blocked'); });
+    fireEvent.submit(openAndFill('colorado-relocation-guide'));
+    await screen.findByRole('status');
+    expect(screen.getByRole('link', { name: 'Download guide' }).getAttribute('href')).toBe('/downloads/colorado-relocation-guide-tyler-parker-v7.pdf');
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(mocks.submit).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses real name limits and focuses the missing name without submitting or tracking a download', () => {
+    const form = openAndFill('colorado-relocation-guide');
+    expect(screen.getByLabelText('First name').getAttribute('maxlength')).toBe('40');
+    expect(screen.getByLabelText('Last name').getAttribute('maxlength')).toBe('80');
+    expect(screen.getByLabelText('Email').getAttribute('maxlength')).toBe('80');
+    fireEvent.change(screen.getByLabelText('First name'), { target: { value: '   ' } });
+    fireEvent.submit(form);
+    expect(document.activeElement).toBe(screen.getByLabelText('First name'));
+    expect(screen.getByRole('alert').textContent).toContain('first name');
+    expect(mocks.submit).not.toHaveBeenCalled();
+    expect(downloadEvents()).toHaveLength(0);
+    expect(mocks.gtm).not.toHaveBeenCalled();
+  });
+
+  it('treats Contact Tyler as a separate selected-agent action after download', async () => {
+    mocks.submit.mockResolvedValue({ success: true });
+    fireEvent.submit(openAndFill('colorado-relocation-guide'));
+    await screen.findByRole('status');
+    expect(sessionStorage.getItem('vpcs_selected_agent')).toBeNull();
+    const contact = screen.getByRole('link', { name: 'Contact Tyler' });
+    expect(contact.getAttribute('href')).toBe('/contact-agent?form=agent&fn=Tyler&id=001Rg00000pmUUk&state=colorado');
+    // Prevent jsdom navigation after exercising the link's normal click handler.
+    contact.addEventListener('click', event => event.preventDefault());
+    fireEvent.click(contact);
+    expect(JSON.parse(sessionStorage.getItem('vpcs_selected_agent') ?? '{}')).toMatchObject({ id: '001Rg00000pmUUk', name: 'Tyler Parker', brokerage: 'Solid Oak Realty, Inc.' });
+    expect(mocks.capture).toHaveBeenCalledWith('cta_clicked', expect.objectContaining({ cta_intent: 'contact_agent', cta_location: 'guide_download_success', partner_salesforce_id: '001Rg00000pmUUk' }));
+    expect(mocks.submit).toHaveBeenCalledTimes(1);
+    expect(mocks.gtm).toHaveBeenCalledTimes(1);
+  });
+
   it('does not call downloads or emit guide events for a newsletter', async () => {
     mocks.submit.mockResolvedValue({ success: true });
     fireEvent.submit(openAndFill('newsletter'));
     await waitFor(() => expect(screen.getByRole('status').textContent).toContain('received'));
     expect(downloadEvents()).toHaveLength(0);
+    expect(mocks.gtm).not.toHaveBeenCalled();
     expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
   });
 });

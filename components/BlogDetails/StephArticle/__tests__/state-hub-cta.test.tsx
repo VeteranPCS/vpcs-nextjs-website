@@ -9,7 +9,7 @@ vi.mock('next/image', () => ({ default: ({ priority: _priority, ...props }: Reco
 vi.mock('next/link', () => ({ default: ({ children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => <a {...props}>{children}</a> }));
 vi.mock('@/mdx-components', () => ({ createBlogMdxComponents: (args: unknown) => args }));
 vi.mock('next-mdx-remote/rsc', () => ({ MDXRemote: ({ source }: { source: string }) => <div data-testid="source-fragment">{source}</div> }));
-vi.mock('@/services/salesForcePostFormsService', () => ({ KeepInTouchForm: vi.fn(), homebuyerGuideForm: vi.fn(), vaLoanGuideForm: vi.fn() }));
+vi.mock('@/services/salesForcePostFormsService', () => ({ KeepInTouchForm: vi.fn(), homebuyerGuideForm: vi.fn(), vaLoanGuideForm: vi.fn(), coloradoRelocationGuideForm: vi.fn() }));
 const track = vi.hoisted(() => vi.fn());
 vi.mock('@/lib/analytics/client', () => ({ trackCtaClicked: track, trackFormStarted: vi.fn(), captureAnalyticsEvent: vi.fn(), trackFormSubmitAttempted: vi.fn(), trackFormSubmissionFailed: vi.fn(), formTrackingPayload: () => ({}) }));
 const gtm = vi.hoisted(() => vi.fn());

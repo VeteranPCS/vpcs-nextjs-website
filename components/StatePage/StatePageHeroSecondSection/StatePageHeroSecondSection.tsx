@@ -10,9 +10,9 @@ interface StatePageHeroSecondSectionProps {
 
 const StatePageHeroSecondSection = ({
   stateName,
-  stateCode,
   stateSlug,
 }: StatePageHeroSecondSectionProps) => {
+  const hasColoradoGuide = stateSlug === "colorado";
   const benefits = [
     {
       icon: "/icon/userpluswhite.svg",
@@ -33,10 +33,10 @@ const StatePageHeroSecondSection = ({
 
   return (
     <section className="bg-primary text-white" aria-label="VeteranPCS lending support">
-      <div className="mx-auto flex flex-col md:flex-row max-w-[1500px] items-stretch">
-        <div className="flex w-full md:w-[36%] items-center justify-center bg-primary-hover/25 px-10 py-8 xl:px-14">
-          {stateSlug === "colorado" ? (
-            <ColoradoPcsGuidePromo stateCode={stateCode} stateSlug={stateSlug} />
+      <div className={`mx-auto flex max-w-[1500px] flex-col items-stretch ${hasColoradoGuide ? "lg:flex-row" : "md:flex-row"}`}>
+        <div className={`flex w-full items-center justify-center bg-primary-hover/25 px-10 py-8 xl:px-14 ${hasColoradoGuide ? "lg:w-[40%] xl:w-[36%]" : "md:w-[36%]"}`}>
+          {hasColoradoGuide ? (
+            <ColoradoPcsGuidePromo />
           ) : (
             <div className="flex max-w-[360px] flex-col items-center text-center">
               <Image

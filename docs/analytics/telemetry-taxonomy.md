@@ -177,7 +177,34 @@ A valid form submission emits `guide_download_requested` with `download_trigger=
 
 The success-state **Download guide** link emits another requested/started pair with `download_trigger=manual_link`, without submitting another lead. This measures each explicit download initiation; it does **not** prove the user saved or opened the file. Count accepted leads with the existing server-owned `lead_conversion_created` event, not download counts.
 
+The shared dialog also emits the GTM comparator `conversion_download` once after an accepted form response, with `content=VA Loan Guide` or `content=First Time Home Buyer Guide`. Opening, validation failures, submission failures, and manual re-downloads do not emit this conversion. Optional analytics failures never undo an accepted submission or prevent access to the manual download link.
+
 The shared sanitizer excludes raw contact fields and query strings. The SDK `before_send` privacy pass also covers top-level `$set` and `$set_once` person updates; SDK-added current/initial URLs become path-only fields. Browser verification enables local SDK capture explicitly, intercepts ingestion before navigation, and uses `LEAD_DRY_RUN=1`; test events and leads must not reach production. Instrumentation follows [PostHog custom-event capture](https://posthog.com/docs/libraries/js/usage#custom-event-capture).
+
+### Colorado relocation guide
+
+Tyler Parker's V7 guide is captured from `/colorado` through the shared dialog. Its identity is separate from the previous ungated Colorado PCS guide:
+
+| Property | Value |
+| --- | --- |
+| `guide_id`, `form_id` | `colorado_relocation_guide` |
+| `destination_path` | `/downloads/colorado-relocation-guide-tyler-parker-v7.pdf` |
+| `source_page_path` | `/colorado` |
+| `state_code`, `state_slug` | `CO`, `colorado` |
+| `page_type` | `state_page` |
+| `cta_location`, `cta_position` | `state_hero_secondary`, `inline` |
+| `cta_component` | `lead_capture_dialog` |
+| GTM event / `content` | `conversion_download` / `Colorado Relocation Guide` |
+
+Opening **Download Now** emits `cta_clicked` and the existing deduplicated `form_started`. A valid first-name, last-name, and email submission emits `form_submit_attempted` and `guide_download_requested`. An accepted response initiates the PDF, emits `guide_download_started`, and sends the single GTM conversion. Manual **Download guide** clicks emit another requested/started pair only; they never submit another Salesforce lead. Download initiation is not proof the visitor saved or read the PDF.
+
+The server supplies the fixed Colorado page/state attribution and emits `lead_conversion_created` after accepted Web-to-Lead intake, excluding dry-run and spam-quarantined submissions. It carries the guide/form ID, anonymous visitor ID, and server-minted submission ID. The submission ID joins to Salesforce `VPCS_Submission_ID__c`; HTTP acceptance alone does not prove that the expected CRM record exists. Guide events do not extend the agent/lender-only session journey attribution feature.
+
+**Contact Tyler** is a separate `cta_clicked` with `cta_intent=contact_agent`, `partner_type=agent`, Tyler's public Salesforce partner ID, and `cta_location=state_hero_secondary` or `guide_download_success`. Downloading does not select Tyler, submit a contact request, or route the lead to him.
+
+The old `/downloads/colorado-pcs-guide.pdf` remains available for existing links. Historical `guide_id=colorado_pcs_guide` and GTM `content=Colorado PCS Guide` refer to that older ungated promotion; do not combine them with the new guide when measuring accepted captures.
+
+Verification uses the local dry-run server with explicitly enabled, intercepted PostHog SDK capture and blocked Google ingestion. The browser suite validates the downloaded V7 PDF against SHA-256 `b816103bade949338238a93ec77ad930f95a65a04128fbb04d95aa4bf95227e1`, event order and safe properties, GA dataLayer entries, invalid fields, failed requests, retry, pending duplicates, and manual downloads without a second lead. Vercel preview hosts intentionally do not initialize client PostHog, and `LEAD_DRY_RUN` is inactive in production builds; neither a preview page nor a local dry-run proves live CRM/analytics ingestion. Follow the [Colorado guide acceptance runbook](../colorado-relocation-guide.md) for the controlled user-run submission and read-only verification.
 
 ### Bottom Funnel
 
@@ -466,7 +493,7 @@ Known GTM events in the current app:
 | `conversion_contact_lender` | Contact-lender page submission path |
 | `conversion_contact_form` | General contact form |
 | `conversion_keep_in_touch` | Keep-in-touch form |
-| `conversion_download` | Guide download forms and direct-download CTAs; `content` identifies the guide (`Colorado PCS Guide` for `colorado_pcs_guide`) |
+| `conversion_download` | Guide downloads; shared-dialog captures fire after acceptance with `content` identifying the guide (`Colorado Relocation Guide` for `colorado_relocation_guide`). Historical `Colorado PCS Guide` identifies the previous ungated Colorado asset. |
 | `moving_bonus_calculator_interaction` | Moving bonus calculator interaction |
 | `moving_bonus_calculator_cta_click` | Moving bonus calculator CTA |
 | `bah_calculator_use` | BAH calculator success |
@@ -477,6 +504,9 @@ Known GTM events in the current app:
 | `blog_to_state_cta_click` | `FindAgentInState` blog post CTA (`blog_find_agent_in_state`), position `top`, agent-intent posts only; comparator alongside the PostHog `cta_clicked` event |
 
 If a GTM conversion fires before a confirmed Salesforce acceptance, use the PostHog `lead_conversion_created` event for accepted-lead reporting.
+
+Read-only verification of the [published GTM container](https://www.googletagmanager.com/gtm.js?id=GTM-TNWKSN77) on November 21, 2026 found resource version `17`, GA4 event tag `40`, measurement ID `G-G98TNDRRM0`, and an exact `conversion_download` trigger. That tag forwards the dataLayer `content` variable; it does not map new guide/state/source custom parameters automatically. This static configuration verifies forwarding intent, not ingestion. Confirm actual delivery in Tag Assistant / GA4 DebugView during the controlled acceptance check, and verify PostHog independently. No GTM configuration change is required for the existing event plus the new guide's distinct `content` value.
+
 
 ## Troubleshooting In PostHog
 

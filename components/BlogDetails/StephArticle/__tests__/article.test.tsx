@@ -10,7 +10,7 @@ vi.mock('next/link',()=>({default:({children,...props}:React.AnchorHTMLAttribute
 const factory=vi.hoisted(()=>vi.fn());
 vi.mock('@/mdx-components',()=>({createBlogMdxComponents:(args:unknown)=>{factory(args);return args;}}));
 vi.mock('next-mdx-remote/rsc',()=>({MDXRemote:({source,components}:{source:string;components:{headingIds:{id:string;text:string}[]}})=><><div data-testid="source-fragment">{source}</div>{components.headingIds.map(heading=><h2 key={heading.id} id={heading.id}>{heading.text}</h2>)}</>}));
-vi.mock('@/services/salesForcePostFormsService',()=>({KeepInTouchForm:vi.fn(),homebuyerGuideForm:vi.fn(),vaLoanGuideForm:vi.fn()}));
+vi.mock('@/services/salesForcePostFormsService',()=>({KeepInTouchForm:vi.fn(),homebuyerGuideForm:vi.fn(),vaLoanGuideForm:vi.fn(),coloradoRelocationGuideForm:vi.fn()}));
 const track=vi.hoisted(()=>vi.fn());
 vi.mock('@/lib/analytics/client',()=>({trackCtaClicked:track,trackFormStarted:vi.fn(),captureAnalyticsEvent:vi.fn(),trackFormSubmitAttempted:vi.fn(),trackFormSubmissionFailed:vi.fn(),formTrackingPayload:()=>({})}));
 import StephArticle from '../StephArticle';
