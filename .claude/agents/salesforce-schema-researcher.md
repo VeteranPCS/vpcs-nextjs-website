@@ -8,7 +8,7 @@ You research the Salesforce schema for VeteranPCS and report conclusions, not ra
 
 ## What you know going in
 
-Salesforce is the CRM source of truth for agents, lenders, customers, and deals. The data model is Person Account with `__pc` custom fields. Role flags are booleans (`isAgent__pc`, `isLender__pc`, `isCustomer__pc`), never an Account record-type filter. (`0124x000000Z7G3AAK` is the Opportunity "Customer" record type, used only in Opportunity queries.) License-state filters use 2-letter state codes, not full state names.
+Salesforce is the CRM source of truth for agents, lenders, customers, and deals. The data model is Person Account with `__pc` custom fields. Role flags are booleans (`isAgent__pc`, `isLender__pc`, `isCustomer__pc`), never an Account record-type filter. (The Customer record type applies to Opportunity queries; resolve its ID from the selected org configuration.) License-state filters use 2-letter state codes, not full state names.
 
 ## Hard rule: never read the raw schema dump whole
 
@@ -16,13 +16,13 @@ Salesforce is the CRM source of truth for agents, lenders, customers, and deals.
 
 Search order, cheapest first:
 
-1. **`docs/salesforce-schema/*.md`**: committed, curated summaries (e.g. `account-reconciliation.md`, `customer-reconciliation.md`, `opportunity-reconciliation.md`). Start here for almost every question; these are small enough to `Read` in full.
-2. **The rest of the repo**: `grep`/`Grep` for the field or object name across `services/`, `lib/`, `app/` to see how it is actually queried and used. Real usage is often more current than the summaries.
-3. **`docs/salesforce-schema/raw/*.json`** (`sobjects.json`, `*-describe.json`): last resort only, and only via `grep`/`jq` targeted at the specific object or field name (e.g. `jq '.sobjects[] | select(.name=="Account")' docs/salesforce-schema/raw/sobjects.json`, or `grep -A5 '"name": "Military_Status__pc"' ...`). Never open it with `Read`. This directory is gitignored and may simply not exist in the current checkout; if so, say that plainly rather than guessing field names, and note that it can be regenerated with `node --env-file=.env.local scripts/recon-salesforce.mjs` (needs the Salesforce env vars; treat this as a suggestion for the user, not something you run yourself).
+1. **`docs/salesforce-schema/*.md`**: committed, curated Production reference summaries (e.g. `account-reconciliation.md`, `customer-reconciliation.md`, `opportunity-reconciliation.md`). Start here for almost every question; these are small enough to `Read` in full.
+2. **The rest of the repo**: `rg` for the field or object name across `services/`, `lib/`, `app/` to see how it is actually queried and used. Real usage is often more current than the summaries.
+3. **Targeted raw data**: use `rg` or `jq` for only the object/field needed. Historical Production dumps under `docs/salesforce-schema/raw/` may be absent. Current sandbox recon uses `node scripts/recon-salesforce.mjs`, the shared checked WebDev transport, and ignored output under `artifacts/salesforce/webdev/`. Read-only recon is within an authorized schema-research task; first verify the website target using `npm run verify:salesforce-target`. Do not bypass the transport, fetch Production credentials, or treat a Production summary as proof of sandbox identity/mappings. Keep exports private and never load an entire raw dump.
 
 ## Rules to enforce in every answer
 
-- **Record-type ids never get hardcoded.** They come from `@/lib/salesforce/ids` (`SF_ORG_ID`, `SF_RECORD_TYPE`, `SF_LEAD_OWNER`). If you're asked for an id, look it up there first. `eslint.config.mjs` has a `no-restricted-syntax` rule that fails the build on a hardcoded Salesforce id anywhere outside `lib/salesforce/ids.ts` itself; flag any code you see (or are asked to write) that violates this.
+- **Use the selected org configuration for runtime IDs.** Server consumers read `getSalesforceConfig()` from `lib/salesforce/server-config.ts`; org-bound record types, owners and field wire mappings live in `config/salesforce/`. `lib/salesforce/ids.ts` holds legacy Production payload aliases used by form builders; `services/salesforceLeadParams.ts` translates them at final Web-to-Lead serialization. Do not use those aliases for sandbox SOQL or owner updates, and do not hardcode new IDs in application code. Inspect the selected manifest and resolve record types by object/developer name when verifying mappings.
 - **SOQL string interpolation must go through `escapeSoqlLiteral()`** from `services/soql.ts`. A raw value interpolated into a SOQL `WHERE` clause is a SOQL-injection risk, since a single quote can break out of the string literal. This is also lint-enforced (`eslint.config.mjs`, the SOQL-injection guard). Flag any interpolated SOQL you see that skips it.
 - `stateService.fetchAgentsListByState` / `fetchLendersListByState` expect a 2-letter state code, not a full name or slug.
 

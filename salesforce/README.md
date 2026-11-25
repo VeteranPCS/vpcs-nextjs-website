@@ -17,7 +17,7 @@ sf data query --target-org vpcs-webdev --query "SELECT Id, IsSandbox FROM Organi
 
 The identity query returned `Id=00Djg000000EK8YEAW` and `IsSandbox=true`. Require both values before a scoped command. The two website OAuth apps also verified the sandbox and passed 13 Preview and 19 workflow read and denial checks against the seeded data. Verified Web-to-Lead and owner mappings are in the WebDev manifest. [App access and evidence](access/README.md)
 
-The rendering run reconciled seven synthetic primary records and three account revalidation captures. The first Contact Agent rehearsal created a Lead and hit an owner-transfer error. The deployed guard fix was verified on that record. A fresh sandbox run passed all ten form persistence checks, including the two contact owner readbacks. Keep website writes off outside approved capture runs. The protected workflow-test branch is absent remotely. [Rendering fixture operator guide](fixtures/README.md)
+The rendering run reconciled seven synthetic primary records and three account revalidation captures. The first Contact Agent rehearsal created a Lead and hit an owner-transfer error. The deployed guard fix was verified on that record. A fresh sandbox run passed all ten form persistence checks, including the two contact owner readbacks. Keep website writes off outside approved capture runs. The published `codex/salesforce-workflow-test` branch serves the protected `test.veteranpcs.com` Preview in capture mode with writes off. [Rendering fixture operator guide](fixtures/README.md)
 
 ## Inventory before test data
 
@@ -33,7 +33,7 @@ Review retrieved source for embedded secrets before copying the narrowly scoped 
 
 - Test changed Apex with meaningful assertions and callout mocks. Record test run IDs, failures, and coverage; run the relevant existing regression suite as well.
 - Deploy changes to `vpcs-webdev` first. No direct production Apex edits.
-- Validate Flow behavior with eligible and ineligible synthetic records; capture native scheduling and final delivery evidence.
+- Validate affected Flow behavior with eligible and ineligible synthetic records. Capture native schedule times when timing is in scope; provider and recipient receipts are required when certifying live delivery. The full legacy workflow matrix is not a blanket environment merge gate.
 - No production metadata deployment is part of the initial website environment switch. Later Salesforce releases require a separate reviewed manifest, sandbox evidence, production validation/test coverage, and explicit target selection.
 - A sandbox refresh invalidates the previous identity/mapping/isolation attestation. Recheck credentials, recipient controls, schedules, and fixture relationships before re-enabling writes.
 

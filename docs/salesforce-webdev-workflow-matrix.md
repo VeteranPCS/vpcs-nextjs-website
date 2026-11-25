@@ -2,6 +2,12 @@
 
 The ten website submissions, native five-minute welcome with inbox and email-log correlation, and the real SMS queue worker have separate receipts. The scenarios below exercise the remaining Salesforce entry points. The expected results come from the November 25 retrieved metadata and the deployed capture overlay. A test result for one entry point covers that entry point only. [Environment evidence](salesforce-webdev-environment.md)
 
+## Scope and release use
+
+This is the native workflow characterization backlog and the case inventory for changes to these workflows. It is not a requirement to wait for every daily or 5–28 day path before merging the capture-only website environment setup. PR #240 deploys no Production Apex/Flows. Completed environment evidence and remaining pre-merge/staged-release actions are classified in [the environment release gates](salesforce-webdev-environment.md#required-evidence-and-release-gates).
+
+For a later change, select the affected entry points and shared dependencies, record eligible/ineligible outcomes, and exercise the native timer when its scheduling behavior is in scope. Live delivery evidence is required when certifying delivery; capture-only execution does not claim provider or handset arrival. Unexecuted cases below remain open.
+
 ## Setup and evidence
 
 - Reconfirm the exact WebDev org and sandbox flag, the active Flow versions, existing jobs, and the next fire times. The November 25 inventory showed `Daily_Opportunity_Open` at **07:15 America/Denver**, next **2026-11-26 14:15 UTC**. `Daily_Lead_Follow_up`, `Daily_Lead_Not_DQ`, `Daily_Lead_Update_Email_Scheduler_p3yatg` and `Daily_Opp_Update_Scheduler` were at **09:00 America/Denver**, next **2026-11-26 16:00 UTC**. Requery `CronTrigger` with `CronJobDetail.Name`, `CronJobDetail.JobType`, `CronExpression`, `TimeZoneSidKey`, `State`, `PreviousFireTime`, `NextFireTime` and `TimesTriggered`. Job types `6`, `7`, and `A` identify scheduled Flows, scheduled Apex, and Reporting Notifications respectively. The pre-restore WebDev query confirmed 12 jobs, zero of type `7`, and both previously unidentified 07:00 entries of type `A`. [CronJobDetail](https://developer.salesforce.com/docs/platform/object-reference/references/standard-objects/object-cronjobdetail.html) · [CronTrigger](https://developer.salesforce.com/docs/platform/object-reference/references/standard-objects/object-crontrigger.html)

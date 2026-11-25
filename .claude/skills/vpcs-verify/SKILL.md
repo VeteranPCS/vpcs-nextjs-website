@@ -61,8 +61,13 @@ Do not log raw lead payloads, contact data, credentials or bearer tokens. Verify
 synthetic fixtures and assertions, and record sanitized capture evidence instead.
 
 Salesforce queue/Flow/timer tests must exercise the real workflow with a capture transport.
-Disabling the workflow does not count as testing it. Final controlled delivery requires provider
-receipts plus actual inbox/handset arrival, with negative-recipient and expired-run checks.
+Disabling the workflow does not count as testing it. When controlled delivery is in scope, require
+provider receipts plus actual inbox/handset arrival, with negative-recipient and expired-run checks.
+Capture-only environment changes do not require all legacy multi-day timers or live SMS. Select
+affected business cases when spam, routing, schedules or delivery behavior changes.
+
+Use [vpcs-salesforce-dev](../vpcs-salesforce-dev/SKILL.md) for target selection, protected Preview
+runs and the separate website/metadata release procedures.
 
 See [the environment runbook](../../../docs/salesforce-webdev-environment.md) for current
 provisioning status, commands, prerequisites and release evidence.
@@ -105,7 +110,7 @@ a change to shared layout or global CSS should be checked against all of them.
 |---|---|
 | `/` | homepage, includes the large `StateMapSvg` component |
 | `/texas` | the `[state]` dynamic segment, agent and lender partner rendering |
-| `/contact-agent` | lead form, needs `LEAD_DRY_RUN=1` |
+| `/contact-agent` | lead form; submit only through isolated mock or the authorized sandbox gates above |
 | `/contact-lender` | second lead form with different field mapping |
 | `/blog/[slug]` | MDX rendering path, pick any real post from `content/blog/` |
 | `/how-it-works` | static marketing page, catches global layout regressions |

@@ -1,6 +1,6 @@
 # Salesforce webdev environment runbook
 
-**Development handoff** · WebDev and the protected `test.veteranpcs.com` Preview are usable in capture mode with writes off. Verified evidence covers rendering, all ten form mappings, hosted Contact Agent persistence and owner routing, the native callback, the welcome canary, portal reminder and debounce, and hourly sender refresh. Daily and multi-day scenarios and live SMS remain open. Production release is pending. Updated 2026-11-25.
+**Development handoff** · WebDev and the protected `test.veteranpcs.com` Preview are usable in capture mode with writes off. Verified evidence covers rendering, all ten form mappings, hosted Contact Agent persistence and owner routing, the native callback, the welcome canary, portal reminder and debounce, and hourly sender refresh. Daily/multi-day characterization and live SMS remain open as separate follow-up scope, not blanket environment merge gates. Production release is pending the exact-head review and activation hold below. Updated 2026-11-25.
 
 This runbook establishes the website's isolated Salesforce development connection. Salesforce remains cloud-hosted. Spam enforcement, regional routing corrections, new working hours, and timer policy changes are separate releases.
 
@@ -41,7 +41,7 @@ This runbook establishes the website's isolated Salesforce development connectio
 | Apex schedules | Focused sandbox run `707jg000000YWSK` passed 25 tests. Both scheduling classes and the portal reminder batch reached 100% coverage, and the capture guard reached 93%. The reviewed script restored four portal and two sender jobs at 21:39:55 UTC on November 25. All six read back as waiting under the WebDev Tech user in `America/Denver`. The native 21:45 portal batch completed at 21:45:09 with zero errors, incremented the marked Lead count to one, created one `ReminderEmail` capture and left the SMS queue empty. The 22:00 native batch completed with zero errors and zero chunks. The Lead count and timestamp held and no extra reminder capture or SMS row appeared. The canary Lead was closed and the capture label returned to `baseline-capture`. The 22:05 hourly sender run recorded one `SenderRegistry` capture with zero items. The daily sender schedule and other daily and multi-day scenarios remain open. See the [exact job IDs and canary evidence](salesforce-webdev-workflow-matrix.md#apex-reminders-and-sender-refresh). |
 | Salesforce callback canary | Check-only validation `0Afjg0000004fFtCAI` passed 15 tests with 86.8% `WebhookHandler` coverage. Run 01 Future `707jg000000YZ3bAAG` returned `409` on `Colorado` versus `colorado`. Run 02 `webdev-callback-20261125-02` re-saved one existing synthetic `Area_Assignment__c` at 22:30:26 UTC with unchanged `AA_Score__c=90`. Future `707jg000000YXyOAAW` completed at 22:30:28 with zero errors and HTTP `200` in log `07Ljg00000055NFEAY`. Vercel deployment `dpl_EmG9zmtWE6DBUBE6EySoFgrTpfHV` logged one `/colorado` revalidation for the same run at 22:30:28. |
 | Callback cleanup | Capture restore `0Afjg0000004fuECAQ` passed ten tests and the normalized capture source matched. Credential material, temporary permission assignment, trace flag, debug level, Named Credential and External Credential cleanup returned `204`. Credential definition readback returned `404`. The branch callback canary environment variables were removed. |
-| Production release | The workflow-test branch is published. Production `main` is still at `3a8875166e97`. No merge or Production promotion occurred. Daily and multi-day behavior and controlled live SMS remain open before full release. |
+| Production release | The workflow-test branch is published. Production `main` is still at `3a8875166e97`. No merge or Production promotion occurred. The environment release still needs the final exact-head review and Production activation hold. Daily/multi-day characterization and live SMS are separate follow-ups; see the release-gate classification. |
 
 Do not replace unknowns with plausible IDs. `config/salesforce/webdev.example.json` deliberately contains null mappings and `verified: false`. The application rejects it.
 
@@ -153,7 +153,7 @@ The directory uses the committed neutral SVGs for the reconciled synthetic agent
 
 ### Browser verification against the rendering seed
 
-Keep sandbox website writes off. Verify the active target, then start a local WebDev production-mode artifact or a fresh, protected, read-only preview using the exact reviewed tree. For the current Next.js font build issue, use the command-scoped font fallback for local functional checks. Check typography on a genuine-font build separately. [Local WebDev build notes](salesforce-webdev-build-notes.md)
+Keep sandbox website writes off. Verify the active target, then start a local WebDev production-mode artifact or a fresh, protected, read-only preview using the exact reviewed tree. The pinned Next.js 16.4.6 normal local build passed without a font override. Hosted checks verified genuine font assets; earlier fallback-font evidence is historical. [Local WebDev build notes](salesforce-webdev-build-notes.md)
 
 | Read-only routes | Expected result |
 | --- | --- |
@@ -204,28 +204,57 @@ The reviewed clean patch was published at `bbf8e7b0fe89` on `codex/salesforce-wo
 
 ## Required evidence and release gates
 
-Use the [workflow verification matrix](salesforce-webdev-workflow-matrix.md) to select eligible and ineligible Lead, Opportunity, portal and SMS cases and record their native timing evidence.
+### PR #240: environment setup
 
-| Gate | Evidence required |
+This classification supersedes the earlier blanket hold for all legacy timers and live SMS. PR #240 changes the website's environment isolation and provisions a capture-only sandbox. It does not deploy Production Apex/Flows, change spam policy or regional routing, or implement new working hours. Unexecuted scenarios remain explicitly open; they are not implied passes.
+
+| Environment requirement | Recorded evidence / remaining action |
 |---|---|
-| Isolation | Local main and local production-mode builds reject production settings; ordinary previews cannot write; mixed/missing config fails before network |
-| OAuth/REST | Correct org accepted; wrong ID, wrong sandbox flag, unexpected instance host, redirect, revoked token and concurrent 401 cases tested |
-| Payloads | Production characterization preserved; all sandbox field/owner/type IDs verified |
-| Ten forms | Agent contact, lender contact, agent listing, lender listing, keep-in-touch, contact, VA guide, homebuyer guide, Colorado guide, internship persist expected records |
-| Spam baseline | Existing reject/review behavior characterized; no new spam policy hidden in setup |
-| Rendering | State/directory/detail/image/impact/blog-author paths with cold and warm sandbox caches |
-| Workflows | Eligible/ineligible immediate alerts, five-minute welcome, daily follow-ups, SMS workers/refresh, portal reminders, Opportunity scheduled paths |
-| Timing/delivery | Scheduled and actual timestamps, capture entries, provider receipts and actual approved inbox/handset arrival; negative recipients receive nothing |
-| Website regression | Lint, typecheck, Vitest, offline build/start and Playwright; record exact patch identity |
-| Salesforce | Relevant Apex/Flow tests, coverage and deployment results for every changed component; sandbox first |
+| Destination isolation and authentication | Local branch/build matrix, fail-closed hosts/redirects/org identity, token recovery and scoped app access are tested. Local main stays webdev. Preview and Workflow app probes passed 13 and 19 checks. |
+| Form and routing compatibility | All 39 sandbox wire mappings verified; all ten forms persisted and both contact owners read back. Production payload characterization and existing spam behavior remain in the regression suite. Hosted write-off and write-on canaries passed. |
+| Rendering and regression | Normal local sandbox build/start passed; 1,352 Vitest tests and 1,062 mock pages passed on `221bc26`. Earlier mock browser and hosted 26-assertion evidence are in the ledger. Known visual/route defects stay in the baseline ledger. Rerun normal CI on each later head; rerun browser/native tests when the changed paths warrant them. |
+| Sandbox containment and callbacks | Native worker capture/override block, welcome inbox canary, portal reminder/debounce, hourly sender refresh and native protected callback verified. Changed sandbox components have deployment/test/coverage receipts. Final state is capture, writes off, temporary access removed. |
+| Credential scopes and Preview protection | Production-only integration scopes and separate sandbox app credentials verified; legacy Previews retired and protected test alias replaced. Confirm these settings have not drifted at release preflight without exposing secret values. |
+| Exact patch review | Review the final diff and recorded evidence, including resolved review findings, and confirm green CI/Vercel checks on the exact current head. PR remains draft until release review is complete. |
+| Production activation hold — still required before merge | November 25 readback found `autoAssignCustomDomains: true` with Production branch `main`. Disable Auto-assign Custom Production Domains and verify readback, or establish an equivalent enforced hold covering Git-triggered deployments. A one-off CLI `--skip-domain` does not stop the separate Git-triggered deployment from activating. No branch protection rules were applied at this readback; green checks alone do not enforce the release sequence. |
 
-Maintain a baseline defect ledger with observed behavior, expected behavior, evidence and follow-up owner. A pre-existing failure is neither silently fixed nor counted as a passing workflow. The environment is complete only when another developer can verify identity, submit a synthetic lead and trace its isolated workflow.
+After those pre-merge actions, merge the reviewed website change. **After merge, before public promotion**, verify the resulting main revision has a fresh staged Vercel Production build using Production-scoped variables. Check OAuth and `Organization.Id`/`IsSandbox=false`, read-only state/directory/detail/image/impact/blog routes, and nonwriting lead destination/payload configuration. Check callback rejection without triggering a real revalidation or submitting a Production lead. Confirm domain assignment is still held, then promote that exact tested Production artifact. Record deployment ID, commit, smoke results and rollback target. [Vercel staging and promotion](https://vercel.com/docs/deployments/promoting-a-deployment)
+
+The initial website switch has no Salesforce metadata deployment step. Sandbox containment overlays, test credentials and synthetic records must stay in webdev. Local `main` remains sandbox after the merge; only the Vercel Production build uses Production Salesforce.
+
+### Later behavior changes and optional delivery capability
+
+| Later scope | Required tests when that scope changes |
+|---|---|
+| Spam enforcement | Honeypot wiring across every entry point, valid-lead negatives, exact/normalized email policy and aliases, review/reject outcomes, and proof rejected leads produce no downstream records, email, SMS or alerts. Preserve submission reconciliation and avoid blind retries. |
+| Beth/regional routing and SMS ownership | Resolve sender versus recipient and regional owner data; verify each affected region, fallback/missing-number cases, website versus Salesforce send paths, message attribution and duplicate prevention. A phone-number edit alone is not sufficient evidence. Controlled delivery needs provider and actual recipient receipts when the provider path is in scope. |
+| Working hours and urgent countdown | Pacific 09:00–17:00 boundaries, after-hours enqueue, next opening, DST, the explicitly chosen weekend/holiday policy, cancellation/rejection before dispatch, duplicate prevention, and countdown start at actual release. Exercise native schedules and capture scheduled/actual times for affected email, SMS and portal alerts. |
+| Live sandbox SMS enablement | Dedicated sender, exact approved recipient and isolated durable quota resource; provider/handset delivery, negative-recipient and expired-run checks for each path being enabled. Website and Salesforce delivery require independent evidence. User deferred test Redis; capture-only setup can merge while live delivery remains disabled. |
+| Legacy daily/multi-day workflows | The [workflow matrix](salesforce-webdev-workflow-matrix.md) remains a baseline characterization backlog. Run affected cases and dependency regressions for later changes; all 5–28 day paths are not blanket PR #240 merge gates. Native timer evidence remains necessary when certifying those schedules. |
+| Production Salesforce metadata release | Separate scoped manifest, sandbox tests and coverage for changed Apex/Flow dependencies, required Production validation tests, explicit target, deployment and post-release verification. Website Git merge does not perform this promotion. No direct Production Apex edits. |
+
+Suggested business-change order is environment release, spam admission enforcement, routing/ownership correction, then working-hours queue/countdown behavior. Research and isolated tests can proceed in parallel; shared-org deployments and fixture runs stay serialized. Queue work depends on the final accepted/rejected lead state and routing ownership, so define those contracts first. Each release needs its own bounded rollback and pending-job reconciliation.
+
+Maintain the baseline defect ledger with observed behavior, expected behavior and evidence. A pre-existing failure is neither silently fixed nor counted as a passing workflow. Another developer should follow the setup guide to verify identity, submit an authorized synthetic lead and trace its isolated workflow; do not claim an independent fresh-workstation onboarding test has happened unless recorded.
+
+## Code and operational change record
+
+[PR #240](https://github.com/VeteranPCS/vpcs-nextjs-website/pull/240) and its commits are the exact code record. This runbook records cloud changes, tests and deployment IDs; raw sensitive receipts stay ignored. `221bc26` contains the development handoff following runtime `0512600`; later documentation changes refine release scope without claiming new runtime evidence.
+
+| Area | Maintained source / evidence |
+|---|---|
+| Org identity, destinations, mappings | `lib/salesforce/environment.mjs`, `server-config.ts`, `config/salesforce/`; environment matrix tests under `lib/salesforce/__tests__/` |
+| OAuth, REST, form serialization and owner transfer | `services/salesForceTokenService.tsx`, `api.tsx`, `salesforceLeadParams.ts`, `salesForcePostFormsService.tsx`, `salesforceLeadOwnerService.ts`; compatibility and recovery tests under `services/__tests__/` |
+| Website delivery and test intake | `lib/leads/notification-delivery.ts`, `lib/salesforce/webdev-intake.ts`, notification actions and their tests; website and native Salesforce receipts are separate |
+| Launchers, offline builds, scripts and CI | `scripts/next-with-salesforce.mjs`, `scripts/lib/next-environment.mjs`, `scripts/lib/salesforce-sandbox.mjs`, `scripts/verify-salesforce-target.mjs`, `scripts/verify-salesforce-sandbox-leads.mjs`, `.github/workflows/ci.yml`; [hosted build fixes](salesforce-webdev-build-notes.md) |
+| Sandbox metadata, permissions, fixtures and capture | `salesforce/README.md`, `salesforce/access/`, `salesforce/fixtures/`, `salesforce/outbound-capture/`, `salesforce/scripts/`; scoped deployment receipts and coverage in this ledger |
+| Daily development and release procedure | `CLAUDE.md` is the operational source of truth; [vpcs-salesforce-dev](../.claude/skills/vpcs-salesforce-dev/SKILL.md) routes local → Preview → staged Production; [vpcs-verify](../.claude/skills/vpcs-verify/SKILL.md) covers rendered/form verification. Both are discoverable through `.agents/skills/` symlinks. |
 
 ## Rollback and refresh
 
 Rollback restores the previous compatible website artifact. Never restore production credentials into local development. Disable new sandbox writes, preserve the attempt ledger and reconcile pending jobs; rollback cannot retract delivered messages or undo created records.
 
-After sandbox refresh: invalidate isolation attestation, stop writes, re-verify org ID/domain/CLI alias, rotate sandbox-specific access as needed, regenerate field/record/owner mappings, reapply transport containment, inspect scheduled Flows, recreate approved Apex schedules, seed fresh synthetic fixtures, and repeat all release gates. Replace the directory fixture manifest with the refreshed org ID and the reconciled synthetic partner IDs. Do not reuse old pending queues or a previous test-run marker.
+After sandbox refresh: invalidate isolation attestation, stop writes, re-verify org ID/domain/CLI alias, rotate sandbox-specific access as needed, regenerate field/record/owner mappings, review and rebind exact org/actor IDs in sandbox-only capture and owner guards plus deployment/schedule scripts if identity changed, reapply transport containment, inspect scheduled Flows, recreate approved Apex schedules, seed fresh synthetic fixtures, and repeat the applicable environment acceptance gates before enabling tests. Re-certify affected native schedules; the workflow matrix records remaining baseline scenarios. Replace the directory fixture manifest with the refreshed org ID and the reconciled synthetic partner IDs. Do not reuse old pending queues or a previous test-run marker.
 
 ## Authoritative references
 
