@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
             return new Response(JSON.stringify({ message: "No states found" }), { status: 404 });
         }
 
-        if (webdevRun && (agentStates.length !== 1 || agentStates[0] !== 'Colorado')) {
+        if (webdevRun && (agentStates.length !== 1 || agentStates[0] !== 'colorado')) {
             return new Response('Unexpected WebDev fixture state', { status: 409 });
         }
 

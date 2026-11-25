@@ -1,8 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
+import type { AxiosResponse } from 'axios';
 
-vi.mock('@/services/agentService', () => ({
-  default: { getAgentState: vi.fn() },
+vi.mock('@/services/api', () => ({
+  RequestType: { GET: 'get' },
+  salesForceAPIWithRefresh: vi.fn(),
 }));
 
 vi.mock('server-only', () => ({}));
@@ -10,10 +12,11 @@ vi.mock('server-only', () => ({}));
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
 
 import agentService from '@/services/agentService';
+import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { revalidatePath } from 'next/cache';
 import { POST } from '@/app/api/v1/revalidate/salesforce/route';
 import fixtures from '@/config/salesforce/webdev-fixtures.json';
-import { stubProductionEnv, stubWebdevEnv, webdevMetadata } from '@/lib/salesforce/__tests__/configuration-fixtures';
+import { stubProductionEnv, stubWebdevEnv, WEBDEV_ORIGIN, webdevMetadata } from '@/lib/salesforce/__tests__/configuration-fixtures';
 
 const SECRET = 'good-secret-value';
 const WEBDEV_SECRET = 'webdev-only-secret';
@@ -56,8 +59,17 @@ function callbackRequest({
   return request(secret, id, host, run);
 }
 
+function mockAgentLicenses(otherStates: string | null) {
+  vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce({
+    status: 200,
+    data: { records: [{ State_s_Licensed_in__pc: 'CO', Other_States__pc: otherStates }] },
+  } as AxiosResponse);
+}
+
 describe('POST /api/v1/revalidate/salesforce', () => {
   beforeEach(() => {
+    vi.spyOn(agentService, 'getAgentState');
+    vi.mocked(salesForceAPIWithRefresh).mockReset();
     stubProductionEnv();
     vi.stubEnv('SALESFORCE_WEBHOOK_SECRET', SECRET);
   });
@@ -113,8 +125,13 @@ describe('POST /api/v1/revalidate/salesforce', () => {
     expect((await POST(callbackRequest({ secret: SECRET }))).status).toBe(401);
     vi.stubEnv('VPCS_WEBDEV_SALESFORCE_WEBHOOK_SECRET', WEBDEV_SECRET);
 
-    vi.mocked(agentService.getAgentState).mockResolvedValue(['Colorado']);
+    mockAgentLicenses(null);
     expect((await POST(callbackRequest())).status).toBe(200);
+    const soql = `SELECT State_s_Licensed_in__pc, Other_States__pc FROM Account WHERE AccountId_15__c = '${FIXTURE_ID}'`;
+    expect(salesForceAPIWithRefresh).toHaveBeenCalledExactlyOnceWith({
+      endpoint: `${WEBDEV_ORIGIN}/services/data/v62.0/query?q=${encodeURIComponent(soql)}`,
+      type: RequestType.GET,
+    });
     expect(agentService.getAgentState).toHaveBeenCalledExactlyOnceWith(FIXTURE_ID);
     expect(revalidatePath).toHaveBeenCalledExactlyOnceWith('/colorado');
   });
@@ -172,7 +189,7 @@ describe('POST /api/v1/revalidate/salesforce', () => {
 
   it('rejects fixture license drift without revalidating other states', async () => {
     stubCallback();
-    vi.mocked(agentService.getAgentState).mockResolvedValue(['Colorado', 'Texas']);
+    mockAgentLicenses('TX');
     expect((await POST(callbackRequest())).status).toBe(409);
     expect(revalidatePath).not.toHaveBeenCalled();
   });
