@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { stubProductionEnv } from '@/lib/salesforce/__tests__/configuration-fixtures';
 
 vi.mock('server-only', () => ({}));
 
@@ -67,7 +68,7 @@ const post = (body: unknown = { messages: [] }, headers: Record<string, string> 
   POST(
     new Request('http://localhost/api/chat', {
       method: 'POST',
-      headers: { 'content-type': 'application/json', ...headers },
+      headers: { 'content-type': 'application/json', ...botIdHeaders, ...headers },
       body: JSON.stringify(body),
     }),
   );
@@ -84,8 +85,11 @@ function mockParsed(messages: unknown[]) {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.unstubAllEnvs();
+  stubProductionEnv();
+  vi.stubEnv('UPSTASH_REDIS_REST_URL', 'https://redis.example.invalid');
+  vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', 'synthetic-token');
 });
+afterEach(() => vi.unstubAllEnvs());
 
 describe('POST /api/chat — F1 malformed parts', () => {
   it('returns 400 (never 500) when a user message has non-array parts', async () => {
@@ -101,11 +105,28 @@ describe('POST /api/chat — F1 malformed parts', () => {
 });
 
 describe('POST /api/chat — deployed security gates', () => {
-  it('rejects deployed raw clients before BotID verification logs a misconfiguration', async () => {
-    vi.stubEnv('VERCEL', '1');
-    vi.stubEnv('VERCEL_ENV', 'preview');
+  it.each([
+    { VPCS_SALESFORCE_PROFILE: 'webdev', VERCEL_ENV: 'preview' },
+    { VPCS_SALESFORCE_PROFILE: 'webdev', VERCEL: undefined, VERCEL_ENV: undefined },
+    { VPCS_SALESFORCE_PROFILE: 'mock', VERCEL: undefined, VERCEL_ENV: undefined, VPCS_BROWSER_FIXTURE: '1' },
+    { VERCEL_GIT_COMMIT_REF: 'feature-branch' },
+  ])('blocks nonproduction before any BotID, Redis, or AI Gateway calls %#', async (overrides) => {
+    for (const [key, value] of Object.entries(overrides)) vi.stubEnv(key, value);
+    vi.stubEnv('AI_GATEWAY_API_KEY', 'stale-production-gateway-key');
+    vi.stubEnv('VERCEL_OIDC_TOKEN', 'stale-production-oidc-token');
 
     const res = await post({ messages: [userMsg('hi')] });
+
+    expect(res.status).toBe(404);
+    expect(checkBotId).not.toHaveBeenCalled();
+    expect(getOrCreateSessionId).not.toHaveBeenCalled();
+    expect(chatLimiter.limit).not.toHaveBeenCalled();
+    expect(evaluateInput).not.toHaveBeenCalled();
+    expect(streamText).not.toHaveBeenCalled();
+  });
+
+  it('rejects deployed raw clients before BotID verification logs a misconfiguration', async () => {
+    const res = await post({ messages: [userMsg('hi')] }, { 'x-is-human': '' });
 
     expect(res.status).toBe(403);
     expect(checkBotId).not.toHaveBeenCalled();
@@ -116,8 +137,6 @@ describe('POST /api/chat — deployed security gates', () => {
   });
 
   it('fails closed on deployed chat when Upstash env vars are missing', async () => {
-    vi.stubEnv('VERCEL', '1');
-    vi.stubEnv('VERCEL_ENV', 'preview');
     vi.stubEnv('UPSTASH_REDIS_REST_URL', '');
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '');
     vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_URL', '');
@@ -133,7 +152,7 @@ describe('POST /api/chat — deployed security gates', () => {
     expect(streamText).not.toHaveBeenCalled();
   });
 
-  it('keeps local malformed request validation usable without BotID headers or Upstash env', async () => {
+  it('keeps malformed request validation on the production path', async () => {
     mockParsed([{ role: 'user', parts: 'not-an-array' }]);
 
     const res = await post();

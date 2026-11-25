@@ -9,7 +9,7 @@ npm run eval                          # all suites
 npm run eval -- evals/safety.eval.ts  # one suite
 ```
 
-Requires `AI_GATEWAY_API_KEY` in `.env.local` (Salesforce/Sanity creds only needed if you swap the mock tools for real ones).
+Set `VPCS_EVAL_AI_GATEWAY_API_KEY` in `.env.evals.local` or the shell using a key from a dedicated evaluation project. The evals use the committed mock tools by default.
 
 ## Suites
 

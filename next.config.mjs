@@ -1,4 +1,13 @@
 import { withBotId } from 'botid/next/config';
+import { resolveSalesforceEnvironment, isProductionSalesforceRuntime } from './lib/salesforce/environment.mjs';
+
+const salesforceEnvironment = resolveSalesforceEnvironment();
+const productionTelemetry = isProductionSalesforceRuntime();
+const salesforceImageOrigin = salesforceEnvironment.profile === 'mock' ? '' : salesforceEnvironment.restOrigin;
+const conciergeFixture = salesforceEnvironment.profile === 'mock' && process.env.VPCS_BROWSER_FIXTURE === '1'
+  && process.env.NODE_ENV === 'development' && process.env.VERCEL !== '1';
+const videoFrameOrigin = salesforceEnvironment.profile === 'mock' ? '' : ' https://www.youtube-nocookie.com';
+const nonProductionCsp = `default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: ${salesforceImageOrigin}; font-src 'self' data:; connect-src 'self'; frame-src 'self'${videoFrameOrigin}; worker-src 'self' blob:;`;
 
 // Content-Security-Policy, enforced on every route.
 // script-src/style-src keep 'unsafe-inline' because Next.js emits inline
@@ -36,6 +45,20 @@ const toCspHeaderValue = (csp) => csp.replace(/\s{2,}/g, ' ').trim();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  distDir: process.env.VPCS_NEXT_DIST_DIR || '.next',
+  outputFileTracingIncludes: {
+    '/blog/*/{opengraph-image*,twitter-image*}': [
+      './content/blog/*.mdx',
+      './public/images/blog/*/{main,hero}*.{webp,png,jpg,jpeg,gif}',
+      './public/assets/blogctabgimage.webp',
+      './public/icon/VeteranPCSlogo.svg',
+      './styles/lora-font/Lora-Bold.ttf',
+    ],
+  },
+  env: {
+    NEXT_PUBLIC_VPCS_ANALYTICS_ENABLED: productionTelemetry ? '1' : '0',
+    ...(productionTelemetry ? {} : { NEXT_PUBLIC_CONCIERGE_ENABLED: conciergeFixture ? '1' : '0' }),
+  },
   async headers() {
     return [
       {
@@ -46,7 +69,7 @@ const nextConfig = {
             value: 'max-age=63072000; includeSubDomains; preload'
           },
           // Enforced CSP for every route.
-          { key: "Content-Security-Policy", value: toCspHeaderValue(siteCsp) },
+          { key: "Content-Security-Policy", value: toCspHeaderValue(productionTelemetry ? siteCsp : nonProductionCsp) },
         ],
       },
       {
@@ -62,15 +85,11 @@ const nextConfig = {
     ]
   },
   images: {
+    // The image optimizer applies remotePatterns to the first URL only.
+    ...(productionTelemetry ? {} : { maximumRedirects: 0 }),
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'veteranpcs.my.salesforce.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'lh3.googleusercontent.com',
-      },
+      ...(salesforceImageOrigin ? [{ protocol: /** @type {'https'} */ ('https'), hostname: new URL(salesforceImageOrigin).hostname }] : []),
+      ...(productionTelemetry ? [{ protocol: /** @type {'https'} */ ('https'), hostname: 'lh3.googleusercontent.com' }] : []),
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
@@ -78,6 +97,7 @@ const nextConfig = {
     minimumCacheTTL: 2678400, // 31 days
   },
   async rewrites() {
+    if (!productionTelemetry) return [];
     return [
       {
         source: '/ingest/static/:path*',
@@ -173,4 +193,4 @@ const nextConfig = {
   }
 };
 
-export default withBotId(nextConfig);
+export default productionTelemetry ? withBotId(nextConfig) : nextConfig;

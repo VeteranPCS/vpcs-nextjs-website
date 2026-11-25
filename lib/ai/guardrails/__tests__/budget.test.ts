@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { tokensOverCap } from '@/lib/ai/guardrails/budget';
 import { DAILY_TOKEN_CAP } from '@/lib/ai/guardrails/config';
 
@@ -11,6 +11,15 @@ vi.mock('@upstash/redis', () => ({
   Redis: vi.fn(function RedisMock() { return redisMock; }),
 }));
 
+beforeEach(() => {
+  vi.resetModules();
+  vi.stubEnv('VERCEL', '1');
+  vi.stubEnv('VERCEL_ENV', 'production');
+  vi.stubEnv('VERCEL_GIT_COMMIT_REF', 'main');
+  vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'production');
+});
+afterEach(() => vi.unstubAllEnvs());
+
 describe('tokensOverCap', () => {
   it('is true at/over the cap and false under it', () => {
     expect(tokensOverCap(0)).toBe(false);
@@ -22,8 +31,6 @@ describe('tokensOverCap', () => {
 
 describe('budget fail-open (no Upstash env)', () => {
   beforeEach(() => {
-    vi.resetModules();
-    vi.unstubAllEnvs();
     vi.stubEnv('UPSTASH_REDIS_REST_URL', '');
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '');
     vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_URL', '');
@@ -44,8 +51,6 @@ describe('budget fail-open (no Upstash env)', () => {
 
 describe('addSessionTokens TTL — NX heal', () => {
   beforeEach(() => {
-    vi.resetModules();
-    vi.unstubAllEnvs();
     vi.stubEnv('UPSTASH_REDIS_REST_URL', 'https://example.upstash.io');
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', 'token');
     vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_URL', '');

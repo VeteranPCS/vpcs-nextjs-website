@@ -1,11 +1,11 @@
-"use client";
-
 import Image from 'next/image';
 import LeadCaptureDialog from '@/components/redesign/LeadCaptureDialog';
 import ColoradoGuideContactLink from '@/components/redesign/ColoradoGuideContactLink';
 import { COLORADO_RELOCATION_GUIDE as guide } from '@/lib/guides/colorado-relocation';
+import { isProductionSalesforceRuntime } from '@/lib/salesforce/environment.mjs';
 
 export default function ColoradoPcsGuidePromo() {
+  const allowAuthorContact = isProductionSalesforceRuntime();
   return (
     <section aria-labelledby="colorado-relocation-guide-title" className="bg-surface py-12 font-inter md:py-16">
       <div className="mx-auto grid max-w-[1120px] items-center gap-8 px-6 md:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] md:gap-12">
@@ -37,8 +37,9 @@ export default function ColoradoPcsGuidePromo() {
               kind={guide.kind}
               triggerLabel="Download Now"
               placement={{ location: 'state_guide_section', position: 'inline', pageType: 'state_page' }}
+              allowAuthorContact={allowAuthorContact}
             />
-            <ColoradoGuideContactLink location="state_guide_section" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
+            <ColoradoGuideContactLink allowAuthorContact={allowAuthorContact} location="state_guide_section" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
           </div>
         </div>
       </div>

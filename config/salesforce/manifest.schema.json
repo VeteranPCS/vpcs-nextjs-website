@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VeteranPCS Salesforce metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "verified",
+    "orgId",
+    "recordTypes",
+    "leadOwners",
+    "fieldIds"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "verified": {
+      "const": true
+    },
+    "orgId": {
+      "type": "string",
+      "pattern": "^00D[A-Za-z0-9]{12}([A-Za-z0-9]{3})?$"
+    },
+    "recordTypes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "CUSTOMER_LEAD",
+        "CUSTOMER_LEAD_15",
+        "CUSTOMER_OPPORTUNITY",
+        "AGENT_LISTING_LEAD",
+        "LENDER_LISTING_LEAD",
+        "INTERNSHIP_LEAD"
+      ],
+      "properties": {
+        "CUSTOMER_LEAD": {
+          "type": "string",
+          "pattern": "^012[A-Za-z0-9]{12}([A-Za-z0-9]{3})?$"
+        },
+        "CUSTOMER_LEAD_15": {
+          "type": "string",
+          "pattern": "^012[A-Za-z0-9]{12}$"
+        },
+        "CUSTOMER_OPPORTUNITY": {
+          "type": "string",
+          "pattern": "^012[A-Za-z0-9]{12}([A-Za-z0-9]{3})?$"
+        },
+        "AGENT_LISTING_LEAD": {
+          "type": "string",
+          "pattern": "^012[A-Za-z0-9]{12}([A-Za-z0-9]{3})?$"
+        },
+        "LENDER_LISTING_LEAD": {
+          "type": "string",
+          "pattern": "^012[A-Za-z0-9]{12}([A-Za-z0-9]{3})?$"
+        },
+        "INTERNSHIP_LEAD": {
+          "type": "string",
+          "pattern": "^012[A-Za-z0-9]{12}([A-Za-z0-9]{3})?$"
+        }
+      }
+    },
+    "leadOwners": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "BETH",
+        "JESSICA",
+        "STEPHANIE",
+        "TARA"
+      ],
+      "properties": {
+        "BETH": {
+          "type": "string",
+          "pattern": "^005[A-Za-z0-9]{12}([A-Za-z0-9]{3})?$"
+        },
+        "JESSICA": {
+          "type": "string",
+          "pattern": "^005[A-Za-z0-9]{12}([A-Za-z0-9]{3})?$"
+        },
+        "STEPHANIE": {
+          "type": "string",
+          "pattern": "^005[A-Za-z0-9]{12}([A-Za-z0-9]{3})?$"
+        },
+        "TARA": {
+          "type": "string",
+          "pattern": "^005[A-Za-z0-9]{12}([A-Za-z0-9]{3})?$"
+        }
+      }
+    },
+    "fieldIds": {
+      "type": "object",
+      "required": [
+        "00N4x00000Lpb0T",
+        "00N4x00000Lpb2K",
+        "00N4x00000Lpb2Z",
+        "00N4x00000Lpbfw",
+        "00N4x00000LpcBo",
+        "00N4x00000LpcCm",
+        "00N4x00000LpcCr",
+        "00N4x00000LpcDQ",
+        "00N4x00000LpcDV",
+        "00N4x00000LsaCy",
+        "00N4x00000LsaDm",
+        "00N4x00000Lsn28",
+        "00N4x00000LsnOx",
+        "00N4x00000LsnP2",
+        "00N4x00000LspUi",
+        "00N4x00000LspUs",
+        "00N4x00000LspV2",
+        "00N4x00000LsqCV",
+        "00N4x00000LsqCa",
+        "00N4x00000Lsr0G",
+        "00N4x00000LssBZ",
+        "00N4x00000QPIOZ",
+        "00N4x00000QPIOe",
+        "00N4x00000QPIOt",
+        "00N4x00000QPJUT",
+        "00N4x00000QPK7L",
+        "00N4x00000QPLQY",
+        "00N4x00000QPLQd",
+        "00N4x00000QPS7V",
+        "00N4x00000QPksj",
+        "00N4x00000QQ0Vz",
+        "00N4x00000QQ1LB",
+        "00N4x00000bfgFA",
+        "00N4x00000c4kPN",
+        "00N4x00000c4kPS",
+        "00N4x00000c4kPX",
+        "00N4x00000cKsNF",
+        "00NRg00000PjSD3MAN",
+        "00NRg00000PjSEfMAN"
+      ],
+      "maxProperties": 39,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^00N[A-Za-z0-9]{12}([A-Za-z0-9]{3})?$"
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@ import sendToSlack from '@/actions/sendToSlack';
 import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
 import { formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
 import { buildPartnerSmsContent } from '@/lib/leads/notification-payloads';
+import { assertWebdevOpenPhoneConfigured, sendWebdevOpenPhoneMessage } from '@/lib/leads/webdev-openphone';
 import { LeadSubmissionError } from '@/lib/leads/submission-outcome';
 import stateService from '@/services/stateService';
 import { logDebug, logError, logInfo } from './loggingService';
@@ -20,8 +21,14 @@ import { formatStateLabel, normalizeStateCode, normalizeStateSlug } from '@/lib/
 import {
     buildAgentLeadParams,
     buildLenderLeadParams,
+    serializeWebToLeadParams,
 } from '@/services/salesforceLeadParams';
 import { SF_ORG_ID, SF_RECORD_TYPE } from '@/lib/salesforce/ids';
+import { assertWebToLeadTarget, getSalesforceConfig } from '@/lib/salesforce/server-config';
+import { isProductionSalesforceRuntime, isProtectedSalesforceWebdevPreview } from '@/lib/salesforce/environment.mjs';
+import { getWebdevSiteOrigin, markWebdevSubmission, requireWebdevTestRun, type MarkedWebdevSubmission } from '@/lib/salesforce/webdev-intake';
+import { isWebdevPartnerFixture } from '@/lib/salesforce/webdev-fixtures';
+import { getVerifiedSalesforceSession } from '@/services/salesForceTokenService';
 import { COLORADO_RELOCATION_GUIDE } from '@/lib/guides/colorado-relocation';
 import {
     appendSalesforceAttributionParams,
@@ -64,22 +71,20 @@ interface SalesforceSubmissionResult {
 async function submitToSalesforceWebToLead(
     url: string,
     formBody: string,
-    submissionId: string
+    submissionId: string,
+    dryRun: boolean,
+    sandboxReturnUrl?: string,
 ): Promise<SalesforceSubmissionResult> {
-    if (isLeadDryRun()) {
-        // Dumped with console.log rather than logInfo on purpose: the structured logger
-        // redacts exactly the keys a verifier needs to check here (first_name, last_name,
-        // email, mobile, message, payload). Safe because isLeadDryRun() is inert in
-        // production, so this line is unreachable there.
+    if (dryRun) {
         console.log('[LEAD_DRY_RUN] Skipping Salesforce Web-to-Lead POST', {
             submissionId,
-            url,
-            payload: Object.fromEntries(new URLSearchParams(formBody)),
+            fieldCount: new URLSearchParams(formBody).size,
         });
 
         return { success: true, responseText: '', dryRun: true };
     }
 
+    const sandbox = Boolean(sandboxReturnUrl);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000);
     try {
@@ -89,7 +94,8 @@ async function submitToSalesforceWebToLead(
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: formBody,
-            signal: controller.signal
+            signal: controller.signal,
+            ...(sandbox ? { redirect: 'error' } : {}),
         });
 
         clearTimeout(timeoutId);
@@ -123,24 +129,25 @@ async function submitToSalesforceWebToLead(
             );
         }
 
-        const validation = validateSalesforceResponse(responseText, submissionId);
+        const validation = validateSalesforceResponse(responseText, submissionId, !sandbox);
 
         if (!validation.isValid) {
             const error = new Error(`Salesforce validation failed: ${validation.reason}`);
             logError('Salesforce Web-to-Lead response validation failed', {
                 submissionId,
                 reason: validation.reason,
-                responsePreview: responseText.substring(0, 200)
+                ...(!sandbox ? { responsePreview: responseText.substring(0, 200) } : {}),
             }, error);
             return { success: false, response, responseText, error };
         }
 
-        const redirectUrl = extractSalesforceRedirectUrl(responseText);
+        const candidate = extractSalesforceRedirectUrl(responseText);
+        const redirectUrl = !sandbox || candidate === sandboxReturnUrl || candidate === '/thank-you' ? candidate : undefined;
 
         logInfo('Salesforce Web-to-Lead submission accepted', {
             submissionId,
             hasRedirectUrl: !!redirectUrl,
-            redirectUrl
+            ...(!sandbox ? { redirectUrl } : {}),
         });
 
         return {
@@ -172,7 +179,7 @@ function extractSalesforceRedirectUrl(responseText: string): string | undefined 
 /**
  * Validates that a Salesforce response indicates successful form submission
  */
-function validateSalesforceResponse(responseText: string, submissionId: string): { isValid: boolean; reason?: string } {
+function validateSalesforceResponse(responseText: string, submissionId: string, logPreview: boolean): { isValid: boolean; reason?: string } {
     // 1. Positive signal FIRST. Salesforce emits a redirect script on acceptance
     //    (window.location(...) / window.location.replace(...)). This is the
     //    authoritative success signal. Checking it before any substring scan makes
@@ -211,7 +218,7 @@ function validateSalesforceResponse(responseText: string, submissionId: string):
             logDebug('Found error indicator in response', {
                 submissionId,
                 indicator,
-                responsePreview: responseText.substring(0, 200)
+                ...(logPreview ? { responsePreview: responseText.substring(0, 200) } : {}),
             });
             return { isValid: false, reason: `Error indicator found: ${indicator}` };
         }
@@ -222,7 +229,7 @@ function validateSalesforceResponse(responseText: string, submissionId: string):
     logDebug('Response has content but no Salesforce success redirect - treating accepted HTTP response as success', {
         submissionId,
         responseLength: responseText.length,
-        responsePreview: responseText.substring(0, 200)
+        ...(logPreview ? { responsePreview: responseText.substring(0, 200) } : {}),
     });
     return { isValid: true };
 }
@@ -263,6 +270,7 @@ function getEffectiveLeadState(formState?: string, queryState?: string): Effecti
 }
 
 async function captureAcceptedCustomerLead(args: {
+    dryRun: boolean;
     spamQuarantined: boolean;
     formId: string;
     leadSource: string;
@@ -277,7 +285,7 @@ async function captureAcceptedCustomerLead(args: {
 }): Promise<void> {
     // PostHog is the primary funnel telemetry source, so a dry-run submit must not emit a
     // conversion event. This is the fifth outbound side effect the flag suppresses.
-    if (isLeadDryRun()) {
+    if (args.dryRun) {
         console.log('[LEAD_DRY_RUN] Skipping lead_conversion_created PostHog capture', {
             submissionId: args.submissionId,
             formId: args.formId,
@@ -286,7 +294,7 @@ async function captureAcceptedCustomerLead(args: {
         return;
     }
 
-    if (args.spamQuarantined) return;
+    if (args.spamQuarantined || !isProductionSalesforceRuntime()) return;
 
     await captureLeadConversionCreated({
         formId: args.formId,
@@ -301,9 +309,6 @@ async function captureAcceptedCustomerLead(args: {
         guideId: args.guideId,
     });
 }
-
-const SALESFORCE_WEB_TO_LEAD_URL =
-    "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8";
 
 type SpamEvaluation = Awaited<ReturnType<typeof evaluateLeadSpam>>;
 
@@ -321,6 +326,8 @@ interface WebToLeadContext {
     submissionId: string;
     paramsObj: Record<string, string>;
     webFormUrl: string;
+    siteOrigin: string | undefined;
+    sandboxSiteOrigin: string | undefined;
     effectiveState: EffectiveLeadState | null;
     agentInfo: any;
 }
@@ -372,15 +379,15 @@ function defineWebToLeadConfig<TResult>(config: WebToLeadConfig<TResult>): WebTo
 // characterization suite pins these ordered bodies byte-for-byte, so insertion order is
 // load-bearing (internship uniquely emits `recordType` BEFORE `retURL`).
 
-function buildGetListedAgentsParams(formData: Record<string, string | undefined>): URLSearchParams {
+function buildGetListedAgentsParams({ formData, siteOrigin }: WebToLeadContext): URLSearchParams {
     return new URLSearchParams({
         oid: SF_ORG_ID,
-        retURL: `${BASE_URL}/thank-you`,
+        retURL: `${siteOrigin}/thank-you`,
         recordType: SF_RECORD_TYPE.AGENT_LISTING_LEAD,
         lead_source: "Agent Listing Request",
         "00N4x00000Lsr0G": "true",
         country_code: "US",
-        "00N4x00000QQ1LB": `${BASE_URL}/get-listed-agents`,
+        "00N4x00000QQ1LB": `${siteOrigin}/get-listed-agents`,
         first_name: formData.firstName || "",
         last_name: formData.lastName || "",
         email: formData.email || "",
@@ -408,15 +415,15 @@ function buildGetListedAgentsParams(formData: Record<string, string | undefined>
     });
 }
 
-function buildGetListedLendersParams(formData: Record<string, string | undefined>): URLSearchParams {
+function buildGetListedLendersParams({ formData, siteOrigin }: WebToLeadContext): URLSearchParams {
     return new URLSearchParams({
         oid: SF_ORG_ID,
-        retURL: `${BASE_URL}/thank-you`,
+        retURL: `${siteOrigin}/thank-you`,
         recordType: SF_RECORD_TYPE.LENDER_LISTING_LEAD,
         lead_source: "Lender Listing Request",
         "00N4x00000Lsr0G": "true",
         country_code: "US",
-        "00N4x00000QQ1LB": `${BASE_URL}/get-listed-lenders`,
+        "00N4x00000QQ1LB": `${siteOrigin}/get-listed-lenders`,
         first_name: formData.firstName || "",
         last_name: formData.lastName || "",
         email: formData.email || "",
@@ -441,10 +448,10 @@ function buildGetListedLendersParams(formData: Record<string, string | undefined
     });
 }
 
-function buildKeepInTouchParams(formData: Record<string, string | undefined>, submissionId: string): URLSearchParams {
+function buildKeepInTouchParams({ formData, siteOrigin, submissionId }: WebToLeadContext): URLSearchParams {
     const params = new URLSearchParams({
         oid: SF_ORG_ID,
-        retURL: `${BASE_URL}/thank-you`,
+        retURL: `${siteOrigin}/thank-you`,
         recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
         lead_source: "Keep in Touch",
         first_name: formData.firstName || "",
@@ -456,10 +463,10 @@ function buildKeepInTouchParams(formData: Record<string, string | undefined>, su
     return appendSalesforceAttributionParams(params, formData, submissionId);
 }
 
-function buildContactParams(formData: Record<string, string | undefined>, submissionId: string): URLSearchParams {
+function buildContactParams({ formData, siteOrigin, submissionId }: WebToLeadContext): URLSearchParams {
     const params = new URLSearchParams({
         oid: SF_ORG_ID,
-        retURL: `${BASE_URL}/thank-you`,
+        retURL: `${siteOrigin}/thank-you`,
         recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
         lead_source: "Contact Form",
         first_name: formData.firstName || "",
@@ -472,10 +479,10 @@ function buildContactParams(formData: Record<string, string | undefined>, submis
     return appendSalesforceAttributionParams(params, formData, submissionId);
 }
 
-function buildVaLoanGuideParams(formData: Record<string, string | undefined>, submissionId: string): URLSearchParams {
+function buildVaLoanGuideParams({ formData, siteOrigin, submissionId }: WebToLeadContext): URLSearchParams {
     const params = new URLSearchParams({
         oid: SF_ORG_ID,
-        retURL: `${BASE_URL}/thank-you`,
+        retURL: `${siteOrigin}/thank-you`,
         recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
         lead_source: "VA Loan Guide",
         first_name: formData.firstName || "",
@@ -487,10 +494,10 @@ function buildVaLoanGuideParams(formData: Record<string, string | undefined>, su
     return appendSalesforceAttributionParams(params, formData, submissionId);
 }
 
-function buildHomebuyerGuideParams(formData: Record<string, string | undefined>, submissionId: string): URLSearchParams {
+function buildHomebuyerGuideParams({ formData, siteOrigin, submissionId }: WebToLeadContext): URLSearchParams {
     const params = new URLSearchParams({
         oid: SF_ORG_ID,
-        retURL: `${BASE_URL}/thank-you`,
+        retURL: `${siteOrigin}/thank-you`,
         recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
         lead_source: "First Time Home Buyer Guide",
         first_name: formData.firstName || "",
@@ -504,17 +511,19 @@ function buildHomebuyerGuideParams(formData: Record<string, string | undefined>,
 
 const COLORADO_GUIDE_DESCRIPTION = `${COLORADO_RELOCATION_GUIDE.title} (${COLORADO_RELOCATION_GUIDE.version}) by ${COLORADO_RELOCATION_GUIDE.author}; Colorado (${COLORADO_RELOCATION_GUIDE.stateCode}); source: ${COLORADO_RELOCATION_GUIDE.pagePath}.`;
 
-function buildColoradoRelocationGuideParams(formData: Record<string, string | undefined>, submissionId: string): URLSearchParams {
+function buildColoradoRelocationGuideParams({ formData, siteOrigin, submissionId, sandboxSiteOrigin }: WebToLeadContext): URLSearchParams {
     const params = new URLSearchParams({
         oid: SF_ORG_ID,
-        retURL: `${BASE_URL}/thank-you`,
+        retURL: `${siteOrigin}/thank-you`,
         recordType: SF_RECORD_TYPE.CUSTOMER_LEAD_15,
         lead_source: COLORADO_RELOCATION_GUIDE.leadSource,
         first_name: formData.firstName || '',
         last_name: formData.lastName || '',
         email: formData.email || '',
         // Content attribution is server-owned; visiting Colorado does not imply a move there.
-        '00N4x00000QQ1LB': COLORADO_RELOCATION_GUIDE.sourceUrl,
+        '00N4x00000QQ1LB': sandboxSiteOrigin
+            ? `${sandboxSiteOrigin}${COLORADO_RELOCATION_GUIDE.pagePath}`
+            : COLORADO_RELOCATION_GUIDE.sourceUrl,
         description: COLORADO_GUIDE_DESCRIPTION,
         'g-recaptcha-response': '',
         captcha_settings: '',
@@ -522,11 +531,11 @@ function buildColoradoRelocationGuideParams(formData: Record<string, string | un
     return appendSalesforceAttributionParams(params, formData, submissionId);
 }
 
-function buildInternshipParams(formData: Record<string, string | undefined>): URLSearchParams {
+function buildInternshipParams({ formData, siteOrigin }: WebToLeadContext): URLSearchParams {
     return new URLSearchParams({
         oid: SF_ORG_ID,
         recordType: SF_RECORD_TYPE.INTERNSHIP_LEAD,
-        retURL: `${BASE_URL}/thank-you`,
+        retURL: `${siteOrigin}/thank-you`,
         lead_source: "Internship Application",
         "00N4x00000Lsr0G": "true",
         country_code: "US",
@@ -568,24 +577,22 @@ function buildContactPartnerSms(ctx: WebToLeadContext): Parameters<typeof sendOp
 /** Each channel owns construction AND delivery; no eager builder can block its sibling. */
 async function dispatchNotifications(params: {
     submissionId: string;
+    dryRun: boolean;
     buildSlack: () => Parameters<typeof sendToSlack>[0];
     buildSms?: () => Parameters<typeof sendOpenPhoneMessage>[0];
+    webdevSms?: MarkedWebdevSubmission;
 }): Promise<void> {
-    const { submissionId } = params;
-    const dryRun = isLeadDryRun();
-    const dryPayloads: Record<string, unknown> = {};
+    const { submissionId, dryRun, webdevSms } = params;
     async function channel<T>(name: 'Slack' | 'OpenPhone', build: () => T, send: (input: T) => Promise<unknown>) {
         let stage: 'construction' | 'delivery' | 'configuration' = 'construction';
         let detail = 'construction';
         try {
             const payload = build();
-            if (dryRun) {
-                dryPayloads[name === 'Slack' ? 'slack' : 'sms'] = payload;
-                return;
-            }
+            if (dryRun) return;
             stage = 'delivery';
             detail = 'rejected';
             const result = await send(payload);
+            if ((result as { captured?: boolean })?.captured) return;
             if (name === 'Slack' && (result as { ok?: boolean })?.ok !== true) {
                 const reported = (result as { failureStage?: string })?.failureStage;
                 if (reported === 'construction' || reported === 'configuration') stage = reported;
@@ -597,7 +604,7 @@ async function dispatchNotifications(params: {
         } catch {
             logError(`${name} notification failed`, { submissionId, stage }, new Error(detail));
         }
-        if (!dryRun) {
+        if (!dryRun && isProductionSalesforceRuntime()) {
             try {
                 await captureServerAnalyticsEvent({
                     event: 'lead_notification_failed',
@@ -611,9 +618,10 @@ async function dispatchNotifications(params: {
     }
     await Promise.allSettled([
         channel('Slack', params.buildSlack, sendToSlack),
-        ...(params.buildSms ? [channel('OpenPhone', params.buildSms, sendOpenPhoneMessage)] : []),
+        ...(webdevSms ? [channel('OpenPhone', () => webdevSms, sendWebdevOpenPhoneMessage)] :
+            params.buildSms ? [channel('OpenPhone', params.buildSms, sendOpenPhoneMessage)] : []),
     ]);
-    if (dryRun) console.log('[LEAD_DRY_RUN] Skipping lead notifications', { submissionId, ...dryPayloads });
+    if (dryRun) console.log('[LEAD_DRY_RUN] Skipping lead notifications', { submissionId, channelCount: params.buildSms ? 2 : 1 });
 }
 
 /** Optional post-acceptance work cannot change the outcome of a created lead. */
@@ -634,6 +642,7 @@ async function submitWebToLead<TResult extends object>(
     rawFormData: unknown,
     runtime?: { queryString?: string; options?: InternalCallOptions },
 ): Promise<TResult> {
+    const production = isProductionSalesforceRuntime();
     const options = runtime?.options;
     const queryString = runtime?.queryString ?? '';
 
@@ -649,6 +658,19 @@ async function submitWebToLead<TResult extends object>(
     let acceptedResult: TResult | undefined;
 
     try {
+        const deployedNonProduction = process.env.VERCEL_ENV === 'preview' || process.env.VERCEL_ENV === 'development';
+        if (deployedNonProduction && !isProtectedSalesforceWebdevPreview()) {
+            throw new Error('Lead submissions are disabled in non-production Vercel environments');
+        }
+        const salesforce = getSalesforceConfig();
+        const sandbox = salesforce.profile === 'webdev';
+        if (sandbox && process.env.VPCS_SANDBOX_LEAD_WRITES === '1' &&
+            !salesforce.allowSandboxWrites && !isLeadDryRun()) {
+            throw new Error('Salesforce WebDev writes are disabled for this environment');
+        }
+        const dryRun = salesforce.profile === 'mock' || (sandbox && !salesforce.allowSandboxWrites) ||
+            (!production && isLeadDryRun());
+
         // Validate and normalize the payload before processing. Invalid data is a HARD
         // reject here — never written to Salesforce.
         const validation = parseLeadForm(config.schema, rawFormData);
@@ -665,12 +687,20 @@ async function submitWebToLead<TResult extends object>(
         // Family A: parse the query string, derive the effective state (hard reject if
         // missing), and resolve the Lead owner for routing.
         let paramsObj: Record<string, string> = {};
+        let partnerId: string | undefined;
         let effectiveState: EffectiveLeadState | null = null;
         let leadOwner: ReturnType<typeof getLeadOwnerForState> | null = null;
         if (config.location) {
             new URLSearchParams(queryString).forEach((value, key) => {
                 paramsObj[key] = value;
             });
+            partnerId = paramsObj.id;
+            if (sandbox && !dryRun && partnerId) {
+                const role = config.location.partner === 'agent' ? 'agents' : 'lenders';
+                if (!isWebdevPartnerFixture(salesforce, role, partnerId)) {
+                    throw new Error('Salesforce WebDev submission requires an approved partner Account fixture');
+                }
+            }
 
             effectiveState = getEffectiveLeadState(formData.state, paramsObj.state);
             if (!effectiveState) {
@@ -701,27 +731,15 @@ async function submitWebToLead<TResult extends object>(
             }
         }
 
-        // Family A: fetch partner (agent/lender) information if an id is provided.
-        let agentInfo: any = null;
+        const sandboxSiteOrigin = sandbox && !dryRun ? getWebdevSiteOrigin() : undefined;
+        const siteOrigin = sandboxSiteOrigin ?? BASE_URL;
         let webFormUrl = '';
         if (config.location) {
-            if (paramsObj.id) {
-                try {
-                    agentInfo = await stateService.fetchAgentById(paramsObj.id);
-                    logDebug('Partner information fetched successfully', {
-                        partner_id: paramsObj.id,
-                        submissionId,
-                    });
-                } catch (error) {
-                    logError('Error fetching partner information', {
-                        partner_id: paramsObj.id,
-                        submissionId,
-                    }, error);
-                }
-            }
-
+            // Keep the sandbox URL limited to the approved partner selector and state.
+            const sandboxQuery = new URLSearchParams({ state: formData.state ?? '' });
+            if (paramsObj.id) sandboxQuery.set('id', paramsObj.id);
             webFormUrl = appendLeadOwnerSubmissionMarker(
-                `${BASE_URL}/${config.location.path}${queryString}`,
+                `${siteOrigin}/${config.location.path}${sandbox ? `?${sandboxQuery}` : queryString}`,
                 submissionId,
             );
         }
@@ -732,28 +750,59 @@ async function submitWebToLead<TResult extends object>(
             submissionId,
             paramsObj,
             webFormUrl,
+            siteOrigin,
+            sandboxSiteOrigin,
             effectiveState,
-            agentInfo,
+            agentInfo: null,
         };
 
-        const formBody = config.buildParams(ctx).toString();
+        const legacyParams = config.buildParams(ctx);
+        let webdevSubmission: MarkedWebdevSubmission | undefined;
+        if (sandbox && !dryRun) {
+            webdevSubmission = markWebdevSubmission(legacyParams, salesforce, submissionId);
+            if (salesforce.deliveryMode === 'allowlisted') assertWebdevOpenPhoneConfigured(salesforce);
+        }
+        const params = serializeWebToLeadParams(legacyParams, salesforce);
+        const formBody = params.toString();
+        const url = dryRun ? salesforce.webToLeadUrl : assertWebToLeadTarget(params, salesforce);
+        // Web-to-Lead is unauthenticated. Verify sandbox identity without making production intake depend on OAuth.
+        if (sandbox && !dryRun) {
+            const session = await getVerifiedSalesforceSession();
+            if (session.cacheKey !== salesforce.cacheKey) throw new Error('Salesforce session did not match the Web-to-Lead profile');
+        }
 
-        // Resolved once per submission so the Salesforce POST, the Lead-owner routing, and
-        // the returned marker all agree. Inert in production by construction, see the
-        // invariant on isLeadDryRun().
-        const dryRun = isLeadDryRun();
+        // Salesforce must resolve an optional sandbox partner ID against the verified sandbox Account store.
+        if (partnerId && !dryRun) {
+            try {
+                ctx.agentInfo = await stateService.fetchAgentById(partnerId);
+                logDebug('Partner information fetched successfully', {
+                    partner_id: partnerId,
+                    submissionId,
+                });
+            } catch (error) {
+                if (sandbox) throw new Error('Salesforce WebDev partner Account could not be verified');
+                logError('Error fetching partner information', {
+                    partner_id: partnerId,
+                    submissionId,
+                }, error);
+            }
+            if (sandbox && !ctx.agentInfo) throw new Error('Salesforce WebDev partner Account could not be verified');
+        }
 
         logDebug('Sending form data to Salesforce Web-to-Lead', {
             submissionId,
-            url: SALESFORCE_WEB_TO_LEAD_URL,
+            profile: salesforce.profile,
         });
 
+        if (sandbox && !dryRun) requireWebdevTestRun(salesforce);
         const submissionStartedAt = new Date();
-        postInitiated = true;
+        postInitiated = !dryRun;
         const submissionResult = await submitToSalesforceWebToLead(
-            SALESFORCE_WEB_TO_LEAD_URL,
+            url,
             formBody,
             submissionId,
+            dryRun,
+            sandboxSiteOrigin ? `${sandboxSiteOrigin}/thank-you` : undefined,
         );
 
         if (!submissionResult.success) {
@@ -774,6 +823,7 @@ async function submitWebToLead<TResult extends object>(
         if (config.capture) {
             const capture = config.capture;
             await afterAcceptance(submissionId, 'accepted_conversion', () => captureAcceptedCustomerLead({
+                dryRun,
                 spamQuarantined: spam.quarantine,
                 formId: capture.formId,
                 leadSource: capture.leadSource,
@@ -841,11 +891,14 @@ async function submitWebToLead<TResult extends object>(
         }
 
         // Notifications: Slack always; partner SMS only for Family A, suppressed for spam.
-        const location = config.location;
+        const location = spam.quarantine ? undefined : config.location;
+        const webdevSms = location && salesforce.deliveryMode === 'allowlisted' ? webdevSubmission : undefined;
         await afterAcceptance(submissionId, 'notifications', () => dispatchNotifications({
             submissionId,
+            dryRun,
             buildSlack: () => config.buildSlack(ctx),
-            buildSms: location && !spam.quarantine ? () => location.buildSms(ctx) : undefined,
+            buildSms: location && !webdevSms ? () => location.buildSms(ctx) : undefined,
+            webdevSms,
         }));
 
         logInfo('Form submitted successfully', { submissionId, hasRedirectUrl: !!redirectUrl });
@@ -882,7 +935,7 @@ const contactAgentConfig = defineWebToLeadConfig({
         buildSms: buildContactPartnerSms,
     },
     buildParams: (ctx) =>
-        buildAgentLeadParams(ctx.formData, ctx.paramsObj, ctx.webFormUrl, BASE_URL, ctx.submissionId),
+        buildAgentLeadParams(ctx.formData, ctx.paramsObj, ctx.webFormUrl, ctx.siteOrigin, ctx.submissionId),
     buildSlack: (ctx) => ({
         headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Agent Lead' : '🔔 New Agent Lead',
         name: `${ctx.formData.firstName} ${ctx.formData.lastName}` || "",
@@ -922,7 +975,7 @@ const contactLenderConfig = defineWebToLeadConfig({
         buildSms: buildContactPartnerSms,
     },
     buildParams: (ctx) =>
-        buildLenderLeadParams(ctx.formData, ctx.paramsObj, ctx.webFormUrl, BASE_URL, ctx.submissionId),
+        buildLenderLeadParams(ctx.formData, ctx.paramsObj, ctx.webFormUrl, ctx.siteOrigin, ctx.submissionId),
     buildSlack: (ctx) => ({
         headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Lender Lead' : '🔔 New Lender Lead',
         name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
@@ -955,7 +1008,7 @@ const getListedAgentsConfig = defineWebToLeadConfig({
     processingMessage: 'Processing agent listing form submission',
     schema: getListedAgentsSchema,
     spamFreeTextField: 'tellusMore',
-    buildParams: (ctx) => buildGetListedAgentsParams(ctx.formData),
+    buildParams: buildGetListedAgentsParams,
     buildSlack: (ctx) => ({
         headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Agent Listing Request' : '🔔 New Agent Listing Request',
         name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
@@ -976,7 +1029,7 @@ const getListedLendersConfig = defineWebToLeadConfig({
     processingMessage: 'Processing lender listing form submission',
     schema: getListedLendersSchema,
     spamFreeTextField: 'tellusMore',
-    buildParams: (ctx) => buildGetListedLendersParams(ctx.formData),
+    buildParams: buildGetListedLendersParams,
     buildSlack: (ctx) => ({
         headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Lender Listing Request' : '🔔 New Lender Listing Request',
         name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
@@ -996,7 +1049,7 @@ const keepInTouchConfig = defineWebToLeadConfig({
     formType: 'keepInTouch',
     processingMessage: 'Processing keep in touch form submission',
     schema: simpleLeadSchema,
-    buildParams: (ctx) => buildKeepInTouchParams(ctx.formData, ctx.submissionId),
+    buildParams: buildKeepInTouchParams,
     buildSlack: (ctx) => ({
         headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Keep In Touch Submission' : '🔔 New Keep In Touch Submission',
         name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
@@ -1021,7 +1074,7 @@ const contactConfig = defineWebToLeadConfig({
     processingMessage: 'Processing contact form submission',
     schema: simpleLeadSchema,
     spamFreeTextField: 'additionalComments',
-    buildParams: (ctx) => buildContactParams(ctx.formData, ctx.submissionId),
+    buildParams: buildContactParams,
     buildSlack: (ctx) => ({
         headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Contact Form Submission' : '🔔 New Contact Form Submission',
         name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
@@ -1045,7 +1098,7 @@ const vaLoanGuideConfig = defineWebToLeadConfig({
     formType: 'vaLoanGuide',
     processingMessage: 'Processing VA loan guide form submission',
     schema: simpleLeadSchema,
-    buildParams: (ctx) => buildVaLoanGuideParams(ctx.formData, ctx.submissionId),
+    buildParams: buildVaLoanGuideParams,
     buildSlack: (ctx) => ({
         headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New VA Loan Guide Download' : '🔔 New VA Loan Guide Download',
         name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
@@ -1070,7 +1123,7 @@ const homebuyerGuideConfig = defineWebToLeadConfig({
     formType: 'homebuyerGuide',
     processingMessage: 'Processing first time home buyer guide form submission',
     schema: simpleLeadSchema,
-    buildParams: (ctx) => buildHomebuyerGuideParams(ctx.formData, ctx.submissionId),
+    buildParams: buildHomebuyerGuideParams,
     buildSlack: (ctx) => ({
         headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New First Time Home Buyer Guide Download' : '🔔 New First Time Home Buyer Guide Download',
         name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
@@ -1095,7 +1148,7 @@ const coloradoRelocationGuideConfig = defineWebToLeadConfig({
     formType: 'coloradoRelocationGuide',
     processingMessage: 'Processing Colorado relocation guide form submission',
     schema: coloradoRelocationGuideSchema,
-    buildParams: (ctx) => buildColoradoRelocationGuideParams(ctx.formData, ctx.submissionId),
+    buildParams: buildColoradoRelocationGuideParams,
     buildSlack: (ctx) => ({
         headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Colorado Relocation Guide Download' : '🔔 New Colorado Relocation Guide Download',
         name: `${ctx.formData.firstName} ${ctx.formData.lastName}`,
@@ -1124,7 +1177,7 @@ const internshipConfig = defineWebToLeadConfig({
     processingMessage: 'Processing internship form submission',
     schema: internshipSchema,
     spamFreeTextField: '00N4x00000QPS7V',
-    buildParams: (ctx) => buildInternshipParams(ctx.formData),
+    buildParams: buildInternshipParams,
     buildSlack: (ctx) => ({
         headerText: ctx.spam.quarantine ? '⚠️ SPAM-SUSPECTED — 🔔 New Internship Submission' : '🔔 New Internship Submission',
         name: `${ctx.formData.first_name} ${ctx.formData.last_name}`,

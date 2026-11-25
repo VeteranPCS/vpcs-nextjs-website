@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <!-- Retrieve into ignored retrieved-private first: copied code/settings can contain secrets. -->
+    <types><members>*</members><name>ApexClass</name></types>
+    <types><members>*</members><name>ApexTrigger</name></types>
+    <types><members>*</members><name>Flow</name></types>
+    <types><members>Lead</members><members>Account</members><members>Opportunity</members><members>SMS_Message_Queue__c</members><members>Form__c</members><members>AppLog__c</members><name>CustomObject</name></types>
+    <types><members>Lead</members><members>Account</members><members>Opportunity</members><name>Workflow</name></types>
+    <types><members>*</members><name>NamedCredential</name></types>
+    <types><members>*</members><name>RemoteSiteSetting</name></types>
+    <types><members>*</members><name>CustomMetadata</name></types>
+    <version>62.0</version>
+</Package>

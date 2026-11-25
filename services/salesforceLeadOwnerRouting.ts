@@ -1,30 +1,13 @@
 import 'server-only';
 
 import { getAdminRoutingForState, type AdminKey } from '@/services/stateRoutingService';
-import { SF_LEAD_OWNER } from '@/lib/salesforce/ids';
+import { getSalesforceConfig } from '@/lib/salesforce/server-config';
 
-type SalesforceLeadOwnerConfig = {
-    ownerId: string;
-    ownerName: string;
-};
-
-const SALESFORCE_LEAD_OWNERS_BY_ADMIN: Record<AdminKey, SalesforceLeadOwnerConfig> = {
-    BETH: {
-        ownerId: SF_LEAD_OWNER.BETH,
-        ownerName: 'Beth Soldner',
-    },
-    JESSICA: {
-        ownerId: SF_LEAD_OWNER.JESSICA,
-        ownerName: 'Jessica Brown',
-    },
-    STEPHANIE: {
-        ownerId: SF_LEAD_OWNER.STEPHANIE,
-        ownerName: 'Stephanie Guree',
-    },
-    TARA: {
-        ownerId: SF_LEAD_OWNER.TARA,
-        ownerName: 'Tara Gould',
-    },
+const OWNER_NAMES: Record<AdminKey, string> = {
+    BETH: 'Beth Soldner',
+    JESSICA: 'Jessica Brown',
+    STEPHANIE: 'Stephanie Guree',
+    TARA: 'Tara Gould',
 };
 
 export type SalesforceLeadOwner = {
@@ -40,15 +23,15 @@ export function getLeadOwnerForState(state?: string): SalesforceLeadOwner {
         throw new Error(`No admin routing found for Salesforce Lead owner state: ${state || '(missing)'}`);
     }
 
-    const owner = SALESFORCE_LEAD_OWNERS_BY_ADMIN[adminRouting.adminKey];
-    if (!owner?.ownerId) {
+    const ownerId = getSalesforceConfig().leadOwners[adminRouting.adminKey];
+    if (!ownerId) {
         throw new Error(`No Salesforce Lead OwnerId configured for admin: ${adminRouting.adminKey}`);
     }
 
     return {
         adminKey: adminRouting.adminKey,
         adminName: adminRouting.name,
-        ownerId: owner.ownerId,
-        ownerName: owner.ownerName,
+        ownerId,
+        ownerName: OWNER_NAMES[adminRouting.adminKey],
     };
 }

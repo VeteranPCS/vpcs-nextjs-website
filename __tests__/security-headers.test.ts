@@ -1,18 +1,42 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { NextRequest } from 'next/server';
-import nextConfig from '@/next.config.mjs';
+import mockMetadata from '@/config/salesforce/mock.json';
+import productionMetadata from '@/config/salesforce/production.json';
 import { proxy } from '@/proxy';
 
 type HeaderEntry = { key: string; value: string };
 type HeaderRule = { source: string; headers: HeaderEntry[] };
 
 let rules: HeaderRule[];
+const productionOrigin = 'https://veteranpcs.my.salesforce.com';
+const sandboxOrigin = 'https://veteranpcs--webdev.sandbox.my.salesforce.com';
+const webToLeadPath = '/servlet/servlet.WebToLead?encoding=UTF-8';
+
+async function loadConfig(env: Record<string, string | undefined>) {
+  vi.resetModules();
+  vi.unstubAllEnvs();
+  for (const [key, setting] of Object.entries(env)) vi.stubEnv(key, setting);
+  return (await import('@/next.config.mjs')).default;
+}
 
 beforeAll(async () => {
+  const nextConfig = await loadConfig({
+    VERCEL: '1', VERCEL_ENV: 'production', VERCEL_GIT_COMMIT_REF: 'main',
+    VPCS_SALESFORCE_PROFILE: 'production', VPCS_DELIVERY_MODE: 'live',
+    VPCS_SALESFORCE_ORG_ID: productionMetadata.orgId,
+    SALESFORCE_LOGIN_BASE_URL: productionOrigin, VPCS_SALESFORCE_BASE_URL: productionOrigin,
+    SALESFORCE_API_VERSION: 'v62.0', SALESFORCE_AUTH_GRANT: 'client_credentials',
+    VPCS_SALESFORCE_WEB_TO_LEAD_URL: `https://webto.salesforce.com${webToLeadPath}`,
+  });
   // withBotId wraps headers() as an async function; resolve the full merged array.
   if (!nextConfig.headers) throw new Error('next.config headers() is not defined');
   rules = (await nextConfig.headers()) as HeaderRule[];
+  expect(nextConfig.env?.NEXT_PUBLIC_VPCS_ANALYTICS_ENABLED).toBe('1');
+  expect(JSON.stringify(await nextConfig.rewrites?.())).toContain('https://us.i.posthog.com');
+  expect(nextConfig.images?.maximumRedirects).toBeUndefined();
 });
+
+afterAll(() => vi.unstubAllEnvs());
 
 const rule = (source: string) => {
   const found = rules.find((r) => r.source === source);
@@ -89,5 +113,39 @@ describe('Content-Security-Policy (enforced)', () => {
     expect(csp).toContain('https://*.doubleclick.net');
     // the site policy must never carry an eval escape hatch
     expect(csp).not.toContain("'unsafe-eval'");
+  });
+});
+
+describe('non-production integrations', () => {
+  const orgId = '00DTESTORG00001';
+
+  it.each(['mock', 'webdev'] as const)('uses isolated CSP and disables ingestion in the %s profile', async profile => {
+    const config = await loadConfig({
+      VERCEL: undefined, VERCEL_ENV: undefined, VERCEL_GIT_COMMIT_REF: undefined,
+      VPCS_SALESFORCE_PROFILE: profile, VPCS_DELIVERY_MODE: 'capture',
+      VPCS_SALESFORCE_ORG_ID: orgId, VPCS_SALESFORCE_METADATA_JSON: JSON.stringify({ ...mockMetadata, orgId }),
+      SALESFORCE_LOGIN_BASE_URL: sandboxOrigin, VPCS_SALESFORCE_BASE_URL: sandboxOrigin,
+      SALESFORCE_API_VERSION: 'v62.0', SALESFORCE_AUTH_GRANT: 'client_credentials',
+      VPCS_SALESFORCE_WEB_TO_LEAD_URL: `https://test.salesforce.com${webToLeadPath}`,
+    });
+    const siteRule = (await config.headers?.())?.find(header => header.source === '/(.*)');
+    if (!siteRule) throw new Error('No site security header rule');
+    const csp = value(siteRule, 'Content-Security-Policy');
+
+    expect(config.env?.NEXT_PUBLIC_VPCS_ANALYTICS_ENABLED).toBe('0');
+    expect(config.env?.NEXT_PUBLIC_CONCIERGE_ENABLED).toBe('0');
+    expect(await config.rewrites?.()).toEqual([]);
+    expect(config.images?.maximumRedirects).toBe(0);
+    expect(csp).toContain("connect-src 'self';");
+    expect(csp).not.toMatch(/posthog|googletagmanager|google-analytics|vercel-insights|veteranpcs\.my\.salesforce/);
+    if (profile === 'mock') {
+      expect(csp).toContain("frame-src 'self';");
+      expect(csp).not.toContain(sandboxOrigin);
+      expect(config.images?.remotePatterns).toEqual([]);
+    } else {
+      expect(csp).toContain("frame-src 'self' https://www.youtube-nocookie.com;");
+      expect(csp).toContain(sandboxOrigin);
+      expect(config.images?.remotePatterns).toEqual([{ protocol: 'https', hostname: new URL(sandboxOrigin).hostname }]);
+    }
   });
 });

@@ -1,48 +1,12 @@
 #!/usr/bin/env node
-// One-shot recon script. Verifies whether the Salesforce org actually has the
-// Opportunity schema that docs/REVERSION-PLAN.md assumes, so we know whether
-// `lib/salesforce-deals.ts` can target Opportunity or needs a different object.
-//
-// Run:
-//   node --env-file=.env.local scripts/recon-salesforce.mjs
-//
-// Output:
-//   - stdout: human-readable reconciliation summary
-//   - docs/salesforce-schema/opportunity-reconciliation.md: committed summary
-//   - docs/salesforce-schema/raw/*.json: raw dumps (gitignored)
+// Inspect schema in the verified Salesforce WebDev sandbox.
+// Run: node scripts/recon-salesforce.mjs
+// Output: artifacts/salesforce/webdev/<target fingerprint>/
 
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-
-const REQUIRED = [
-    'SALESFORCE_CLIENT_ID',
-    'SALESFORCE_CLIENT_SECRET',
-    'SALESFORCE_USERNAME',
-    'SALESFORCE_PASSWORD',
-    'SALESFORCE_TOKEN',
-    'SALESFORCE_LOGIN_BASE_URL',
-    'SALESFORCE_API_VERSION',
-    'VPCS_SALESFORCE_BASE_URL',
-];
-
-for (const key of REQUIRED) {
-    if (!process.env[key]) {
-        console.error(`Missing env var: ${key}`);
-        console.error('Run with: node --env-file=.env.local scripts/recon-salesforce.mjs');
-        process.exit(1);
-    }
-}
-
-const {
-    SALESFORCE_CLIENT_ID,
-    SALESFORCE_CLIENT_SECRET,
-    SALESFORCE_USERNAME,
-    SALESFORCE_PASSWORD,
-    SALESFORCE_TOKEN,
-    SALESFORCE_LOGIN_BASE_URL,
-    SALESFORCE_API_VERSION,
-    VPCS_SALESFORCE_BASE_URL,
-} = process.env;
+import { projectRoot } from './lib/next-environment.mjs';
+import { connectSandbox } from './lib/salesforce-sandbox.mjs';
 
 // Fields the reversion plan assumes exist on Opportunity.
 const PLAN_FIELDS = [
@@ -72,47 +36,6 @@ const PLAN_STAGES = [
     'Closed - Lost',
 ];
 
-// RecordTypeId the plan assumes is the "Customer" pipeline.
-const PLAN_RECORD_TYPE_ID = '0124x000000Z7G3AAK';
-
-const RAW_DIR = 'docs/salesforce-schema/raw';
-mkdirSync(RAW_DIR, { recursive: true });
-
-async function getToken() {
-    const params = new URLSearchParams({
-        grant_type: 'password',
-        client_id: SALESFORCE_CLIENT_ID,
-        client_secret: SALESFORCE_CLIENT_SECRET,
-        username: SALESFORCE_USERNAME,
-        password: `${SALESFORCE_PASSWORD}${SALESFORCE_TOKEN}`,
-    });
-    const res = await fetch(`${SALESFORCE_LOGIN_BASE_URL}/services/oauth2/token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: params.toString(),
-    });
-    if (!res.ok) {
-        throw new Error(`Auth failed (${res.status}): ${await res.text()}`);
-    }
-    const json = await res.json();
-    return { token: json.access_token, instanceUrl: json.instance_url };
-}
-
-async function sfGet(token, instanceUrl, path) {
-    const base = instanceUrl || VPCS_SALESFORCE_BASE_URL;
-    const url = `${base}/services/data/${SALESFORCE_API_VERSION}${path}`;
-    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-    const text = await res.text();
-    if (!res.ok) {
-        return { ok: false, status: res.status, body: text, url };
-    }
-    return { ok: true, status: res.status, body: JSON.parse(text), url };
-}
-
-function writeRaw(name, data) {
-    writeFileSync(join(RAW_DIR, name), JSON.stringify(data, null, 2));
-}
-
 function check(bool) {
     return bool ? '✓' : '✗';
 }
@@ -121,13 +44,24 @@ async function main() {
     console.log('═══ Salesforce Schema Recon ═══\n');
 
     console.log('1. Authenticating...');
-    const { token, instanceUrl } = await getToken();
-    console.log(`   Authenticated. Instance: ${instanceUrl}\n`);
+    const { config, fingerprint, get } = await connectSandbox();
+    const outputDir = join(projectRoot, 'artifacts', 'salesforce', 'webdev', fingerprint.slice(0, 12));
+    const rawDir = join(outputDir, 'raw');
+    mkdirSync(rawDir, { recursive: true, mode: 0o700 });
+    const expectedRecordType = config.recordTypes.CUSTOMER_OPPORTUNITY;
+    console.log(`   Verified instance: ${config.restOrigin}\n`);
+
+    function writeRaw(name, data) {
+        writeFileSync(join(rawDir, name), JSON.stringify(data, null, 2), { mode: 0o600 });
+    }
+    function writeSummary(name, lines) {
+        writeFileSync(join(outputDir, name), lines.join('\n'), { mode: 0o600 });
+    }
 
     console.log('2. Listing accessible SObjects...');
-    const sobjects = await sfGet(token, instanceUrl, '/sobjects');
+    const sobjects = await get('/sobjects');
     if (!sobjects.ok) {
-        console.error(`   FAIL (${sobjects.status}): ${sobjects.body}`);
+        console.error(`   FAIL (${sobjects.status})`);
         process.exit(1);
     }
     writeRaw('sobjects.json', sobjects.body);
@@ -149,9 +83,9 @@ async function main() {
 
     if (opportunityPresent) {
         console.log('3. Describing Opportunity...');
-        const describe = await sfGet(token, instanceUrl, '/sobjects/Opportunity/describe');
+        const describe = await get('/sobjects/Opportunity/describe');
         if (!describe.ok) {
-            console.error(`   FAIL (${describe.status}): ${describe.body}`);
+            console.error(`   FAIL (${describe.status})`);
         } else {
             writeRaw('opportunity-describe.json', describe.body);
             opportunityFields = new Set(describe.body.fields.map((f) => f.name));
@@ -170,16 +104,14 @@ async function main() {
         }
 
         console.log('4. Counting Opportunity records...');
-        const count = await sfGet(
-            token,
-            instanceUrl,
+        const count = await get(
             `/query?q=${encodeURIComponent('SELECT COUNT(Id) c FROM Opportunity')}`,
         );
         if (count.ok) {
             opportunityCount = count.body.records?.[0]?.c ?? null;
             console.log(`   Total Opportunity records: ${opportunityCount}\n`);
         } else {
-            console.log(`   Query failed (${count.status}): ${count.body}\n`);
+            console.log(`   Query failed (${count.status})\n`);
         }
     } else {
         console.log('3-4. Opportunity not present — skipping describe/count.\n');
@@ -199,9 +131,9 @@ async function main() {
 
     if (customerPresent) {
         console.log('5. Describing Customer SObject...');
-        const customerDescribe = await sfGet(token, instanceUrl, '/sobjects/Customer/describe');
+        const customerDescribe = await get('/sobjects/Customer/describe');
         if (!customerDescribe.ok) {
-            console.error(`   FAIL (${customerDescribe.status}): ${customerDescribe.body}`);
+            console.error(`   FAIL (${customerDescribe.status})`);
         } else {
             customerDescribeBody = customerDescribe.body;
             writeRaw('customer-describe.json', customerDescribe.body);
@@ -230,16 +162,14 @@ async function main() {
         }
 
         console.log('6. Counting Customer records...');
-        const count = await sfGet(
-            token,
-            instanceUrl,
+        const count = await get(
             `/query?q=${encodeURIComponent('SELECT COUNT(Id) c FROM Customer')}`,
         );
         if (count.ok) {
             customerCount = count.body.records?.[0]?.c ?? null;
             console.log(`   Total Customer records: ${customerCount}\n`);
         } else {
-            console.log(`   Query failed (${count.status}): ${count.body}\n`);
+            console.log(`   Query failed (${count.status})\n`);
         }
     } else {
         console.log('5-6. Customer SObject not present — skipping.\n');
@@ -279,9 +209,9 @@ async function main() {
     let accountCountLender = null;
 
     console.log('7. Describing Account...');
-    const accountDescribe = await sfGet(token, instanceUrl, '/sobjects/Account/describe');
+    const accountDescribe = await get('/sobjects/Account/describe');
     if (!accountDescribe.ok) {
-        console.error(`   FAIL (${accountDescribe.status}): ${accountDescribe.body}`);
+        console.error(`   FAIL (${accountDescribe.status})`);
     } else {
         writeRaw('account-describe.json', accountDescribe.body);
         const fields = accountDescribe.body.fields;
@@ -329,7 +259,7 @@ async function main() {
     if (accountIsPersonAccountPresent) {
         console.log('8. Counting Accounts...');
         const runCount = async (soql) => {
-            const r = await sfGet(token, instanceUrl, `/query?q=${encodeURIComponent(soql)}`);
+            const r = await get(`/query?q=${encodeURIComponent(soql)}`);
             if (!r.ok) {
                 console.log(`   Query failed (${r.status}): ${soql}`);
                 return null;
@@ -383,8 +313,8 @@ async function main() {
     console.log();
 
     console.log('Assumed RecordType id:');
-    const planRecordType = opportunityRecordTypes.find((rt) => rt.id === PLAN_RECORD_TYPE_ID);
-    console.log(`   ${check(!!planRecordType)} ${PLAN_RECORD_TYPE_ID}`);
+    const planRecordType = opportunityRecordTypes.find((rt) => rt.id === expectedRecordType);
+    console.log(`   ${check(!!planRecordType)} ${expectedRecordType}`);
     if (planRecordType) {
         console.log(`     name: ${planRecordType.name} (developerName: ${planRecordType.developerName})`);
     } else if (opportunityRecordTypes.length > 0) {
@@ -417,7 +347,7 @@ async function main() {
         }
         if (!planRecordType) {
             verdictLines.push(
-                `Plan RecordTypeId ${PLAN_RECORD_TYPE_ID} does not match any configured RecordType. The plan's SOQL will return zero rows as written.`,
+                `Plan RecordTypeId ${expectedRecordType} does not match any configured RecordType. The plan's SOQL will return zero rows as written.`,
             );
         }
         if (opportunityCount === 0) {
@@ -534,8 +464,8 @@ async function main() {
         '',
         '## Environment',
         '',
-        `- Instance: \`${instanceUrl}\``,
-        `- API version: \`${SALESFORCE_API_VERSION}\``,
+        `- Instance: \`${config.restOrigin}\``,
+        `- API version: \`${config.apiVersion}\``,
         '',
         '## Object Presence',
         '',
@@ -564,7 +494,7 @@ async function main() {
     }
 
     mdLines.push('## RecordTypes', '');
-    mdLines.push(`- Plan-assumed id: \`${PLAN_RECORD_TYPE_ID}\` → ${planRecordType ? `matches **${planRecordType.name}**` : 'NOT FOUND'}`);
+    mdLines.push(`- Plan-assumed id: \`${expectedRecordType}\` → ${planRecordType ? `matches **${planRecordType.name}**` : 'NOT FOUND'}`);
     mdLines.push('');
     if (opportunityRecordTypes.length > 0) {
         mdLines.push('| Id | Name | Developer Name | Default | Available |');
@@ -585,7 +515,7 @@ async function main() {
     for (const line of verdictLines) mdLines.push(`- ${line}`);
     mdLines.push('');
 
-    writeFileSync('docs/salesforce-schema/opportunity-reconciliation.md', mdLines.join('\n'));
+    writeSummary('opportunity-reconciliation.md', mdLines);
 
     // ─── Customer reconciliation markdown ───
     const customerMd = [
@@ -655,7 +585,7 @@ async function main() {
         customerMd.push('</details>', '');
     }
 
-    writeFileSync('docs/salesforce-schema/customer-reconciliation.md', customerMd.join('\n'));
+    writeSummary('customer-reconciliation.md', customerMd);
 
     // ─── Account reconciliation markdown ───
     const accountMd = [
@@ -732,17 +662,12 @@ async function main() {
     }
     accountMd.push('```', '</details>', '');
 
-    writeFileSync('docs/salesforce-schema/account-reconciliation.md', accountMd.join('\n'));
+    writeSummary('account-reconciliation.md', accountMd);
 
-    console.log('Wrote:');
-    console.log('  - docs/salesforce-schema/opportunity-reconciliation.md (summary, commit)');
-    console.log('  - docs/salesforce-schema/customer-reconciliation.md (summary, commit)');
-    console.log('  - docs/salesforce-schema/account-reconciliation.md (summary, commit)');
-    console.log(`  - ${RAW_DIR}/*.json (raw dumps, gitignored)`);
+    console.log(`Wrote sandbox reconciliation summaries and raw JSON to ${outputDir}.`);
 }
 
-main().catch((err) => {
-    console.error('\nRecon failed:', err.message);
-    if (err.stack) console.error(err.stack);
-    process.exit(1);
+main().catch(error => {
+    console.error('Recon failed:', error.message);
+    process.exitCode = 1;
 });

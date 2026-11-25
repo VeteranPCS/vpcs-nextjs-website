@@ -9,6 +9,7 @@ import type { ResolvedAuthor } from '@/lib/blog/types';
 import type { TocHeading } from '@/lib/blog/mdx';
 import TrackedCtaLink from '@/components/common/TrackedCtaLink';
 import { blogContactTracking, internalBlogHref } from '@/lib/blog/contact-link';
+import { isProductionSalesforceRuntime } from '@/lib/salesforce/environment.mjs';
 
 function isExternal(href: string): boolean {
   return /^https?:\/\//i.test(href);
@@ -102,7 +103,7 @@ export const mdxComponents: MDXComponents = {
       <td className="px-4 py-3 align-top leading-6" {...props} />
     ),
     a: ({ href, children, ...rest }) => {
-      const target = internalBlogHref(href ?? '') ?? href ?? '#';
+      const target = internalBlogHref(href ?? '', isProductionSalesforceRuntime()) ?? href ?? '#';
       if (isExternal(target)) {
         return (
           <a
@@ -159,7 +160,7 @@ export function createBlogMdxComponents({
   return {
     ...mdxComponents,
     a: ({ href, children, ...rest }) => {
-      const target = internalBlogHref(href ?? '') ?? href ?? '#';
+      const target = internalBlogHref(href ?? '', isProductionSalesforceRuntime()) ?? href ?? '#';
       const cta = blogContactTracking(target, contentSlug);
       if (cta) {
         return (

@@ -32,12 +32,7 @@ jobs:
       - name: Type-check
         run: npm run type-check
       - name: Build
-        run: npm run build
-        env:
-          # GitHub Actions does not hold Salesforce credentials. Compile the
-          # dynamic state routes here; Vercel and credentialed local builds
-          # still prerender all states and fail closed on upstream errors.
-          SKIP_SALESFORCE_PRERENDER: '1'
+        run: npm run build:mock
       - name: Test
         run: npm test
       - name: Content lint (banned byline)
@@ -62,7 +57,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     env:
-      AI_GATEWAY_API_KEY: ${{ secrets.AI_GATEWAY_API_KEY }}
+      VPCS_EVAL_AI_GATEWAY_API_KEY: ${{ secrets.VPCS_EVAL_AI_GATEWAY_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

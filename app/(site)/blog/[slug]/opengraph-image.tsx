@@ -1,82 +1,11 @@
-import { ImageResponse } from 'next/og'
-import { readFile } from 'node:fs/promises'
-import path from 'node:path'
-import { getBlogBySlug } from '@/lib/blog/mdx'
+import { renderBlogSocialImage } from '@/lib/blog/social-image';
 
-export const alt = 'VeteranPCS Blog'
+export const runtime = 'nodejs';
+export const alt = 'VeteranPCS Blog';
+export const size = { width: 1200, height: 630 };
+export const contentType = 'image/png';
 
-export const size = {
-    width: 1200,
-    height: 630,
-}
-export const contentType = 'image/png'
-
-export default async function Image(props: { params: Promise<{ slug: string }> }) {
-    const params = await props.params;
-    const blog = await getBlogBySlug(params.slug);
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
-
-    const title = blog?.shortTitle || blog?.title || 'VeteranPCS';
-    const heroPath = blog?.mainImage?.src || '/assets/blogctabgimage.png';
-    const image_url = `${baseUrl}${heroPath}`;
-    const logo_url = `${baseUrl}/icon/VeteranPCSlogo.svg`;
-
-    const loraBold = readFile(
-        path.join(process.cwd(), 'styles/lora-font/Lora-Bold.ttf')
-    );
-
-    return new ImageResponse(
-        (
-            <div
-                style={{
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundImage: `linear-gradient(to right, rgba(255, 0, 0, 0.7), rgba(0, 0, 255, 0.5)), url(${image_url})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    padding: '40px',
-                }}
-            >
-                <div
-                    style={{
-                        color: 'white',
-                        fontSize: 60,
-                        fontWeight: '100',
-                        textAlign: 'center',
-                        marginBottom: '60px',
-                        maxWidth: '70%',
-                        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
-                    }}
-                >
-                    {title}
-                </div>
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        marginTop: '0px',
-                        width: '304px',
-                        height: '71px',
-                    }}
-                >
-                    <img src={logo_url} alt={title} height={71} width={304} />
-                </div>
-            </div>
-        ),
-        {
-            ...size,
-            fonts: [
-                {
-                    name: 'Lora',
-                    data: await loraBold,
-                    style: 'normal',
-                    weight: 700,
-                },
-            ],
-        }
-    )
+export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    return renderBlogSocialImage(slug, size);
 }

@@ -8,9 +8,6 @@ import { assertNoOverflow, interceptTelemetry } from './helpers';
 const PDF_SHA256 = 'b816103bade949338238a93ec77ad930f95a65a04128fbb04d95aa4bf95227e1';
 const privateValues = ['ColoradoTelemetryGiven', 'ColoradoTelemetryFamily', 'colorado-telemetry-private@example.com', 'private-colorado-query'];
 
-// Exercise the real SDK locally; ingestion is intercepted before navigation.
-test.use({ userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' });
-
 async function googleDownloads(page: Page): Promise<Record<string, unknown>[]> {
   return page.evaluate(() => {
     const layer = (window as Window & { dataLayer?: unknown[] }).dataLayer ?? [];
@@ -22,11 +19,17 @@ async function googleDownloads(page: Page): Promise<Record<string, unknown>[]> {
 
 test('Colorado guide captures a private-safe download after accepted dry-run submission', async ({ page }, testInfo) => {
   test.setTimeout(90000);
-  test.skip(process.env.E2E_LEAD_DRY_RUN !== '1' || process.env.E2E_POSTHOG_LOCAL_CAPTURE !== '1', 'Requires a loopback dry-run server with explicit local SDK capture enabled');
+  test.skip(process.env.E2E_LEAD_DRY_RUN !== '1', 'Requires a loopback mock server with dry-run enabled');
   const pageErrors: string[] = [];
   page.on('pageerror', error => { pageErrors.push(error.message); });
   const telemetry = await interceptTelemetry(page);
-  const downloads = () => telemetry.events.filter(event => event.event.startsWith('guide_download_'));
+  let postHogRequests = 0;
+  page.context().on('request', request => {
+    const { hostname, pathname } = new URL(request.url());
+    if (/^\/ingest(?:\/|$)/.test(pathname) || hostname === 'posthog.com' || hostname.endsWith('.posthog.com')) {
+      postHogRequests += 1;
+    }
+  });
   let attempts = 0;
   let contactSubmissions = 0;
   await page.route('**/contact-agent**', async route => {
@@ -63,14 +66,15 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     expect(placement.guideTop).toBeGreaterThanOrEqual(placement.bannerBottom ?? Number.POSITIVE_INFINITY);
     await promotion.scrollIntoViewIfNeeded();
     await promotion.screenshot({ path: testInfo.outputPath('colorado-guide-promotion.png'), caret: 'initial' });
-    const contact = page.getByRole('link', { name: 'Contact Tyler', exact: true });
+    const contact = page.getByRole('link', { name: 'Find a Colorado Agent', exact: true });
     await expect(contact).toBeVisible();
     const contactHref = await contact.getAttribute('href');
     expect(contactHref).toBeTruthy();
     const contactUrl = new URL(contactHref ?? '', page.url());
     expect(contactUrl.pathname).toBe('/contact-agent');
     expect(contactUrl.searchParams.get('state')).toBe('colorado');
-    expect(contactUrl.searchParams.get('id')).toBe(guide.authorSalesforceId);
+    expect(contactUrl.searchParams.get('id')).toBeNull();
+    expect(contactUrl.searchParams.get('fn')).toBeNull();
 
     await trigger.focus();
     await page.keyboard.press('Enter');
@@ -86,7 +90,6 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     await page.keyboard.press('Escape');
     await expect(dialog).not.toBeVisible();
     await expect(trigger).toBeFocused();
-    expect(downloads()).toHaveLength(0);
     expect(await googleDownloads(page)).toHaveLength(0);
 
     await trigger.click();
@@ -108,13 +111,11 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     await submit.click();
     await expect(email).toBeFocused();
     expect(attempts).toBe(0);
-    expect(downloads()).toHaveLength(0);
     expect(await googleDownloads(page)).toHaveLength(0);
 
     await email.fill('colorado-telemetry-private@example.com');
     await submit.click();
     await expect(dialog.getByRole('alert')).toContainText('Please try again');
-    await expect.poll(() => downloads().map(event => event.event), { timeout: 15000 }).toEqual(['guide_download_requested']);
     expect(await googleDownloads(page)).toHaveLength(0);
 
     const automaticDownload = page.waitForEvent('download');
@@ -126,7 +127,7 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     expect(attempts).toBe(2);
     releaseAcceptedRequest?.();
     await expect(dialog.getByRole('status')).toContainText('Your download has started.');
-    await expect(dialog.getByRole('region', { name: 'Meet Tyler Parker' }).getByRole('link', { name: 'Contact Tyler', exact: true })).toBeFocused();
+    await expect(dialog.getByRole('region', { name: 'Meet Tyler Parker' }).getByRole('link', { name: 'Find a Colorado Agent', exact: true })).toBeFocused();
     const downloaded = await automaticDownload;
     expect(downloaded.suggestedFilename()).toBe(guide.fileName);
     expect(await downloaded.failure()).toBeNull();
@@ -143,10 +144,6 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     const repeatedDownload = await manualDownload;
     expect(repeatedDownload.suggestedFilename()).toBe(guide.fileName);
     expect(await repeatedDownload.failure()).toBeNull();
-    await expect.poll(() => downloads().map(event => event.event), { timeout: 15000 }).toEqual([
-      'guide_download_requested', 'guide_download_requested', 'guide_download_started',
-      'guide_download_requested', 'guide_download_started',
-    ]);
     expect(attempts).toBe(2);
     expect(await googleDownloads(page)).toHaveLength(1);
     const authorCard = dialog.getByRole('region', { name: 'Meet Tyler Parker' });
@@ -156,8 +153,8 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     const portrait = authorCard.getByRole('img', { name: guide.author, exact: true });
     await expect(portrait).toBeVisible();
     await expect.poll(() => portrait.evaluate(element => element instanceof HTMLImageElement && element.complete && element.naturalWidth > 0)).toBe(true);
-    await expect(authorCard.getByRole('link', { name: 'Contact Tyler', exact: true })).toBeVisible();
-    // Accepted details are not persisted until the visitor chooses to contact Tyler.
+    await expect(authorCard.getByRole('link', { name: 'Find a Colorado Agent', exact: true })).toBeVisible();
+    // The generic nonproduction link does not persist accepted contact details.
     expect(await page.evaluate(key => sessionStorage.getItem(key), CONTACT_PREFILL_STORAGE_KEY)).toBeNull();
     await assertNoOverflow(page);
     await page.screenshot({ path: testInfo.outputPath('colorado-guide-success.png'), caret: 'initial' });
@@ -167,59 +164,43 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     const oldBytes = await oldPdf.body();
     expect(oldBytes.subarray(0, 5).toString()).toBe('%PDF-');
     expect(createHash('sha256').update(oldBytes).digest('hex')).toBe('de08483cf591ba9f8dcad0436c12894423726258491ac20cbdefed554530db76');
-    const openingEvent = telemetry.events.find(event => event.event === 'cta_clicked' && event.properties.guide_id === guide.id);
-    expect(openingEvent?.properties).toMatchObject({ cta_intent: 'download_guide', cta_location: 'state_guide_section' });
-    for (const event of downloads()) {
-      expect(event.properties).toMatchObject({
-        guide_id: guide.id, form_id: guide.id, state_code: 'CO', state_slug: 'colorado',
-        source_page_path: '/colorado', destination_path: guide.path,
-        cta_component: 'lead_capture_dialog', cta_location: 'state_guide_section',
-        cta_position: 'inline', page_type: 'state_page',
-        distinct_id: 'vpcs_d8a351ef-9f74-43bc-826a-6111857758b5',
-      });
-      expect(event.properties.$current_url).toBeUndefined();
-      expect(event.properties.$initial_current_url).toBeUndefined();
-    }
-    expect(downloads().slice(-2).map(event => event.properties.download_trigger)).toEqual(['manual_link', 'manual_link']);
-    expect(telemetry.decodeFailures).toEqual([]);
-    expect(telemetry.events.some(event => event.event === 'lead_conversion_created')).toBe(false);
+    expect(postHogRequests).toBe(0);
     const googleEvents = await googleDownloads(page);
     const serialized = JSON.stringify({ posthog: telemetry.events, google: googleEvents });
     for (const privateValue of privateValues) expect(serialized.includes(privateValue), 'Contact values and query strings must not appear in analytics').toBe(false);
     // Export safe fields only, never project tokens, contact data, or anonymous identifiers.
-    const keys = ['guide_id', 'form_id', 'state_code', 'state_slug', 'source_page_path', 'destination_path', 'cta_location', 'cta_position', 'download_trigger'];
     await testInfo.attach('colorado-guide-analytics', {
       body: JSON.stringify({
-        posthog: downloads().map(event => ({ event: event.event, properties: Object.fromEntries(keys.filter(key => key in event.properties).map(key => [key, event.properties[key]])) })),
-        google: googleEvents.map(event => ({ event: event.event, content: event.content })),
+        postHogRequests,
+        googleDataLayer: googleEvents.map(event => ({ event: event.event, content: event.content })),
       }, null, 2), contentType: 'application/json',
     });
 
-    // Navigation alone verifies the separate selected-agent hand-off; never submit this form.
-    await dialog.getByRole('link', { name: 'Contact Tyler', exact: true }).click();
+    // Verify navigation to the general form without submitting it.
+    await dialog.getByRole('link', { name: 'Find a Colorado Agent', exact: true }).click();
     await expect(page).toHaveURL(url => url.pathname === '/contact-agent'
-      && url.searchParams.get('id') === guide.authorSalesforceId
+      && !url.searchParams.has('id')
+      && !url.searchParams.has('fn')
       && url.searchParams.get('state') === guide.stateSlug);
-    await expect(page.getByRole('heading', { level: 1, name: /Contact Tyler/ })).toBeVisible();
-    await expect(page.locator('#firstName')).toHaveValue('ColoradoTelemetryGiven');
-    await expect(page.locator('#lastName')).toHaveValue('ColoradoTelemetryFamily');
-    await expect(page.locator('#email')).toHaveValue('colorado-telemetry-private@example.com');
+    await expect(page.getByRole('heading', { level: 1, name: /Contact Us|match you with an agent/ })).toBeVisible();
+    await expect(page.locator('#firstName')).toHaveValue('');
+    await expect(page.locator('#lastName')).toHaveValue('');
+    await expect(page.locator('#email')).toHaveValue('');
     expect(await page.evaluate(key => sessionStorage.getItem(key), CONTACT_PREFILL_STORAGE_KEY)).toBeNull();
-    for (const privateValue of privateValues) expect(decodeURIComponent(page.url()).includes(privateValue), 'Contact prefill must not enter the URL').toBe(false);
-    await expect.poll(() => telemetry.events.some(event => event.event === 'cta_clicked'
-      && event.properties.cta_id === 'colorado_relocation_guide_contact_tyler'
-      && event.properties.cta_location === 'guide_download_success'), { timeout: 15000 }).toBe(true);
+    for (const privateValue of privateValues) expect(decodeURIComponent(page.url()).includes(privateValue), 'Contact details must not enter the URL').toBe(false);
+    expect(postHogRequests).toBe(0);
     const handoffAnalytics = JSON.stringify({ posthog: telemetry.events, google: await googleDownloads(page) });
     for (const privateValue of privateValues) expect(handoffAnalytics.includes(privateValue), 'Contact prefill must not enter analytics').toBe(false);
     expect(contactSubmissions).toBe(0);
     expect(attempts).toBe(2);
 
-    // The single-use hand-off is consumed; a fresh mount does not reuse contact details.
+    // Reloading keeps the generic form blank.
     await page.reload();
-    await expect(page.getByRole('heading', { level: 1, name: /Contact Tyler/ })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: /Contact Us|match you with an agent/ })).toBeVisible();
     await expect(page.locator('#firstName')).toHaveValue('');
     await expect(page.locator('#lastName')).toHaveValue('');
     await expect(page.locator('#email')).toHaveValue('');
+    expect(postHogRequests).toBe(0);
     expect(contactSubmissions).toBe(0);
     expect(pageErrors).toEqual([]);
   } finally {

@@ -20,6 +20,7 @@ import { addSessionTokens } from '@/lib/ai/guardrails/budget';
 import { guardrailsEnforced, REFUSAL_MESSAGE } from '@/lib/ai/guardrails/config';
 import { logError } from '@/services/loggingService';
 import { captureServerAnalyticsEvent } from '@/lib/analytics/server';
+import { isProductionSalesforceRuntime } from '@/lib/salesforce/environment.mjs';
 import {
   deployedConciergeRequiresUpstash,
   missingUpstashEnvVars,
@@ -27,10 +28,6 @@ import {
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
-
-function deployedRuntimeRequiresBotId(): boolean {
-  return process.env.VERCEL === '1' && process.env.VERCEL_ENV !== 'development';
-}
 
 function hasExpectedBotIdClientHeaders(req: Request): boolean {
   const path = req.headers.get('x-path')?.trim();
@@ -40,11 +37,11 @@ function hasExpectedBotIdClientHeaders(req: Request): boolean {
 }
 
 export async function POST(req: Request) {
-  if (!featureFlags.conciergeEnabled) {
+  if (!featureFlags.conciergeEnabled || !isProductionSalesforceRuntime()) {
     return new Response('Not found', { status: 404 });
   }
 
-  if (deployedRuntimeRequiresBotId() && !hasExpectedBotIdClientHeaders(req)) {
+  if (!hasExpectedBotIdClientHeaders(req)) {
     return new Response('Unauthorized', { status: 403 });
   }
 

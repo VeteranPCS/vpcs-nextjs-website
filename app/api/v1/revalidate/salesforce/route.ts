@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
 import agentService from "@/services/agentService";
 import { revalidatePath } from "next/cache";
+import { isProductionSalesforceRuntime, isProtectedSalesforceWebdevPreview } from '@/lib/salesforce/environment.mjs';
 
 // Verify the shared secret the Salesforce webhook sends in X-Salesforce-Signature.
 // NOTE: this is still a shared-secret compare, not a true request signature. Full
@@ -11,7 +12,12 @@ import { revalidatePath } from "next/cache";
 // response-timing to recover the secret byte by byte.
 function verifySalesforceSignature(req: NextRequest): boolean {
     const salesforceSignature = req.headers.get("X-Salesforce-Signature");
-    const expectedSecret = process.env.SALESFORCE_WEBHOOK_SECRET;
+    const productionSecret = process.env.SALESFORCE_WEBHOOK_SECRET;
+    const webdevSecret = process.env.VPCS_WEBDEV_SALESFORCE_WEBHOOK_SECRET;
+    const expectedSecret = isProductionSalesforceRuntime()
+        ? productionSecret
+        : process.env.VPCS_SALESFORCE_PROFILE === 'webdev' && isProtectedSalesforceWebdevPreview() && webdevSecret !== productionSecret
+            ? webdevSecret : undefined;
 
     if (!salesforceSignature || !expectedSecret) {
         return false;
@@ -36,14 +42,12 @@ function convertStateNameToPathName(state: string): string {
 
 export async function POST(req: NextRequest) {
     try {
-        const body = await req.json();
-
         if (!verifySalesforceSignature(req)) {
             return new Response(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
         }
 
         // Extract accountId
-        const { accountId } = body;
+        const { accountId } = await req.json();
 
         if (!accountId) {
             return new Response(JSON.stringify({ message: "Invalid payload" }), { status: 400 });

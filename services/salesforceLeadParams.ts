@@ -1,5 +1,32 @@
 import { appendSalesforceAttributionParams } from '@/lib/analytics/server';
 import { SF_ORG_ID, SF_RECORD_TYPE } from '@/lib/salesforce/ids';
+import type { getSalesforceConfig } from '@/lib/salesforce/server-config';
+
+type SalesforceConfig = ReturnType<typeof getSalesforceConfig>;
+
+/** Translate existing builder aliases once, at the final transport boundary. */
+export function serializeWebToLeadParams(legacy: URLSearchParams, salesforce: SalesforceConfig): URLSearchParams {
+    const params = new URLSearchParams();
+    const recordTypeAliases = Object.entries(SF_RECORD_TYPE) as [keyof typeof SF_RECORD_TYPE, string][];
+    for (const [key, value] of legacy) {
+        if (key === 'oid') {
+            if (value !== SF_ORG_ID) throw new Error('Unexpected Web-to-Lead organization alias');
+            params.append(key, salesforce.orgId);
+        } else if (key === 'recordType') {
+            const recordType = recordTypeAliases.find(([, alias]) => alias === value)?.[0];
+            if (!recordType) throw new Error('Unmapped Web-to-Lead record type');
+            const targetId = salesforce.recordTypes[recordType];
+            params.append(key, targetId);
+        } else if (key.startsWith('00N')) {
+            const targetField = salesforce.fieldIds[key];
+            if (!targetField) throw new Error('Unmapped Web-to-Lead custom field');
+            params.append(targetField, value);
+        } else {
+            params.append(key, value);
+        }
+    }
+    return params;
+}
 
 export function buildAgentLeadParams(
     formData: Record<string, string | undefined>,

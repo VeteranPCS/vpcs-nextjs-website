@@ -1,11 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { stubProductionEnv } from '@/lib/salesforce/__tests__/configuration-fixtures';
 
 vi.mock('server-only', () => ({}));
-
-vi.mock('@/constants/api', () => ({
-  SALESFORCE_BASE_URL: 'https://sf.example.test',
-  SALESFORCE_API_VERSION: 'v62.0',
-}));
 
 vi.mock('@/services/api', () => ({
   RequestType: {
@@ -65,8 +61,10 @@ function patchCall() {
 
 describe('salesforceLeadOwnerService', () => {
   beforeEach(() => {
+    stubProductionEnv();
     vi.clearAllMocks();
   });
+  afterEach(() => vi.unstubAllEnvs());
 
   it('appends a submission marker to the WebForm URL', () => {
     expect(
@@ -101,7 +99,7 @@ describe('salesforceLeadOwnerService', () => {
     expect(decodedQuery(0)).toContain("WebFormURL__c LIKE '%sid=submission-test-id%'");
     expect(patchCall()).toEqual(
       expect.objectContaining({
-        endpoint: 'https://sf.example.test/services/data/v62.0/sobjects/Lead/00QMARKER',
+        endpoint: 'https://veteranpcs.my.salesforce.com/services/data/v62.0/sobjects/Lead/00QMARKER',
         type: RequestType.PATCH,
         data: { OwnerId: BETH_OWNER_ID },
       }),

@@ -1,3 +1,4 @@
+import { isProductionSalesforceRuntime } from '@/lib/salesforce/environment.mjs';
 import type { Metadata } from "next";
 import { Inter, Poppins, Roboto, Lora } from "next/font/google";
 import "./globals.css";
@@ -155,18 +156,19 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const productionTelemetry = isProductionSalesforceRuntime();
     return (
         <html lang="en" className={`scroll-pt-20 ${inter.variable} ${poppins.variable} ${roboto.variable} ${lora.variable}`}>
             <head>
-                <GoogleTagManager gtmId={GTM_ID} />
+                {productionTelemetry && <GoogleTagManager gtmId={GTM_ID} />}
                 <Script id={`json-ld-real-estate-agent`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
             </head>
             <body className={inter.className}>
                 <Suspense fallback={null}>
-                    <PageviewTracker />
+                    {productionTelemetry && <PageviewTracker />}
                 </Suspense>
                 {children}
-                <SpeedInsights />
+                {productionTelemetry && <SpeedInsights />}
             </body>
         </html>
     );

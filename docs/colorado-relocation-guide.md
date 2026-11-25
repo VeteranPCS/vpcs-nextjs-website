@@ -25,20 +25,20 @@ A successful HTTP response and `lead_conversion_created` mean the Web-to-Lead en
 Use an isolated loopback dev server. Never run these submissions against a live deployment. Keep Google and PostHog ingestion intercepted in browser tests; local dry-run suppresses CRM writes, notifications, owner routing, server conversion events, and shared Redis lead rate-limit writes. Other spam signals remain evaluated; production rate limiting is unchanged.
 
 ```sh
-E2E_BASE_URL=http://127.0.0.1:3107 NEXT_PUBLIC_POSTHOG_ENABLE_LOCAL_CAPTURE=1 npm run test:e2e:server
+E2E_BASE_URL=http://127.0.0.1:3107 npm run test:e2e:server
 ```
 
 In another terminal, after confirming the server started with dry-run enabled:
 
 ```sh
-E2E_BASE_URL=http://127.0.0.1:3107 E2E_LEAD_DRY_RUN=1 E2E_POSTHOG_LOCAL_CAPTURE=1 npm run test:e2e -- e2e/colorado-guide-download.spec.ts --project=phone-narrow --project=tablet --project=desktop
+E2E_BASE_URL=http://127.0.0.1:3107 E2E_LEAD_DRY_RUN=1 npm run test:e2e -- e2e/colorado-guide-download.spec.ts --project=phone-narrow --project=tablet --project=desktop
 npm run lint
 npm run type-check
 npm test
 npm run build
 ```
 
-Also run the existing Resources capture tests after changing the shared dialog. Inspect the saved promotion, dialog, and success screenshots. Checks include validation/focus, retry after a known failed request, pending duplicate suppression, complete PDF bytes/hash, fallback download without resubmission, Contact Tyler selection, narrow-screen overflow, event sequence, and personal-data exclusion.
+Also run the existing Resources capture tests after changing the shared dialog. Inspect the saved promotion, dialog, and success screenshots. Checks include validation and focus, retry after a known failed request, pending duplicate suppression, complete PDF bytes and hash, fallback download without resubmission, narrow-screen overflow, personal-data exclusion, and zero PostHog requests. The loopback Colorado flow links to the general Colorado agent form and leaves its contact fields blank. The component tests cover the event sequence and the production Contact Tyler link with its one-time prefill.
 
 ## One user-run live acceptance
 

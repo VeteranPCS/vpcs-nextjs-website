@@ -1,0 +1,6 @@
+{
+  "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap": "/* latin */\n@font-face {font-family:'Inter';font-style:normal;font-weight:100 900;font-display:swap;src:local('Arial');}",
+  "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap": "/* latin */\n@font-face {font-family:'Poppins';font-style:normal;font-weight:400 700;font-display:swap;src:local('Arial');}",
+  "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap": "/* latin */\n@font-face {font-family:'Roboto';font-style:normal;font-weight:400 700;font-display:swap;src:local('Arial');}",
+  "https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap": "/* latin */\n@font-face {font-family:'Lora';font-style:normal;font-weight:400 700;font-display:swap;src:local('Georgia');}"
+}

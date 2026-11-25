@@ -1,6 +1,14 @@
 import { EventEmitter } from "node:events";
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { getSalesforceToken } from "@/services/salesForceTokenService";
+import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios";
+import {
+    getSalesforceTokenSnapshot,
+    invalidateSalesforceToken,
+    type SalesforceTokenSnapshot,
+} from "@/services/salesForceTokenService";
+import { SalesforceConfigurationError } from "@/lib/salesforce/environment.mjs";
+import { requestMockSalesforce } from "@/lib/salesforce/mock-transport";
+import { assertSalesforceRequestUrl, getSalesforceConfig } from "@/lib/salesforce/server-config";
+import { SalesforceTokenError } from "@/lib/salesforce/token-error";
 import { logDebug, logError } from "@/services/loggingService";
 
 // Next spawns fresh worker processes for static generation — globals set in
@@ -97,81 +105,116 @@ export const api = async ({
 };
 // ***** end - Api function for calling any type of APIs *****
 
-export const salesForceAPI = async ({
-    endpoint,
-    data,
-    type,
-    customHeader
-}: ApiParams): Promise<AxiosResponse | undefined> => {
-    let res: AxiosResponse | undefined;
+function prepareSalesforceRequest(params: ApiParams) {
+    const config = getSalesforceConfig();
+    const url = assertSalesforceRequestUrl(params.endpoint, config);
+    const isRead = params.type === RequestType.GET;
+    const isMutation = params.type === RequestType.POST || params.type === RequestType.PUT
+        || params.type === RequestType.PATCH || params.type === RequestType.DELETE;
+    if (!isRead && !isMutation) {
+        throw new SalesforceConfigurationError('Unsupported Salesforce REST request method.');
+    }
+    if (isMutation && config.profile === 'webdev' && !config.allowSandboxWrites) {
+        throw new SalesforceConfigurationError('Salesforce REST writes are disabled for this deployment.');
+    }
+    return { config, url };
+}
 
-    const token = await getSalesforceToken();
+const RESTRICTED_HEADERS = new Set(['authorization', 'proxy-authorization', 'cookie', 'host']);
 
-    const config: AxiosRequestConfig = {
-        url: endpoint,
-        method: type as any,
-        data,
-        timeout: SALESFORCE_REQUEST_TIMEOUT_MS,
-        headers: {
-            "Cache-Control": "no-cache",
-            Authorization: `Bearer ${token}`,
-            ...customHeader,
-        },
-    };
-
-    try {
-        res = await axios(config);
-    } catch (err: any) {
-        if (err?.response) {
-            // HTTP error response (4xx/5xx): return it so callers can inspect .status
-            // (salesForceAPIWithRefresh reads .status === 401 to trigger a single retry).
-            res = err.response;
-        } else {
-            // Network error (no HTTP response): log the real cause and rethrow it wrapped.
-            logError('salesForceAPI network error', { endpoint: logSafeEndpoint(config.url), method: type }, err);
-            throw new Error('salesForceAPI request failed', { cause: err });
-        }
+async function requestSalesforceAPI(
+    params: ApiParams,
+    target: ReturnType<typeof prepareSalesforceRequest>,
+    session: SalesforceTokenSnapshot,
+    image = false,
+): Promise<AxiosResponse> {
+    const { url, config } = target;
+    if (session.cacheKey !== config.cacheKey || session.instanceUrl !== url.origin) {
+        throw new SalesforceConfigurationError('The verified Salesforce session does not match the request target.');
     }
 
-    return res;  // Return the response or error
-};
+    const customHeaders = Object.fromEntries(
+        Object.entries(params.customHeader ?? {}).filter(([key]) => !RESTRICTED_HEADERS.has(key.toLowerCase())),
+    );
+    const service = image ? 'salesForceImageAPI' : 'salesForceAPI';
+    try {
+        return await axios({
+            url: url.toString(),
+            method: params.type,
+            data: params.data,
+            timeout: SALESFORCE_REQUEST_TIMEOUT_MS,
+            maxRedirects: 0,
+            headers: {
+                ...customHeaders,
+                "Cache-Control": "no-cache",
+                Authorization: `Bearer ${session.token}`,
+            },
+            responseType: image ? 'arraybuffer' : undefined,
+        });
+    } catch (error: any) {
+        if (error?.response) return error.response;
 
-// Keeps the existing one-time 401 refresh for every request type. Safe GETs also
-// retry bounded transient failures so a momentary Salesforce/network issue does
-// not poison a statically generated or ISR state page with an empty result.
-// Mutations are never transiently retried because the first attempt may have
-// reached Salesforce even when the response was lost.
-export const salesForceAPIWithRefresh = async (
-    params: ApiParams,
-): Promise<AxiosResponse | undefined> => {
+        // Raw Axios errors retain request headers and can include SOQL in the message.
+        const code = typeof error?.code === 'string' && /^[A-Z0-9_]{1,40}$/.test(error.code)
+            ? error.code
+            : undefined;
+        const detail = Object.assign(new Error('Salesforce transport failed'), { code });
+        logError(`${service} network error`, { endpoint: logSafeEndpoint(url.toString()), method: params.type }, detail);
+        throw new Error(`${service} request failed`, { cause: detail });
+    }
+}
+
+async function requestWithoutRetry(params: ApiParams, image = false): Promise<AxiosResponse> {
+    const target = prepareSalesforceRequest(params);
+    if (target.config.profile === 'mock') return requestMockSalesforce(target.url, params.type, image);
+
+    const session = await getSalesforceTokenSnapshot();
+    const response = await requestSalesforceAPI(params, target, session, image);
+    if (response.status === 401) invalidateSalesforceToken(session.generation);
+    return response;
+}
+
+export const salesForceAPI = (params: ApiParams): Promise<AxiosResponse> => requestWithoutRetry(params);
+
+export const salesForceImageAPI = (params: ApiParams): Promise<AxiosResponse> => requestWithoutRetry(params, true);
+
+// A safe GET can refresh a rejected token once and retry bounded transient failures.
+// Invalidate a rejected write token for future requests without replaying the mutation.
+export const salesForceAPIWithRefresh = async (params: ApiParams): Promise<AxiosResponse> => {
+    const target = prepareSalesforceRequest(params);
+    if (target.config.profile === 'mock') return requestMockSalesforce(target.url, params.type, false);
+
     const isRetryableGet = params.type === RequestType.GET;
     const attempts = isRetryableGet ? SALESFORCE_GET_RETRY_DELAYS_MS.length + 1 : 1;
     let didRefreshAuth = false;
 
     for (let attempt = 1; attempt <= attempts; attempt += 1) {
         try {
-            let response = await salesForceAPI(params);
+            let session = await getSalesforceTokenSnapshot();
+            let response = await requestSalesforceAPI(params, target, session);
 
-            if (response?.status === 401 && !didRefreshAuth) {
+            if (response.status === 401 && isRetryableGet && !didRefreshAuth) {
                 didRefreshAuth = true;
-                await getSalesforceToken({ forceRefresh: true });
-                response = await salesForceAPI(params);
+                session = await getSalesforceTokenSnapshot({ rejectedGeneration: session.generation });
+                response = await requestSalesforceAPI(params, target, session);
             }
 
-            const shouldRetry = response?.status !== undefined
-                && RETRYABLE_SALESFORCE_STATUSES.has(response.status)
-                && attempt < attempts;
+            if (response.status === 401) {
+                invalidateSalesforceToken(session.generation);
+                return response;
+            }
 
-            if (!shouldRetry) return response;
+            if (!RETRYABLE_SALESFORCE_STATUSES.has(response.status) || attempt >= attempts) return response;
 
             logDebug('Retrying transient Salesforce GET response', {
                 endpoint: logSafeEndpoint(params.endpoint),
-                status: response?.status,
+                status: response.status,
                 attempt,
                 maxAttempts: attempts,
             });
         } catch (error) {
-            if (!isRetryableGet || attempt >= attempts) throw error;
+            if (error instanceof SalesforceTokenError || error instanceof SalesforceConfigurationError
+                || !isRetryableGet || attempt >= attempts) throw error;
 
             logDebug('Retrying transient Salesforce GET error', {
                 endpoint: logSafeEndpoint(params.endpoint),
@@ -185,80 +228,4 @@ export const salesForceAPIWithRefresh = async (
     }
 
     throw new Error('Salesforce GET retry loop exhausted');
-};
-
-export const salesForceImageAPI = async ({
-    endpoint,
-    data,
-    type
-}: ApiParams): Promise<AxiosResponse | undefined> => {
-    let res: AxiosResponse | undefined;
-
-    const token = await getSalesforceToken();
-
-    const config: AxiosRequestConfig = {
-        url: endpoint,
-        method: type as any,
-        data,
-        timeout: SALESFORCE_REQUEST_TIMEOUT_MS,
-        headers: {
-            "Cache-Control": "no-cache",
-            Authorization: `Bearer ${token}`,
-        },
-        responseType: 'arraybuffer'
-    };
-
-    try {
-        res = await axios(config);
-    } catch (err: any) {
-        if (err?.response) {
-            // HTTP error response (4xx/5xx): return it so callers can inspect .status.
-            res = err.response;
-        } else {
-            // Network error (no HTTP response): log the real cause and rethrow it wrapped.
-            logError('salesForceImageAPI network error', { endpoint: config.url, method: type }, err);
-            throw new Error('salesForceImageAPI request failed', { cause: err });
-        }
-    }
-
-    return res;  // Return the response or error
-};
-
-export const salesForceTokenAPI = async ({
-    endpoint,
-    data,
-    type
-}: ApiParams): Promise<AxiosResponse | undefined> => {
-    let res: AxiosResponse | undefined;
-
-    // Token endpoint only: the OAuth2 grant params travel as a
-    // application/x-www-form-urlencoded body (see salesForceTokenService), never
-    // on the URL query string, so credentials don't leak into logs.
-    const config: AxiosRequestConfig = {
-        url: endpoint,
-        method: type as any,
-        data,
-        timeout: SALESFORCE_REQUEST_TIMEOUT_MS,
-        headers: {
-            "Cache-Control": "no-cache",
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-    };
-
-    try {
-        res = await axios(config);
-    } catch (err: any) {
-        if (err?.response) {
-            // HTTP error response (4xx/5xx): return it so callers can inspect .status.
-            res = err.response;
-        } else {
-            // Network error (no HTTP response): log the real cause and rethrow it wrapped.
-            // logError only extracts message/name/code/stack — the credentialed request body
-            // (err.config.data) is never logged, so this does not leak the OAuth grant.
-            logError('salesForceTokenAPI network error', { endpoint: config.url, method: type }, err);
-            throw new Error('salesForceTokenAPI request failed', { cause: err });
-        }
-    }
-
-    return res;  // Return the response or error
 };

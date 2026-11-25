@@ -3,7 +3,7 @@ import 'server-only';
 import fs from 'node:fs';
 import path from 'node:path';
 import { unstable_cache } from 'next/cache';
-import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api';
+import { getSalesforceConfig, getSalesforceCacheKey } from '@/lib/salesforce/server-config';
 import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { buildContactCtaHref } from '@/lib/contactAgentUrl';
 import { normalizeStateSlug, stateSlugFromAbbr } from '@/lib/states';
@@ -93,7 +93,8 @@ function resolveHeadshotPath(salesforceId: string, isLender: boolean): string | 
 }
 
 async function runQuery(soql: string): Promise<SfAccount | null> {
-  const endpoint = `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(soql)}`;
+  const { restOrigin, apiVersion } = getSalesforceConfig();
+  const endpoint = `${restOrigin}/services/data/${apiVersion}/query?q=${encodeURIComponent(soql)}`;
   const response = await salesForceAPIWithRefresh({ endpoint, type: RequestType.GET });
 
   if (response?.status !== 200) return null;
@@ -126,17 +127,17 @@ async function querySalesforceByName(name: string): Promise<SfAccount | null> {
   return runQuery(soql);
 }
 
-const fetchById = unstable_cache(
-  async (id: string) => querySalesforceById(id),
-  ['blog-author-by-id'],
+const fetchById = (id: string) => unstable_cache(
+  querySalesforceById,
+  ['blog-author-by-id', getSalesforceCacheKey()],
   { revalidate: 3600, tags: ['blog-author'] },
-);
+)(id);
 
-const fetchByName = unstable_cache(
-  async (name: string) => querySalesforceByName(name),
-  ['blog-author-by-name'],
+const fetchByName = (name: string) => unstable_cache(
+  querySalesforceByName,
+  ['blog-author-by-name', getSalesforceCacheKey()],
   { revalidate: 3600, tags: ['blog-author'] },
-);
+)(name);
 
 function toResolved(
   record: SfAccount,

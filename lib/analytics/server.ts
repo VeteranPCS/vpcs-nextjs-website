@@ -11,6 +11,7 @@ import {
   type JourneyStage,
 } from '@/lib/analytics/sanitizer';
 import { captureServerEvent } from '@/lib/posthog-server';
+import { SF_WEB_TO_LEAD_FIELD_IDS } from '@/lib/salesforce/ids';
 import { logError } from '@/services/loggingService';
 
 const EVENT_STAGE = {
@@ -23,8 +24,8 @@ const EVENT_STAGE = {
   concierge_chat_completed: 'mid',
 } as const satisfies Record<string, JourneyStage>;
 
-export const VPCS_VISITOR_ID_W2L_FIELD_ID = '00NRg00000PjSD3MAN';
-export const VPCS_SUBMISSION_ID_W2L_FIELD_ID = '00NRg00000PjSEfMAN';
+export const VPCS_VISITOR_ID_W2L_FIELD_ID = SF_WEB_TO_LEAD_FIELD_IDS['00NRg00000PjSD3MAN'];
+export const VPCS_SUBMISSION_ID_W2L_FIELD_ID = SF_WEB_TO_LEAD_FIELD_IDS['00NRg00000PjSEfMAN'];
 
 export interface LeadAnalyticsInput {
   formId: string;

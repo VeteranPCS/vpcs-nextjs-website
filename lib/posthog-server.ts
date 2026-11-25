@@ -1,9 +1,10 @@
 import { PostHog } from 'posthog-node';
 import { logError } from '@/services/loggingService';
+import { isProductionSalesforceRuntime } from '@/lib/salesforce/environment.mjs';
 
 let posthogClient: PostHog | null = null;
 
-export function getPostHogClient(): PostHog {
+function getPostHogClient(): PostHog {
   if (!posthogClient) {
     posthogClient = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN!, {
       host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
@@ -39,6 +40,7 @@ export async function captureServerEvent({ distinctId, event, properties }: Serv
 }
 
 export async function captureServerEventStrict({ distinctId, event, properties }: ServerEvent): Promise<void> {
+  if (!isProductionSalesforceRuntime()) return;
   const client = getPostHogClient();
   client.capture({ distinctId, event, properties });
   await client.flush();

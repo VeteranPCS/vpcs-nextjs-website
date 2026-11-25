@@ -131,14 +131,14 @@ export function getAdminContactForState(state?: string): AdminContact {
 
     const adminRouting = getAdminRoutingForState(state);
     if (!adminRouting) {
-        console.warn(`No admin mapping found for state: ${state}, using fallback number`);
+        console.warn('No admin mapping found for OpenPhone routing, using fallback number');
         return {
             name: 'Default',
             phoneNumber: process.env.OPEN_PHONE_FROM_NUMBER || '719-249-5359',
         };
     }
 
-    console.log(`OpenPhone routing: ${state} -> ${adminRouting.name} (${adminRouting.phoneNumber})`);
+    console.log('OpenPhone state routing resolved');
 
     return {
         name: adminRouting.name,

@@ -4,11 +4,12 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import Link from "next/link";
-import { LendersData, Lenders } from "@/services/stateService";
+import type { LendersData, Lenders } from "@/services/stateService";
 import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
 import { trackCtaClicked } from "@/lib/analytics/client";
 import { buildStateContactCtaProperties } from "@/lib/analytics/state-cta";
 import { buildContactCtaHref } from "@/lib/contactAgentUrl";
+import { PARTNER_FIXTURE_PHOTO } from "@/lib/salesforce/partner-fixture-assets";
 
 const LenderBio = ({ bio }: { bio: string }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -106,6 +107,7 @@ const StatePageVaLoan = ({ cityName, lendersData, state }: { cityName: string, l
                           width={1000}
                           height={1000}
                           sizes="(min-width: 640px) 200px, 100px"
+                          unoptimized={lender.PhotoUrl === PARTNER_FIXTURE_PHOTO.lenders}
                           className="object-cover"
                         />
                       </Link>

@@ -10,6 +10,7 @@ vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
 import agentService from '@/services/agentService';
 import { revalidatePath } from 'next/cache';
 import { POST } from '@/app/api/v1/revalidate/salesforce/route';
+import { stubProductionEnv, stubWebdevEnv } from '@/lib/salesforce/__tests__/configuration-fixtures';
 
 const SECRET = 'good-secret-value';
 
@@ -26,6 +27,7 @@ function request(signature: string, accountId = '001ABCDEFGHIJKL') {
 
 describe('POST /api/v1/revalidate/salesforce', () => {
   beforeEach(() => {
+    stubProductionEnv();
     vi.stubEnv('SALESFORCE_WEBHOOK_SECRET', SECRET);
   });
 
@@ -60,5 +62,29 @@ describe('POST /api/v1/revalidate/salesforce', () => {
     expect(response.status).toBe(200);
     expect(agentService.getAgentState).toHaveBeenCalledWith('001ABCDEFGHIJKL');
     expect(revalidatePath).toHaveBeenCalledWith('/texas');
+  });
+
+  it('rejects inherited production credentials on an ordinary preview', async () => {
+    stubWebdevEnv({ VERCEL: '1', VERCEL_ENV: 'preview', VERCEL_GIT_COMMIT_REF: 'feature-preview' });
+    vi.stubEnv('VPCS_WEBDEV_SALESFORCE_WEBHOOK_SECRET', 'webdev-only-secret');
+
+    expect((await POST(request(SECRET))).status).toBe(401);
+    expect((await POST(request('webdev-only-secret'))).status).toBe(401);
+    expect(agentService.getAgentState).not.toHaveBeenCalled();
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
+  it('uses only a separate webhook credential on the protected WebDev preview', async () => {
+    stubWebdevEnv({
+      VERCEL: '1', VERCEL_ENV: 'preview', VERCEL_GIT_COMMIT_REF: 'codex/salesforce-workflow-test',
+      VPCS_SANDBOX_PREVIEW_PROTECTED: '1',
+    });
+    vi.stubEnv('VPCS_WEBDEV_SALESFORCE_WEBHOOK_SECRET', SECRET);
+    expect((await POST(request(SECRET))).status).toBe(401);
+
+    vi.stubEnv('VPCS_WEBDEV_SALESFORCE_WEBHOOK_SECRET', 'webdev-only-secret');
+    vi.mocked(agentService.getAgentState).mockResolvedValue(['Texas']);
+    expect((await POST(request('webdev-only-secret'))).status).toBe(200);
+    expect(revalidatePath).toHaveBeenCalledExactlyOnceWith('/texas');
   });
 });

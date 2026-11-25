@@ -1,13 +1,17 @@
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { stubProductionEnv, stubWebdevEnv } from "@/lib/salesforce/__tests__/configuration-fixtures";
 
 vi.mock('@/services/salesForcePostFormsService', () => ({ KeepInTouchForm: vi.fn(), vaLoanGuideForm: vi.fn(), homebuyerGuideForm: vi.fn(), coloradoRelocationGuideForm: vi.fn() }));
 
 import StatePageHeroSecondSection from "@/components/StatePage/StatePageHeroSecondSection/StatePageHeroSecondSection";
 
 describe("StatePageHeroSecondSection", () => {
+  afterEach(() => vi.unstubAllEnvs());
+
   it("places the Colorado relocation guide below the intact lending support banner", () => {
+    stubProductionEnv();
     const html = renderToStaticMarkup(
       <StatePageHeroSecondSection
         stateName="Colorado"
@@ -31,6 +35,17 @@ describe("StatePageHeroSecondSection", () => {
     expect(html).toContain("Assistance");
     // The guide is a sibling section after the complete support banner.
     expect(html).toMatch(/VeteranPCS lending support[\s\S]*Assistance[\s\S]*<\/section><section aria-labelledby="colorado-relocation-guide-title"/);
+  });
+
+  it("keeps the editorial credit and renders a general Colorado contact in WebDev", () => {
+    stubWebdevEnv();
+    const html = renderToStaticMarkup(
+      <StatePageHeroSecondSection stateName="Colorado" stateCode="CO" stateSlug="colorado" />,
+    );
+    expect(html).toContain("Tyler Parker");
+    expect(html).toContain("Find a Colorado Agent");
+    expect(html).toContain("/contact-agent?form=agent&amp;state=colorado");
+    expect(html).not.toContain("id=001Rg00000pmUUk");
   });
 
   it("keeps the existing VeteranPCS panel for other states", () => {
