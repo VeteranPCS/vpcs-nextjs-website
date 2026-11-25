@@ -1,13 +1,21 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import axios from 'axios';
-import { api, salesForceAPI, salesForceAPIWithRefresh, RequestType } from '@/services/api';
-import { getSalesforceToken } from '@/services/salesForceTokenService';
+import { api, salesForceAPI, salesForceAPIWithRefresh, salesForceImageAPI, RequestType } from '@/services/api';
+import { getSalesforceTokenSnapshot, invalidateSalesforceToken } from '@/services/salesForceTokenService';
+import { getSalesforceConfig } from '@/lib/salesforce/server-config';
+import { stubWebdevEnv, WEBDEV_ORIGIN, WEBDEV_QUERY } from '@/lib/salesforce/__tests__/configuration-fixtures';
 import { logDebug, logError } from '@/services/loggingService';
+
+vi.mock('server-only', () => ({}));
 
 // axios is called as a function (default export) inside the api helpers.
 vi.mock('axios', () => ({ default: vi.fn() }));
 vi.mock('@/services/salesForceTokenService', () => ({
-  getSalesforceToken: vi.fn(async () => 'test-token'),
+  getSalesforceTokenSnapshot: vi.fn(async () => {
+    const config = getSalesforceConfig();
+    return { token: 'test-token', generation: 1, cacheKey: config.cacheKey, instanceUrl: config.restOrigin };
+  }),
+  invalidateSalesforceToken: vi.fn(),
 }));
 vi.mock('@/services/loggingService', () => ({
   logDebug: vi.fn(),
@@ -15,6 +23,13 @@ vi.mock('@/services/loggingService', () => ({
 }));
 
 const mockedAxios = vi.mocked(axios);
+const leadEndpoint = `${WEBDEV_ORIGIN}/services/data/v62.0/sobjects/Lead/00Q000000000001`;
+
+beforeEach(() => stubWebdevEnv({
+  VPCS_SANDBOX_LEAD_WRITES: '1',
+  VPCS_WEBDEV_ISOLATION_ATTESTED: '1',
+}));
+afterEach(() => vi.unstubAllEnvs());
 
 // Helper: await a promise expected to reject and return the thrown value.
 async function captureRejection<T>(promise: Promise<T>): Promise<unknown> {
@@ -74,37 +89,41 @@ describe('api error handling: HTTP response vs network error', () => {
     const httpErrorResponse = { status: 401, data: 'INVALID_SESSION_ID' };
     mockedAxios.mockRejectedValueOnce({ response: httpErrorResponse });
 
-    const result = await salesForceAPI({ endpoint: 'https://sf/query', type: RequestType.GET });
+    const result = await salesForceAPI({ endpoint: WEBDEV_QUERY, type: RequestType.GET });
 
     expect(result).toBe(httpErrorResponse);
     expect(logError).not.toHaveBeenCalled();
   });
 
-  it('salesForceAPI rethrows a network error with the original cause preserved', async () => {
-    const networkError = Object.assign(new Error('ETIMEDOUT'), { code: 'ETIMEDOUT' });
+  it('salesForceAPI keeps the transport code and discards credential-bearing errors', async () => {
+    const networkError = Object.assign(new Error('private query string'), {
+      code: 'ETIMEDOUT',
+      config: { headers: { Authorization: 'Bearer private-token' } },
+    });
     mockedAxios.mockRejectedValueOnce(networkError);
 
     const thrown = await captureRejection(
-      salesForceAPI({ endpoint: 'https://sf/query', type: RequestType.GET }),
+      salesForceAPI({ endpoint: WEBDEV_QUERY, type: RequestType.GET }),
     );
 
     expect(thrown).toBeInstanceOf(Error);
     expect((thrown as Error).message).toBe('salesForceAPI request failed');
-    expect((thrown as Error).cause).toBe(networkError);
+    expect((thrown as Error).cause).toMatchObject({ code: 'ETIMEDOUT', message: 'Salesforce transport failed' });
+    expect((thrown as Error).cause).not.toHaveProperty('config');
     expect(logError).toHaveBeenCalledWith(
       'salesForceAPI network error',
       expect.any(Object),
-      networkError,
+      (thrown as Error).cause,
     );
   });
 
   it('sets a bounded timeout on Salesforce requests', async () => {
     mockedAxios.mockResolvedValueOnce({ status: 200 } as never);
 
-    await salesForceAPI({ endpoint: 'https://sf/query', type: RequestType.GET });
+    await salesForceAPI({ endpoint: WEBDEV_QUERY, type: RequestType.GET });
 
     expect(mockedAxios).toHaveBeenCalledWith(
-      expect.objectContaining({ timeout: 15_000 }),
+      expect.objectContaining({ timeout: 15_000, maxRedirects: 0 }),
     );
   });
 });
@@ -125,7 +144,7 @@ describe('salesForceAPIWithRefresh retry policy', () => {
       .mockResolvedValueOnce(success as never);
 
     const request = salesForceAPIWithRefresh({
-      endpoint: 'https://sf/query?q=sensitive',
+      endpoint: `${WEBDEV_QUERY}?q=sensitive`,
       type: RequestType.GET,
     });
     await vi.runAllTimersAsync();
@@ -134,7 +153,7 @@ describe('salesForceAPIWithRefresh retry policy', () => {
     expect(mockedAxios).toHaveBeenCalledTimes(3);
     expect(logDebug).toHaveBeenCalledWith(
       'Retrying transient Salesforce GET response',
-      expect.objectContaining({ endpoint: 'https://sf/query', status: 503 }),
+      expect.objectContaining({ endpoint: WEBDEV_QUERY, status: 503 }),
     );
   });
 
@@ -144,7 +163,7 @@ describe('salesForceAPIWithRefresh retry policy', () => {
     mockedAxios.mockResolvedValue(unavailable as never);
 
     const request = salesForceAPIWithRefresh({
-      endpoint: 'https://sf/query',
+      endpoint: WEBDEV_QUERY,
       type: RequestType.GET,
     });
     await vi.runAllTimersAsync();
@@ -163,7 +182,7 @@ describe('salesForceAPIWithRefresh retry policy', () => {
       .mockResolvedValueOnce(success as never);
 
     const request = salesForceAPIWithRefresh({
-      endpoint: 'https://sf/query',
+      endpoint: WEBDEV_QUERY,
       type: RequestType.GET,
     });
     await vi.runAllTimersAsync();
@@ -178,7 +197,7 @@ describe('salesForceAPIWithRefresh retry policy', () => {
     mockedAxios.mockRejectedValue(networkError);
 
     const request = salesForceAPIWithRefresh({
-      endpoint: 'https://sf/query',
+      endpoint: WEBDEV_QUERY,
       type: RequestType.GET,
     });
     request.catch(() => undefined);
@@ -186,7 +205,7 @@ describe('salesForceAPIWithRefresh retry policy', () => {
 
     await expect(request).rejects.toMatchObject({
       message: 'salesForceAPI request failed',
-      cause: networkError,
+      cause: { code: 'ETIMEDOUT', message: 'Salesforce transport failed' },
     });
     expect(mockedAxios).toHaveBeenCalledTimes(3);
   });
@@ -196,7 +215,7 @@ describe('salesForceAPIWithRefresh retry policy', () => {
     mockedAxios.mockResolvedValueOnce(badRequest as never);
 
     const response = await salesForceAPIWithRefresh({
-      endpoint: 'https://sf/query',
+      endpoint: WEBDEV_QUERY,
       type: RequestType.GET,
     });
 
@@ -209,7 +228,7 @@ describe('salesForceAPIWithRefresh retry policy', () => {
     mockedAxios.mockResolvedValueOnce(unavailable as never);
 
     const response = await salesForceAPIWithRefresh({
-      endpoint: 'https://sf/lead/001',
+      endpoint: leadEndpoint,
       type: RequestType.PATCH,
       data: { OwnerId: '005TEST' },
     });
@@ -226,12 +245,12 @@ describe('salesForceAPIWithRefresh retry policy', () => {
       .mockResolvedValueOnce(success as never);
 
     const response = await salesForceAPIWithRefresh({
-      endpoint: 'https://sf/query',
+      endpoint: WEBDEV_QUERY,
       type: RequestType.GET,
     });
 
     expect(response).toBe(success);
-    expect(getSalesforceToken).toHaveBeenCalledWith({ forceRefresh: true });
+    expect(getSalesforceTokenSnapshot).toHaveBeenCalledWith({ rejectedGeneration: 1 });
     expect(mockedAxios).toHaveBeenCalledTimes(2);
   });
 
@@ -245,7 +264,7 @@ describe('salesForceAPIWithRefresh retry policy', () => {
       .mockResolvedValueOnce(unauthorized as never);
 
     const responsePromise = salesForceAPIWithRefresh({
-      endpoint: 'https://sf/query',
+      endpoint: WEBDEV_QUERY,
       type: RequestType.GET,
     });
 
@@ -253,8 +272,80 @@ describe('salesForceAPIWithRefresh retry policy', () => {
     const response = await responsePromise;
 
     expect(response).toBe(unauthorized);
-    expect(getSalesforceToken).toHaveBeenCalledWith({ forceRefresh: true });
-    expect(getSalesforceToken).toHaveBeenCalledTimes(4);
+    expect(getSalesforceTokenSnapshot).toHaveBeenCalledWith({ rejectedGeneration: 1 });
+    expect(getSalesforceTokenSnapshot).toHaveBeenCalledTimes(3);
     expect(mockedAxios).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe('Salesforce transport isolation', () => {
+  beforeEach(() => vi.resetAllMocks());
+
+  it.each([
+    'https://veteranpcs.my.salesforce.com/services/data/v62.0/query',
+    'https://veteranpcs--webdev.sandbox.my.salesforce.com.evil.invalid/services/data/v62.0/query',
+    `${WEBDEV_ORIGIN}/services/oauth2/token`,
+  ])('rejects an invalid request URL before loading a token (%s)', async (endpoint) => {
+    await expect(salesForceAPIWithRefresh({ endpoint, type: RequestType.GET }))
+      .rejects.toMatchObject({ name: 'SalesforceConfigurationError' });
+
+    expect(getSalesforceTokenSnapshot).not.toHaveBeenCalled();
+    expect(mockedAxios).not.toHaveBeenCalled();
+  });
+
+  it('makes ordinary previews read-only before requesting a token', async () => {
+    vi.stubEnv('VERCEL', '1');
+    vi.stubEnv('VERCEL_ENV', 'preview');
+    vi.stubEnv('VERCEL_GIT_COMMIT_REF', 'ordinary-feature');
+
+    await expect(salesForceAPIWithRefresh({ endpoint: leadEndpoint, type: RequestType.PATCH }))
+      .rejects.toThrow('Salesforce REST writes are disabled');
+    expect(getSalesforceTokenSnapshot).not.toHaveBeenCalled();
+    expect(mockedAxios).not.toHaveBeenCalled();
+  });
+
+  it('invalidates a 401 write generation without replaying the mutation', async () => {
+    const unauthorized = { status: 401, data: {} };
+    mockedAxios.mockResolvedValueOnce(unauthorized);
+
+    await expect(salesForceAPIWithRefresh({ endpoint: leadEndpoint, type: RequestType.PATCH })).resolves.toBe(unauthorized);
+    expect(mockedAxios).toHaveBeenCalledTimes(1);
+    expect(invalidateSalesforceToken).toHaveBeenCalledWith(1);
+  });
+
+  it('uses only the verified bearer and does not forward routing headers supplied by callers', async () => {
+    mockedAxios.mockResolvedValueOnce({ status: 302 });
+
+    await expect(salesForceAPI({
+      endpoint: WEBDEV_QUERY,
+      type: RequestType.GET,
+      customHeader: { authorization: 'Bearer forged', Host: 'outside.invalid', 'Sforce-Auto-Assign': 'FALSE' },
+    })).resolves.toMatchObject({ status: 302 });
+    expect(mockedAxios).toHaveBeenCalledTimes(1);
+    expect(mockedAxios).toHaveBeenCalledWith(expect.objectContaining({
+      maxRedirects: 0,
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Sforce-Auto-Assign': 'FALSE',
+        Authorization: 'Bearer test-token',
+      },
+    }));
+  });
+
+  it('serves mock records, writes and images without touching Axios or OAuth', async () => {
+    vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'mock');
+    const { restOrigin, apiVersion } = getSalesforceConfig();
+    const endpoint = `${restOrigin}/services/data/${apiVersion}`;
+    const query = encodeURIComponent("SELECT Id FROM Account WHERE isAgent__pc = true AND State_s_Licensed_in__pc LIKE '%CO%'");
+
+    await expect(salesForceAPIWithRefresh({ endpoint: `${endpoint}/query?q=${query}`, type: RequestType.GET }))
+      .resolves.toMatchObject({ status: 200, data: { records: [{ Name: 'Sample Agent', PersonEmail: 'agent@example.invalid' }] } });
+    await expect(salesForceAPI({ endpoint: `${endpoint}/sobjects/Lead`, type: RequestType.POST }))
+      .resolves.toMatchObject({ status: 201, data: { success: true } });
+    await expect(salesForceImageAPI({ endpoint: `${restOrigin}/servlet/servlet.FileDownload?file=fixture`, type: RequestType.GET }))
+      .resolves.toMatchObject({ status: 200, data: expect.any(ArrayBuffer) });
+
+    expect(getSalesforceTokenSnapshot).not.toHaveBeenCalled();
+    expect(mockedAxios).not.toHaveBeenCalled();
   });
 });

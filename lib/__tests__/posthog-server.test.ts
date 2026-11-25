@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { captureServerEvent } from '@/lib/posthog-server';
 import { logError } from '@/services/loggingService';
 
@@ -24,6 +24,21 @@ vi.mock('@/services/loggingService', () => ({
 describe('PostHog server delivery', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv('VERCEL', '1');
+    vi.stubEnv('VERCEL_ENV', 'production');
+    vi.stubEnv('VERCEL_GIT_COMMIT_REF', 'main');
+    vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'production');
+  });
+  afterEach(() => vi.unstubAllEnvs());
+
+  it('discards server events outside production even with an inherited project token', async () => {
+    vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'webdev');
+    vi.stubEnv('NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN', 'test-project-token');
+
+    await captureServerEvent({ distinctId: 'vpcs_test', event: 'lead_conversion_created' });
+
+    expect(mocks.capture).not.toHaveBeenCalled();
+    expect(mocks.flush).not.toHaveBeenCalled();
   });
 
   it('logs capture failures without leaking event properties', async () => {

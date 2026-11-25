@@ -1,5 +1,6 @@
-'use server';
+import 'server-only';
 
+import { getNotificationDeliveryMode } from '@/lib/leads/notification-delivery';
 import fetchWithRetry from "@/utils/fetchWithRetry";
 
 interface OpenPhoneMessageParams {
@@ -9,6 +10,13 @@ interface OpenPhoneMessageParams {
 }
 
 export async function sendOpenPhoneMessage(params: OpenPhoneMessageParams) {
+    const mode = getNotificationDeliveryMode();
+    if (mode === 'capture') {
+        console.info('Lead notification captured', { channel: 'openphone', recipientCount: params.to.length });
+        return { captured: true as const };
+    }
+    if (mode === 'blocked') throw new Error('OpenPhone delivery is disabled for this environment');
+
     const { content, from, to } = params;
     // Log function invocation and recipient count
     console.log(`Initiating sendOpenPhoneMessage for ${to.length} recipients.`);

@@ -3,65 +3,33 @@
 //
 // For each {state, AccountId_15__c} pair, prints the record's gating fields
 // (Active_on_Website__pc, State_s_Licensed_in__pc, Other_States__pc, area
-// assignments, etc.) and re-runs the exact production SOQL the website fires
+// assignments, etc.) and re-runs the exact website SOQL the website fires
 // for that state to confirm whether the agent passes the WHERE clause.
 //
 // Run:
-//   node --env-file=.env.local scripts/diagnose-agents.mjs <STATE:ID15> [<STATE:ID15> ...]
+//   node scripts/diagnose-agents.mjs <STATE:ID15> [<STATE:ID15> ...]
 // Example:
-//   node --env-file=.env.local scripts/diagnose-agents.mjs OK:001Rg00000kYr7a FL:001Rg00000kvkAA
+//   node scripts/diagnose-agents.mjs OK:001Rg00000kYr7a FL:001Rg00000kvkAA
 
-const E = process.env;
-const REQUIRED = [
-    'SALESFORCE_CLIENT_ID', 'SALESFORCE_CLIENT_SECRET',
-    'SALESFORCE_USERNAME', 'SALESFORCE_PASSWORD', 'SALESFORCE_TOKEN',
-    'SALESFORCE_LOGIN_BASE_URL', 'SALESFORCE_API_VERSION',
-];
-for (const k of REQUIRED) if (!E[k]) { console.error(`Missing env var: ${k}`); process.exit(1); }
+import { accountIdPattern, connectSandbox } from './lib/salesforce-sandbox.mjs';
 
 const args = process.argv.slice(2);
 if (args.length === 0) {
-    console.error('Usage: node --env-file=.env.local scripts/diagnose-agents.mjs <STATE:ID15> [<STATE:ID15> ...]');
-    console.error('Example: node --env-file=.env.local scripts/diagnose-agents.mjs OK:001Rg00000kYr7a FL:001Rg00000kvkAA');
+    console.error('Usage: node scripts/diagnose-agents.mjs <STATE:ID15> [<STATE:ID15> ...]');
+    console.error('Example: node scripts/diagnose-agents.mjs OK:001Rg00000kYr7a FL:001Rg00000kvkAA');
     process.exit(1);
 }
 
 const TARGETS = args.map((arg) => {
-    const [state, id15] = arg.split(':');
-    if (!state || !id15) {
-        console.error(`Bad arg "${arg}" — expected STATE:ID15 (e.g. OK:001Rg00000kYr7a)`);
+    const [state, id, extra] = arg.split(':');
+    if (!/^[a-z]{2}$/i.test(state) || !accountIdPattern.test(id) || extra !== undefined) {
+        console.error('Expected a two-letter state and an Account ID in STATE:ID format.');
         process.exit(1);
     }
-    return { state: state.toUpperCase(), id15 };
+    return { state: state.toUpperCase(), id15: id.slice(0, 15) };
 });
 
-async function tok() {
-    const p = new URLSearchParams({
-        grant_type: 'password',
-        client_id: E.SALESFORCE_CLIENT_ID,
-        client_secret: E.SALESFORCE_CLIENT_SECRET,
-        username: E.SALESFORCE_USERNAME,
-        password: `${E.SALESFORCE_PASSWORD}${E.SALESFORCE_TOKEN}`,
-    });
-    const r = await fetch(`${E.SALESFORCE_LOGIN_BASE_URL}/services/oauth2/token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: p.toString(),
-    });
-    if (!r.ok) throw new Error(`Auth failed (${r.status}): ${await r.text()}`);
-    const j = await r.json();
-    return { token: j.access_token, instanceUrl: j.instance_url };
-}
-
-async function sfQuery(token, instanceUrl, soql) {
-    const url = `${instanceUrl}/services/data/${E.SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(soql)}`;
-    const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-    const text = await r.text();
-    if (!r.ok) throw new Error(`Query failed (${r.status}): ${text}`);
-    return JSON.parse(text);
-}
-
-const { token, instanceUrl } = await tok();
+const { query } = await connectSandbox();
 console.log('✓ Authenticated\n');
 
 console.log('═══ Per-agent record state ═══\n');
@@ -77,7 +45,7 @@ for (const t of TARGETS) {
         WHERE AccountId_15__c = '${t.id15}' OR Id = '${t.id15}'
     `.replace(/\s+/g, ' ').trim();
 
-    const result = await sfQuery(token, instanceUrl, soql);
+    const result = await query(soql);
     console.log(`── ${t.id15} (expected state=${t.state}) ──`);
     if (result.totalSize === 0) {
         console.log('  ✗ NOT FOUND in Salesforce by AccountId_15__c or Id');
@@ -103,7 +71,7 @@ for (const t of TARGETS) {
     console.log();
 }
 
-console.log('═══ Re-running production query per state ═══\n');
+console.log('═══ Re-running website query per state ═══\n');
 const byState = TARGETS.reduce((acc, t) => {
     (acc[t.state] ||= []).push(t);
     return acc;
@@ -122,7 +90,7 @@ for (const [state, agents] of Object.entries(byState)) {
               OR Other_States__pc INCLUDES ('${state}'))
     `.replace(/\s+/g, ' ').trim();
 
-    const result = await sfQuery(token, instanceUrl, soql);
+    const result = await query(soql);
     const ids = new Set(result.records.map((r) => r.AccountId_15__c));
     console.log(`── State ${state}: ${result.totalSize} agent(s) returned by website query`);
     for (const t of agents) {

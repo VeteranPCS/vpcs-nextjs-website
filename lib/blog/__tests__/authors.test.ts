@@ -1,16 +1,27 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import fs from 'node:fs';
-import path from 'node:path';
+import { stubProductionEnv, stubWebdevEnv, WEBDEV_ORIGIN } from '@/lib/salesforce/__tests__/configuration-fixtures';
 
 vi.mock('server-only', () => ({}));
 
-vi.mock('next/cache', () => ({
-  unstable_cache: <T extends (...args: any[]) => any>(fn: T) => fn,
-}));
+const { cachedAuthors } = vi.hoisted(() => {
+  vi.stubEnv('VPCS_BLOG_HEADSHOT_PATHS', [
+    '/images/agents/001AGENT0000001.jpg',
+    '/images/agents/001AGENT0000001.webp',
+    '/images/lenders/001AGENT0000001.webp',
+    '/images/lenders/001LENDER000001.jpg',
+  ].join('\n'));
+  return { cachedAuthors: new Map<string, Promise<unknown>>() };
+});
 
-vi.mock('@/constants/api', () => ({
-  SALESFORCE_BASE_URL: 'https://sf.example.test',
-  SALESFORCE_API_VERSION: 'v62.0',
+vi.mock('next/cache', () => ({
+  unstable_cache: (fn: (...args: string[]) => Promise<unknown>, keyParts: string[]) => (...args: string[]) => {
+    const key = JSON.stringify([...keyParts, ...args]);
+    const existing = cachedAuthors.get(key);
+    if (existing) return existing;
+    const result = fn(...args);
+    cachedAuthors.set(key, result);
+    return result;
+  },
 }));
 
 vi.mock('@/services/api', () => ({
@@ -54,10 +65,15 @@ function account(overrides: Record<string, unknown> = {}) {
 }
 
 describe('resolveAuthor', () => {
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllEnvs();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
+    cachedAuthors.clear();
+    stubProductionEnv();
   });
 
   it('resolves an active agent and builds a specific contact-agent URL', async () => {
@@ -101,30 +117,30 @@ describe('resolveAuthor', () => {
   });
 
   it.each([
-    { isLender: false, folder: 'agents' },
-    { isLender: true, folder: 'lenders' },
-  ])('prefers the $folder portrait when both roles have a file', async ({ isLender, folder }) => {
-    vi.spyOn(fs, 'existsSync').mockImplementation((file) =>
-      ['agents', 'lenders'].some((role) =>
-        file === path.join(process.cwd(), 'public/images', role, `${AGENT_ID}.webp`),
-      ),
-    );
+    { isLender: false, folder: 'agents', extension: 'jpg' },
+    { isLender: true, folder: 'lenders', extension: 'webp' },
+  ])('prefers the $folder portrait and earliest extension', async ({ isLender, folder, extension }) => {
     vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce(
       queryResponse([account({ isLender__pc: isLender })]) as never,
     );
 
     expect((await resolveAuthor({ salesforceId: AGENT_ID })).headshotPath)
-      .toBe(`/images/${folder}/${AGENT_ID}.webp`);
+      .toBe(`/images/${folder}/${AGENT_ID}.${extension}`);
   });
 
   it('finds an author portrait in the secondary folder', async () => {
-    vi.spyOn(fs, 'existsSync').mockImplementation((file) =>
-      file === path.join(process.cwd(), 'public/images/lenders', `${AGENT_ID}.jpg`),
-    );
-    vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce(queryResponse([account()]) as never);
+    const lenderPortrait = account({ Id: LENDER_ID, AccountId_15__c: LENDER_ID });
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce(queryResponse([lenderPortrait]) as never);
 
-    expect((await resolveAuthor({ salesforceId: AGENT_ID })).headshotPath)
-      .toBe(`/images/lenders/${AGENT_ID}.jpg`);
+    expect((await resolveAuthor({ salesforceId: LENDER_ID })).headshotPath)
+      .toBe(`/images/lenders/${LENDER_ID}.jpg`);
+  });
+
+  it('leaves the headshot empty when the index has no portrait for an active author', async () => {
+    const noPortrait = account({ Id: MARYLAND_AGENT_ID, AccountId_15__c: MARYLAND_AGENT_ID });
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce(queryResponse([noPortrait]) as never);
+
+    expect((await resolveAuthor({ salesforceId: MARYLAND_AGENT_ID })).headshotPath).toBeNull();
   });
 
   it('falls back to VeteranPCS when a Salesforce author is inactive', async () => {
@@ -187,5 +203,23 @@ describe('resolveAuthor', () => {
     expect(author.contactHref).toBe(
       `/contact-agent?form=agent&fn=Mary&id=${MARYLAND_AGENT_ID}&state=maryland`,
     );
+  });
+
+  it('does not reuse the cached production identity in a sandbox with a matching account ID', async () => {
+    vi.mocked(salesForceAPIWithRefresh)
+      .mockResolvedValueOnce(queryResponse([account({ FirstName: 'Production' })]) as never)
+      .mockResolvedValueOnce(queryResponse([account({ FirstName: 'Sandbox' })]) as never);
+
+    const input = { salesforceId: AGENT_ID };
+    expect((await resolveAuthor(input)).name).toBe('Production Agent');
+    stubWebdevEnv();
+    expect((await resolveAuthor(input)).name).toBe('Sandbox Agent');
+    stubProductionEnv();
+    expect((await resolveAuthor(input)).name).toBe('Production Agent');
+
+    expect(salesForceAPIWithRefresh).toHaveBeenCalledTimes(2);
+    expect(salesForceAPIWithRefresh).toHaveBeenLastCalledWith(expect.objectContaining({
+      endpoint: expect.stringContaining(`${WEBDEV_ORIGIN}/services/data/v62.0/query?`),
+    }));
   });
 });

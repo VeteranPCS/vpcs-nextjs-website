@@ -1,5 +1,5 @@
 import { REAL_STATE_AGENTS } from '@/lib/content/homepage'
-import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
+import { getSalesforceConfig } from '@/lib/salesforce/server-config'
 import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { escapeSoqlLiteral } from '@/services/soql';
 import { RealEstateAgentDocument } from '@/types/agent';
@@ -63,8 +63,9 @@ const agentService = {
             WHERE AccountId_15__c = '${escapeSoqlLiteral(salesforceID)}'
         `.replace(/\s+/g, ' ').trim();
 
+        const { restOrigin, apiVersion } = getSalesforceConfig();
         const response = await salesForceAPIWithRefresh({
-            endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
+            endpoint: `${restOrigin}/services/data/${apiVersion}/query?q=${encodeURIComponent(query)}`,
             type: RequestType.GET,
         });
 

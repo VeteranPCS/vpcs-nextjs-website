@@ -4,7 +4,7 @@ import type { ContactPrefillDetails } from '@/lib/leads/contact-prefill';
 import ColoradoGuideContactLink from './ColoradoGuideContactLink';
 
 /** The next step after downloading: meet the real local agent who wrote the guide. */
-export default function ColoradoGuideAuthorCard({ contactDetails }: { contactDetails?: ContactPrefillDetails }) {
+export default function ColoradoGuideAuthorCard({ allowAuthorContact, contactDetails }: { allowAuthorContact: boolean; contactDetails?: ContactPrefillDetails }) {
   return <section data-guide-contact-card aria-label="Meet Tyler Parker" className="border-t border-primary/15 pt-5">
     <div className="flex items-center gap-4">
       <Image
@@ -21,10 +21,11 @@ export default function ColoradoGuideAuthorCard({ contactDetails }: { contactDet
         <p className="mt-1 text-sm text-primary">{guide.brokerage}</p>
       </div>
     </div>
-    <p className="mt-4 text-sm leading-6 text-primary">
+    {allowAuthorContact && <p className="mt-4 text-sm leading-6 text-primary">
       Have questions about your move? Tyler can help you compare communities and plan your next steps.
-    </p>
+    </p>}
     <ColoradoGuideContactLink
+      allowAuthorContact={allowAuthorContact}
       location="guide_download_success"
       contactDetails={contactDetails}
       className="steph-button mt-5 w-full"

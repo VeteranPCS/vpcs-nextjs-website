@@ -62,7 +62,7 @@ const classNameSelector = (source) =>
 
 export default defineConfig([
     {
-        ignores: [".claude/**"],
+        ignores: [".claude/**", ".next-sandbox/**", ".next-mock/**"],
     },
     {
         extends: [...nextCoreWebVitals],

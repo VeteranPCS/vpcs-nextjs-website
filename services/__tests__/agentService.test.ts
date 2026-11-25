@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { productionEnv, stubProductionEnv } from '@/lib/salesforce/__tests__/configuration-fixtures';
 
 // Stub the Salesforce transport so importing agentService pulls in no network
 // side effects; we only drive getAgentState here.
@@ -17,8 +18,11 @@ import { salesForceAPIWithRefresh } from '@/services/api';
 const mockedApi = vi.mocked(salesForceAPIWithRefresh);
 
 describe('agentService.getAgentState', () => {
+  beforeEach(stubProductionEnv);
+
   afterEach(() => {
     vi.clearAllMocks();
+    vi.unstubAllEnvs();
   });
 
   it('rejects an injection-shaped accountId before it reaches the query builder', async () => {
@@ -45,6 +49,7 @@ describe('agentService.getAgentState', () => {
     expect(mockedApi).toHaveBeenCalledTimes(1);
     const endpoint = mockedApi.mock.calls[0]![0].endpoint as string;
     const soql = decodeURIComponent(endpoint);
+    expect(new URL(endpoint).origin).toBe(productionEnv.VPCS_SALESFORCE_BASE_URL);
     expect(soql).toContain("AccountId_15__c = '001ABCDEFGHIJKL'");
     // 'TX' resolves to a single mapped state; exact slug value is incidental here.
     expect(result).toHaveLength(1);

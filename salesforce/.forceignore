@@ -1,0 +1,6 @@
+.sf/**
+.sfdx/**
+retrieved-private/**
+evidence-private/**
+fixtures-private/**
+**/.env*

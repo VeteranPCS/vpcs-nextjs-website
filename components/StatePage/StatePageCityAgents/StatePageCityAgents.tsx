@@ -6,11 +6,12 @@ import Button from "@/components/common/Button";
 import Link from "next/link";
 import orderMilitaryServiceInfo from "@/utils/getMilitaryServiceInfo";
 import { sanitizeCityName } from "@/utils/sanitizeCityName";
-import { Agent } from "@/services/stateService";
+import type { Agent } from "@/services/stateService";
 import { trackCtaClicked } from "@/lib/analytics/client";
 import { buildStateContactCtaProperties } from "@/lib/analytics/state-cta";
 import { buildContactCtaHref } from "@/lib/contactAgentUrl";
 import { rememberSelectedAgent } from "@/lib/experiments/desktop-contact-agent";
+import { PARTNER_FIXTURE_PHOTO } from "@/lib/salesforce/partner-fixture-assets";
 
 type Props = {
   city: string;
@@ -143,6 +144,7 @@ const StatePageCityAgents = ({ city, agent_data, state }: Props) => {
                           width={1000}
                           height={1000}
                           sizes="(min-width: 768px) 200px, 100px"
+                          unoptimized={agent.PhotoUrl === PARTNER_FIXTURE_PHOTO.agents}
                           className="object-cover"
                         />
                       </Link>

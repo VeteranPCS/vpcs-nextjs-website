@@ -7,9 +7,22 @@ vi.mock('@/lib/analytics/client', () => ({ initializeClientAnalytics: mocks.visi
 const id = '01994000-0000-7000-8000-123456789012';
 beforeEach(() => {
   vi.resetModules(); vi.clearAllMocks();
+  vi.stubEnv('NEXT_PUBLIC_VPCS_ANALYTICS_ENABLED', '1');
   vi.stubEnv('NEXT_PUBLIC_CUSTOMER_JOURNEY_ATTRIBUTION_ENABLED', '1');
   vi.stubGlobal('window', { location: { hostname: 'www.veteranpcs.com' },
     localStorage: { getItem: vi.fn() }, sessionStorage: { getItem: vi.fn() } });
+});
+
+describe('non-production SDK wiring', () => {
+  it.each(['www.veteranpcs.com', '127.0.0.1'])('leaves %s storage and ingestion off when the build flag is disabled', async hostname => {
+    vi.stubEnv('NEXT_PUBLIC_VPCS_ANALYTICS_ENABLED', '0');
+    vi.stubEnv('NEXT_PUBLIC_POSTHOG_ENABLE_LOCAL_CAPTURE', '1');
+    vi.stubGlobal('window', { location: { hostname } });
+
+    await expect(import('../../../instrumentation-client')).resolves.toBeDefined();
+    expect(mocks.visitor).not.toHaveBeenCalled();
+    expect(mocks.init).not.toHaveBeenCalled();
+  });
 });
 afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
 

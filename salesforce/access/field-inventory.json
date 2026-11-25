@@ -1,0 +1,548 @@
+{
+  "schemaVersion": 1,
+  "status": "live-read-probes-fixture-visibility-and-contact-owner-readbacks-verified",
+  "sandbox": {
+    "orgId": "00Djg000000EK8YEAW",
+    "metadataRetrievalId": "09Sjg000000BrfJEAS",
+    "requiredProfile": "Minimum Access - API Only Integrations",
+    "requiredUserLicense": "Salesforce Integration",
+    "permissionSetLicense": "Salesforce API Integration",
+    "licenseCapacitySnapshot": {
+      "Salesforce Integration": {
+        "total": 5,
+        "used": 1,
+        "available": 4
+      },
+      "Salesforce API Integration": {
+        "total": 5,
+        "used": 0,
+        "available": 5
+      }
+    }
+  },
+  "permissionSets": {
+    "VPCS_Webdev_Read": {
+      "intendedUse": "Ordinary Salesforce WebDev website previews",
+      "userPermissions": [
+        "ViewRoles",
+        "ViewSetup"
+      ],
+      "readObjects": [
+        "Account",
+        "Area_Assignment__c",
+        "Area__c",
+        "Contact",
+        "Opportunity"
+      ],
+      "editObjects": [],
+      "readableFieldMetadata": [
+        "Account.AccountId_15__c",
+        "Account.BillingAddress",
+        "Area_Assignment__c.AA_Score__c",
+        "Contact.Active_on_Website__c",
+        "Contact.Agent_Bio__c",
+        "Contact.Brokerage_Name__c",
+        "Contact.Company_NMLS_ID__c",
+        "Contact.Individual_NMLS_ID__c",
+        "Contact.Military_Service__c",
+        "Contact.Military_Status__c",
+        "Contact.Other_States__c",
+        "Contact.State_s_Licensed_in__c",
+        "Contact.isAgent__c",
+        "Contact.isLender__c",
+        "Opportunity.Charity_Amount__c",
+        "Opportunity.Payout_Amount__c",
+        "Opportunity.Sale_Price__c"
+      ],
+      "editableFieldMetadata": []
+    },
+    "VPCS_Webdev_Test": {
+      "intendedUse": "Local and protected workflow-test website session",
+      "userPermissions": [
+        "ViewRoles",
+        "ViewSetup"
+      ],
+      "readObjects": [
+        "Account",
+        "Area_Assignment__c",
+        "Area__c",
+        "Contact",
+        "Lead",
+        "Opportunity"
+      ],
+      "editObjects": [
+        "Lead"
+      ],
+      "activationBlockedUntilOwnerOnlyEnforcementVerified": true,
+      "readableFieldMetadata": [
+        "Account.AccountId_15__c",
+        "Account.BillingAddress",
+        "Area_Assignment__c.AA_Score__c",
+        "Contact.Active_on_Website__c",
+        "Contact.Agent_Bio__c",
+        "Contact.Brokerage_Name__c",
+        "Contact.Company_NMLS_ID__c",
+        "Contact.Email",
+        "Contact.Individual_NMLS_ID__c",
+        "Contact.Military_Service__c",
+        "Contact.Military_Status__c",
+        "Contact.MobilePhone",
+        "Contact.Other_States__c",
+        "Contact.State_s_Licensed_in__c",
+        "Contact.isAgent__c",
+        "Contact.isLender__c",
+        "Lead.Description",
+        "Lead.Destination_State__c",
+        "Lead.Email",
+        "Lead.LeadSource",
+        "Lead.WebFormAgentId__c",
+        "Lead.WebFormLenderId__c",
+        "Lead.WebFormURL__c",
+        "Opportunity.Charity_Amount__c",
+        "Opportunity.Payout_Amount__c",
+        "Opportunity.Sale_Price__c"
+      ],
+      "editableFieldMetadata": [],
+      "intendedWriteFields": [
+        "Lead.OwnerId"
+      ]
+    }
+  },
+  "sharingModelSnapshot": {
+    "Account": {
+      "internal": "ReadWrite",
+      "external": "Private"
+    },
+    "Lead": {
+      "internal": "ReadWriteTransfer",
+      "external": "Private"
+    },
+    "Opportunity": {
+      "internal": "Read",
+      "external": "Private"
+    }
+  },
+  "operations": [
+    {
+      "name": "OAuth organization identity check",
+      "permissionSets": [
+        "VPCS_Webdev_Read",
+        "VPCS_Webdev_Test"
+      ],
+      "source": "lib/salesforce/environment.mjs",
+      "method": "GET",
+      "object": "Organization",
+      "deployedUserPermissions": [
+        "ViewRoles",
+        "ViewSetup"
+      ],
+      "select": [
+        "Id",
+        "IsSandbox"
+      ]
+    },
+    {
+      "name": "State agent directory and coverage",
+      "permissionSets": [
+        "VPCS_Webdev_Read",
+        "VPCS_Webdev_Test"
+      ],
+      "source": "services/stateService.tsx",
+      "method": "GET",
+      "object": "Account",
+      "select": [
+        "Name",
+        "AccountId_15__c",
+        "FirstName",
+        "Agent_Bio__pc",
+        "Military_Status__pc",
+        "Military_Service__pc",
+        "Brokerage_Name__pc",
+        "BillingAddress"
+      ],
+      "filter": [
+        "isAgent__pc",
+        "Active_on_Website__pc",
+        "State_s_Licensed_in__pc",
+        "Other_States__pc"
+      ],
+      "childQuery": {
+        "relationship": "Area_Assignments__r",
+        "object": "Area_Assignment__c",
+        "select": [
+          "Id",
+          "Name",
+          "AA_Score__c",
+          "Area__r.Name",
+          "Area__r.State__c"
+        ],
+        "sort": [
+          "AA_Score__c"
+        ]
+      }
+    },
+    {
+      "name": "State lender directory and coverage",
+      "permissionSets": [
+        "VPCS_Webdev_Read",
+        "VPCS_Webdev_Test"
+      ],
+      "source": "services/stateService.tsx",
+      "method": "GET",
+      "object": "Account",
+      "select": [
+        "Name",
+        "AccountId_15__c",
+        "FirstName",
+        "Agent_Bio__pc",
+        "Military_Status__pc",
+        "Military_Service__pc",
+        "Brokerage_Name__pc",
+        "BillingCity",
+        "BillingState",
+        "Individual_NMLS_ID__pc",
+        "Company_NMLS_ID__pc"
+      ],
+      "filter": [
+        "isLender__pc",
+        "Active_on_Website__pc",
+        "State_s_Licensed_in__pc",
+        "Other_States__pc"
+      ],
+      "childQuery": {
+        "relationship": "Area_Assignments__r",
+        "object": "Area_Assignment__c",
+        "select": [
+          "Id",
+          "Name",
+          "AA_Score__c",
+          "Area__r.Name",
+          "Area__r.State__c"
+        ],
+        "sort": [
+          "AA_Score__c"
+        ]
+      }
+    },
+    {
+      "name": "Revalidation by partner licensed state",
+      "permissionSets": [
+        "VPCS_Webdev_Test"
+      ],
+      "source": "services/agentService.tsx",
+      "method": "GET",
+      "object": "Account",
+      "select": [
+        "State_s_Licensed_in__pc",
+        "Other_States__pc"
+      ],
+      "filter": [
+        "AccountId_15__c"
+      ]
+    },
+    {
+      "name": "Blog author lookup by ID or name",
+      "permissionSets": [
+        "VPCS_Webdev_Read",
+        "VPCS_Webdev_Test"
+      ],
+      "source": "lib/blog/authors.ts",
+      "method": "GET",
+      "object": "Account",
+      "select": [
+        "Id",
+        "AccountId_15__c",
+        "FirstName",
+        "LastName",
+        "Military_Status__pc",
+        "Brokerage_Name__pc",
+        "BillingStateCode",
+        "BillingAddress",
+        "isAgent__pc",
+        "isLender__pc",
+        "Active_on_Website__pc"
+      ],
+      "filter": [
+        "Id",
+        "AccountId_15__c",
+        "IsPersonAccount",
+        "FirstName",
+        "LastName",
+        "isAgent__pc",
+        "isLender__pc"
+      ]
+    },
+    {
+      "name": "Optional selected partner verification on a live sandbox submission",
+      "permissionSets": [
+        "VPCS_Webdev_Test"
+      ],
+      "source": "services/stateService.tsx",
+      "method": "GET",
+      "object": "Account",
+      "select": [
+        "Name",
+        "Brokerage_Name__pc",
+        "PersonEmail",
+        "PersonMobilePhone"
+      ],
+      "filter": [
+        "Id",
+        "Active_on_Website__pc"
+      ]
+    },
+    {
+      "name": "Impact aggregates",
+      "permissionSets": [
+        "VPCS_Webdev_Read",
+        "VPCS_Webdev_Test"
+      ],
+      "source": "services/salesforceImpactService.tsx",
+      "method": "GET",
+      "object": "Opportunity",
+      "sum": [
+        "Payout_Amount__c",
+        "Charity_Amount__c",
+        "Sale_Price__c"
+      ],
+      "filter": [
+        "RecordTypeId"
+      ]
+    },
+    {
+      "name": "Lead owner lookup and confirmation",
+      "permissionSets": [
+        "VPCS_Webdev_Test"
+      ],
+      "source": "services/salesforceLeadOwnerService.ts",
+      "method": "GET",
+      "object": "Lead",
+      "select": [
+        "Id",
+        "OwnerId",
+        "Owner.Name"
+      ],
+      "filter": [
+        "Id",
+        "WebFormURL__c",
+        "Email",
+        "LeadSource",
+        "RecordTypeId",
+        "Destination_State__c",
+        "CreatedDate",
+        "WebFormAgentId__c",
+        "WebFormLenderId__c"
+      ],
+      "sort": [
+        "CreatedDate"
+      ]
+    },
+    {
+      "name": "Lead owner change",
+      "permissionSets": [
+        "VPCS_Webdev_Test"
+      ],
+      "source": "services/salesforceLeadOwnerService.ts",
+      "method": "PATCH",
+      "object": "Lead",
+      "write": [
+        "OwnerId"
+      ],
+      "headers": {
+        "Sforce-Auto-Assign": "FALSE"
+      }
+    },
+    {
+      "name": "Ten-form rehearsal reconciliation",
+      "permissionSets": [
+        "VPCS_Webdev_Test"
+      ],
+      "source": "scripts/fixtures/salesforce-sandbox-rehearsal.test.ts",
+      "method": "GET",
+      "object": "Lead",
+      "select": [
+        "Id",
+        "Email",
+        "LeadSource",
+        "OwnerId",
+        "RecordTypeId",
+        "Description"
+      ],
+      "filter": [
+        "FirstName",
+        "LastName",
+        "CreatedDate"
+      ]
+    }
+  ],
+  "describeGates": {
+    "Account": [
+      "Id",
+      "Name",
+      "FirstName",
+      "LastName",
+      "IsPersonAccount",
+      "BillingAddress",
+      "BillingCity",
+      "BillingState",
+      "BillingStateCode",
+      "PersonEmail",
+      "PersonMobilePhone"
+    ],
+    "accountPersonContactAliasesToResolve": [
+      "Active_on_Website__pc",
+      "Agent_Bio__pc",
+      "Brokerage_Name__pc",
+      "Company_NMLS_ID__pc",
+      "Individual_NMLS_ID__pc",
+      "isAgent__pc",
+      "isLender__pc",
+      "Military_Service__pc",
+      "Military_Status__pc",
+      "Other_States__pc",
+      "State_s_Licensed_in__pc"
+    ],
+    "Area_Assignment__c": [
+      "Id",
+      "Name",
+      "AA_Score__c",
+      "Agent__c",
+      "Area__c"
+    ],
+    "Area__c": [
+      "Name",
+      "State__c"
+    ],
+    "Lead": [
+      "Id",
+      "OwnerId",
+      "Email",
+      "LeadSource",
+      "RecordTypeId",
+      "CreatedDate",
+      "FirstName",
+      "LastName",
+      "Description"
+    ],
+    "Opportunity": [
+      "RecordTypeId"
+    ],
+    "Organization": [
+      "Id",
+      "IsSandbox"
+    ]
+  },
+  "localImages": {
+    "sources": [
+      "services/stateService.tsx",
+      "lib/blog/authors.ts",
+      "app/api/v1/states/[state]/image/route.ts"
+    ],
+    "paths": [
+      "public/images/agents",
+      "public/images/lenders",
+      "public/images/states"
+    ],
+    "salesforceFileReadGrants": []
+  },
+  "excludedGrants": [
+    "authenticated Lead creation",
+    "Account or Opportunity create, edit or delete",
+    "Lead delete or convert",
+    "setup edits and administrative diagnostics permissions beyond ViewRoles and ViewSetup",
+    "CustomizeApplication, ViewAllData, and ModifyAllData",
+    "Salesforce Files and Attachments",
+    "view-all, modify-all, and global transfer permissions"
+  ],
+  "adminDescribeEvidence": {
+    "status": "all-listed-objects-described-in-sandbox-admin-context",
+    "actualRunAsReadQueriesVerified": true,
+    "actualFixtureVisibilityVerified": true,
+    "caseCriticalFields": {
+      "Lead.OwnerId": {
+        "permissionable": false,
+        "updateableAsAdmin": true
+      },
+      "Area__c.State__c": {
+        "permissionable": false,
+        "updateableAsAdmin": true
+      },
+      "Area_Assignment__c.Agent__c": {
+        "permissionable": false,
+        "target": "Account"
+      },
+      "Area_Assignment__c.Area__c": {
+        "permissionable": false,
+        "target": "Area__c"
+      },
+      "Organization.Id": {
+        "permissionable": false
+      },
+      "Organization.IsSandbox": {
+        "permissionable": false
+      }
+    },
+    "personFieldGrantSource": "backing-Contact-fields",
+    "contactObjectReadDependency": {
+      "requiredBy": "Account.Read",
+      "validationId": "0Afjg0000004cRhCAI",
+      "previewEmailAndMobileFieldGrants": false,
+      "effectiveRunAsSharingStillRequiresVerification": true
+    }
+  },
+  "oauthRunAsEvidence": {
+    "oauthAndInstanceVerifiedRoles": [
+      "preview",
+      "workflow"
+    ],
+    "initialOrganizationQueryErrorCode": "INVALID_TYPE",
+    "websiteQueriesRanWithInitialPermissions": false,
+    "deployedAdditionalUserPermissions": [
+      "ViewRoles",
+      "ViewSetup"
+    ],
+    "permissionsDeploymentId": "0Afjg0000004cwMCAQ",
+    "permissionsDeploymentTestsPassed": 11,
+    "organizationVerifiedWithDeployedPermissions": true,
+    "previewChecksPassed": 13,
+    "workflowChecksPassed": 19,
+    "previewLeadDeniedWith": "INVALID_TYPE",
+    "previewRestrictedContactAndPersonAccountFieldsDeniedWith": "INVALID_FIELD",
+    "fixtureVisibilityConfirmed": true,
+    "liveWorkflowOwnerChangesConfirmed": true,
+    "workflowOwnerGuardDeploymentId": "0Afjg0000004cbPCAQ",
+    "workflowOwnerGuardDeploymentTestsPassed": 12
+  },
+  "workflowLeadGuard": {
+    "sandboxOrgId": "00Djg000000EK8YEAW",
+    "requireIsSandbox": true,
+    "username": "tech+webdev-workflow@veteranpcs.com.webdev",
+    "firstNameStartsWith": "[VPCS WEBDEV TEST]",
+    "descriptionStartsWith": "[VPCS WEBDEV TEST] ",
+    "requireMarkerOnPriorRecord": true,
+    "approvedOwners": {
+      "BETH": "0054x000005GsUvAAK",
+      "JESSICA": "005Rg000004hWojIAE",
+      "STEPHANIE": "0054x0000082vHgAAI",
+      "TARA": "005Rg00000BAN0DIAX"
+    },
+    "events": [
+      "before insert",
+      "before update",
+      "after update",
+      "before delete",
+      "after undelete"
+    ],
+    "validChange": "Lead.OwnerId only",
+    "sameApprovedOwnerAllowedWhenMarkersAlreadyExistAndEveryBusinessFieldIsUnchanged": true
+  },
+  "billingAddressPermissionEvidence": {
+    "source": "Live webdev FieldPermissions query on 2026-11-25",
+    "permissionName": "Account.BillingAddress",
+    "constituentNamesAreQueryFieldsOnly": [
+      "Account.BillingCity",
+      "Account.BillingState",
+      "Account.BillingStateCode"
+    ]
+  }
+}

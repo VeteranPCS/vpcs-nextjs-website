@@ -1,10 +1,13 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { stubProductionEnv } from '@/lib/salesforce/__tests__/configuration-fixtures';
 
 vi.mock('server-only', () => ({}));
 
 import { getLeadOwnerForState } from '@/services/salesforceLeadOwnerRouting';
 
 describe('salesforceLeadOwnerRouting', () => {
+  beforeEach(stubProductionEnv);
+  afterEach(() => vi.unstubAllEnvs());
   it.each([
     ['colorado', 'BETH', 'Beth', '0054x000005GsUvAAK', 'Beth Soldner'],
     ['texas', 'TARA', 'Tara', '005Rg00000BAN0DIAX', 'Tara Gould'],
@@ -13,7 +16,7 @@ describe('salesforceLeadOwnerRouting', () => {
     ['new-york', 'STEPHANIE', 'Stephanie', '0054x0000082vHgAAI', 'Stephanie Guree'],
     ['puerto-rico', 'STEPHANIE', 'Stephanie', '0054x0000082vHgAAI', 'Stephanie Guree'],
     ['PR', 'STEPHANIE', 'Stephanie', '0054x0000082vHgAAI', 'Stephanie Guree'],
-  ])('returns hardcoded owner config for %s', (state, adminKey, adminName, ownerId, ownerName) => {
+  ])('returns the production owner config for %s', (state, adminKey, adminName, ownerId, ownerName) => {
     expect(getLeadOwnerForState(state)).toEqual({
       adminKey,
       adminName,

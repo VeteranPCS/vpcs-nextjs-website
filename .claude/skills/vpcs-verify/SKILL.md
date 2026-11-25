@@ -1,6 +1,6 @@
 ---
 name: vpcs-verify
-description: Use before claiming any UI, form, or route change is done in the VeteranPCS repo. Covers what lint/type-check/build cannot see, how to drive the dev server safely, and the hard rule against submitting real lead forms. Trigger phrases include "verify", "is it working", "check the page", "done?", "confirm the fix", "test in the browser", "screenshot it".
+description: Use before claiming any UI, form, or route change is done in the VeteranPCS repo. Covers what lint/type-check/build cannot see, how to drive the dev server safely, and the rule against production test submissions and the guarded sandbox workflow. Trigger phrases include "verify", "is it working", "check the page", "done?", "confirm the fix", "test in the browser", "screenshot it".
 ---
 
 # VeteranPCS: verify before claiming done
@@ -32,57 +32,50 @@ but not all of it. Assume typos survive to the browser.
 **Therefore: for any change touching a component, a page, a layout, or a Tailwind class, running the
 four gates is necessary and not sufficient. You must look at the rendered result.**
 
-## The safety rule that has no exceptions
+## Lead verification boundaries
 
-**Never submit a lead form against a live backend.**
+**Never submit test leads against production.** Automated browser checks use the isolated mock
+launcher (`npm run test:e2e:server`) with `E2E_LEAD_DRY_RUN=1`. The Salesforce profile is `mock`,
+external Node sockets are blocked, and notifications/analytics are captured. `build:mock` and
+`start:mock` also exercise a production-mode Next build without a Salesforce credential.
 
-`services/salesForcePostFormsService.tsx` posts to Salesforce Web-to-Lead, then fires a Slack
-webhook and an OpenPhone SMS. The submit helper is deliberately non-idempotent; its own comment
-reads "Retrying after any response can create duplicate Leads, so this helper intentionally performs
-exactly one POST." Local `SALESFORCE_LOGIN_BASE_URL` does not match the `test.salesforce.com`
-sandbox pattern, so **local dev appears to point at the production org.** A single naive "click
-Submit to check it works" creates a real Lead, a real Slack message, and a real SMS to a real person.
+Local `dev`, `build` and `start` target `webdev`, including on local main. They intentionally
+fail before network access if the sandbox profile is incomplete. Do not restore production
+credentials to make tests work. `NODE_ENV=production` never authorizes production Salesforce.
 
-To exercise a form path, set the dry-run flag:
+Real sandbox submissions are allowed only when explicitly within the user's authorized test
+scope and the environment runbook's gates are satisfied: verified sandbox org ID/IsSandbox,
+complete field/owner mappings, contained Salesforce and website outbound transports, marked
+synthetic records, exact approved recipients, an expiring run, and explicit write/isolation
+flags. Ordinary previews cannot write. A protected workflow-test preview must independently
+prove unauthenticated access is denied before its assertion flag is enabled.
 
-```bash
-LEAD_DRY_RUN=1 npm run dev
-```
+`npm run verify:salesforce-sandbox-leads` rehearses all ten forms; `--execute` is a deliberate
+live sandbox operation. Reconcile actual persisted records using unique markers and bounded
+creation windows. Web-to-Lead acceptance alone is not success. Never blindly retry an uncertain
+submission: one POST can create a lead and start asynchronous workflows.
 
-`lib/lead-dry-run.ts` returns false whenever `NODE_ENV === 'production'`, so the flag cannot be
-enabled in a deployed environment even if the variable is set. That production check lives inside
-the single `isLeadDryRun()` helper that every guard calls, so a guard added later cannot forget it.
-Never read `process.env.LEAD_DRY_RUN` anywhere else.
+`LEAD_DRY_RUN` remains the existing local-development shortcut and is false in Next production
+mode. It is supplementary, not the environment boundary. Read it through `isLeadDryRun()`.
+Do not log raw lead payloads, contact data, credentials or bearer tokens. Verify mapping with
+synthetic fixtures and assertions, and record sanitized capture evidence instead.
 
-In dry-run the full payload is still constructed, and six outbound side effects are skipped:
-shared Redis lead rate-limit writes, the Salesforce Web-to-Lead POST, the Slack webhook, the
-OpenPhone SMS, `routeSalesforceLeadOwner` (which also writes to the org), and the PostHog
-`lead_conversion_created` capture. Local dry-run still evaluates the other spam signals. Skipping
-shared rate-limit writes prevents automated checks from quarantining a later real submission.
-That last analytics side effect is the
-easiest to miss and the most damaging: PostHog is the primary funnel telemetry source, so an
-unguarded verification run pollutes conversion data. The result carries `dryRun: true` and the
-caller walks the identical success path. All three guards log under the `[LEAD_DRY_RUN]` prefix:
+Salesforce queue/Flow/timer tests must exercise the real workflow with a capture transport.
+Disabling the workflow does not count as testing it. When controlled delivery is in scope, require
+provider receipts plus actual inbox/handset arrival, with negative-recipient and expired-run checks.
+Capture-only environment changes do not require all legacy multi-day timers or live SMS. Select
+affected business cases when spam, routing, schedules or delivery behavior changes.
 
-```
-[LEAD_DRY_RUN] Skipping Salesforce Web-to-Lead POST
-[LEAD_DRY_RUN] Skipping lead notifications
-[LEAD_DRY_RUN] Skipping lead_conversion_created PostHog capture
-```
+Use [vpcs-salesforce-dev](../vpcs-salesforce-dev/SKILL.md) for target selection, protected Preview
+runs and the separate website/metadata release procedures.
 
-If you add a new outbound sink to the lead path, guard it with `isLeadDryRun()` and add a line here.
-
-Read the logged payload to confirm field mapping. It uses `console.log` rather than `logInfo` on
-purpose: `services/loggingService.ts` sanitizes `first_name`, `last_name`, `email`, `mobile`, and
-`message`, which are exactly the fields you need to see. This is safe only because the line is
-unreachable in production.
-
-If you find yourself about to click Submit without that flag set, stop.
+See [the environment runbook](../../../docs/salesforce-webdev-environment.md) for current
+provisioning status, commands, prerequisites and release evidence.
 
 ## Driving the app
 
 ```bash
-LEAD_DRY_RUN=1 npm run dev     # binds 127.0.0.1:3000, not localhost:3000
+npm run test:e2e:server       # isolated mock; set E2E_BASE_URL for a nondefault loopback port
 ```
 
 Use **Playwright MCP** when available, or the repository's pinned Playwright runner. Harper's
@@ -103,10 +96,10 @@ Kill the dev server when the task is done. Global rule, and a stray server on 30
 Stale Turbopack dev cache. Not a real error, and not worth debugging:
 
 ```bash
-rm -rf .next/dev && npm run dev
+rm -rf .next-sandbox/dev && npm run dev:sandbox
 ```
 
-Do not delete all of `.next`; that forces a full rebuild for no benefit.
+Do not delete all build outputs; that forces a full rebuild for no benefit.
 
 ## Route checklist
 
@@ -117,7 +110,7 @@ a change to shared layout or global CSS should be checked against all of them.
 |---|---|
 | `/` | homepage, includes the large `StateMapSvg` component |
 | `/texas` | the `[state]` dynamic segment, agent and lender partner rendering |
-| `/contact-agent` | lead form, needs `LEAD_DRY_RUN=1` |
+| `/contact-agent` | lead form; submit only through isolated mock or the authorized sandbox gates above |
 | `/contact-lender` | second lead form with different field mapping |
 | `/blog/[slug]` | MDX rendering path, pick any real post from `content/blog/` |
 | `/how-it-works` | static marketing page, catches global layout regressions |

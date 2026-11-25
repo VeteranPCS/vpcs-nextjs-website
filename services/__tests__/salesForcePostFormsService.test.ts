@@ -12,6 +12,7 @@ import {
   vaLoanGuideForm,
   homebuyerGuideForm,
   internshipFormSubmission,
+  coloradoRelocationGuideForm,
 } from '@/services/salesForcePostFormsService';
 import {
   buildAgentLeadParams,
@@ -26,8 +27,19 @@ import * as notificationPayloads from '@/lib/leads/notification-payloads';
 import { contactAgentClientSchema, contactLenderClientSchema } from '@/lib/validation/contactForms';
 import { LeadSubmissionError } from '@/lib/leads/submission-outcome';
 import { submitCustomerWebsiteLead } from '@/lib/leads/customer-action';
+import { getSalesforceConfig } from '@/lib/salesforce/server-config';
+import { getVerifiedSalesforceSession } from '@/services/salesForceTokenService';
+import { sendWebdevOpenPhoneMessage } from '@/lib/leads/webdev-openphone';
+import mockManifest from '@/config/salesforce/mock.json';
+import webdevFixtures from '@/config/salesforce/webdev-fixtures.json';
+import { stubProductionEnv } from '@/lib/salesforce/__tests__/configuration-fixtures';
 
 vi.mock('server-only', () => ({}));
+vi.mock('@/services/salesForceTokenService', () => ({ getVerifiedSalesforceSession: vi.fn() }));
+vi.mock('@/lib/leads/webdev-openphone', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@/lib/leads/webdev-openphone')>(),
+  sendWebdevOpenPhoneMessage: vi.fn(async () => ({ accepted: true })),
+}));
 
 vi.mock('@/actions/sendToSlack', () => ({
   default: vi.fn(async () => ({ ok: true })),
@@ -105,12 +117,34 @@ vi.mock('@/services/formTrackingService', () => ({
 
 const queryString = '?form=agent&fn=Jason&id=0014x00000HWTqI&state=colorado';
 
+beforeEach(() => {
+  stubProductionEnv();
+  vi.mocked(getVerifiedSalesforceSession).mockReset().mockImplementation(async () => {
+    const config = getSalesforceConfig();
+    return { token: 'test-only', generation: 1, instanceUrl: config.restOrigin, cacheKey: config.cacheKey };
+  });
+});
+afterEach(() => vi.unstubAllEnvs());
+
 describe('accepted customer lead regression boundaries', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubGlobal('fetch', vi.fn(async () => new Response('', { status: 200 })));
   });
   afterEach(() => { vi.restoreAllMocks(); vi.useRealTimers(); });
+
+  it('posts the production contact form even when Salesforce OAuth is unavailable', async () => {
+    vi.mocked(getVerifiedSalesforceSession).mockRejectedValue(new Error('Salesforce OAuth unavailable'));
+
+    await expect(contactPostForm({ firstName: 'QA', lastName: 'Contact', email: 'qa@example.test' }))
+      .resolves.toMatchObject({ success: true, submissionId: 'submission-test-id' });
+
+    expect(getVerifiedSalesforceSession).not.toHaveBeenCalled();
+    expect(fetch).toHaveBeenCalledExactlyOnceWith(
+      'https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8',
+      expect.objectContaining({ method: 'POST', body: expect.stringContaining('oid=00D4x000003yaV2') }),
+    );
+  });
 
   describe.each([
     ['contact_agent', contactAgentClientSchema, contactAgentPostForm],
@@ -1386,7 +1420,6 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.unstubAllEnvs();
     vi.stubGlobal('fetch', vi.fn());
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     process.env.NEXT_PUBLIC_API_BASE_URL = 'https://www.veteranpcs.com';
@@ -1404,8 +1437,16 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     });
   }
 
-  it('suppresses the Salesforce POST, Slack, OpenPhone, owner routing and PostHog, and marks the result', async () => {
+  function selectLocalDryRun() {
+    vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'mock');
+    vi.stubEnv('VERCEL', undefined);
+    vi.stubEnv('VERCEL_ENV', undefined);
+    vi.stubEnv('VPCS_DELIVERY_MODE', undefined);
     vi.stubEnv('LEAD_DRY_RUN', '1');
+  }
+
+  it('suppresses the Salesforce POST, Slack, OpenPhone, owner routing and PostHog, and marks the result', async () => {
+    selectLocalDryRun();
 
     const result = await contactAgentPostForm(qaPayload(), queryString);
 
@@ -1430,39 +1471,24 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', undefined);
   });
 
-  it('still builds and logs the full Web-to-Lead payload so field mapping stays verifiable', async () => {
-    vi.stubEnv('LEAD_DRY_RUN', '1');
+  it('logs only Web-to-Lead and notification metadata', async () => {
+    selectLocalDryRun();
 
     await contactAgentPostForm(qaPayload(), queryString);
 
     const postLog = consoleLogSpy.mock.calls.find(
       (call) => call[0] === '[LEAD_DRY_RUN] Skipping Salesforce Web-to-Lead POST',
     );
-    expect(postLog).toBeDefined();
-    // postLog is defined per the assertion above, so the payload argument is present.
-    const logged = postLog![1] as { payload: Record<string, string> };
-    expect(logged.payload.first_name).toBe('QA');
-    expect(logged.payload.last_name).toBe('Concierge Test');
-    expect(logged.payload.email).toBe('tech+qa@veteranpcs.com');
-    // State derivation, submission-id attribution and the lead-owner URL marker all still run.
-    expect(logged.payload['00N4x00000LspV2']).toBe('CO');
-    expect(logged.payload['00NRg00000PjSEfMAN']).toBe('submission-test-id');
-    expect(logged.payload['00N4x00000QQ1LB']).toContain('sid=submission-test-id');
+    expect(postLog?.[1]).toEqual({ submissionId: 'submission-test-id', fieldCount: expect.any(Number) });
 
     const notifyLog = consoleLogSpy.mock.calls.find(
       (call) => call[0] === '[LEAD_DRY_RUN] Skipping lead notifications',
     );
-    expect(notifyLog).toBeDefined();
-    expect(notifyLog![1]).toEqual(
-      expect.objectContaining({
-        slack: expect.objectContaining({ headerText: '🔔 New Agent Lead', state: 'Colorado' }),
-        sms: expect.objectContaining({ to: ['+17195550100'] }),
-      }),
-    );
+    expect(notifyLog?.[1]).toEqual({ submissionId: 'submission-test-id', channelCount: 2 });
   });
 
   it('marks the dry run on a simpler form without disturbing its success shape', async () => {
-    vi.stubEnv('LEAD_DRY_RUN', '1');
+    selectLocalDryRun();
 
     const result = await KeepInTouchForm({
       firstName: 'Test', lastName: 'Touch', email: 'touch@example.com', phone: '8035550100',
@@ -1514,5 +1540,269 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
     expect(consoleLogSpy.mock.calls.some((call) => String(call[0]).startsWith('[LEAD_DRY_RUN]'))).toBe(false);
+  });
+});
+
+
+describe('non-production Vercel submission guard', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal('fetch', vi.fn(() => { throw new Error('Unexpected network access'); }));
+  });
+  afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
+
+  const submissions = [
+    ['contact agent', () => contactAgentPostForm(qaPayload(), queryString)],
+    ['contact lender', () => contactLenderPostForm(lenderPayload(), queryString)],
+    ['listed agent', () => GetListedAgentsPostForm({})],
+    ['listed lender', () => GetListedLendersPostForm({})],
+    ['keep in touch', () => KeepInTouchForm({})],
+    ['contact', () => contactPostForm({})],
+    ['VA guide', () => vaLoanGuideForm({})],
+    ['homebuyer guide', () => homebuyerGuideForm({})],
+    ['Colorado relocation guide', () => coloradoRelocationGuideForm({})],
+    ['internship', () => internshipFormSubmission({})],
+  ] as const;
+
+  describe.each(['preview', 'development'])('%s', (environment) => {
+    it.each(submissions)('blocks %s before remote processing even with dry-run enabled', async (_name, submit) => {
+      vi.stubEnv('VERCEL_ENV', environment);
+      vi.stubEnv('NODE_ENV', 'production');
+      vi.stubEnv('LEAD_DRY_RUN', '1');
+      await expect(submit()).rejects.toMatchObject({ outcome: 'not_sent', submissionId: 'submission-test-id' });
+      expect(fetch).not.toHaveBeenCalled();
+      expect(evaluateLeadSpam).not.toHaveBeenCalled();
+      expect(stateService.fetchAgentById).not.toHaveBeenCalled();
+      expect(routeSalesforceLeadOwner).not.toHaveBeenCalled();
+      expect(sendToSlack).not.toHaveBeenCalled();
+      expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+      expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+      expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
+      expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'FAILURE', null, expect.objectContaining({ message: 'Lead submissions are disabled in non-production Vercel environments' }));
+    });
+  });
+
+  it('retains real production behavior with mocked sinks', async () => {
+    vi.stubEnv('VERCEL_ENV', 'production');
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('LEAD_DRY_RUN', '1');
+    vi.mocked(fetch).mockResolvedValue(new Response('', { status: 200 }));
+    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toMatchObject({ message: 'Form submitted successfully!', submissionId: 'submission-test-id' });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(routeSalesforceLeadOwner).toHaveBeenCalledTimes(1);
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Salesforce WebDev form transport', () => {
+  const fixtureOrgId = webdevFixtures.orgId;
+  const agentFixture = webdevFixtures.accountIds.agents[0]!.slice(0, 15);
+  const lenderFixture = webdevFixtures.accountIds.lenders[0]!;
+  const action = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8';
+  const sandboxOrigin = 'https://veteranpcs--webdev.sandbox.my.salesforce.com';
+  const fixtureLead = {
+    firstName: '[VPCS WEBDEV TEST] Sample', first_name: '[VPCS WEBDEV TEST] Sample',
+    lastName: 'Fixture', last_name: 'Fixture', email: 'qa@example.test',
+    phone: '(202) 555-0101', mobile: '202-555-0101', state: 'CO',
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('', { status: 200 })));
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('VERCEL', undefined);
+    vi.stubEnv('VERCEL_ENV', undefined);
+    vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'webdev');
+    vi.stubEnv('VPCS_SALESFORCE_ORG_ID', fixtureOrgId);
+    vi.stubEnv('VPCS_SALESFORCE_METADATA_JSON', JSON.stringify({ ...mockManifest, orgId: fixtureOrgId }));
+    vi.stubEnv('SALESFORCE_LOGIN_BASE_URL', sandboxOrigin);
+    vi.stubEnv('SALESFORCE_AUTH_GRANT', 'client_credentials');
+    vi.stubEnv('VPCS_SALESFORCE_BASE_URL', sandboxOrigin);
+    vi.stubEnv('VPCS_SALESFORCE_WEB_TO_LEAD_URL', action);
+    vi.stubEnv('VPCS_DELIVERY_MODE', 'capture');
+    vi.stubEnv('VPCS_SANDBOX_LEAD_WRITES', '1');
+    vi.stubEnv('VPCS_WEBDEV_ISOLATION_ATTESTED', '1');
+    vi.stubEnv('VPCS_WEBDEV_TEST_EMAILS', 'qa@example.test');
+    vi.stubEnv('VPCS_WEBDEV_TEST_PHONES', '+12025552000');
+    vi.stubEnv('VPCS_WEBDEV_TEST_RUN_ID', 'offline-test');
+    vi.stubEnv('VPCS_WEBDEV_TEST_EXPIRES_AT', new Date(Date.now() + 60_000).toISOString());
+    vi.stubEnv('VPCS_WEBDEV_SITE_ORIGIN', 'http://127.0.0.1:3131');
+  });
+  afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); });
+
+  const submissions = [
+    ['contact agent', () => contactAgentPostForm(fixtureLead, '?state=colorado')],
+    ['contact lender', () => contactLenderPostForm(fixtureLead, '?state=colorado')],
+    ['listed agent', () => GetListedAgentsPostForm(fixtureLead)],
+    ['listed lender', () => GetListedLendersPostForm(fixtureLead)],
+    ['keep in touch', () => KeepInTouchForm(fixtureLead)],
+    ['contact', () => contactPostForm(fixtureLead)],
+    ['VA guide', () => vaLoanGuideForm(fixtureLead)],
+    ['homebuyer guide', () => homebuyerGuideForm(fixtureLead)],
+    ['Colorado relocation guide', () => coloradoRelocationGuideForm(fixtureLead)],
+    ['internship', () => internshipFormSubmission(fixtureLead)],
+  ] as const;
+
+  it.each(submissions)('posts %s exactly once through the verified sandbox mapping', async (_name, submit) => {
+    await expect(submit()).resolves.toMatchObject({ message: 'Form submitted successfully!' });
+
+    expect(getVerifiedSalesforceSession).toHaveBeenCalledBefore(vi.mocked(fetch));
+    expect(fetch).toHaveBeenCalledTimes(1);
+    const [url, options] = vi.mocked(fetch).mock.calls[0]!; // The call count is asserted above.
+    expect(url).toBe(action);
+    expect(options?.redirect).toBe('error');
+    const params = new URLSearchParams(String(options?.body));
+    expect(params.get('oid')).toBe(fixtureOrgId);
+    expect(params.get('retURL')).toBe('http://127.0.0.1:3131/thank-you');
+    expect(Object.values(mockManifest.recordTypes)).toContain(params.get('recordType'));
+    const customFieldKeys = [...params.keys()].filter(key => key.startsWith('00N'));
+    expect(customFieldKeys.length).toBeGreaterThan(0);
+    for (const key of customFieldKeys) expect(Object.values(mockManifest.fieldIds)).toContain(key);
+    expect(params.get('description')).toContain('offline-test submission-test-id');
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
+  });
+
+  it('uses capture on a protected preview only when the branch attestation is present', async () => {
+    vi.stubEnv('VERCEL', '1');
+    vi.stubEnv('VERCEL_ENV', 'preview');
+    vi.stubEnv('VERCEL_GIT_COMMIT_REF', 'codex/salesforce-workflow-test');
+    vi.stubEnv('VERCEL_URL', 'protected-workflow-preview.vercel.app');
+    await expect(contactPostForm(fixtureLead)).rejects.toMatchObject({ outcome: 'not_sent' });
+    expect(fetch).not.toHaveBeenCalled();
+
+    vi.stubEnv('VPCS_SANDBOX_PREVIEW_PROTECTED', '1');
+    await expect(contactPostForm(fixtureLead)).resolves.toMatchObject({ success: true });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    const params = new URLSearchParams(String(vi.mocked(fetch).mock.calls[0]?.[1]?.body));
+    expect(params.get('retURL')).toBe('https://protected-workflow-preview.vercel.app/thank-you');
+  });
+
+  it('discards an unexpected sandbox provider redirect instead of redirecting to production', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(`<script>window.location.replace('https://www.veteranpcs.com/thank-you')</script>`));
+
+    await expect(contactAgentPostForm(fixtureLead, '?state=colorado')).resolves.toEqual({
+      message: 'Form submitted successfully!', submissionId: 'submission-test-id',
+    });
+  });
+
+  it('keeps local production builds offline when mock is selected', async () => {
+    vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'mock');
+    await expect(contactPostForm(fixtureLead)).resolves.toMatchObject({ success: true, dryRun: true });
+    for (const effect of [getVerifiedSalesforceSession, fetch, sendToSlack, sendOpenPhoneMessage, routeSalesforceLeadOwner, captureLeadConversionCreated]) {
+      expect(effect).not.toHaveBeenCalled();
+    }
+  });
+
+  it.each([
+    ['an unmarked name', { firstName: 'Sample' }],
+    ['an unlisted email', { email: 'other@example.test' }],
+    ['an unlisted mobile', { phone: '+12025552001' }],
+  ])('rejects %s before org verification or posting', async (_label, changedInput) => {
+    await expect(contactAgentPostForm({ ...fixtureLead, ...changedInput }, '?state=colorado')).rejects.toMatchObject({ outcome: 'not_sent' });
+    expect(getVerifiedSalesforceSession).not.toHaveBeenCalled();
+    expect(fetch).not.toHaveBeenCalled();
+    expect(sendToSlack).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['VPCS_WEBDEV_ISOLATION_ATTESTED', '0'],
+    ['VPCS_WEBDEV_TEST_RUN_ID', ''],
+    ['VPCS_WEBDEV_TEST_EXPIRES_AT', '2026-01-01T00:00:00Z'],
+    ['VPCS_DELIVERY_MODE', 'allowlisted'],
+  ])('rejects a write for unsafe %s', async (setting, value) => {
+    vi.stubEnv(setting, value);
+    await expect(contactPostForm(fixtureLead)).rejects.toMatchObject({ outcome: 'not_sent' });
+    expect(getVerifiedSalesforceSession).not.toHaveBeenCalled();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('reports verification failure as not sent and never calls the Web-to-Lead action', async () => {
+    vi.mocked(getVerifiedSalesforceSession).mockRejectedValueOnce(new Error('Organization mismatch'));
+    await expect(contactPostForm(fixtureLead)).rejects.toMatchObject({ outcome: 'not_sent' });
+    expect(fetch).not.toHaveBeenCalled();
+    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'FAILURE', null, expect.any(Error));
+  });
+
+  it('requires the test window to stay open through org verification', async () => {
+    vi.mocked(getVerifiedSalesforceSession).mockImplementationOnce(async () => {
+      const config = getSalesforceConfig();
+      vi.stubEnv('VPCS_WEBDEV_TEST_EXPIRES_AT', new Date(Date.now() - 60_000).toISOString());
+      return { token: 'test-only', generation: 1, instanceUrl: config.restOrigin, cacheKey: config.cacheKey };
+    });
+
+    await expect(contactPostForm(fixtureLead)).rejects.toMatchObject({ outcome: 'not_sent' });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('rejects a partner ID absent from the verified sandbox Account lookup', async () => {
+    vi.mocked(stateService.fetchAgentById).mockResolvedValueOnce(null);
+    await expect(contactAgentPostForm(fixtureLead, `?state=colorado&id=${agentFixture}`)).rejects.toMatchObject({ outcome: 'not_sent' });
+    expect(getVerifiedSalesforceSession).toHaveBeenCalledBefore(vi.mocked(stateService.fetchAgentById));
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['a production ID copied into the sandbox', '001Rg00000pmUUk'],
+    ['an unknown sandbox Account ID', '001jg000000V70W'],
+    ['the lender fixture in an agent form', lenderFixture],
+    ['a malformed ID', agentFixture + 'X'],
+    ['an unrecognized 18-character ID with the fixture prefix', agentFixture + 'AAX'],
+  ])('rejects %s before any partner lookup or Web-to-Lead request', async (_label, partnerId) => {
+    // The Account stub would return a record even for a copied production ID.
+    await expect(contactAgentPostForm(fixtureLead, `?state=colorado&id=${partnerId}`)).rejects.toMatchObject({ outcome: 'not_sent' });
+    expect(getVerifiedSalesforceSession).not.toHaveBeenCalled();
+    expect(stateService.fetchAgentById).not.toHaveBeenCalled();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('rejects an agent fixture for the lender form', async () => {
+    await expect(contactLenderPostForm(fixtureLead, `?state=colorado&id=${agentFixture}`)).rejects.toMatchObject({ outcome: 'not_sent' });
+    expect(stateService.fetchAgentById).not.toHaveBeenCalled();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('rejects a known partner fixture in a different org', async () => {
+    const differentOrgId = '00D000000000019';
+    vi.stubEnv('VPCS_SALESFORCE_ORG_ID', differentOrgId);
+    vi.stubEnv('VPCS_SALESFORCE_METADATA_JSON', JSON.stringify({ ...mockManifest, orgId: differentOrgId }));
+    await expect(contactAgentPostForm(fixtureLead, `?state=colorado&id=${agentFixture}`)).rejects.toMatchObject({ outcome: 'not_sent' });
+    expect(stateService.fetchAgentById).not.toHaveBeenCalled();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['agent', agentFixture, '00N4x00000Lsn28', contactAgentPostForm],
+    ['lender', lenderFixture, '00N4x00000QPJUT', contactLenderPostForm],
+  ] as const)('forwards only the verified %s Account selector and state to sandbox', async (role, partnerId, field, submit) => {
+    await expect(submit(fixtureLead, `?state=colorado&id=${partnerId}&message=omit-this`))
+      .resolves.toMatchObject({ message: 'Form submitted successfully!' });
+
+    expect(stateService.fetchAgentById).toHaveBeenCalledWith(partnerId);
+    expect(fetch).toHaveBeenCalledTimes(1);
+    const body = new URLSearchParams(String(vi.mocked(fetch).mock.calls[0]?.[1]?.body));
+    expect(body.get(mockManifest.fieldIds[field])).toBe(partnerId);
+    const formUrl = body.get(mockManifest.fieldIds['00N4x00000QQ1LB']);
+    expect(formUrl).toContain(`http://127.0.0.1:3131/contact-${role}?`);
+    expect(formUrl).toContain(`id=${partnerId}`);
+    expect(formUrl).not.toContain('omit-this');
+  });
+
+  it('uses the dedicated SMS transport only after Salesforce accepts an allowlisted submission', async () => {
+    vi.stubEnv('VPCS_DELIVERY_MODE', 'allowlisted');
+    vi.stubEnv('VPCS_WEBDEV_OPENPHONE_API_KEY', 'test-only-quo');
+    vi.stubEnv('VPCS_WEBDEV_OPENPHONE_FROM_NUMBER', '+12025552001');
+    vi.stubEnv('VPCS_WEBDEV_OPENPHONE_TO_NUMBER', '+12025552000');
+    vi.stubEnv('VPCS_WEBDEV_OPENPHONE_MAX_SENDS', '1');
+    vi.stubEnv('VPCS_WEBDEV_UPSTASH_REDIS_REST_URL', 'https://isolated-budget.upstash.io');
+    vi.stubEnv('VPCS_WEBDEV_UPSTASH_REDIS_REST_TOKEN', 'test-only-budget');
+    const input = { ...fixtureLead, phone: '+12025552000' };
+
+    vi.mocked(fetch).mockResolvedValueOnce(new Response('', { status: 500 }));
+    await expect(contactAgentPostForm(input, '?state=colorado')).rejects.toMatchObject({ outcome: 'unconfirmed' });
+    expect(sendWebdevOpenPhoneMessage).not.toHaveBeenCalled();
+    await expect(contactAgentPostForm(input, '?state=colorado')).resolves.toMatchObject({ submissionId: 'submission-test-id' });
+    expect(sendWebdevOpenPhoneMessage).toHaveBeenCalledWith(expect.objectContaining({ runId: 'offline-test', submissionId: 'submission-test-id' }));
+    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
   });
 });

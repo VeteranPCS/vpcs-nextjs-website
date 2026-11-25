@@ -12,6 +12,14 @@ describe('editorial contact links', () => {
     expect(blogContactTracking(href, 'guide')).toBeNull();
   });
 
+  it.each(['agent', 'lender'])('retains state and form while stripping the selected %s from nonproduction URLs', (role) => {
+    const query = `/contact-${role}?form=${role}&fn=Author&id=001Rg00000pmUUk&state=colorado#form`;
+    expect(internalBlogHref(`https://www.veteranpcs.com${query}`, false)).toBe(`/contact-${role}?form=${role}&state=colorado#form`);
+    expect(internalBlogHref(`https://www.veteranpcs.com${query}`, true)).toBe(query);
+    expect(internalBlogHref(`https://example.com${query}`, false)).toBeNull();
+    expect(internalBlogHref('/blog/example?id=article&fn=label', false)).toBe('/blog/example?id=article&fn=label');
+  });
+
   it.each(['agent', 'lender'])('tracks the actual %s destination without query strings or personal labels', (partner) => {
     const input = blogContactTracking(`/contact-${partner}/?state=texas&fn=Private&email=private@example.org`, 'guide');
     expect(input).not.toBeNull();

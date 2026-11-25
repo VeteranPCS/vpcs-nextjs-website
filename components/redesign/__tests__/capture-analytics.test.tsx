@@ -20,10 +20,10 @@ beforeEach(() => {
   vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
-function openAndFill(kind: 'va-guide' | 'homebuyer-guide' | 'newsletter' | 'colorado-relocation-guide' = 'va-guide') {
+function openAndFill(kind: 'va-guide' | 'homebuyer-guide' | 'newsletter' | 'colorado-relocation-guide' = 'va-guide', allowAuthorContact = false) {
   const colorado = kind === 'colorado-relocation-guide';
   if (colorado) window.history.replaceState({}, '', '/colorado?private-query=do-not-record');
-  render(<LeadCaptureDialog kind={kind} initialEmail="private-person@example.com" triggerLabel="Get guide" placement={colorado
+  render(<LeadCaptureDialog kind={kind} allowAuthorContact={allowAuthorContact} initialEmail="private-person@example.com" triggerLabel="Get guide" placement={colorado
     ? { location: 'state_guide_section', position: 'inline', pageType: 'state_page' }
     : { location: 'featured_resources', position: 'card', pageType: 'pcs_resources' }} />);
   fireEvent.click(screen.getByRole('button', { name: 'Get guide' }));
@@ -134,7 +134,7 @@ describe('guide capture analytics', () => {
 
   it('treats Contact Tyler as a separate selected-agent action after download', async () => {
     mocks.submit.mockResolvedValue({ success: true });
-    fireEvent.submit(openAndFill('colorado-relocation-guide'));
+    fireEvent.submit(openAndFill('colorado-relocation-guide', true));
     await screen.findByRole('status');
     expect(sessionStorage.getItem('vpcs_selected_agent')).toBeNull();
     expect(screen.getByRole('status').textContent).toContain('Your download has started.');
@@ -153,6 +153,16 @@ describe('guide capture analytics', () => {
     expect(mocks.capture).toHaveBeenCalledWith('cta_clicked', expect.objectContaining({ cta_intent: 'contact_agent', cta_location: 'guide_download_success', partner_salesforce_id: '001Rg00000pmUUk' }));
     expect(mocks.submit).toHaveBeenCalledTimes(1);
     expect(mocks.gtm).toHaveBeenCalledTimes(1);
+  });
+
+  it('offers a generic Colorado contact after a nonproduction download', async () => {
+    mocks.submit.mockResolvedValue({ success: true });
+    fireEvent.submit(openAndFill('colorado-relocation-guide'));
+    await screen.findByRole('status');
+    const contact = screen.getByRole('link', { name: 'Find a Colorado Agent' });
+    expect(contact.getAttribute('href')).toBe('/contact-agent?form=agent&state=colorado');
+    expect(document.activeElement).toBe(contact);
+    expect(screen.queryByRole('link', { name: 'Contact Tyler' })).toBeNull();
   });
 
   it('does not call downloads or emit guide events for a newsletter', async () => {

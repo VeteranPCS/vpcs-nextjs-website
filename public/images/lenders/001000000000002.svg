@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <title>Offline sample lender placeholder</title>
+  <path fill="#eaf0ed" d="M0 0h128v128H0z"/>
+  <circle cx="64" cy="46" r="22" fill="#577968"/>
+  <path fill="#577968" d="M19 128v-8a45 45 0 0 1 90 0v8z"/>
+</svg>

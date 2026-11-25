@@ -1,10 +1,12 @@
 import React, { isValidElement, type ReactNode } from 'react';
+import Image from 'next/image';
 import { describe, expect, it, vi } from 'vitest';
 import StatePageCTA from '../StatePageCTA/StatePageCTA';
 import StatePageLetFindAgent from '../StatePageLetFindAgent/StatePageLetFindAgent';
 import StatePageCityAgents from '../StatePageCityAgents/StatePageCityAgents';
 import StatePageVaLoan from '../StatePageVaLoan/StatePageVaLoan';
 import { trackCtaClicked } from '@/lib/analytics/client';
+import { PARTNER_FIXTURE_PHOTO } from '@/lib/salesforce/partner-fixture-assets';
 import type { Agent, Lenders } from '@/services/stateService';
 
 vi.mock('@/lib/analytics/client', () => ({ trackCtaClicked: vi.fn() }));
@@ -50,6 +52,29 @@ describe('state contact CTA wiring', () => {
           partner_type: index === 0 ? 'agent' : 'lender', partner_salesforce_id: 'partner-fixture',
         }));
       }
+    }
+  });
+
+  it.each([
+    ['agents', 'lenders'],
+    ['lenders', 'agents'],
+  ] as const)('serves only the exact local %s fixture SVG without optimization', (role, otherRole) => {
+    const photo = PARTNER_FIXTURE_PHOTO[role];
+    const cases = [
+      [photo, true],
+      [PARTNER_FIXTURE_PHOTO[otherRole], false],
+      [`https://example.com${photo}`, false],
+      [`${photo}?other=1`, false],
+      [`/images/${role}/production-partner.webp`, false],
+    ] as const;
+
+    for (const [src, unoptimized] of cases) {
+      const partner = { FirstName: 'Fixture', AccountId_15__c: 'partner-fixture', Name: 'Fixture Partner', PhotoUrl: src };
+      const tree = role === 'agents'
+        ? StatePageCityAgents({ city: 'Austin', state: 'texas', agent_data: [partner as Agent] })
+        : StatePageVaLoan({ cityName: 'Texas', state: 'texas', lendersData: { totalSize: 1, done: true, records: [partner as Lenders] } });
+      const [imageLink] = contactLinks(tree);
+      expect(imageLink?.children).toMatchObject({ type: Image, props: { src, unoptimized } });
     }
   });
 });

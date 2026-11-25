@@ -2,7 +2,7 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 # Ordered fastest-failing first. `npm test` is vitest run (non-watch).
-# `next build` is the slowest step and CI runs it too; it stays here because
+# The mock build is the slowest step and CI runs it too; it stays here because
 # content loaders throw at module load, so build catches bad JSON that the
-# unit suite does not. Drop it if commit latency becomes a problem.
-npm run lint && npm run type-check && npm test && npm run build
+# unit suite does not.
+npm run lint && npm run type-check && npm test && npm run build:mock

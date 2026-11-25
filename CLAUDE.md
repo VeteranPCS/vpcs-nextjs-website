@@ -9,7 +9,7 @@ Operational guide for Claude (and any other AI assistant) working in this repo. 
 
 VeteranPCS is a Next.js site that connects active-duty service members, veterans, and military spouses doing a PCS (Permanent Change of Station) move to vetted, military-experienced real estate agents and VA-loan lenders. The site is read-mostly marketing surface (state pages, blog) plus form-driven lead capture; Phase 2 is layering an LLM concierge on top of that.
 
-- Source of truth for agents/lenders/customers/deals: **Salesforce** (Person Account model with `__pc` custom fields). Person-Account customers are identified by the `isAgent__pc` / `isLender__pc` / `isCustomer__pc` booleans, **not** by an Account record-type filter. (`0124x000000Z7G3AAK` is the **Opportunity** "Customer" record type, used only in Opportunity queries.)
+- Source of truth for agents/lenders/customers/deals: **Salesforce** (Person Account model with `__pc` custom fields). Person-Account customers are identified by the `isAgent__pc` / `isLender__pc` / `isCustomer__pc` booleans, **not** by an Account record-type filter. (Customer is an **Opportunity** record type used only in Opportunity queries; resolve its ID from the selected org configuration.)
 - Source of truth for marketing content (states, blog, headshots, copy): **the repo itself** — structured content in `content/_data/site/*.json`, rich text as typed `.tsx` modules colocated with their consumers, images under `public/images/`. (Sanity CMS was fully removed 2026-07-13 — see `docs/sanity-migration-decision.md`.)
 - Lead intake: server actions → Salesforce REST + Slack notification + OpenPhone SMS.
 
@@ -29,8 +29,12 @@ VeteranPCS is a Next.js site that connects active-duty service members, veterans
 
 | Command | What it does |
 |---|---|
-| `npm run dev` | Next dev server at `http://127.0.0.1:3000` |
-| `npm run build` | Production build (runs in pre-commit hook) |
+| `npm run dev` / `dev:sandbox` | Validated webdev server at `http://127.0.0.1:3000`; fails closed until sandbox configuration is complete |
+| `npm run build` / `build:sandbox` | Local production-mode build targeting webdev; hosted build uses its explicit deployment profile |
+| `npm run build:mock` / `start:mock` | Credential-free offline build and production-mode server; CI/pre-commit build uses mock |
+| `npm run start:sandbox` | Start the matching sandbox build; rejects another profile’s artifact |
+| `npm run verify:salesforce-target` | Read-only OAuth and Organization identity verification |
+| `npm run verify:salesforce-sandbox-leads` | Ten-form rehearsal; live sandbox execution requires explicit `--execute` and bounded test gates |
 | `npm run lint` | ESLint (pre-commit) |
 | `npm run type-check` | `tsc --noEmit` (pre-commit) |
 | `npm test` | Vitest one-shot (pre-commit) |
@@ -40,7 +44,7 @@ VeteranPCS is a Next.js site that connects active-duty service members, veterans
 | `npm run test:e2e` | Playwright responsive/interaction suite; requires local `E2E_BASE_URL` and `E2E_LEAD_DRY_RUN=1` for submissions |
 | `npm run eval` | Concierge eval suites (`vitest run -c vitest.eval.config.ts`); on-demand, not in `npm test` |
 
-Pre-commit hook (`.husky/pre-commit`) runs `lint && type-check && test && build`, ordered fastest-failing first. The full suite is ~2s, so tests are cheap; `build` is the slow step and stays because content loaders throw at module load, catching bad JSON the unit suite misses. `npm run lint:content` is **not** in the hook: run it manually after `content/blog/` changes. Never use `--no-verify` to bypass the hook unless the user explicitly asks.
+Pre-commit hook (`.husky/pre-commit`) runs `lint && type-check && test && build:mock`, ordered fastest-failing first. The test suite runs before the slower build; `build:mock` is the slow step and stays because content loaders throw at module load, catching bad JSON the unit suite misses. `npm run lint:content` is **not** in the hook: run it manually after `content/blog/` changes. Never use `--no-verify` to bypass the hook unless the user explicitly asks.
 
 ## Repo layout
 
@@ -91,6 +95,7 @@ second copy: edit `.claude/` only. Adding a skill means adding the mirror symlin
 
 | Skill | Use it when |
 |---|---|
+| `vpcs-salesforce-dev` | Salesforce local/sandbox development, protected Preview tests, and staged website or separate metadata releases. |
 | `vpcs-verify` | Before claiming any UI, form, or route change is done. Also carries the lead-form safety rule. |
 | `vpcs-blog` | Writing, refreshing, or auditing posts under `content/blog/`. |
 | `vpcs-state-maps` | Processing a state-map update ticket (Linear + Drive + repo). |
@@ -102,12 +107,13 @@ Project subagents live in `.claude/agents/`: `salesforce-schema-researcher`, `bl
 
 ### Salesforce / SOQL
 
-- Person-Account customers are identified by the boolean flags `isAgent__pc` / `isLender__pc` / `isCustomer__pc`, **not** by an Account record-type filter. (`0124x000000Z7G3AAK` is the **Opportunity** "Customer" record type, used only in Opportunity queries — see `services/salesforceImpactService.tsx`, `FROM Opportunity`.) Person Account fields use the `__pc` suffix (`Current_location__pc`, `Military_Status__pc`, `Have_you_personally_PCS_d__pc`, etc.).
+- Person-Account customers are identified by the boolean flags `isAgent__pc` / `isLender__pc` / `isCustomer__pc`, **not** by an Account record-type filter. (Customer is an **Opportunity** record type used only in Opportunity queries; resolve its ID from the selected org configuration — see `services/salesforceImpactService.tsx`, `FROM Opportunity`.) Person Account fields use the `__pc` suffix (`Current_location__pc`, `Military_Status__pc`, `Have_you_personally_PCS_d__pc`, etc.).
 - Role flags are booleans: `isAgent__pc`, `isLender__pc`, `isCustomer__pc`.
 - License-state filters use **2-letter codes**, not full names: `State_s_Licensed_in__pc LIKE '%TX%' OR Other_States__pc INCLUDES ('TX')`.
 - `stateService.fetchAgentsListByState` / `fetchLendersListByState` expect a 2-letter state code (`short_name`), **not** the full state name or slug. They accept an optional `{ requireHeadshot?: boolean }`; the concierge tools pass `false` so the LLM still gets matches when a headshot is missing, while SSR pages keep the `true` default.
-- Scripts that talk to Salesforce use **inline API helpers** (not top-level module imports) so env vars are read after `dotenv` runs.
-- Schema reference: use the committed `.md` summaries in `docs/salesforce-schema/`. The deeper `raw/` dumps (`sobjects.json`, `*-describe.json`) are **gitignored** — not present in a fresh clone. Regenerate them (and refresh the `.md` summaries) with `node --env-file=.env.local scripts/recon-salesforce.mjs` (needs the Salesforce env vars). If present, **never `Read` them whole** — `sobjects.json` is ~1.35 MB (~350K tokens) and will blow the context window; grep or jq them instead.
+- Salesforce network scripts use the shared checked sandbox transport in `scripts/lib/salesforce-sandbox.mjs`. They validate the effective environment before OAuth and verify org identity. Never introduce a separate unguarded login helper.
+- `scripts/activate-agents.mjs` is retired and makes no network requests. Website OAuth deliberately cannot edit Accounts; use the separately authenticated operator fixture workflow in `salesforce/fixtures/README.md` to seed active synthetic partners.
+- Use the committed `.md` summaries under `docs/salesforce-schema/` for the production schema reference. `node scripts/recon-salesforce.mjs` uses the verified WebDev website credentials and writes sandbox summaries and raw dumps under ignored `artifacts/salesforce/webdev/`. Inspect large raw dumps with `rg` or `jq`.
 
 ### Repo content (`content/_data/site/`)
 
@@ -119,7 +125,7 @@ Project subagents live in `.claude/agents/`: `salesforce-schema-researcher`, `bl
 
 ### Concierge (Phase 2)
 
-- Entry point: `POST /api/chat` (`app/api/chat/route.ts`). It runs BotID first, then Upstash rate-limit, then `streamText` with the tools from `lib/ai/tools/index.ts`. Errors from `streamText` are caught and returned as JSON 500 — do not let it silently fail.
+- Entry point: `POST /api/chat` (`app/api/chat/route.ts`). It checks the production profile before running BotID, Upstash rate limits, guardrails or `streamText`. Errors from `streamText` return JSON 500.
 - Session: cookie `vpcs_concierge_sid`, 30-day, httpOnly, sameSite lax, secure in prod (`lib/ai/session.ts`). No DB; memory is cookie-scoped only for Phase 2.
 - Feature flag: `NEXT_PUBLIC_CONCIERGE_ENABLED` (`'1'` or `'true'`). Off by default.
 - System prompt and brand voice live in `lib/ai/system-prompt.ts`. Three words: **Trusted. Patriotic. Helpful.** No emoji, no hype, 5th–7th grade reading level.
@@ -133,7 +139,7 @@ Project subagents live in `.claude/agents/`: `salesforce-schema-researcher`, `bl
 
 ### Forms & lead routing
 
-- Lead-capture forms write to **both** the Salesforce Person Account (Customer record type) and the appropriate Opportunity. `destination_city` and `current_location` mappings are documented in the per-project memory directory `~/.claude/projects/-Users-harperfoley-VPCS-vpcs-nextjs-website/memory/` (the freshest source of project history; read its `MEMORY.md` index first). Ask before changing them.
+- Website lead-capture forms submit to Salesforce Web-to-Lead. Eligible contact forms use REST for a subsequent Lead owner transfer. Related Person Account and Opportunity automations require separate evidence. The `destination_city` and `current_location` mappings are in the per-project memory directory `~/.claude/projects/-Users-harperfoley-VPCS-vpcs-nextjs-website/memory/`. Read its `MEMORY.md` index and ask before changing those mappings.
 - Default blog byline is `VeteranPCS`, never `The VeteranPCS Team`.
 
 ### Middleware (proxy.ts)
@@ -146,17 +152,32 @@ Project subagents live in `.claude/agents/`: `salesforce-schema-researcher`, `bl
 - **Where shared code goes:** framework-agnostic helpers and pure functions live in `lib/`, grouped by feature (`lib/ai/`, `lib/blog/`, `lib/content/`); external-system access (Salesforce) lives in `services/`. Don't add a top-level `utils/` or `constants/` catch-all — colocate with the feature that owns it.
 - **`.ts` vs `.tsx`:** new files with no JSX get a `.ts` extension; reserve `.tsx` for modules that return JSX. This is a going-forward rule for **new files only** — do not mass-rename the existing JSX-free `.tsx` files (e.g. `services/*.tsx`).
 
-### Env vars (on `main`)
+### Salesforce development isolation
 
-The env vars used on `main`:
+The operational setup and evidence ledger are in [docs/salesforce-webdev-environment.md](docs/salesforce-webdev-environment.md). Use [vpcs-salesforce-dev](.claude/skills/vpcs-salesforce-dev/SKILL.md) for the daily local → Preview → staged Production workflow and its scope-specific test gates. Local development and local production-mode builds use `webdev`, including on `main`. Only an explicit `production` profile on Vercel Production from `main` can use production Salesforce. `NODE_ENV` never selects an org. CLI authentication and website OAuth are separate.
 
+WebDev is provisioned at `https://veteranpcs--webdev.sandbox.my.salesforce.com`. The `vpcs-webdev` CLI alias and both website OAuth apps verified `00Djg000000EK8YEAW` and `IsSandbox=true`. Preview passed 13 access checks and Workflow passed 19. The rendering seed reconciled seven records and three revalidation captures. The first Contact Agent owner transfer failed and was verified after the guard update. A fresh sandbox run passed ten form persistence checks and both contact owner readbacks. The browser and hosted deployment have separate gates.
+
+Sandbox HTTP/SMS and Apex reminder capture, the native recipient overlay and the guest signup restriction are deployed. The native five-minute welcome reached `tech@veteranpcs.com` and matched Salesforce Email Log Files. Salesforce returned to **System email only** after the canary. The live SMS worker captured the normal fixture and blocked the credential override with zero provider receipts. The temporary operator grant was revoked. Keep website Lead writes off outside approved capture runs. WebDev remains in capture mode. Live SMS is disabled pending a dedicated sender, an exact verified test phone and a connected isolated Redis budget. The user deferred test Redis; capture-only development does not require it. The published `codex/salesforce-workflow-test` branch has separate OAuth credentials. Its deployment is Ready and serves the protected `test.veteranpcs.com` alias. Anonymous access is redirected. The hosted HTTP smoke and all 26 browser checks passed on `c8db80acdc93`. All 29 original Previews are retired. The native Salesforce callback succeeded on `0512600bbae6` after a first attempt received `409` on the state-slug check. Capture is restored and temporary callback credentials and grants have been removed. A hosted Contact Agent submission with writes disabled reached thank-you with zero matching Salesforce Leads. The write-enabled Contact Agent canary persisted one marked Lead with the expected agent and owner. Website Slack and OpenPhone each produced one capture. The hosted Lead's welcome Flow was correlated by the sole eligible Lead and its due time. Its SMS queue readback was zero. The fixture is closed, temporary access is cleared, and the protected test alias serves the verified capture-only Preview with writes off. Production release remains pending exact-head review and an effective hold on automatic Production domain assignment. Live SMS is a separate capability; its remaining checks do not block capture-only setup.
+
+WebDev restored the four quarter-hour portal reminder schedules and two sender refresh schedules in `America/Denver` after the 25-test scheduler run passed. The first native portal batch advanced the synthetic Lead's count to one and captured one reminder. The next native batch confirmed the one-hour debounce. The fixture was closed and the capture label reset to baseline. The native 22:05 hourly sender refresh recorded a capture with zero items. Daily and multi-day timer scenarios remain an explicit baseline backlog. Select affected cases for later spam/routing/timing changes; they are not blanket environment merge gates. See the [native workflow matrix](docs/salesforce-webdev-workflow-matrix.md).
+
+The active `.env.local` is sandbox-only; missing identity, credentials or mappings intentionally stop startup. Do not restore production secrets to make development work. Use `build:mock` for offline verification. Never pull Vercel Production into local dotenv; pull Development into a fresh ignored staging file, validate, then merge approved values.
+
+`lib/salesforce/environment.mjs` owns destination validation; `server-config.ts` is the application accessor. Nonsecret org-bound mappings live under `config/salesforce/`; the webdev example is deliberately invalid until verified. Salesforce changes start in the cloud sandbox with relevant tests/coverage, then reviewed deployment; no direct production Apex edits. The scoped DX workspace is `salesforce/`. A website merge to `main` builds with Vercel Production variables after the release hold is established; validate that staged artifact before promotion. This does not change local main or deploy Salesforce metadata. Later Apex/Flow releases require a separate reviewed manifest, sandbox evidence and Production validation tests/coverage; exclude sandbox capture overlays, credentials and fixtures.
+
+### Env vars
+
+The existing integration variables and new explicit controls:
+
+- Salesforce profile controls: `VPCS_SALESFORCE_PROFILE`, `VPCS_SALESFORCE_ORG_ID`, `VPCS_SALESFORCE_METADATA_JSON`, `SALESFORCE_AUTH_GRANT`, `VPCS_SALESFORCE_WEB_TO_LEAD_URL`, `VPCS_SANDBOX_LEAD_WRITES`, `VPCS_WEBDEV_ISOLATION_ATTESTED`, `VPCS_DELIVERY_MODE`. See the runbook for the complete scope/test-window contract.
 - Salesforce: `SALESFORCE_CLIENT_ID`, `SALESFORCE_CLIENT_SECRET`, `SALESFORCE_USERNAME`, `SALESFORCE_PASSWORD`, `SALESFORCE_TOKEN`, `SALESFORCE_LOGIN_BASE_URL`, `SALESFORCE_API_VERSION`, `VPCS_SALESFORCE_BASE_URL`, `SALESFORCE_WEBHOOK_SECRET`
-- AI: `AI_GATEWAY_API_KEY` (Vercel AI Gateway), `NEXT_PUBLIC_CONCIERGE_ENABLED`
+- AI: `AI_GATEWAY_API_KEY` (production Vercel AI Gateway), `NEXT_PUBLIC_CONCIERGE_ENABLED`, `VPCS_EVAL_AI_GATEWAY_API_KEY` (dedicated evaluation key in the shell or `.env.evals.local`)
 - **Rate limit / bot:** Upstash Redis REST env can use either the canonical pair `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` or the Vercel integration pair `UPSTASH_REDIS_REST_KV_REST_API_URL` / `UPSTASH_REDIS_REST_KV_REST_API_TOKEN` (resolved in `lib/upstash-env.ts`). The app intentionally does **not** use read-only token or Redis-protocol URL vars for write paths. `LEAD_SPAM_ENFORCED` (`LEAD_SPAM_ENFORCED='0'` is the kill-switch that disables lead-spam quarantine — any other value or unset = enforced). BotID is auto-wired on Vercel and now guards **only** the concierge chat route (`/api/chat`), not the lead forms. `BOTID_FORMS_ENFORCED` is retired.
 - **Guardrails:** `GUARDRAILS_ENFORCED` (`'0'` = disable all concierge input guardrails; any other value or unset = enforced). Mirrors `LEAD_SPAM_ENFORCED`. Guardrails run in `app/api/chat/route.ts` via `lib/ai/guardrails/evaluateInput`.
 - Notifications: `SLACK_WEBHOOK_URL`, `OPEN_PHONE_API_KEY`, `OPEN_PHONE_FROM_NUMBER`, plus per-partner `*_PHONE_NUMBER`
 - Misc: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID`, Google Reviews creds
-- **Local verification only:** `LEAD_DRY_RUN` (`'1'`/`'true'`) short-circuits every outbound lead side effect (shared Redis lead rate-limit writes, Web-to-Lead POST, Slack, OpenPhone SMS, lead-owner routing, PostHog `lead_conversion_created`) while still building and logging the payload. `lib/lead-dry-run.ts` forces it false when `NODE_ENV === 'production'`, so it is inert in any deployed environment. Read it only via `isLeadDryRun()`; never read `process.env.LEAD_DRY_RUN` directly.
+- **Local verification only:** `LEAD_DRY_RUN` (`'1'`/`'true'`) short-circuits every outbound lead side effect (shared Redis lead rate-limit writes, Web-to-Lead POST, Slack, OpenPhone SMS, lead-owner routing, PostHog `lead_conversion_created`) while still constructing the payload (never log raw personal data). `lib/lead-dry-run.ts` forces it false when `NODE_ENV === 'production'`, so it is inert in any deployed environment. Read it only via `isLeadDryRun()`; never read `process.env.LEAD_DRY_RUN` directly.
 
 No `RESEND_*` keys on this branch — transactional email is off here. Don't add Resend-based code without checking `docs/PROJECT-STATUS.md` first.
 
@@ -166,7 +187,7 @@ No `RESEND_*` keys on this branch — transactional email is off here. Don't add
 - **Verify before recommending.** A memory or plan that names a file/flag may be stale; `grep` or `Read` it before suggesting it to the user.
 - **Don't bypass the pre-commit hook.** Lint, type-check, test, and build must all pass.
 - **Green gates are not visual verification.** Customer forms have jsdom interaction tests; most tests use Node. Neither verifies browser layout. For any UI, layout, or Tailwind change, use the `vpcs-verify` skill and look at the rendered page before claiming done.
-- **Never submit a lead form against a live backend.** Local Salesforce config points at the production org and the submit path is non-idempotent. Use `LEAD_DRY_RUN=1 npm run dev`; see `vpcs-verify`.
+- **Never submit test leads to production.** Automated UI tests use isolated mock transports. Authorized real sandbox tests require verified webdev identity, all outbound paths contained, bounded marked synthetic runs and reconciled persistence. The submit path is non-idempotent: never blindly retry an uncertain POST. See `vpcs-verify` and the environment runbook.
 - **Use TodoWrite for non-trivial work** — branch state should always reflect a clear punch list.
 - **Force-push requires explicit per-task authorization** (don't reuse a prior session's authorization).
 - **Never commit `.env*` files or anything containing secrets.** Stage files by name rather than `git add -A`.

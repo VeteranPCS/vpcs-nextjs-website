@@ -9,8 +9,16 @@ import { captureLeadConversionCreated, captureServerAnalyticsEvent } from '@/lib
 import { updateSubmissionStatus } from '@/services/formTrackingService';
 import { SF_RECORD_TYPE } from '@/lib/salesforce/ids';
 import { HP_FIELD, TS_FIELD } from '@/lib/validation/spam-fields';
+import { getSalesforceConfig } from '@/lib/salesforce/server-config';
+import { stubProductionEnv } from '@/lib/salesforce/__tests__/configuration-fixtures';
 
 vi.mock('server-only', () => ({}));
+vi.mock('@/services/salesForceTokenService', () => ({
+  getVerifiedSalesforceSession: vi.fn(async () => {
+    const config = getSalesforceConfig();
+    return { token: 'test-only', generation: 1, instanceUrl: config.restOrigin, cacheKey: config.cacheKey };
+  }),
+}));
 vi.mock('@/actions/sendToSlack', () => ({ default: vi.fn(async () => ({ ok: true })) }));
 vi.mock('@/actions/sendOpenPhoneMessage', () => ({ sendOpenPhoneMessage: vi.fn() }));
 vi.mock('@/services/stateService', () => ({ default: { fetchAgentById: vi.fn() } }));
@@ -47,6 +55,7 @@ function expectNoPartnerContact() {
 describe('Colorado relocation guide capture', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    stubProductionEnv();
     vi.stubEnv('LEAD_DRY_RUN', '0');
     vi.stubEnv('NODE_ENV', 'test');
     vi.stubGlobal('fetch', vi.fn(async () => new Response('', { status: 200 })));
@@ -134,6 +143,10 @@ describe('Colorado relocation guide capture', () => {
   });
 
   it('uses the full acceptance path in local dry run while suppressing all outbound sinks', async () => {
+    vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'mock');
+    vi.stubEnv('VERCEL', undefined);
+    vi.stubEnv('VERCEL_ENV', undefined);
+    vi.stubEnv('VPCS_DELIVERY_MODE', undefined);
     vi.stubEnv('LEAD_DRY_RUN', '1');
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     await expect(coloradoRelocationGuideForm(valid)).resolves.toMatchObject({ success: true, dryRun: true });
@@ -142,6 +155,6 @@ describe('Colorado relocation guide capture', () => {
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
     expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
     expectNoPartnerContact();
-    expect(log).toHaveBeenCalledWith('[LEAD_DRY_RUN] Skipping Salesforce Web-to-Lead POST', expect.objectContaining({ payload: expect.objectContaining({ lead_source: 'Colorado Relocation Guide', email: 'guide@example.test' }) }));
+    expect(log).toHaveBeenCalledWith('[LEAD_DRY_RUN] Skipping Salesforce Web-to-Lead POST', { submissionId: 'colorado-submission-test-id', fieldCount: expect.any(Number) });
   });
 });

@@ -1,13 +1,12 @@
 import 'server-only';
 
-import { SALESFORCE_API_VERSION, SALESFORCE_BASE_URL } from '@/constants/api';
 import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { getLeadOwnerForState, type SalesforceLeadOwner } from '@/services/salesforceLeadOwnerRouting';
 import { logError, logInfo } from '@/services/loggingService';
 import { escapeSoqlLiteral } from '@/services/soql';
-import { SF_RECORD_TYPE } from '@/lib/salesforce/ids';
+import { getSalesforceConfig } from '@/lib/salesforce/server-config';
+import { requireWebdevTestRun } from '@/lib/salesforce/webdev-intake';
 
-const CUSTOMER_LEAD_RECORD_TYPE_ID = SF_RECORD_TYPE.CUSTOMER_LEAD;
 const WEB_FORM_URL_MAX_LENGTH = 255;
 const LEAD_LOOKUP_TIMEOUT_MS = process.env.NODE_ENV === 'test' ? 0 : 12_000;
 const LEAD_LOOKUP_INTERVAL_MS = process.env.NODE_ENV === 'test' ? 0 : 750;
@@ -70,7 +69,15 @@ export function appendLeadOwnerSubmissionMarker(webFormUrl: string, submissionId
 export async function routeSalesforceLeadOwner(
     params: RouteSalesforceLeadOwnerParams,
 ): Promise<SalesforceLeadOwnerRouteResult> {
+    const config = getSalesforceConfig();
+    if (config.profile === 'mock') {
+        throw new Error('Salesforce Lead owner writes are disabled for this environment');
+    }
+    if (config.profile === 'webdev') requireWebdevTestRun(config);
     const owner = params.owner ?? getLeadOwnerForState(params.destinationStateSlug);
+    if (!Object.values(config.leadOwners).includes(owner.ownerId)) {
+        throw new Error('Salesforce Lead owner is not configured for this environment');
+    }
     const lead = await findCreatedLead(params);
 
     if (lead.OwnerId === owner.ownerId) {
@@ -84,6 +91,7 @@ export async function routeSalesforceLeadOwner(
             ownerName: lead.Owner?.Name ?? owner.ownerName,
         });
     } else {
+        if (config.profile === 'webdev') requireWebdevTestRun(config);
         await patchLeadOwner(lead.Id, owner, params.submissionId);
     }
 
@@ -153,7 +161,7 @@ async function findLeadByFallbackCriteria(
     const conditions = [
         `Email = '${escapeSoqlLiteral(safeEmail)}'`,
         `LeadSource = '${escapeSoqlLiteral(params.leadSource)}'`,
-        `RecordTypeId = '${CUSTOMER_LEAD_RECORD_TYPE_ID}'`,
+        `RecordTypeId = '${getSalesforceConfig().recordTypes.CUSTOMER_LEAD}'`,
         `Destination_State__c = '${escapeSoqlLiteral(params.destinationStateCode)}'`,
         `CreatedDate >= ${formatSoqlDateTime(params.submissionStartedAt)}`,
     ];
@@ -269,11 +277,8 @@ async function runSalesforceQuery<T>(soql: string): Promise<T[]> {
 }
 
 function salesforceEndpoint(path: string): string {
-    if (!SALESFORCE_BASE_URL || !SALESFORCE_API_VERSION) {
-        throw new Error('Salesforce base URL or API version is not configured');
-    }
-
-    return `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}${path}`;
+    const { restOrigin, apiVersion } = getSalesforceConfig();
+    return `${restOrigin}/services/data/${apiVersion}${path}`;
 }
 
 function formatSoqlDateTime(date: Date): string {

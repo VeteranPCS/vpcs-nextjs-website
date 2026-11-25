@@ -9,25 +9,16 @@
 //   E. Simulate groupAgentsByAreaForState("montana") — what would actually render?
 //
 // Run:
-//   node --env-file=.env.local scripts/diagnose-bozeman-agents.mjs
+//   node scripts/diagnose-bozeman-agents.mjs
 
 import { existsSync } from 'fs';
 import { dirname, join } from 'path';
 import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
+import { connectSandbox } from './lib/salesforce-sandbox.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
-
-const E = process.env;
-const REQUIRED = [
-  'SALESFORCE_CLIENT_ID', 'SALESFORCE_CLIENT_SECRET',
-  'SALESFORCE_USERNAME', 'SALESFORCE_PASSWORD', 'SALESFORCE_TOKEN',
-  'SALESFORCE_LOGIN_BASE_URL', 'SALESFORCE_API_VERSION',
-];
-for (const k of REQUIRED) {
-  if (!E[k]) { console.error(`Missing env var: ${k}`); process.exit(1); }
-}
 
 // ── Replicate normalizeStateSlug from lib/states.ts (inline — can't import TS) ──
 
@@ -63,41 +54,13 @@ function normalizeStateSlug(value) {
   return code ? STATE_ABBR_TO_SLUG[code] : null;
 }
 
-// ── Salesforce helpers ────────────────────────────────────────────────────────
-
-async function tok() {
-  const p = new URLSearchParams({
-    grant_type: 'password',
-    client_id: E.SALESFORCE_CLIENT_ID,
-    client_secret: E.SALESFORCE_CLIENT_SECRET,
-    username: E.SALESFORCE_USERNAME,
-    password: `${E.SALESFORCE_PASSWORD}${E.SALESFORCE_TOKEN}`,
-  });
-  const r = await fetch(`${E.SALESFORCE_LOGIN_BASE_URL}/services/oauth2/token`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: p.toString(),
-  });
-  if (!r.ok) throw new Error(`Auth failed (${r.status}): ${await r.text()}`);
-  const j = await r.json();
-  return { token: j.access_token, instanceUrl: j.instance_url };
-}
-
-async function sfQuery(token, instanceUrl, soql) {
-  const url = `${instanceUrl}/services/data/${E.SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(soql)}`;
-  const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-  const text = await r.text();
-  if (!r.ok) throw new Error(`Query failed (${r.status}): ${text}`);
-  return JSON.parse(text);
-}
-
 function headshotPath(id15) {
   return join(__dirname, '..', 'public', 'images', 'agents', `${id15}.webp`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
-const { token, instanceUrl } = await tok();
+const { query } = await connectSandbox();
 console.log('✓ Authenticated to Salesforce\n');
 
 // ── Layer A: Raw MT agent count ───────────────────────────────────────────────
@@ -117,7 +80,7 @@ const rawQuery = `
         OR Other_States__pc INCLUDES ('MT'))
 `.replace(/\s+/g, ' ').trim();
 
-const rawResult = await sfQuery(token, instanceUrl, rawQuery);
+const rawResult = await query(rawQuery);
 const agents = rawResult.records;
 
 if (agents.length === 0) {
