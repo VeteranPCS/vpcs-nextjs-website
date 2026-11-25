@@ -1,7 +1,5 @@
 import 'server-only';
 
-import fs from 'node:fs';
-import path from 'node:path';
 import { unstable_cache } from 'next/cache';
 import { getSalesforceConfig, getSalesforceCacheKey } from '@/lib/salesforce/server-config';
 import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
@@ -37,6 +35,7 @@ type SfAccount = {
   Active_on_Website__pc: boolean | null;
 };
 
+const HEADSHOT_PATHS = new Set(process.env.VPCS_BLOG_HEADSHOT_PATHS?.split('\n'));
 const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp'] as const;
 const FALLBACK_AUTHOR_NAME = 'VeteranPCS';
 
@@ -81,12 +80,7 @@ function resolveHeadshotPath(salesforceId: string, isLender: boolean): string | 
   for (const folder of folders) {
     for (const ext of IMAGE_EXTENSIONS) {
       const rel = `/images/${folder}/${salesforceId}.${ext}`;
-      // Keep the directories literal so Next traces headshots instead of every
-      // image in public/ into each blog function (which exceeds Vercel's limit).
-      const abs = folder === 'agents'
-        ? path.join(process.cwd(), 'public/images/agents', `${salesforceId}.${ext}`)
-        : path.join(process.cwd(), 'public/images/lenders', `${salesforceId}.${ext}`);
-      if (fs.existsSync(abs)) return rel;
+      if (HEADSHOT_PATHS.has(rel)) return rel;
     }
   }
   return null;

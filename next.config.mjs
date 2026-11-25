@@ -1,3 +1,4 @@
+import { readdirSync } from 'node:fs';
 import { withBotId } from 'botid/next/config';
 import { resolveSalesforceEnvironment, isProductionSalesforceRuntime } from './lib/salesforce/environment.mjs';
 
@@ -41,6 +42,14 @@ const siteCsp = `
   upgrade-insecure-requests;
 `;
 
+// Portraits are served from public/ by Next.js and Vercel. Keep their filenames
+// here so resolving an author does not trace the image bytes into each function.
+const blogHeadshotPaths = ['agents', 'lenders'].flatMap((folder) =>
+  readdirSync(new URL(`./public/images/${folder}/`, import.meta.url), { withFileTypes: true })
+    .filter((entry) => entry.isFile() && /\.(?:jpe?g|png|webp)$/.test(entry.name))
+    .map((entry) => `/images/${folder}/${entry.name}`),
+).sort().join('\n');
+
 const toCspHeaderValue = (csp) => csp.replace(/\s{2,}/g, ' ').trim();
 
 /** @type {import('next').NextConfig} */
@@ -56,6 +65,7 @@ const nextConfig = {
     ],
   },
   env: {
+    VPCS_BLOG_HEADSHOT_PATHS: blogHeadshotPaths,
     NEXT_PUBLIC_VPCS_ANALYTICS_ENABLED: productionTelemetry ? '1' : '0',
     ...(productionTelemetry ? {} : { NEXT_PUBLIC_CONCIERGE_ENABLED: conciergeFixture ? '1' : '0' }),
   },

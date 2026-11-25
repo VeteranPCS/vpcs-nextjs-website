@@ -31,7 +31,7 @@
     "@hookform/resolvers": "^3.9.1",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@mui/material": "^6.1.8",
-    "@next/third-parties": "16.2.6",
+    "@next/third-parties": "16.4.6",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
     "@vercel/og": "^0.6.4",
@@ -44,7 +44,7 @@
     "cheerio": "^1.1.0",
     "gray-matter": "^4.0.3",
     "mcp-handler": "^1.1.0",
-    "next": "16.2.6",
+    "next": "16.4.6",
     "next-mdx-remote": "^6.0.0",
     "posthog-js": "^1.391.2",
     "posthog-node": "^5.38.2",
@@ -81,11 +81,11 @@
     "autoprefixer": "^10.4.20",
     "dotenv": "^17.2.3",
     "eslint": "^9",
-    "eslint-config-next": "16.2.6",
+    "eslint-config-next": "16.4.6",
     "googleapis": "^166.0.0",
     "husky": "^8.0.0",
     "jsdom": "^29.1.1",
-    "postcss": "^8.5.10",
+    "postcss": "8.5.23",
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
     "vitest": "^4.1.8"
@@ -93,16 +93,14 @@
   "overridesComments": {
     "@grpc/grpc-js": "PR #88 audit triage / GHSA-5375-pq7m-f5r2 + GHSA-99f4-grh7-6pcq (high). google-gax allows ^1.12.6, so pin to the patched 1.14.4 release without changing majors.",
     "protobufjs": "PR #88 audit triage / GHSA-jggg-4jg4-v7c6 (moderate). @grpc/proto-loader and google-gax allow protobufjs ^7.x; pin to a patched 7.x release to avoid the protobufjs 8 major.",
-    "glob@10": "Dependabot #8 / GHSA-5j98-mcp5-4vw2 (high). google-gax (via rimraf@5) pins glob 10.x <10.5.0. Version-scoped to 10.x. Remove once google-gax's chain ships glob>=10.5.0 unaided.",
-    "postcss": "Dependabot #10 / GHSA-qx2v-qp2m-jg93 (moderate, XSS in CSS stringify). next@16.2.6 pins postcss to exactly 8.4.31 (node_modules/next/node_modules/postcss). postcss is also a direct devDependency, so npm forbids a bare/version-scoped postcss override (EOVERRIDE). The `$postcss` reference forces every postcss in the tree to match the direct devDependency (now ^8.5.10), lifting Next's vendored copy to 8.5.10 (within the postcss 8.x major, no breaking changes). Remove once next ships postcss>=8.5.10."
+    "glob@10": "Dependabot #8 / GHSA-5j98-mcp5-4vw2 (high). google-gax (via rimraf@5) pins glob 10.x <10.5.0. Version-scoped to 10.x. Remove once google-gax's chain ships glob>=10.5.0 unaided."
   },
   "overrides": {
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@grpc/grpc-js": "1.14.4",
     "protobufjs": "^7.6.4",
-    "glob@10": "^10.5.0",
-    "postcss": "$postcss"
+    "glob@10": "^10.5.0"
   },
   "engines": {
     "node": "24.x"
