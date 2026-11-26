@@ -1,9 +1,13 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('upstash env resolver', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.unstubAllEnvs();
+    vi.stubEnv('VERCEL', '1');
+    vi.stubEnv('VERCEL_ENV', 'production');
+    vi.stubEnv('VERCEL_GIT_COMMIT_REF', 'main');
+    vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'production');
     vi.stubEnv('UPSTASH_REDIS_REST_URL', '');
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '');
     vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_URL', '');
@@ -11,6 +15,15 @@ describe('upstash env resolver', () => {
     vi.stubEnv('UPSTASH_REDIS_REST_KV_REST_API_READ_ONLY_TOKEN', '');
     vi.stubEnv('UPSTASH_REDIS_REST_KV_URL', '');
     vi.stubEnv('UPSTASH_REDIS_REST_REDIS_URL', '');
+  });
+  afterEach(() => vi.unstubAllEnvs());
+
+  it('ignores inherited credentials outside the explicit production runtime', async () => {
+    vi.stubEnv('UPSTASH_REDIS_REST_URL', 'https://canonical.upstash.io');
+    vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', 'canonical-token');
+    vi.stubEnv('VPCS_SALESFORCE_PROFILE', undefined);
+    const { resolveUpstashRedisEnv } = await import('@/lib/upstash-env');
+    expect(resolveUpstashRedisEnv()).toBeNull();
   });
 
   it('accepts the canonical Upstash REST env pair', async () => {

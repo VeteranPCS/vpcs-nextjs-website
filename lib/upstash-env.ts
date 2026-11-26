@@ -1,3 +1,5 @@
+import { isProductionSalesforceRuntime } from '@/lib/salesforce/environment.mjs';
+
 const REST_URL_ENV_NAMES = [
   'UPSTASH_REDIS_REST_URL',
   'UPSTASH_REDIS_REST_KV_REST_API_URL',
@@ -30,6 +32,7 @@ function firstPresent<const T extends readonly string[]>(
 }
 
 export function resolveUpstashRedisEnv(): UpstashRedisEnv | null {
+  if (!isProductionSalesforceRuntime()) return null;
   const url = firstPresent(REST_URL_ENV_NAMES);
   const token = firstPresent(REST_TOKEN_ENV_NAMES);
 
@@ -41,6 +44,19 @@ export function resolveUpstashRedisEnv(): UpstashRedisEnv | null {
     urlEnvName: url.name,
     tokenEnvName: token.name,
   };
+}
+
+/** The WebDev notification budget has its own database and credentials. */
+export function resolveWebdevNotificationRedisEnv(): { url: string; token: string } | null {
+  if (process.env.VPCS_SALESFORCE_PROFILE !== 'webdev') return null;
+
+  const url = process.env.VPCS_WEBDEV_UPSTASH_REDIS_REST_URL?.trim().replace(/\/$/, '') ?? '';
+  const token = process.env.VPCS_WEBDEV_UPSTASH_REDIS_REST_TOKEN?.trim() ?? '';
+  if (!/^https:\/\/[a-z0-9-]+\.upstash\.io$/.test(url) || !/^\S+$/.test(token)) return null;
+  if (REST_URL_ENV_NAMES.some(name => process.env[name]?.trim().toLowerCase().replace(/\/$/, '') === url) ||
+      REST_TOKEN_ENV_NAMES.some(name => process.env[name]?.trim() === token)) return null;
+
+  return { url, token };
 }
 
 export function missingUpstashEnvVars(): string[] {

@@ -32,7 +32,7 @@ function trackSafely(track: () => void) {
   try { track(); } catch { /* Analytics can be blocked independently of the form. */ }
 }
 
-export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabel, className = '', placement }: { kind: Kind; initialEmail?: string; triggerLabel: string; className?: string; placement?: CapturePlacement }) {
+export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabel, className = '', placement, allowAuthorContact = false }: { kind: Kind; initialEmail?: string; triggerLabel: string; className?: string; placement?: CapturePlacement; allowAuthorContact?: boolean }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const busy = useRef(false);
@@ -116,7 +116,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
       return;
     }
 
-    if (isColorado) setAcceptedContactDetails({ firstName, lastName, email });
+    if (isColorado && allowAuthorContact) setAcceptedContactDetails({ firstName, lastName, email });
     setSuccess(true);
     busy.current = false;
     setPending(false);
@@ -158,7 +158,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
         <h2 id={`${id}-title`}>{config.title}</h2>
         {success ? <div role="status">
           <p>{isColorado && downloadStarted ? 'Your download has started.' : config.file ? 'Your guide is ready.' : 'Thank you. We received your request.'}</p>
-          {isColorado && <ColoradoGuideAuthorCard contactDetails={acceptedContactDetails} />}
+          {isColorado && <ColoradoGuideAuthorCard allowAuthorContact={allowAuthorContact} contactDetails={acceptedContactDetails} />}
           {config.file && (isColorado ? <p className="text-sm">
             Download didn’t start?{' '}
             <a className="inline-flex min-h-11 items-center font-semibold text-primary underline underline-offset-4" href={downloadPath} download onClick={() => {

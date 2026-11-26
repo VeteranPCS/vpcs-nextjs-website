@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <fields>
+        <fullName>Action__c</fullName>
+        <label>Action</label>
+        <length>32</length>
+        <required>true</required>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Digest__c</fullName>
+        <label>Digest</label>
+        <length>64</length>
+        <required>true</required>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Item_Count__c</fullName>
+        <label>Item Count</label>
+        <precision>9</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>Run_Id__c</fullName>
+        <label>Run ID</label>
+        <length>64</length>
+        <required>true</required>
+        <type>Text</type>
+    </fields>
+    <label>WebDev Outbound Capture</label>
+    <nameField>
+        <displayFormat>WOC-{000000}</displayFormat>
+        <label>Capture Number</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>WebDev Outbound Captures</pluralLabel>
+    <sharingModel>Private</sharingModel>
+</CustomObject>

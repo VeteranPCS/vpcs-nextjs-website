@@ -1,9 +1,7 @@
 import 'server-only';
 
-import fs from 'node:fs';
-import path from 'node:path';
 import { unstable_cache } from 'next/cache';
-import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api';
+import { getSalesforceConfig, getSalesforceCacheKey } from '@/lib/salesforce/server-config';
 import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { buildContactCtaHref } from '@/lib/contactAgentUrl';
 import { normalizeStateSlug, stateSlugFromAbbr } from '@/lib/states';
@@ -37,6 +35,7 @@ type SfAccount = {
   Active_on_Website__pc: boolean | null;
 };
 
+const HEADSHOT_PATHS = new Set(process.env.VPCS_BLOG_HEADSHOT_PATHS?.split('\n'));
 const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp'] as const;
 const FALLBACK_AUTHOR_NAME = 'VeteranPCS';
 
@@ -81,19 +80,15 @@ function resolveHeadshotPath(salesforceId: string, isLender: boolean): string | 
   for (const folder of folders) {
     for (const ext of IMAGE_EXTENSIONS) {
       const rel = `/images/${folder}/${salesforceId}.${ext}`;
-      // Keep the directories literal so Next traces headshots instead of every
-      // image in public/ into each blog function (which exceeds Vercel's limit).
-      const abs = folder === 'agents'
-        ? path.join(process.cwd(), 'public/images/agents', `${salesforceId}.${ext}`)
-        : path.join(process.cwd(), 'public/images/lenders', `${salesforceId}.${ext}`);
-      if (fs.existsSync(abs)) return rel;
+      if (HEADSHOT_PATHS.has(rel)) return rel;
     }
   }
   return null;
 }
 
 async function runQuery(soql: string): Promise<SfAccount | null> {
-  const endpoint = `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(soql)}`;
+  const { restOrigin, apiVersion } = getSalesforceConfig();
+  const endpoint = `${restOrigin}/services/data/${apiVersion}/query?q=${encodeURIComponent(soql)}`;
   const response = await salesForceAPIWithRefresh({ endpoint, type: RequestType.GET });
 
   if (response?.status !== 200) return null;
@@ -126,17 +121,17 @@ async function querySalesforceByName(name: string): Promise<SfAccount | null> {
   return runQuery(soql);
 }
 
-const fetchById = unstable_cache(
-  async (id: string) => querySalesforceById(id),
-  ['blog-author-by-id'],
+const fetchById = (id: string) => unstable_cache(
+  querySalesforceById,
+  ['blog-author-by-id', getSalesforceCacheKey()],
   { revalidate: 3600, tags: ['blog-author'] },
-);
+)(id);
 
-const fetchByName = unstable_cache(
-  async (name: string) => querySalesforceByName(name),
-  ['blog-author-by-name'],
+const fetchByName = (name: string) => unstable_cache(
+  querySalesforceByName,
+  ['blog-author-by-name', getSalesforceCacheKey()],
   { revalidate: 3600, tags: ['blog-author'] },
-);
+)(name);
 
 function toResolved(
   record: SfAccount,

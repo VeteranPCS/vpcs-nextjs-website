@@ -1,8 +1,16 @@
-'use server';
+import 'server-only';
+import { getNotificationDeliveryMode } from '@/lib/leads/notification-delivery';
 import { buildSlackLeadPayload, type SlackLeadInput } from '@/lib/leads/notification-payloads';
 import fetchWithRetry from '@/utils/fetchWithRetry';
 
 export default async function sendToSlack(input: SlackLeadInput) {
+    const mode = getNotificationDeliveryMode();
+    if (mode === 'capture') {
+        console.info('Lead notification captured', { channel: 'slack', recipientCount: 1 });
+        return { ok: true, captured: true as const };
+    }
+    if (mode === 'blocked') return { ok: false, failureStage: 'configuration' as const };
+
     const webhookUrl = process.env.SLACK_WEBHOOK_URL;
     if (!webhookUrl) return { ok: false, failureStage: 'configuration' as const };
 

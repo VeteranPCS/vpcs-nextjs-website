@@ -3,13 +3,15 @@ import styles from "./RefinancingHero.module.css";
 import Button from "@/components/common/Button";
 import TrackedCtaLink from "@/components/common/TrackedCtaLink";
 import RefinancingLenderCard from "./RefinancingLenderCard";
+import { isProductionSalesforceRuntime } from "@/lib/salesforce/environment.mjs";
 
 const RefinancingHero = () => {
+    const showFeaturedLender = isProductionSalesforceRuntime();
     return (
         <div className="relative">
             <div className={styles.refinancingHeroContainer}>
                 <div className="container mx-auto px-5">
-                    <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-center justify-between gap-8">
+                    <div className={`grid ${showFeaturedLender ? "lg:grid-cols-2 " : ""}md:grid-cols-1 sm:grid-cols-1 grid-cols-1 items-center justify-between gap-8`}>
                         <div className="mx-auto lg:text-left md:text-left sm:text-left text-left w-full">
                             <h1 className="text-white font-bold lg:text-[59px] md:text-[45px] sm:text-[36px] text-[32px] poppins mb-5 leading-[1.2]">
                                 VA Loan Refinancing Made Simple
@@ -50,9 +52,9 @@ const RefinancingHero = () => {
                                 </TrackedCtaLink>
                             </div>
                         </div>
-                        <div className="flex items-center justify-center lg:justify-end">
+                        {showFeaturedLender && <div className="flex items-center justify-center lg:justify-end">
                             <RefinancingLenderCard />
-                        </div>
+                        </div>}
                     </div>
                 </div>
             </div>

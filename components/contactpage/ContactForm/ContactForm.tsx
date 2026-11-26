@@ -9,7 +9,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { contactPostForm } from "@/services/salesForcePostFormsService";
-import { useRouter } from "next/navigation";
+import { navigateCustomerSuccess } from "@/lib/leads/customer-navigation";
 import { sendGTMEvent } from "@next/third-parties/google";
 import { useConcierge } from "@/components/Concierge";
 import { featureFlags } from "@/lib/feature-flags";
@@ -40,8 +40,6 @@ const contactFormSchema = yup.object().shape({
 });
 
 const ContactForm = () => {
-  const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { open: openConcierge } = useConcierge();
 
@@ -83,7 +81,7 @@ const ContactForm = () => {
       });
       if (server_response?.success || server_response?.message) {
         reset();
-        window.location.href = `${BASE_URL}/thank-you`;
+        navigateCustomerSuccess('/thank-you');
         return;
       } else {
         trackFormSubmissionFailed('contact_form', 'server_submission', ['no_success_response']);

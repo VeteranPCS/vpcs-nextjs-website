@@ -4,7 +4,19 @@ import type { CtaTrackingInput } from '@/lib/analytics/cta';
 const SITE_ORIGIN = 'https://www.veteranpcs.com';
 
 /** Keep absolute first-party editorial links in the same navigation journey. */
-export function internalBlogHref(href: string): string | null {
+export function internalBlogHref(href: string, allowPartnerSelection = true): string | null {
+  const internalHref = firstPartyHref(href);
+  if (!internalHref || allowPartnerSelection) return internalHref;
+
+  if (!/^\/contact-(agent|lender)\/?(?:[?#]|$)/.test(internalHref)) return internalHref;
+  const url = new URL(internalHref, SITE_ORIGIN);
+  if (!url.searchParams.has('id') && !url.searchParams.has('fn')) return internalHref;
+  url.searchParams.delete('id');
+  url.searchParams.delete('fn');
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function firstPartyHref(href: string): string | null {
   if (href.startsWith('/') && !href.startsWith('//')) return href;
   try {
     const url = new URL(href, SITE_ORIGIN);

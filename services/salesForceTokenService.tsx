@@ -1,71 +1,115 @@
-import { salesForceTokenAPI, RequestType } from '@/services/api';
-import { SALESFORCE_LOGIN_BASE_URL } from '@/constants/api';
+import axios from 'axios';
+import {
+    assertSalesforceInstanceUrl,
+    assertSalesforceOrganization,
+    getSalesforceOAuthRequest,
+    getSalesforceOrganizationQueryUrl,
+    type SalesforceEnvironment,
+} from '@/lib/salesforce/environment.mjs';
+import { getSalesforceConfig } from '@/lib/salesforce/server-config';
+import { SalesforceTokenError } from '@/lib/salesforce/token-error';
 
-type CachedSalesforceToken = {
-    token: string;
-    instanceUrl: string | null;
-    expiresAt: number;
+export type SalesforceTokenSnapshot = {
+    readonly token: string;
+    readonly generation: number;
+    readonly instanceUrl: string;
+    readonly cacheKey: string;
 };
 
-// Salesforce's password-grant response carries no `expires_in`, so we can't know
-// the real session lifetime. Cache under a conservative TTL as a proactive-refresh
-// hint; a 401 (handled by salesForceAPIWithRefresh / forceRefresh) is the actual
-// correctness backstop if a token dies before the TTL elapses.
-const TOKEN_TTL_MS = 55 * 60 * 1000; // 55 min, safely under Salesforce's default 2h session
+type CachedSalesforceToken = SalesforceTokenSnapshot & { readonly expiresAt: number };
 
-let cached: CachedSalesforceToken | null = null;
-let inflight: Promise<CachedSalesforceToken> | null = null;
+// A 401 remains the correctness backstop when Salesforce revokes a session
+// before this conservative refresh interval.
+const TOKEN_TTL_MS = 55 * 60 * 1000;
+const AUTH_REQUEST_TIMEOUT_MS = 15_000;
 
-async function requestSalesforceToken(): Promise<CachedSalesforceToken> {
-    // Send the OAuth2 password-grant credentials in the request BODY, not the URL
-    // query string. Credentials on the query string leak into proxy/access logs,
-    // and reserved characters (&, +, %) in the password/security-token corrupt the
-    // query. URLSearchParams url-encodes each value and axios serialises it as an
-    // application/x-www-form-urlencoded body. (Follow-up: migrate to the JWT-bearer
-    // grant so a long-lived password never leaves the box at all.)
-    const body = new URLSearchParams({
-        grant_type: 'password',
-        client_id: process.env.SALESFORCE_CLIENT_ID ?? '',
-        client_secret: process.env.SALESFORCE_CLIENT_SECRET ?? '',
-        username: process.env.SALESFORCE_USERNAME ?? '',
-        password: `${process.env.SALESFORCE_PASSWORD ?? ''}${process.env.SALESFORCE_TOKEN ?? ''}`,
-    });
+let generation = 0;
+const cached = new Map<string, CachedSalesforceToken>();
+const inflight = new Map<string, Promise<CachedSalesforceToken>>();
 
-    const response = await salesForceTokenAPI({
-        endpoint: `${SALESFORCE_LOGIN_BASE_URL}/services/oauth2/token`,
+async function requestSalesforceToken(config: SalesforceEnvironment): Promise<CachedSalesforceToken> {
+    const { url, body } = getSalesforceOAuthRequest(config);
+    const response = await axios({
+        url,
+        method: 'post',
         data: body,
-        type: RequestType.POST,
+        timeout: AUTH_REQUEST_TIMEOUT_MS,
+        maxRedirects: 0,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
+    const token: unknown = response.data?.access_token;
+    if (response.status !== 200 || typeof token !== 'string' || !token) throw new SalesforceTokenError();
 
-    if (response?.status === 200 && response.data?.access_token) {
-        return {
-            token: response.data.access_token,
-            instanceUrl: response.data.instance_url ?? null,
-            expiresAt: Date.now() + TOKEN_TTL_MS,
-        };
-    }
+    const instanceUrl = assertSalesforceInstanceUrl(response.data?.instance_url, config);
+    const organization = await axios({
+        url: getSalesforceOrganizationQueryUrl(config),
+        method: 'get',
+        timeout: AUTH_REQUEST_TIMEOUT_MS,
+        maxRedirects: 0,
+        headers: { Authorization: `Bearer ${token}` },
+    });
+    if (organization.status !== 200) throw new SalesforceTokenError();
+    assertSalesforceOrganization(organization.data, config);
 
-    throw new Error('Failed to FETCH Salesforce Token');
+    return {
+        token,
+        generation: ++generation,
+        instanceUrl,
+        cacheKey: config.cacheKey,
+        expiresAt: Date.now() + TOKEN_TTL_MS,
+    };
 }
 
+/** Invalidate only the rejected generation so late 401s preserve a refreshed session. */
+export function invalidateSalesforceToken(rejectedGeneration: number): void {
+    for (const [key, session] of cached) {
+        if (session.generation === rejectedGeneration) {
+            cached.delete(key);
+            return;
+        }
+    }
+}
+
+export async function getSalesforceTokenSnapshot(options?: {
+    forceRefresh?: boolean;
+    rejectedGeneration?: number;
+}): Promise<SalesforceTokenSnapshot> {
+    const config = getSalesforceConfig();
+    const { cacheKey } = config;
+    if (config.profile === 'mock') {
+        return { token: 'offline-mock-salesforce-token', generation: 0, instanceUrl: config.restOrigin, cacheKey };
+    }
+
+    if (options?.rejectedGeneration !== undefined) {
+        invalidateSalesforceToken(options.rejectedGeneration);
+    } else if (options?.forceRefresh) {
+        cached.delete(cacheKey);
+    }
+
+    const current = cached.get(cacheKey);
+    if (current && current.expiresAt > Date.now()) return current;
+
+    const pending = inflight.get(cacheKey);
+    if (pending) return pending;
+
+    const request = requestSalesforceToken(config)
+        .then((result) => {
+            cached.set(cacheKey, result);
+            return result;
+        })
+        .catch(() => {
+            // Discard credential-bearing Axios config and untrusted response bodies.
+            throw new SalesforceTokenError();
+        })
+        .finally(() => {
+            inflight.delete(cacheKey);
+        });
+    inflight.set(cacheKey, request);
+    return request;
+}
+
+export const getVerifiedSalesforceSession = getSalesforceTokenSnapshot;
+
 export async function getSalesforceToken(options?: { forceRefresh?: boolean }): Promise<string> {
-    if (!options?.forceRefresh && cached && cached.expiresAt > Date.now()) {
-        return cached.token;
-    }
-
-    // Collapse concurrent fetches (cold-start fan-out across the state pages) into a
-    // single in-flight OAuth request; every waiter resolves to the same fresh token.
-    if (!inflight) {
-        inflight = requestSalesforceToken()
-            .then((result) => {
-                cached = result;
-                return result;
-            })
-            .finally(() => {
-                inflight = null;
-            });
-    }
-
-    const result = await inflight;
-    return result.token;
+    return (await getSalesforceTokenSnapshot(options)).token;
 }

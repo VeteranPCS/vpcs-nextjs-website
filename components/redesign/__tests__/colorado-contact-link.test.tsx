@@ -21,7 +21,7 @@ afterEach(() => { cleanup(); vi.restoreAllMocks(); sessionStorage.clear(); local
 
 describe('Colorado guide contact CTA', () => {
   it('stores contact details only after explicit success CTA click without placing them in the URL or analytics', () => {
-    render(<ColoradoGuideContactLink location="guide_download_success" contactDetails={details} />);
+    render(<ColoradoGuideContactLink allowAuthorContact location="guide_download_success" contactDetails={details} />);
     expect(sessionStorage.getItem(CONTACT_PREFILL_STORAGE_KEY)).toBeNull();
     const link = click();
     const analytics = JSON.stringify(vi.mocked(trackCtaClicked).mock.calls);
@@ -35,9 +35,21 @@ describe('Colorado guide contact CTA', () => {
 
   it('a direct promo contact click sends no visitor prefill and clears stale data', () => {
     storeContactPrefill(agentId, details);
-    render(<ColoradoGuideContactLink location="state_guide_section" />);
+    render(<ColoradoGuideContactLink allowAuthorContact location="state_guide_section" />);
     click();
     expect(consumeContactPrefill(agentId)).toBeNull();
     expect(trackCtaClicked).toHaveBeenCalledWith(expect.objectContaining({ cta_position: 'secondary' }));
+  });
+
+  it('links to a generic Colorado form without recording a partner in storage', () => {
+    render(<ColoradoGuideContactLink allowAuthorContact={false} location="guide_download_success" contactDetails={details} />);
+    const link = screen.getByRole('link', { name: 'Find a Colorado Agent' });
+    expect(link.getAttribute('href')).toBe('/contact-agent?form=agent&state=colorado');
+    link.addEventListener('click', event => event.preventDefault());
+    fireEvent.click(link);
+    expect(readSelectedAgent(agentId)).toBeNull();
+    expect(sessionStorage.getItem(CONTACT_PREFILL_STORAGE_KEY)).toBeNull();
+    expect(trackCtaClicked).toHaveBeenCalledWith(expect.objectContaining({ cta_id: 'colorado_relocation_guide_find_agent' }));
+    expect(JSON.stringify(vi.mocked(trackCtaClicked).mock.calls)).not.toContain(agentId);
   });
 });

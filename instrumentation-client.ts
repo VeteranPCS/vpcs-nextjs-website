@@ -9,7 +9,7 @@ import {
 
 const hostname = typeof window !== 'undefined' ? window.location.hostname : undefined;
 
-if (shouldInitializePostHog(hostname)) {
+if (process.env.NEXT_PUBLIC_VPCS_ANALYTICS_ENABLED === '1' && shouldInitializePostHog(hostname)) {
   try {
     const visitorId = initializeClientAnalytics();
     const replayPilot = createReplayPilot();

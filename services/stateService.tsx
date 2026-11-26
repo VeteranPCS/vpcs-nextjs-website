@@ -1,5 +1,7 @@
-import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
-import { RequestType, salesForceAPIWithRefresh, salesForceImageAPI } from '@/services/api';
+import { getSalesforceConfig } from '@/lib/salesforce/server-config'
+import { MOCK_AGENT_ID, MOCK_LENDER_ID, PARTNER_FIXTURE_PHOTO } from '@/lib/salesforce/partner-fixture-assets';
+import { isWebdevPartnerFixture } from '@/lib/salesforce/webdev-fixtures';
+import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
 import { escapeSoqlLiteral, isStateCode } from '@/services/soql';
 import { logDebug, logError } from '@/services/loggingService';
 import { getStateBySlug, STATE_LIST } from '@/lib/content/states';
@@ -15,7 +17,13 @@ const headshotFilenameCache = new Map<'agents' | 'lenders', Promise<ReadonlySet<
 async function resolveHeadshot(
   role: 'agents' | 'lenders',
   salesforceID: string,
+  target: Pick<ReturnType<typeof getSalesforceConfig>, 'profile' | 'orgId'>,
 ): Promise<string | null> {
+  const mockId = role === 'agents' ? MOCK_AGENT_ID : MOCK_LENDER_ID;
+  const isMockFixture = target.profile === 'mock' && salesforceID === mockId;
+  const isWebdevFixture = isWebdevPartnerFixture(target, role, salesforceID);
+  if (isMockFixture || isWebdevFixture) return PARTNER_FIXTURE_PHOTO[role];
+
   const [{ default: fs }, { default: path }] = await Promise.all([
     import('node:fs'),
     import('node:path'),
@@ -170,15 +178,17 @@ async function runStateLicensedQuery<T extends { AccountId_15__c: string }>(
           OR Other_States__pc INCLUDES ('${safeState}'))
   `.replace(/\s+/g, ' ').trim();
 
+  const target = getSalesforceConfig();
+  const { restOrigin, apiVersion } = target;
   const response = await salesForceAPIWithRefresh({
-    endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
+    endpoint: `${restOrigin}/services/data/${apiVersion}/query?q=${encodeURIComponent(query)}`,
     type: RequestType.GET,
   });
 
   if (response?.status === 200) {
     const resolved = await Promise.all(
       response.data.records.map(async (record: T) => {
-        const PhotoUrl = await resolveHeadshot(headshotRole, record.AccountId_15__c);
+        const PhotoUrl = await resolveHeadshot(headshotRole, record.AccountId_15__c, target);
         if (PhotoUrl) return { ...record, PhotoUrl };
         return requireHeadshot ? null : record;
       }),
@@ -294,8 +304,9 @@ const stateService = {
           AND Active_on_Website__pc = true
       `.replace(/\s+/g, ' ').trim();
 
+      const { restOrigin, apiVersion } = getSalesforceConfig();
       const response = await salesForceAPIWithRefresh({
-        endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(query)}`,
+        endpoint: `${restOrigin}/services/data/${apiVersion}/query?q=${encodeURIComponent(query)}`,
         type: RequestType.GET,
       });
 

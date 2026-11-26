@@ -1,24 +1,22 @@
-import { JWT } from 'google-auth-library';
-import { Review } from '@/components/homepage/ReviewTestimonial/ReviewTestimonial'
-import fallBackReviews from '@/public/json/reviews.json';
+import 'server-only';
 
-const LOCATION_ID = process.env.GOOGLE_REVIEWS_LOCATION_ID;
-const ACCOUNT_ID = process.env.GOOGLE_REVIEWS_ACCOUNT_ID;
-const SUBJECT = process.env.GOOGLE_SERVICE_ACCOUNT_SUBJECT;
-const CREDENTIALS = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS;
+import { JWT } from 'google-auth-library';
+import type { Review } from '@/components/homepage/ReviewTestimonial/ReviewTestimonial';
+import fallBackReviews from '@/public/json/reviews.json';
+import { isProductionSalesforceRuntime } from '@/lib/salesforce/environment.mjs';
 
 let cachedJWT: JWT | null = null;
 
-function getAuthClient(): JWT {
+function getAuthClient(credentials: string, subject: string): JWT {
     if (!cachedJWT) {
         const serviceAccountJson = JSON.parse(
-            Buffer.from(CREDENTIALS as string, 'base64').toString('utf-8')
+            Buffer.from(credentials, 'base64').toString('utf-8')
         );
         cachedJWT = new JWT({
             email: serviceAccountJson.client_email,
             key: serviceAccountJson.private_key,
             scopes: ['https://www.googleapis.com/auth/business.manage'],
-            subject: SUBJECT,
+            subject,
         });
     }
     return cachedJWT;
@@ -37,6 +35,14 @@ interface ReviewsData {
     averageRating: number;
     totalReviewCount: number;
 }
+
+const offlineReviews: ReviewsData = {
+    ...(fallBackReviews as ReviewsData),
+    reviews: (fallBackReviews as ReviewsData).reviews.map(review => ({
+        ...review,
+        reviewer: { ...review.reviewer, profilePhotoUrl: '' },
+    })),
+};
 
 /**
  * Fetches Google Business Profile reviews using JWT service account authentication.
@@ -63,20 +69,26 @@ interface ReviewsData {
  * @see GOOGLE_REVIEWS_SETUP.md for detailed setup instructions
  */
 export async function fetchGoogleReviews(): Promise<ReviewsData> {
+    if (!isProductionSalesforceRuntime()) return offlineReviews;
+
+    const locationId = process.env.GOOGLE_REVIEWS_LOCATION_ID;
+    const accountId = process.env.GOOGLE_REVIEWS_ACCOUNT_ID;
+    const subject = process.env.GOOGLE_SERVICE_ACCOUNT_SUBJECT;
+    const credentials = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS;
     // If credentials are not configured, return fallback immediately
-    if (!CREDENTIALS || !LOCATION_ID || !ACCOUNT_ID || !SUBJECT) {
+    if (!credentials || !locationId || !accountId || !subject) {
         console.warn('Google Business Profile API credentials not configured. Using fallback reviews.');
         return fallBackReviews as ReviewsData;
     }
 
     try {
-        const auth = getAuthClient();
+        const auth = getAuthClient(credentials, subject);
         await auth.authorize();
 
         // Use the Google My Business API v4 for reviews
         // Format: accounts/{accountId}/locations/{locationId}/reviews
         const response = await fetch(
-            `https://mybusiness.googleapis.com/v4/accounts/${ACCOUNT_ID}/locations/${LOCATION_ID}/reviews`,
+            `https://mybusiness.googleapis.com/v4/accounts/${accountId}/locations/${locationId}/reviews`,
             {
                 method: 'GET',
                 headers: {

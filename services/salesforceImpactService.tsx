@@ -1,16 +1,5 @@
-import { SALESFORCE_BASE_URL, SALESFORCE_API_VERSION } from '@/constants/api'
+import { getSalesforceConfig } from '@/lib/salesforce/server-config'
 import { RequestType, salesForceAPIWithRefresh } from '@/services/api';
-import { SF_RECORD_TYPE } from '@/lib/salesforce/ids';
-
-// RecordTypeId for Opportunity records we're querying
-const OPPORTUNITY_RECORD_TYPE_ID = SF_RECORD_TYPE.CUSTOMER_OPPORTUNITY;
-
-// The SOQL query to get aggregate sums
-const IMPACT_QUERY = `
-    SELECT SUM(Payout_Amount__c), SUM(Charity_Amount__c), SUM(Sale_Price__c) 
-    FROM Opportunity 
-    WHERE RecordTypeId = '${OPPORTUNITY_RECORD_TYPE_ID}'
-`.replace(/\s+/g, ' ').trim();
 
 // Response type from Salesforce aggregate query
 interface SalesforceAggregateResponse {
@@ -29,6 +18,7 @@ interface SalesforceAggregateResponse {
 // Cached result to avoid multiple API calls
 let cachedResult: SalesforceAggregateResponse | null = null;
 let cacheTimestamp: number = 0;
+let cachedProfile = '';
 const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes cache
 
 /**
@@ -37,21 +27,24 @@ const CACHE_DURATION_MS = 5 * 60 * 1000; // 5 minutes cache
  */
 async function fetchImpactData(): Promise<SalesforceAggregateResponse> {
     const now = Date.now();
+    const { restOrigin, apiVersion, cacheKey, recordTypes } = getSalesforceConfig();
 
     // Return cached result if still valid
-    if (cachedResult && (now - cacheTimestamp) < CACHE_DURATION_MS) {
+    if (cachedResult && cachedProfile === cacheKey && (now - cacheTimestamp) < CACHE_DURATION_MS) {
         return cachedResult;
     }
 
     try {
+        const query = `SELECT SUM(Payout_Amount__c), SUM(Charity_Amount__c), SUM(Sale_Price__c) FROM Opportunity WHERE RecordTypeId = '${recordTypes.CUSTOMER_OPPORTUNITY}'`;
         const response = await salesForceAPIWithRefresh({
-            endpoint: `${SALESFORCE_BASE_URL}/services/data/${SALESFORCE_API_VERSION}/query?q=${encodeURIComponent(IMPACT_QUERY)}`,
+            endpoint: `${restOrigin}/services/data/${apiVersion}/query?q=${encodeURIComponent(query)}`,
             type: RequestType.GET,
         });
 
         if (response?.status === 200) {
             cachedResult = response.data as SalesforceAggregateResponse;
             cacheTimestamp = now;
+            cachedProfile = cacheKey;
             return cachedResult;
         } else {
             throw new Error(`Failed to fetch impact data: ${response?.status}`);

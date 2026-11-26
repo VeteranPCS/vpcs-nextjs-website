@@ -43,6 +43,21 @@ describe('stateRoutingService admin routing', () => {
     });
   });
 
+  it('keeps the routed recipient and raw fallback input out of OpenPhone routing logs', () => {
+    const routing = getAdminRoutingForState('CO');
+    expect(routing).not.toBeNull();
+    expect(getAdminContactForState('CO')).toEqual({
+      name: routing?.name,
+      phoneNumber: routing?.phoneNumber,
+    });
+    getAdminContactForState('+12025550101');
+
+    expect(console.log).toHaveBeenCalledExactlyOnceWith('OpenPhone state routing resolved');
+    expect(console.warn).toHaveBeenCalledExactlyOnceWith(
+      'No admin mapping found for OpenPhone routing, using fallback number',
+    );
+  });
+
   it('includes Puerto Rico in Stephanie states', () => {
     expect(getStatesByAdmin('STEPHANIE')).toContain('puerto-rico');
   });

@@ -9,7 +9,8 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { KeepInTouchForm } from "@/services/salesForcePostFormsService";
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+import { navigateCustomerSuccess } from '@/lib/leads/customer-navigation';
 import { sendGTMEvent } from "@next/third-parties/google";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 import {
@@ -20,7 +21,6 @@ import {
   trackFormValidationFailed,
 } from '@/lib/analytics/client';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 interface ContactFormData {
   firstName?: string;
   lastName?: string;
@@ -36,7 +36,6 @@ const contactFormSchema = yup.object().shape({
 });
 
 const KeepInTouch = () => {
-  const router = useRouter()
   const pathname = usePathname()
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -73,7 +72,7 @@ const KeepInTouch = () => {
       });
       if (server_response?.success) {
         reset();
-        window.location.href = `${BASE_URL}/thank-you`;
+        navigateCustomerSuccess('/thank-you');
         return;
       } else {
         trackFormSubmissionFailed('keep_in_touch', 'server_submission', ['no_success_response']);

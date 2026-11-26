@@ -1,13 +1,23 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import sendToSlack from '../sendToSlack';
+import { sendOpenPhoneMessage } from '../sendOpenPhoneMessage';
 import fetchWithRetry from '@/utils/fetchWithRetry';
 import { buildPartnerSmsContent, buildSlackLeadPayload, displayContactPhone } from '@/lib/leads/notification-payloads';
 
 vi.mock('@/utils/fetchWithRetry', () => ({ default: vi.fn(async () => new Response('ok')) }));
+vi.mock('server-only', () => ({}));
 const lead = { headerText: '🔔 New Agent Lead', name: 'Synthetic QA', email: 'qa@example.com', message: '' };
 
 describe('real Slack wire contract with isolated transport', () => {
-  beforeEach(() => { vi.clearAllMocks(); vi.stubEnv('SLACK_WEBHOOK_URL', 'https://example.test/private-webhook'); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubEnv('SLACK_WEBHOOK_URL', 'https://example.test/private-webhook');
+    vi.stubEnv('VERCEL', '1');
+    vi.stubEnv('VERCEL_ENV', 'production');
+    vi.stubEnv('VERCEL_GIT_COMMIT_REF', 'main');
+    vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'production');
+    vi.stubEnv('VPCS_DELIVERY_MODE', 'live');
+  });
   afterEach(() => vi.unstubAllEnvs());
   it.each([undefined, '', '   '])('supports absent phone %s without an empty telephone link', async (phoneNumber) => {
     await expect(sendToSlack({ ...lead, phoneNumber })).resolves.toEqual({ ok: true });
@@ -45,5 +55,43 @@ describe('real Slack wire contract with isolated transport', () => {
     vi.stubEnv('SLACK_WEBHOOK_URL', 'https://example.test/private-webhook');
     vi.mocked(fetchWithRetry).mockRejectedValueOnce(new Error('secret URL and customer data'));
     await expect(sendToSlack(lead)).resolves.toEqual({ ok: false, failureStage: 'delivery' });
+  });
+});
+
+describe('non-production notification transports', () => {
+  const sms = { content: 'Contact me at qa@example.com', from: '+12025550100', to: ['+12025550101'] };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('VERCEL', '1');
+    vi.stubEnv('VERCEL_ENV', 'preview');
+    vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'webdev');
+    vi.stubEnv('SLACK_WEBHOOK_URL', 'https://example.test/private-webhook');
+    vi.stubEnv('OPEN_PHONE_API_KEY', 'test-only-token');
+  });
+  afterEach(() => { vi.restoreAllMocks(); vi.unstubAllEnvs(); });
+
+  it.each(['capture', 'allowlisted'])('captures only channel and recipient count in %s mode', async (mode) => {
+    vi.stubEnv('VPCS_DELIVERY_MODE', mode);
+    const captureLog = vi.spyOn(console, 'info').mockImplementation(() => {});
+
+    await expect(sendToSlack(lead)).resolves.toEqual({ ok: true, captured: true });
+    await expect(sendOpenPhoneMessage(sms)).resolves.toEqual({ captured: true });
+
+    expect(fetchWithRetry).not.toHaveBeenCalled();
+    expect(captureLog.mock.calls).toEqual([
+      ['Lead notification captured', { channel: 'slack', recipientCount: 1 }],
+      ['Lead notification captured', { channel: 'openphone', recipientCount: 1 }],
+    ]);
+  });
+
+  it('fails closed for unrestricted live delivery', async () => {
+    vi.stubEnv('VPCS_DELIVERY_MODE', 'live');
+
+    await expect(sendToSlack(lead)).resolves.toEqual({ ok: false, failureStage: 'configuration' });
+    await expect(sendOpenPhoneMessage(sms)).rejects.toThrow('OpenPhone delivery is disabled');
+
+    expect(fetchWithRetry).not.toHaveBeenCalled();
   });
 });

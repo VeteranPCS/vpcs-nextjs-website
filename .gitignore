@@ -11,6 +11,8 @@
 
 # next.js
 /.next/
+/.next-sandbox/
+/.next-mock/
 /out/
 
 # production
@@ -47,6 +49,16 @@ artifacts/
 
 # migration data (contains customer PII — never commit)
 data/
+
+# Salesforce CLI retrievals and local rehearsal evidence
+.sf/
+.sfdx/
+/salesforce/retrieved-private/
+/salesforce/evidence-private/
+/salesforce/evidence/
+/salesforce/fixture-exports/
+__pycache__/
+*.py[cod]
 
 # legacy Salesforce email template exports (reference only)
 docs/legacy-email-templates/
