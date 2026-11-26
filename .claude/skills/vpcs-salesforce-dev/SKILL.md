@@ -46,6 +46,8 @@ Use the [routing release sequence](../../../docs/customer-regional-routing.md#re
 
 For open-work owner migration, verify that a direct Lead transfer can mark Salesforce’s `IsUnreadByOwner` from false to true. The guard permits only that platform-generated transition on the directly moved Lead. Preserve the remaining field checks, and account for the unread flag when verifying an owner rollback. After an interrupted receipt read, resume with the same manifest and idempotency keys. Reconcile excluded records separately and distinguish derived Task classifications from stored field changes. Accept a native converted referral Task only when the verified Customer Lead conversion lineage matches its Contact and Opportunity and satisfies the timestamp checks. Keep ambiguous conversions out of the migration. [Salesforce Lead read status](https://help.salesforce.com/s/articleView?id=000385207&language=en_US&type=1)
 
+Use the build-time partner portrait inventory in state directories and coverage routes. Public image files are served outside Vercel’s function filesystem. Verify exact-case paths for real Agent and Lender records and exercise a dynamic cache miss, since synthetic fixture portraits and cached state pages can pass while the cold server fails.
+
 ## Select tests by the change
 
 Use the runbook's [release-gate classification](../../../docs/salesforce-webdev-environment.md#required-evidence-and-release-gates). Environment changes require isolation, auth, mapping, form, rendering and containment regression. They do not automatically require every legacy multi-day timer or live SMS certification.
