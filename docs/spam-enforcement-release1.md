@@ -1,9 +1,10 @@
 # Release 1 lead admission runbook
 
 Status on November 26, 2026. The admission package and submission-ID uniqueness are deployed in
-Salesforce WebDev. The ten live WebDev controls, native claim concurrency and 22 direct
-backstop cases reconciled. Full native notification verification, protected Preview and
-Production gates remain open. The [proposal](spam-enforcement-plan.md) covers the original
+Salesforce WebDev. The ten live form controls, 11-case routing rehearsal, native claim and
+notification arbitration, and 22 direct backstop cases reconciled. Both read-only Previews
+were checked. Protected Preview writes, actual email delivery for this run, and Production
+gates remain open. The [proposal](spam-enforcement-plan.md) covers the original
 rationale and the separate Release 2 CAPTCHA work.
 
 ## What the release changes
@@ -58,6 +59,10 @@ HMAC used for binding an attempt to its actual business payload. Rate counters c
 identity or IP keys. Missing backend or required policy yields retry guidance and zero dispatch
 for that invocation.
 
+The earlier proposal deferred a Redis purchase. The subsequent approval covers the dedicated
+Preview-only Upstash connection under a $20 cap. Production and the WebDev notification
+budget remain separate. The local isolated Redis workflow remains available.
+
 Treat binding-key rotation as a separate coordinated change. A new key cannot reproduce a previous
 fingerprint. Fence and drain intake, reconcile earlier attempts and notifications with the old key,
 and verify any new key across all eligible deployment snapshots before reopening. Keep the old key
@@ -77,6 +82,14 @@ after verifying the website OAuth principal, org identity, capture and fixture l
 exercise the form and admission path with side effects suppressed. Opt-in browser PostHog SDK checks
 need a separate fixture because the current mock deployment profile disables initialization.
 Client conversion and privacy behavior is covered by the instrumented component tests.
+
+For the bounded `--routing --execute` rehearsal, pass two approved clean sinks with repeated
+`--email` flags and a distinct reserved honeypot sink with `--negative-email`. The ten clean
+controls use five submissions per clean address. The reserved address is used only for the
+honeypot case. Verify all three exact addresses against the approved WebDev capture allowlist
+before executing. Keep the negative case on its own identity so it can exercise honeypot
+admission within the limiter budget. The direct Web-to-Lead backstop uses its own harness and
+fixture controls.
 
 ## Website function budget
 
@@ -147,14 +160,23 @@ There is no automatic claim expiry or replay.
 |---|---|
 | Local Vitest | 139 files passed and one isolated Redis file was skipped by default. 1,659 tests passed and four were skipped. |
 | Isolated real Redis | Four opt-in tests passed. This confirms local Redis behavior. Hosted backend verification is separate. |
-| Mock build and function budget | The standard credential-free Turbopack build passed after moving the cached artifact from the earlier port failure. The mock network block remained in effect. Local manifests showed a 60-second budget for 23 lead action hosts across 33 site pages and matched the baseline outside that scope. Hosted confirmation remains pending. |
+| Mock build, startup and function budget | The standard credential-free Turbopack build passed after moving the cached artifact from the earlier port failure. The mock network block remained in effect. Six mock-start HTTP route checks returned 200. Local manifests showed a 60-second budget for 23 lead action hosts across 33 site pages and matched the baseline outside that scope. Hosted budget confirmation remains pending. |
+| Pull request checks | PR #244 CI passed for revision `0477329d0f8e01f5d14c5569e54956229a651649`. |
 | Browser | 42 isolated mock cases passed at 360px and 1440px. After the atomic decline update, 22 affected cases passed again, including fresh IDs after correction on both listing forms and an unconfirmed guide lock after reload. |
 | Immutable v3 review | SHA-256 `12e481452f4644de8ec986ecc6006b1a68a530a7e97e6ae1ea533859cd37561b`. The 105-file patch applied cleanly to the reviewed base. The source review found that v3 addressed the prior findings and recommended holding for hosted, native notification and Production evidence. |
-| WebDev admission package | Initial deployment `0Afjg0000004vNtCAI` passed eight Apex tests, with admission trigger and class coverage at 100% and intake API coverage at 92%. Atomic decline deployment `0Afjg0000004vXZCAY` passed all nine Apex tests. |
+| WebDev admission package | Initial deployment `0Afjg0000004vNtCAI` passed eight Apex tests, with admission trigger and class coverage at 100% and intake API coverage at 92%. Atomic decline deployment `0Afjg0000004vXZCAY` passed nine of nine Apex tests. The revised intake API covered 114 of 124 lines. |
 | WebDev Lead uniqueness | Field-only deployment `0Afjg0000004vPVCAY` enabled case-insensitive submission-ID uniqueness. The separate index regression passed in `0Afjg0000004vR7CAI`. |
 | WebDev affected Apex | All 63 affected Apex tests passed in run `707jg000000aItT`. |
 | Live WebDev website | All ten real synthetic form controls passed in 22.48 seconds. Each matched a persisted Lead with its submission hash and capture evidence. All ten synthetic Leads were closed afterward. |
 | Direct WebDev backstop | All 22 cases completed. No Lead persisted and no SMS or reminder email was observed over the bounded observation window. With no matching Lead, absence of linked work is an inference. The check did not directly inspect queue records through the restricted principal. |
-| Native claim concurrency | The second WebDev run passed against the updated intake API. Full native notification verification remains pending. |
-| Protected Preview | The approved dedicated Redis connection was provisioned for Preview only under the $20 cap. Its generated, prefixed REST write credentials are sensitive Preview variables. The deployment's HMAC binding, hosted runtime access, submission behavior and Redis isolation still need verification on the exact candidate. |
+| Native claim and notification arbitration | The second WebDev concurrency run passed against the updated intake API. A separate native check confirmed the exact persisted Lead and one notification claim winner. |
+| Native routing and capture | The 11-case WebDev rehearsal passed with ten persisted controls and one honeypot rejection. Four SMS captures and six expected Tasks reconciled. Ten welcome email paths were scheduled for 22:27 UTC. The two older welcome entries were unchanged. This run verified scheduling and capture. Actual email delivery was not verified. |
+| Read-only Preview | Ordinary `dpl_Ddh6L7FqrwfcUtbp5y8eZtreUrFc` and workflow `dpl_6Z8v39af1U6hFrVdV8Z7giKe387c` at `0477329` each returned three anonymous Vercel SSO redirects and produced 22 authenticated render receipts across 360px and 1440px. Both rendered all ten form families and the alternate VA question form. Workflow used existing CLI automation access after Development OIDC received 403. The Contact form fit both viewports. The existing reviews carousel caused a separate intermittent document overflow. No Server Action was sent. |
+| Protected Preview writes | Pending. The approved dedicated Redis connection was provisioned for Preview only under the $20 cap. Its generated, prefixed REST write credentials are sensitive Preview variables. The exact write-enabled candidate still needs HMAC binding, Redis isolation, ordinary Preview application-level denial, and bounded protected submissions verified. |
 | Production | Pending. No Production configuration, promotion, live form verification or policy activation is recorded for this release. |
+
+### Follow-up verification
+
+- Native welcome log `07Ljg0000005TxSEAU` started at 22:27:45 UTC. All ten exact Lead and submission references matched separate completed interviews, each with one `SE_Welcome_Video` action and no logged Flow errors. Email remained System email only; this is execution evidence, not mailbox receipt. The ten synthetic routing Leads were subsequently closed with expected-state guards and their six routing tasks completed. Captured SMS receipts were preserved.
+- Production check-only validation `0Afjf0000003mL3CAI` passed 66 tests with zero component errors, test failures or coverage warnings. It applied no metadata or record changes. Actual deployment, policy seed/reconciliation, uniqueness activation, mappings and website cutover remain pending.
+- The first protected Preview browser control stopped on an unconfirmed UI result. The existing alternate-host firewall rule still denies all Preview POSTs. The exact candidate host recorded one firewall denial, no application POST log, and no matching Salesforce Lead or durable attempt. Preserve the original reference and do not resend it. A draft exception for only the immutable protected test host is awaiting authorization; it does not open Production or other Preview hosts. Hosted admission remains unverified until the bounded controls pass after that fence is resolved.

@@ -18,12 +18,12 @@ const rehearsalKeys = new Set([
     'SALESFORCE_API_VERSION', 'SALESFORCE_CLIENT_ID', 'SALESFORCE_CLIENT_SECRET',
     'VPCS_WEBDEV_LEAD_REDIS_URL', 'VPCS_WEBDEV_LEAD_REDIS_TOKEN', 'VPCS_LEAD_BINDING_KEY',
 ]);
-const usage = 'node scripts/with-isolated-lead-redis.mjs rehearsal [--routing | --routing-delivery] --execute --email <approved test sink> [--email <additional approved test sink>...]';
+const usage = 'node scripts/with-isolated-lead-redis.mjs rehearsal [--routing | --routing-delivery] --execute --email <approved test sink> [--email <second approved test sink>] [--negative-email <routing honeypot sink>]';
 
 async function main() {
     const { values } = parseArgs({ options: {
         execute: { type: 'boolean' }, routing: { type: 'boolean' }, 'routing-delivery': { type: 'boolean' },
-        email: { type: 'string', multiple: true },
+        email: { type: 'string', multiple: true }, 'negative-email': { type: 'string' },
     } });
     const delivery = values['routing-delivery'];
     if (delivery && values.routing) throw new Error(`Usage: ${usage}`);
@@ -38,10 +38,17 @@ async function main() {
         }
         console.log('Execution requires a verified sandbox, write and isolation flags, capture delivery, an expiring test run, and an approved email sink.');
         if (delivery) console.log('Queues exactly four selected cases with dispatch paused and Tech contact details; sends no SMS.');
+        if (values.routing) console.log('Use two approved healthy email sinks for five cases each, and reserve --negative-email for the honeypot rejection.');
         console.log(usage);
         return;
     }
-    const testSinks = (values.email ?? []).map(email => email.trim().toLowerCase());
+    const healthySinks = (values.email ?? []).map(email => email.trim().toLowerCase());
+    const negativeSink = values['negative-email']?.trim().toLowerCase();
+    if (values.routing && (healthySinks.length !== 2 || !negativeSink)) {
+        throw new Error('The routing rehearsal needs 3 distinct approved email identities: two --email values and one --negative-email reserved for the honeypot.');
+    }
+    if (!values.routing && negativeSink !== undefined) throw new Error('--negative-email applies only to the full routing rehearsal.');
+    const testSinks = negativeSink === undefined ? healthySinks : [...healthySinks, negativeSink];
     if (testSinks.length === 0 || testSinks.some(email => !/^[a-z0-9.!#$%&*+/=?^_`{|}~-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email) || email.length > 80)) {
         throw new Error(`Usage: ${usage}`);
     }

@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { routingRehearsalCases, routingRehearsalEmail } from '../fixtures/salesforce-routing-rehearsal.mjs';
 
 const project = fileURLToPath(new URL('../..', import.meta.url));
 function run(script: string, ...args: string[]) {
@@ -33,5 +34,16 @@ describe('sandbox spam rehearsal command guards', () => {
     expect(noThirdBucket.status).toBe(1);
     expect(noThirdBucket.stderr).toContain('3 distinct approved email identities');
     expect(noThirdBucket.stdout).toBe('');
+  });
+
+  it('assigns five routing cases to each healthy identity and isolates the honeypot identity', () => {
+    const sinks = ['first@example.test', 'second@example.test', 'blocked@example.test'];
+    const positives = routingRehearsalCases.filter(scenario => scenario.channel !== 'spam');
+    const negatives = routingRehearsalCases.filter(scenario => scenario.channel === 'spam');
+    const positiveEmails = positives.map(scenario => routingRehearsalEmail(scenario.name, sinks));
+    expect(positiveEmails.filter(email => email === sinks[0])).toHaveLength(5);
+    expect(positiveEmails.filter(email => email === sinks[1])).toHaveLength(5);
+    expect(positiveEmails).not.toContain(sinks[2]);
+    expect(negatives.map(scenario => routingRehearsalEmail(scenario.name, sinks))).toEqual([sinks[2]]);
   });
 });

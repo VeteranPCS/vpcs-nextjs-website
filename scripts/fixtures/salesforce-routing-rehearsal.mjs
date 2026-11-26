@@ -23,5 +23,13 @@ export const routingRehearsalCases = [
 
 export const routingDeliveryCases = routingRehearsalCases.filter(scenario => scenario.channel === 'selected');
 
+export function routingRehearsalEmail(name, sinks) {
+    const testCase = routingRehearsalCases.find(scenario => scenario.name === name);
+    if (!testCase || sinks.length !== 3) return undefined;
+    if (testCase.channel === 'spam') return sinks[2];
+    const healthy = routingRehearsalCases.filter(scenario => scenario.channel !== 'spam');
+    return sinks[healthy.indexOf(testCase) % 2];
+}
+
 export const routingLeadFields = 'WebFormAgentId__c, WebFormLenderId__c, Agent__c, Lender__c, WebFormURL__c, ' +
     'Additional_Comments__c, VPCS_Visitor_ID__c, VPCS_Submission_ID__c';

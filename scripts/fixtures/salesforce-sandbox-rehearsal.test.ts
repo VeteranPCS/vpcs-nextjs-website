@@ -14,7 +14,7 @@ import { createSalesforceCli } from '../../salesforce/routing-migration/salesfor
 import {
     deliveryEmail, deliveryOperatorAlias, readPendingDeliveryFixture, requirePausedDeliveryFixtures,
 } from './salesforce-routing-delivery-readback.mjs';
-import { routingDeliveryCases, routingLeadFields, routingRehearsalCases } from './salesforce-routing-rehearsal.mjs';
+import { routingDeliveryCases, routingLeadFields, routingRehearsalCases, routingRehearsalEmail } from './salesforce-routing-rehearsal.mjs';
 import { connectSandbox, loadSandboxSettings } from '../lib/salesforce-sandbox.mjs';
 
 const marker = '[VPCS WEBDEV TEST]';
@@ -61,7 +61,7 @@ const fields = routingMode ? leadFields + ', ' + routingLeadFields : leadFields 
 const lastNameFor = (form: { name: string }) => `${runKey}-${form.name}`;
 const emailFor = (name: string) => {
     const index = (routingMode ? routingCases : forms).findIndex(form => form.name === name);
-    const email = testSinks[index % testSinks.length];
+    const email = routingMode && !deliveryMode ? routingRehearsalEmail(name, testSinks) : testSinks[index % testSinks.length];
     if (!email) throw new Error('No approved email sink for the rehearsal case.');
     return email;
 };
