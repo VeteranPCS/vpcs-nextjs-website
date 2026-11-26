@@ -2,6 +2,8 @@
 
 This overlay admits one live attempt per reviewed WebDev queue row, up to four rows in a window of at most 30 minutes. It leaves other SMS in capture mode. It never changes sender enumeration, email, the named credential, or Production routing metadata.
 
+The approved browser fixture supplies `VPCS WebDev synthetic location` in both Current Base and Destination Base. The WebDev overlay checks both persisted Lead values for that exact, case-sensitive pair. Service fixtures may leave both values null. Mixed pairs or any other value fail the delivery gate. These checks apply only to the sandbox delivery overlay. Public form validation stays unchanged.
+
 1. Verify the exact WebDev Organization and outbound containment, including System email only and the Tech-only recipient policy. Pause both regional dispatch flags. Run the approved website routing fixture launcher in website capture mode and verify all four marked synthetic Leads and their unclaimed queue rows. Do not reuse queue rows from earlier tests.
 2. Save a private JSON configuration with `orgId`, `isSandbox`, `runId`, UTC `issuedAt` and `expiresAt`, and `slots`. Each slot includes `scenario`, `submissionId`, `lastName`, `leadId`, `partnerId`, `queueId`, and the exact `eventKey` from the launcher. Use the same run ID as the WebDev capture label and the marked Lead descriptions. Review the generator output privately.
 3. Generate the activation and restoration packages from the exact deployed WebDev capture `OpenPhoneClient.cls` and updated regional `VpcsRegionalSmsWorker.cls` and their accompanying `-meta.xml` files.

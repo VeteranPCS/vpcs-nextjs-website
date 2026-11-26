@@ -3,6 +3,7 @@ public without sharing class WebdevControlledSms {
     private static final Id WEBDEV_ORG = '00Djg000000EK8YEAW';
     private static final String TECH_PHONE = '+17194153014';
     private static final String MARKER = '[VPCS WEBDEV TEST]';
+    private static final String SYNTHETIC_LOCATION = 'VPCS WebDev synthetic location';
     private static final String SYNTHETIC_NOTES = 'Synthetic routing delivery verification';
     private static final String BETH_SENDER = '+17192495359';
     private static final String STEPHANIE_SENDER = '+17192494757';
@@ -200,7 +201,7 @@ public without sharing class WebdevControlledSms {
             !MARKER.equals(customer.FirstName) || !item.lastName.equals(customer.LastName) ||
             !'tech@veteranpcs.com'.equals(customer.Email) || String.isNotBlank(customer.Phone) ||
             String.isNotBlank(customer.MobilePhone) || !item.submissionId.equals(customer.VPCS_Submission_ID__c) ||
-            String.isNotBlank(customer.Current_Base__c) || String.isNotBlank(customer.Destination_Base__c) ||
+            !syntheticLocations(customer.Current_Base__c, customer.Destination_Base__c) ||
             !SYNTHETIC_NOTES.equals(customer.Additional_Comments__c) ||
             customer.Description == null || !(firstLine.equals(customer.Description) ||
                 customer.Description.startsWith(firstLine + '\n') || customer.Description.startsWith(firstLine + '\r\n')) ||
@@ -212,6 +213,11 @@ public without sharing class WebdevControlledSms {
         VpcsCustomerRouting.Route route = VpcsCustomerRouting.forLead(customer);
         return item.expectedAdmin().equals(route.admin) && route.binding != null &&
             route.binding.ownerId == customer.OwnerId && item.sender().equals(route.sender());
+    }
+
+    private static Boolean syntheticLocations(String currentBase, String destinationBase) {
+        return (currentBase == null && destinationBase == null) ||
+            (SYNTHETIC_LOCATION.equals(currentBase) && SYNTHETIC_LOCATION.equals(destinationBase));
     }
 
     private static Id idFrom(String candidate) {

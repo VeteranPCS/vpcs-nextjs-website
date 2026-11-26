@@ -5,6 +5,7 @@ private class WebdevControlledSmsNativeTest {
     private static final String BETH = '+17192495359';
     private static final String STEPHANIE = '+17192494757';
     private static final String MARKER = '[VPCS WEBDEV TEST]';
+    private static final String LOCATION = 'VPCS WebDev synthetic location';
     private static final String NOTES = 'Synthetic routing delivery verification';
     private static final String PORTAL = 'https://example.test/agent-portal';
     private static final String AGENT_NAME = 'Synthetic Native Agent';
@@ -61,6 +62,7 @@ private class WebdevControlledSmsNativeTest {
             WebFormURL__c = 'https://example.test/contact-' + (isAgent ? 'agent' : 'lender') + '?sid=' + sid,
             Description = MARKER + ' ' + Label.VPCS_Webdev_Capture_Run_Id + ' ' + sid,
             Additional_Comments__c = NOTES, VPCS_Submission_ID__c = sid,
+            Current_Base__c = LOCATION, Destination_Base__c = LOCATION,
             Agent__c = isAgent ? partnerId : null, Lender__c = isAgent ? null : partnerId);
         insert as system customer;
         // Qualify the synthetic row for settlement without running the live website insert branch.

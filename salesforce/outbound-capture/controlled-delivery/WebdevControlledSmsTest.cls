@@ -5,6 +5,7 @@ private class WebdevControlledSmsTest {
     private static final String TECH = '+17194153014';
     private static final String BETH = '+17192495359';
     private static final String STEPHANIE = '+17192494757';
+    private static final String LOCATION = 'VPCS WebDev synthetic location';
     private static final String MARKER = '[VPCS WEBDEV TEST]';
     private static final String SUBMISSION = 'controlled-delivery-fixture';
     private static final String PORTAL = 'https://example.test/agent-portal';
@@ -128,4 +129,27 @@ private class WebdevControlledSmsTest {
         System.assertEquals(false, WebdevControlledSms.sendOrCapture(JOB, row.Id, provider, requestFor(row)).success);
         System.assertEquals(0, provider.accepted);
     }
+    @IsTest
+    static void requiresBothExactSyntheticLocationsOrBothNull() {
+        SMS_Message_Queue__c row = seed();
+        FakeProvider provider = new FakeProvider();
+        WebdevControlledSms.reserve(new Set<Id>{row.Id}, JOB);
+        System.assertEquals(1, [SELECT COUNT() FROM Webdev_Live_SMS_Reservation__c WITH SYSTEM_MODE]);
+
+        update as system new Lead(Id = row.Related_Lead__c, Current_Base__c = LOCATION);
+        System.assertEquals(false, WebdevControlledSms.sendOrCapture(JOB, row.Id, provider, requestFor(row)).success);
+
+        update as system new Lead(Id = row.Related_Lead__c, Destination_Base__c = 'Denver');
+        System.assertEquals(false, WebdevControlledSms.sendOrCapture(JOB, row.Id, provider, requestFor(row)).success);
+
+        update as system new Lead(Id = row.Related_Lead__c,
+            Current_Base__c = 'vpcs WebDev synthetic location', Destination_Base__c = LOCATION);
+        System.assertEquals(false, WebdevControlledSms.sendOrCapture(JOB, row.Id, provider, requestFor(row)).success);
+        System.assertEquals(0, provider.accepted);
+
+        update as system new Lead(Id = row.Related_Lead__c, Current_Base__c = LOCATION);
+        System.assert(WebdevControlledSms.sendOrCapture(JOB, row.Id, provider, requestFor(row)).success);
+        System.assertEquals(1, provider.accepted);
+    }
+
 }
