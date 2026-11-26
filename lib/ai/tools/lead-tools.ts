@@ -17,6 +17,7 @@ import {
 import { INTERNAL_CALL_TOKEN } from '@/lib/internal-call-token';
 import { SUCCESS_MESSAGE } from '@/lib/ai/tools/messages';
 import { captureServerAnalyticsEvent } from '@/lib/analytics/server';
+import type { LeadSubmitResult } from '@/lib/leads/submission-outcome';
 import { normalizeStateCode, normalizeStateSlug } from '@/lib/states';
 
 interface LeadSuccess {
@@ -27,16 +28,27 @@ interface LeadSuccess {
 const SUBMIT_REQUIRED =
   'Required: first name, last name, email, phone. Confirm with the user in plain words first and wait for a yes, then emit the call; the SDK-level approval card is the final gate shown before anything is sent.';
 
-function errorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  return 'Submission failed.';
+class LeadToolFailure extends Error {
+  readonly outcome: LeadSubmitResult['outcome'];
+
+  constructor(result: Exclude<LeadSubmitResult, { outcome: 'accepted' }>) {
+    const messages = {
+      validation_error: 'Check the contact details before submitting a new request.',
+      rejected: 'VeteranPCS could not accept this request. Email info@veteranpcs.com for help.',
+      review_required: 'VeteranPCS needs to verify this request. Email info@veteranpcs.com for help.',
+      retry_later: 'VeteranPCS could not verify this request right now. Please wait before trying again.',
+      not_sent: 'VeteranPCS could not send this request. Please try again later.',
+      unconfirmed: 'This request may already have arrived. Do not send it again. Email info@veteranpcs.com to check its status.',
+    };
+    super(messages[result.outcome]);
+    this.outcome = result.outcome;
+  }
 }
 
-function submissionIdFromResponse(response: unknown): string | undefined {
-  if (!response || typeof response !== 'object') return undefined;
-  const submissionId = (response as { submissionId?: unknown }).submissionId;
-  return typeof submissionId === 'string' ? submissionId : undefined;
-}
+const errorMessage = (error: unknown) => error instanceof LeadToolFailure
+  ? error.message
+  : 'We could not confirm this request. Do not send it again. Email info@veteranpcs.com to check its status.';
+const errorCode = (error: unknown) => error instanceof LeadToolFailure ? error.outcome : 'unconfirmed';
 
 // Overwrites SF additionalComments on each call — fine for single-submit flows;
 // a retry within one conversation will replace prior context.
@@ -122,34 +134,31 @@ const submitAgentRequestTool = tool({
         ...analyticsFormContext,
       };
       logInfo('Concierge tool: submitAgentRequest', {
-        destinationState: input.destinationState,
+        stateCode,
         hasMessage: Boolean(input.message),
       });
       const serverResponse = await contactAgentPostForm(formData, '', { internalCallToken: INTERNAL_CALL_TOKEN });
+      if (serverResponse.outcome !== 'accepted') throw new LeadToolFailure(serverResponse);
       await captureToolTelemetry('concierge_tool_completed', toolName, {
         form_id: 'contact_agent',
         lead_source: 'Contact Agent',
         state_code: stateCode,
         state_slug: stateSlug,
-        submission_id: submissionIdFromResponse(serverResponse),
+        submission_id: serverResponse.submissionId,
       });
       return {
         ok: true,
         data: { kind: 'agent', message: SUCCESS_MESSAGE },
       };
     } catch (error) {
-      logError(
-        'Concierge tool: submitAgentRequest failed',
-        { destinationState: input.destinationState },
-        error,
-      );
+      logError('Concierge tool: submitAgentRequest failed', { outcome: errorCode(error) });
       await captureToolTelemetry('concierge_tool_failed', toolName, {
         form_id: 'contact_agent',
         lead_source: 'Contact Agent',
         state_code: stateCode,
         state_slug: stateSlug,
         failure_stage: 'tool_execute',
-        error_codes: ['submission_failed'],
+        error_codes: [errorCode(error)],
       });
       return { ok: false, error: errorMessage(error) };
     }
@@ -190,34 +199,31 @@ const submitLenderRequestTool = tool({
         ...analyticsFormContext,
       };
       logInfo('Concierge tool: submitLenderRequest', {
-        destinationState: input.destinationState,
+        stateCode,
         hasMessage: Boolean(input.message),
       });
       const serverResponse = await contactLenderPostForm(formData, '', { internalCallToken: INTERNAL_CALL_TOKEN });
+      if (serverResponse.outcome !== 'accepted') throw new LeadToolFailure(serverResponse);
       await captureToolTelemetry('concierge_tool_completed', toolName, {
         form_id: 'contact_lender',
         lead_source: 'Contact Lender',
         state_code: stateCode,
         state_slug: stateSlug,
-        submission_id: submissionIdFromResponse(serverResponse),
+        submission_id: serverResponse.submissionId,
       });
       return {
         ok: true,
         data: { kind: 'lender', message: SUCCESS_MESSAGE },
       };
     } catch (error) {
-      logError(
-        'Concierge tool: submitLenderRequest failed',
-        { destinationState: input.destinationState },
-        error,
-      );
+      logError('Concierge tool: submitLenderRequest failed', { outcome: errorCode(error) });
       await captureToolTelemetry('concierge_tool_failed', toolName, {
         form_id: 'contact_lender',
         lead_source: 'Contact Lender',
         state_code: stateCode,
         state_slug: stateSlug,
         failure_stage: 'tool_execute',
-        error_codes: ['submission_failed'],
+        error_codes: [errorCode(error)],
       });
       return { ok: false, error: errorMessage(error) };
     }
@@ -254,22 +260,23 @@ const submitGeneralInquiryTool = tool({
         hasSubject: Boolean(input.subject),
       });
       const serverResponse = await contactPostForm(formData, { internalCallToken: INTERNAL_CALL_TOKEN });
+      if (serverResponse.outcome !== 'accepted') throw new LeadToolFailure(serverResponse);
       await captureToolTelemetry('concierge_tool_completed', toolName, {
         form_id: 'contact_form',
         lead_source: 'Contact Form',
-        submission_id: submissionIdFromResponse(serverResponse),
+        submission_id: serverResponse.submissionId,
       });
       return {
         ok: true,
         data: { kind: 'general', message: SUCCESS_MESSAGE },
       };
     } catch (error) {
-      logError('Concierge tool: submitGeneralInquiry failed', undefined, error);
+      logError('Concierge tool: submitGeneralInquiry failed', { outcome: errorCode(error) });
       await captureToolTelemetry('concierge_tool_failed', toolName, {
         form_id: 'contact_form',
         lead_source: 'Contact Form',
         failure_stage: 'tool_execute',
-        error_codes: ['submission_failed'],
+        error_codes: [errorCode(error)],
       });
       return { ok: false, error: errorMessage(error) };
     }
@@ -311,24 +318,21 @@ const submitVALoanGuideRequestTool = tool({
         hasState: Boolean(input.destinationState),
       });
       const serverResponse = await vaLoanGuideForm(formData, { internalCallToken: INTERNAL_CALL_TOKEN });
+      if (serverResponse.outcome !== 'accepted') throw new LeadToolFailure(serverResponse);
       await captureToolTelemetry('concierge_tool_completed', toolName, {
         form_id: 'va_loan_guide',
         lead_source: 'VA Loan Guide',
         guide_id: 'va_loan_guide',
         state_code: stateCode,
         state_slug: stateSlug,
-        submission_id: submissionIdFromResponse(serverResponse),
+        submission_id: serverResponse.submissionId,
       });
       return {
         ok: true,
         data: { kind: 'va_guide', message: SUCCESS_MESSAGE },
       };
     } catch (error) {
-      logError(
-        'Concierge tool: submitVALoanGuideRequest failed',
-        undefined,
-        error,
-      );
+      logError('Concierge tool: submitVALoanGuideRequest failed', { outcome: errorCode(error) });
       await captureToolTelemetry('concierge_tool_failed', toolName, {
         form_id: 'va_loan_guide',
         lead_source: 'VA Loan Guide',
@@ -336,7 +340,7 @@ const submitVALoanGuideRequestTool = tool({
         state_code: stateCode,
         state_slug: stateSlug,
         failure_stage: 'tool_execute',
-        error_codes: ['submission_failed'],
+        error_codes: [errorCode(error)],
       });
       return { ok: false, error: errorMessage(error) };
     }

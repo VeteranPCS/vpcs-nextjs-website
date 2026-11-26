@@ -1,10 +1,12 @@
 "use client";
+import { useLeadSubmission } from '@/components/common/useLeadSubmission';
+import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { internshipFormSubmission } from "@/services/salesForcePostFormsService";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useHoneypot, HoneypotField } from '@/components/common/honeypot';
 
 export interface FormData {
@@ -81,7 +83,8 @@ const schema = yup.object().shape({
 });
 
 const WebToLeadForm = () => {
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const submission = useLeadSubmission('internship');
+    const isSubmitting = submission.submitting;
     const {
         register,
         handleSubmit,
@@ -125,25 +128,12 @@ const WebToLeadForm = () => {
     }, [militaryStatus, setValue]);
 
     const handleFormSubmit: SubmitHandler<FormData> = async (data) => {
-        if (isSubmitting) return;
-        setIsSubmitting(true);
-        try {
-            // Transform the form data to the API format
-            const apiData: ApiSubmissionData = {
-                ...data,
-                "00N4x00000QQ0Vz": [data["00N4x00000QQ0Vz"]]
-            };
-
-            const response = await internshipFormSubmission({ ...apiData, ...getSpamFields() });
-            if (response.redirectUrl) {
-                router.push(response.redirectUrl);
-            } else {
-                setIsSubmitting(false);
-            }
-        } catch (error) {
-            console.error('Error submitting form:', error);
-            setIsSubmitting(false);
-        }
+        const apiData: ApiSubmissionData = {
+            ...data,
+            "00N4x00000QQ0Vz": [data["00N4x00000QQ0Vz"]]
+        };
+        const response = await submission.submit({ ...apiData, ...getSpamFields() }, internshipFormSubmission, apiData);
+        if (response?.outcome === 'accepted') router.push(response.redirectUrl || '/thank-you');
     };
 
     const handleDateInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -673,11 +663,12 @@ const WebToLeadForm = () => {
                         <HoneypotField ref={honeypotRef} />
                         {/* Submit Button */}
                         <div className="flex md:justify-start justify-center">
+                            <CustomerSubmissionFeedback failure={submission.failure} />
                             <button
                                 type="submit"
                                 name="submit"
-                                disabled={isSubmitting}
-                                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
+                                disabled={isSubmitting || submission.blocked}
+                                className={`rounded-md border border-[#BBBFC1] ${isSubmitting || submission.blocked ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
                             >
                                 {isSubmitting ? 'Submitting...' : 'Submit'}
                             </button>

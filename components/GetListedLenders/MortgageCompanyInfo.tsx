@@ -1,5 +1,5 @@
 "use client";
-import { useState, FormEvent } from 'react';
+import { FormEvent } from 'react';
 import { useForm, Controller, Resolver } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -51,7 +51,9 @@ const howDidYouHearOptions: HowDidYouHearOptions[] = [
 interface ContactFormProps {
   onSubmit: (data: FormData) => void;
   onBack: () => void;
-  shouldSubmit: () => void;
+  isSubmitting: boolean;
+  blocked: boolean;
+  feedback: React.ReactNode;
 }
 
 // Validation schema using yup
@@ -75,9 +77,7 @@ const schema = yup.object({
   }),
 });
 
-const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+const MortgageCompanyInfo = ({ onSubmit, onBack, isSubmitting, blocked, feedback }: ContactFormProps) => {
   const { register, handleSubmit, control, watch, formState: { errors } } = useForm<FormData>({
     resolver: yupResolver(schema) as Resolver<FormData>,
     defaultValues: {
@@ -95,10 +95,7 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
   const howDidYouHearValue = watch("howDidYouHear");
 
   const onFormSubmit = (data: FormData) => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    onSubmit(data);
-    shouldSubmit();
+    if (!isSubmitting && !blocked) onSubmit(data);
   };
 
   const handleBack = (e: FormEvent) => {
@@ -270,11 +267,12 @@ const MortgageCompanyInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProp
             </div>
 
             <hr />
+            {feedback}
             <div className="flex md:justify-start justify-center">
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-3 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
+                disabled={isSubmitting || blocked}
+                className={`rounded-md border border-[#BBBFC1] ${isSubmitting || blocked ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-3 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Now'}
                 {!isSubmitting && (

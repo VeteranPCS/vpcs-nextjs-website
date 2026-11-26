@@ -1,7 +1,6 @@
 import 'server-only';
 import { getNotificationDeliveryMode } from '@/lib/leads/notification-delivery';
 import { buildSlackLeadPayload, type SlackLeadInput } from '@/lib/leads/notification-payloads';
-import fetchWithRetry from '@/utils/fetchWithRetry';
 
 export default async function sendToSlack(input: SlackLeadInput) {
     const mode = getNotificationDeliveryMode();
@@ -21,10 +20,12 @@ export default async function sendToSlack(input: SlackLeadInput) {
         return { ok: false, failureStage: 'construction' as const };
     }
     try {
-        const response = await fetchWithRetry(webhookUrl, {
+        const response = await fetch(webhookUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
+            redirect: 'error',
+            signal: AbortSignal.timeout(3_000),
         });
         return response.ok ? { ok: true } : { ok: false, failureStage: 'delivery' as const };
     } catch {

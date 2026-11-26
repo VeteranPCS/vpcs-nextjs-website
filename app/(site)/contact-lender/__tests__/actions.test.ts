@@ -43,6 +43,8 @@ describe('submitContactLenderLead', () => {
 
   it('preserves a Salesforce redirect URL', async () => {
     vi.mocked(contactLenderPostForm).mockResolvedValueOnce({
+      success: true,
+      outcome: 'accepted',
       redirectUrl: 'https://www.veteranpcs.com/thank-you',
       submissionId: 'submission-test-id',
     });
@@ -56,10 +58,11 @@ describe('submitContactLenderLead', () => {
     expect(contactLenderPostForm).toHaveBeenCalledWith(expect.objectContaining({ ...payload, state: 'CO' }), '?id=001&state=colorado');
   });
 
-  it('normalizes message-only success to the thank-you route', async () => {
+  it('normalizes accepted results without a redirect to the thank-you route', async () => {
     vi.mocked(contactLenderPostForm).mockResolvedValueOnce({
-      message: 'Form submitted successfully!',
-      submissionId: 'submission-test-id',
+      success: true,
+      outcome: 'accepted',
+        submissionId: 'submission-test-id',
     });
 
     await expect(submitContactLenderLead(payload, '?id=001&state=colorado')).resolves.toEqual({

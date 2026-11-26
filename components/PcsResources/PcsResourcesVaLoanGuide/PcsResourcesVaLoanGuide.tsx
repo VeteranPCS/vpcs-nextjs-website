@@ -1,4 +1,6 @@
 "use client";
+import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
+import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import React from "react";
 import Link from "next/link";
 import classes from "./PcsResourcesVaLoanGuide.module.css";
@@ -44,51 +46,39 @@ const PcsResourcesVaLoanGuide = () => {
 
   const { ref: honeypotRef, getSpamFields } = useHoneypot();
 
+  const submission = useLeadSubmission('va_loan_guide');
+  const submitting = submission.submitting;
+
   const onSubmitHandler: SubmitHandler<FormInputs> = async (data) => {
-    captureAnalyticsEvent('guide_download_requested', {
+    if (submission.blocked) return;
+    bestEffort(() => captureAnalyticsEvent('guide_download_requested', {
       guide_id: 'va_loan_guide',
       form_id: 'va_loan_guide',
       has_email: Boolean(data.email),
-    });
-    try {
-      sendGTMEvent({
-        event: "conversion_download",
-        content: "VA Loan Guide",
-      });
-
-      const server_response = await vaLoanGuideForm({
-        ...data,
-        ...getSpamFields(),
-        ...formTrackingPayload(),
-      });
-      if (server_response?.success) {
-        setValue('firstName', '');
-        setValue('lastName', '');
-        setValue('email', '');
-        captureAnalyticsEvent('guide_download_started', {
-          guide_id: 'va_loan_guide',
-          form_id: 'va_loan_guide',
-        });
-
-        const link = document.createElement('a');
-        link.href = '/downloads/VA-Loan-Guide.pdf';  // Note: case-sensitive path
-        link.download = 'VA-Loan-Guide.pdf';
-
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } else {
-        trackFormSubmissionFailed('va_loan_guide', 'server_submission', ['no_success_response'], {
-          guide_id: 'va_loan_guide',
-        });
-        console.log("No redirect URL found");
-      }
-    } catch (error) {
-      trackFormSubmissionFailed('va_loan_guide', 'server_submission', ['submission_exception'], {
-        guide_id: 'va_loan_guide',
-      });
-      console.error('Error submitting form:', error);
+    }));
+    const result = await submission.submit({ ...data, ...getSpamFields() }, attempt => {
+      let tracking = {};
+      bestEffort(() => { tracking = formTrackingPayload(); });
+      return vaLoanGuideForm({ ...attempt, ...tracking });
+    }, data);
+    if (!result) return;
+    if (result.outcome !== 'accepted') {
+      bestEffort(() => trackFormSubmissionFailed('va_loan_guide', 'server_submission', [result.outcome], { guide_id: 'va_loan_guide' }));
+      return;
     }
+    setValue('firstName', '');
+    setValue('lastName', '');
+    setValue('email', '');
+    submission.resetAccepted();
+    bestEffort(() => sendGTMEvent({ event: 'conversion_download', content: "VA Loan Guide" }));
+    bestEffort(() => captureAnalyticsEvent('guide_download_started', { guide_id: 'va_loan_guide', form_id: 'va_loan_guide' }));
+    bestEffort(() => {
+      const link = document.createElement('a');
+      link.href = '/downloads/VA-Loan-Guide.pdf';
+      link.download = 'VA-Loan-Guide.pdf';
+      document.body.appendChild(link);
+      try { link.click(); } finally { link.remove(); }
+    });
   };
 
   const handleInvalidSubmit = (formErrors: typeof errors) => {
@@ -165,7 +155,8 @@ const PcsResourcesVaLoanGuide = () => {
                 </div>
               </div>
               <div>
-                <button type="submit" className="border-2 border-white rounded-md text-center block w-full py-3 text-white roboto lg:text-[20px] md:text-[20px] sm:text-[14px] text-[14px] font-medium mt-8 mb-3">
+                <CustomerSubmissionFeedback failure={submission.failure} className="text-white text-sm" />
+                <button type="submit" disabled={submitting || submission.blocked} className="border-2 border-white rounded-md text-center block w-full py-3 text-white roboto lg:text-[20px] md:text-[20px] sm:text-[14px] text-[14px] font-medium mt-8 mb-3">
                   Download For Free
                 </button>
               </div>

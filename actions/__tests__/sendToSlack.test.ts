@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import sendToSlack from '../sendToSlack';
-import fetchWithRetry from '@/utils/fetchWithRetry';
 import { buildSlackLeadPayload, displayContactPhone } from '@/lib/leads/notification-payloads';
 
-vi.mock('@/utils/fetchWithRetry', () => ({ default: vi.fn(async () => new Response('ok')) }));
+const fetchSlack = vi.fn<typeof fetch>();
+beforeEach(() => vi.stubGlobal('fetch', fetchSlack.mockReset().mockResolvedValue(new Response('ok'))));
+afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 vi.mock('server-only', () => ({}));
 const lead = { headerText: '🔔 New Agent Lead', name: 'Synthetic QA', email: 'qa@example.com', message: '' };
 
@@ -20,10 +21,14 @@ describe('real Slack wire contract with isolated transport', () => {
   afterEach(() => vi.unstubAllEnvs());
   it.each([undefined, '', '   '])('supports absent phone %s without an empty telephone link', async (phoneNumber) => {
     await expect(sendToSlack({ ...lead, phoneNumber })).resolves.toEqual({ ok: true });
-    expect(fetchWithRetry).toHaveBeenCalledTimes(1);
-    const [url, init] = vi.mocked(fetchWithRetry).mock.calls[0]!; // Call count asserted above.
+    expect(fetchSlack).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchSlack.mock.calls[0]!; // Call count asserted above.
     expect(url).toBe('https://example.test/private-webhook');
-    expect(init).toMatchObject({ method: 'POST', headers: { 'Content-Type': 'application/json' } });
+    if (!init) throw new Error('Missing Slack POST options');
+    expect(init).toMatchObject({
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      redirect: 'error', signal: expect.any(AbortSignal),
+    });
     const body = JSON.parse(init.body as string);
     expect(Object.keys(body)).toEqual(['blocks']);
     expect(init.body).toContain('Not provided');
@@ -49,10 +54,28 @@ describe('real Slack wire contract with isolated transport', () => {
   it('returns safe configuration and transport failures', async () => {
     vi.stubEnv('SLACK_WEBHOOK_URL', '');
     await expect(sendToSlack(lead)).resolves.toEqual({ ok: false, failureStage: 'configuration' });
-    expect(fetchWithRetry).not.toHaveBeenCalled();
+    expect(fetchSlack).not.toHaveBeenCalled();
     vi.stubEnv('SLACK_WEBHOOK_URL', 'https://example.test/private-webhook');
-    vi.mocked(fetchWithRetry).mockRejectedValueOnce(new Error('secret URL and customer data'));
+    vi.mocked(fetchSlack).mockRejectedValueOnce(new Error('secret URL and customer data'));
     await expect(sendToSlack(lead)).resolves.toEqual({ ok: false, failureStage: 'delivery' });
+    expect(fetchSlack).toHaveBeenCalledTimes(1);
+  });
+  it('aborts at the configured deadline and issues one POST', async () => {
+    const controller = new AbortController();
+    const timeout = vi.spyOn(AbortSignal, 'timeout').mockReturnValue(controller.signal);
+    fetchSlack.mockImplementationOnce(async (_url, input) => new Promise((_resolve, reject) => {
+      input?.signal?.addEventListener('abort', () => reject(input.signal?.reason), { once: true });
+    }));
+    const result = sendToSlack(lead);
+    controller.abort();
+    await expect(result).resolves.toEqual({ ok: false, failureStage: 'delivery' });
+    expect(timeout).toHaveBeenCalledWith(3_000);
+    expect(fetchSlack).toHaveBeenCalledTimes(1);
+  });
+  it('does not replay a POST after a retryable HTTP status', async () => {
+    fetchSlack.mockResolvedValueOnce(new Response('Unavailable', { status: 503 }));
+    await expect(sendToSlack(lead)).resolves.toEqual({ ok: false, failureStage: 'delivery' });
+    expect(fetchSlack).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -73,7 +96,7 @@ describe('non-production notification transports', () => {
 
     await expect(sendToSlack(lead)).resolves.toEqual({ ok: true, captured: true });
 
-    expect(fetchWithRetry).not.toHaveBeenCalled();
+    expect(fetchSlack).not.toHaveBeenCalled();
     expect(captureLog.mock.calls).toEqual([
       ['Lead notification captured', { channel: 'slack', recipientCount: 1 }],
     ]);
@@ -84,6 +107,6 @@ describe('non-production notification transports', () => {
 
     await expect(sendToSlack(lead)).resolves.toEqual({ ok: false, failureStage: 'configuration' });
 
-    expect(fetchWithRetry).not.toHaveBeenCalled();
+    expect(fetchSlack).not.toHaveBeenCalled();
   });
 });

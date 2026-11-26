@@ -9,6 +9,9 @@ import { featureFlags } from "@/lib/feature-flags";
 import { isProductionSalesforceRuntime } from "@/lib/salesforce/environment.mjs";
 
 
+// Shared lead forms dispatch and confirm submissions from multiple site pages.
+export const maxDuration = 60;
+
 export default function RootLayout({
   children,
 }: Readonly<{

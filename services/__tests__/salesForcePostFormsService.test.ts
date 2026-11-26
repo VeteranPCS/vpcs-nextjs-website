@@ -22,15 +22,31 @@ import { evaluateLeadSpam } from '@/lib/spam-protection';
 import { updateSubmissionStatus } from '@/services/formTrackingService';
 import stateService from '@/services/stateService';
 import { contactAgentClientSchema, contactLenderClientSchema } from '@/lib/validation/contactForms';
-import { LeadSubmissionError } from '@/lib/leads/submission-outcome';
 import { submitCustomerWebsiteLead } from '@/lib/leads/customer-action';
 import { getSalesforceConfig } from '@/lib/salesforce/server-config';
 import { getVerifiedSalesforceSession } from '@/services/salesForceTokenService';
+import { inspectLeadAttempt, reconcileLeadAttempt } from '@/services/salesforceIntake';
 import mockManifest from '@/config/salesforce/mock.json';
 import webdevFixtures from '@/config/salesforce/webdev-fixtures.json';
 import { stubProductionEnv } from '@/lib/salesforce/__tests__/configuration-fixtures';
 
+const submissionId = vi.hoisted(() => '025284ba-b587-4777-b974-e5ebbf0ef6c7');
+
 vi.mock('server-only', () => ({}));
+vi.mock('node:crypto', async importOriginal => ({
+  ...await importOriginal<typeof import('node:crypto')>(),
+  randomUUID: () => submissionId,
+}));
+vi.mock('@/lib/salesforce/intake-fields', () => ({
+  getIntakeFields: () => ({ honeypot: '00N000000000901', submissionHash: '00N000000000902' }),
+}));
+vi.mock('@/services/salesforceIntake', async importOriginal => ({
+  ...await importOriginal<typeof import('@/services/salesforceIntake')>(),
+  inspectLeadAttempt: vi.fn(),
+  claimLeadAttempt: vi.fn(async (_id, _hash, _emailHash, denyDispatch) => ({ claimed: !denyDispatch, blocked: Boolean(denyDispatch) })),
+  reconcileLeadAttempt: vi.fn(),
+  claimWebsiteNotifications: vi.fn(async () => true),
+}));
 vi.mock('@/services/salesForceTokenService', () => ({ getVerifiedSalesforceSession: vi.fn() }));
 
 vi.mock('@/actions/sendToSlack', () => ({
@@ -55,8 +71,8 @@ vi.mock('@/services/stateService', () => ({
 }));
 
 vi.mock('@/lib/spam-protection', () => ({
-  evaluateLeadSpam: vi.fn(async () => ({ quarantine: false, reasons: [] })),
-  tagSpamSuspected: vi.fn((comments?: string) => `[SPAM-SUSPECTED] ${comments ?? ''}`.trim()),
+  evaluateLeadRateLimit: vi.fn(async () => ({ decision: 'allow', quarantine: false, reasons: [] })),
+  evaluateLeadSpam: vi.fn(async () => ({ decision: 'allow', quarantine: false, reasons: [] })),
 }));
 
 vi.mock('@/lib/analytics/server', () => ({
@@ -80,20 +96,24 @@ vi.mock('@/lib/analytics/server', () => ({
 }));
 
 vi.mock('@/services/formTrackingService', () => ({
-  FormSubmissionStatus: {
-    PENDING: 'PENDING',
-    SUCCESS: 'SUCCESS',
-    FAILURE: 'FAILURE',
-    UNCONFIRMED: 'UNCONFIRMED',
-  },
-  trackFormSubmission: vi.fn(async () => 'submission-test-id'),
+  FormSubmissionStatus: { SUCCESS: 'SUCCESS' },
   updateSubmissionStatus: vi.fn(async () => true),
 }));
+
+const acceptedResult = {
+  outcome: 'accepted', success: true, submissionId, redirectUrl: '/thank-you',
+} as const;
 
 const queryString = '?form=agent&fn=Jason&id=0014x00000HWTqI&state=colorado';
 
 beforeEach(() => {
   stubProductionEnv();
+  vi.stubEnv('VPCS_LEAD_BINDING_KEY', 'f'.repeat(64));
+  vi.mocked(inspectLeadAttempt).mockReset().mockImplementation(async () => {
+    await getVerifiedSalesforceSession();
+    return { exists: false, confirmed: false, declined: false };
+  });
+  vi.mocked(reconcileLeadAttempt).mockReset().mockResolvedValue(true);
   vi.mocked(getVerifiedSalesforceSession).mockReset().mockImplementation(async () => {
     const config = getSalesforceConfig();
     return { token: 'test-only', generation: 1, instanceUrl: config.restOrigin, cacheKey: config.cacheKey };
@@ -108,17 +128,16 @@ describe('accepted customer lead regression boundaries', () => {
   });
   afterEach(() => { vi.restoreAllMocks(); vi.useRealTimers(); });
 
-  it('posts the production contact form even when Salesforce OAuth is unavailable', async () => {
+  it('returns a recoverable outcome before POST when Salesforce OAuth is unavailable', async () => {
     vi.mocked(getVerifiedSalesforceSession).mockRejectedValue(new Error('Salesforce OAuth unavailable'));
 
     await expect(contactPostForm({ firstName: 'QA', lastName: 'Contact', email: 'qa@example.test' }))
-      .resolves.toMatchObject({ success: true, submissionId: 'submission-test-id' });
+      .resolves.toMatchObject({ success: false, outcome: 'retry_later' });
 
-    expect(getVerifiedSalesforceSession).not.toHaveBeenCalled();
-    expect(fetch).toHaveBeenCalledExactlyOnceWith(
-      'https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8',
-      expect.objectContaining({ method: 'POST', body: expect.stringContaining('oid=00D4x000003yaV2') }),
-    );
+    expect(getVerifiedSalesforceSession).toHaveBeenCalledOnce();
+    expect(fetch).not.toHaveBeenCalled();
+    expect(sendToSlack).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
   });
 
   describe.each([
@@ -129,12 +148,12 @@ describe('accepted customer lead regression boundaries', () => {
       const data = await schema.validate({ ...qaPayload(), state: 'CO', email: method === 'phone' ? '' : 'qa@example.com', phone: method === 'email' ? '' : '(719) 555-0100' });
       if (method === 'email') expect(data.phone).toBeUndefined();
       const result = await submitCustomerWebsiteLead(formId, data, queryString, submit);
-      expect(result).toMatchObject({ success: true, outcome: 'accepted', submissionId: 'submission-test-id' });
+      expect(result).toMatchObject({ success: true, outcome: 'accepted', submissionId });
       expect(fetch).toHaveBeenCalledTimes(1);
       expect(sendToSlack).toHaveBeenCalledTimes(1);
       expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
       expect(updateSubmissionStatus).toHaveBeenCalledTimes(1);
-      expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.any(Response));
+      expect(updateSubmissionStatus).toHaveBeenCalledWith(submissionId, 'SUCCESS', expect.any(Response));
     });
 
     it('rejects invalid website input before every outbound effect', async () => {
@@ -167,16 +186,17 @@ describe('accepted customer lead regression boundaries', () => {
   it('network uncertainty makes one POST, clears its timer, and produces a typed failure', async () => {
     vi.useFakeTimers();
     vi.mocked(fetch).mockRejectedValueOnce(new Error('network lost'));
-    await expect(contactAgentPostForm(qaPayload(), queryString)).rejects.toMatchObject({ outcome: 'unconfirmed', submissionId: 'submission-test-id' });
+    vi.mocked(reconcileLeadAttempt).mockResolvedValueOnce(false);
+    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toMatchObject({ outcome: 'unconfirmed', submissionId });
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(vi.getTimerCount()).toBe(0);
-    expect(updateSubmissionStatus).toHaveBeenCalledTimes(1);
+    expect(updateSubmissionStatus).not.toHaveBeenCalled();
     expect(sendToSlack).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
   });
 
-  it('pre-send failures are typed not_sent and never POST', async () => {
-    await expect(contactAgentPostForm({ email: 'bad' }, '')).rejects.toBeInstanceOf(LeadSubmissionError);
+  it('invalid contact values are rejected before POST', async () => {
+    await expect(contactAgentPostForm({ email: 'bad' }, '')).resolves.toMatchObject({ outcome: 'validation_error' });
     expect(fetch).not.toHaveBeenCalled();
   });
 
@@ -359,11 +379,11 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
       { id: '001AGENT' },
       'https://www.veteranpcs.com/contact-agent?sid=test',
       'https://www.veteranpcs.com',
-      'submission-test-id',
+      submissionId,
     );
 
     expect(params.get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
-    expect(params.get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
+    expect(params.get('00NRg00000PjSEfMAN')).toBe(submissionId);
   });
 
   it('accepts a Salesforce redirect response and sends notifications once', async () => {
@@ -374,26 +394,23 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     const result = await contactAgentPostForm(qaPayload(), queryString);
 
-    expect(result).toEqual({
-      redirectUrl: 'https://www.veteranpcs.com/thank-you',
-      submissionId: 'submission-test-id',
-    });
+    expect(result).toEqual(acceptedResult);
     expect(salesforceBody().get('00N4x00000LspV2')).toBe('CO');
-    expect(salesforceBody().get('00N4x00000QQ1LB')).toContain('sid=submission-test-id');
+    expect(salesforceBody().get('00N4x00000QQ1LB')).toContain(`sid=${submissionId}`);
     expect(salesforceBody().get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
-    expect(salesforceBody().get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
+    expect(salesforceBody().get('00NRg00000PjSEfMAN')).toBe(submissionId);
     expect(global.fetch).toHaveBeenCalledExactlyOnceWith(
       'https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8',
       expect.objectContaining({ method: 'POST' }),
     );
-    expect(getVerifiedSalesforceSession).not.toHaveBeenCalled();
+    expect(getVerifiedSalesforceSession).toHaveBeenCalledBefore(vi.mocked(fetch));
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Colorado' }));
     expect(captureLeadConversionCreated).toHaveBeenCalledWith(
       expect.objectContaining({
         formId: 'contact_agent',
         leadSource: 'Contact Agent',
-        submissionId: 'submission-test-id',
+        submissionId,
         stateCode: 'CO',
         stateSlug: 'colorado',
         partnerType: 'agent',
@@ -416,10 +433,7 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
       '?form=agent&fn=Jason&id=0014x00000HWTqI',
     );
 
-    expect(result).toEqual({
-      message: 'Form submitted successfully!',
-      submissionId: 'submission-test-id',
-    });
+    expect(result).toEqual(acceptedResult);
     expect(salesforceBody().get('00N4x00000LspV2')).toBe('TX');
     expect(salesforceBody().get('00N4x00000Lpb0T')).toBe('QA Test Current Base');
     expect(salesforceBody().get('00N4x00000LspUs')).toBe('Austin QA Test');
@@ -440,14 +454,10 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
   it.each(['', '&state=unrecognized'])('rejects missing or malformed effective state (%s) before Salesforce and notifications', async (stateParam) => {
     await expect(
       contactAgentPostForm(qaPayload(), `?form=agent&fn=Jason&id=0014x00000HWTqI${stateParam}`),
-    ).rejects.toThrow('Failed to submit form');
+    ).resolves.toMatchObject({ outcome: 'validation_error', fieldErrors: { state: expect.any(String) } });
 
     expect(global.fetch).not.toHaveBeenCalled();
     expect(sendToSlack).not.toHaveBeenCalled();
-    expect(logError).toHaveBeenCalledWith(
-      'Invalid contactAgent state',
-      expect.objectContaining({ submissionId: 'submission-test-id' }),
-    );
   });
 
   it('submits lender state to Salesforce from the derived URL state', async () => {
@@ -460,16 +470,13 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
       '?form=lender&fn=Taylor&id=0014x00000Lender&state=florida',
     );
 
-    expect(result).toEqual({
-      message: 'Form submitted successfully!',
-      submissionId: 'submission-test-id',
-    });
+    expect(result).toEqual(acceptedResult);
     expect(salesforceBody().get('00N4x00000LspV2')).toBe('FL');
     expect(global.fetch).toHaveBeenCalledExactlyOnceWith(
       'https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8',
       expect.objectContaining({ method: 'POST' }),
     );
-    expect(getVerifiedSalesforceSession).not.toHaveBeenCalled();
+    expect(getVerifiedSalesforceSession).toHaveBeenCalledBefore(vi.mocked(fetch));
     expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Florida' }));
   });
 
@@ -480,10 +487,7 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     const result = await contactAgentPostForm(qaPayload(), queryString);
 
-    expect(result).toEqual({
-      message: 'Form submitted successfully!',
-      submissionId: 'submission-test-id',
-    });
+    expect(result).toEqual(acceptedResult);
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
   });
@@ -496,23 +500,20 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     const result = await contactAgentPostForm(qaPayload(), queryString);
 
-    expect(result).toEqual({
-      message: 'Form submitted successfully!',
-      submissionId: 'submission-test-id',
-    });
+    expect(result).toEqual(acceptedResult);
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(logError).toHaveBeenCalledWith(
       'Slack notification failed',
-      expect.objectContaining({ submissionId: 'submission-test-id', stage: 'configuration' }),
+      expect.objectContaining({ submissionId, stage: 'configuration' }),
       expect.any(Error),
     );
     expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         event: 'lead_notification_failed',
-        distinctId: 'submission-test-id',
+        distinctId: submissionId,
         properties: expect.objectContaining({
-          submission_id: 'submission-test-id',
+          submission_id: submissionId,
           channel: 'Slack',
           failure_detail: 'ok=false',
         }),
@@ -528,13 +529,10 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     const result = await contactAgentPostForm(qaPayload(), queryString);
 
-    expect(result).toEqual({
-      message: 'Form submitted successfully!',
-      submissionId: 'submission-test-id',
-    });
+    expect(result).toEqual(acceptedResult);
     expect(logError).toHaveBeenCalledWith(
       'Slack notification failed',
-      expect.objectContaining({ submissionId: 'submission-test-id' }),
+      expect.objectContaining({ submissionId }),
       expect.any(Error),
     );
     expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(
@@ -555,68 +553,34 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
   });
 
-  it('rejects an explicit Salesforce error response without retrying or notifying', async () => {
-    mockSalesforceResponse('<html><body>error occurred: required field missing</body></html>', {
-      status: 200,
-    });
-
-    await expect(contactAgentPostForm(qaPayload(), queryString)).rejects.toThrow(
-      'Failed to submit form',
-    );
-
-    expect(global.fetch).toHaveBeenCalledTimes(1);
+  it.each([
+    ['a Salesforce 2xx error body', '<html><body>error occurred: required field missing</body></html>', 200],
+    ['a Salesforce HTTP error', 'server error', 500],
+    ['a Salesforce 2xx redirect', '<script>window.location("/thank-you")</script>', 200],
+  ])('treats %s without readback as uncertain and sends no notification', async (_name, body, status) => {
+    mockSalesforceResponse(body, { status });
+    vi.mocked(reconcileLeadAttempt).mockResolvedValueOnce(false);
+    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toMatchObject({ outcome: 'unconfirmed' });
+    expect(fetch).toHaveBeenCalledOnce();
     expect(sendToSlack).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
   });
 
-  it('does not emit lead conversion telemetry for spam-quarantined leads', async () => {
-    vi.mocked(evaluateLeadSpam).mockResolvedValueOnce({ quarantine: true, reasons: ['honeypot'] });
-    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
-      status: 200,
-    });
-
-    const result = await contactAgentPostForm(qaPayload(), queryString);
-
-    expect(result).toEqual({
-      message: 'Form submitted successfully!',
-      submissionId: 'submission-test-id',
-    });
+  it('rejects suspected spam before POST or enrichment, with no conversion', async () => {
+    vi.mocked(evaluateLeadSpam).mockResolvedValueOnce({ decision: 'reject', quarantine: true, reasons: ['honeypot'] });
+    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toMatchObject({ outcome: 'rejected' });
+    expect(stateService.fetchAgentById).not.toHaveBeenCalled();
+    expect(fetch).not.toHaveBeenCalled();
+    expect(sendToSlack).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
-    expect([...salesforceBody().values()]).toContain(`[SPAM-SUSPECTED] ${qaPayload().additionalComments}`);
-    expect(sendToSlack).toHaveBeenCalledTimes(1);
-  });
-
-  it('does not retry or notify on a Salesforce HTTP error', async () => {
-    mockSalesforceResponse('server error', {
-      status: 500,
-      statusText: 'Internal Server Error',
-    });
-
-    await expect(contactAgentPostForm(qaPayload(), queryString)).rejects.toThrow(
-      'Failed to submit form',
-    );
-
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(sendToSlack).not.toHaveBeenCalled();
-  });
-
-  it('does not retry or notify on a network error', async () => {
-    vi.mocked(global.fetch).mockRejectedValueOnce(new Error('network down'));
-
-    await expect(contactAgentPostForm(qaPayload(), queryString)).rejects.toThrow(
-      'Failed to submit form',
-    );
-
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(sendToSlack).not.toHaveBeenCalled();
   });
 });
 
 /**
  * Characterization tests for the SEVEN Web-to-Lead functions that previously had ZERO
  * posted-body coverage. Each pins the FULL ordered [key, value] list of the URLSearchParams
- * body sent to Salesforce, byte-for-byte, so an upcoming refactor that unifies these
- * functions can be proven byte-identical. Insertion order is load-bearing.
+ * body sent to Salesforce. The original business values and order remain pinned.
+ * Admission appends the mapped honeypot and submission fingerprint to every form.
  *
  * Note on `retURL` / `00N4x00000QQ1LB`: `BASE_URL` is captured at module load from
  * `process.env.NEXT_PUBLIC_API_BASE_URL`, which is unset in the Vitest env, so the template
@@ -631,7 +595,7 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
     process.env.OPEN_PHONE_FROM_NUMBER = '+17194153014';
   });
 
-  it('GetListedAgentsPostForm posts an exact ordered body with no attribution params', async () => {
+  it('GetListedAgentsPostForm posts an exact ordered body with attribution and admission fields', async () => {
     mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
       status: 200,
     });
@@ -694,20 +658,20 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['00N4x00000QPS7V', 'More info here'],
       ['g-recaptcha-response', ''],
       ['captcha_settings', ''],
+      ['00NRg00000PjSD3MAN', ''],
+      ['00NRg00000PjSEfMAN', submissionId],
+      ['00N000000000901', ''],
+      ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
     expect(body.get('recordType')).toBe('0124x000000Z5yI');
     expect(body.get('lead_source')).toBe('Agent Listing Request');
     expect(body.has('retURL')).toBe(true);
-    const keys = [...body.keys()];
-    expect(keys.slice(-2)).toEqual(['g-recaptcha-response', 'captcha_settings']);
-    expect(keys).not.toContain('00NRg00000PjSD3MAN');
-    expect(keys).not.toContain('00NRg00000PjSEfMAN');
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('GetListedLendersPostForm posts an exact ordered body with no attribution params', async () => {
+  it('GetListedLendersPostForm posts an exact ordered body with attribution and admission fields', async () => {
     mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
       status: 200,
     });
@@ -764,20 +728,20 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['00N4x00000QPS7V', 'Lender details'],
       ['g-recaptcha-response', ''],
       ['captcha_settings', ''],
+      ['00NRg00000PjSD3MAN', ''],
+      ['00NRg00000PjSEfMAN', submissionId],
+      ['00N000000000901', ''],
+      ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
     expect(body.get('recordType')).toBe('0124x000000ZGGU');
     expect(body.get('lead_source')).toBe('Lender Listing Request');
     expect(body.has('retURL')).toBe(true);
-    const keys = [...body.keys()];
-    expect(keys.slice(-2)).toEqual(['g-recaptcha-response', 'captcha_settings']);
-    expect(keys).not.toContain('00NRg00000PjSD3MAN');
-    expect(keys).not.toContain('00NRg00000PjSEfMAN');
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('KeepInTouchForm posts an exact ordered body ending with the two attribution field ids', async () => {
+  it('KeepInTouchForm posts an exact ordered body with attribution and admission fields', async () => {
     mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
       status: 200,
     });
@@ -802,26 +766,21 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['g-recaptcha-response', ''],
       ['captcha_settings', ''],
       ['00NRg00000PjSD3MAN', 'vpcs_test_visitor_1234567890'],
-      ['00NRg00000PjSEfMAN', 'submission-test-id'],
+      ['00NRg00000PjSEfMAN', submissionId],
+      ['00N000000000901', ''],
+      ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
     expect(body.get('recordType')).toBe('0124x000000Z5yD');
     expect(body.get('lead_source')).toBe('Keep in Touch');
     expect(body.has('retURL')).toBe(true);
-    const keys = [...body.keys()];
-    expect(keys.slice(-4)).toEqual([
-      'g-recaptcha-response',
-      'captcha_settings',
-      '00NRg00000PjSD3MAN',
-      '00NRg00000PjSEfMAN',
-    ]);
     expect(body.get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
-    expect(body.get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
+    expect(body.get('00NRg00000PjSEfMAN')).toBe(submissionId);
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('contactPostForm posts an exact ordered body ending with the two attribution field ids', async () => {
+  it('contactPostForm posts an exact ordered body with attribution and admission fields', async () => {
     mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
       status: 200,
     });
@@ -848,26 +807,21 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['g-recaptcha-response', ''],
       ['captcha_settings', ''],
       ['00NRg00000PjSD3MAN', 'vpcs_test_visitor_1234567890'],
-      ['00NRg00000PjSEfMAN', 'submission-test-id'],
+      ['00NRg00000PjSEfMAN', submissionId],
+      ['00N000000000901', ''],
+      ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
     expect(body.get('recordType')).toBe('0124x000000Z5yD');
     expect(body.get('lead_source')).toBe('Contact Form');
     expect(body.has('retURL')).toBe(true);
-    const keys = [...body.keys()];
-    expect(keys.slice(-4)).toEqual([
-      'g-recaptcha-response',
-      'captcha_settings',
-      '00NRg00000PjSD3MAN',
-      '00NRg00000PjSEfMAN',
-    ]);
     expect(body.get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
-    expect(body.get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
+    expect(body.get('00NRg00000PjSEfMAN')).toBe(submissionId);
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('vaLoanGuideForm posts an exact ordered body ending with the two attribution field ids', async () => {
+  it('vaLoanGuideForm posts an exact ordered body with attribution and admission fields', async () => {
     mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
       status: 200,
     });
@@ -892,26 +846,21 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['g-recaptcha-response', ''],
       ['captcha_settings', ''],
       ['00NRg00000PjSD3MAN', 'vpcs_test_visitor_1234567890'],
-      ['00NRg00000PjSEfMAN', 'submission-test-id'],
+      ['00NRg00000PjSEfMAN', submissionId],
+      ['00N000000000901', ''],
+      ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
     expect(body.get('recordType')).toBe('0124x000000Z5yD');
     expect(body.get('lead_source')).toBe('VA Loan Guide');
     expect(body.has('retURL')).toBe(true);
-    const keys = [...body.keys()];
-    expect(keys.slice(-4)).toEqual([
-      'g-recaptcha-response',
-      'captcha_settings',
-      '00NRg00000PjSD3MAN',
-      '00NRg00000PjSEfMAN',
-    ]);
     expect(body.get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
-    expect(body.get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
+    expect(body.get('00NRg00000PjSEfMAN')).toBe(submissionId);
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('homebuyerGuideForm posts an exact ordered body ending with the two attribution field ids', async () => {
+  it('homebuyerGuideForm posts an exact ordered body with attribution and admission fields', async () => {
     mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
       status: 200,
     });
@@ -936,26 +885,21 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['g-recaptcha-response', ''],
       ['captcha_settings', ''],
       ['00NRg00000PjSD3MAN', 'vpcs_test_visitor_1234567890'],
-      ['00NRg00000PjSEfMAN', 'submission-test-id'],
+      ['00NRg00000PjSEfMAN', submissionId],
+      ['00N000000000901', ''],
+      ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
     expect(body.get('recordType')).toBe('0124x000000Z5yD');
     expect(body.get('lead_source')).toBe('First Time Home Buyer Guide');
     expect(body.has('retURL')).toBe(true);
-    const keys = [...body.keys()];
-    expect(keys.slice(-4)).toEqual([
-      'g-recaptcha-response',
-      'captcha_settings',
-      '00NRg00000PjSD3MAN',
-      '00NRg00000PjSEfMAN',
-    ]);
     expect(body.get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
-    expect(body.get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
+    expect(body.get('00NRg00000PjSEfMAN')).toBe(submissionId);
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it('internshipFormSubmission posts an exact ordered body (recordType before retURL) with no attribution params', async () => {
+  it('internshipFormSubmission posts an exact ordered body (recordType before retURL) with attribution and admission fields', async () => {
     mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
       status: 200,
     });
@@ -1009,36 +953,22 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['00N4x00000QPS7V', 'Why I want this internship'],
       ['g-recaptcha-response', ''],
       ['captcha_settings', ''],
+      ['00NRg00000PjSD3MAN', ''],
+      ['00NRg00000PjSEfMAN', submissionId],
+      ['00N000000000901', ''],
+      ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
     expect(body.get('recordType')).toBe('0124x000000ZGKv');
     expect(body.get('lead_source')).toBe('Internship Application');
     expect(body.has('retURL')).toBe(true);
-    const keys = [...body.keys()];
-    expect(keys.slice(-2)).toEqual(['g-recaptcha-response', 'captcha_settings']);
-    expect(keys).not.toContain('00NRg00000PjSD3MAN');
-    expect(keys).not.toContain('00NRg00000PjSEfMAN');
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 });
 
-/**
- * Observable-contract characterization for the seven simpler forms (everything the
- * committed body-only tests above do NOT pin): return shape to the caller, the exact
- * Slack payload, the success `updateSubmissionStatus` call, whether lead-conversion
- * analytics fire.
- * Together with the byte-exact body tests above and the contactAgent/contactLender
- * behavioral suite, this freezes contract axes (b)-(f) for all nine forms before the
- * `submitWebToLead` consolidation, so the refactor can be proven behavior-preserving.
- *
- * One axis is deliberately NOT frozen here: the notification-failure *handling* idiom.
- * The consolidation's single sanctioned delta is to fold contactAgent's
- * Promise.allSettled + Slack `ok` inspection into the shared path so a failed Slack
- * post is logged instead of silently discarded. These tests keep Slack on its default
- * ok:true mock, so they pin dispatch + payload (which stay identical) without pinning
- * the pre-refactor `.catch()` mechanism (which is allowed to change).
- */
+// Accepted controls preserve Slack payloads and conversion classification. Rejected and
+// uncertain outcomes have no website notification or accepted-conversion side effects.
 describe('characterization: observable contract for the seven simpler forms', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -1053,7 +983,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
     });
   }
 
-  it('GetListedAgentsPostForm: {message} return, exact Slack payload, no conversion capture', async () => {
+  it('GetListedAgentsPostForm: accepted result, exact Slack payload, no conversion capture', async () => {
     accept200();
     const result = await GetListedAgentsPostForm({
       firstName: 'Test', lastName: 'Agent', email: 'agent@example.com', phone: '8035550100',
@@ -1063,7 +993,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
       additionalComments: 'internal note that must not reach Slack',
     });
 
-    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(result).toEqual(acceptedResult);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledWith({
       headerText: '🔔 New Agent Listing Request',
@@ -1073,10 +1003,10 @@ describe('characterization: observable contract for the seven simpler forms', ()
       message: 'I have served military families for 10 years.',
     });
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
-    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+    expect(updateSubmissionStatus).toHaveBeenCalledWith(submissionId, 'SUCCESS', expect.anything());
   });
 
-  it('GetListedLendersPostForm: {message} return, exact Slack payload, no conversion capture', async () => {
+  it('GetListedLendersPostForm: accepted result, exact Slack payload, no conversion capture', async () => {
     accept200();
     const result = await GetListedLendersPostForm({
       firstName: 'Test', lastName: 'Lender', email: 'lender@example.com', phone: '8035550100',
@@ -1086,7 +1016,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
       additionalComments: 'internal note that must not reach Slack',
     });
 
-    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(result).toEqual(acceptedResult);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledWith({
       headerText: '🔔 New Lender Listing Request',
@@ -1096,16 +1026,16 @@ describe('characterization: observable contract for the seven simpler forms', ()
       message: 'VA-focused lender, 500+ closed loans.',
     });
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
-    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+    expect(updateSubmissionStatus).toHaveBeenCalledWith(submissionId, 'SUCCESS', expect.anything());
   });
 
-  it('internshipFormSubmission: {message} return, empty Slack message, no conversion capture', async () => {
+  it('internshipFormSubmission: accepted result, empty Slack message, no conversion capture', async () => {
     accept200();
     const result = await internshipFormSubmission({
       first_name: 'Test', last_name: 'Intern', email: 'intern@example.com', mobile: '8035550100',
     });
 
-    expect(result).toEqual({ message: 'Form submitted successfully!' });
+    expect(result).toEqual(acceptedResult);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledWith({
       headerText: '🔔 New Internship Submission',
@@ -1115,18 +1045,16 @@ describe('characterization: observable contract for the seven simpler forms', ()
       message: '',
     });
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
-    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+    expect(updateSubmissionStatus).toHaveBeenCalledWith(submissionId, 'SUCCESS', expect.anything());
   });
 
-  it('KeepInTouchForm: {success,message,submissionId} return, Slack payload, capture keep_in_touch', async () => {
+  it('KeepInTouchForm: accepted result, Slack payload, capture keep_in_touch', async () => {
     accept200();
     const result = await KeepInTouchForm({
       firstName: 'Test', lastName: 'Keep', email: 'keep@example.com', phone: '8035550100',
     });
 
-    expect(result).toEqual({
-      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
-    });
+    expect(result).toEqual(acceptedResult);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledWith({
       headerText: '🔔 New Keep In Touch Submission',
@@ -1139,22 +1067,20 @@ describe('characterization: observable contract for the seven simpler forms', ()
       expect.objectContaining({
         formId: 'keep_in_touch',
         leadSource: 'Keep in Touch',
-        submissionId: 'submission-test-id',
+        submissionId,
       }),
     );
-    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+    expect(updateSubmissionStatus).toHaveBeenCalledWith(submissionId, 'SUCCESS', expect.anything());
   });
 
-  it('contactPostForm: {success,...} return, Slack message carries the comment, capture contact_form', async () => {
+  it('contactPostForm: accepted result, Slack message carries the comment, capture contact_form', async () => {
     accept200();
     const result = await contactPostForm({
       firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
       additionalComments: 'A contact message',
     });
 
-    expect(result).toEqual({
-      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
-    });
+    expect(result).toEqual(acceptedResult);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledWith({
       headerText: '🔔 New Contact Form Submission',
@@ -1167,21 +1093,19 @@ describe('characterization: observable contract for the seven simpler forms', ()
       expect.objectContaining({
         formId: 'contact_form',
         leadSource: 'Contact Form',
-        submissionId: 'submission-test-id',
+        submissionId,
       }),
     );
-    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+    expect(updateSubmissionStatus).toHaveBeenCalledWith(submissionId, 'SUCCESS', expect.anything());
   });
 
-  it('vaLoanGuideForm: {success,...} return, Slack payload, capture with guideId', async () => {
+  it('vaLoanGuideForm: accepted result, Slack payload, capture with guideId', async () => {
     accept200();
     const result = await vaLoanGuideForm({
       firstName: 'Test', lastName: 'Va', email: 'va@example.com', phone: '8035550100',
     });
 
-    expect(result).toEqual({
-      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
-    });
+    expect(result).toEqual(acceptedResult);
     expect(sendToSlack).toHaveBeenCalledWith({
       headerText: '🔔 New VA Loan Guide Download',
       name: 'Test Va',
@@ -1193,22 +1117,20 @@ describe('characterization: observable contract for the seven simpler forms', ()
       expect.objectContaining({
         formId: 'va_loan_guide',
         leadSource: 'VA Loan Guide',
-        submissionId: 'submission-test-id',
+        submissionId,
         guideId: 'va_loan_guide',
       }),
     );
-    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+    expect(updateSubmissionStatus).toHaveBeenCalledWith(submissionId, 'SUCCESS', expect.anything());
   });
 
-  it('homebuyerGuideForm: {success,...} return, Slack payload, capture with guideId', async () => {
+  it('homebuyerGuideForm: accepted result, Slack payload, capture with guideId', async () => {
     accept200();
     const result = await homebuyerGuideForm({
       firstName: 'Test', lastName: 'Home', email: 'home@example.com', phone: '8035550100',
     });
 
-    expect(result).toEqual({
-      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
-    });
+    expect(result).toEqual(acceptedResult);
     expect(sendToSlack).toHaveBeenCalledWith({
       headerText: '🔔 New First Time Home Buyer Guide Download',
       name: 'Test Home',
@@ -1220,78 +1142,42 @@ describe('characterization: observable contract for the seven simpler forms', ()
       expect.objectContaining({
         formId: 'first_time_homebuyer_guide',
         leadSource: 'First Time Home Buyer Guide',
-        submissionId: 'submission-test-id',
+        submissionId,
         guideId: 'first_time_homebuyer_guide',
       }),
     );
-    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
+    expect(updateSubmissionStatus).toHaveBeenCalledWith(submissionId, 'SUCCESS', expect.anything());
   });
 
-  it('spam-quarantined contactPostForm: tags the comment, still returns success, suppresses capture', async () => {
-    vi.mocked(evaluateLeadSpam).mockResolvedValueOnce({ quarantine: true, reasons: ['honeypot'] });
-    accept200();
-
-    const result = await contactPostForm({
-      firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
-      additionalComments: 'A contact message',
-    });
-
-    expect(result).toEqual({
-      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
-    });
-    // Free-text field is tagged in the posted body and echoed into the Slack message.
-    expect(salesforceBody().get('00N4x00000bfgFA')).toBe('[SPAM-SUSPECTED] A contact message');
-    expect(sendToSlack).toHaveBeenCalledWith(
-      expect.objectContaining({
-        headerText: '⚠️ SPAM-SUSPECTED — 🔔 New Contact Form Submission',
-        message: '[SPAM-SUSPECTED] A contact message',
-      }),
-    );
-    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
-  });
-
-  it('spam-quarantined GetListedAgentsPostForm: tags tellusMore in the body, still submits', async () => {
-    vi.mocked(evaluateLeadSpam).mockResolvedValueOnce({ quarantine: true, reasons: ['honeypot'] });
-    accept200();
-
-    const result = await GetListedAgentsPostForm({
-      firstName: 'Test', lastName: 'Agent', email: 'agent@example.com', phone: '8035550100',
-      tellusMore: 'More info here',
-    });
-
-    expect(result).toEqual({ message: 'Form submitted successfully!' });
-    expect(salesforceBody().get('00N4x00000QPS7V')).toBe('[SPAM-SUSPECTED] More info here');
-    expect(sendToSlack).toHaveBeenCalledWith(
-      expect.objectContaining({
-        headerText: '⚠️ SPAM-SUSPECTED — 🔔 New Agent Listing Request',
-      }),
-    );
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-  });
-
-  it('contactPostForm on a Salesforce HTTP error: throws, no Slack, marks UNCONFIRMED', async () => {
-    mockSalesforceResponse('server error', { status: 500, statusText: 'Internal Server Error' });
-
-    await expect(
-      contactPostForm({
-        firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
-        additionalComments: 'A contact message',
-      }),
-    ).rejects.toThrow('Failed to submit form');
-
-    expect(global.fetch).toHaveBeenCalledTimes(1);
+  it.each([
+    ['contact', contactPostForm, { additionalComments: 'A contact message' }],
+    ['agent listing', GetListedAgentsPostForm, { tellusMore: 'More info here' }],
+  ] as const)('rejects the %s honeypot without POST, notice or conversion', async (_name, submit, details) => {
+    vi.mocked(evaluateLeadSpam).mockResolvedValueOnce({ decision: 'reject', quarantine: true, reasons: ['honeypot'] });
+    await expect(submit({ firstName: 'Test', lastName: 'QA', email: 'contact@example.com', ...details }))
+      .resolves.toMatchObject({ outcome: 'rejected' });
+    expect(fetch).not.toHaveBeenCalled();
     expect(sendToSlack).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
-    expect(
-      vi.mocked(updateSubmissionStatus).mock.calls.some((call) => call[1] === 'UNCONFIRMED'),
-    ).toBe(true);
+    expect(updateSubmissionStatus).not.toHaveBeenCalled();
+  });
+
+  it('does not send Slack or count a conversion after an unconfirmed POST', async () => {
+    mockSalesforceResponse('server error', { status: 500 });
+    vi.mocked(reconcileLeadAttempt).mockResolvedValueOnce(false);
+    await expect(contactPostForm({ firstName: 'Test', lastName: 'Contact', email: 'contact@example.com' }))
+      .resolves.toMatchObject({ outcome: 'unconfirmed' });
+    expect(fetch).toHaveBeenCalledOnce();
+    expect(sendToSlack).not.toHaveBeenCalled();
+    expect(captureLeadConversionCreated).not.toHaveBeenCalled();
+    expect(updateSubmissionStatus).not.toHaveBeenCalled();
   });
 });
 
 /**
  * LEAD_DRY_RUN: the lead-submit path is non-idempotent and fires real outbound side
  * effects (Salesforce Web-to-Lead POST, Slack webhook, and PostHog conversion capture). These
- * tests pin the flag's three contracts: it suppresses every sink and marks the result in
+ * tests pin the flag's three contracts: it suppresses every sink and returns the mock acceptance in
  * a non-production environment, it is inert in production, and it changes nothing when
  * unset.
  */
@@ -1325,16 +1211,12 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     vi.stubEnv('LEAD_DRY_RUN', '1');
   }
 
-  it('suppresses the Salesforce POST, Slack and PostHog, and marks the result', async () => {
+  it('suppresses the Salesforce POST, Slack and PostHog, and returns the mock acceptance', async () => {
     selectLocalDryRun();
 
     const result = await contactAgentPostForm(qaPayload(), queryString);
 
-    expect(result).toEqual({
-      message: 'Form submitted successfully!',
-      submissionId: 'submission-test-id',
-      dryRun: true,
-    });
+    expect(result).toEqual(acceptedResult);
     expect(global.fetch).not.toHaveBeenCalled();
     expect(sendToSlack).not.toHaveBeenCalled();
     // PostHog is the primary funnel source, so a dry run must not record a false conversion.
@@ -1346,7 +1228,7 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
       ),
     ).toBe(true);
     // The submission is still tracked as accepted so the caller exercises the success path.
-    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', undefined);
+    expect(updateSubmissionStatus).toHaveBeenCalledWith(submissionId, 'SUCCESS', undefined);
   });
 
   it('logs only Web-to-Lead and notification metadata', async () => {
@@ -1357,27 +1239,22 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     const postLog = consoleLogSpy.mock.calls.find(
       (call) => call[0] === '[LEAD_DRY_RUN] Skipping Salesforce Web-to-Lead POST',
     );
-    expect(postLog?.[1]).toEqual({ submissionId: 'submission-test-id', fieldCount: expect.any(Number) });
+    expect(postLog?.[1]).toEqual({ submissionId, fieldCount: expect.any(Number) });
 
     const notifyLog = consoleLogSpy.mock.calls.find(
       (call) => call[0] === '[LEAD_DRY_RUN] Skipping lead notifications',
     );
-    expect(notifyLog?.[1]).toEqual({ submissionId: 'submission-test-id', channelCount: 1 });
+    expect(notifyLog?.[1]).toEqual({ submissionId, channelCount: 1 });
   });
 
-  it('marks the dry run on a simpler form without disturbing its success shape', async () => {
+  it('returns mock acceptance for a simpler form without outbound effects', async () => {
     selectLocalDryRun();
 
     const result = await KeepInTouchForm({
       firstName: 'Test', lastName: 'Touch', email: 'touch@example.com', phone: '8035550100',
     });
 
-    expect(result).toEqual({
-      success: true,
-      message: 'Form submitted successfully!',
-      submissionId: 'submission-test-id',
-      dryRun: true,
-    });
+    expect(result).toEqual(acceptedResult);
     expect(global.fetch).not.toHaveBeenCalled();
     expect(sendToSlack).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
@@ -1393,9 +1270,7 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
       additionalComments: 'A contact message',
     });
 
-    expect(result).toEqual({
-      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
-    });
+    expect(result).toEqual(acceptedResult);
     expect(result).not.toHaveProperty('dryRun');
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
@@ -1410,9 +1285,7 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
       additionalComments: 'A contact message',
     });
 
-    expect(result).toEqual({
-      success: true, message: 'Form submitted successfully!', submissionId: 'submission-test-id',
-    });
+    expect(result).toEqual(acceptedResult);
     expect(result).not.toHaveProperty('dryRun');
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
@@ -1447,14 +1320,14 @@ describe('non-production Vercel submission guard', () => {
       vi.stubEnv('VERCEL_ENV', environment);
       vi.stubEnv('NODE_ENV', 'production');
       vi.stubEnv('LEAD_DRY_RUN', '1');
-      await expect(submit()).rejects.toMatchObject({ outcome: 'not_sent', submissionId: 'submission-test-id' });
+      await expect(submit()).resolves.toMatchObject({ outcome: 'not_sent', submissionId });
       expect(fetch).not.toHaveBeenCalled();
       expect(evaluateLeadSpam).not.toHaveBeenCalled();
       expect(stateService.fetchAgentById).not.toHaveBeenCalled();
       expect(sendToSlack).not.toHaveBeenCalled();
       expect(captureLeadConversionCreated).not.toHaveBeenCalled();
       expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
-      expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'FAILURE', null, expect.objectContaining({ message: 'Lead submissions are disabled in non-production Vercel environments' }));
+      expect(updateSubmissionStatus).not.toHaveBeenCalled();
     });
   });
 
@@ -1463,7 +1336,7 @@ describe('non-production Vercel submission guard', () => {
     vi.stubEnv('NODE_ENV', 'production');
     vi.stubEnv('LEAD_DRY_RUN', '1');
     vi.mocked(fetch).mockResolvedValue(new Response('', { status: 200 }));
-    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toMatchObject({ message: 'Form submitted successfully!', submissionId: 'submission-test-id' });
+    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toEqual(acceptedResult);
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
   });
@@ -1519,7 +1392,7 @@ describe('Salesforce WebDev form transport', () => {
   ] as const;
 
   it.each(submissions)('posts %s exactly once through the verified sandbox mapping', async (_name, submit) => {
-    await expect(submit()).resolves.toMatchObject({ message: 'Form submitted successfully!' });
+    await expect(submit()).resolves.toEqual(acceptedResult);
 
     expect(getVerifiedSalesforceSession).toHaveBeenCalledBefore(vi.mocked(fetch));
     expect(fetch).toHaveBeenCalledTimes(1);
@@ -1532,8 +1405,9 @@ describe('Salesforce WebDev form transport', () => {
     expect(Object.values(mockManifest.recordTypes)).toContain(params.get('recordType'));
     const customFieldKeys = [...params.keys()].filter(key => key.startsWith('00N'));
     expect(customFieldKeys.length).toBeGreaterThan(0);
-    for (const key of customFieldKeys) expect(Object.values(mockManifest.fieldIds)).toContain(key);
-    expect(params.get('description')).toContain('offline-test submission-test-id');
+    const permittedFields = [...Object.values(mockManifest.fieldIds), '00N000000000901', '00N000000000902'];
+    for (const key of customFieldKeys) expect(permittedFields).toContain(key);
+    expect(params.get('description')).toContain(`offline-test ${submissionId}`);
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
     expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
   });
@@ -1543,7 +1417,7 @@ describe('Salesforce WebDev form transport', () => {
     vi.stubEnv('VERCEL_ENV', 'preview');
     vi.stubEnv('VERCEL_GIT_COMMIT_REF', 'codex/salesforce-workflow-test');
     vi.stubEnv('VERCEL_URL', 'protected-workflow-preview.vercel.app');
-    await expect(contactPostForm(fixtureLead)).rejects.toMatchObject({ outcome: 'not_sent' });
+    await expect(contactPostForm(fixtureLead)).resolves.toMatchObject({ outcome: 'not_sent' });
     expect(fetch).not.toHaveBeenCalled();
 
     vi.stubEnv('VPCS_SANDBOX_PREVIEW_PROTECTED', '1');
@@ -1556,14 +1430,12 @@ describe('Salesforce WebDev form transport', () => {
   it('discards an unexpected sandbox provider redirect instead of redirecting to production', async () => {
     vi.mocked(fetch).mockResolvedValueOnce(new Response(`<script>window.location.replace('https://www.veteranpcs.com/thank-you')</script>`));
 
-    await expect(contactAgentPostForm(fixtureLead, '?state=colorado')).resolves.toEqual({
-      message: 'Form submitted successfully!', submissionId: 'submission-test-id',
-    });
+    await expect(contactAgentPostForm(fixtureLead, '?state=colorado')).resolves.toEqual(acceptedResult);
   });
 
   it('keeps local production builds offline when mock is selected', async () => {
     vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'mock');
-    await expect(contactPostForm(fixtureLead)).resolves.toMatchObject({ success: true, dryRun: true });
+    await expect(contactPostForm(fixtureLead)).resolves.toEqual(acceptedResult);
     for (const effect of [getVerifiedSalesforceSession, fetch, sendToSlack, captureLeadConversionCreated]) {
       expect(effect).not.toHaveBeenCalled();
     }
@@ -1574,7 +1446,7 @@ describe('Salesforce WebDev form transport', () => {
     ['an unlisted email', { email: 'other@example.test' }],
     ['an unlisted mobile', { phone: '+12025552001' }],
   ])('rejects %s before org verification or posting', async (_label, changedInput) => {
-    await expect(contactAgentPostForm({ ...fixtureLead, ...changedInput }, '?state=colorado')).rejects.toMatchObject({ outcome: 'not_sent' });
+    await expect(contactAgentPostForm({ ...fixtureLead, ...changedInput }, '?state=colorado')).resolves.toMatchObject({ outcome: 'retry_later' });
     expect(getVerifiedSalesforceSession).not.toHaveBeenCalled();
     expect(fetch).not.toHaveBeenCalled();
     expect(sendToSlack).not.toHaveBeenCalled();
@@ -1587,16 +1459,17 @@ describe('Salesforce WebDev form transport', () => {
     ['VPCS_DELIVERY_MODE', 'live'],
   ])('rejects a write for unsafe %s', async (setting, value) => {
     vi.stubEnv(setting, value);
-    await expect(contactPostForm(fixtureLead)).rejects.toMatchObject({ outcome: 'not_sent' });
+    const outcome = setting === 'VPCS_WEBDEV_ISOLATION_ATTESTED' ? 'not_sent' : 'retry_later';
+    await expect(contactPostForm(fixtureLead)).resolves.toMatchObject({ outcome });
     expect(getVerifiedSalesforceSession).not.toHaveBeenCalled();
     expect(fetch).not.toHaveBeenCalled();
   });
 
-  it('reports verification failure as not sent and never calls the Web-to-Lead action', async () => {
+  it('reports org verification failure as recoverable and never calls the Web-to-Lead action', async () => {
     vi.mocked(getVerifiedSalesforceSession).mockRejectedValueOnce(new Error('Organization mismatch'));
-    await expect(contactPostForm(fixtureLead)).rejects.toMatchObject({ outcome: 'not_sent' });
+    await expect(contactPostForm(fixtureLead)).resolves.toMatchObject({ outcome: 'retry_later' });
     expect(fetch).not.toHaveBeenCalled();
-    expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'FAILURE', null, expect.any(Error));
+    expect(updateSubmissionStatus).not.toHaveBeenCalled();
   });
 
   it('requires the test window to stay open through org verification', async () => {
@@ -1606,13 +1479,13 @@ describe('Salesforce WebDev form transport', () => {
       return { token: 'test-only', generation: 1, instanceUrl: config.restOrigin, cacheKey: config.cacheKey };
     });
 
-    await expect(contactPostForm(fixtureLead)).rejects.toMatchObject({ outcome: 'not_sent' });
+    await expect(contactPostForm(fixtureLead)).resolves.toMatchObject({ outcome: 'retry_later' });
     expect(fetch).not.toHaveBeenCalled();
   });
 
   it('rejects a partner ID absent from the verified sandbox Account lookup', async () => {
     vi.mocked(stateService.fetchAgentById).mockResolvedValueOnce(null);
-    await expect(contactAgentPostForm(fixtureLead, `?state=colorado&id=${agentFixture}`)).rejects.toMatchObject({ outcome: 'not_sent' });
+    await expect(contactAgentPostForm(fixtureLead, `?state=colorado&id=${agentFixture}`)).resolves.toMatchObject({ outcome: 'retry_later' });
     expect(getVerifiedSalesforceSession).toHaveBeenCalledBefore(vi.mocked(stateService.fetchAgentById));
     expect(fetch).not.toHaveBeenCalled();
   });
@@ -1625,14 +1498,14 @@ describe('Salesforce WebDev form transport', () => {
     ['an unrecognized 18-character ID with the fixture prefix', agentFixture + 'AAX'],
   ])('rejects %s before any partner lookup or Web-to-Lead request', async (_label, partnerId) => {
     // The Account stub would return a record even for a copied production ID.
-    await expect(contactAgentPostForm(fixtureLead, `?state=colorado&id=${partnerId}`)).rejects.toMatchObject({ outcome: 'not_sent' });
+    await expect(contactAgentPostForm(fixtureLead, `?state=colorado&id=${partnerId}`)).resolves.toMatchObject({ outcome: 'not_sent' });
     expect(getVerifiedSalesforceSession).not.toHaveBeenCalled();
     expect(stateService.fetchAgentById).not.toHaveBeenCalled();
     expect(fetch).not.toHaveBeenCalled();
   });
 
   it('rejects an agent fixture for the lender form', async () => {
-    await expect(contactLenderPostForm(fixtureLead, `?state=colorado&id=${agentFixture}`)).rejects.toMatchObject({ outcome: 'not_sent' });
+    await expect(contactLenderPostForm(fixtureLead, `?state=colorado&id=${agentFixture}`)).resolves.toMatchObject({ outcome: 'not_sent' });
     expect(stateService.fetchAgentById).not.toHaveBeenCalled();
     expect(fetch).not.toHaveBeenCalled();
   });
@@ -1641,7 +1514,7 @@ describe('Salesforce WebDev form transport', () => {
     const differentOrgId = '00D000000000019';
     vi.stubEnv('VPCS_SALESFORCE_ORG_ID', differentOrgId);
     vi.stubEnv('VPCS_SALESFORCE_METADATA_JSON', JSON.stringify({ ...mockManifest, orgId: differentOrgId }));
-    await expect(contactAgentPostForm(fixtureLead, `?state=colorado&id=${agentFixture}`)).rejects.toMatchObject({ outcome: 'not_sent' });
+    await expect(contactAgentPostForm(fixtureLead, `?state=colorado&id=${agentFixture}`)).resolves.toMatchObject({ outcome: 'not_sent' });
     expect(stateService.fetchAgentById).not.toHaveBeenCalled();
     expect(fetch).not.toHaveBeenCalled();
   });
@@ -1651,9 +1524,9 @@ describe('Salesforce WebDev form transport', () => {
     ['lender', lenderFixture, '00N4x00000QPJUT', contactLenderPostForm],
   ] as const)('forwards only the verified %s Account selector and state to sandbox', async (role, partnerId, field, submit) => {
     await expect(submit(fixtureLead, `?state=colorado&id=${partnerId}&message=omit-this`))
-      .resolves.toMatchObject({ message: 'Form submitted successfully!' });
+      .resolves.toEqual(acceptedResult);
 
-    expect(stateService.fetchAgentById).toHaveBeenCalledWith(partnerId);
+    expect(stateService.fetchAgentById).toHaveBeenCalledWith(partnerId, expect.any(AbortSignal));
     expect(fetch).toHaveBeenCalledTimes(1);
     const body = new URLSearchParams(String(vi.mocked(fetch).mock.calls[0]?.[1]?.body));
     expect(body.get(mockManifest.fieldIds[field])).toBe(partnerId);
@@ -1663,18 +1536,18 @@ describe('Salesforce WebDev form transport', () => {
     expect(formUrl).not.toContain('omit-this');
   });
 
-  it('accepts an allowlisted sandbox submission with website SMS configuration absent', async () => {
+  it('reconciles an allowlisted sandbox attempt without repeating the POST or using website SMS', async () => {
     vi.stubEnv('VPCS_DELIVERY_MODE', 'allowlisted');
-    const input = { ...fixtureLead, phone: '+12025552000' };
+    const input = { ...fixtureLead, phone: '+12025552000', submission_attempt_id: acceptedResult.submissionId };
 
     vi.mocked(fetch).mockResolvedValueOnce(new Response('', { status: 500 }));
-    await expect(contactAgentPostForm(input, '?state=colorado')).rejects.toMatchObject({ outcome: 'unconfirmed' });
-    await expect(contactAgentPostForm(input, '?state=colorado')).resolves.toMatchObject({ submissionId: 'submission-test-id' });
-    expect(fetch).toHaveBeenCalledTimes(2);
-    for (const [url, request] of vi.mocked(fetch).mock.calls) {
-      expect(url).toBe(action);
-      expect(request?.method).toBe('POST');
-    }
+    vi.mocked(reconcileLeadAttempt).mockResolvedValueOnce(false);
+    await expect(contactAgentPostForm(input, '?state=colorado')).resolves.toMatchObject({ outcome: 'unconfirmed' });
+    expect(sendToSlack).not.toHaveBeenCalled();
+
+    vi.mocked(inspectLeadAttempt).mockResolvedValueOnce({ exists: true, confirmed: false, declined: false });
+    await expect(contactAgentPostForm(input, '?state=colorado')).resolves.toEqual(acceptedResult);
+    expect(fetch).toHaveBeenCalledExactlyOnceWith(action, expect.objectContaining({ method: 'POST' }));
     expect(sendToSlack).toHaveBeenCalledTimes(1);
   });
 });

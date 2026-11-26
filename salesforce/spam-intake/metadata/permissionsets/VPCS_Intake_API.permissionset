@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <classAccesses>
+        <apexClass>VpcsIntakeAttemptApi</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <customPermissions>
+        <enabled>true</enabled>
+        <name>VPCS_Intake_API</name>
+    </customPermissions>
+    <description>Grants website intake endpoint access without blocklist or Lead object grants.</description>
+    <label>VPCS Intake API</label>
+</PermissionSet>

@@ -37,11 +37,7 @@ export function useHoneypot() {
    * spread cleanly into strongly-typed react-hook-form payloads without
    * index-signature conflicts.
    *
-   * Memoized with an empty dep array (it only reads from the two stable refs)
-   * so it has a constant identity across renders. That keeps it safe to list
-   * in a submit-effect's dependency array — the multi-step get-listed pages
-   * call it from inside a `useEffect`, and an unstable identity there would
-   * re-fire the effect every render (risking a double submit).
+   * Memoized with an empty dependency array since it only reads two refs.
    */
   const getSpamFields = useCallback(
     () => ({

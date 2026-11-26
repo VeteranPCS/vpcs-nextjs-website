@@ -1,36 +1,25 @@
-'use client';
+import type { LeadSubmitResult } from '@/lib/leads/submission-outcome';
 
-import { useEffect, useRef } from 'react';
-
-export default function CustomerSubmissionFeedback({ notice, hasUnconfirmed, confirmRetry, isSubmitting, submissionId, sendAgain, cancelRetry }: {
-  notice: 'not_sent' | 'unconfirmed' | null;
-  hasUnconfirmed: boolean;
-  confirmRetry: boolean;
-  isSubmitting: boolean;
-  submissionId?: string;
-  sendAgain: () => void;
-  cancelRetry: () => void;
+export default function CustomerSubmissionFeedback({ failure, className = 'text-red-700 text-sm', showValidation = true }: {
+  failure?: Extract<LeadSubmitResult, { success: false }>;
+  className?: string;
+  showValidation?: boolean;
 }) {
-  const confirmation = useRef<HTMLDivElement>(null);
-  useEffect(() => { if (confirmRetry) confirmation.current?.focus(); }, [confirmRetry]);
-  return <>
-    {notice === 'not_sent' && <p role="alert" className="text-red-700 text-sm">
-      We couldn’t send your request. Your information is still here. Please try again.
-    </p>}
-    {hasUnconfirmed && <div className="text-red-700 text-sm">
-      <p role={notice === 'unconfirmed' ? 'alert' : undefined}>
-        We couldn’t confirm whether your request was received. It may already have reached us. Sending again could create a duplicate.
-      </p>
-      {submissionId && <p>Reference: {submissionId}</p>}
-    </div>}
-    {confirmRetry && <div ref={confirmation} tabIndex={-1} role="region" aria-labelledby="customer-retry-heading"
-      className="border border-red-700 rounded-md p-4 text-red-800 focus:outline-2 focus:outline-offset-2">
-      <h2 id="customer-retry-heading" className="font-bold">Send this request again?</h2>
-      <p className="mt-2 text-sm">Your earlier request may already have arrived. Only send again if you want to retry.</p>
-      <div className="flex gap-4 mt-3">
-        <button type="button" disabled={isSubmitting} onClick={sendAgain} className="underline min-h-[44px]">Send again</button>
-        <button type="button" onClick={cancelRetry} className="underline min-h-[44px]">Cancel</button>
-      </div>
-    </div>}
-  </>;
+  if (!failure || (failure.outcome === 'validation_error' && !showValidation)) return null;
+  const messages = {
+    not_sent: 'We couldn’t send your request. Your information is still here. Please try again.',
+    rejected: 'We couldn’t accept this request. Contact us if you need help.',
+    review_required: 'We need to verify this request before it can be sent. Contact us for help.',
+    retry_later: 'We couldn’t verify your request right now. Your information is still here. Please wait before trying again.',
+    unconfirmed: 'We couldn’t confirm whether your request was received. It may already have reached us. Contact us to check its status.',
+    validation_error: 'Check the information you entered and try again.',
+  };
+  const needsHelp = ['rejected', 'review_required', 'unconfirmed'].includes(failure.outcome);
+
+  return <div role="alert" className={className}>
+    <p>{messages[failure.outcome]}</p>
+    {failure.outcome === 'retry_later' && failure.retryAt && Number.isFinite(failure.retryAt) && <p>Try again after {new Date(failure.retryAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}.</p>}
+    {needsHelp && <p><a className="underline" href="mailto:info@veteranpcs.com">Email VeteranPCS</a></p>}
+    {needsHelp && failure.submissionId && <p>Reference {failure.submissionId}</p>}
+  </div>;
 }

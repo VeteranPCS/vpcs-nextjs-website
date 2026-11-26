@@ -16,27 +16,21 @@ export default function ContactLenderPage() {
     setDerivedStateCode(normalizeStateCode(queryParams.get("state")));
   }, []);
 
-  const handleSubmit = async (formData: ContactLenderFormData): Promise<CustomerSubmitResult> => {
+  const handleSubmit = async (formData: ContactLenderFormData & { submission_attempt_id: string }): Promise<CustomerSubmitResult> => {
     const fullQueryString = window.location.search;
     const queryParams = new URLSearchParams(fullQueryString);
 
-    try {
-      // Comparator telemetry is optional and must never prevent lead delivery.
+    let tracking = {};
+    try { tracking = formTrackingPayload('contact_lender'); } catch { /* Optional attribution. */ }
+    const result = await submitContactLenderLead({ ...formData, ...tracking }, fullQueryString);
+    if (result.outcome === 'accepted') {
       try { sendGTMEvent({
         event: "conversion_contact_lender",
-        agent_id: queryParams.get('id') || "",
-        state: normalizeStateSlug(queryParams.get('state')) || "",
-      }); } catch { /* Keep existing GTM semantics, best effort. */ }
-
-      const result = await submitContactLenderLead(
-        { ...formData, ...formTrackingPayload('contact_lender') },
-        fullQueryString,
-      );
-      return result;
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      return { success: false, outcome: 'unconfirmed' };
+        agent_id: queryParams.get("id") || "",
+        state: normalizeStateSlug(queryParams.get("state")) || "",
+      }); } catch { /* Optional conversion telemetry. */ }
     }
+    return result;
   };
 
   return (

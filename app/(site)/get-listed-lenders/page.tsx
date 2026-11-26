@@ -1,5 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
+import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
+import { useState } from "react";
 import GetListedLenders from "@/components/GetListedLenders/GetListedLenders";
 import GetListedLendersProfileInfo from "@/components/GetListedLenders/GetListedLendersProfileInfo";
 import GetListedLendersProfileInfoWantShareMore from "@/components/GetListedLenders/GetListedLendersProfileInfoWantShareMore";
@@ -26,46 +28,22 @@ export default function GetListedLendersPage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState({});
-  const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const submission = useLeadSubmission('get_listed_lenders');
   const { ref: honeypotRef, getSpamFields } = useHoneypot();
 
-  const shouldSubmit = () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    setShouldSubmitForm(true);
+  async function submitApplication(stepData: object) {
+    const payload = { ...formData, ...stepData };
+    const result = await submission.submit({ ...payload, ...getSpamFields() }, GetListedLendersPostForm, payload);
+    if (result?.outcome === 'accepted') {
+      bestEffort(() => sendGTMEvent({ event: 'conversion_get_listed_lenders' }));
+      router.push(result.redirectUrl || '/thank-you');
+    }
   }
 
   const handleNext = () => {
     setCurrentStep(prev => Math.min(prev + 1, 4));
   };
 
-  useEffect(() => {
-    const handleFormSubmission = async () => {
-      try {
-        sendGTMEvent({
-          event: 'conversion_get_listed_lenders',
-        });
-        const server_response = await GetListedLendersPostForm({ ...formData, ...getSpamFields() });
-
-        // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
-        if (server_response?.redirectUrl) {
-          router.push(server_response.redirectUrl);
-        } else {
-          console.error('No redirect URL found');
-          setIsSubmitting(false);
-          setShouldSubmitForm(false);
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        setIsSubmitting(false);
-        setShouldSubmitForm(false);
-      }
-    };
-    if (shouldSubmitForm) {
-      handleFormSubmission();
-    }
-  }, [formData, shouldSubmitForm, router, getSpamFields]);
 
   const handleBack = () => {
     setCurrentStep(prev => Math.max(prev - 1, 1));
@@ -157,8 +135,10 @@ export default function GetListedLendersPage() {
         {currentStep === 4 && (
           <MortgageCompanyInfo
             onBack={handleBack}
-            onSubmit={handleSubmit}
-            shouldSubmit={shouldSubmit}
+            onSubmit={submitApplication}
+            isSubmitting={submission.submitting}
+            blocked={submission.blocked}
+            feedback={<CustomerSubmissionFeedback failure={submission.failure} />}
           />
         )}
       </div>

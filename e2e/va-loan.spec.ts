@@ -22,8 +22,9 @@ test('VA landing keeps qualified benefits, routes and responsive form usable',as
   attempts++;
   const payload=route.request().postData()??'';
   expect(payload).toContain('firstName');expect(payload).toContain('additionalComments');expect(payload).toContain('form_rendered_at');expect(payload).toContain('alex@example.com');
-  if(attempts===1){await new Promise(resolve=>setTimeout(resolve,350));return route.fulfill({status:503,body:'Unavailable'});}
-  return route.fulfill({status:200,contentType:'text/x-component',body:'0:{"a":"$@1","f":"","b":"test"}\n1:{"success":true}\n'});
+  if(attempts===1) await new Promise(resolve=>setTimeout(resolve,350));
+  const result = attempts===1 ? { outcome: 'not_sent', success: false } : { outcome: 'accepted', success: true };
+  return route.fulfill({status:200,contentType:'text/x-component',body:`0:{"a":"$@1","f":"","b":"test"}\n1:${JSON.stringify(result)}\n`});
  });
  await form.getByRole('button',{name:/Ask a VA Loan Expert/}).click();await expect(form.getByRole('button',{name:'Sending…'})).toBeDisabled();await form.evaluate(node=>{node.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));node.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));});await expect(form.getByRole('alert')).toBeVisible();expect(attempts).toBe(1);await expect(form.getByLabel('First name')).toHaveValue('Alex');
  await form.getByRole('button',{name:/Ask a VA Loan Expert/}).click();await expect(page.getByRole('status').filter({hasText:'We received your VA loan question'})).toBeVisible();expect(attempts).toBe(2);

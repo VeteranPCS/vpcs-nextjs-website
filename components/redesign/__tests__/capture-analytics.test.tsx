@@ -2,6 +2,7 @@
 import React from 'react';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { LeadSubmitResult } from '@/lib/leads/submission-outcome';
 const mocks = vi.hoisted(() => ({ submit: vi.fn(), capture: vi.fn(), gtm: vi.fn() }));
 vi.mock('posthog-js', () => ({ default: { capture: mocks.capture } }));
 vi.mock('@next/third-parties/google', () => ({ sendGTMEvent: mocks.gtm }));
@@ -41,7 +42,7 @@ describe('guide capture analytics', () => {
     ['homebuyer-guide', 'first_time_homebuyer_guide', '/downloads/first-time-home-buyer-guide.pdf', 'First Time Home Buyer Guide'],
     ['colorado-relocation-guide', 'colorado_relocation_guide', '/downloads/colorado-relocation-guide-tyler-parker-v7.pdf', 'Colorado Relocation Guide'],
   ] as const)('tracks %s requests, successful starts and manual downloads without personal input', async (kind, guideId, destination, gaContent) => {
-    let finish: ((result: { success: boolean }) => void) | undefined;
+    let finish: ((result: LeadSubmitResult) => void) | undefined;
     mocks.submit.mockReturnValue(new Promise(resolve => { finish = resolve; }));
     const form = openAndFill(kind);
     const colorado = kind === 'colorado-relocation-guide';
@@ -54,7 +55,7 @@ describe('guide capture analytics', () => {
     expect(downloadEvents().map(([event]) => event)).toEqual(['guide_download_requested']);
     expect(mocks.gtm).not.toHaveBeenCalled();
     if (!finish) throw new Error('Expected pending submission');
-    finish({ success: true });
+    finish({ success: true, outcome: 'accepted' });
     await screen.findByRole('status');
     expect(downloadEvents().map(([event]) => event)).toEqual(['guide_download_requested', 'guide_download_started']);
     expect(mocks.gtm).toHaveBeenCalledExactlyOnceWith({ event: 'conversion_download', content: gaContent });
@@ -83,7 +84,7 @@ describe('guide capture analytics', () => {
   });
 
   it('does not report conversion after a failed request; explicit retry is tracked', async () => {
-    mocks.submit.mockResolvedValueOnce({ success: false }).mockResolvedValueOnce({ success: true });
+    mocks.submit.mockResolvedValueOnce({ success: false, outcome: 'not_sent' }).mockResolvedValueOnce({ success: true, outcome: 'accepted' });
     const form = openAndFill('colorado-relocation-guide');
     fireEvent.submit(form);
     await screen.findByRole('alert');
@@ -96,8 +97,30 @@ describe('guide capture analytics', () => {
     expect(mocks.gtm).toHaveBeenCalledTimes(1);
   });
 
+  it.each([
+    ['rejected', 'couldn’t accept'],
+    ['review_required', 'need to verify'],
+    ['retry_later', 'couldn’t verify'],
+    ['unconfirmed', 'may already have reached us'],
+  ] as const)('shows %s without starting a download or conversion', async (outcome, message) => {
+    mocks.submit.mockResolvedValue({ success: false, outcome, submissionId: 'test-reference' });
+    const form = openAndFill('colorado-relocation-guide');
+    fireEvent.submit(form);
+    const alert = await screen.findByRole('alert');
+    expect(alert.textContent).toContain(message);
+    expect(screen.queryByRole('status')).toBeNull();
+    expect(mocks.gtm).not.toHaveBeenCalled();
+    expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
+    if (outcome === 'unconfirmed') {
+      expect(alert.textContent).toContain('test-reference');
+      expect((screen.getByRole('button', { name: 'Get my guide' }) as HTMLButtonElement).disabled).toBe(true);
+      fireEvent.submit(form);
+      expect(mocks.submit).toHaveBeenCalledTimes(1);
+    }
+  });
+
   it('preserves success and downloading when both analytics providers throw', async () => {
-    mocks.submit.mockResolvedValue({ success: true });
+    mocks.submit.mockResolvedValue({ success: true, outcome: 'accepted' });
     mocks.capture.mockImplementation(() => { throw new Error('PostHog blocked'); });
     mocks.gtm.mockImplementation(() => { throw new Error('GTM blocked'); });
     fireEvent.submit(openAndFill('colorado-relocation-guide'));
@@ -108,7 +131,7 @@ describe('guide capture analytics', () => {
   });
 
   it('keeps the manual link after the browser blocks the automatic download', async () => {
-    mocks.submit.mockResolvedValue({ success: true });
+    mocks.submit.mockResolvedValue({ success: true, outcome: 'accepted' });
     vi.mocked(HTMLAnchorElement.prototype.click).mockImplementation(() => { throw new Error('Download blocked'); });
     fireEvent.submit(openAndFill('colorado-relocation-guide'));
     await screen.findByRole('status');
@@ -133,7 +156,7 @@ describe('guide capture analytics', () => {
   });
 
   it('treats Contact Tyler as a separate selected-agent action after download', async () => {
-    mocks.submit.mockResolvedValue({ success: true });
+    mocks.submit.mockResolvedValue({ success: true, outcome: 'accepted' });
     fireEvent.submit(openAndFill('colorado-relocation-guide', true));
     await screen.findByRole('status');
     expect(sessionStorage.getItem('vpcs_selected_agent')).toBeNull();
@@ -156,7 +179,7 @@ describe('guide capture analytics', () => {
   });
 
   it('offers a generic Colorado contact after a nonproduction download', async () => {
-    mocks.submit.mockResolvedValue({ success: true });
+    mocks.submit.mockResolvedValue({ success: true, outcome: 'accepted' });
     fireEvent.submit(openAndFill('colorado-relocation-guide'));
     await screen.findByRole('status');
     const contact = screen.getByRole('link', { name: 'Find a Colorado Agent' });
@@ -166,7 +189,7 @@ describe('guide capture analytics', () => {
   });
 
   it('does not call downloads or emit guide events for a newsletter', async () => {
-    mocks.submit.mockResolvedValue({ success: true });
+    mocks.submit.mockResolvedValue({ success: true, outcome: 'accepted' });
     fireEvent.submit(openAndFill('newsletter'));
     await waitFor(() => expect(screen.getByRole('status').textContent).toContain('received'));
     expect(downloadEvents()).toHaveLength(0);

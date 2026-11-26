@@ -172,6 +172,18 @@ describe('stateService partner headshots', () => {
     }));
   });
 
+  it('passes an optional partner enrichment deadline through to Salesforce', async () => {
+    stubWebdevEnv();
+    const signal = new AbortController().signal;
+    const partner = { Name: 'Synthetic Partner' };
+    vi.mocked(salesForceAPIWithRefresh).mockResolvedValueOnce({
+      status: 200, data: { records: [partner] },
+    } as never);
+
+    await expect(stateService.fetchAgentById(MOCK_AGENT_ID, signal)).resolves.toEqual(partner);
+    expect(salesForceAPIWithRefresh).toHaveBeenCalledWith(expect.objectContaining({ signal }));
+  });
+
   it.each([
     ['agents', MOCK_AGENT_ID, stateService.fetchAgentsListByState],
     ['lenders', MOCK_LENDER_ID, stateService.fetchLendersListByState],

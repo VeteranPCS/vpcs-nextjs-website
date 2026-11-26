@@ -1,5 +1,5 @@
 "use client";
-import { useState, FormEvent } from "react";
+import { FormEvent } from "react";
 import { Controller, useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -23,7 +23,9 @@ export type HowDidYouHearOptions =
 interface ContactFormProps {
   onSubmit: (data: any) => void;
   onBack: () => void;
-  shouldSubmit: () => void;
+  isSubmitting: boolean;
+  blocked: boolean;
+  feedback: React.ReactNode;
 }
 
 const howDidYouHearOptions: HowDidYouHearOptions[] = [
@@ -73,9 +75,7 @@ const schema = yup.object().shape({
   }),
 });
 
-const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+const AgentInfo = ({ onSubmit, onBack, isSubmitting, blocked, feedback }: ContactFormProps) => {
   const {
     register,
     handleSubmit,
@@ -84,15 +84,13 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
     watch,
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: { otherStates: [] },
   });
 
   const howDidYouHearValue = watch("howDidYouHear");
 
   const onSubmitHandler: SubmitHandler<any> = (data) => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    onSubmit(data);
-    shouldSubmit();
+    if (!isSubmitting && !blocked) onSubmit(data);
   };
 
   return (
@@ -405,11 +403,12 @@ const AgentInfo = ({ onSubmit, onBack, shouldSubmit }: ContactFormProps) => {
 
             {/* <HowDidYouHearAboutUs /> */}
             <hr />
+            {feedback}
             <div className="flex md:justify-start justify-center">
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[#292F6C]"} px-8 py-3 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
+                disabled={isSubmitting || blocked}
+                className={`rounded-md border border-[#BBBFC1] ${isSubmitting || blocked ? "bg-gray-400 cursor-not-allowed" : "bg-[#292F6C]"} px-8 py-3 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
               >
                 {isSubmitting ? "Submitting..." : "Submit Now"}
                 {!isSubmitting && (

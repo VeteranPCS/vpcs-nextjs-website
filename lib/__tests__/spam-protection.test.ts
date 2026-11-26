@@ -1,371 +1,115 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { Mock } from 'vitest';
-
-// Mock server-only so it doesn't throw in test env
-vi.mock('server-only', () => ({}));
-
-// Mock next/headers — we control what `headers()` returns per test
-vi.mock('next/headers', () => ({
-  headers: vi.fn(async () => new Headers({ 'x-forwarded-for': '1.2.3.4' })),
-}));
-
-// Mock the rate limiter — control results per test
-vi.mock('@/lib/rate-limit', () => ({
-  formLimiter: { limit: vi.fn() },
-}));
-
-// Mock loggingService so we can assert it's called on throw
-vi.mock('@/services/loggingService', () => ({
-  logError: vi.fn(),
-}));
-
-// NOTE: internal-call-token is NOT mocked globally; we import the real module and use
-// INTERNAL_CALL_TOKEN for the bypass test (most reliable approach per spec guidance).
-
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { headers } from 'next/headers';
-import { formLimiter } from '@/lib/rate-limit';
-import { logError } from '@/services/loggingService';
+import { INTERNAL_CALL_TOKEN } from '@/lib/internal-call-token';
+import { evaluateLeadSpam, ipFromHeaders, trustedLeadIp, tagSpamSuspected } from '@/lib/spam-protection';
+import { leadRateLimit } from '@/lib/leads/rate-limit';
+import { checkBlockedIdentity } from '@/services/salesforceIntake';
+import { emailIdentityHash, sha256 } from '@/lib/leads/identity';
 
-const mockHeaders = headers as Mock;
-const mockLimit = formLimiter.limit as Mock;
+vi.mock('server-only', () => ({}));
+vi.mock('next/headers', () => ({ headers: vi.fn() }));
+vi.mock('@/lib/leads/rate-limit', () => ({ leadRateLimit: vi.fn() }));
+vi.mock('@/services/salesforceIntake', () => ({ checkBlockedIdentity: vi.fn() }));
+vi.mock('@/services/loggingService', () => ({ logError: vi.fn() }));
 
-// Helper: make limit resolve with success for both ip + optional email buckets
-function setupLimitSuccess() {
-  mockLimit.mockResolvedValue({ success: true, limit: 5, remaining: 4, reset: 0 });
-}
+const clean = () => ({ email: 'user@example.test', honeypot: '', renderedAt: Date.now() - 5_000 });
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.stubEnv('NODE_ENV', 'test');
+  vi.stubEnv('LEAD_DRY_RUN', '0');
+  vi.stubEnv('LEAD_SPAM_ENFORCED', undefined);
+  vi.stubEnv('VERCEL', '1');
+  vi.mocked(headers).mockResolvedValue(new Headers({ 'x-vercel-forwarded-for': '192.0.2.10' }) as Awaited<ReturnType<typeof headers>>);
+  vi.mocked(leadRateLimit).mockResolvedValue({ allowed: true, retryAt: Date.now() + 600_000 });
+  vi.mocked(checkBlockedIdentity).mockResolvedValue(false);
+});
+afterEach(() => vi.unstubAllEnvs());
 
-function setupIpFail() {
-  // ip bucket returns over-limit; subsequent calls (email) would also fail but ip is enough
-  mockLimit.mockResolvedValue({ success: false, limit: 5, remaining: 0, reset: 0 });
-}
-
-function setupIpSuccessEmailFail() {
-  // First call (ip) succeeds, second call (email) fails
-  mockLimit
-    .mockResolvedValueOnce({ success: true, limit: 5, remaining: 3, reset: 0 })
-    .mockResolvedValueOnce({ success: false, limit: 5, remaining: 0, reset: 0 });
-}
-
-describe('spam-protection', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    vi.unstubAllEnvs();
+describe('lead admission', () => {
+  it('admits clean input after current policy and both bounded identity checks', async () => {
+    expect(await evaluateLeadSpam(clean())).toEqual({ decision: 'allow', quarantine: false, reasons: [] });
+    expect(checkBlockedIdentity).toHaveBeenCalledWith(emailIdentityHash('user@example.test'));
+    expect(leadRateLimit).toHaveBeenCalledWith([`email:${emailIdentityHash('user@example.test')}`, `ip:${sha256('192.0.2.10')}`]);
   });
-
-  afterEach(() => {
-    vi.unstubAllEnvs();
+  it.each(['https://bot.test', ' filled ', ' '.repeat(256), {}])('rejects filled or malformed honeypot before policy/rate requests: %j', async honeypot => {
+    expect((await evaluateLeadSpam({ ...clean(), honeypot: honeypot as string })).decision).toBe('reject');
+    expect(checkBlockedIdentity).not.toHaveBeenCalled();
+    expect(leadRateLimit).not.toHaveBeenCalled();
   });
-
-  // -----------------------------------------------------------------------
-  // Internal bypass
-  // -----------------------------------------------------------------------
-  describe('internal bypass', () => {
-    it('returns quarantine:false and reasons:["internal"] for a trusted internal call, without touching headers or formLimiter', async () => {
-      // Use the real INTERNAL_CALL_TOKEN — the cleanest way to build a genuinely-trusted options object
-      const { INTERNAL_CALL_TOKEN } = await import('@/lib/internal-call-token');
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        email: 'user@example.com',
-        freeText: 'see http://spam.example',
-        options: { internalCallToken: INTERNAL_CALL_TOKEN },
-      });
-
-      expect(result).toEqual({ quarantine: false, reasons: ['internal'] });
-      // headers() must NOT have been called
-      expect(mockHeaders).not.toHaveBeenCalled();
-      // formLimiter.limit must NOT have been called
-      expect(mockLimit).not.toHaveBeenCalled();
-    });
+  it.each([undefined, '', {}, [], '0x123456', ' '.repeat(20), '1'.repeat(100), NaN, Infinity])('holds missing or malformed public timestamps: %j', async renderedAt => {
+    expect((await evaluateLeadSpam({ ...clean(), renderedAt: renderedAt as string })).decision).toBe('review_required');
+    expect(leadRateLimit).not.toHaveBeenCalled();
   });
-
-  // -----------------------------------------------------------------------
-  // Kill-switch
-  // -----------------------------------------------------------------------
-  describe('kill-switch', () => {
-    it('returns quarantine:false and reasons:["disabled"] when LEAD_SPAM_ENFORCED=0', async () => {
-      vi.stubEnv('LEAD_SPAM_ENFORCED', '0');
-
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        freeText: 'see http://spam.example',
-        email: 'spammer@bad.com',
-      });
-
-      expect(result).toEqual({ quarantine: false, reasons: ['disabled'] });
-    });
+  it('holds a missing public honeypot without inventing a successful review queue', async () => {
+    expect((await evaluateLeadSpam({ ...clean(), honeypot: undefined })).decision).toBe('review_required');
   });
-
-  // -----------------------------------------------------------------------
-  // Link detection
-  // -----------------------------------------------------------------------
-  describe('link in free text', () => {
-    it('quarantines when freeText contains a URL', async () => {
-      setupLimitSuccess();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({ freeText: 'see http://spam.example' });
-
-      expect(result.quarantine).toBe(true);
-      expect(result.reasons).toContain('link-in-freetext');
-    });
-
-    it('does not quarantine for clean text', async () => {
-      setupLimitSuccess();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({ freeText: 'I am moving to San Diego next year' });
-
-      expect(result.quarantine).toBe(false);
-      expect(result.reasons).not.toContain('link-in-freetext');
-    });
+  it.each([0, -1000])('holds too-fast or future timing (elapsed %s)', async elapsed => {
+    expect((await evaluateLeadSpam({ ...clean(), renderedAt: Date.now() - elapsed })).decision).toBe('review_required');
   });
-
-  // -----------------------------------------------------------------------
-  // Rate-limit — IP bucket over limit
-  // -----------------------------------------------------------------------
-  describe('dry-run rate-limit isolation', () => {
-    it('keeps local dry-run submissions out of shared rate-limit buckets while retaining spam signals', async () => {
-      vi.stubEnv('NODE_ENV', 'development');
-      vi.stubEnv('LEAD_DRY_RUN', '1');
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      expect(await evaluateLeadSpam({ email: 'test@example.com', freeText: 'Moving to Colorado' }))
-        .toEqual({ quarantine: false, reasons: [] });
-      expect(await evaluateLeadSpam({ email: 'test@example.com', honeypot: 'filled' }))
-        .toEqual({ quarantine: true, reasons: ['honeypot'] });
-      expect(mockLimit).not.toHaveBeenCalled();
-      expect(mockHeaders).not.toHaveBeenCalled();
-    });
-
-    it('enforces real rate limits in production even if LEAD_DRY_RUN is set', async () => {
-      vi.stubEnv('NODE_ENV', 'production');
-      vi.stubEnv('LEAD_DRY_RUN', '1');
-      setupIpFail();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      expect(await evaluateLeadSpam({ email: 'test@example.com' }))
-        .toEqual({ quarantine: true, reasons: ['rate-limit'] });
-      expect(mockLimit).toHaveBeenCalledTimes(2);
-      expect(mockHeaders).toHaveBeenCalledOnce();
-    });
+  it('holds a link-only signal without declaring a permanent blocked identity', async () => {
+    expect(await evaluateLeadSpam({ ...clean(), freeText: 'https://example.test' })).toMatchObject({ decision: 'review_required', reasons: ['link-in-freetext'] });
   });
-
-  describe('rate-limit: ip bucket over limit', () => {
-    it('quarantines and includes rate-limit in reasons', async () => {
-      setupIpFail();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({ freeText: 'clean text' });
-
-      expect(result.quarantine).toBe(true);
-      expect(result.reasons).toContain('rate-limit');
-    });
+  it('rejects an active blocked identity using its canonical matching key', async () => {
+    vi.mocked(checkBlockedIdentity).mockResolvedValue(true);
+    expect((await evaluateLeadSpam({ ...clean(), email: 'U.s.e.r+extra@gmail.com' })).decision).toBe('reject');
+    expect(checkBlockedIdentity).toHaveBeenCalledWith(emailIdentityHash('user@gmail.com'));
+    expect(leadRateLimit).not.toHaveBeenCalled();
   });
-
-  // -----------------------------------------------------------------------
-  // Rate-limit — email bucket over limit (ip succeeds, email fails)
-  // -----------------------------------------------------------------------
-  describe('rate-limit: email bucket over limit', () => {
-    it('quarantines when ip passes but email bucket is exhausted', async () => {
-      setupIpSuccessEmailFail();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        email: 'repeat@example.com',
-        freeText: 'clean text',
-      });
-
-      expect(result.quarantine).toBe(true);
-      expect(result.reasons).toContain('rate-limit');
-    });
+  it('returns recoverable rate exhaustion with its retry time', async () => {
+    vi.mocked(leadRateLimit).mockResolvedValue({ allowed: false, retryAt: 12345 });
+    expect(await evaluateLeadSpam(clean())).toMatchObject({ decision: 'retry_later', retryAt: 12345 });
   });
-
-  // -----------------------------------------------------------------------
-  // Fail open — formLimiter throws
-  // -----------------------------------------------------------------------
-  describe('fail open on rate-limit error', () => {
-    it('does not crash and quarantine:false when formLimiter.limit throws (and logError is called)', async () => {
-      mockLimit.mockRejectedValue(new Error('Redis connection timeout'));
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({ freeText: 'clean text', email: 'user@ok.com' });
-
-      expect(result.quarantine).toBe(false);
-      expect(result.reasons).not.toContain('rate-limit');
-      expect(logError).toHaveBeenCalled();
-    });
+  it.each(['policy', 'rate'])('fails closed when %s is unavailable', async dependency => {
+    if (dependency === 'policy') vi.mocked(checkBlockedIdentity).mockRejectedValue(new Error('offline'));
+    else vi.mocked(leadRateLimit).mockRejectedValue(new Error('offline'));
+    expect((await evaluateLeadSpam(clean())).decision).toBe('retry_later');
   });
-
-  // -----------------------------------------------------------------------
-  // Clean lead
-  // -----------------------------------------------------------------------
-  describe('clean lead', () => {
-    it('returns quarantine:false with empty reasons when lead is clean', async () => {
-      setupLimitSuccess();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        freeText: 'Moving from Fort Bragg to Fort Lewis next summer',
-        email: 'soldier@army.mil',
-      });
-
-      expect(result).toEqual({ quarantine: false, reasons: [] });
-    });
+  it('cannot disable enforcement with the old permissive switch', async () => {
+    vi.stubEnv('LEAD_SPAM_ENFORCED', '0');
+    expect((await evaluateLeadSpam(clean())).decision).toBe('retry_later');
   });
-
-  // -----------------------------------------------------------------------
-  // tagSpamSuspected
-  // -----------------------------------------------------------------------
-  describe('tagSpamSuspected', () => {
-    it('returns bare tag when comments is undefined', async () => {
-      const { tagSpamSuspected } = await import('@/lib/spam-protection');
-      expect(tagSpamSuspected(undefined)).toBe('[SPAM-SUSPECTED]');
-    });
-
-    it('returns bare tag when comments is empty string', async () => {
-      const { tagSpamSuspected } = await import('@/lib/spam-protection');
-      expect(tagSpamSuspected('')).toBe('[SPAM-SUSPECTED]');
-    });
-
-    it('returns bare tag when comments is whitespace-only', async () => {
-      const { tagSpamSuspected } = await import('@/lib/spam-protection');
-      expect(tagSpamSuspected('   ')).toBe('[SPAM-SUSPECTED]');
-    });
-
-    it('prepends tag and space when comments has content', async () => {
-      const { tagSpamSuspected } = await import('@/lib/spam-protection');
-      expect(tagSpamSuspected('hello')).toBe('[SPAM-SUSPECTED] hello');
-    });
+  it('internal calls still check blocked identity and rates but need no browser timing', async () => {
+    const input = { email: 'user@example.test', options: { internalCallToken: INTERNAL_CALL_TOKEN } };
+    expect((await evaluateLeadSpam(input)).decision).toBe('allow');
+    expect(leadRateLimit).toHaveBeenCalledTimes(1);
+    vi.mocked(checkBlockedIdentity).mockResolvedValue(true);
+    expect((await evaluateLeadSpam(input)).decision).toBe('reject');
   });
-
-  // -----------------------------------------------------------------------
-  // Phase 2: honeypot
-  // -----------------------------------------------------------------------
-  describe('honeypot', () => {
-    it('quarantines when honeypot is non-empty', async () => {
-      setupLimitSuccess();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        freeText: 'clean text',
-        honeypot: 'http://bot.example',
-      });
-
-      expect(result.quarantine).toBe(true);
-      expect(result.reasons).toContain('honeypot');
-    });
-
-    it('does not add honeypot reason when honeypot is empty string', async () => {
-      setupLimitSuccess();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        freeText: 'clean text',
-        honeypot: '',
-      });
-
-      expect(result.reasons).not.toContain('honeypot');
-    });
-
-    it('does not add honeypot reason when honeypot is whitespace-only', async () => {
-      setupLimitSuccess();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        freeText: 'clean text',
-        honeypot: '   ',
-      });
-
-      expect(result.reasons).not.toContain('honeypot');
-    });
-
-    it('does not add honeypot reason when honeypot is undefined', async () => {
-      setupLimitSuccess();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        freeText: 'clean text',
-      });
-
-      expect(result.reasons).not.toContain('honeypot');
-    });
+  it('untrusted internal flags do not bypass missing browser signals', async () => {
+    expect((await evaluateLeadSpam({ email: 'user@example.test', options: {} })).decision).toBe('review_required');
   });
+  it('uses the normalized phone counter without a shared anonymous bucket', async () => {
+    vi.mocked(headers).mockResolvedValue(new Headers() as Awaited<ReturnType<typeof headers>>);
+    expect((await evaluateLeadSpam({ ...clean(), email: undefined, phone: '+44 20 7946 0123' })).decision).toBe('allow');
+    expect(leadRateLimit).toHaveBeenCalledWith([`phone:${sha256('+442079460123')}`]);
+  });
+  it('rejects missing contact identity instead of sharing an empty rate key', async () => {
+    expect((await evaluateLeadSpam({ ...clean(), email: '', phone: '' })).decision).toBe('reject');
+    expect(leadRateLimit).not.toHaveBeenCalled();
+  });
+  it('offline capture skips external dependencies while retaining honeypot admission', async () => {
+    expect((await evaluateLeadSpam({ ...clean(), dryRun: true })).decision).toBe('allow');
+    expect((await evaluateLeadSpam({ ...clean(), dryRun: true, honeypot: 'bot' })).decision).toBe('reject');
+    expect(checkBlockedIdentity).not.toHaveBeenCalled();
+    expect(leadRateLimit).not.toHaveBeenCalled();
+  });
+});
 
-  // -----------------------------------------------------------------------
-  // Phase 2: submit timing
-  // -----------------------------------------------------------------------
-  describe('submit timing', () => {
-    const FIXED = 1_700_000_000_000;
-
-    afterEach(() => {
-      vi.restoreAllMocks();
-    });
-
-    it('quarantines when elapsed time is less than MIN_SUBMIT_MS (100 ms)', async () => {
-      vi.spyOn(Date, 'now').mockReturnValue(FIXED);
-      setupLimitSuccess();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        freeText: 'clean text',
-        renderedAt: FIXED - 100,
-      });
-
-      expect(result.quarantine).toBe(true);
-      expect(result.reasons).toContain('too-fast');
-    });
-
-    it('does not add too-fast reason when elapsed time is >= MIN_SUBMIT_MS (5000 ms)', async () => {
-      vi.spyOn(Date, 'now').mockReturnValue(FIXED);
-      setupLimitSuccess();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        freeText: 'clean text',
-        renderedAt: FIXED - 5000,
-      });
-
-      expect(result.reasons).not.toContain('too-fast');
-    });
-
-    it('does not add too-fast reason when renderedAt is in the future (negative elapsed / clock skew)', async () => {
-      vi.spyOn(Date, 'now').mockReturnValue(FIXED);
-      setupLimitSuccess();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        freeText: 'clean text',
-        renderedAt: FIXED + 5000,
-      });
-
-      expect(result.reasons).not.toContain('too-fast');
-    });
-
-    it('does not add too-fast reason and does not throw when renderedAt is a non-numeric string', async () => {
-      vi.spyOn(Date, 'now').mockReturnValue(FIXED);
-      setupLimitSuccess();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        freeText: 'clean text',
-        renderedAt: 'abc',
-      });
-
-      expect(result.reasons).not.toContain('too-fast');
-    });
-
-    it('does not add too-fast reason when renderedAt is omitted', async () => {
-      vi.spyOn(Date, 'now').mockReturnValue(FIXED);
-      setupLimitSuccess();
-      const { evaluateLeadSpam } = await import('@/lib/spam-protection');
-
-      const result = await evaluateLeadSpam({
-        freeText: 'clean text',
-      });
-
-      expect(result.reasons).not.toContain('too-fast');
-    });
+describe('IP trust and compatibility', () => {
+  it('does not trust arbitrary forwarded local headers', () => {
+    vi.stubEnv('VERCEL', undefined);
+    expect(trustedLeadIp(new Headers({ 'x-vercel-forwarded-for': '192.0.2.1' }))).toBeNull();
+  });
+  it.each(['anonymous', '1.2.3.4, 5.6.7.8', 'not-an-ip', ''])('rejects ambiguous platform IP %j', value => {
+    expect(trustedLeadIp(new Headers({ 'x-vercel-forwarded-for': value }))).toBeNull();
+  });
+  it('preserves existing non-lead IP helper behavior for unrelated routes', () => {
+    expect(ipFromHeaders(new Headers({ 'x-forwarded-for': '1.2.3.4, 5.6.7.8' }))).toBe('1.2.3.4');
+    expect(ipFromHeaders(new Headers({ 'x-real-ip': '192.0.2.3' }))).toBe('192.0.2.3');
+    expect(ipFromHeaders(new Headers())).toBe('anonymous');
+  });
+  it('retains the legacy marker helper as defense in depth', () => {
+    expect(tagSpamSuspected('')).toBe('[SPAM-SUSPECTED]');
+    expect(tagSpamSuspected('hello')).toBe('[SPAM-SUSPECTED] hello');
   });
 });

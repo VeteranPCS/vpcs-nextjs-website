@@ -15,8 +15,11 @@ export async function connectSandbox(settings = loadSandboxSettings()) {
     const { config, env } = settings;
     if (config.profile !== 'webdev') throw new Error('This command requires the Salesforce WebDev sandbox profile.');
     const { token, instanceUrl } = await authenticateSalesforce(config, env);
-    async function request(path, { method = 'GET', body } = {}) {
-        const url = validateSalesforceRequestUrl(`${instanceUrl}/services/data/${config.apiVersion}${path}`, config);
+    async function request(path, options) {
+        return send(`/services/data/${config.apiVersion}${path}`, options);
+    }
+    async function send(path, { method = 'GET', body } = {}) {
+        const url = validateSalesforceRequestUrl(`${instanceUrl}${path}`, config);
         try {
             return await fetch(url, {
                 method,
@@ -41,5 +44,16 @@ export async function connectSandbox(settings = loadSandboxSettings()) {
         const response = await request(path);
         return { ok: response.ok, status: response.status, body: response.ok ? await response.json() : null };
     }
-    return { config, fingerprint: salesforceTargetFingerprint(config), get, query, request };
+    async function postIntake(operation, body) {
+        if (!['policy', 'inspect', 'claim', 'reconcile', 'notification'].includes(operation)) {
+            throw new Error('Unsupported WebDev intake operation.');
+        }
+        const response = await send(`/services/apexrest/vpcs/intake/v1/${operation}`, { method: 'POST', body });
+        try {
+            return { status: response.status, body: await response.json() };
+        } catch {
+            throw new Error('WebDev intake API did not return JSON.');
+        }
+    }
+    return { config, fingerprint: salesforceTargetFingerprint(config), get, postIntake, query, request };
 }

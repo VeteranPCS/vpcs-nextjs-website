@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Private Lead admission policy. Store canonical SHA-256 keys only, with non-personal reasons.</description>
+    <enableHistory>true</enableHistory>
+    <externalSharingModel>Private</externalSharingModel>
+    <fields>
+        <fullName>Active__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Active</label>
+        <trackHistory>true</trackHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Email_Hash__c</fullName>
+        <caseSensitive>true</caseSensitive>
+        <externalId>true</externalId>
+        <label>Canonical Email Hash</label>
+        <length>64</length>
+        <required>true</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Reason__c</fullName>
+        <label>Reason</label>
+        <length>255</length>
+        <required>true</required>
+        <trackHistory>true</trackHistory>
+        <type>Text</type>
+    </fields>
+    <label>VPCS Blocked Email</label>
+    <nameField>
+        <displayFormat>VBE-{000000}</displayFormat>
+        <label>VPCS Blocked Email ID</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>VPCS Blocked Emails</pluralLabel>
+    <sharingModel>Private</sharingModel>
+    <validationRules>
+        <fullName>Canonical_Hash_Format</fullName>
+        <active>true</active>
+        <errorConditionFormula>NOT(REGEX(Email_Hash__c, "[0-9a-f]{64}"))</errorConditionFormula>
+        <errorDisplayField>Email_Hash__c</errorDisplayField>
+        <errorMessage>Enter a lowercase SHA-256 hash.</errorMessage>
+    </validationRules>
+</CustomObject>

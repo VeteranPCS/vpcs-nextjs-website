@@ -35,7 +35,7 @@ describe.each([
   ['newsletter', KeepInTouch],
 ] as const)('%s form redirect', (_name, Form) => {
   it('navigates to a relative thank-you page instead of following the provider URL', async () => {
-    submit.mockResolvedValue({ success: true, redirectUrl: 'https://www.veteranpcs.com/thank-you?from=provider' });
+    submit.mockResolvedValue({ success: true, outcome: 'accepted', redirectUrl: 'https://www.veteranpcs.com/thank-you?from=provider' });
     const { container } = render(<Form />);
     const form = container.querySelector('form');
     if (!form) throw new Error('Expected form');

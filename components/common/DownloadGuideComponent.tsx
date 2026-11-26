@@ -1,4 +1,6 @@
 "use client";
+import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
+import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import * as Yup from 'yup';
@@ -53,9 +55,7 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
     guideId,
     className = "",
 }) => {
-    const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     // Validation schema
     const validationSchema = Yup.object().shape({
@@ -84,59 +84,38 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
         : vaLoanGuideForm;
 
     // On submit
+    const submission = useLeadSubmission(resolvedGuideId);
+    const submitting = submission.submitting;
+
     const onSubmitHandler: SubmitHandler<FormInputs> = async (data) => {
-        setSubmitting(true);
-        setError(null);
-        captureAnalyticsEvent('guide_download_requested', {
+        const payload = data;
+        if (submission.blocked) return;
+        bestEffort(() => captureAnalyticsEvent('guide_download_requested', {
             guide_id: resolvedGuideId,
             form_id: resolvedGuideId,
             has_email: Boolean(data.email),
-        });
-        try {
-            if (gtmEventContent) {
-                sendGTMEvent({ event: "conversion_download", content: gtmEventContent });
-            }
-
-            const payload = {
-                firstName: data.firstName,
-                lastName: data.lastName,
-                email: data.email,
-            };
-
-            const server_response = await submitGuideForm({
-                ...payload,
-                ...getSpamFields(),
-                ...formTrackingPayload(),
-            });
-            if (server_response?.success) {
-                setSuccess(true);
-                reset();
-                captureAnalyticsEvent('guide_download_started', {
-                    guide_id: resolvedGuideId,
-                    form_id: resolvedGuideId,
-                });
-
-                // Download the PDF
-                const link = document.createElement('a');
-                link.href = `/downloads/${downloadFileName}`;
-                link.download = downloadDisplayName;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } else {
-                trackFormSubmissionFailed(resolvedGuideId, 'server_submission', ['no_success_response'], {
-                    guide_id: resolvedGuideId,
-                });
-                setError("Submission failed. Please try again.");
-            }
-        } catch (err) {
-            trackFormSubmissionFailed(resolvedGuideId, 'server_submission', ['submission_exception'], {
-                guide_id: resolvedGuideId,
-            });
-            setError("Submission failed. Please try again.");
-        } finally {
-            setSubmitting(false);
+        }));
+        const result = await submission.submit({ ...payload, ...getSpamFields() }, attempt => {
+            let tracking = {};
+            bestEffort(() => { tracking = formTrackingPayload(); });
+            return submitGuideForm({ ...attempt, ...tracking });
+        }, payload);
+        if (!result) return;
+        if (result.outcome !== 'accepted') {
+            bestEffort(() => trackFormSubmissionFailed(resolvedGuideId, 'server_submission', [result.outcome], { guide_id: resolvedGuideId }));
+            return;
         }
+        setSuccess(true);
+        reset();
+        if (gtmEventContent) bestEffort(() => sendGTMEvent({ event: 'conversion_download', content: gtmEventContent }));
+        bestEffort(() => captureAnalyticsEvent('guide_download_started', { guide_id: resolvedGuideId, form_id: resolvedGuideId }));
+        bestEffort(() => {
+            const link = document.createElement('a');
+            link.href = `/downloads/${downloadFileName}`;
+            link.download = downloadDisplayName;
+            document.body.appendChild(link);
+            try { link.click(); } finally { link.remove(); }
+        });
     };
 
     const handleInvalidSubmit = (formErrors: typeof errors) => {
@@ -218,14 +197,14 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                         <button
                             className="md:w-auto px-6 bg-[#232857] text-white rounded py-3 text-base font-medium hover:bg-[#1a1e4a] disabled:bg-gray-400"
                             type="submit"
-                            disabled={submitting}
+                            disabled={submitting || submission.blocked || success}
                         >
                             {submitting ? 'Submitting...' : downloadButtonText}
                         </button>
                     </div>
 
                     <div className="w-full flex flex-col items-center mb-2">
-                        {error && <span className="text-red-600 text-xs">{error}</span>}
+                        <CustomerSubmissionFeedback failure={submission.failure} />
                         {success && <span className="text-green-700 text-xs">Thank you! Your download will begin shortly.</span>}
                     </div>
                 </form>

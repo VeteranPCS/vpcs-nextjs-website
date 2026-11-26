@@ -56,6 +56,14 @@ Changes to spam rules, routing, countdowns or schedules require the affected bus
 
 ## Website and Salesforce releases are separate
 
+For lead admission, follow the [Release 1 runbook](../../../docs/spam-enforcement-release1.md).
+Use the isolated WebDev rate backend and separate HMAC key. Reconcile by exact submission ID and
+fingerprint. Distinguish rejection before dispatch, confirmed persistence, and unconfirmed outcomes.
+Validate scoped admission, Lead uniqueness, and legacy-rule packages for each org from its current
+metadata. Keep the honeypot rule active and reconcile the private blocklist before retiring the old
+email rule. Verify the website's restricted API grant separately in WebDev and Production. For a
+rollback, retain compatible admission and readback and preserve uncertain attempts.
+
 For Customer routing work, also read [the routing runbook](../../../docs/customer-regional-routing.md).
 The fixed Beth/Stephanie map lives in `config/routing/customer-admins.json`; generate and verify
 its Salesforce policy/assignment criteria rather than hand-editing another territory list.

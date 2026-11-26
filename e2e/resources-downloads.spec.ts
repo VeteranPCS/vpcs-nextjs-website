@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { fixtureImpact, interceptTelemetry } from './helpers';
+import { fixtureImpact, interceptTelemetry, leadTimingReady } from './helpers';
 
 // Real SDK drops automation UAs/webdriver; emulate a human browser only in this test context.
 test.use({ userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36' });
+const localCapture = process.env.E2E_POSTHOG_LOCAL_CAPTURE === '1';
 const surfaces = [
   { name: 'featured VA', kind: 'va', location: 'featured_resources', position: 'card', query: '', strip: false, retry: true },
   { name: 'library VA', kind: 'va', location: 'resource_library', position: 'card', query: '?view=all', strip: false },
@@ -10,15 +11,14 @@ const surfaces = [
   { name: 'strip VA', kind: 'va', location: 'resources_guide_strip', position: 'inline', query: '', strip: true },
   { name: 'strip homebuyer', kind: 'homebuyer', location: 'resources_guide_strip', position: 'inline', query: '', strip: true },
 ] as const;
-for (const surface of surfaces) test(`Resources ${surface.name} emits private-safe SDK downloads`, async ({ page }, testInfo) => {
-  test.skip(process.env.E2E_LEAD_DRY_RUN !== '1' || process.env.E2E_POSTHOG_LOCAL_CAPTURE !== '1', 'Requires a loopback dry-run server with explicit local SDK capture enabled');
+for (const surface of surfaces) test(`Resources ${surface.name} downloads after an accepted submission`, async ({ page }, testInfo) => {
+  test.skip(process.env.E2E_LEAD_DRY_RUN !== '1', 'Requires a loopback dry-run server');
   const telemetry = await interceptTelemetry(page);
   await fixtureImpact(page);
   let attempts = 0;
   await page.route('**/pcs-resources**', async route => {
     if (route.request().method() === 'POST' && route.request().headers()['next-action']) {
       attempts += 1;
-      if ('retry' in surface && surface.retry && attempts === 1) { await route.abort('failed'); return; }
     }
     await route.continue();
   });
@@ -33,6 +33,7 @@ for (const surface of surfaces) test(`Resources ${surface.name} emits private-sa
     : page.locator('#resource-library article').filter({ has: page.getByRole('heading', { name: title, exact: true }) }).getByRole('button', { name: 'Download Guide' });
   await trigger.click();
   const dialog = page.getByRole('dialog', { name: title });
+  const timingReady = leadTimingReady();
   const downloads = () => telemetry.events.filter(event => event.event.startsWith('guide_download_'));
   await dialog.getByRole('button', { name: 'Get my guide' }).click();
   await expect(dialog.getByLabel('First name')).toBeFocused();
@@ -44,10 +45,14 @@ for (const surface of surfaces) test(`Resources ${surface.name} emits private-sa
   expect(downloads()).toHaveLength(0);
   await dialog.getByLabel('Email', { exact: true }).fill('telemetry-private@example.com');
   if ('retry' in surface && surface.retry) {
+    const honeypot = dialog.locator('input[name=company_website]');
+    await honeypot.evaluate((input: HTMLInputElement) => { input.value = 'synthetic-filled-honeypot'; });
     await dialog.getByRole('button', { name: 'Get my guide' }).click();
-    await expect(dialog.getByRole('alert')).toContainText('Please try again');
-    await expect.poll(() => downloads().map(event => event.event), { timeout: 15000 }).toEqual(['guide_download_requested']);
+    await expect(dialog.getByRole('alert')).toContainText('couldn’t accept');
+    if (localCapture) await expect.poll(() => downloads().map(event => event.event), { timeout: 15000 }).toEqual(['guide_download_requested']);
+    await honeypot.evaluate((input: HTMLInputElement) => { input.value = ''; });
   }
+  await timingReady;
   const automaticDownload = page.waitForEvent('download');
   await dialog.getByRole('button', { name: 'Get my guide' }).click();
   await expect(dialog.getByRole('status')).toContainText('Your guide is ready');
@@ -62,11 +67,14 @@ for (const surface of surfaces) test(`Resources ${surface.name} emits private-sa
   const manualDownload = page.waitForEvent('download');
   await dialog.getByRole('link', { name: 'Download guide' }).click();
   expect((await manualDownload).suggestedFilename()).toBe(file);
+  expect(attempts).toBe('retry' in surface && surface.retry ? 2 : 1);
+  await page.screenshot({ path: testInfo.outputPath('guide-download-success.png'), caret: 'initial' });
+  if (!localCapture) return;
+
   const expected = 'retry' in surface && surface.retry
     ? ['guide_download_requested', 'guide_download_requested', 'guide_download_started', 'guide_download_requested', 'guide_download_started']
     : ['guide_download_requested', 'guide_download_started', 'guide_download_requested', 'guide_download_started'];
   await expect.poll(() => downloads().map(event => event.event), { timeout: 15000 }).toEqual(expected);
-  expect(attempts).toBe('retry' in surface && surface.retry ? 2 : 1);
   expect(telemetry.decodeFailures).toEqual([]);
   const openingEvent = telemetry.events.find(event => event.event === 'cta_clicked' && event.properties.guide_id === guideId);
   expect(openingEvent?.properties).toMatchObject({ cta_intent: 'download_guide', cta_location: surface.location });
@@ -83,5 +91,4 @@ for (const surface of surfaces) test(`Resources ${surface.name} emits private-sa
   // Export only a property allowlist: no project token, distinct/session/device IDs or personal input.
   const keys = ['guide_id', 'form_id', 'cta_id', 'cta_intent', 'cta_location', 'cta_position', 'cta_component', 'page_type', 'source_page_path', 'destination_path', 'download_trigger', 'has_email'];
   await testInfo.attach('sanitized-guide-event-evidence', { body: JSON.stringify(downloads().map(event => ({ event: event.event, properties: Object.fromEntries(keys.filter(key => key in event.properties).map(key => [key, event.properties[key]])) })), null, 2), contentType: 'application/json' });
-  await page.screenshot({ path: testInfo.outputPath('guide-download-success.png'), caret: 'initial' });
 });

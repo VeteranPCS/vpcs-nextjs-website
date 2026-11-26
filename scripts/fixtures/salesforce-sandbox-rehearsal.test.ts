@@ -1,10 +1,10 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { setTimeout as wait } from 'node:timers/promises';
 import { beforeAll, expect, test } from 'vitest';
 import webdevFixtures from '@/config/salesforce/webdev-fixtures.json';
 import { buildLeadTools } from '@/lib/ai/tools/lead-tools';
-import { HP_FIELD } from '@/lib/validation/spam-fields';
-import { INTERNAL_CALL_TOKEN } from '@/lib/internal-call-token';
+import { canonicalEmail } from '@/lib/leads/identity';
+import { HP_FIELD, TS_FIELD } from '@/lib/validation/spam-fields';
 import {
     contactAgentPostForm, contactLenderPostForm, contactPostForm, coloradoRelocationGuideForm,
     GetListedAgentsPostForm, GetListedLendersPostForm, homebuyerGuideForm, internshipFormSubmission,
@@ -22,33 +22,33 @@ const runId = process.env.VPCS_WEBDEV_TEST_RUN_ID ?? '';
 // Salesforce description is a long text field and cannot filter a SOQL query.
 // Put a fixed-length run key in LastName to look up only these exact records.
 const runKey = createHash('sha256').update(runId).digest('hex').slice(0, 16);
-const email = process.env.VPCS_WEBDEV_REHEARSAL_EMAIL ?? '';
+const testSinks: string[] = JSON.parse(process.env.VPCS_WEBDEV_REHEARSAL_EMAILS ?? '[]');
 const phone = '+12025550100';
-const options = { internalCallToken: INTERNAL_CALL_TOKEN };
 const stateQuery = '?state=colorado';
-const data = { firstName: marker, email, phone, state: 'CO' };
+const data = { firstName: marker, phone, state: 'CO' };
+const envelope = () => ({ [HP_FIELD]: '', [TS_FIELD]: Date.now() - 5_000, submission_attempt_id: randomUUID() });
 
 const forms = [
     { name: 'Agent', source: 'Contact Agent', recordType: 'CUSTOMER_LEAD', expectedAdmin: 'BETH', expectedState: 'CO',
-        submit: (lastName: string) => contactAgentPostForm({ ...data, lastName }, stateQuery, options) },
+        submit: (lastName: string, email: string) => contactAgentPostForm({ ...data, ...envelope(), email, lastName }, stateQuery) },
     { name: 'Lender', source: 'Contact Lender', recordType: 'CUSTOMER_LEAD', expectedAdmin: 'STEPHANIE', expectedState: 'FL',
-        submit: (lastName: string) => contactLenderPostForm({ ...data, lastName, state: 'FL' }, '?state=florida', options) },
+        submit: (lastName: string, email: string) => contactLenderPostForm({ ...data, ...envelope(), email, lastName, state: 'FL' }, '?state=florida') },
     { name: 'AgentListing', source: 'Agent Listing Request', recordType: 'AGENT_LISTING_LEAD',
-        submit: (lastName: string) => GetListedAgentsPostForm({ ...data, lastName, primaryState: 'CO' }, options) },
+        submit: (lastName: string, email: string) => GetListedAgentsPostForm({ ...data, ...envelope(), email, lastName, primaryState: 'CO' }) },
     { name: 'LenderListing', source: 'Lender Listing Request', recordType: 'LENDER_LISTING_LEAD',
-        submit: (lastName: string) => GetListedLendersPostForm({ ...data, lastName, primaryState: 'CO' }, options) },
+        submit: (lastName: string, email: string) => GetListedLendersPostForm({ ...data, ...envelope(), email, lastName, primaryState: 'CO' }) },
     { name: 'KeepInTouch', source: 'Keep in Touch', recordType: 'CUSTOMER_LEAD',
-        submit: (lastName: string) => KeepInTouchForm({ ...data, lastName }, options) },
+        submit: (lastName: string, email: string) => KeepInTouchForm({ ...data, ...envelope(), email, lastName }) },
     { name: 'Contact', source: 'Contact Form', recordType: 'CUSTOMER_LEAD',
-        submit: (lastName: string) => contactPostForm({ ...data, lastName }, options) },
+        submit: (lastName: string, email: string) => contactPostForm({ ...data, ...envelope(), email, lastName }) },
     { name: 'VALoan', source: 'VA Loan Guide', recordType: 'CUSTOMER_LEAD',
-        submit: (lastName: string) => vaLoanGuideForm({ ...data, lastName }, options) },
+        submit: (lastName: string, email: string) => vaLoanGuideForm({ ...data, ...envelope(), email, lastName }) },
     { name: 'Homebuyer', source: 'First Time Home Buyer Guide', recordType: 'CUSTOMER_LEAD',
-        submit: (lastName: string) => homebuyerGuideForm({ ...data, lastName }, options) },
+        submit: (lastName: string, email: string) => homebuyerGuideForm({ ...data, ...envelope(), email, lastName }) },
     { name: 'Colorado', source: 'Colorado Relocation Guide', recordType: 'CUSTOMER_LEAD',
-        submit: (lastName: string) => coloradoRelocationGuideForm({ ...data, lastName }, options) },
+        submit: (lastName: string, email: string) => coloradoRelocationGuideForm({ ...data, ...envelope(), email, lastName }) },
     { name: 'Internship', source: 'Internship Application', recordType: 'INTERNSHIP_LEAD',
-        submit: (lastName: string) => internshipFormSubmission({ first_name: marker, last_name: lastName, email, mobile: phone }, options) },
+        submit: (lastName: string, email: string) => internshipFormSubmission({ ...envelope(), first_name: marker, last_name: lastName, email, mobile: phone }) },
 ] as const;
 
 const deliveryMode = process.env.VPCS_WEBDEV_REHEARSAL_SUITE === 'routing-delivery';
@@ -56,8 +56,15 @@ const routingMode = deliveryMode || process.env.VPCS_WEBDEV_REHEARSAL_SUITE === 
 const routingCases = deliveryMode ? routingDeliveryCases : routingRehearsalCases;
 const deliveryOperator = deliveryMode ? createSalesforceCli(deliveryOperatorAlias) : null;
 const leadFields = 'Id, Email, LeadSource, OwnerId, RecordTypeId, Description, Destination_State__c';
-const fields = routingMode ? leadFields + ', ' + routingLeadFields : leadFields;
+// The app retains its existing field grants. The operator separately reads the two intake wire fields.
+const fields = routingMode ? leadFields + ', ' + routingLeadFields : leadFields + ', VPCS_Submission_ID__c';
 const lastNameFor = (form: { name: string }) => `${runKey}-${form.name}`;
+const emailFor = (name: string) => {
+    const index = (routingMode ? routingCases : forms).findIndex(form => form.name === name);
+    const email = testSinks[index % testSinks.length];
+    if (!email) throw new Error('No approved email sink for the rehearsal case.');
+    return email;
+};
 let crm: Awaited<ReturnType<typeof connectSandbox>>;
 
 beforeAll(async () => {
@@ -65,8 +72,11 @@ beforeAll(async () => {
     const { config, env } = settings;
     const emailAllowlist = (env.VPCS_WEBDEV_TEST_EMAILS ?? '').split(',').map(value => value.trim().toLowerCase());
     if (!config.allowSandboxWrites || config.deliveryMode !== 'capture' || env.VPCS_WEBDEV_ISOLATION_ATTESTED !== '1'
-        || !runId || !email || !emailAllowlist.includes(email)) {
+        || !runId || testSinks.length !== (deliveryMode ? 1 : routingMode ? 3 : 2) || testSinks.some(email => !emailAllowlist.includes(email))) {
         throw new Error('Start the guarded Salesforce WebDev synthetic lead rehearsal command first.');
+    }
+    if (new Set(testSinks.map(canonicalEmail)).size !== testSinks.length) {
+        throw new Error('The approved test sinks must have distinct canonical identities.');
     }
     crm = await connectSandbox(settings);
     if (routingMode && config.orgId.slice(0, 15) !== webdevFixtures.orgId.slice(0, 15)) {
@@ -74,7 +84,7 @@ beforeAll(async () => {
     }
     if (deliveryOperator) {
         const remaining = Date.parse(env.VPCS_WEBDEV_TEST_EXPIRES_AT ?? '') - Date.now();
-        if (email !== deliveryEmail || runId === 'baseline-capture' || !/^[a-zA-Z0-9_-]{1,64}$/.test(runId) || !(remaining > 0 && remaining <= 1_800_000)) {
+        if (testSinks[0] !== deliveryEmail || runId === 'baseline-capture' || !/^[a-zA-Z0-9_-]{1,64}$/.test(runId) || !(remaining > 0 && remaining <= 1_800_000)) {
             throw new Error('Routing delivery preparation requires the Tech email and a live window of up to 30 minutes.');
         }
         await requirePausedDeliveryFixtures(deliveryOperator, webdevFixtures);
@@ -102,7 +112,7 @@ async function reconcileLead(lastName: string, startedAt: number) {
     return records;
 }
 
-function assertMarkedLead(lead: Record<string, string>, source: string, recordType: string) {
+function assertMarkedLead(lead: Record<string, string>, source: string, recordType: string, email: string) {
     expect(lead.LeadSource).toBe(source);
     expect(lead.RecordTypeId?.slice(0, 15)).toBe(recordType.slice(0, 15));
     expect(lead.Description?.startsWith(`${marker} ${runId} `)).toBe(true);
@@ -123,6 +133,7 @@ const visitorId = 'vpcs_routing_rehearsal_' + runKey;
 const syntheticNotes = deliveryMode ? 'Synthetic routing delivery verification' : 'Synthetic routing rehearsal note';
 
 async function submitRoutingCase(scenario: RoutingCase, lastName: string, partnerId: string | null) {
+    const email = emailFor(scenario.name);
     if (scenario.channel === 'concierge') {
         const tools = buildLeadTools({ vpcs_visitor_id: visitorId, source_page_path: '/' + scenario.slug });
         const tool = scenario.role === 'agent' ? tools.submitAgentRequest : tools.submitLenderRequest;
@@ -144,6 +155,8 @@ async function submitRoutingCase(scenario: RoutingCase, lastName: string, partne
     const spamFixture = scenario.channel === 'spam';
     const result = await submit({
         ...data,
+        ...envelope(),
+        email,
         ...(deliveryMode ? { phone: '' } : {}),
         lastName,
         // A selected deep link must win over the conflicting form state.
@@ -151,8 +164,12 @@ async function submitRoutingCase(scenario: RoutingCase, lastName: string, partne
         additionalComments: syntheticNotes,
         vpcs_visitor_id: visitorId,
         ...(spamFixture ? { [HP_FIELD]: 'synthetic-honeypot' } : {}),
-    }, partnerId ? '?' + query.toString() : '', spamFixture ? undefined : options);
-    if ('dryRun' in result || !('message' in result || 'redirectUrl' in result)) {
+    }, partnerId ? '?' + query.toString() : '');
+    if (spamFixture) {
+        expect(result).toMatchObject({ outcome: 'rejected' });
+        return;
+    }
+    if (result.outcome !== 'accepted') {
         throw new Error('The form did not confirm a sandbox Web-to-Lead submission.');
     }
     return result.submissionId;
@@ -177,9 +194,13 @@ if (routingMode) {
         if (!confirmed) {
             throw new Error(`Submission was unconfirmed. Readback found ${records.length} matching Lead(s). Stop and reconcile the run before any further submission.`);
         }
+        if (scenario.channel === 'spam') {
+            expect(records.length).toBe(0);
+            return;
+        }
         expect(records.length).toBe(1);
         const lead = records[0];
-        assertMarkedLead(lead, scenario.role === 'agent' ? 'Contact Agent' : 'Contact Lender', crm.config.recordTypes.CUSTOMER_LEAD);
+        assertMarkedLead(lead, scenario.role === 'agent' ? 'Contact Agent' : 'Contact Lender', crm.config.recordTypes.CUSTOMER_LEAD, emailFor(scenario.name));
         expect(lead.OwnerId?.slice(0, 15)).toBe(crm.config.leadOwners[scenario.owner].slice(0, 15));
         expect(lead.Destination_State__c).toBe(scenario.state);
         const expectedAgent = scenario.role === 'agent' ? partnerId?.slice(0, 15) ?? null : null;
@@ -202,9 +223,6 @@ if (routingMode) {
         if (scenario.channel === 'concierge') {
             expect(lead.Additional_Comments__c).toContain('[via Concierge]');
             expect(lead.Additional_Comments__c).toContain(syntheticNotes);
-        } else if (scenario.channel === 'spam') {
-            expect(lead.Additional_Comments__c).toContain('[SPAM-SUSPECTED]');
-            expect(lead.Additional_Comments__c).toContain(syntheticNotes);
         } else {
             expect(lead.Additional_Comments__c).toBe(syntheticNotes);
         }
@@ -217,14 +235,16 @@ if (routingMode) {
     test.each(forms)('$source creates one marked sandbox Lead', async form => {
         const lastName = lastNameFor(form);
         const startedAt = Date.now();
-        const result = await form.submit(lastName);
-        expect(result).not.toHaveProperty('dryRun', true);
-        expect('message' in result || 'redirectUrl' in result).toBe(true);
+        const email = emailFor(form.name);
+        const result = await form.submit(lastName, email);
 
         const records = await reconcileLead(lastName, startedAt);
+        expect(result.outcome).toBe('accepted');
         expect(records.length).toBe(1);
         const lead = records[0];
-        assertMarkedLead(lead, form.source, crm.config.recordTypes[form.recordType]);
+        assertMarkedLead(lead, form.source, crm.config.recordTypes[form.recordType], email);
+        expect(result.submissionId).toMatch(/^[a-f0-9-]{36}$/);
+        expect(lead.VPCS_Submission_ID__c).toBe(result.submissionId);
         if ('expectedAdmin' in form) {
             // Independent business expectations: do not call the routing function under test.
             expect(lead.OwnerId.slice(0, 15)).toBe(crm.config.leadOwners[form.expectedAdmin].slice(0, 15));

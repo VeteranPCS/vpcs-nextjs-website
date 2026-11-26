@@ -18,7 +18,7 @@ export const routingRehearsalCases = [
     }))),
     { ...regions[0], role: 'agent', channel: 'concierge', name: 'AgentConciergeCO' },
     { ...regions[1], role: 'lender', channel: 'concierge', name: 'LenderConciergeFL' },
-    { ...regions[0], role: 'agent', channel: 'spam', name: 'AgentQuarantinedCO' },
+    { ...regions[0], role: 'agent', channel: 'spam', name: 'AgentRejectedHoneypotCO' },
 ];
 
 export const routingDeliveryCases = routingRehearsalCases.filter(scenario => scenario.channel === 'selected');
