@@ -1,6 +1,6 @@
 {
-  "contentHash": "cd98ad735e5129f6b9151c88bef039ab05014377f2975dc18f7e92dfdf78acb2",
-  "totalPosts": 422,
+  "contentHash": "271f041fd9b26a0da7e2c841c18b62662c81a1922673d30c5a18f204c19e87ec",
+  "totalPosts": 426,
   "byComponent": {
     "Financial Guidance": [
       "2026-bah-rates-what-changed-and-how-to-check-yours",
@@ -113,6 +113,7 @@
       "hurricane-prep-military-families-florida",
       "military-pcs-weight-allowance-2026",
       "military-quick-guide-q-a",
+      "military-spouse-license-transfer-pcs",
       "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "new-costco-and-dawson-trails-development-coming-to-castle-rock-co",
       "new-home-builders-offering-low-rates-here-is-the-clarity-you-need-to-know",
@@ -232,8 +233,10 @@
       "air-force-bases-in-south-carolina",
       "air-force-bases-in-texas",
       "alabama-military-bases",
+      "army-bases-in-alabama",
       "army-bases-in-alaska",
       "army-bases-in-california",
+      "army-bases-in-colorado",
       "army-bases-in-florida",
       "army-bases-in-georgia",
       "army-bases-in-hawaii",
@@ -259,6 +262,7 @@
       "naval-bases-in-california",
       "naval-bases-in-florida",
       "naval-bases-in-hawaii",
+      "naval-bases-in-south-carolina",
       "naval-bases-in-texas",
       "naval-bases-in-virginia",
       "naval-bases-in-washington-state",
@@ -551,6 +555,7 @@
       "hurricane-prep-military-families-florida",
       "military-pcs-weight-allowance-2026",
       "military-quick-guide-q-a",
+      "military-spouse-license-transfer-pcs",
       "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "new-costco-and-dawson-trails-development-coming-to-castle-rock-co",
       "new-home-builders-offering-low-rates-here-is-the-clarity-you-need-to-know",
@@ -670,8 +675,10 @@
       "air-force-bases-in-south-carolina",
       "air-force-bases-in-texas",
       "alabama-military-bases",
+      "army-bases-in-alabama",
       "army-bases-in-alaska",
       "army-bases-in-california",
+      "army-bases-in-colorado",
       "army-bases-in-florida",
       "army-bases-in-georgia",
       "army-bases-in-hawaii",
@@ -697,6 +704,7 @@
       "naval-bases-in-california",
       "naval-bases-in-florida",
       "naval-bases-in-hawaii",
+      "naval-bases-in-south-carolina",
       "naval-bases-in-texas",
       "naval-bases-in-virginia",
       "naval-bases-in-washington-state",
@@ -881,6 +889,7 @@
     "alabama": [
       "alabama-military-bases",
       "alabama-veteran-property-tax-exemptions-2026",
+      "army-bases-in-alabama",
       "pcs-to-fort-rucker-2026-guide",
       "pcs-to-maxwell-afb-montgomery-2026-guide",
       "settling-down-pcsing-to-birmingham-alabama-with-the-military"
@@ -933,6 +942,7 @@
     ],
     "colorado": [
       "air-force-bases-in-colorado",
+      "army-bases-in-colorado",
       "colorado-veteran-property-tax-exemptions-2026",
       "pcs-to-air-force-academy-colorado-springs-2026-guide",
       "pcs-to-buckley-sfb-aurora-2026-guide",
@@ -1171,6 +1181,7 @@
       "army-bases-in-south-carolina",
       "marine-corps-bases-in-south-carolina",
       "myrtle-beach-military-retirement",
+      "naval-bases-in-south-carolina",
       "pcs-to-charleston-sc-military-family-guide-to-joint-base-charleston",
       "pcs-to-fort-jackson-columbia-2026-guide",
       "pcs-to-mcas-beaufort-2026-guide",
@@ -1259,10 +1270,10 @@
     ]
   },
   "stateCoverage": {
-    "resolved": 279,
+    "resolved": 282,
     "bySource": {
       "author-state-slug": 3,
-      "frontmatter-state-slug": 255,
+      "frontmatter-state-slug": 258,
       "slug-heuristic": 20,
       "state-map-post": 1
     },
@@ -1284,6 +1295,7 @@
       "military-bases-near-me-how-to-find-bases-by-state",
       "military-moving-expenses-tax-deduction-pcs",
       "military-pcs-weight-allowance-2026",
+      "military-spouse-license-transfer-pcs",
       "navigating-temporary-housing-during-your-pcs-move-what-you-need-to-know",
       "navigating-your-pcs-move-with-pets-a-comprehensive-guide",
       "non-temporary-storage-nts-pcs-guide",
@@ -1945,7 +1957,7 @@
       ],
       "description": "Alabama is home to over 100,000 active-duty military personnel and their families. The military community in Alabama is diverse and close-knit, bringing together service members from across the country and around the world.",
       "publishedAt": "2023-09-19T03:34:43.000Z",
-      "updatedAt": "2026-06-19T00:00:00.000Z",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
       "primaryKeyword": "army forts in alabama",
       "secondaryKeywords": [
         "air force base alabama",
@@ -2128,6 +2140,38 @@
       ]
     },
     {
+      "slug": "army-bases-in-alabama",
+      "title": "PCS Housing Near Redstone Arsenal, Fort Rucker and Anniston",
+      "url": "/blog/army-bases-in-alabama",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "alabama",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Moving to an Army post in Alabama? Compare nearby towns and 2026 housing pay, and see what to consider before you rent or buy.",
+      "publishedAt": "2026-11-19T09:00:00.000Z",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
+      "primaryKeyword": "alabama army pcs housing",
+      "secondaryKeywords": [
+        "alabama army bah",
+        "anniston army depot housing",
+        "fort rucker housing",
+        "redstone arsenal housing"
+      ],
+      "h2Outline": [
+        "Where to Look for Housing Near Alabama Army Posts",
+        "Redstone Arsenal",
+        "Fort Rucker",
+        "Anniston Army Depot",
+        "What BAH Covers Near Alabama Army Bases",
+        "Buying a Home Near Alabama Army Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "army-bases-in-alaska",
       "title": "Army Bases in Alaska: A PCS Guide to Every Installation",
       "url": "/blog/army-bases-in-alaska",
@@ -2189,6 +2233,41 @@
         "National Guard Sites Are Not Active-Duty Posts",
         "What It Costs to Live Near an Army Base in California",
         "On Post, Renting, or Buying",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "army-bases-in-colorado",
+      "title": "Colorado Army Duty Stations: Fort Carson Housing and PCS Guide",
+      "url": "/blog/army-bases-in-colorado",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "colorado",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Got Army orders to Colorado? Learn which area to budget for, how Fort Carson housing pay works and where to get help with your move.",
+      "publishedAt": "2026-11-15T09:00:00.000Z",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
+      "primaryKeyword": "colorado army duty stations",
+      "secondaryKeywords": [
+        "4th infantry division fort carson",
+        "fort carson bah",
+        "fort carson housing",
+        "pinon canyon maneuver site",
+        "pueblo chemical depot"
+      ],
+      "h2Outline": [
+        "Colorado Army Duty Stations and Other Sites",
+        "Fort Carson: The Mountain Post",
+        "Piñon Canyon Maneuver Site",
+        "The 100th Missile Defense Brigade",
+        "Pueblo Chemical Depot",
+        "What BAH Covers Near Colorado Army Sites",
+        "The Colorado Springs Housing Market",
+        "Buying a Home Near Fort Carson",
         "Frequently Asked Questions"
       ]
     },
@@ -5263,6 +5342,39 @@
       ]
     },
     {
+      "slug": "military-spouse-license-transfer-pcs",
+      "title": "Military Spouse License Transfer: How to Keep Working After a PCS",
+      "url": "/blog/military-spouse-license-transfer-pcs",
+      "component": "PCS Help",
+      "componentSlug": "pcs-help",
+      "stateSlug": null,
+      "stateSource": null,
+      "categories": [
+        "Financial Guidance",
+        "PCS Help"
+      ],
+      "description": "A PCS should not cost a spouse their career. See when federal law lets you use an existing license in a new state, what to send the board, and where to get help with the costs.",
+      "publishedAt": "2026-11-21T09:00:00.000Z",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
+      "primaryKeyword": "military spouse license transfer",
+      "secondaryKeywords": [
+        "50 usc 4025a",
+        "interstate licensure compact military spouse",
+        "military spouse license portability",
+        "military spouse relicensing reimbursement",
+        "spouseworks scholarship"
+      ],
+      "h2Outline": [
+        "Why Military Spouse License Transfer Matters",
+        "The Federal Law: 50 U.S.C. 4025a",
+        "Interstate Compacts: Check These First",
+        "Money That Helps Pay the Costs",
+        "What About Real Estate Licenses?",
+        "A Simple Timeline for Spouses",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
       "slug": "minnesota-veteran-property-tax-exemptions-2026",
       "title": "Minnesota Military & Veteran Property Tax Exemptions (2026)",
       "url": "/blog/minnesota-veteran-property-tax-exemptions-2026",
@@ -5559,6 +5671,41 @@
         "Navy Health Care and Housing on Oahu",
         "What BAH and COLA Cover in Hawaii",
         "Buying a Home Near Hawaii's Navy Bases",
+        "Frequently Asked Questions"
+      ]
+    },
+    {
+      "slug": "naval-bases-in-south-carolina",
+      "title": "Navy PCS to Charleston and Beaufort: Housing and BAH",
+      "url": "/blog/naval-bases-in-south-carolina",
+      "component": "U.S. Military Bases",
+      "componentSlug": "us-military-bases",
+      "stateSlug": "south-carolina",
+      "stateSource": "frontmatter-state-slug",
+      "categories": [
+        "PCS Help",
+        "U.S. Military Bases"
+      ],
+      "description": "Use your Navy orders to plan a move to Charleston, Goose Creek or Beaufort. Compare 2026 housing pay, weigh a short-term lease and find local help.",
+      "publishedAt": "2026-11-17T09:00:00.000Z",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
+      "primaryKeyword": "navy pcs to charleston",
+      "secondaryKeywords": [
+        "beaufort bah",
+        "goose creek navy housing",
+        "joint base charleston navy housing",
+        "navy nuclear power school housing"
+      ],
+      "h2Outline": [
+        "Where Your Navy Orders May Take You",
+        "What Happened to the Charleston Naval Base?",
+        "Naval Support Activity Charleston (the Weapons Station)",
+        "Nuclear Power School in Goose Creek",
+        "NIWC Atlantic in North Charleston",
+        "Naval Hospital Beaufort",
+        "What BAH Covers Near Navy Sites in South Carolina",
+        "Living Near the Navy in the Lowcountry",
+        "Buying a Home Near South Carolina Navy Sites",
         "Frequently Asked Questions"
       ]
     },
@@ -13381,7 +13528,7 @@
       ],
       "description": "Colorado is home to several key military installations that support the U.S. Air Force, Space Force, Army, and national defense operations. Whether you're PCSing (Permanent Change of Station) to Colorado or just curious about the militar...",
       "publishedAt": "2022-09-20T14:35:24.000Z",
-      "updatedAt": "2026-10-11T00:00:00.000Z",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
       "primaryKeyword": "air force bases in colorado",
       "secondaryKeywords": [
         "colorado air force bases",
@@ -13395,8 +13542,8 @@
         "3 Cheyenne Mountain Space Force Station (CMSFS)",
         "4 Fort Carson – \"The Mountain Post\"",
         "5 Peterson Space Force Base (SFB)",
-        "6 Pueblo Chemical Weapons Depot (PCD)",
-        "7 Schriever Space Force Base (SFB)",
+        "6 Schriever Space Force Base (SFB)",
+        "Former Pueblo Chemical Depot",
         "Moving to Colorado? We Can Help!",
         "Plan Your PCS to Colorado"
       ]
@@ -14349,9 +14496,9 @@
       "categories": [
         "U.S. Military Bases"
       ],
-      "description": "South Carolina has a long and proud military history, and it is still a busy training hub today. The state is home to six major active-duty installations, supporting the Army, Navy, Air Force, and Marine Corps, along with an Air National...",
+      "description": "South Carolina is home to five major active-duty military installations and McEntire Joint National Guard Base. These support the Army, Navy, Air Force and Marine Corps. Whether you're planning a permanent change of station (PCS) move or...",
       "publishedAt": "2026-06-26T09:00:00.000Z",
-      "updatedAt": "2026-11-15T00:00:00.000Z",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
       "primaryKeyword": "military bases in south carolina",
       "secondaryKeywords": [
         "army bases in south carolina",
@@ -14364,6 +14511,7 @@
         "Army Bases in South Carolina",
         "Marine Corps Bases in South Carolina",
         "Air Force Bases in South Carolina",
+        "Navy Sites in South Carolina",
         "Moving to South Carolina? Let Us Help You Find a Home",
         "Plan Your PCS to South Carolina",
         "Frequently Asked Questions (FAQ)"
