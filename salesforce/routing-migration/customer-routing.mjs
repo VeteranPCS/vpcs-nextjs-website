@@ -107,7 +107,23 @@ function captureBefore(record, state) {
     }
     return { ...before, recordTypeId: record.recordTypeId, state, isClosed: record.isClosed, stageName: record.stageName };
   }
-  return { ...before, parentId: record.parentId, isClosed: record.isClosed, isReferral: record.isReferral };
+  const task = { ...before, parentId: record.parentId, isClosed: record.isClosed, isReferral: record.isReferral };
+  if (Object.hasOwn(record, 'referralOrigin')) {
+    const { sourceLeadId, contactId, opportunityId, sourceCreatedDate, convertedDate, taskCreatedDate } =
+      record.referralOrigin ?? {};
+    if (record.isReferral !== true || !salesforceId(sourceLeadId) || !sourceLeadId.startsWith('00Q') ||
+        !salesforceId(contactId) || !contactId.startsWith('003') || !salesforceId(opportunityId) ||
+        !opportunityId.startsWith('006') || !sameId(record.parentId, opportunityId) ||
+        typeof sourceCreatedDate !== 'string' || !Number.isFinite(Date.parse(sourceCreatedDate)) ||
+        typeof taskCreatedDate !== 'string' || !Number.isFinite(Date.parse(taskCreatedDate)) ||
+        typeof convertedDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(convertedDate) ||
+        Date.parse(sourceCreatedDate) > Date.parse(taskCreatedDate) ||
+        new Date(taskCreatedDate).toISOString().slice(0, 10) >= convertedDate) {
+      throw new Error(`Invalid converted referral origin for Task ${record.id}`);
+    }
+    task.referralOrigin = { sourceLeadId, contactId, opportunityId, sourceCreatedDate, convertedDate, taskCreatedDate };
+  }
+  return task;
 }
 
 export function buildMigrationPlan(snapshot) {

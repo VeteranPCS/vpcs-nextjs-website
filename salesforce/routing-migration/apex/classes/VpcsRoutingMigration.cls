@@ -7,7 +7,9 @@ public without sharing class VpcsRoutingMigration {
     private static final Set<String> REQUIRED_QUERY_FIELDS = new Set<String>{'IsClosed', 'IsConverted'};
     private static final Set<String> AUDIT_FIELDS = new Set<String>{
         // Salesforce may stamp Lead.LastTransferDate during an OwnerId-only transfer.
-        'ownerid', 'lastmodifieddate', 'lastmodifiedbyid', 'systemmodstamp', 'lasttransferdate'
+        'ownerid', 'lastmodifieddate', 'lastmodifiedbyid', 'systemmodstamp', 'lasttransferdate',
+        // Read-only per-user usage dates can change when the record or a related item is accessed.
+        'lastreferenceddate', 'lastvieweddate'
     };
     // The verified repository manifests retain these former regional assignments in both orgs.
     private static final Set<String> KNOWN_ORGS = new Set<String>{'00D4x000003yaV2', '00Djg000000EK8Y'};
@@ -144,8 +146,10 @@ public without sharing class VpcsRoutingMigration {
                 VpcsCustomerRouting.setMigrationOwnerWrite(false);
             }
             SObject afterRow = readRow(request.type, request.id, false);
-            require(afterRow != null && (Id)afterRow.get('OwnerId') == desired &&
-                sameProtectedFields(beforeRow, afterRow), 'Unexpected record mutation during owner update');
+            require(afterRow != null && (Id)afterRow.get('OwnerId') == desired,
+                'Unexpected owner after the guarded update');
+            String changedField = protectedFieldChange(beforeRow, afterRow, true);
+            require(changedField == null, 'Unexpected record mutation during owner update: ' + changedField);
             require(matchesObject(priorLimits, effectLimits()) &&
                 priorEffects.equals(effectSignature(request.id, request.type, accountId, started)) &&
                 !relatedParentChanged(parent),
@@ -280,7 +284,7 @@ public without sharing class VpcsRoutingMigration {
         String parentType = parentId.getSObjectType().getDescribe().getName();
         SObject after = readRow(parentType, parentId, false);
         return after == null || !idsEqual(parent.get('OwnerId'), after.get('OwnerId')) ||
-            !sameProtectedFields(parent, after);
+            protectedFieldChange(parent, after, false) != null;
     }
 
     private static Boolean idsEqual(Object left, Object right) {
@@ -315,15 +319,27 @@ public without sharing class VpcsRoutingMigration {
     }
 
     @TestVisible
-    private static Boolean sameProtectedFields(SObject beforeRow, SObject afterRow) {
+    private static String protectedFieldChange(SObject beforeRow, SObject afterRow, Boolean allowTransferStamp) {
         Map<String, Object> beforeFields = comparableFields(beforeRow);
         Map<String, Object> afterFields = comparableFields(afterRow);
         Set<String> allFields = new Set<String>(beforeFields.keySet());
         allFields.addAll(afterFields.keySet());
-        for (String field : allFields) {
-            if (!matchesObject(beforeFields.get(field), afterFields.get(field))) return false;
+        List<String> orderedFields = new List<String>(allFields);
+        orderedFields.sort();
+        for (String field : orderedFields) {
+            Object previous = beforeFields.get(field);
+            Object current = afterFields.get(field);
+            if (matchesObject(previous, current)) continue;
+            // Salesforce marks a previously read Lead unread for its new owner.
+            // Accept only that platform transition on the directly transferred Lead.
+            if (allowTransferStamp && field == 'isunreadbyowner' &&
+                beforeRow instanceof Lead && afterRow instanceof Lead &&
+                beforeRow.get('OwnerId') != null && afterRow.get('OwnerId') != null &&
+                !idsEqual(beforeRow.get('OwnerId'), afterRow.get('OwnerId')) &&
+                matchesObject(previous, false) && matchesObject(current, true)) continue;
+            return field;
         }
-        return true;
+        return null;
     }
 
     private static Map<String, Object> comparableFields(SObject row) {
@@ -347,7 +363,7 @@ public without sharing class VpcsRoutingMigration {
         if (row instanceof Opportunity) {
             return !String.isBlank(((Opportunity)row).StageName) && VpcsCustomerRouting.isOpenCustomer((Opportunity)row);
         }
-        return parent != null && isEligible(parent, null) && isReferral((Task)row);
+        return parent != null && isEligible(parent, null);
     }
 
     private static String captureConflict(SObject row, Map<String, Object> expected) {
@@ -366,9 +382,13 @@ public without sharing class VpcsRoutingMigration {
         } else {
             Task task = (Task)row;
             Id parentId = task.WhatId == null ? task.WhoId : task.WhatId;
+            Map<String, Object> origin = convertedReferralOrigin(task);
+            if (!matchesObject(origin, expected.get('referralOrigin'))) return 'referral-origin-changed';
             if (!idsEqual(parentId, expected.get('parentId')) ||
                 !matchesObject(task.IsClosed, expected.get('isClosed')) ||
-                !matchesObject(isReferral(task), expected.get('isReferral'))) return 'referral-eligibility-changed';
+                (origin == null && !isDirectReferral(task)) || !matchesObject(true, expected.get('isReferral'))) {
+                return 'referral-eligibility-changed';
+            }
         }
         if (!(row instanceof Task)) {
             String destination = (String)row.get('Destination_State__c');
@@ -408,6 +428,10 @@ public without sharing class VpcsRoutingMigration {
 
     @TestVisible
     private static Boolean isReferral(Task task) {
+        return isDirectReferral(task) || convertedReferralOrigin(task) != null;
+    }
+
+    private static Boolean isDirectReferral(Task task) {
         if (task.IsClosed != false || task.Subject == null) return false;
         if (task.WhatId == null && task.WhoId != null && task.WhoId.getSObjectType() == Lead.SObjectType) {
             return task.Subject.equals('Reach out to new Lead');
@@ -416,6 +440,31 @@ public without sharing class VpcsRoutingMigration {
         // The trailing space is part of the exact Opportunity Flow subject.
         return task.Subject.equals('Check on Referral Check') ||
             task.Subject.equals('email closing info and agent referral agreement to Melanie ');
+    }
+
+    @TestVisible
+    private static Map<String, Object> convertedReferralOrigin(Task task) {
+        if (task.IsClosed != false || task.Subject == null || !task.Subject.equals('Reach out to new Lead') ||
+            task.CreatedDate == null || task.WhoId == null || task.WhoId.getSObjectType() != Contact.SObjectType ||
+            task.WhatId == null || task.WhatId.getSObjectType() != Opportunity.SObjectType) return null;
+        List<Lead> matches = [
+            SELECT Id, RecordTypeId, IsConverted, WebToLead__c, CreatedDate, ConvertedDate,
+                   ConvertedContactId, ConvertedOpportunityId
+            FROM Lead WHERE ConvertedOpportunityId = :task.WhatId WITH SYSTEM_MODE LIMIT 2 FOR UPDATE
+        ];
+        if (matches.size() != 1) return null;
+        Lead source = matches[0];
+        if (source.IsConverted != true || source.WebToLead__c != true || !VpcsCustomerRouting.isCustomer(source) ||
+            source.ConvertedContactId != task.WhoId || source.CreatedDate == null || source.CreatedDate > task.CreatedDate ||
+            source.ConvertedDate == null || task.CreatedDate.dateGmt() >= source.ConvertedDate) return null;
+        return new Map<String, Object>{
+            'sourceLeadId' => String.valueOf(source.Id),
+            'contactId' => String.valueOf(source.ConvertedContactId),
+            'opportunityId' => String.valueOf(source.ConvertedOpportunityId),
+            'sourceCreatedDate' => jsonDate(source.CreatedDate),
+            'convertedDate' => dateOnly(source.ConvertedDate),
+            'taskCreatedDate' => jsonDate(task.CreatedDate)
+        };
     }
 
     private static List<SObject> linkedSms(Id recordId, Boolean lockRows) {

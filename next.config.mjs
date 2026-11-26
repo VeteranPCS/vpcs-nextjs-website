@@ -43,8 +43,8 @@ const siteCsp = `
 `;
 
 // Portraits are served from public/ by Next.js and Vercel. Keep their filenames
-// here so resolving an author does not trace the image bytes into each function.
-const blogHeadshotPaths = ['agents', 'lenders'].flatMap((folder) =>
+// here so resolving a partner or author does not require image files in a function bundle.
+const partnerHeadshotPaths = ['agents', 'lenders'].flatMap((folder) =>
   readdirSync(new URL(`./public/images/${folder}/`, import.meta.url), { withFileTypes: true })
     .filter((entry) => entry.isFile() && /\.(?:jpe?g|png|webp)$/.test(entry.name))
     .map((entry) => `/images/${folder}/${entry.name}`),
@@ -65,7 +65,7 @@ const nextConfig = {
     ],
   },
   env: {
-    VPCS_BLOG_HEADSHOT_PATHS: blogHeadshotPaths,
+    VPCS_BLOG_HEADSHOT_PATHS: partnerHeadshotPaths,
     NEXT_PUBLIC_VPCS_ANALYTICS_ENABLED: productionTelemetry ? '1' : '0',
     ...(productionTelemetry ? {} : { NEXT_PUBLIC_CONCIERGE_ENABLED: conciergeFixture ? '1' : '0' }),
   },

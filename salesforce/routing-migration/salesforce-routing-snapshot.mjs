@@ -94,15 +94,42 @@ function oppRecord(row, pending, typeId, timers) {
   };
 }
 
-function taskRecord(row, parentType, parents, pending) {
+function convertedLineage(task, customerLeadTypeId, sources) {
+  if (task.Subject !== leadReferral || !salesforceId(task.WhoId) || !task.WhoId.startsWith('003')) return null;
+  const matching = sources.filter((source) => sameSalesforceId(source.ConvertedOpportunityId, task.WhatId));
+  if (matching.length !== 1) return null;
+  const [source] = matching;
+  if (source.IsConverted !== true || source.WebToLead__c !== true ||
+      !sameSalesforceId(source.RecordTypeId, customerLeadTypeId) ||
+      !sameSalesforceId(source.ConvertedContactId, task.WhoId) ||
+      typeof task.CreatedDate !== 'string' || typeof source.CreatedDate !== 'string' ||
+      typeof source.ConvertedDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(source.ConvertedDate)) return null;
+  const taskTime = Date.parse(task.CreatedDate);
+  const sourceTime = Date.parse(source.CreatedDate);
+  if (!Number.isFinite(taskTime) || !Number.isFinite(sourceTime) || sourceTime > taskTime ||
+      new Date(taskTime).toISOString().slice(0, 10) >= source.ConvertedDate) return null;
+  return {
+    sourceLeadId: checkedId(source.Id, '00Q'),
+    contactId: checkedId(source.ConvertedContactId, '003'),
+    opportunityId: checkedId(source.ConvertedOpportunityId, '006'),
+    sourceCreatedDate: isoDate(source.CreatedDate),
+    convertedDate: source.ConvertedDate,
+    taskCreatedDate: isoDate(task.CreatedDate),
+  };
+}
+
+function taskRecord(row, parentType, parents, pending, customerLeadTypeId, convertedSources) {
   const parentId = checkedId(parentType === 'Lead' ? row.WhoId : row.WhatId);
   if (row.IsClosed !== false || !parents.has(parentId.slice(0, 15))) {
     throw new RoutingCliError('Salesforce returned a Task outside reviewed open Customer scope');
   }
+  const referralOrigin = parentType === 'Opportunity' ? convertedLineage(row, customerLeadTypeId, convertedSources) : null;
   const isReferral = parentType === 'Lead'
     ? row.WhatId === null && row.Subject === leadReferral
-    : oppReferrals.has(row.Subject);
-  return { ...recordBase(row, 'Task', pending, taskTimers), parentId, isClosed: false, isReferral };
+    : oppReferrals.has(row.Subject) || referralOrigin !== null;
+  const record = { ...recordBase(row, 'Task', pending, taskTimers), parentId, isClosed: false, isReferral };
+  if (referralOrigin !== null) record.referralOrigin = referralOrigin;
+  return record;
 }
 
 async function checkOrgMappings(cli, organization) {
@@ -136,10 +163,10 @@ async function checkOrgMappings(cli, organization) {
   return { leadRecordTypeId, opportunityRecordTypeId, ownerIds: { BETH, STEPHANIE }, previousRegionalOwnerIds };
 }
 
-async function loadOpenTasks(cli, parentType, customerIds, pending) {
+async function loadOpenTasks(cli, parentType, customerIds, pending, customerLeadTypeId) {
   const rows = [];
   const column = parentType === 'Lead' ? 'WhoId' : 'WhatId';
-  const readable = ['Id', 'OwnerId', 'LastModifiedDate', 'WhoId', 'WhatId', 'Subject', 'IsClosed', ...taskTimers];
+  const readable = ['Id', 'OwnerId', 'LastModifiedDate', 'CreatedDate', 'WhoId', 'WhatId', 'Subject', 'IsClosed', ...taskTimers];
   const parents = new Set(customerIds.map((id) => id.slice(0, 15)));
   for (let start = 0; start < customerIds.length; start += 100) {
     const batch = customerIds.slice(start, start + 100);
@@ -147,7 +174,15 @@ async function loadOpenTasks(cli, parentType, customerIds, pending) {
       'SELECT ' + readable.join(',') + ' FROM Task WHERE IsClosed = false AND ' + column + ' IN ' + inList(batch),
       'incomplete Customer Tasks',
     );
-    for (const row of tasks) rows.push(taskRecord(row, parentType, parents, pending));
+    const candidateOppIds = parentType === 'Opportunity'
+      ? [...new Set(tasks.filter((row) => row.Subject === leadReferral).map((row) => checkedId(row.WhatId, '006')))]
+      : [];
+    const converted = candidateOppIds.length === 0 ? [] : await cli.query(
+      'SELECT Id, RecordTypeId, IsConverted, WebToLead__c, CreatedDate, ConvertedDate, ConvertedContactId, ' +
+      'ConvertedOpportunityId FROM Lead WHERE ConvertedOpportunityId IN ' + inList(candidateOppIds),
+      'converted Customer referral lineage',
+    );
+    for (const row of tasks) rows.push(taskRecord(row, parentType, parents, pending, customerLeadTypeId, converted));
   }
   return rows;
 }
@@ -191,7 +226,7 @@ export async function captureRoutingSnapshot(cli, expected, clock = Date.now, { 
   const opportunities = oppRows.map((row) => oppRecord(row, pending, routing.opportunityRecordTypeId, readOppTimers));
   const tasks = [
     ...await loadOpenTasks(cli, 'Lead', leads.map(({ id }) => id), pending),
-    ...await loadOpenTasks(cli, 'Opportunity', opportunities.map(({ id }) => id), pending),
+    ...await loadOpenTasks(cli, 'Opportunity', opportunities.map(({ id }) => id), pending, routing.leadRecordTypeId),
   ];
   const legacyPendingSmsCount = await countLegacyPendingSms(cli, { hasRelationships: !legacySchema });
   assertSameOrganization(organization, await cli.getOrganization());
