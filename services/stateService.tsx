@@ -8,39 +8,21 @@ import { getStateBySlug, STATE_LIST } from '@/lib/content/states';
 import { absoluteUrl } from '@/lib/siteUrl';
 import { toLegacyImage, type LegacyImage } from '@/lib/content/loader';
 
-// Dynamic node:fs import keeps these calls out of client bundles that
-// transitively import this module. Only ever runs server-side. (The module is
-// now also hard server-only via the lib/content/states import above; type-only
-// imports from client components remain fine because they compile away.)
-const headshotFilenameCache = new Map<'agents' | 'lenders', Promise<ReadonlySet<string>>>();
+// Next embeds the same exact-case paths used by blog author portraits.
+const HEADSHOT_PATHS = new Set(process.env.VPCS_BLOG_HEADSHOT_PATHS?.split('\n'));
 
-async function resolveHeadshot(
+function resolveHeadshot(
   role: 'agents' | 'lenders',
   salesforceID: string,
   target: Pick<ReturnType<typeof getSalesforceConfig>, 'profile' | 'orgId'>,
-): Promise<string | null> {
+): string | null {
   const mockId = role === 'agents' ? MOCK_AGENT_ID : MOCK_LENDER_ID;
   const isMockFixture = target.profile === 'mock' && salesforceID === mockId;
   const isWebdevFixture = isWebdevPartnerFixture(target, role, salesforceID);
   if (isMockFixture || isWebdevFixture) return PARTNER_FIXTURE_PHOTO[role];
 
-  const [{ default: fs }, { default: path }] = await Promise.all([
-    import('node:fs'),
-    import('node:path'),
-  ]);
-  const filename = `${salesforceID}.webp`;
-  let filenamesPromise = headshotFilenameCache.get(role);
-  if (!filenamesPromise) {
-    const directory = path.join(process.cwd(), 'public', 'images', role);
-    filenamesPromise = fs.promises.readdir(directory).then((filenames) => new Set(filenames));
-    headshotFilenameCache.set(role, filenamesPromise);
-  }
-
-  // Salesforce 15-character IDs are case-sensitive. Reading the directory and
-  // checking its returned names prevents case-insensitive development machines
-  // from assigning one partner's headshot to a different, case-colliding ID.
-  const filenames = await filenamesPromise;
-  return filenames.has(filename) ? `/images/${role}/${filename}` : null;
+  const photoPath = `/images/${role}/${salesforceID}.webp`;
+  return HEADSHOT_PATHS.has(photoPath) ? photoPath : null;
 }
 
 // One row of the state list, sourced from the repo-committed export
@@ -186,13 +168,11 @@ async function runStateLicensedQuery<T extends { AccountId_15__c: string }>(
   });
 
   if (response?.status === 200) {
-    const resolved = await Promise.all(
-      response.data.records.map(async (record: T) => {
-        const PhotoUrl = await resolveHeadshot(headshotRole, record.AccountId_15__c, target);
-        if (PhotoUrl) return { ...record, PhotoUrl };
-        return requireHeadshot ? null : record;
-      }),
-    );
+    const resolved = (response.data.records as T[]).map((record) => {
+      const PhotoUrl = resolveHeadshot(headshotRole, record.AccountId_15__c, target);
+      if (PhotoUrl) return { ...record, PhotoUrl };
+      return requireHeadshot ? null : record;
+    });
     const records = resolved.filter((record): record is T => record !== null);
 
     return { ...response.data, records };

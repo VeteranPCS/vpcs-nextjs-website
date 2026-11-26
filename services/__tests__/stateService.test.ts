@@ -1,3 +1,4 @@
+import { promises as fs } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   productionEnv,
@@ -10,6 +11,16 @@ import {
 // marker package (same approach as app/__tests__/sitemap.test.ts). Mock the
 // Salesforce API layer so importing the service never touches token plumbing —
 // these tests only exercise the migrated repo-content functions.
+// Next embeds this inventory at build time. Provide the same shape without
+// depending on the checkout's public directories at test runtime.
+vi.hoisted(() => {
+  vi.stubEnv('VPCS_BLOG_HEADSHOT_PATHS', [
+    '/images/agents/0014x00000IFGiV.webp',
+    '/images/agents/0014x00000IFGiq.webp',
+    '/images/agents/0014x00000IFGix.webp',
+    '/images/lenders/0014x0000100OSg.webp',
+  ].join('\n'));
+});
 vi.mock('server-only', () => ({}));
 vi.mock('@/services/api', () => ({
   RequestType: { GET: 'GET', POST: 'POST' },
@@ -90,6 +101,30 @@ describe('stateService partner headshots', () => {
     vi.clearAllMocks();
   });
   afterEach(() => vi.unstubAllEnvs());
+
+  it.each([
+    ['agents', '0014x00000IFGiV', stateService.fetchAgentsListByState],
+    ['lenders', '0014x0000100OSg', stateService.fetchLendersListByState],
+  ] as const)('retains %s portraits when the runtime has no public image directories', async (role, id, getPartners) => {
+    const readDirectory = vi.spyOn(fs, 'readdir').mockRejectedValue(
+      Object.assign(new Error('public image directories are absent from the function bundle'), { code: 'ENOENT' }),
+    );
+    try {
+      const partner = { Name: 'Partner with portrait', AccountId_15__c: id };
+      const partnerWithoutPhoto = { Name: 'Partner without portrait', AccountId_15__c: '001000000000098' };
+      vi.mocked(salesForceAPIWithRefresh).mockResolvedValue({
+        status: 200,
+        data: { totalSize: 2, done: true, records: [partner, partnerWithoutPhoto] },
+      } as never);
+
+      const withPortrait = { ...partner, PhotoUrl: `/images/${role}/${id}.webp` };
+      expect((await getPartners('NE')).records).toEqual([withPortrait]);
+      expect((await getPartners('NE', { requireHeadshot: false })).records).toEqual([withPortrait, partnerWithoutPhoto]);
+      expect(readDirectory).not.toHaveBeenCalled();
+    } finally {
+      readDirectory.mockRestore();
+    }
+  });
 
   it('matches case-sensitive Salesforce IDs consistently on every filesystem', async () => {
     vi.mocked(salesForceAPIWithRefresh).mockResolvedValue({
