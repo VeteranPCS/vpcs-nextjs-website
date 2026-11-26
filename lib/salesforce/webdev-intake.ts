@@ -7,15 +7,10 @@ const TEST_MARKER = '[VPCS WEBDEV TEST]';
 const RESERVED_TEST_PHONE = /^\+120255501\d{2}$/;
 const ISO_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/;
 const MAX_TEST_WINDOW_MS = 24 * 60 * 60 * 1_000;
-const markedSubmissions = new WeakSet<MarkedWebdevSubmission>();
 
 export interface WebdevTestRun {
     runId: string;
     expiresAt: number;
-}
-
-export interface MarkedWebdevSubmission extends WebdevTestRun {
-    submissionId: string;
 }
 
 function listedValues(variable: string | undefined): Set<string> {
@@ -47,7 +42,7 @@ export function markWebdevSubmission(
     params: URLSearchParams,
     config: ReturnType<typeof getSalesforceConfig>,
     submissionId: string,
-): MarkedWebdevSubmission {
+): void {
     const run = requireWebdevTestRun(config);
     if (!params.get('first_name')?.startsWith(TEST_MARKER)) {
         throw new Error('Salesforce WebDev submission is missing the synthetic test marker');
@@ -71,19 +66,10 @@ export function markWebdevSubmission(
     const description = params.get('description');
     const marker = `${TEST_MARKER} ${run.runId} ${submissionId}`;
     params.set('description', description ? `${marker}\n${description}` : marker);
-    const submission = Object.freeze({ ...run, submissionId });
-    if (config.deliveryMode === 'allowlisted') markedSubmissions.add(submission);
-    return submission;
 }
 
-export function isAllowedWebdevTestPhone(phone: string): boolean {
+function isAllowedWebdevTestPhone(phone: string): boolean {
     return /^\+[1-9]\d{7,14}$/.test(phone) && listedValues(process.env.VPCS_WEBDEV_TEST_PHONES).has(phone);
-}
-
-export function assertMarkedWebdevSubmission(submission: MarkedWebdevSubmission, run: WebdevTestRun): void {
-    if (!markedSubmissions.has(submission) || submission.runId !== run.runId || submission.expiresAt !== run.expiresAt) {
-        throw new Error('OpenPhone delivery requires a validated WebDev test submission');
-    }
 }
 
 /** Keep Salesforce return and record URLs within the instance being tested. */

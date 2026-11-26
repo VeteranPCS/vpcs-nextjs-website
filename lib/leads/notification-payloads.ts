@@ -53,14 +53,3 @@ export function buildSlackLeadPayload(input: SlackLeadInput, submittedAt = new D
   blocks.push({ type: 'context', elements: [{ type: 'mrkdwn', text: `Submitted: ${submittedAt.toLocaleString()}` }] });
   return { blocks };
 }
-
-export function buildPartnerSmsContent(formData: Record<string, string | undefined>, stateLabel: string): string {
-  return `New Lead From VeteranPCS:
-${formData.firstName || ''} ${formData.lastName || ''}
-Email: ${optionalContact(formData.email)}
-Phone: ${displayContactPhone(formData.phone)}
-Destination State: ${stateLabel}
-${formData.currentBase ? `Current Base: ${formData.currentBase}` : ''}
-${formData.destinationBase ? `Destination Base: ${formData.destinationBase}` : ''}
-${formData.additionalComments ? `Additional Comments: ${formData.additionalComments}` : ''}`;
-}

@@ -1,7 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import sendToSlack from '@/actions/sendToSlack';
-import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
-import { routeSalesforceLeadOwner } from '@/services/salesforceLeadOwnerService';
 import {
   contactAgentPostForm,
   contactLenderPostForm,
@@ -23,43 +21,20 @@ import { captureLeadConversionCreated, captureServerAnalyticsEvent } from '@/lib
 import { evaluateLeadSpam } from '@/lib/spam-protection';
 import { updateSubmissionStatus } from '@/services/formTrackingService';
 import stateService from '@/services/stateService';
-import * as notificationPayloads from '@/lib/leads/notification-payloads';
 import { contactAgentClientSchema, contactLenderClientSchema } from '@/lib/validation/contactForms';
 import { LeadSubmissionError } from '@/lib/leads/submission-outcome';
 import { submitCustomerWebsiteLead } from '@/lib/leads/customer-action';
 import { getSalesforceConfig } from '@/lib/salesforce/server-config';
 import { getVerifiedSalesforceSession } from '@/services/salesForceTokenService';
-import { sendWebdevOpenPhoneMessage } from '@/lib/leads/webdev-openphone';
 import mockManifest from '@/config/salesforce/mock.json';
 import webdevFixtures from '@/config/salesforce/webdev-fixtures.json';
 import { stubProductionEnv } from '@/lib/salesforce/__tests__/configuration-fixtures';
 
 vi.mock('server-only', () => ({}));
 vi.mock('@/services/salesForceTokenService', () => ({ getVerifiedSalesforceSession: vi.fn() }));
-vi.mock('@/lib/leads/webdev-openphone', async (importOriginal) => ({
-  ...await importOriginal<typeof import('@/lib/leads/webdev-openphone')>(),
-  sendWebdevOpenPhoneMessage: vi.fn(async () => ({ accepted: true })),
-}));
 
 vi.mock('@/actions/sendToSlack', () => ({
   default: vi.fn(async () => ({ ok: true })),
-}));
-
-vi.mock('@/actions/sendOpenPhoneMessage', () => ({
-  sendOpenPhoneMessage: vi.fn(async () => ({ id: 'openphone-test-message' })),
-}));
-
-vi.mock('@/services/salesforceLeadOwnerService', () => ({
-  appendLeadOwnerSubmissionMarker: vi.fn((url: string, submissionId: string) => {
-    const separator = url.includes('?') ? '&' : '?';
-    return `${url}${separator}sid=${encodeURIComponent(submissionId)}`;
-  }),
-  routeSalesforceLeadOwner: vi.fn(async () => ({
-    leadId: '00QTEST',
-    ownerId: '005TEST',
-    ownerName: 'Test Owner',
-    adminName: 'Test Admin',
-  })),
 }));
 
 vi.mock('@/services/loggingService', () => ({
@@ -157,8 +132,6 @@ describe('accepted customer lead regression boundaries', () => {
       expect(result).toMatchObject({ success: true, outcome: 'accepted', submissionId: 'submission-test-id' });
       expect(fetch).toHaveBeenCalledTimes(1);
       expect(sendToSlack).toHaveBeenCalledTimes(1);
-      expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
-      expect(vi.mocked(sendOpenPhoneMessage).mock.calls[0]?.[0].content).not.toContain('undefined');
       expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
       expect(updateSubmissionStatus).toHaveBeenCalledTimes(1);
       expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.any(Response));
@@ -167,37 +140,26 @@ describe('accepted customer lead regression boundaries', () => {
     it('rejects invalid website input before every outbound effect', async () => {
       const result = await submitCustomerWebsiteLead(formId, { ...qaPayload(), firstName: '   ' }, queryString, submit);
       expect(result).toMatchObject({ outcome: 'validation_error', fieldErrors: { firstName: 'First name is required' } });
-      for (const effect of [fetch, sendToSlack, sendOpenPhoneMessage, routeSalesforceLeadOwner, captureLeadConversionCreated]) expect(effect).not.toHaveBeenCalled();
+      for (const effect of [fetch, sendToSlack, captureLeadConversionCreated]) expect(effect).not.toHaveBeenCalled();
     });
   });
 
-  it('an SMS construction exception cannot suppress Slack or accepted capture', async () => {
-    vi.spyOn(notificationPayloads, 'buildPartnerSmsContent').mockImplementationOnce(() => { throw new Error('private payload'); });
-    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toHaveProperty('submissionId');
-    expect(sendToSlack).toHaveBeenCalledTimes(1);
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
-    expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
-    expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(expect.objectContaining({ properties: expect.objectContaining({ channel: 'OpenPhone', failure_stage: 'construction' }) }));
-  });
-
-  it('a Slack argument-construction exception cannot suppress partner SMS', async () => {
+  it('a Slack argument-construction exception preserves acceptance and conversion capture', async () => {
     vi.mocked(stateService.fetchAgentById).mockResolvedValueOnce({
       get Name() { throw new Error('private partner data'); }, PersonMobilePhone: '7195550100',
     } as never);
     await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toHaveProperty('submissionId');
     expect(sendToSlack).not.toHaveBeenCalled();
-    expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
     expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
+    expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(expect.objectContaining({ properties: expect.objectContaining({ channel: 'Slack', failure_stage: 'construction' }) }));
   });
 
-  it.each(['status', 'analytics', 'routing'] as const)('%s failure after acceptance cannot reverse success or suppress notifications', async (stage) => {
+  it.each(['status', 'analytics'] as const)('%s failure after acceptance cannot reverse success or suppress notifications', async (stage) => {
     if (stage === 'status') vi.mocked(updateSubmissionStatus).mockRejectedValueOnce(new Error('unavailable'));
     if (stage === 'analytics') vi.mocked(captureLeadConversionCreated).mockRejectedValueOnce(new Error('construction or delivery'));
-    if (stage === 'routing') vi.mocked(routeSalesforceLeadOwner).mockRejectedValueOnce(new Error('unavailable'));
     await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toHaveProperty('submissionId');
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
-    expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
     expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
     expect(vi.mocked(updateSubmissionStatus).mock.calls.every((call) => call[1] === 'SUCCESS')).toBe(true);
   });
@@ -218,13 +180,20 @@ describe('accepted customer lead regression boundaries', () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
-  it('SMS delivery and failure-telemetry failures cannot undo acceptance or suppress Slack', async () => {
-    vi.mocked(sendOpenPhoneMessage).mockRejectedValueOnce(new Error('transport failed'));
+  it('Slack delivery and failure-telemetry failures preserve acceptance and conversion capture', async () => {
+    vi.mocked(sendToSlack).mockRejectedValueOnce(new Error('transport failed'));
     vi.mocked(captureServerAnalyticsEvent).mockRejectedValueOnce(new Error('analytics failed'));
     await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toHaveProperty('submissionId');
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(captureLeadConversionCreated).toHaveBeenCalledTimes(1);
+  });
+
+  it('preserves the selected partner ID and Slack delivery when the production lookup finds no Account', async () => {
+    vi.mocked(stateService.fetchAgentById).mockResolvedValueOnce(null);
+    await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toHaveProperty('submissionId');
+    expect(salesforceBody().get('00N4x00000Lsn28')).toBe('0014x00000HWTqI');
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
   });
 
   it('retains partial-context service callers such as Concierge', async () => {
@@ -413,25 +382,13 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     expect(salesforceBody().get('00N4x00000QQ1LB')).toContain('sid=submission-test-id');
     expect(salesforceBody().get('00NRg00000PjSD3MAN')).toBe('vpcs_test_visitor_1234567890');
     expect(salesforceBody().get('00NRg00000PjSEfMAN')).toBe('submission-test-id');
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(routeSalesforceLeadOwner).toHaveBeenCalledWith(
-      expect.objectContaining({
-        submissionId: 'submission-test-id',
-        submissionStartedAt: expect.any(Date),
-        leadSource: 'Contact Agent',
-        destinationStateCode: 'CO',
-        destinationStateSlug: 'colorado',
-        email: 'tech+qa@veteranpcs.com',
-        selectedAgentId: '0014x00000HWTqI',
-        owner: expect.objectContaining({
-          adminName: 'Beth',
-          ownerId: '0054x000005GsUvAAK',
-        }),
-      }),
+    expect(global.fetch).toHaveBeenCalledExactlyOnceWith(
+      'https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8',
+      expect.objectContaining({ method: 'POST' }),
     );
+    expect(getVerifiedSalesforceSession).not.toHaveBeenCalled();
     expect(sendToSlack).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Colorado' }));
-    expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
     expect(captureLeadConversionCreated).toHaveBeenCalledWith(
       expect.objectContaining({
         formId: 'contact_agent',
@@ -467,11 +424,6 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     expect(salesforceBody().get('00N4x00000Lpb0T')).toBe('QA Test Current Base');
     expect(salesforceBody().get('00N4x00000LspUs')).toBe('Austin QA Test');
     expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Texas' }));
-    expect(sendOpenPhoneMessage).toHaveBeenCalledWith(
-      expect.objectContaining({
-        content: expect.stringContaining('Destination State: Texas'),
-      }),
-    );
   });
 
   it('lets a valid URL state win over submitted form state', async () => {
@@ -482,24 +434,16 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     await contactAgentPostForm({ ...qaPayload(), state: 'TX' }, queryString);
 
     expect(salesforceBody().get('00N4x00000LspV2')).toBe('CO');
-    expect(routeSalesforceLeadOwner).toHaveBeenCalledWith(
-      expect.objectContaining({
-        destinationStateCode: 'CO',
-        destinationStateSlug: 'colorado',
-        owner: expect.objectContaining({ adminName: 'Beth' }),
-      }),
-    );
     expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Colorado' }));
   });
 
-  it('rejects missing effective state before Salesforce and notifications', async () => {
+  it.each(['', '&state=unrecognized'])('rejects missing or malformed effective state (%s) before Salesforce and notifications', async (stateParam) => {
     await expect(
-      contactAgentPostForm(qaPayload(), '?form=agent&fn=Jason&id=0014x00000HWTqI'),
+      contactAgentPostForm(qaPayload(), `?form=agent&fn=Jason&id=0014x00000HWTqI${stateParam}`),
     ).rejects.toThrow('Failed to submit form');
 
     expect(global.fetch).not.toHaveBeenCalled();
     expect(sendToSlack).not.toHaveBeenCalled();
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(logError).toHaveBeenCalledWith(
       'Invalid contactAgent state',
       expect.objectContaining({ submissionId: 'submission-test-id' }),
@@ -513,32 +457,20 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     const result = await contactLenderPostForm(
       lenderPayload(),
-      '?form=lender&fn=Taylor&id=0014x00000Lender&state=texas',
+      '?form=lender&fn=Taylor&id=0014x00000Lender&state=florida',
     );
 
     expect(result).toEqual({
       message: 'Form submitted successfully!',
       submissionId: 'submission-test-id',
     });
-    expect(salesforceBody().get('00N4x00000LspV2')).toBe('TX');
-    expect(routeSalesforceLeadOwner).toHaveBeenCalledWith(
-      expect.objectContaining({
-        leadSource: 'Contact Lender',
-        destinationStateCode: 'TX',
-        destinationStateSlug: 'texas',
-        selectedLenderId: '0014x00000Lender',
-        owner: expect.objectContaining({
-          adminName: 'Tara',
-          ownerId: '005Rg00000BAN0DIAX',
-        }),
-      }),
+    expect(salesforceBody().get('00N4x00000LspV2')).toBe('FL');
+    expect(global.fetch).toHaveBeenCalledExactlyOnceWith(
+      'https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8',
+      expect.objectContaining({ method: 'POST' }),
     );
-    expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Texas' }));
-    expect(sendOpenPhoneMessage).toHaveBeenCalledWith(
-      expect.objectContaining({
-        content: expect.stringContaining('Destination State: Texas'),
-      }),
-    );
+    expect(getVerifiedSalesforceSession).not.toHaveBeenCalled();
+    expect(sendToSlack).toHaveBeenCalledWith(expect.objectContaining({ state: 'Florida' }));
   });
 
   it('accepts a Salesforce 200 without redirect and sends notifications once', async () => {
@@ -554,46 +486,6 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     });
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
-    expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
-  });
-
-  it('keeps the visitor success path when post-Web-to-Lead owner routing fails', async () => {
-    vi.mocked(routeSalesforceLeadOwner).mockRejectedValueOnce(new Error('ambiguous lead'));
-    mockSalesforceResponse('<html><body>Thank you for your submission.</body></html>', {
-      status: 200,
-    });
-
-    const result = await contactAgentPostForm(qaPayload(), queryString);
-
-    expect(result).toEqual({
-      message: 'Form submitted successfully!',
-      submissionId: 'submission-test-id',
-    });
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(sendToSlack).toHaveBeenCalledTimes(1);
-    expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
-    expect(logError).toHaveBeenCalledWith(
-      'Salesforce Lead owner routing failed after Web-to-Lead acceptance',
-      expect.objectContaining({
-        submissionId: 'submission-test-id',
-        leadSource: 'Contact Agent',
-        destinationStateCode: 'CO',
-        destinationStateSlug: 'colorado',
-      }),
-      expect.any(Error),
-    );
-    expect(captureServerAnalyticsEvent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        event: 'lead_owner_routing_failed',
-        distinctId: 'submission-test-id',
-        properties: expect.objectContaining({
-          submission_id: 'submission-test-id',
-          lead_source: 'Contact Agent',
-          state_code: 'CO',
-          state_slug: 'colorado',
-        }),
-      }),
-    );
   });
 
   it('does not retry Salesforce when Slack returns a failed result after Salesforce accepts', async () => {
@@ -610,7 +502,6 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
     });
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
-    expect(sendOpenPhoneMessage).toHaveBeenCalledTimes(1);
     expect(logError).toHaveBeenCalledWith(
       'Slack notification failed',
       expect.objectContaining({ submissionId: 'submission-test-id', stage: 'configuration' }),
@@ -675,7 +566,6 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).not.toHaveBeenCalled();
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
   });
 
@@ -692,7 +582,8 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
       submissionId: 'submission-test-id',
     });
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect([...salesforceBody().values()]).toContain(`[SPAM-SUSPECTED] ${qaPayload().additionalComments}`);
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
   });
 
   it('does not retry or notify on a Salesforce HTTP error', async () => {
@@ -707,7 +598,6 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).not.toHaveBeenCalled();
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
   });
 
   it('does not retry or notify on a network error', async () => {
@@ -719,7 +609,6 @@ describe('contactAgentPostForm Salesforce Web-to-Lead behavior', () => {
 
     expect(global.fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).not.toHaveBeenCalled();
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
   });
 });
 
@@ -1138,7 +1027,7 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
  * Observable-contract characterization for the seven simpler forms (everything the
  * committed body-only tests above do NOT pin): return shape to the caller, the exact
  * Slack payload, the success `updateSubmissionStatus` call, whether lead-conversion
- * analytics fire, and that OpenPhone SMS never fires for a non-agent/lender form.
+ * analytics fire.
  * Together with the byte-exact body tests above and the contactAgent/contactLender
  * behavioral suite, this freezes contract axes (b)-(f) for all nine forms before the
  * `submitWebToLead` consolidation, so the refactor can be proven behavior-preserving.
@@ -1164,7 +1053,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
     });
   }
 
-  it('GetListedAgentsPostForm: {message} return, exact Slack payload, no OpenPhone, no capture', async () => {
+  it('GetListedAgentsPostForm: {message} return, exact Slack payload, no conversion capture', async () => {
     accept200();
     const result = await GetListedAgentsPostForm({
       firstName: 'Test', lastName: 'Agent', email: 'agent@example.com', phone: '8035550100',
@@ -1183,12 +1072,11 @@ describe('characterization: observable contract for the seven simpler forms', ()
       phoneNumber: '8035550100',
       message: 'I have served military families for 10 years.',
     });
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
     expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
   });
 
-  it('GetListedLendersPostForm: {message} return, exact Slack payload, no OpenPhone, no capture', async () => {
+  it('GetListedLendersPostForm: {message} return, exact Slack payload, no conversion capture', async () => {
     accept200();
     const result = await GetListedLendersPostForm({
       firstName: 'Test', lastName: 'Lender', email: 'lender@example.com', phone: '8035550100',
@@ -1207,12 +1095,11 @@ describe('characterization: observable contract for the seven simpler forms', ()
       phoneNumber: '8035550100',
       message: 'VA-focused lender, 500+ closed loans.',
     });
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
     expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
   });
 
-  it('internshipFormSubmission: {message} return, empty Slack message, no OpenPhone, no capture', async () => {
+  it('internshipFormSubmission: {message} return, empty Slack message, no conversion capture', async () => {
     accept200();
     const result = await internshipFormSubmission({
       first_name: 'Test', last_name: 'Intern', email: 'intern@example.com', mobile: '8035550100',
@@ -1227,7 +1114,6 @@ describe('characterization: observable contract for the seven simpler forms', ()
       phoneNumber: '8035550100',
       message: '',
     });
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
     expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'SUCCESS', expect.anything());
   });
@@ -1249,7 +1135,6 @@ describe('characterization: observable contract for the seven simpler forms', ()
       phoneNumber: '8035550100',
       message: '',
     });
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).toHaveBeenCalledWith(
       expect.objectContaining({
         formId: 'keep_in_touch',
@@ -1278,7 +1163,6 @@ describe('characterization: observable contract for the seven simpler forms', ()
       phoneNumber: '8035550100',
       message: 'A contact message',
     });
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).toHaveBeenCalledWith(
       expect.objectContaining({
         formId: 'contact_form',
@@ -1305,7 +1189,6 @@ describe('characterization: observable contract for the seven simpler forms', ()
       phoneNumber: '8035550100',
       message: '',
     });
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).toHaveBeenCalledWith(
       expect.objectContaining({
         formId: 'va_loan_guide',
@@ -1333,7 +1216,6 @@ describe('characterization: observable contract for the seven simpler forms', ()
       phoneNumber: '8035550100',
       message: '',
     });
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
     expect(captureLeadConversionCreated).toHaveBeenCalledWith(
       expect.objectContaining({
         formId: 'first_time_homebuyer_guide',
@@ -1408,9 +1290,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
 
 /**
  * LEAD_DRY_RUN: the lead-submit path is non-idempotent and fires real outbound side
- * effects (Salesforce Web-to-Lead POST, Slack webhook, partner OpenPhone SMS, lead-owner
- * routing, PostHog conversion capture), so it cannot be exercised end to end without
- * creating a real Lead, texting a real person, and recording a false conversion. These
+ * effects (Salesforce Web-to-Lead POST, Slack webhook, and PostHog conversion capture). These
  * tests pin the flag's three contracts: it suppresses every sink and marks the result in
  * a non-production environment, it is inert in production, and it changes nothing when
  * unset.
@@ -1445,7 +1325,7 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     vi.stubEnv('LEAD_DRY_RUN', '1');
   }
 
-  it('suppresses the Salesforce POST, Slack, OpenPhone, owner routing and PostHog, and marks the result', async () => {
+  it('suppresses the Salesforce POST, Slack and PostHog, and marks the result', async () => {
     selectLocalDryRun();
 
     const result = await contactAgentPostForm(qaPayload(), queryString);
@@ -1457,8 +1337,6 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     });
     expect(global.fetch).not.toHaveBeenCalled();
     expect(sendToSlack).not.toHaveBeenCalled();
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
-    expect(routeSalesforceLeadOwner).not.toHaveBeenCalled();
     // PostHog is the primary funnel source, so a dry run must not record a false conversion.
     expect(captureLeadConversionCreated).not.toHaveBeenCalled();
     expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
@@ -1484,7 +1362,7 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     const notifyLog = consoleLogSpy.mock.calls.find(
       (call) => call[0] === '[LEAD_DRY_RUN] Skipping lead notifications',
     );
-    expect(notifyLog?.[1]).toEqual({ submissionId: 'submission-test-id', channelCount: 2 });
+    expect(notifyLog?.[1]).toEqual({ submissionId: 'submission-test-id', channelCount: 1 });
   });
 
   it('marks the dry run on a simpler form without disturbing its success shape', async () => {
@@ -1573,9 +1451,7 @@ describe('non-production Vercel submission guard', () => {
       expect(fetch).not.toHaveBeenCalled();
       expect(evaluateLeadSpam).not.toHaveBeenCalled();
       expect(stateService.fetchAgentById).not.toHaveBeenCalled();
-      expect(routeSalesforceLeadOwner).not.toHaveBeenCalled();
       expect(sendToSlack).not.toHaveBeenCalled();
-      expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
       expect(captureLeadConversionCreated).not.toHaveBeenCalled();
       expect(captureServerAnalyticsEvent).not.toHaveBeenCalled();
       expect(updateSubmissionStatus).toHaveBeenCalledWith('submission-test-id', 'FAILURE', null, expect.objectContaining({ message: 'Lead submissions are disabled in non-production Vercel environments' }));
@@ -1589,7 +1465,6 @@ describe('non-production Vercel submission guard', () => {
     vi.mocked(fetch).mockResolvedValue(new Response('', { status: 200 }));
     await expect(contactAgentPostForm(qaPayload(), queryString)).resolves.toMatchObject({ message: 'Form submitted successfully!', submissionId: 'submission-test-id' });
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(routeSalesforceLeadOwner).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
   });
 });
@@ -1689,7 +1564,7 @@ describe('Salesforce WebDev form transport', () => {
   it('keeps local production builds offline when mock is selected', async () => {
     vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'mock');
     await expect(contactPostForm(fixtureLead)).resolves.toMatchObject({ success: true, dryRun: true });
-    for (const effect of [getVerifiedSalesforceSession, fetch, sendToSlack, sendOpenPhoneMessage, routeSalesforceLeadOwner, captureLeadConversionCreated]) {
+    for (const effect of [getVerifiedSalesforceSession, fetch, sendToSlack, captureLeadConversionCreated]) {
       expect(effect).not.toHaveBeenCalled();
     }
   });
@@ -1709,7 +1584,7 @@ describe('Salesforce WebDev form transport', () => {
     ['VPCS_WEBDEV_ISOLATION_ATTESTED', '0'],
     ['VPCS_WEBDEV_TEST_RUN_ID', ''],
     ['VPCS_WEBDEV_TEST_EXPIRES_AT', '2026-01-01T00:00:00Z'],
-    ['VPCS_DELIVERY_MODE', 'allowlisted'],
+    ['VPCS_DELIVERY_MODE', 'live'],
   ])('rejects a write for unsafe %s', async (setting, value) => {
     vi.stubEnv(setting, value);
     await expect(contactPostForm(fixtureLead)).rejects.toMatchObject({ outcome: 'not_sent' });
@@ -1788,21 +1663,18 @@ describe('Salesforce WebDev form transport', () => {
     expect(formUrl).not.toContain('omit-this');
   });
 
-  it('uses the dedicated SMS transport only after Salesforce accepts an allowlisted submission', async () => {
+  it('accepts an allowlisted sandbox submission with website SMS configuration absent', async () => {
     vi.stubEnv('VPCS_DELIVERY_MODE', 'allowlisted');
-    vi.stubEnv('VPCS_WEBDEV_OPENPHONE_API_KEY', 'test-only-quo');
-    vi.stubEnv('VPCS_WEBDEV_OPENPHONE_FROM_NUMBER', '+12025552001');
-    vi.stubEnv('VPCS_WEBDEV_OPENPHONE_TO_NUMBER', '+12025552000');
-    vi.stubEnv('VPCS_WEBDEV_OPENPHONE_MAX_SENDS', '1');
-    vi.stubEnv('VPCS_WEBDEV_UPSTASH_REDIS_REST_URL', 'https://isolated-budget.upstash.io');
-    vi.stubEnv('VPCS_WEBDEV_UPSTASH_REDIS_REST_TOKEN', 'test-only-budget');
     const input = { ...fixtureLead, phone: '+12025552000' };
 
     vi.mocked(fetch).mockResolvedValueOnce(new Response('', { status: 500 }));
     await expect(contactAgentPostForm(input, '?state=colorado')).rejects.toMatchObject({ outcome: 'unconfirmed' });
-    expect(sendWebdevOpenPhoneMessage).not.toHaveBeenCalled();
     await expect(contactAgentPostForm(input, '?state=colorado')).resolves.toMatchObject({ submissionId: 'submission-test-id' });
-    expect(sendWebdevOpenPhoneMessage).toHaveBeenCalledWith(expect.objectContaining({ runId: 'offline-test', submissionId: 'submission-test-id' }));
-    expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
+    expect(fetch).toHaveBeenCalledTimes(2);
+    for (const [url, request] of vi.mocked(fetch).mock.calls) {
+      expect(url).toBe(action);
+      expect(request?.method).toBe('POST');
+    }
+    expect(sendToSlack).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,9 +1,5 @@
-/**
- * State-based OpenPhone routing service
- * Maps states to appropriate admin phone numbers for contact form notifications
- */
-
-import { normalizeStateSlug } from '@/lib/states';
+import customerAdmins from '@/config/routing/customer-admins.json';
+import { normalizeStateCode, stateSlugFromAbbr } from '@/lib/states';
 
 export interface AdminContact {
     name: string;
@@ -36,114 +32,26 @@ export interface AdminRouting extends AdminContact {
     adminKey: AdminKey;
 }
 
-// State-to-admin mapping based on provided chart
-const STATE_TO_ADMIN_MAP: Record<string, AdminKey> = {
-    // Beth's states
-    'alaska': 'BETH',
-    'arizona': 'BETH',
-    'california': 'BETH',
-    'colorado': 'BETH',
-    'hawaii': 'BETH',
-    'idaho': 'BETH',
-    'iowa': 'BETH',
-    'kansas': 'BETH',
-    'missouri': 'BETH',
-    'montana': 'BETH',
-    'nebraska': 'BETH',
-    'nevada': 'BETH',
-    'new-mexico': 'BETH',
-    'north-dakota': 'BETH',
-    'oregon': 'BETH',
-    'south-dakota': 'BETH',
-    'utah': 'BETH',
-    'washington': 'BETH',
-    'wyoming': 'BETH',
+const { territories } = customerAdmins;
+const TERRITORY_ADMINS = ['BETH', 'STEPHANIE'] as const;
+const ADMIN_BY_STATE = new Map(TERRITORY_ADMINS.flatMap((admin) =>
+    territories[admin].map((code) => [code, admin] as const)));
+const defaultAdmin = customerAdmins.defaultAdmin;
+if (defaultAdmin !== 'BETH' && defaultAdmin !== 'STEPHANIE') {
+    throw new Error('Invalid default admin in customer routing policy');
+}
+const DEFAULT_ADMIN: (typeof TERRITORY_ADMINS)[number] = defaultAdmin;
 
-    // Jessica's states
-    'alabama': 'JESSICA',
-    'florida': 'JESSICA',
-    'georgia': 'JESSICA',
-    'north-carolina': 'JESSICA',
-    'south-carolina': 'JESSICA',
-
-    // Stephanie's states
-    'connecticut': 'STEPHANIE',
-    'delaware': 'STEPHANIE',
-    'illinois': 'STEPHANIE',
-    'indiana': 'STEPHANIE',
-    'maine': 'STEPHANIE',
-    'maryland': 'STEPHANIE',
-    'massachusetts': 'STEPHANIE',
-    'michigan': 'STEPHANIE',
-    'minnesota': 'STEPHANIE',
-    'new-hampshire': 'STEPHANIE',
-    'new-jersey': 'STEPHANIE',
-    'new-york': 'STEPHANIE',
-    'ohio': 'STEPHANIE',
-    'pennsylvania': 'STEPHANIE',
-    'puerto-rico': 'STEPHANIE',
-    'rhode-island': 'STEPHANIE',
-    'vermont': 'STEPHANIE',
-    'virginia': 'STEPHANIE',
-    'washington-dc': 'STEPHANIE',
-    'west-virginia': 'STEPHANIE',
-    'wisconsin': 'STEPHANIE',
-
-    // Tara's states
-    'arkansas': 'TARA',
-    'kentucky': 'TARA',
-    'louisiana': 'TARA',
-    'mississippi': 'TARA',
-    'oklahoma': 'TARA',
-    'tennessee': 'TARA',
-    'texas': 'TARA',
-};
-
-export function getAdminRoutingForState(state?: string): AdminRouting | null {
-    const normalizedState = normalizeStateSlug(state) ?? state?.toLowerCase().trim();
-    if (!normalizedState) return null;
-
-    const adminKey = STATE_TO_ADMIN_MAP[normalizedState];
-    if (!adminKey) return null;
-
-    const adminContact = ADMIN_CONTACTS[adminKey];
-    return {
-        adminKey,
-        name: adminContact.name,
-        phoneNumber: adminContact.phoneNumber,
-    };
+export function getAdminRoutingForState(state?: string): AdminRouting {
+    const stateCode = normalizeStateCode(state);
+    const adminKey = ADMIN_BY_STATE.get(stateCode ?? '') ?? DEFAULT_ADMIN;
+    return { adminKey, ...ADMIN_CONTACTS[adminKey] };
 }
 
-/**
- * Get the appropriate admin phone number for a given state
- * @param state - State in lowercase with hyphens (e.g., "new-hampshire")
- * @returns Admin contact information
- */
 export function getAdminContactForState(state?: string): AdminContact {
-    // Fallback to default if no state provided
-    if (!state) {
-        console.warn('No state provided for OpenPhone routing, using fallback number');
-        return {
-            name: 'Default',
-            phoneNumber: process.env.OPEN_PHONE_FROM_NUMBER || '719-249-5359',
-        };
-    }
-
-    const adminRouting = getAdminRoutingForState(state);
-    if (!adminRouting) {
-        console.warn('No admin mapping found for OpenPhone routing, using fallback number');
-        return {
-            name: 'Default',
-            phoneNumber: process.env.OPEN_PHONE_FROM_NUMBER || '719-249-5359',
-        };
-    }
-
+    const { name, phoneNumber } = getAdminRoutingForState(state);
     console.log('OpenPhone state routing resolved');
-
-    return {
-        name: adminRouting.name,
-        phoneNumber: adminRouting.phoneNumber,
-    };
+    return { name, phoneNumber };
 }
 
 /**
@@ -161,7 +69,7 @@ export function getAdminPhoneNumberForState(state?: string): string {
  * @returns Array of state names
  */
 export function getStatesByAdmin(adminKey: AdminKey): string[] {
-    return Object.entries(STATE_TO_ADMIN_MAP)
-        .filter(([, admin]) => admin === adminKey)
-        .map(([state]) => state);
+    if (adminKey !== 'BETH' && adminKey !== 'STEPHANIE') return [];
+
+    return territories[adminKey].map(stateSlugFromAbbr).filter((slug) => slug !== null);
 }

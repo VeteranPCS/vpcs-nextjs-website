@@ -72,6 +72,7 @@ function queryProbes(inventory, config, role, fixtureAccountId, fixtureLeadId) {
     }
     const owner = select('Lead owner lookup and confirmation');
     const rehearsal = select('Ten-form rehearsal reconciliation');
+    const routingRehearsal = select('Routing rehearsal reconciliation');
     const begin = '2026-11-25T00:00:00.000Z';
     const end = '2026-11-25T00:01:00.000Z';
     return [
@@ -83,6 +84,7 @@ function queryProbes(inventory, config, role, fixtureAccountId, fixtureLeadId) {
         ['Lead owner confirmation', `SELECT ${owner} FROM Lead WHERE Id = '${leadId}' LIMIT 1`, fixtureLeadId ? 1 : undefined],
         ['Ten-form rehearsal duplicate check', "SELECT Id FROM Lead WHERE FirstName = '[VPCS WEBDEV TEST]' AND LastName IN ('webdev-access-probe') LIMIT 1"],
         ['Ten-form rehearsal reconciliation', `SELECT ${rehearsal} FROM Lead WHERE FirstName = '[VPCS WEBDEV TEST]' AND LastName = 'webdev-access-probe' AND CreatedDate >= ${begin} AND CreatedDate <= ${end} LIMIT 2`],
+        ['Routing rehearsal reconciliation', `SELECT ${routingRehearsal} FROM Lead WHERE Id = '${leadId}' AND FirstName = '[VPCS WEBDEV TEST]' LIMIT 1`, fixtureLeadId ? 1 : undefined],
     ];
 }
 

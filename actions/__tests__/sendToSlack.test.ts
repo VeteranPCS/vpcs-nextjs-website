@@ -1,8 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import sendToSlack from '../sendToSlack';
-import { sendOpenPhoneMessage } from '../sendOpenPhoneMessage';
 import fetchWithRetry from '@/utils/fetchWithRetry';
-import { buildPartnerSmsContent, buildSlackLeadPayload, displayContactPhone } from '@/lib/leads/notification-payloads';
+import { buildSlackLeadPayload, displayContactPhone } from '@/lib/leads/notification-payloads';
 
 vi.mock('@/utils/fetchWithRetry', () => ({ default: vi.fn(async () => new Response('ok')) }));
 vi.mock('server-only', () => ({}));
@@ -34,7 +33,6 @@ describe('real Slack wire contract with isolated transport', () => {
   it('preserves domestic formatting and all international digits', () => {
     expect(displayContactPhone('+17195550100')).toBe('(719) 555-0100');
     expect(displayContactPhone('+442079460958')).toBe('+442079460958');
-    expect(buildPartnerSmsContent({ firstName: 'QA', phone: '+442079460958' }, 'Colorado')).toContain('Email: Not provided');
   });
   it('bounds escaped notes and partner fields without changing the input', () => {
     const message = '<&>'.repeat(1666);
@@ -59,8 +57,6 @@ describe('real Slack wire contract with isolated transport', () => {
 });
 
 describe('non-production notification transports', () => {
-  const sms = { content: 'Contact me at qa@example.com', from: '+12025550100', to: ['+12025550101'] };
-
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubEnv('NODE_ENV', 'production');
@@ -68,7 +64,6 @@ describe('non-production notification transports', () => {
     vi.stubEnv('VERCEL_ENV', 'preview');
     vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'webdev');
     vi.stubEnv('SLACK_WEBHOOK_URL', 'https://example.test/private-webhook');
-    vi.stubEnv('OPEN_PHONE_API_KEY', 'test-only-token');
   });
   afterEach(() => { vi.restoreAllMocks(); vi.unstubAllEnvs(); });
 
@@ -77,12 +72,10 @@ describe('non-production notification transports', () => {
     const captureLog = vi.spyOn(console, 'info').mockImplementation(() => {});
 
     await expect(sendToSlack(lead)).resolves.toEqual({ ok: true, captured: true });
-    await expect(sendOpenPhoneMessage(sms)).resolves.toEqual({ captured: true });
 
     expect(fetchWithRetry).not.toHaveBeenCalled();
     expect(captureLog.mock.calls).toEqual([
       ['Lead notification captured', { channel: 'slack', recipientCount: 1 }],
-      ['Lead notification captured', { channel: 'openphone', recipientCount: 1 }],
     ]);
   });
 
@@ -90,7 +83,6 @@ describe('non-production notification transports', () => {
     vi.stubEnv('VPCS_DELIVERY_MODE', 'live');
 
     await expect(sendToSlack(lead)).resolves.toEqual({ ok: false, failureStage: 'configuration' });
-    await expect(sendOpenPhoneMessage(sms)).rejects.toThrow('OpenPhone delivery is disabled');
 
     expect(fetchWithRetry).not.toHaveBeenCalled();
   });

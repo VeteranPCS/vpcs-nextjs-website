@@ -1,9 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { coloradoRelocationGuideForm } from '@/services/salesForcePostFormsService';
 import sendToSlack from '@/actions/sendToSlack';
-import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
 import stateService from '@/services/stateService';
-import { routeSalesforceLeadOwner } from '@/services/salesforceLeadOwnerService';
 import { evaluateLeadSpam } from '@/lib/spam-protection';
 import { captureLeadConversionCreated, captureServerAnalyticsEvent } from '@/lib/analytics/server';
 import { updateSubmissionStatus } from '@/services/formTrackingService';
@@ -20,11 +18,7 @@ vi.mock('@/services/salesForceTokenService', () => ({
   }),
 }));
 vi.mock('@/actions/sendToSlack', () => ({ default: vi.fn(async () => ({ ok: true })) }));
-vi.mock('@/actions/sendOpenPhoneMessage', () => ({ sendOpenPhoneMessage: vi.fn() }));
 vi.mock('@/services/stateService', () => ({ default: { fetchAgentById: vi.fn() } }));
-vi.mock('@/services/salesforceLeadOwnerService', () => ({
-  appendLeadOwnerSubmissionMarker: vi.fn(), routeSalesforceLeadOwner: vi.fn(),
-}));
 vi.mock('@/services/loggingService', () => ({ logDebug: vi.fn(), logError: vi.fn(), logInfo: vi.fn() }));
 vi.mock('@/services/formTrackingService', () => ({
   FormSubmissionStatus: { PENDING: 'PENDING', SUCCESS: 'SUCCESS', FAILURE: 'FAILURE', UNCONFIRMED: 'UNCONFIRMED' },
@@ -48,8 +42,6 @@ function postedBody() {
 
 function expectNoPartnerContact() {
   expect(stateService.fetchAgentById).not.toHaveBeenCalled();
-  expect(routeSalesforceLeadOwner).not.toHaveBeenCalled();
-  expect(sendOpenPhoneMessage).not.toHaveBeenCalled();
 }
 
 describe('Colorado relocation guide capture', () => {

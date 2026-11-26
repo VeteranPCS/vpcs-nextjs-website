@@ -1,19 +1,10 @@
 'use server'
 import sendToSlack from '@/actions/sendToSlack';
-import { sendOpenPhoneMessage } from '@/actions/sendOpenPhoneMessage';
-import { formatPhoneNumberE164 } from '@/utils/formatPhoneNumber';
-import { buildPartnerSmsContent } from '@/lib/leads/notification-payloads';
-import { assertWebdevOpenPhoneConfigured, sendWebdevOpenPhoneMessage } from '@/lib/leads/webdev-openphone';
 import { LeadSubmissionError } from '@/lib/leads/submission-outcome';
 import stateService from '@/services/stateService';
 import { logDebug, logError, logInfo } from './loggingService';
 import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
-import { getAdminPhoneNumberForState } from '@/services/stateRoutingService';
-import { getLeadOwnerForState } from '@/services/salesforceLeadOwnerRouting';
-import {
-    appendLeadOwnerSubmissionMarker,
-    routeSalesforceLeadOwner,
-} from '@/services/salesforceLeadOwnerService';
+import { appendLeadSubmissionMarker } from '@/lib/leads/submission-marker';
 import { evaluateLeadSpam, tagSpamSuspected } from '@/lib/spam-protection';
 import { isLeadDryRun } from '@/lib/lead-dry-run';
 import { HP_FIELD, TS_FIELD } from '@/lib/validation/spam-fields';
@@ -26,7 +17,7 @@ import {
 import { SF_ORG_ID, SF_RECORD_TYPE } from '@/lib/salesforce/ids';
 import { assertWebToLeadTarget, getSalesforceConfig } from '@/lib/salesforce/server-config';
 import { isProductionSalesforceRuntime, isProtectedSalesforceWebdevPreview } from '@/lib/salesforce/environment.mjs';
-import { getWebdevSiteOrigin, markWebdevSubmission, requireWebdevTestRun, type MarkedWebdevSubmission } from '@/lib/salesforce/webdev-intake';
+import { getWebdevSiteOrigin, markWebdevSubmission, requireWebdevTestRun } from '@/lib/salesforce/webdev-intake';
 import { isWebdevPartnerFixture } from '@/lib/salesforce/webdev-fixtures';
 import { getVerifiedSalesforceSession } from '@/services/salesForceTokenService';
 import { COLORADO_RELOCATION_GUIDE } from '@/lib/guides/colorado-relocation';
@@ -235,7 +226,6 @@ function validateSalesforceResponse(responseText: string, submissionId: string, 
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const OPEN_PHONE_FROM_NUMBER = process.env.OPEN_PHONE_FROM_NUMBER || "";
 
 type EffectiveLeadState = {
     code: string;
@@ -333,20 +323,17 @@ interface WebToLeadContext {
 }
 
 /**
- * Family A extras: query-string parsing, state derivation, Lead-owner routing, an agent
- * fetch, and a partner OpenPhone SMS. Present only on the two contact-partner configs.
+ * Family A extras: query-string parsing, state derivation, and partner lookup.
+ * Present only on the two contact-partner configs.
  */
 interface WebToLeadLocation {
     partner: 'agent' | 'lender';
     path: 'contact-agent' | 'contact-lender';
-    leadSource: 'Contact Agent' | 'Contact Lender';
-    buildSms: (ctx: WebToLeadContext) => Parameters<typeof sendOpenPhoneMessage>[0];
 }
 
 interface WebToLeadCapture {
     formId: string;
     leadSource: string;
-    /** Fixed content attribution does not opt a guide into partner routing or SMS. */
     sourcePagePath?: string;
     stateCode?: string;
     stateSlug?: string;
@@ -561,67 +548,46 @@ function buildInternshipParams({ formData, siteOrigin }: WebToLeadContext): URLS
     });
 }
 
-/**
- * Family A partner SMS. The contact-agent and contact-lender templates are identical,
- * so both configs share this single builder.
- */
-function buildContactPartnerSms(ctx: WebToLeadContext): Parameters<typeof sendOpenPhoneMessage>[0] {
-    const { formData, effectiveState, agentInfo } = ctx;
-    return {
-        content: buildPartnerSmsContent(formData, effectiveState!.label),
-        from: getAdminPhoneNumberForState(effectiveState!.slug),
-        to: [formatPhoneNumberE164(agentInfo?.PersonMobilePhone || OPEN_PHONE_FROM_NUMBER)],
-    };
-}
-
-/** Each channel owns construction AND delivery; no eager builder can block its sibling. */
-async function dispatchNotifications(params: {
-    submissionId: string;
-    dryRun: boolean;
-    buildSlack: () => Parameters<typeof sendToSlack>[0];
-    buildSms?: () => Parameters<typeof sendOpenPhoneMessage>[0];
-    webdevSms?: MarkedWebdevSubmission;
-}): Promise<void> {
-    const { submissionId, dryRun, webdevSms } = params;
-    async function channel<T>(name: 'Slack' | 'OpenPhone', build: () => T, send: (input: T) => Promise<unknown>) {
-        let stage: 'construction' | 'delivery' | 'configuration' = 'construction';
-        let detail = 'construction';
-        try {
-            const payload = build();
-            if (dryRun) return;
-            stage = 'delivery';
-            detail = 'rejected';
-            const result = await send(payload);
-            if ((result as { captured?: boolean })?.captured) return;
-            if (name === 'Slack' && (result as { ok?: boolean })?.ok !== true) {
-                const reported = (result as { failureStage?: string })?.failureStage;
-                if (reported === 'construction' || reported === 'configuration') stage = reported;
-                detail = 'ok=false';
-                throw new Error('Slack did not confirm delivery');
-            }
-            logInfo(`${name} notification accepted`, { submissionId });
+async function dispatchSlackNotification(
+    submissionId: string,
+    dryRun: boolean,
+    buildSlack: () => Parameters<typeof sendToSlack>[0],
+): Promise<void> {
+    let stage: 'construction' | 'delivery' | 'configuration' = 'construction';
+    let detail = 'construction';
+    try {
+        const payload = buildSlack();
+        if (dryRun) {
+            console.log('[LEAD_DRY_RUN] Skipping lead notifications', { submissionId, channelCount: 1 });
             return;
-        } catch {
-            logError(`${name} notification failed`, { submissionId, stage }, new Error(detail));
         }
-        if (!dryRun && isProductionSalesforceRuntime()) {
-            try {
-                await captureServerAnalyticsEvent({
-                    event: 'lead_notification_failed',
-                    distinctId: submissionId,
-                    properties: { submission_id: submissionId, channel: name, failure_detail: detail, failure_stage: stage },
-                });
-            } catch {
-                logError('Notification failure telemetry unavailable', { submissionId, channel: name });
+        stage = 'delivery';
+        detail = 'rejected';
+        const result = await sendToSlack(payload);
+        if (result.captured) return;
+        if (!result.ok) {
+            if (result.failureStage === 'construction' || result.failureStage === 'configuration') {
+                stage = result.failureStage;
             }
+            detail = 'ok=false';
+            throw new Error('Slack did not confirm delivery');
+        }
+        logInfo('Slack notification accepted', { submissionId });
+        return;
+    } catch {
+        logError('Slack notification failed', { submissionId, stage }, new Error(detail));
+    }
+    if (!dryRun && isProductionSalesforceRuntime()) {
+        try {
+            await captureServerAnalyticsEvent({
+                event: 'lead_notification_failed',
+                distinctId: submissionId,
+                properties: { submission_id: submissionId, channel: 'Slack', failure_detail: detail, failure_stage: stage },
+            });
+        } catch {
+            logError('Notification failure telemetry unavailable', { submissionId, channel: 'Slack' });
         }
     }
-    await Promise.allSettled([
-        channel('Slack', params.buildSlack, sendToSlack),
-        ...(webdevSms ? [channel('OpenPhone', () => webdevSms, sendWebdevOpenPhoneMessage)] :
-            params.buildSms ? [channel('OpenPhone', params.buildSms, sendOpenPhoneMessage)] : []),
-    ]);
-    if (dryRun) console.log('[LEAD_DRY_RUN] Skipping lead notifications', { submissionId, channelCount: params.buildSms ? 2 : 1 });
 }
 
 /** Optional post-acceptance work cannot change the outcome of a created lead. */
@@ -684,12 +650,10 @@ async function submitWebToLead<TResult extends object>(
         // (analytics counters, an `otherStates` array) still flow through untouched.
         const formData: Record<string, string | undefined> = validation.data as Record<string, string | undefined>;
 
-        // Family A: parse the query string, derive the effective state (hard reject if
-        // missing), and resolve the Lead owner for routing.
+        // Family A: parse the query string and require a valid effective state.
         let paramsObj: Record<string, string> = {};
         let partnerId: string | undefined;
         let effectiveState: EffectiveLeadState | null = null;
-        let leadOwner: ReturnType<typeof getLeadOwnerForState> | null = null;
         if (config.location) {
             new URLSearchParams(queryString).forEach((value, key) => {
                 paramsObj[key] = value;
@@ -712,11 +676,9 @@ async function submitWebToLead<TResult extends object>(
                 throw new Error('Invalid form data: state is required.');
             }
             formData.state = effectiveState.code;
-            leadOwner = getLeadOwnerForState(effectiveState.slug);
         }
 
-        // Soft-quarantine spam-suspected leads: still written to Salesforce, but tagged so
-        // the team can filter them and partner SMS is suppressed below. Never drop a real lead.
+        // Preserve suspected leads in Salesforce and tag them for downstream quarantine.
         const spam = await evaluateLeadSpam({
             email: formData.email,
             ...(config.spamFreeTextField ? { freeText: formData[config.spamFreeTextField] } : {}),
@@ -738,7 +700,7 @@ async function submitWebToLead<TResult extends object>(
             // Keep the sandbox URL limited to the approved partner selector and state.
             const sandboxQuery = new URLSearchParams({ state: formData.state ?? '' });
             if (paramsObj.id) sandboxQuery.set('id', paramsObj.id);
-            webFormUrl = appendLeadOwnerSubmissionMarker(
+            webFormUrl = appendLeadSubmissionMarker(
                 `${siteOrigin}/${config.location.path}${sandbox ? `?${sandboxQuery}` : queryString}`,
                 submissionId,
             );
@@ -757,10 +719,8 @@ async function submitWebToLead<TResult extends object>(
         };
 
         const legacyParams = config.buildParams(ctx);
-        let webdevSubmission: MarkedWebdevSubmission | undefined;
         if (sandbox && !dryRun) {
-            webdevSubmission = markWebdevSubmission(legacyParams, salesforce, submissionId);
-            if (salesforce.deliveryMode === 'allowlisted') assertWebdevOpenPhoneConfigured(salesforce);
+            markWebdevSubmission(legacyParams, salesforce, submissionId);
         }
         const params = serializeWebToLeadParams(legacyParams, salesforce);
         const formBody = params.toString();
@@ -795,7 +755,6 @@ async function submitWebToLead<TResult extends object>(
         });
 
         if (sandbox && !dryRun) requireWebdevTestRun(salesforce);
-        const submissionStartedAt = new Date();
         postInitiated = !dryRun;
         const submissionResult = await submitToSalesforceWebToLead(
             url,
@@ -843,63 +802,8 @@ async function submitWebToLead<TResult extends object>(
                 ...(capture.guideId ? { guideId: capture.guideId } : {}),
             }));
         }
-        // Family A: post-acceptance Lead-owner routing. Its failure is LOGGED, not thrown,
-        // so a routing hiccup never costs the visitor a successful submission. Skipped in a
-        // dry run: it writes to the Salesforce org, and no Lead was created to route.
-        if (config.location && leadOwner && !dryRun) {
-            try {
-                await routeSalesforceLeadOwner({
-                    submissionId,
-                    submissionStartedAt,
-                    leadSource: config.location.leadSource,
-                    destinationStateCode: effectiveState!.code,
-                    destinationStateSlug: effectiveState!.slug,
-                    email: formData.email,
-                    ...(config.location.partner === 'agent'
-                        ? { selectedAgentId: paramsObj.id || null }
-                        : { selectedLenderId: paramsObj.id || null }),
-                    owner: leadOwner,
-                });
-            } catch (ownerRoutingError) {
-                logError('Salesforce Lead owner routing failed after Web-to-Lead acceptance', {
-                    submissionId,
-                    leadSource: config.location.leadSource,
-                    destinationStateCode: effectiveState!.code,
-                    destinationStateSlug: effectiveState!.slug,
-                    adminName: leadOwner.adminName,
-                    ownerId: leadOwner.ownerId,
-                }, ownerRoutingError);
-
-                // Surface this lead-critical failure to PostHog so "accepted but never routed"
-                // is a queryable funnel drop, not just a log line. Wrapped so a capture hiccup
-                // can't undo the guarantee that routing failures never cost a successful submit.
-                try {
-                    await captureServerAnalyticsEvent({
-                        event: 'lead_owner_routing_failed',
-                        distinctId: submissionId,
-                        properties: {
-                            submission_id: submissionId,
-                            lead_source: config.location.leadSource,
-                            state_code: effectiveState!.code,
-                            state_slug: effectiveState!.slug,
-                        },
-                    });
-                } catch (captureError) {
-                    logError('PostHog lead_owner_routing_failed capture failed', { submissionId }, captureError);
-                }
-            }
-        }
-
-        // Notifications: Slack always; partner SMS only for Family A, suppressed for spam.
-        const location = spam.quarantine ? undefined : config.location;
-        const webdevSms = location && salesforce.deliveryMode === 'allowlisted' ? webdevSubmission : undefined;
-        await afterAcceptance(submissionId, 'notifications', () => dispatchNotifications({
-            submissionId,
-            dryRun,
-            buildSlack: () => config.buildSlack(ctx),
-            buildSms: location && !webdevSms ? () => location.buildSms(ctx) : undefined,
-            webdevSms,
-        }));
+        await afterAcceptance(submissionId, 'notifications', () =>
+            dispatchSlackNotification(submissionId, dryRun, () => config.buildSlack(ctx)));
 
         logInfo('Form submitted successfully', { submissionId, hasRedirectUrl: !!redirectUrl });
 
@@ -931,8 +835,6 @@ const contactAgentConfig = defineWebToLeadConfig({
     location: {
         partner: 'agent',
         path: 'contact-agent',
-        leadSource: 'Contact Agent',
-        buildSms: buildContactPartnerSms,
     },
     buildParams: (ctx) =>
         buildAgentLeadParams(ctx.formData, ctx.paramsObj, ctx.webFormUrl, ctx.siteOrigin, ctx.submissionId),
@@ -971,8 +873,6 @@ const contactLenderConfig = defineWebToLeadConfig({
     location: {
         partner: 'lender',
         path: 'contact-lender',
-        leadSource: 'Contact Lender',
-        buildSms: buildContactPartnerSms,
     },
     buildParams: (ctx) =>
         buildLenderLeadParams(ctx.formData, ctx.paramsObj, ctx.webFormUrl, ctx.siteOrigin, ctx.submissionId),

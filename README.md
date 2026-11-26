@@ -113,33 +113,21 @@ VeteranPCS is a NextJS-based web application designed to connect military person
 
 ---
 
-### Server Action: `sendOpenPhoneMessage`
+### Referral SMS
 
-- **Description**: Sends SMS messages via OpenPhone API with state-based routing.
-- **Parameters**:
-  - `content`: string - Message content
-  - `from`: string - Sender phone number (automatically routed based on state)
-  - `to`: string[] - Array of recipient phone numbers
-- **Response**: OpenPhone API response data
-- **Authentication**: Requires OpenPhone API key
-- **Side Effects**: Sends SMS messages to recipients
-- **State Routing**: Automatically selects admin phone number based on agent/lender state
+The routing implementation moves customer referral SMS to the Salesforce regional queue and removes the website OpenPhone action and owner PATCH service. Website intake keeps the selected partner and submission marker in Web-to-Lead, confirms the submission and notifies Slack. The website and Salesforce changes share a coordinated cutover. [Routing runbook](docs/customer-regional-routing.md)
 
 ---
 
 ### Service: `stateRoutingService`
 
-- **Description**: Routes OpenPhone messages to appropriate admin phone numbers based on state.
-- **Admin Assignments**:
-  - **Beth (719-249-5359)**: Alaska, Arizona, California, Colorado, Hawaii, Idaho, Iowa, Kansas, Missouri, Montana, Nebraska, Nevada, New Mexico, North Dakota, Oregon, South Dakota, Utah, Washington, Wyoming
-  - **Stephanie (719-249-4757)**: Connecticut, Delaware, Illinois, Indiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, New Hampshire, New Jersey, New York, Ohio, Pennsylvania, Rhode Island, Vermont, Virginia, Washington D.C., West Virginia, Wisconsin
-  - **Jessica (719-782-5065)**: Alabama, Florida, Georgia, North Carolina, South Carolina
-  - **Tara (719-249-7898)**: Arkansas, Kentucky, Louisiana, Mississippi, Oklahoma, Tennessee, Texas
+- **Description**: Compatibility helpers read the versioned Beth/Stephanie map in `config/routing/customer-admins.json`. They do not deliver SMS.
+- **Admin Assignments**: Beth (719-249-5359) and Stephanie (719-249-4757); complete territories and aliases are recorded in the routing runbook.
 - **Functions**:
   - `getAdminContactForState(state)`: Returns admin contact info for a state
   - `getAdminPhoneNumberForState(state)`: Returns admin phone number for a state
   - `getStatesByAdmin(adminKey)`: Returns all states managed by an admin
-- **Fallback**: Uses `OPEN_PHONE_FROM_NUMBER` for unmapped or missing states
+- **Unknown destination**: Stephanie triage. No fallback SMS to an admin or sending line.
 
 ---
 

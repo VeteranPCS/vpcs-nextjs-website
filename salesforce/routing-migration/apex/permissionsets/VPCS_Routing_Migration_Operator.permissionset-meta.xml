@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <classAccesses>
+        <apexClass>VpcsRoutingMigration</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <customPermissions>
+        <enabled>true</enabled>
+        <name>VPCS_Routing_Migration</name>
+    </customPermissions>
+    <label>VPCS Routing Migration Operator</label>
+</PermissionSet>

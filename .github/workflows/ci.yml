@@ -31,6 +31,8 @@ jobs:
         run: npm run lint
       - name: Type-check
         run: npm run type-check
+      - name: Generated customer routing contract
+        run: npm run verify:customer-routing
       - name: Build
         run: npm run build:mock
       - name: Test

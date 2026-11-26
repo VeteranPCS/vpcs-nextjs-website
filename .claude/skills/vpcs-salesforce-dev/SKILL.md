@@ -38,7 +38,7 @@ Read the runbook's live form rehearsal and containment sections before writes. C
 
 After a bounded run, close/neutralize its fixtures as specified by the runbook, restore capture and write gates, remove temporary credentials/grants and verify the final Preview. Existing build snapshots retain their environment values; rebuild and retire temporary write-enabled artifacts as needed within the authorized scope.
 
-Live SMS is currently disabled. The user deferred isolated Redis; do not provision paid resources or reuse Production SMS/Redis credentials to complete a capture test. Live delivery requires its own resources and evidence, including provider receipts, approved inbox/handset arrival, and negative-recipient/expiry checks.
+Capture is the WebDev default. For the approved regional routing check, prepare the four selected Web-to-Lead cases with dispatch paused using `--routing-delivery`. The separate sandbox delivery overlay permits up to four exact pending queue rows for up to 30 minutes, from Beth and Stephanie to Tech at `+17194153014`. The synthetic email sink is `tech@veteranpcs.com`. Prove the recipient and expiry checks, correlate native queue and provider receipts with arrival, and restore capture on completion or uncertainty. The website transport stays captured throughout. Follow the same exact-recipient scope for the separately gated Production verification after cutover. [Routing delivery procedure](../../../docs/customer-regional-routing.md#required-gates-and-release-sequence)
 
 ## Select tests by the change
 
@@ -47,6 +47,31 @@ Use the runbook's [release-gate classification](../../../docs/salesforce-webdev-
 Changes to spam rules, routing, countdowns or schedules require the affected business cases and native workflow evidence from the [workflow matrix](../../../docs/salesforce-webdev-workflow-matrix.md), including ineligible records and actual scheduled execution where timing is changed. Do not disable the workflow and call it tested, or count an unexecuted scenario as a pass. Review shared dependencies to select adjacent regression cases.
 
 ## Website and Salesforce releases are separate
+
+For Customer routing work, also read [the routing runbook](../../../docs/customer-regional-routing.md).
+The fixed Beth/Stephanie map lives in `config/routing/customer-admins.json`; generate and verify
+its Salesforce policy/assignment criteria rather than hand-editing another territory list.
+Keep org user IDs, notification inboxes, provider numbers and portal URLs in the separate bindings.
+There is no runtime spreadsheet lookup. Customer destination means `Destination_State__c`.
+
+The routing release removes website owner PATCHes and website SMS transports. Salesforce ownership
+must be proven before native notifications on the same submission. A website-only deployment is not
+a complete routing release. Validate the scoped metadata in WebDev with its capture overlay; build
+Production from its own fresh baseline and exclude all sandbox overlays. Preserve partner and existing
+Person Account owners, closed history, spam policy and existing timing.
+
+Open-work transfers require a private report/old-owner ledger, temporary migration permission,
+expected-current-state comparisons, durable receipts and native pending-timer evidence. Pause affected
+dispatch and reconcile legacy unlinked/uncertain queue rows before batches. Permission-based Flow guards
+are broader than a single Apex invocation: keep the operator window exclusive and revoke the grant
+afterwards. Never treat a passing owner update or queue `Sent` value as proof of timer preservation or
+recipient delivery.
+
+Coordinate Salesforce/website cutover with a rehearsed platform POST fence covering stale deployment
+URLs and pinned Server Actions. Keep automatic Production domain assignment disabled, validate the
+fresh staged artifact, deploy Salesforce, promote the tested website and set the Skew Protection threshold
+before reopening intake. Rollback must retain a website with direct SMS disabled. Record completed gates
+and remaining limitations in the routing runbook.
 
 For the first website environment release, verify an effective hold on automatic Production domain assignment **before merging**. Git-triggered `main` deployments otherwise activate automatically. Review the exact head and its CI, merge within the authorized release scope, build fresh with Production variables, run nonmutating Production identity/route checks, then promote that same tested Production artifact. Do not submit synthetic Production leads. Local `main` remains connected to webdev. Follow the runbook for the current hold and rollback procedure.
 
