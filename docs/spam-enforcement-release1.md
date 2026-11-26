@@ -3,8 +3,9 @@
 Status on November 26, 2026. The admission package and submission-ID uniqueness are deployed in
 Salesforce WebDev. The ten live form controls, 11-case routing rehearsal, native claim and
 notification arbitration, and 22 direct backstop cases reconciled. Both read-only Previews
-were checked. Protected Preview writes, actual email delivery for this run, and Production
-gates remain open. The [proposal](spam-enforcement-plan.md) covers the original
+were checked. WebDev retired the legacy exact-match rule after blocklist reconciliation. The
+post-retirement set of 22 direct rejection controls also passed. Protected Preview writes and Production gates remain
+open. The [proposal](spam-enforcement-plan.md) covers the original
 rationale and the separate Release 2 CAPTCHA work.
 
 ## What the release changes
@@ -107,7 +108,11 @@ opening the protected verification window or promoting Production.
    Keep capture and ordinary website writes off. Assign the restricted website permission and verify
    positive and denied API access separately. Audit active and soft-deleted Leads for nonblank IDs,
    including case-folded equivalents. Use the separate field-only uniqueness package from a fresh org
-   retrieval. Verify a duplicate insert fails and multiple historical blank IDs remain allowed. Record metadata deployment and live behavior separately.
+   retrieval. Validate with existing affected tests, deploy the field alone under the producer hold,
+   and wait for index finalization. Verify live uniqueness and run the unchanged index regression
+   afterward. Check-only cannot prove a post-commit index. Require duplicate and case-variant
+   rejection plus multiple permitted historical blank IDs before reopening. Record metadata
+   deployment and live behavior separately.
 2. **Reconcile policy per org.** Privately export the existing exact rule inventory, canonicalize
    its entries, reconcile all ten original entries to active blocklist rows and account for
    canonical collisions. Verify manual insert, import and API paths, unrelated historical edits,
@@ -120,7 +125,8 @@ opening the protected verification window or promoting Production.
    across real sources and record types. Run ten approved positive website controls and check the
    exact persisted records. Include CO/Beth and FL/Stephanie selected paths, unselected routing,
    reminders, escalation, statuses, email and SMS containment. Use native schedule/Flow evidence for
-   timing assertions. Distinguish capture, provider acceptance and confirmed recipient arrival.
+   timing assertions. Capture is the default delivery evidence. Record provider acceptance and
+   confirmed recipient arrival separately for any authorized real-delivery check.
 4. **Stage the website.** Prove access denial for anonymous clients and the ordinary Preview
    principal. Run the protected WebDev Preview with expiring access, approved recipients and
    capture. Reconcile persistence and notifications. Restore capture, disable test writes, revoke
@@ -156,27 +162,37 @@ Salesforce. Preserve the unique-ID and attempt evidence and coordinate any rule 
 the verified private inventory. Reconcile unseen outcomes before deciding what to restore.
 There is no automatic claim expiry or replay.
 
+This first admission release has no earlier Production artifact with the new contract. If its
+candidate fails, keep the platform intake fence in place while preparing a compatible correction.
+Restoring the previous website for read-only availability does not authorize reopening its older
+submission actions. Retain the blocklist, finalized unique index and attempt evidence; do not
+remove those safeguards to make an older artifact accept forms.
+
 | Gate | Result recorded November 26, 2026 |
 |---|---|
-| Local Vitest | 139 files passed and one isolated Redis file was skipped by default. 1,659 tests passed and four were skipped. |
+| Local Vitest | The latest mandatory hooks passed 139 files and 1,660 tests; one isolated Redis file and four tests were skipped by default. Its four opt-in tests passed separately. |
 | Isolated real Redis | Four opt-in tests passed. This confirms local Redis behavior. Hosted backend verification is separate. |
-| Mock build, startup and function budget | The standard credential-free Turbopack build passed after moving the cached artifact from the earlier port failure. The mock network block remained in effect. Six mock-start HTTP route checks returned 200. Local manifests showed a 60-second budget for 23 lead action hosts across 33 site pages and matched the baseline outside that scope. Hosted budget confirmation remains pending. |
-| Pull request checks | PR #244 CI passed for revision `0477329d0f8e01f5d14c5569e54956229a651649`. |
+| Mock build, startup and function budget | The standard credential-free Turbopack build passed after moving the cached artifact from the earlier port failure. The mock network block remained in effect. Six mock-start HTTP route checks returned 200. Local manifests showed a 60-second budget for 23 lead action hosts across 33 site pages and matched the baseline outside that scope. The exact protected hosted candidate `dpl_4k3wNGp73hyK7wSMEM9o5Dz39MpH` confirmed a 60-second function budget. |
+| Pull request checks | PR #244 CI passed for revision `4b910dff502be1dd302af066df86cc4968ecc675`, including Semgrep. |
 | Browser | 42 isolated mock cases passed at 360px and 1440px. After the atomic decline update, 22 affected cases passed again, including fresh IDs after correction on both listing forms and an unconfirmed guide lock after reload. |
 | Immutable v3 review | SHA-256 `12e481452f4644de8ec986ecc6006b1a68a530a7e97e6ae1ea533859cd37561b`. The 105-file patch applied cleanly to the reviewed base. The source review found that v3 addressed the prior findings and recommended holding for hosted, native notification and Production evidence. |
 | WebDev admission package | Initial deployment `0Afjg0000004vNtCAI` passed eight Apex tests, with admission trigger and class coverage at 100% and intake API coverage at 92%. Atomic decline deployment `0Afjg0000004vXZCAY` passed nine of nine Apex tests. The revised intake API covered 114 of 124 lines. |
 | WebDev Lead uniqueness | Field-only deployment `0Afjg0000004vPVCAY` enabled case-insensitive submission-ID uniqueness. The separate index regression passed in `0Afjg0000004vR7CAI`. |
 | WebDev affected Apex | All 63 affected Apex tests passed in run `707jg000000aItT`. |
 | Live WebDev website | All ten real synthetic form controls passed in 22.48 seconds. Each matched a persisted Lead with its submission hash and capture evidence. All ten synthetic Leads were closed afterward. |
-| Direct WebDev backstop | All 22 cases completed. No Lead persisted and no SMS or reminder email was observed over the bounded observation window. With no matching Lead, absence of linked work is an inference. The check did not directly inspect queue records through the restricted principal. |
-| Native claim and notification arbitration | The second WebDev concurrency run passed against the updated intake API. A separate native check confirmed the exact persisted Lead and one notification claim winner. |
+| WebDev blocklist and legacy rule retirement | All ten legacy entries and one synthetic control matched active blocklist rows. Rule-only validation `0Afjg0000004vanCAA` and deployment `0Afjg0000004uoQCAQ` each passed nine of nine Apex tests. Tooling readback confirmed `Block_Predatory_Email` inactive and the existing honeypot rule active. |
+| Direct WebDev backstop | Both sets of 22 cases, before and after legacy-rule retirement, completed. No matching Lead persisted and no native SMS or reminder-email capture appeared over either bounded observation window. With no matching Lead, absence of linked work is an inference. The backstop harness did not directly inspect queue records. Capture returned to its baseline label after the second run. |
+| Native claim and notification arbitration | The second WebDev concurrency run passed against the updated intake API. A separate native check confirmed the exact persisted Lead and one notification claim winner. In four additional native allow-versus-decline races, claim won three and decline won one. Each UUID had exactly one durable row and the race harness sent zero Web-to-Lead POSTs. |
 | Native routing and capture | The 11-case WebDev rehearsal passed with ten persisted controls and one honeypot rejection. Four SMS captures and six expected Tasks reconciled. Ten welcome email paths were scheduled for 22:27 UTC. The two older welcome entries were unchanged. This run verified scheduling and capture. Actual email delivery was not verified. |
 | Read-only Preview | Ordinary `dpl_Ddh6L7FqrwfcUtbp5y8eZtreUrFc` and workflow `dpl_6Z8v39af1U6hFrVdV8Z7giKe387c` at `0477329` each returned three anonymous Vercel SSO redirects and produced 22 authenticated render receipts across 360px and 1440px. Both rendered all ten form families and the alternate VA question form. Workflow used existing CLI automation access after Development OIDC received 403. The Contact form fit both viewports. The existing reviews carousel caused a separate intermittent document overflow. No Server Action was sent. |
-| Protected Preview writes | Pending. The approved dedicated Redis connection was provisioned for Preview only under the $20 cap. Its generated, prefixed REST write credentials are sensitive Preview variables. The exact write-enabled candidate still needs HMAC binding, Redis isolation, ordinary Preview application-level denial, and bounded protected submissions verified. |
+| Protected Preview writes | Pending. The approved dedicated Redis connection was provisioned for Preview only under the $20 cap. Its generated, prefixed REST write credentials are sensitive Preview variables. The exact write-enabled candidate still needs HMAC binding, Redis isolation, ordinary Preview application-level denial, and bounded protected submissions verified. The scoped firewall exception is awaiting authorization. |
 | Production | Pending. No Production configuration, promotion, live form verification or policy activation is recorded for this release. |
 
 ### Follow-up verification
 
 - Native welcome log `07Ljg0000005TxSEAU` started at 22:27:45 UTC. All ten exact Lead and submission references matched separate completed interviews, each with one `SE_Welcome_Video` action and no logged Flow errors. Email remained System email only; this is execution evidence, not mailbox receipt. The ten synthetic routing Leads were subsequently closed with expected-state guards and their six routing tasks completed. Captured SMS receipts were preserved.
-- Production check-only validation `0Afjf0000003mL3CAI` passed 66 tests with zero component errors, test failures or coverage warnings. It applied no metadata or record changes. Actual deployment, policy seed/reconciliation, uniqueness activation, mappings and website cutover remain pending.
+- Production check-only validation `0Afjf0000003mL3CAI` passed 66 tests with zero component errors, test failures or coverage warnings. Intake API coverage was 114 of 124 lines (91.94%), admission class coverage was 43 of 43, and trigger coverage was one of one. It applied no metadata or record changes. The fresh uniqueness audit found 892 nonblank IDs, 464 soft-deleted Leads and zero case-folded duplicate groups. Repeat the audit under the intake hold. Actual deployment, policy seed/reconciliation, uniqueness activation, mappings and website cutover remain pending.
+- Combined index/test validation `0Afjf0000003mT7CAI` failed its unchanged `isUnique()` assertion, with zero metadata component errors. This is consistent with Salesforce's documented post-commit index creation. The release now follows the already-passed WebDev sequence: validate/deploy the field alone with adjacent regressions, wait for terminal success and verify the live index, then run the unchanged duplicate/blank-history regression while intake stays held. The failed validation applied no Production changes. [Salesforce deployment lifecycle](https://developer.salesforce.com/blogs/2025/09/take-a-deep-dive-into-metadata-api-deployments)
+- The separate field-only Production check-only validation `0Afjf0000003mUjCAI` passed all 57 tests across the 12 affected existing classes, with zero test or component errors. Live index finalization and the subsequent unchanged native uniqueness regression remain cutover gates.
+- Rule-only Production check-only validation `0Afjf0000003mZZCAY` also passed those 57 tests with zero component errors. It left the Production rule active. All ten Production blocklist entries must be seeded and reconciled before any actual retirement.
 - The first protected Preview browser control stopped on an unconfirmed UI result. The existing alternate-host firewall rule still denies all Preview POSTs. The exact candidate host recorded one firewall denial, no application POST log, and no matching Salesforce Lead or durable attempt. Preserve the original reference and do not resend it. A draft exception for only the immutable protected test host is awaiting authorization; it does not open Production or other Preview hosts. Hosted admission remains unverified until the bounded controls pass after that fence is resolved.

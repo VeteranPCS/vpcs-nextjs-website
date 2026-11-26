@@ -64,6 +64,12 @@ metadata. Keep the honeypot rule active and reconcile the private blocklist befo
 email rule. Verify the website's restricted API grant separately in WebDev and Production. For a
 rollback, retain compatible admission and readback and preserve uncertain attempts.
 
+For an existing field's new unique index, validate the field-only package with existing affected
+tests, deploy under the producer hold, and wait for terminal success including finalization.
+Then verify the live index and run the unchanged uniqueness regression before reopening intake.
+An index-dependent assertion cannot establish the post-commit index during check-only validation.
+Do not weaken that assertion to pass a combined package. See the [intake package sequence](../../../salesforce/spam-intake/README.md).
+
 For Customer routing work, also read [the routing runbook](../../../docs/customer-regional-routing.md).
 The fixed Beth/Stephanie map lives in `config/routing/customer-admins.json`; generate and verify
 its Salesforce policy/assignment criteria rather than hand-editing another territory list.

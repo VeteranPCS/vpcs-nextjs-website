@@ -35,9 +35,15 @@ Review the result against the retrieved baseline. It preserves Text(128), nullab
 field properties, and sets the unique check to case-insensitive. Never deploy the retrieval's
 other Lead metadata. Recheck the audit and validate the uniqueness change during the coordinated
 hold and producer drain. Test that a duplicate insert fails and multiple blank IDs still work.
-Run the isolated `uniqueness-regression/metadata` package and
-`VpcsLeadSubmissionUniquenessTest` after the index is active, or with the index change in a
-combined validation package. The website serializer also needs the org-specific wire ID of
+Validate the field-only package with the affected existing Apex tests. Deploy it under the
+producer hold and wait for terminal `Succeeded`, including index finalization. Then verify the
+live field and run the unchanged isolated `uniqueness-regression/metadata` package and
+`VpcsLeadSubmissionUniquenessTest` before reopening intake. Do not combine that index-dependent
+test with the initial field change: Production check-only validation `0Afjf0000003mT7CAI`
+accepted the metadata but failed its `isUnique()` assertion. Salesforce documents custom field
+index creation after testing and commit; check-only does not commit. Keep intake held on
+`Finalizing Failed` or any regression failure. [Deployment stages](https://developer.salesforce.com/blogs/2025/09/take-a-deep-dive-into-metadata-api-deployments)
+The website serializer also needs the org-specific wire ID of
 `VPCS_Submission_Hash__c`.
 
 The private attempt row's unique UUID arbitrates dispatch. Row locking serializes reconcile and
