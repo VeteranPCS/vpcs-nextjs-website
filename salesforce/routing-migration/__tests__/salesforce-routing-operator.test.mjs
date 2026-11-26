@@ -141,7 +141,7 @@ const task = {
   WhoId: lead.Id, WhatId: null, Subject: 'Reach out to new Lead', IsClosed: false,
   ActivityDate: null, ReminderDateTime: null, IsReminderSet: false,
 };
-function snapshotCli({ legacySchema = false } = {}) {
+function snapshotCli({ legacySchema = false, opportunityTasks, sources = [] } = {}) {
   return {
     getOrganization: async () => organization,
     query: async (soql, label) => {
@@ -167,11 +167,15 @@ function snapshotCli({ legacySchema = false } = {}) {
         case 'unlinked pending SMS':
           assert.equal(soql.includes('Related_Lead__c = null'), !legacySchema);
           return [{ pendingCount: 2 }];
+        case 'converted Customer referral lineage':
+          assert.match(soql, /FROM Lead WHERE ConvertedOpportunityId IN/);
+          assert.doesNotMatch(soql, /WHERE IsConverted|AND WebToLead__c|AND RecordTypeId/);
+          return sources;
         case 'incomplete Customer Tasks':
           if (soql.includes('AND WhoId')) {
             return [task, { ...task, Id: '00T000000000002', Subject: 'Unrelated private task subject' }];
           }
-          return [{
+          return opportunityTasks ?? [{
             ...task, Id: '00T000000000003', WhoId: null, WhatId: deal.Id,
             Subject: 'email closing info and agent referral agreement to Melanie ',
           }];
@@ -181,6 +185,56 @@ function snapshotCli({ legacySchema = false } = {}) {
     },
   };
 }
+
+test('a converted Lead referral requires exact, unique Customer conversion lineage and dates', async () => {
+  const historicalTask = {
+    ...task, Id: '00T000000000003', CreatedDate: '2026-11-20T12:00:00Z',
+    WhoId: '003000000000001', WhatId: deal.Id,
+  };
+  const source = {
+    Id: '00Q000000000011', RecordTypeId: lead.RecordTypeId, IsConverted: true, WebToLead__c: true,
+    CreatedDate: '2026-11-18T12:00:00Z', ConvertedDate: '2026-11-21',
+    ConvertedContactId: historicalTask.WhoId, ConvertedOpportunityId: deal.Id,
+  };
+  const referral = async (taskRow, records) => {
+    const result = await captureRoutingSnapshot(
+      snapshotCli({ opportunityTasks: [taskRow], sources: records }), organization, () => now,
+    );
+    const entry = result.records.find(({ id }) => id === historicalTask.Id);
+    assert.equal(entry.parentId, deal.Id);
+    assert.equal(result.records.some(({ id }) => id === source.Id), false);
+    if (entry.isReferral) {
+      assert.deepEqual(entry.referralOrigin, {
+        sourceLeadId: source.Id, contactId: historicalTask.WhoId, opportunityId: deal.Id,
+        sourceCreatedDate: '2026-11-18T12:00:00.000Z', convertedDate: '2026-11-21',
+        taskCreatedDate: '2026-11-20T12:00:00.000Z',
+      });
+      result.legacyPendingSmsCount = 0;
+      const approved = buildMigrationPlan(result);
+      const planned = approved.entries.find(({ id }) => id === historicalTask.Id);
+      assert.deepEqual(planned.before.referralOrigin, entry.referralOrigin);
+      entry.referralOrigin.sourceLeadId = '00Q000000000099';
+      assert.notEqual(buildMigrationPlan(result).fingerprint, approved.fingerprint);
+    } else {
+      assert.equal(Object.hasOwn(entry, 'referralOrigin'), false);
+    }
+    return entry.isReferral;
+  };
+  assert.equal(await referral(historicalTask, [source]), true);
+  for (const invalid of [
+    { ConvertedContactId: '003000000000002' }, { ConvertedOpportunityId: '006000000000002' },
+    { RecordTypeId: '012000000000009' }, { IsConverted: false }, { WebToLead__c: false },
+    { CreatedDate: undefined }, { CreatedDate: '2026-11-20T13:00:00Z' },
+    { ConvertedDate: undefined }, { ConvertedDate: '2026-11-19' }, { ConvertedDate: '2026-11-20' },
+  ]) assert.equal(await referral(historicalTask, [{ ...source, ...invalid }]), false);
+  assert.equal(await referral(historicalTask, []), false);
+  assert.equal(await referral(historicalTask, [
+    source, { ...source, Id: '00Q000000000012', WebToLead__c: false, ConvertedContactId: '003000000000008' },
+  ]), false);
+  assert.equal(await referral({ ...historicalTask, WhoId: lead.Id }, [source]), false);
+  assert.equal(await referral({ ...historicalTask, CreatedDate: undefined }, [source]), false);
+  assert.equal(await referral({ ...historicalTask, Subject: 'reach out to new lead' }, [source]), false);
+});
 
 test('private snapshot captures original destination and timers without retaining Task subjects', async () => {
   const snapshot = await captureRoutingSnapshot(snapshotCli(), organization, () => now);
