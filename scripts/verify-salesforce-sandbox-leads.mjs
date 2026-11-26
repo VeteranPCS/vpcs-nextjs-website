@@ -4,6 +4,8 @@ import { createHash } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
+import { deliveryEmail } from './fixtures/salesforce-routing-delivery-readback.mjs';
+import { routingDeliveryCases, routingRehearsalCases } from './fixtures/salesforce-routing-rehearsal.mjs';
 import { projectRoot } from './lib/next-environment.mjs';
 import { connectSandbox, loadSandboxSettings } from './lib/salesforce-sandbox.mjs';
 
@@ -15,14 +17,25 @@ const rehearsalKeys = new Set([
     'VPCS_WEBDEV_TEST_EMAILS', 'VPCS_WEBDEV_TEST_PHONES', 'SALESFORCE_AUTH_GRANT', 'SALESFORCE_LOGIN_BASE_URL',
     'SALESFORCE_API_VERSION', 'SALESFORCE_CLIENT_ID', 'SALESFORCE_CLIENT_SECRET',
 ]);
-const usage = 'npm run verify:salesforce-sandbox-leads -- --execute --email <approved test sink>';
+const usage = 'npm run verify:salesforce-sandbox-leads -- [--routing | --routing-delivery] --execute --email <approved test sink>';
 
 async function main() {
-    const { values } = parseArgs({ options: { execute: { type: 'boolean' }, email: { type: 'string' } } });
+    const { values } = parseArgs({ options: {
+        execute: { type: 'boolean' }, routing: { type: 'boolean' }, 'routing-delivery': { type: 'boolean' }, email: { type: 'string' },
+    } });
+    const delivery = values['routing-delivery'];
+    if (delivery && values.routing) throw new Error(`Usage: ${usage}`);
+    const suite = delivery ? 'routing-delivery' : values.routing ? 'routing' : 'forms';
     if (!values.execute) {
         console.log('Salesforce WebDev rehearsal plan (no Salesforce requests).');
-        console.log('Contact Agent, Contact Lender, Agent Listing Request, Lender Listing Request, Keep in Touch, Contact Form, VA Loan Guide, First Time Home Buyer Guide, Colorado Relocation Guide, Internship Application.');
+        if (suite !== 'forms') {
+            const cases = delivery ? routingDeliveryCases : routingRehearsalCases;
+            console.log(cases.map(scenario => scenario.name).join(', '));
+        } else {
+            console.log('Contact Agent, Contact Lender, Agent Listing Request, Lender Listing Request, Keep in Touch, Contact Form, VA Loan Guide, First Time Home Buyer Guide, Colorado Relocation Guide, Internship Application.');
+        }
         console.log('Execution requires a verified sandbox, write and isolation flags, capture delivery, an expiring test run, and an approved email sink.');
+        if (delivery) console.log('Queues exactly four selected cases with dispatch paused and Tech contact details; sends no SMS.');
         console.log(usage);
         return;
     }
@@ -30,6 +43,7 @@ async function main() {
     if (!email || !/^[a-z0-9.!#$%&*+/=?^_`{|}~-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email) || email.length > 80) {
         throw new Error(`Usage: ${usage}`);
     }
+    if (delivery && email !== deliveryEmail) throw new Error('Delivery preparation requires the exact approved Tech email.');
     const settings = loadSandboxSettings();
     const { config, env } = settings;
     if (!config.allowSandboxWrites || config.deliveryMode !== 'capture' || env.VPCS_WEBDEV_ISOLATION_ATTESTED !== '1') {
@@ -41,9 +55,10 @@ async function main() {
     const runId = env.VPCS_WEBDEV_TEST_RUN_ID ?? '';
     const windowEnd = env.VPCS_WEBDEV_TEST_EXPIRES_AT ?? '';
     const windowRemaining = Date.parse(windowEnd) - Date.now();
-    if (!/^[a-zA-Z0-9_-]{1,64}$/.test(runId) || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(windowEnd)
-        || !(windowRemaining > 0 && windowRemaining <= 86_400_000)) {
-        throw new Error('Lead verification requires a unique test run ID and an authorized window of up to 24 hours.');
+    if ((delivery && runId === 'baseline-capture') || !/^[a-zA-Z0-9_-]{1,64}$/.test(runId) || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(windowEnd)
+        || !(windowRemaining > 0 && windowRemaining <= (delivery ? 1_800_000 : 86_400_000))) {
+        throw new Error(delivery ? 'Delivery preparation requires a fresh run ID and a window of up to 30 minutes.'
+            : 'Lead verification requires a unique test run ID and an authorized window of up to 24 hours.');
     }
     const emails = (env.VPCS_WEBDEV_TEST_EMAILS ?? '').split(',').map(value => value.trim().toLowerCase());
     if (!emails.includes(email)) throw new Error('The rehearsal email is outside the approved test sink allowlist.');
@@ -71,6 +86,7 @@ async function main() {
             NODE_ENV: 'production',
             NEXT_PUBLIC_API_BASE_URL: 'http://127.0.0.1:3000',
             VPCS_WEBDEV_REHEARSAL_EMAIL: email,
+            VPCS_WEBDEV_REHEARSAL_SUITE: suite,
         },
     });
     const stop = () => child.kill('SIGTERM');

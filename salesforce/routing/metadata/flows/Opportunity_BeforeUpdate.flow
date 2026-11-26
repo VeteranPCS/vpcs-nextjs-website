@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <assignments>
+        <name>Payout_Charity</name>
+        <label>Payout: Charity</label>
+        <locationX>50</locationX>
+        <locationY>803</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Payout_Type__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Charity</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Payout_Military_Bonus</name>
+        <label>Payout: Military Bonus</label>
+        <locationX>314</locationX>
+        <locationY>803</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Payout_Type__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Military Bonus</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>set_CW_Timestamp</name>
+        <label>set CW Timestamp</label>
+        <locationX>248</locationX>
+        <locationY>395</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Closed_Win_Timestamp__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Military_Status_Affirmed</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Guard_Routing_Migration</name>
+        <label>Routing Migration</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Stage_changed</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Continue</defaultConnectorLabel>
+        <rules>
+            <name>Routing_Migration_Transfer</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Guard_Routing_Migration_Check</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <label>Stop</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Military_Affirmation</name>
+        <label>Military Status?</label>
+        <locationX>182</locationX>
+        <locationY>695</locationY>
+        <defaultConnector>
+            <targetReference>Payout_Military_Bonus</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Current, Former, or Spouse (Default)</defaultConnectorLabel>
+        <rules>
+            <name>None</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.MilitaryStatusAffirmation__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>I am not a Service Member or Veteran</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Payout_Charity</targetReference>
+            </connector>
+            <label>None/Charity</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Compare prior value against current value to see if the Military Status affirmation changed.</description>
+        <name>Military_Status_Affirmed</name>
+        <label>Military Status Affirmed?</label>
+        <locationX>380</locationX>
+        <locationY>587</locationY>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <rules>
+            <name>Military_Status_Affirmed_Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record__Prior.MilitaryStatusAffirmation__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>$Record.MilitaryStatusAffirmation__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Military_Affirmation</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Stage_changed</name>
+        <label>Stage changed...</label>
+        <locationX>380</locationX>
+        <locationY>287</locationY>
+        <defaultConnector>
+            <targetReference>Military_Status_Affirmed</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>to_Closed_Won</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.StageName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed Won</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>set_CW_Timestamp</targetReference>
+            </connector>
+            <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+            <label>to Closed Won</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>Guard_Routing_Migration_Check</name>
+        <dataType>Boolean</dataType>
+        <expression>AND({!$Permission.VPCS_Routing_Migration},ISCHANGED({!$Record.OwnerId}))</expression>
+    </formulas>
+    <interviewLabel>Opportunity : BeforeUpdate {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Opportunity : BeforeUpdate</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>254</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Guard_Routing_Migration</targetReference>
+        </connector>
+        <object>Opportunity</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

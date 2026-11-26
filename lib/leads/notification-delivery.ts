@@ -7,7 +7,7 @@ export function getNotificationDeliveryMode(): 'live' | 'capture' | 'blocked' {
     if (isProductionSalesforceRuntime()) {
         return configuredMode === 'live' ? 'live' : configuredMode === 'capture' ? 'capture' : 'blocked';
     }
-    // The dedicated WebDev SMS transport owns real test delivery. Normal notifications stay captured.
+    // Slack stays captured in WebDev, including during allowlisted Salesforce delivery.
     return !configuredMode || configuredMode === 'capture' ||
         (configuredMode === 'allowlisted' && process.env.VPCS_SALESFORCE_PROFILE === 'webdev') ? 'capture' : 'blocked';
 }

@@ -91,10 +91,15 @@
         "Contact.State_s_Licensed_in__c",
         "Contact.isAgent__c",
         "Contact.isLender__c",
+        "Lead.Additional_Comments__c",
+        "Lead.Agent__c",
         "Lead.Description",
         "Lead.Destination_State__c",
         "Lead.Email",
         "Lead.LeadSource",
+        "Lead.Lender__c",
+        "Lead.VPCS_Submission_ID__c",
+        "Lead.VPCS_Visitor_ID__c",
         "Lead.WebFormAgentId__c",
         "Lead.WebFormLenderId__c",
         "Lead.WebFormURL__c",
@@ -314,7 +319,7 @@
       "permissionSets": [
         "VPCS_Webdev_Test"
       ],
-      "source": "services/salesforceLeadOwnerService.ts",
+      "source": "salesforce/access/README.md",
       "method": "GET",
       "object": "Lead",
       "select": [
@@ -335,14 +340,15 @@
       ],
       "sort": [
         "CreatedDate"
-      ]
+      ],
+      "legacyBaselineOnly": true
     },
     {
       "name": "Lead owner change",
       "permissionSets": [
         "VPCS_Webdev_Test"
       ],
-      "source": "services/salesforceLeadOwnerService.ts",
+      "source": "salesforce/access/README.md",
       "method": "PATCH",
       "object": "Lead",
       "write": [
@@ -350,7 +356,8 @@
       ],
       "headers": {
         "Sforce-Auto-Assign": "FALSE"
-      }
+      },
+      "legacyBaselineOnly": true
     },
     {
       "name": "Ten-form rehearsal reconciliation",
@@ -366,7 +373,39 @@
         "LeadSource",
         "OwnerId",
         "RecordTypeId",
-        "Description"
+        "Description",
+        "Destination_State__c"
+      ],
+      "filter": [
+        "FirstName",
+        "LastName",
+        "CreatedDate"
+      ]
+    },
+    {
+      "name": "Routing rehearsal reconciliation",
+      "permissionSets": [
+        "VPCS_Webdev_Test"
+      ],
+      "source": "scripts/fixtures/salesforce-sandbox-rehearsal.test.ts",
+      "method": "GET",
+      "object": "Lead",
+      "select": [
+        "Id",
+        "Email",
+        "LeadSource",
+        "OwnerId",
+        "RecordTypeId",
+        "Description",
+        "Destination_State__c",
+        "WebFormAgentId__c",
+        "WebFormLenderId__c",
+        "Agent__c",
+        "Lender__c",
+        "WebFormURL__c",
+        "Additional_Comments__c",
+        "VPCS_Visitor_ID__c",
+        "VPCS_Submission_ID__c"
       ],
       "filter": [
         "FirstName",
@@ -422,7 +461,12 @@
       "CreatedDate",
       "FirstName",
       "LastName",
-      "Description"
+      "Description",
+      "Additional_Comments__c",
+      "Agent__c",
+      "Lender__c",
+      "VPCS_Submission_ID__c",
+      "VPCS_Visitor_ID__c"
     ],
     "Opportunity": [
       "RecordTypeId"

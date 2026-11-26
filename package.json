@@ -14,6 +14,7 @@
     "start:mock": "node scripts/next-with-salesforce.mjs start --salesforce-profile=mock",
     "verify:salesforce-target": "node scripts/verify-salesforce-target.mjs",
     "verify:salesforce-sandbox-leads": "node scripts/verify-salesforce-sandbox-leads.mjs",
+    "verify:customer-routing": "python3 scripts/check-customer-routing.py",
     "lint": "eslint .",
     "lint:content": "node scripts/audit-blog-editorial.mjs",
     "test": "vitest run",

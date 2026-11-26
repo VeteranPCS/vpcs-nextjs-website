@@ -91,6 +91,8 @@ covers what is specific to VeteranPCS.
 
 Kill the dev server when the task is done. Global rule, and a stray server on 3000 breaks the next run.
 
+For an intercepted local Next.js development browser run, permit only the selected loopback origin's `/_next/hmr` WebSocket when the pinned framework requires it for hydration. Blocking that socket can leave an apparently rendered form without its React submit handler. Wait for the selected-partner heading and derived state before filling or submitting; elapsed time alone is insufficient. Abort unexpected native form navigations and all unrelated writes. The read-only `/api/v1/impact` POST may be deliberately blocked without permitting it through the submission gate. Keep production-mode and hosted verification independent of this development-only socket.
+
 ### If the dev server throws TS2307 on modules that clearly exist
 
 Stale Turbopack dev cache. Not a real error, and not worth debugging:

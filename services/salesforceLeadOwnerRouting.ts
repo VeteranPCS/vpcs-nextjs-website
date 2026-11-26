@@ -19,10 +19,6 @@ export type SalesforceLeadOwner = {
 
 export function getLeadOwnerForState(state?: string): SalesforceLeadOwner {
     const adminRouting = getAdminRoutingForState(state);
-    if (!adminRouting) {
-        throw new Error(`No admin routing found for Salesforce Lead owner state: ${state || '(missing)'}`);
-    }
-
     const ownerId = getSalesforceConfig().leadOwners[adminRouting.adminKey];
     if (!ownerId) {
         throw new Error(`No Salesforce Lead OwnerId configured for admin: ${adminRouting.adminKey}`);

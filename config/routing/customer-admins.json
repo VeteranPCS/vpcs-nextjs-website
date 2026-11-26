@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "source": {
+    "url": "https://docs.google.com/spreadsheets/d/1epLoEN9CIF0zeTwfjXCM11nvFCcLn4oSBMnm03KUdXc/edit",
+    "verifiedOn": "2026-11-25",
+    "ranges": ["Sheet1!B4:B27", "Sheet1!D4:D31"],
+    "note": "Reviewed static policy. No runtime spreadsheet access. Deleware normalized to DE."
+  },
+  "defaultAdmin": "STEPHANIE",
+  "territories": {
+    "BETH": ["AK", "AZ", "AR", "CA", "CO", "HI", "ID", "IA", "KS", "LA", "MN", "MO", "MT", "NE", "NV", "NM", "ND", "OK", "OR", "SD", "TX", "UT", "WA", "WY"],
+    "STEPHANIE": ["AL", "CT", "DE", "DC", "FL", "GA", "IL", "IN", "KY", "ME", "MD", "MA", "MI", "MS", "NH", "NJ", "NY", "NC", "OH", "PA", "PR", "RI", "SC", "TN", "VT", "VA", "WV", "WI"]
+  },
+  "openLeadStatuses": ["Prospect", "New:_Not_Contacted", "Urgent", "New:_Attempted", "Contacted:_Interviewing", "Contacted:_Future Lead", "Ready to Close", "Ready to Convert"],
+  "terminalOpportunityStages": ["Transaction Closed", "Closed - Lost", "Closed Won", "Paid - Complete"]
+}

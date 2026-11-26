@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomPermission xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Authorizes guarded VeteranPCS regional routing ownership migrations.</description>
+    <label>VPCS Routing Migration</label>
+</CustomPermission>
