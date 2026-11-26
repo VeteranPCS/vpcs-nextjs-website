@@ -1,5 +1,5 @@
 {
-  "contentHash": "5684b640d05245814fbd0724dcc3e66dc1438ded8d9ad812e8acf566c000a13d",
+  "contentHash": "271f041fd9b26a0da7e2c841c18b62662c81a1922673d30c5a18f204c19e87ec",
   "totalPosts": 426,
   "byComponent": {
     "Financial Guidance": [
@@ -1957,7 +1957,7 @@
       ],
       "description": "Alabama is home to over 100,000 active-duty military personnel and their families. The military community in Alabama is diverse and close-knit, bringing together service members from across the country and around the world.",
       "publishedAt": "2023-09-19T03:34:43.000Z",
-      "updatedAt": "2026-11-22T00:00:00.000Z",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
       "primaryKeyword": "army forts in alabama",
       "secondaryKeywords": [
         "air force base alabama",
@@ -2141,7 +2141,7 @@
     },
     {
       "slug": "army-bases-in-alabama",
-      "title": "Army Bases in Alabama: Redstone, Fort Rucker and Anniston",
+      "title": "PCS Housing Near Redstone Arsenal, Fort Rucker and Anniston",
       "url": "/blog/army-bases-in-alabama",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
@@ -2151,19 +2151,18 @@
         "PCS Help",
         "U.S. Military Bases"
       ],
-      "description": "Alabama is home to Army flight school, the Army's top materiel commands and its tank rebuild depot. Here is what each Army base does, which town it is near, and what 2026 housing pay looks like.",
+      "description": "Moving to an Army post in Alabama? Compare nearby towns and 2026 housing pay, and see what to consider before you rent or buy.",
       "publishedAt": "2026-11-19T09:00:00.000Z",
-      "updatedAt": "2026-11-22T00:00:00.000Z",
-      "primaryKeyword": "army bases in alabama",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
+      "primaryKeyword": "alabama army pcs housing",
       "secondaryKeywords": [
-        "anniston army depot",
-        "army base huntsville",
-        "army forts in alabama",
-        "fort rucker",
-        "redstone arsenal"
+        "alabama army bah",
+        "anniston army depot housing",
+        "fort rucker housing",
+        "redstone arsenal housing"
       ],
       "h2Outline": [
-        "Army Bases in Alabama, at a Glance",
+        "Where to Look for Housing Near Alabama Army Posts",
         "Redstone Arsenal",
         "Fort Rucker",
         "Anniston Army Depot",
@@ -2239,7 +2238,7 @@
     },
     {
       "slug": "army-bases-in-colorado",
-      "title": "Army Bases in Colorado: Fort Carson and Beyond",
+      "title": "Colorado Army Duty Stations: Fort Carson Housing and PCS Guide",
       "url": "/blog/army-bases-in-colorado",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
@@ -2249,19 +2248,19 @@
         "PCS Help",
         "U.S. Military Bases"
       ],
-      "description": "Fort Carson is the heart of the Army in Colorado, but it is not the whole story. Here is what each Army site does, where it is, and what 2026 housing pay looks like nearby.",
+      "description": "Got Army orders to Colorado? Learn which area to budget for, how Fort Carson housing pay works and where to get help with your move.",
       "publishedAt": "2026-11-15T09:00:00.000Z",
-      "updatedAt": "2026-11-22T00:00:00.000Z",
-      "primaryKeyword": "army bases in colorado",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
+      "primaryKeyword": "colorado army duty stations",
       "secondaryKeywords": [
         "4th infantry division fort carson",
-        "army base colorado springs",
-        "fort carson",
+        "fort carson bah",
+        "fort carson housing",
         "pinon canyon maneuver site",
         "pueblo chemical depot"
       ],
       "h2Outline": [
-        "Army Bases in Colorado, at a Glance",
+        "Colorado Army Duty Stations and Other Sites",
         "Fort Carson: The Mountain Post",
         "Piñon Canyon Maneuver Site",
         "The 100th Missile Defense Brigade",
@@ -5354,9 +5353,9 @@
         "Financial Guidance",
         "PCS Help"
       ],
-      "description": "A PCS should not cost a spouse their career. Federal law now lets most licensed spouses keep working in a new state. Here is how it works, what to send, and which programs help pay the costs.",
+      "description": "A PCS should not cost a spouse their career. See when federal law lets you use an existing license in a new state, what to send the board, and where to get help with the costs.",
       "publishedAt": "2026-11-21T09:00:00.000Z",
-      "updatedAt": "2026-11-22T00:00:00.000Z",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
       "primaryKeyword": "military spouse license transfer",
       "secondaryKeywords": [
         "50 usc 4025a",
@@ -5677,7 +5676,7 @@
     },
     {
       "slug": "naval-bases-in-south-carolina",
-      "title": "Naval Bases in South Carolina: Charleston, Goose Creek and Beaufort",
+      "title": "Navy PCS to Charleston and Beaufort: Housing and BAH",
       "url": "/blog/naval-bases-in-south-carolina",
       "component": "U.S. Military Bases",
       "componentSlug": "us-military-bases",
@@ -5687,19 +5686,18 @@
         "PCS Help",
         "U.S. Military Bases"
       ],
-      "description": "South Carolina no longer has a stand-alone naval base, but the Navy is still a big part of life in the Lowcountry. Here is where Sailors train and work, and what 2026 housing pay looks like nearby.",
+      "description": "Use your Navy orders to plan a move to Charleston, Goose Creek or Beaufort. Compare 2026 housing pay, weigh a short-term lease and find local help.",
       "publishedAt": "2026-11-17T09:00:00.000Z",
-      "updatedAt": "2026-11-22T00:00:00.000Z",
-      "primaryKeyword": "naval bases in south carolina",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
+      "primaryKeyword": "navy pcs to charleston",
       "secondaryKeywords": [
-        "joint base charleston navy",
-        "naval hospital beaufort",
-        "naval weapons station charleston",
-        "navy bases in south carolina",
-        "nuclear power school charleston"
+        "beaufort bah",
+        "goose creek navy housing",
+        "joint base charleston navy housing",
+        "navy nuclear power school housing"
       ],
       "h2Outline": [
-        "Naval Bases in South Carolina, at a Glance",
+        "Where Your Navy Orders May Take You",
         "What Happened to the Charleston Naval Base?",
         "Naval Support Activity Charleston (the Weapons Station)",
         "Nuclear Power School in Goose Creek",
@@ -13530,7 +13528,7 @@
       ],
       "description": "Colorado is home to several key military installations that support the U.S. Air Force, Space Force, Army, and national defense operations. Whether you're PCSing (Permanent Change of Station) to Colorado or just curious about the militar...",
       "publishedAt": "2022-09-20T14:35:24.000Z",
-      "updatedAt": "2026-11-22T00:00:00.000Z",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
       "primaryKeyword": "air force bases in colorado",
       "secondaryKeywords": [
         "colorado air force bases",
@@ -13544,8 +13542,8 @@
         "3 Cheyenne Mountain Space Force Station (CMSFS)",
         "4 Fort Carson – \"The Mountain Post\"",
         "5 Peterson Space Force Base (SFB)",
-        "6 Pueblo Chemical Weapons Depot (PCD)",
-        "7 Schriever Space Force Base (SFB)",
+        "6 Schriever Space Force Base (SFB)",
+        "Former Pueblo Chemical Depot",
         "Moving to Colorado? We Can Help!",
         "Plan Your PCS to Colorado"
       ]
@@ -14498,9 +14496,9 @@
       "categories": [
         "U.S. Military Bases"
       ],
-      "description": "South Carolina has a long and proud military history, and it is still a busy training hub today. The state is home to six major active-duty installations, supporting the Army, Navy, Air Force, and Marine Corps, along with an Air National...",
+      "description": "South Carolina is home to five major active-duty military installations and McEntire Joint National Guard Base. These support the Army, Navy, Air Force and Marine Corps. Whether you're planning a permanent change of station (PCS) move or...",
       "publishedAt": "2026-06-26T09:00:00.000Z",
-      "updatedAt": "2026-11-22T00:00:00.000Z",
+      "updatedAt": "2026-11-25T00:00:00.000Z",
       "primaryKeyword": "military bases in south carolina",
       "secondaryKeywords": [
         "army bases in south carolina",
