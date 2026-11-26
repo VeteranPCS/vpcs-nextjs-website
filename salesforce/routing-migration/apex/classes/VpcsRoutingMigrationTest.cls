@@ -154,12 +154,14 @@ private class VpcsRoutingMigrationTest {
             Description = 'Synthetic migration note'
         );
         insert as system customer;
+        update as system new Lead(Id = customer.Id, IsUnreadByOwner = false);
         customer = [
             SELECT Id, OwnerId, RecordTypeId, LastModifiedDate, IsConverted, Status,
-                   CreatedDate, Next_Contact_Date__c, Description, Destination_State__c
+                   CreatedDate, Next_Contact_Date__c, Description, Destination_State__c, IsUnreadByOwner
             FROM Lead WHERE Id = :customer.Id WITH SYSTEM_MODE
         ];
         System.assertEquals(operator.Id, customer.OwnerId);
+        System.assertEquals(false, customer.IsUnreadByOwner, 'The original owner has already read the Lead.');
         System.assertEquals('TX', customer.Destination_State__c, 'The persisted fixture must retain its destination.');
         System.assert(VpcsCustomerRouting.isOpenCustomer(customer), 'The persisted fixture must be eligible.');
         VpcsCustomerRouting.testBindings.put(
@@ -209,6 +211,9 @@ private class VpcsRoutingMigrationTest {
             Map<String, Object> afterApply = (Map<String, Object>)appliedReceipt.get('after');
             System.assertNotEquals(null, afterApply, applied);
             System.assertEquals(destinationOwner, (Id)afterApply.get('ownerId'));
+            System.assertEquals(true, [
+                SELECT IsUnreadByOwner FROM Lead WHERE Id = :customer.Id WITH SYSTEM_MODE
+            ].IsUnreadByOwner, 'A transferred Lead is unread for its new owner.');
             System.assertEquals(applied, VpcsRoutingMigration.executeOwnerOnly(applyCommand));
             System.assertEquals(applied, VpcsRoutingMigration.getReceipt(org.Id, org.IsSandbox, receiptKey('apply', 'Lead', recordId)));
 
@@ -229,21 +234,81 @@ private class VpcsRoutingMigrationTest {
     }
 
     @IsTest
+    static void nativeOwnerTransferMarksReadLeadUnread() {
+        User operator = [SELECT Id FROM User WHERE LastName = :TEST_USER WITH SYSTEM_MODE LIMIT 1];
+        Id destinationOwner = UserInfo.getUserId();
+        System.assertNotEquals(operator.Id, destinationOwner);
+        Id customerType = Lead.SObjectType.getDescribe().getRecordTypeInfosByDeveloperName()
+            .get('Customer').getRecordTypeId();
+        VpcsCustomerRouting.testBindings = new Map<String, VpcsCustomerRouting.Binding>();
+        Lead customer = new Lead(LastName = 'Synthetic Read Lead', Company = 'Synthetic CRM Fixture',
+            OwnerId = operator.Id, RecordTypeId = customerType, Destination_State__c = 'UT',
+            Status = 'Contacted:_Future Lead', WebToLead__c = false);
+        insert as system customer;
+        update as system new Lead(Id = customer.Id, IsUnreadByOwner = false);
+        System.assertEquals(false, [
+            SELECT IsUnreadByOwner FROM Lead WHERE Id = :customer.Id WITH SYSTEM_MODE
+        ].IsUnreadByOwner);
+        VpcsCustomerRouting.testBindings.put(
+            'BETH', new VpcsCustomerRouting.Binding(destinationOwner, '+17192495359', null, null)
+        );
+        System.runAs(operator) {
+            VpcsCustomerRouting.setMigrationOwnerWrite(true);
+            try {
+                Database.DMLOptions options = new Database.DMLOptions();
+                options.assignmentRuleHeader.useDefaultRule = false;
+                options.emailHeader.triggerUserEmail = false;
+                options.emailHeader.triggerOtherEmail = false;
+                options.emailHeader.triggerAutoResponseEmail = false;
+                options.optAllOrNone = true;
+                Database.SaveResult transfer = Database.update(
+                    new Lead(Id = customer.Id, OwnerId = destinationOwner), options, AccessLevel.SYSTEM_MODE);
+                System.assert(transfer.isSuccess());
+            } finally {
+                VpcsCustomerRouting.setMigrationOwnerWrite(false);
+            }
+        }
+        Lead transferred = [SELECT OwnerId, IsUnreadByOwner, Status, Destination_State__c
+            FROM Lead WHERE Id = :customer.Id WITH SYSTEM_MODE];
+        System.assertEquals(destinationOwner, transferred.OwnerId);
+        System.assertEquals(true, transferred.IsUnreadByOwner);
+        System.assertEquals(customer.Status, transferred.Status);
+        System.assertEquals('UT', transferred.Destination_State__c);
+        System.assertEquals(0, [SELECT COUNT() FROM VPCS_Routing_Migration_Receipt__c WITH SYSTEM_MODE]);
+    }
+
+    @IsTest
     static void detectsProtectedFieldChangesAlongsideOwner() {
-        Lead original = new Lead(OwnerId = '005000000000123', Status = 'Prospect', LastName = 'Synthetic');
+        Lead original = new Lead(OwnerId = '005000000000123', Status = 'Prospect', LastName = 'Synthetic',
+            IsUnreadByOwner = false);
         Lead ownerOnly = original.clone(false, false, false, false);
         ownerOnly.OwnerId = '005000000000124';
-        System.assert(VpcsRoutingMigration.sameProtectedFields(original, ownerOnly));
+        System.assertEquals(null, VpcsRoutingMigration.protectedFieldChange(original, ownerOnly, true));
+
         Lead platformStamped = (Lead)JSON.deserialize(
-            '{"OwnerId":"005000000000124","Status":"Prospect","LastName":"Synthetic","LastTransferDate":"2026-11-25"}',
+            '{"OwnerId":"005000000000124","Status":"Prospect","LastName":"Synthetic","LastTransferDate":"2026-11-25","IsUnreadByOwner":true}',
             Lead.class
         );
-        System.assert(VpcsRoutingMigration.sameProtectedFields(original, platformStamped),
-            'A platform-derived ownership audit stamp cannot block an owner-only write');
-        ownerOnly.Status = 'Urgent';
-        System.assertEquals(false, VpcsRoutingMigration.sameProtectedFields(original, ownerOnly));
-        ownerOnly.Status = original.Status;
+        System.assertEquals(null, VpcsRoutingMigration.protectedFieldChange(original, platformStamped, true),
+            'Salesforce stamps the transferred Lead for the new owner');
+        System.assertEquals('isunreadbyowner', VpcsRoutingMigration.protectedFieldChange(original, platformStamped, false),
+            'An unchanged Task parent does not receive the direct-transfer allowance');
+        System.assertEquals('isunreadbyowner', VpcsRoutingMigration.protectedFieldChange(platformStamped, original, true),
+            'The opposite unread transition is not an ownership stamp');
+        platformStamped.OwnerId = original.OwnerId;
+        System.assertEquals('isunreadbyowner', VpcsRoutingMigration.protectedFieldChange(original, platformStamped, true),
+            'A change with the same owner is still protected');
+
+        platformStamped.OwnerId = '005000000000124';
+        platformStamped.Status = 'Urgent';
+        System.assertEquals('status', VpcsRoutingMigration.protectedFieldChange(original, platformStamped, true),
+            'Still reject a business change on the same platform-stamped transfer');
         ownerOnly.LastName = null;
-        System.assertEquals(false, VpcsRoutingMigration.sameProtectedFields(original, ownerOnly));
+        System.assertEquals('lastname', VpcsRoutingMigration.protectedFieldChange(original, ownerOnly, true));
+
+        Opportunity beforeOpportunity = new Opportunity(OwnerId = '005000000000123', StageName = 'Under Contract');
+        Opportunity afterOpportunity = new Opportunity(OwnerId = '005000000000124', StageName = 'Tracking 1-2');
+        System.assertEquals('stagename',
+            VpcsRoutingMigration.protectedFieldChange(beforeOpportunity, afterOpportunity, true));
     }
 }

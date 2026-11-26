@@ -144,8 +144,10 @@ public without sharing class VpcsRoutingMigration {
                 VpcsCustomerRouting.setMigrationOwnerWrite(false);
             }
             SObject afterRow = readRow(request.type, request.id, false);
-            require(afterRow != null && (Id)afterRow.get('OwnerId') == desired &&
-                sameProtectedFields(beforeRow, afterRow), 'Unexpected record mutation during owner update');
+            require(afterRow != null && (Id)afterRow.get('OwnerId') == desired,
+                'Unexpected owner after the guarded update');
+            String changedField = protectedFieldChange(beforeRow, afterRow, true);
+            require(changedField == null, 'Unexpected record mutation during owner update: ' + changedField);
             require(matchesObject(priorLimits, effectLimits()) &&
                 priorEffects.equals(effectSignature(request.id, request.type, accountId, started)) &&
                 !relatedParentChanged(parent),
@@ -280,7 +282,7 @@ public without sharing class VpcsRoutingMigration {
         String parentType = parentId.getSObjectType().getDescribe().getName();
         SObject after = readRow(parentType, parentId, false);
         return after == null || !idsEqual(parent.get('OwnerId'), after.get('OwnerId')) ||
-            !sameProtectedFields(parent, after);
+            protectedFieldChange(parent, after, false) != null;
     }
 
     private static Boolean idsEqual(Object left, Object right) {
@@ -315,15 +317,27 @@ public without sharing class VpcsRoutingMigration {
     }
 
     @TestVisible
-    private static Boolean sameProtectedFields(SObject beforeRow, SObject afterRow) {
+    private static String protectedFieldChange(SObject beforeRow, SObject afterRow, Boolean allowTransferStamp) {
         Map<String, Object> beforeFields = comparableFields(beforeRow);
         Map<String, Object> afterFields = comparableFields(afterRow);
         Set<String> allFields = new Set<String>(beforeFields.keySet());
         allFields.addAll(afterFields.keySet());
-        for (String field : allFields) {
-            if (!matchesObject(beforeFields.get(field), afterFields.get(field))) return false;
+        List<String> orderedFields = new List<String>(allFields);
+        orderedFields.sort();
+        for (String field : orderedFields) {
+            Object previous = beforeFields.get(field);
+            Object current = afterFields.get(field);
+            if (matchesObject(previous, current)) continue;
+            // Salesforce marks a previously read Lead unread for its new owner.
+            // Accept only that platform transition on the directly transferred Lead.
+            if (allowTransferStamp && field == 'isunreadbyowner' &&
+                beforeRow instanceof Lead && afterRow instanceof Lead &&
+                beforeRow.get('OwnerId') != null && afterRow.get('OwnerId') != null &&
+                !idsEqual(beforeRow.get('OwnerId'), afterRow.get('OwnerId')) &&
+                matchesObject(previous, false) && matchesObject(current, true)) continue;
+            return field;
         }
-        return true;
+        return null;
     }
 
     private static Map<String, Object> comparableFields(SObject row) {
