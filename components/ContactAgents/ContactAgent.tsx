@@ -1,4 +1,6 @@
 "use client";
+import type { LeadSubmissionFields } from '@/lib/leads/captcha-types';
+import { LeadCaptcha } from '@/components/common/LeadCaptcha';
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useForm, Resolver } from "react-hook-form";
@@ -25,7 +27,7 @@ import {
 import v2 from './ContactAgentV2.module.css';
 
 interface ContactFormProps {
-  onSubmit: (data: ContactAgentFormData & { submission_attempt_id: string }) => Promise<CustomerSubmitResponse>;
+  onSubmit: (data: ContactAgentFormData & LeadSubmissionFields) => Promise<CustomerSubmitResponse>;
   derivedStateCode?: string | null;
   /**
    * The page's current query string, passed by the page so the form follows a change of
@@ -107,7 +109,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode, urlSearch, experiment }:
     openConcierge({ topic: 'agent', openingMessage });
   };
 
-  const { isSubmitting, focusRequest, onFormSubmit, blocked, submitLabel, failure, showValidationFeedback } = useCustomerSubmission({
+  const { captcha, isSubmitting, focusRequest, onFormSubmit, blocked, submitLabel, failure, showValidationFeedback } = useCustomerSubmission({
     formId: 'contact_agent',
     form: { handleSubmit, getValues, setError, reset },
     onSubmit,
@@ -419,6 +421,7 @@ const ContactAgentForm = ({ onSubmit, derivedStateCode, urlSearch, experiment }:
             {/* Submit Button */}
             <CustomerSubmissionFeedback failure={failure} showValidation={showValidationFeedback} />
             <div className={`flex md:justify-start justify-center flex-col md:items-start items-center gap-3 ${v2.actions}`}>
+              <LeadCaptcha control={captcha} />
               <button
                 type="submit"
                 disabled={isSubmitting || blocked}

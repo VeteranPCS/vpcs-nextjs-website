@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react';
-import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
+import { renderWithCaptchaOff as render } from '@/components/common/__tests__/render-with-captcha-off';
+import { screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks=vi.hoisted(()=>({submit:vi.fn()}));
 vi.mock('@/services/salesForcePostFormsService',()=>({KeepInTouchForm:mocks.submit,vaLoanGuideForm:mocks.submit,homebuyerGuideForm:mocks.submit,coloradoRelocationGuideForm:mocks.submit}));

@@ -4,6 +4,7 @@ import type { LeadSubmitResult } from '@/lib/leads/submission-outcome';
 import { randomUUID } from 'node:crypto';
 import { canonicalEmail, emailIdentityHash, leadPayloadHash, normalizedPhone } from '@/lib/leads/identity';
 import { getIntakeFields } from '@/lib/salesforce/intake-fields';
+import { appendLeadCaptcha, getLeadCaptchaConfig, validCaptchaToken } from '@/lib/leads/captcha-config';
 import { inspectLeadAttempt, claimLeadAttempt, reconcileLeadAttempt, claimWebsiteNotifications, LeadAttemptConflictError } from '@/services/salesforceIntake';
 import stateService from '@/services/stateService';
 import { logDebug, logError, logInfo } from './loggingService';
@@ -488,7 +489,10 @@ async function submitWebToLead<TResult extends object>(
         const sandbox = salesforce.profile === 'webdev';
         const dryRun = salesforce.profile === 'mock' || (!isProductionSalesforceRuntime() && isLeadDryRun());
         if (sandbox && !salesforce.allowSandboxWrites && !dryRun) return { outcome: 'not_sent', success: false, submissionId };
-        const validation = parseLeadForm(config.schema, rawFormData);
+        // Challenge transport is not business data. Reconcile existing work even if a token
+        // has expired or configuration changed; only a fresh dispatch requires a challenge.
+        const { captchaToken, captcha_settings: _clientCaptchaSettings, 'g-recaptcha-response': _clientCaptchaResponse, ...businessInput } = raw;
+        const validation = parseLeadForm(config.schema, businessInput);
         if (!validation.ok) return { outcome: 'validation_error', success: false, submissionId,
             fieldErrors: { form: 'Please check the required fields and try again.' } };
         const formData = validation.data as Record<string, string | undefined>;
@@ -548,7 +552,13 @@ async function submitWebToLead<TResult extends object>(
                 if (!confirmed) return { outcome: 'unconfirmed', success: false, submissionId };
             }
         }
+        const captcha = getLeadCaptchaConfig(salesforce);
         if (!confirmed) {
+            if (captcha.mode === 'unavailable') return { outcome: 'retry_later', success: false, submissionId };
+            if (captcha.mode === 'required' && !validCaptchaToken(captchaToken)) {
+                return { outcome: 'validation_error', success: false, submissionId,
+                    fieldErrors: { captchaToken: 'Complete the security check before submitting.' } };
+            }
             ctx.spam = await evaluateLeadSpam({ email, phone,
                 freeText: config.spamFreeTextField ? formData[config.spamFreeTextField] : undefined,
                 honeypot: formData[HP_FIELD], renderedAt: formData[TS_FIELD], options: runtime?.options, dryRun, rateChecked: true });
@@ -583,6 +593,7 @@ async function submitWebToLead<TResult extends object>(
             const fields = dryRun ? { honeypot: '00N000000000901', submissionHash: '00N000000000902' } : getIntakeFields(salesforce);
             params.set(fields.honeypot, ''); // Only a validated, empty honeypot reaches serialization.
             params.set(fields.submissionHash, payloadHash);
+            appendLeadCaptcha(params, captcha, captchaToken);
             const url = dryRun ? salesforce.webToLeadUrl : assertWebToLeadTarget(params, {
                 ...salesforce,
                 // These two IDs have their own verified, org-bound manifest above.

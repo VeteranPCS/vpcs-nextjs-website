@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { renderWithCaptchaOff as render } from '@/components/common/__tests__/render-with-captcha-off';
+import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { LeadSubmitResult } from '@/lib/leads/submission-outcome';
 const mocks = vi.hoisted(() => ({ submit: vi.fn(), capture: vi.fn(), gtm: vi.fn() }));

@@ -1,5 +1,6 @@
 "use client";
 
+import { LeadCaptcha } from '@/components/common/LeadCaptcha';
 import Link from 'next/link';
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
@@ -43,6 +44,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
   // Keep shared form styling independent of its card.
   useEffect(() => { setPortalRoot(document.body); }, []);
   const id = useId();
+  const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [downloadStarted, setDownloadStarted] = useState(false);
@@ -82,7 +84,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
   }
 
   function close() {
-    if (!busy.current) { dialog.current?.close(); trigger.current?.focus(); }
+    if (!busy.current) { dialog.current?.close(); setIsOpen(false); trigger.current?.focus(); }
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -142,6 +144,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
       setDownloadStarted(false);
       setAcceptedContactDetails(undefined);
       dialog.current?.showModal();
+      setIsOpen(true);
       trackSafely(() => trackCtaClicked(guideProperties));
       trackSafely(() => trackFormStarted(config.formId, guideProperties));
     }}>{triggerLabel}</button>
@@ -151,7 +154,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
       const first = controls[0], last = controls[controls.length - 1];
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
-    }} onCancel={event => { if (busy.current) event.preventDefault(); }} onClose={() => trigger.current?.focus()} onClick={event => { if (event.target === event.currentTarget) close(); }}>
+    }} onCancel={event => { if (busy.current) event.preventDefault(); }} onClose={() => { setIsOpen(false); trigger.current?.focus(); }} onClick={event => { if (event.target === event.currentTarget) close(); }}>
       <div className="steph-capture-inner">
         <button type="button" className="steph-capture-close" aria-label="Close" disabled={pending} onClick={close}>×</button>
         <h2 id={`${id}-title`}>{config.title}</h2>
@@ -172,6 +175,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
         </div> : <form onSubmit={submit}>
           <p>Enter your details to {config.file ? 'get your free guide' : 'keep in touch'}.</p>
           <HoneypotField ref={honeypotRef} />
+          {isOpen && <LeadCaptcha control={submission.captcha} />}
           <label htmlFor={`${id}-first`}>First name<input id={`${id}-first`} name="firstName" autoComplete="given-name" required maxLength={isColorado ? 40 : 120} /></label>
           <label htmlFor={`${id}-last`}>Last name<input id={`${id}-last`} name="lastName" autoComplete="family-name" required maxLength={isColorado ? 80 : 120} /></label>
           <label htmlFor={`${id}-email`}>Email<input id={`${id}-email`} name="email" type="email" autoComplete="email" defaultValue={initialEmail} required maxLength={isColorado ? 80 : 200} /></label>

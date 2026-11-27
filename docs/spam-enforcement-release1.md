@@ -1,14 +1,11 @@
 # Release 1 lead admission runbook
 
-Status on November 26, 2026. The admission package and submission-ID uniqueness are deployed in
-Salesforce WebDev. The ten live form controls, 11-case routing rehearsal, native claim and
-notification arbitration, and 22 direct backstop cases reconciled. Both read-only Previews
-were checked. WebDev retired the legacy exact-match rule after blocklist reconciliation. The
-post-retirement set of 22 direct rejection controls also passed. The protected Preview passed
-with dedicated OAuth. Production has the optional hash field and verified wire IDs. Dedicated
-identity provisioning, Production activation and the website release remain open. The
-[proposal](spam-enforcement-plan.md) covers the original
-rationale and the separate Release 2 CAPTCHA work.
+Status on November 27, 2026: **released to Production**. PR #244 merged and the exact fresh
+Production build passed its gates, was promoted under the intake hold, and reopened at 20:28 UTC.
+The ten-entry hashed blocklist migration reconciled. The controlled Production negative and
+positive canaries passed; the synthetic Lead/task are closed and temporary operator access is
+revoked. CAPTCHA remains the separately tested Release 2. The [proposal](spam-enforcement-plan.md)
+records the original rationale. See the completion evidence below.
 
 ## What the release changes
 
@@ -212,3 +209,44 @@ remove those safeguards to make an older artifact accept forms.
 - The isolated org-access diagnostic deployed to WebDev as `0Afjg00000050aUCAQ` and passed its three rollback-only user cases; a synchronous rerun also passed. License-only and roles-only access could not query Organization. The setup/roles pair allowed the exact query while denying direct read/create/update/delete for Lead, Account, Contact, Opportunity and the two private intake objects. Log `07Ljg0000005lMTEAY` records the roles-only comparison; its temporary trace was removed. The one-permission-set Production package validated as `0Afjf0000003rKjCAI` with ten passing tests and zero errors. Harper approved assignment only to the dedicated intake user. Production deployment `0Afjf0000003rMLCAY` succeeded; the included API license and `VPCS_Intake_Org_Identity` were assigned to that user. A fresh real OAuth session passed the exact Organization query and denied fixed no-row Lead, Account, Contact and Opportunity queries. Salesforce’s expected profile-owned permission row was separately reconciled, rather than treated as an extra grant. [Reproducible package and test](../salesforce/spam-intake/identity-access/README.md)
 
 - Final pre-cutover retrieval `09Sjf000000tdtZEAQ` matched all 84 scoped baseline files byte for byte. Exact-head CI, Semgrep and Vercel checks passed for `c7b285967962b7f224ac7af702f2d3ef2546a090`. The immutable review found no new source defect and retained the remaining operational gates. Automatic Production domain assignment remains disabled; the live routing deployment and 12-hour Skew Protection setting remain unchanged. The outstanding producer-coordination question must be resolved before starting the intake pause.
+
+## Production completion evidence — November 27, 2026
+
+The reviewed website head `ecb437cf873a681ec5438d86dc8725da76e1ab2d` merged in
+[PR #244](https://github.com/VeteranPCS/vpcs-nextjs-website/pull/244) as
+`689d2a90397b4b6557670398eaa075af8d39ccf1`. The two trees were identical. Main CI
+`46063088041` passed. Fresh Production deployment `dpl_4p9vL3XPfNx7YgHiAVwr1khPbDk5`
+was promoted after the identity, policy, route and stale-client checks. Automatic Production
+domain assignment remains disabled. Skew Protection is restored to 43,200 seconds with cutoff
+`1795810897011`. Old and alternate deployment POST paths remain blocked.
+
+| Gate | Observed result |
+|---|---|
+| Unique submission ID | Field deployment `0Afjf0000003rW1CAI`: 57/57 tests; actual nullable, case-insensitive unique index read back |
+| Post-finalization index assertion | Unchanged native regression `0Afjf0000003rZFCAY`: 1/1 passed |
+| Admission | Deployment `0Afjf0000003rarCAA`: 66/66 passed; API coverage 114/124, admission 43/43, trigger 1/1 |
+| Policy migration | Ten successful rows, zero failed; independent exact active-set reconciliation, no extras |
+| Dedicated OAuth | Actual Production org/user verified; direct CRM and private-object queries denied; blocked and unlisted policy responses correct |
+| Legacy rule retirement | `0Afjf0000003sBxCAI`: 57/57 passed; old exact email rule inactive, native honeypot rule active, both formulas unchanged |
+| Intake containment | In-flight producer drain; 25/25 held POST probes; 13 stale-pin response cases; after reopening, public POSTs reached the application and protected alternates stayed denied |
+| Controlled honeypot negative | Declined attempt, no Lead, no website notification claim, no matching Slack post |
+| Controlled clean Colorado form | One persisted Lead owned by Beth; selected agent/lender both empty; UUID and HMAC matched its Confirmed attempt; one website notification claim |
+| Native no-partner routing | One Beth routing-setup task; no SMS queue rows during the complete canary window |
+| Actual email arrival | Immediate Tech confirmation at 20:32:44 UTC; five-minute welcome at 20:37:47, 306 seconds after Lead creation; both Salesforce entity headers match the exact Lead |
+| Internal Slack | One post at 20:32:44, matching the unique synthetic name, contact, Colorado and comments; Slack has no UUID, so correlation uses content/time |
+| Cleanup | Exact synthetic Lead closed as Duplicate, Next Contact Date empty, its single task Completed; receipt records preserved; fresh zero count for Tech's temporary policy permission |
+
+The immediate email headers include the approved Admin and Info copies. Beth's regional email
+binding and native task were verified. Those recipients' mailboxes were not inspected; the actual
+inbox-arrival claim is specifically for Tech. This no-partner canary exercised no SMS provider
+transport. The existing generic email footer still contains the prior 5065 contact number; it is
+recorded as a template follow-up, not silently changed in this spam release.
+
+Private operator receipts are under `/private/tmp/vpcs-spam-ops/production-cutover-20261127/`;
+`canary/notification-evidence.private.json` records the exact record/message correlation and cleanup.
+Do not commit raw customer exports, policy hashes or credentials. The temporary credential-view
+helper was stopped and its browser-memory credentials cleared after verification.
+
+For future blocklist edits, use the scoped policy operator set with approved temporary assignment.
+Administrative Apex access does not substitute for the required new-field permissions. Reconcile
+the expected active hash set before retiring or replacing a policy, then revoke temporary access.

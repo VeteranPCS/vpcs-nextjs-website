@@ -1,10 +1,12 @@
 'use client';
 
 import { useRef, useState, useSyncExternalStore } from 'react';
+import type { LeadSubmissionFields } from '@/lib/leads/captcha-types';
+import { useLeadCaptcha } from './LeadCaptcha';
 import { isLeadSubmitResult, type LeadSubmitResult } from '@/lib/leads/submission-outcome';
 
 type Failure = Extract<LeadSubmitResult, { success: false }>;
-type Submit<T> = (payload: T & { submission_attempt_id: string }) => Promise<LeadSubmitResult | void>;
+type Submit<T> = (payload: T & LeadSubmissionFields) => Promise<LeadSubmitResult | void>;
 
 const activeAttempts = new Set<string>();
 const storageFallback = new Map<string, string>();
@@ -41,6 +43,7 @@ export function bestEffort(work: () => void) {
 }
 
 export function useLeadSubmission(formId: string) {
+  const captcha = useLeadCaptcha();
   const key = `vpcs:lead-pending:v1:${formId}`;
   const stored = useSyncExternalStore(subscribe, () => activeAttempts.has(key) ? 'active' : readAttempt(key), () => undefined);
   const lastAttempt = useRef<{ payload: string; id: string } | null>(null);
@@ -52,6 +55,11 @@ export function useLeadSubmission(formId: string) {
     const marker = readAttempt(key);
     const retryId = marker?.startsWith(retryPrefix) ? marker.slice(retryPrefix.length) : undefined;
     if (accepted.current || activeAttempts.has(key) || (marker && !retryId)) return;
+    const captchaToken = captcha.config.mode === 'required' ? captcha.takeToken() : undefined;
+    if (captcha.config.mode !== 'off' && !captchaToken) {
+      captcha.requestChallenge();
+      return;
+    }
     setSubmitting(true);
     setFailure(undefined);
     let id: string;
@@ -60,6 +68,7 @@ export function useLeadSubmission(formId: string) {
       id = retryId ?? (lastAttempt.current?.payload === comparable ? lastAttempt.current.id : crypto.randomUUID());
       lastAttempt.current = { payload: comparable, id };
     } catch {
+      bestEffort(captcha.resetAfterSubmit);
       setSubmitting(false);
       const result = { outcome: 'not_sent', success: false } as const;
       setFailure(result);
@@ -68,11 +77,13 @@ export function useLeadSubmission(formId: string) {
     writeAttempt(key, id, true);
     let result: LeadSubmitResult;
     try {
-      const response = await action({ ...payload, submission_attempt_id: id });
+      const response = await action({ ...payload, submission_attempt_id: id, ...(captchaToken ? { captchaToken } : {}) });
       result = isLeadSubmitResult(response) ? response : { outcome: 'unconfirmed', success: false };
     } catch {
       result = { outcome: 'unconfirmed', success: false };
     }
+    bestEffort(captcha.resetAfterSubmit);
+    if (result.outcome === 'validation_error' && result.fieldErrors.captchaToken) captcha.requestChallenge();
     if (result.outcome === 'accepted') {
       lastAttempt.current = null;
       accepted.current = true;
@@ -96,6 +107,7 @@ export function useLeadSubmission(formId: string) {
 
   return {
     submit,
+    captcha,
     resetAccepted: () => { accepted.current = false; },
     clearFailure: () => setFailure(undefined),
     submitting,
