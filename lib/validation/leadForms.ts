@@ -9,9 +9,10 @@ import { US_STATE_CODES } from '@/constants/usStates';
  * client controls the payload) but strict about TYPES and LENGTHS so we reject obviously
  * abusive input (giant strings, non-string scalars) before it reaches Salesforce/Slack/SMS.
  *
- * All schemas use `.passthrough()` so unknown fields the client sends (e.g. captcha_settings,
- * Salesforce custom-field IDs we don't model here) are preserved and forwarded unchanged —
- * this keeps behavior identical for valid input.
+ * Schemas retain additional form fields for the explicit Web-to-Lead builders. Unknown input
+ * is never serialized wholesale. Challenge transport is removed before business validation;
+ * the shared intake service validates it only before a fresh dispatch, then supplies the
+ * server-owned Salesforce settings.
  */
 
 // ---- Reusable field primitives --------------------------------------------------------

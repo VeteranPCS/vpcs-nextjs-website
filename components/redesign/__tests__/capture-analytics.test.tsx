@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { renderWithCaptchaOff as render } from '@/components/common/__tests__/render-with-captcha-off';
+import { cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { LeadSubmitResult } from '@/lib/leads/submission-outcome';
 const mocks = vi.hoisted(() => ({ submit: vi.fn(), capture: vi.fn(), gtm: vi.fn() }));
@@ -16,8 +17,6 @@ beforeEach(() => {
   mocks.gtm.mockReset();
   window.history.replaceState({}, '', '/pcs-resources?q=private-query');
   window.sessionStorage.clear();
-  HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', ''); };
-  HTMLDialogElement.prototype.close = function () { this.removeAttribute('open'); };
   vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); });
@@ -46,6 +45,8 @@ describe('guide capture analytics', () => {
     mocks.submit.mockReturnValue(new Promise(resolve => { finish = resolve; }));
     const form = openAndFill(kind);
     const colorado = kind === 'colorado-relocation-guide';
+    form.querySelector<HTMLButtonElement>('button[type="submit"]')?.focus();
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Get my guide' }));
     expect(mocks.capture).toHaveBeenCalledWith('cta_clicked', expect.objectContaining({ cta_intent: 'download_guide', guide_id: guideId }));
     expect(downloadEvents()).toHaveLength(0);
     expect(mocks.gtm).not.toHaveBeenCalled();
@@ -57,6 +58,7 @@ describe('guide capture analytics', () => {
     if (!finish) throw new Error('Expected pending submission');
     finish({ success: true, outcome: 'accepted' });
     await screen.findByRole('status');
+    expect(document.activeElement).toBe(screen.getByRole('link', { name: colorado ? 'Find a Colorado Agent' : 'Download guide' }));
     expect(downloadEvents().map(([event]) => event)).toEqual(['guide_download_requested', 'guide_download_started']);
     expect(mocks.gtm).toHaveBeenCalledExactlyOnceWith({ event: 'conversion_download', content: gaContent });
     expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(1);
@@ -190,8 +192,14 @@ describe('guide capture analytics', () => {
 
   it('does not call downloads or emit guide events for a newsletter', async () => {
     mocks.submit.mockResolvedValue({ success: true, outcome: 'accepted' });
-    fireEvent.submit(openAndFill('newsletter'));
-    await waitFor(() => expect(screen.getByRole('status').textContent).toContain('received'));
+    const form = openAndFill('newsletter');
+    const submit = screen.getByRole('button', { name: 'Keep in touch' });
+    submit.focus();
+    expect(document.activeElement).toBe(submit);
+    fireEvent.submit(form);
+    const success = await screen.findByRole('status');
+    expect(success.textContent).toContain('received');
+    expect(document.activeElement).toBe(within(success).getByRole('button', { name: 'Close' }));
     expect(downloadEvents()).toHaveLength(0);
     expect(mocks.gtm).not.toHaveBeenCalled();
     expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();

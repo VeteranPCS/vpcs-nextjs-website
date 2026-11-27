@@ -136,14 +136,18 @@ describe('non-production integrations', () => {
     expect(config.env?.NEXT_PUBLIC_CONCIERGE_ENABLED).toBe('0');
     expect(await config.rewrites?.()).toEqual([]);
     expect(config.images?.maximumRedirects).toBe(0);
-    expect(csp).toContain("connect-src 'self';");
     expect(csp).not.toMatch(/posthog|googletagmanager|google-analytics|vercel-insights|veteranpcs\.my\.salesforce/);
     if (profile === 'mock') {
+      expect(csp).toContain("connect-src 'self';");
       expect(csp).toContain("frame-src 'self';");
+      expect(csp).not.toMatch(/recaptcha|gstatic/);
       expect(csp).not.toContain(sandboxOrigin);
       expect(config.images?.remotePatterns).toEqual([]);
     } else {
-      expect(csp).toContain("frame-src 'self' https://www.youtube-nocookie.com;");
+      expect(csp).toContain("connect-src 'self' https://www.google.com/recaptcha/;");
+      expect(csp).toContain("frame-src 'self' https://www.youtube-nocookie.com https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/;");
+      expect(csp).toContain("https://www.gstatic.com/recaptcha/");
+      expect(csp).not.toContain('https://*.google.com');
       expect(csp).toContain(sandboxOrigin);
       expect(config.images?.remotePatterns).toEqual([{ protocol: 'https', hostname: new URL(sandboxOrigin).hostname }]);
     }

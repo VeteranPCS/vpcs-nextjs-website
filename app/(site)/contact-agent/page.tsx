@@ -1,4 +1,5 @@
 "use client";
+import type { LeadSubmissionFields } from '@/lib/leads/captcha-types';
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ContactAgents from "@/components/ContactAgents/ContactAgent";
@@ -37,7 +38,7 @@ export default function ContactAgentPage() {
   );
   const experiment = useDesktopContactAgentVariant();
 
-  const handleSubmit = async (formData: ContactAgentFormData & { submission_attempt_id: string }): Promise<CustomerSubmitResult> => {
+  const handleSubmit = async (formData: ContactAgentFormData & LeadSubmissionFields): Promise<CustomerSubmitResult> => {
     const fullQueryString = window.location.search;
     const queryParams = new URLSearchParams(fullQueryString);
     const queryState = queryParams.get("state");

@@ -8,7 +8,10 @@ const salesforceImageOrigin = salesforceEnvironment.profile === 'mock' ? '' : sa
 const conciergeFixture = salesforceEnvironment.profile === 'mock' && process.env.VPCS_BROWSER_FIXTURE === '1'
   && process.env.NODE_ENV === 'development' && process.env.VERCEL !== '1';
 const videoFrameOrigin = salesforceEnvironment.profile === 'mock' ? '' : ' https://www.youtube-nocookie.com';
-const nonProductionCsp = `default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: ${salesforceImageOrigin}; font-src 'self' data:; connect-src 'self'; frame-src 'self'${videoFrameOrigin}; worker-src 'self' blob:;`;
+const captchaScripts = salesforceEnvironment.profile === 'mock' ? '' : ' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/';
+const captchaFrames = salesforceEnvironment.profile === 'mock' ? '' : ' https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/';
+const captchaConnections = salesforceEnvironment.profile === 'mock' ? '' : ' https://www.google.com/recaptcha/';
+const nonProductionCsp = `default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'${captchaScripts}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: ${salesforceImageOrigin}; font-src 'self' data:; connect-src 'self'${captchaConnections}; frame-src 'self'${videoFrameOrigin}${captchaFrames}; worker-src 'self' blob:;`;
 
 // Content-Security-Policy, enforced on every route.
 // script-src/style-src keep 'unsafe-inline' because Next.js emits inline
@@ -32,12 +35,12 @@ const siteCsp = `
   object-src 'none';
   form-action 'self';
   frame-ancestors 'self';
-  script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://va.vercel-scripts.com https://us-assets.i.posthog.com https://www.clarity.ms https://*.clarity.ms https://analytics.ahrefs.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://adservice.google.com;
+  script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com https://va.vercel-scripts.com https://us-assets.i.posthog.com https://www.clarity.ms https://*.clarity.ms https://analytics.ahrefs.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://adservice.google.com${captchaScripts};
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob: https://veteranpcs.my.salesforce.com https://lh3.googleusercontent.com https://www.googletagmanager.com https://www.google-analytics.com https://*.clarity.ms https://www.google.com https://*.doubleclick.net https://*.g.doubleclick.net https://pagead2.googlesyndication.com https://www.googleadservices.com;
   font-src 'self' data:;
   connect-src 'self' https://us.i.posthog.com https://us-assets.i.posthog.com https://us.posthog.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://vitals.vercel-insights.com https://*.clarity.ms https://analytics.ahrefs.com https://www.google.com https://*.doubleclick.net https://*.g.doubleclick.net https://www.googleadservices.com https://pagead2.googlesyndication.com https://ade.googlesyndication.com https://cct.google;
-  frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com https://*.doubleclick.net https://*.g.doubleclick.net https://www.googleadservices.com https://www.google.com;
+  frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com https://*.doubleclick.net https://*.g.doubleclick.net https://www.googleadservices.com https://www.google.com https://recaptcha.google.com/recaptcha/;
   worker-src 'self' blob:;
   upgrade-insecure-requests;
 `;
@@ -53,7 +56,9 @@ const partnerHeadshotPaths = ['agents', 'lenders'].flatMap((folder) =>
 const toCspHeaderValue = (csp) => csp.replace(/\s{2,}/g, ' ').trim();
 
 /** @type {import('next').NextConfig} */
+// Keep CLAUDE.md as the single operational guide; next dev must not append a second guide.
 const nextConfig = {
+  agentRules: false,
   distDir: process.env.VPCS_NEXT_DIST_DIR || '.next',
   outputFileTracingIncludes: {
     '/blog/*/{opengraph-image*,twitter-image*}': [

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>VpcsIntakeOrgAccessTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>VPCS_Intake_Org_Identity</members>
+        <members>VPCS_Intake_Org_Roles_Diagnostic</members>
+        <name>PermissionSet</name>
+    </types>
+    <version>67.0</version>
+</Package>

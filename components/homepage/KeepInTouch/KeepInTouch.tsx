@@ -1,4 +1,5 @@
 "use client";
+import { LeadCaptcha } from '@/components/common/LeadCaptcha';
 import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
 import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import React, { useState, useEffect, useCallback } from "react"; // No need for useState or useEffect
@@ -214,6 +215,7 @@ const KeepInTouch = () => {
                   Fields marked with an asterisk (*) are required.
                 </p>
                 <HoneypotField ref={honeypotRef} />
+                <LeadCaptcha control={submission.captcha} />
                 <div className="flex items-center md:pl-0 pl-3 max-w-[390px] mx-auto sm:max-w-full">
                   <div className="w-[200px] flex md:flex-nowrap flex-wrap items-center gap-4">
                     <div className="md:py-8 py-2">

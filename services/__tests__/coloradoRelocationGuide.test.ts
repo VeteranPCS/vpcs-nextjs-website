@@ -1,3 +1,4 @@
+import { stubLeadCaptchaEnv, syntheticCaptchaToken } from './lead-captcha-fixtures';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { coloradoRelocationGuideForm } from '@/services/salesForcePostFormsService';
 import sendToSlack from '@/actions/sendToSlack';
@@ -55,7 +56,7 @@ const acceptedResult = {
   outcome: 'accepted', success: true, submissionId, redirectUrl: '/thank-you',
 } as const;
 
-const valid = { firstName: ' Harper ', lastName: ' Foley ', email: ' guide@example.test ' };
+const valid = { firstName: ' Harper ', lastName: ' Foley ', email: ' guide@example.test ', captchaToken: syntheticCaptchaToken };
 
 function postedBody() {
   expect(fetch).toHaveBeenCalledTimes(1);
@@ -70,6 +71,7 @@ describe('Colorado relocation guide capture', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     stubProductionEnv();
+    stubLeadCaptchaEnv();
     vi.stubEnv('VPCS_LEAD_BINDING_KEY', 'f'.repeat(64));
     vi.mocked(inspectLeadAttempt).mockReset().mockImplementation(async () => {
       await getVerifiedSalesforceSession();

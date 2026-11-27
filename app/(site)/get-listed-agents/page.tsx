@@ -1,4 +1,5 @@
 "use client";
+import { LeadCaptcha } from '@/components/common/LeadCaptcha';
 import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
 import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import { useState } from "react";
@@ -126,7 +127,10 @@ export default function GetListedAgentsPage() {
             onSubmit={submitApplication}
             isSubmitting={submission.submitting}
             blocked={submission.blocked}
-            feedback={<CustomerSubmissionFeedback failure={submission.failure} />}
+            feedback={<>
+              <LeadCaptcha control={submission.captcha} />
+              <CustomerSubmissionFeedback failure={submission.failure} />
+            </>}
           />
         )}
       </div>

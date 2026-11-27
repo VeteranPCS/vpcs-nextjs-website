@@ -1,4 +1,5 @@
 "use client";
+import { LeadCaptcha } from '@/components/common/LeadCaptcha';
 import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
 import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import React, { useState } from "react";
@@ -163,6 +164,7 @@ const DownloadGuideComponent: React.FC<DownloadGuideComponentProps> = ({
                     className="mb-6"
                 >
                     <HoneypotField ref={honeypotRef} />
+                    <LeadCaptcha control={submission.captcha} />
                     <div className="flex flex-col md:flex-row gap-4 mb-4">
                         <div className="flex-1">
                             <input

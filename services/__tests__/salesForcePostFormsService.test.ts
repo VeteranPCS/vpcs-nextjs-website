@@ -1,3 +1,4 @@
+import { stubLeadCaptchaEnv, syntheticCaptchaToken, syntheticCaptchaKeyName } from './lead-captcha-fixtures';
 import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
 import sendToSlack from '@/actions/sendToSlack';
 import {
@@ -104,10 +105,15 @@ const acceptedResult = {
   outcome: 'accepted', success: true, submissionId, redirectUrl: '/thank-you',
 } as const;
 
+const expectedProductionCaptcha = expect.stringMatching(new RegExp(
+    `^\\{"keyname":"${syntheticCaptchaKeyName}","fallback":"false","orgId":"00D4x000003yaV2","ts":"\\d{13}"\\}$`,
+  ));
+
 const queryString = '?form=agent&fn=Jason&id=0014x00000HWTqI&state=colorado';
 
 beforeEach(() => {
   stubProductionEnv();
+  stubLeadCaptchaEnv();
   vi.stubEnv('VPCS_LEAD_BINDING_KEY', 'f'.repeat(64));
   vi.mocked(inspectLeadAttempt).mockReset().mockImplementation(async () => {
     await getVerifiedSalesforceSession();
@@ -131,7 +137,7 @@ describe('accepted customer lead regression boundaries', () => {
   it('returns a recoverable outcome before POST when Salesforce OAuth is unavailable', async () => {
     vi.mocked(getVerifiedSalesforceSession).mockRejectedValue(new Error('Salesforce OAuth unavailable'));
 
-    await expect(contactPostForm({ firstName: 'QA', lastName: 'Contact', email: 'qa@example.test' }))
+    await expect(contactPostForm({ captchaToken: syntheticCaptchaToken, firstName: 'QA', lastName: 'Contact', email: 'qa@example.test' }))
       .resolves.toMatchObject({ success: false, outcome: 'retry_later' });
 
     expect(getVerifiedSalesforceSession).toHaveBeenCalledOnce();
@@ -217,7 +223,7 @@ describe('accepted customer lead regression boundaries', () => {
   });
 
   it('retains partial-context service callers such as Concierge', async () => {
-    await expect(contactLenderPostForm({ firstName: 'QA', email: 'qa@example.com', state: 'CO' }, '')).resolves.toHaveProperty('submissionId');
+    await expect(contactLenderPostForm({ captchaToken: syntheticCaptchaToken, firstName: 'QA', email: 'qa@example.com', state: 'CO' }, '')).resolves.toHaveProperty('submissionId');
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(sendToSlack).toHaveBeenCalledTimes(1);
   });
@@ -237,6 +243,7 @@ describe('accepted customer lead regression boundaries', () => {
 // builders/attribution helper is still exercised exactly as in production.
 function qaPayload(): Record<string, string | undefined> {
   return {
+    captchaToken: syntheticCaptchaToken,
     firstName: 'QA',
     lastName: 'Concierge Test',
     email: 'tech+qa@veteranpcs.com',
@@ -258,6 +265,7 @@ function qaPayload(): Record<string, string | undefined> {
 
 function lenderPayload(): Record<string, string | undefined> {
   return {
+    captchaToken: syntheticCaptchaToken,
     firstName: 'QA',
     lastName: 'Lender Test',
     email: 'tech+lender-qa@veteranpcs.com',
@@ -601,6 +609,7 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
     });
 
     await GetListedAgentsPostForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test',
       lastName: 'Agent',
       email: 'agent@example.com',
@@ -656,12 +665,12 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['00N4x00000LpcDV', 'Agree'],
       ['00N4x00000QPksj', 'Google'],
       ['00N4x00000QPS7V', 'More info here'],
-      ['g-recaptcha-response', ''],
-      ['captcha_settings', ''],
       ['00NRg00000PjSD3MAN', ''],
       ['00NRg00000PjSEfMAN', submissionId],
       ['00N000000000901', ''],
       ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
+      ['g-recaptcha-response', syntheticCaptchaToken],
+      ['captcha_settings', expectedProductionCaptcha],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
@@ -677,6 +686,7 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
     });
 
     await GetListedLendersPostForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test',
       lastName: 'Lender',
       email: 'lender@example.com',
@@ -726,12 +736,12 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['00N4x00000QPIOe', 'CNMLS888'],
       ['00N4x00000QPksj', 'Referral'],
       ['00N4x00000QPS7V', 'Lender details'],
-      ['g-recaptcha-response', ''],
-      ['captcha_settings', ''],
       ['00NRg00000PjSD3MAN', ''],
       ['00NRg00000PjSEfMAN', submissionId],
       ['00N000000000901', ''],
       ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
+      ['g-recaptcha-response', syntheticCaptchaToken],
+      ['captcha_settings', expectedProductionCaptcha],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
@@ -747,6 +757,7 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
     });
 
     await KeepInTouchForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test',
       lastName: 'Keep',
       email: 'keep@example.com',
@@ -763,12 +774,12 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['first_name', 'Test'],
       ['last_name', 'Keep'],
       ['email', 'keep@example.com'],
-      ['g-recaptcha-response', ''],
-      ['captcha_settings', ''],
       ['00NRg00000PjSD3MAN', 'vpcs_test_visitor_1234567890'],
       ['00NRg00000PjSEfMAN', submissionId],
       ['00N000000000901', ''],
       ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
+      ['g-recaptcha-response', syntheticCaptchaToken],
+      ['captcha_settings', expectedProductionCaptcha],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
@@ -786,6 +797,7 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
     });
 
     await contactPostForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test',
       lastName: 'Contact',
       email: 'contact@example.com',
@@ -804,12 +816,12 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['last_name', 'Contact'],
       ['email', 'contact@example.com'],
       ['00N4x00000bfgFA', 'A contact message'],
-      ['g-recaptcha-response', ''],
-      ['captcha_settings', ''],
       ['00NRg00000PjSD3MAN', 'vpcs_test_visitor_1234567890'],
       ['00NRg00000PjSEfMAN', submissionId],
       ['00N000000000901', ''],
       ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
+      ['g-recaptcha-response', syntheticCaptchaToken],
+      ['captcha_settings', expectedProductionCaptcha],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
@@ -827,6 +839,7 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
     });
 
     await vaLoanGuideForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test',
       lastName: 'Va',
       email: 'va@example.com',
@@ -843,12 +856,12 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['first_name', 'Test'],
       ['last_name', 'Va'],
       ['email', 'va@example.com'],
-      ['g-recaptcha-response', ''],
-      ['captcha_settings', ''],
       ['00NRg00000PjSD3MAN', 'vpcs_test_visitor_1234567890'],
       ['00NRg00000PjSEfMAN', submissionId],
       ['00N000000000901', ''],
       ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
+      ['g-recaptcha-response', syntheticCaptchaToken],
+      ['captcha_settings', expectedProductionCaptcha],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
@@ -866,6 +879,7 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
     });
 
     await homebuyerGuideForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test',
       lastName: 'Home',
       email: 'home@example.com',
@@ -882,12 +896,12 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['first_name', 'Test'],
       ['last_name', 'Home'],
       ['email', 'home@example.com'],
-      ['g-recaptcha-response', ''],
-      ['captcha_settings', ''],
       ['00NRg00000PjSD3MAN', 'vpcs_test_visitor_1234567890'],
       ['00NRg00000PjSEfMAN', submissionId],
       ['00N000000000901', ''],
       ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
+      ['g-recaptcha-response', syntheticCaptchaToken],
+      ['captcha_settings', expectedProductionCaptcha],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
@@ -905,6 +919,7 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
     });
 
     await internshipFormSubmission({
+      captchaToken: syntheticCaptchaToken,
       first_name: 'Test',
       last_name: 'Intern',
       email: 'intern@example.com',
@@ -951,12 +966,12 @@ describe('characterization: uncovered Web-to-Lead posted bodies', () => {
       ['00N4x00000QPLQd', 'Long answer d'],
       ['00N4x00000QPksj', 'Google'],
       ['00N4x00000QPS7V', 'Why I want this internship'],
-      ['g-recaptcha-response', ''],
-      ['captcha_settings', ''],
       ['00NRg00000PjSD3MAN', ''],
       ['00NRg00000PjSEfMAN', submissionId],
       ['00N000000000901', ''],
       ['00N000000000902', expect.stringMatching(/^[0-9a-f]{64}$/)],
+      ['g-recaptcha-response', syntheticCaptchaToken],
+      ['captcha_settings', expectedProductionCaptcha],
     ]);
 
     expect(body.get('oid')).toBe('00D4x000003yaV2');
@@ -986,6 +1001,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
   it('GetListedAgentsPostForm: accepted result, exact Slack payload, no conversion capture', async () => {
     accept200();
     const result = await GetListedAgentsPostForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test', lastName: 'Agent', email: 'agent@example.com', phone: '8035550100',
       // The get-listed Slack message is sourced from `tellusMore` (the form's free-text field),
       // NOT `additionalComments`. Sending a distinct value in each pins that routing.
@@ -1009,6 +1025,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
   it('GetListedLendersPostForm: accepted result, exact Slack payload, no conversion capture', async () => {
     accept200();
     const result = await GetListedLendersPostForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test', lastName: 'Lender', email: 'lender@example.com', phone: '8035550100',
       // The get-listed Slack message is sourced from `tellusMore` (the form's free-text field),
       // NOT `additionalComments`. Sending a distinct value in each pins that routing.
@@ -1032,6 +1049,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
   it('internshipFormSubmission: accepted result, empty Slack message, no conversion capture', async () => {
     accept200();
     const result = await internshipFormSubmission({
+      captchaToken: syntheticCaptchaToken,
       first_name: 'Test', last_name: 'Intern', email: 'intern@example.com', mobile: '8035550100',
     });
 
@@ -1051,6 +1069,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
   it('KeepInTouchForm: accepted result, Slack payload, capture keep_in_touch', async () => {
     accept200();
     const result = await KeepInTouchForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test', lastName: 'Keep', email: 'keep@example.com', phone: '8035550100',
     });
 
@@ -1076,6 +1095,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
   it('contactPostForm: accepted result, Slack message carries the comment, capture contact_form', async () => {
     accept200();
     const result = await contactPostForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
       additionalComments: 'A contact message',
     });
@@ -1102,6 +1122,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
   it('vaLoanGuideForm: accepted result, Slack payload, capture with guideId', async () => {
     accept200();
     const result = await vaLoanGuideForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test', lastName: 'Va', email: 'va@example.com', phone: '8035550100',
     });
 
@@ -1127,6 +1148,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
   it('homebuyerGuideForm: accepted result, Slack payload, capture with guideId', async () => {
     accept200();
     const result = await homebuyerGuideForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test', lastName: 'Home', email: 'home@example.com', phone: '8035550100',
     });
 
@@ -1154,7 +1176,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
     ['agent listing', GetListedAgentsPostForm, { tellusMore: 'More info here' }],
   ] as const)('rejects the %s honeypot without POST, notice or conversion', async (_name, submit, details) => {
     vi.mocked(evaluateLeadSpam).mockResolvedValueOnce({ decision: 'reject', quarantine: true, reasons: ['honeypot'] });
-    await expect(submit({ firstName: 'Test', lastName: 'QA', email: 'contact@example.com', ...details }))
+    await expect(submit({ captchaToken: syntheticCaptchaToken, firstName: 'Test', lastName: 'QA', email: 'contact@example.com', ...details }))
       .resolves.toMatchObject({ outcome: 'rejected' });
     expect(fetch).not.toHaveBeenCalled();
     expect(sendToSlack).not.toHaveBeenCalled();
@@ -1165,7 +1187,7 @@ describe('characterization: observable contract for the seven simpler forms', ()
   it('does not send Slack or count a conversion after an unconfirmed POST', async () => {
     mockSalesforceResponse('server error', { status: 500 });
     vi.mocked(reconcileLeadAttempt).mockResolvedValueOnce(false);
-    await expect(contactPostForm({ firstName: 'Test', lastName: 'Contact', email: 'contact@example.com' }))
+    await expect(contactPostForm({ captchaToken: syntheticCaptchaToken, firstName: 'Test', lastName: 'Contact', email: 'contact@example.com' }))
       .resolves.toMatchObject({ outcome: 'unconfirmed' });
     expect(fetch).toHaveBeenCalledOnce();
     expect(sendToSlack).not.toHaveBeenCalled();
@@ -1251,6 +1273,7 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     selectLocalDryRun();
 
     const result = await KeepInTouchForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test', lastName: 'Touch', email: 'touch@example.com', phone: '8035550100',
     });
 
@@ -1266,6 +1289,7 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     accept200();
 
     const result = await contactPostForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
       additionalComments: 'A contact message',
     });
@@ -1281,6 +1305,7 @@ describe('LEAD_DRY_RUN lead-submit dry run', () => {
     accept200();
 
     const result = await contactPostForm({
+      captchaToken: syntheticCaptchaToken,
       firstName: 'Test', lastName: 'Contact', email: 'contact@example.com', phone: '8035550100',
       additionalComments: 'A contact message',
     });
@@ -1349,6 +1374,7 @@ describe('Salesforce WebDev form transport', () => {
   const action = 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8';
   const sandboxOrigin = 'https://veteranpcs--webdev.sandbox.my.salesforce.com';
   const fixtureLead = {
+    captchaToken: syntheticCaptchaToken,
     firstName: '[VPCS WEBDEV TEST] Sample', first_name: '[VPCS WEBDEV TEST] Sample',
     lastName: 'Fixture', last_name: 'Fixture', email: 'qa@example.test',
     phone: '(202) 555-0101', mobile: '202-555-0101', state: 'CO',
@@ -1361,6 +1387,7 @@ describe('Salesforce WebDev form transport', () => {
     vi.stubEnv('VERCEL', undefined);
     vi.stubEnv('VERCEL_ENV', undefined);
     vi.stubEnv('VPCS_SALESFORCE_PROFILE', 'webdev');
+    stubLeadCaptchaEnv('webdev');
     vi.stubEnv('VPCS_SALESFORCE_ORG_ID', fixtureOrgId);
     vi.stubEnv('VPCS_SALESFORCE_METADATA_JSON', JSON.stringify({ ...mockManifest, orgId: fixtureOrgId }));
     vi.stubEnv('SALESFORCE_LOGIN_BASE_URL', sandboxOrigin);

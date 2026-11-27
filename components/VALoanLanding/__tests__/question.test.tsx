@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import React from 'react';
+import { renderWithCaptchaOff as render } from '@/components/common/__tests__/render-with-captcha-off';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 const action=vi.hoisted(()=>vi.fn());
 vi.mock('@/services/salesForcePostFormsService',()=>({contactPostForm:action}));
 vi.mock('@/lib/analytics/client',()=>({formTrackingPayload:()=>({vpcs_attribution:'retained'}),trackFormStarted:vi.fn(),trackFormSubmitAttempted:vi.fn(),trackFormValidationFailed:vi.fn(),trackFormSubmissionFailed:vi.fn()}));
