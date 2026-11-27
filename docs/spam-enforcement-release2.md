@@ -1,12 +1,11 @@
 # Release 2 native CAPTCHA restoration
 
-Status November 27, 2026: implementation and offline verification passed at `2e62354` in draft
-PR #245. Release 1 is live; no CAPTCHA Production setting has changed. The separate Google
-sandbox checkbox key is registered in WebDev and mandatory native verification is enabled.
-Native positive, missing, malformed, reused and expired token controls passed. The first
-protected Preview control exposed delayed native persistence; its bounded confirmation fix
-and a fresh ten-form Preview batch are pending exact-head verification.
-Do not interpret these instructions or passing mocked tests as provider evidence.
+Status November 27, 2026. Release 1 remains live in Production. In WebDev, mandatory native
+verification, the direct token controls, the genuine mobile image challenge and all ten
+protected Preview forms passed. Test records were closed and capture was restored. The
+read-only replacement build, alias restoration, write-enabled deployment retirement and
+temporary grant revocation are verified. Final review, Production activation and its
+separately bounded canary are still pending.
 
 ## Architecture and configuration
 
@@ -67,8 +66,8 @@ or inject a fake token to turn a rehearsal result green.
    submissions. Ordinary Preview remains writes-off. Native CAPTCHA verification is independent
    of the mocked-provider browser tests; neither may substitute for the other.
 4. Pass all ten real website form persistence controls and direct missing/invalid/expired/reused
-   token negatives. Test a real interactive image challenge inside the native guide/newsletter
-   dialog: a provider iframe outside the dialog may be obscured by the browser's top layer.
+   token negatives. Test a real interactive image challenge in the guide/newsletter overlay, including keyboard focus in the separate provider iframe
+   and its return to the form.
    Test expiry, failed script loading, per-widget isolation, retry and uncertain outcomes.
 5. Complete lint, type-check, Vitest, mock build/start, browser checks and immutable patch review.
    Validate any changed Salesforce metadata in WebDev and Production with affected native tests;
@@ -94,15 +93,16 @@ current [Google billing rules](https://docs.cloud.google.com/recaptcha/docs/bill
 10,000 assessments per organization are free, then $8 through 100,000, then $1 per 1,000.
 No new billing account, paid subscription or alert was created. With active billing, the free
 allowance is a pricing threshold; it does not stop verification. Before Production activation,
-confirm billing remains active and record Tech's monitoring and intake-hold response for billing
-loss, provider/quota errors or unexpected spend. Shared usage informs cost forecasting, not an
-invented functional dependency on the remaining free allowance.
+confirm billing remains active. Tech manually checks provider errors, assessment volume and billing
+daily during launch week. No monitoring automation was created. Hold intake on billing loss,
+provider quota errors or unexpected spend. Keep Release 1 enforcement active during any hold or
+rollback.
 
 For projects without active billing, Google documents different over-quota behavior for legacy
 SiteVerify and CreateAssessment; SiteVerify can return success with an over-quota error. Salesforce's fallback setting documents
 Google server unavailability, not this quota response. Do not claim an untested quota behavior.
-Keep Release 1 enforcement active, record a pre-limit alert and intake-hold procedure, and obtain
-approval before adding billing or spend beyond existing authorization. [Google quotas](https://docs.cloud.google.com/recaptcha/quotas)
+Keep Release 1 enforcement active and obtain approval before changing billing or adding spend
+beyond existing authorization. [Google quotas](https://docs.cloud.google.com/recaptcha/quotas)
 
 ## Evidence ledger
 
@@ -113,8 +113,6 @@ approval before adding billing or spend beyond existing authorization. [Google q
 - Six loopback viewport checks used an intercepted provider, aborted every form POST, and a
   WebDev server with writes disabled. Narrow-mobile and desktop additionally proved uncertainty
   remains locked after another challenge, and no horizontal overflow.
-- Native Google/Salesforce verification, protected Preview, modal image challenge, quota controls,
-  Production validation/cutover and controlled Production canary remain **pending**.
 
 Google key `6LcAeDUuAAAAAKk2NQG1JtCVXwp7aD8gvaOF9xke` is the public WebDev site key;
 it uses domain verification, a Balanced checkbox challenge, and no fixed-score test mode.
@@ -123,23 +121,21 @@ The real classic `api.js` widget loaded on a write-disabled WebDev loopback serv
 proved that native modal top-layer inertness blocks such frames. The guide/newsletter now uses
 an overlay with explicit background inertness, leaving only the provider's challenge container
 interactive. Narrow-mobile and desktop tests cover simulated provider focus transfer, Tab wrapping,
-pending-action close prevention, Escape/backdrop restoration and accepted-state focus. Actual
-Google image challenge/focus verification remains pending. No challenge was solved and no Lead
-was submitted in the placement check.
+pending-action close prevention, Escape/backdrop restoration and accepted-state focus. The initial placement check stopped before solving a challenge or submitting a Lead. The
+later protected Preview exercised the genuine image challenge and is recorded below.
 
 Do not commit raw provider tokens, secrets or personal fixture exports. Private R2 evidence is
 under `/private/tmp/vpcs-spam-ops/`; the independent R2 worktree is `/private/tmp/vpcs-spam-release2`.
 
-### Native and hosted checkpoint — November 27
+### Initial native and hosted checks — November 27
 
 - User saved the WebDev key pair `vpcs_webdev_web_to_lead`. Native generated HTML verified
   the sandbox org, public site key and `fallback: "false"`. WebDev's **Require reCAPTCHA
   Verification** was enabled and read back checked. The real Google checkbox succeeded on
-  loopback; no image puzzle was presented, so image/focus verification remains open.
+  loopback without presenting an image puzzle.
 - Direct missing-token and malformed-token controls each returned HTTP 200 but persisted zero
-  matching Leads and zero SMS/reminder captures over bounded readback. They still need the
-  valid-token positive control before the native configuration is considered fully verified.
-  A filled website Contact Form with no challenge displayed the required-verification prompt;
+  matching Leads and zero SMS/reminder captures over bounded readback. The valid-token, reuse
+  and expiry controls were completed separately below. A filled website Contact Form with no challenge displayed the required-verification prompt;
   its marked Lead count was independently zero. It was not resubmitted.
 - Existing WebDev admission, email-policy and uniqueness tests passed **11/11**, test run
   `707jg000000bPJb`, with 86% test-run coverage. This release has no Apex source changes.
@@ -147,11 +143,11 @@ under `/private/tmp/vpcs-spam-ops/`; the independent R2 worktree is `/private/tm
   Mandatory hooks passed 1,813 tests (four skipped), lint/type-check and the offline 1,070-page
   build. A normal merge preserving the workflow branch's ancestry produced `87d26fb0d700039f218084c3932187910127b3e3`
   with the exact same source tree; no force-push was used.
-- Protected read-only Preview `dpl_9wUF7GhXEFHEgC7xL2j383Q8Ht7d` is Ready and serves
-  `test.veteranpcs.com`. Both the alias and immutable host returned anonymous 302 to Vercel SSO,
+- Protected read-only Preview `dpl_9wUF7GhXEFHEgC7xL2j383Q8Ht7d` was Ready and served
+  `test.veteranpcs.com` in the initial read-only window. Both the alias and immutable host returned anonymous 302 to Vercel SSO,
   authenticated GET 200 with the matching build fingerprint, WebDev public key and Google CSP,
   and authenticated inert POST 403. The real hosted widget rendered. Writes and isolation
-  flags remain zero; no hosted submission window or firewall exception was opened.
+  flags were zero during that read-only check.
 - Production read-only form generation verified existing key `vpcs_web_to_lead` against
   `6LefJ34qAAAAAC-vRBXnAILucN5kp3pHjmLgTJdW` and org `00D4x000003yaV2`. Its native requirement
   remains unchecked. Automatic Production domain assignment is still disabled and Skew
@@ -167,8 +163,8 @@ under `/private/tmp/vpcs-spam-ops/`; the independent R2 worktree is `/private/tm
   captures. The direct positive was closed. These controls pair with the earlier native
   missing/malformed negatives; HTTP 200 was never used as acceptance evidence.
 - The genuine hosted Google checkbox and keyboard return to the guide form worked. Google
-  offered no image puzzle in those controls. Actual modal image-challenge verification remains
-  pending; the simulated provider focus tests are separate evidence.
+  offered no image puzzle in those initial controls. The later protected Preview produced
+  a real image challenge; the simulated provider focus tests remain separate evidence.
 - A fresh protected Preview from workflow `87d26fb` was built with bounded capture-only
   controls. The first firewall draft did not deny stale header/query pins: actual read-only
   HTML/RSC comparisons proved Vercel selected older artifacts. All historical workflow write
@@ -180,17 +176,48 @@ under `/private/tmp/vpcs-spam-ops/`; the independent R2 worktree is `/private/tm
   returned HTTP 200 at 22:10:03.720 UTC; the exact UUID/hash Lead persisted at 22:10:11 UTC,
   correctly owned by Beth with one routing setup Task and zero SMS. The earlier four-read
   cadence could finish before this 7.28-second delay. A later scoped reconciliation confirmed
-  the existing reference without another native POST or notification claim. This is a failed
-  browser acceptance control, not a completed ten-form pass.
+  the existing reference without another native POST or notification claim. The exact late-persisted fixture was closed and its original failed-browser receipt retained.
 - The fix retains the initial fast reads and adds two later exact reads under a 15-second
   ceiling. Fake-clock controls cover visibility after 7.28 and 9 seconds, bounded absence,
-  cancellation, and no resend. Independent focused regression passed 433 tests. Full hooks,
-  fresh hosted verification and immutable review remain required for the changed source.
+  cancellation, and no resend. Independent focused regression passed 433 tests. The final
+  candidate checks and fresh hosted batch are recorded below.
 - The original alternate-host POST hold was restored, the six temporary branch controls were
   removed, and `test.veteranpcs.com` was returned to the prior writes-off artifact before the
   new build. Skew Protection and Production settings were not changed.
 
-Remaining gates: exact-head delayed-persistence regression and a fresh protected Preview build,
-real modal image challenge, ten-form protected Preview matrix, cleanup,
-final immutable review, coordinated Production activation and the separately bounded canary.
-Do not promote or mark Release 2 complete from this checkpoint.
+### Delayed-persistence candidate and final WebDev batch — November 27
+
+- Exact source `acb5a3f74ecd71d4b15d953cf94c78146b938472` passed mandatory hooks with
+  1,816 tests, four skipped, type-check, lint with two existing warnings and the offline
+  1,070-route build. Remote CI run `46075561443` and Semgrep scan `279259821` passed.
+  Workflow revision `77ee547` has the identical source tree.
+- Protected write Preview `dpl_C1t1KB9f7Ax52S53PnsYrLHuFaAP` accepted all ten website forms in
+  the browser. Independent readback verified ten exact Leads and attempts, two Tasks, zero SMS
+  rows and zero native SMS/reminder captures. The private record is
+  `release2-native-window/preview02/readback-20261127224159318.private.json`.
+- At 360 × 780, an actual Google image challenge accepted pointer tile selection and keyboard
+  activation of Verify. Focus returned to the form and Tab reached First name. The exact VA guide
+  Lead persisted. A separately observed natural expiry stopped before claim.
+- The first internship readback flagged a missing expected fixture value. The actual
+  DesiredLocation was CO, matching the selected form value. Correcting the private expectation
+  from null to CO left the wire and original failed comparison intact. No additional POST ran.
+- The WAF policy was restored and six temporary branch variables removed. Ten synthetic Leads
+  were closed as Duplicate and both Tasks were completed. Native baseline capture restoration
+  succeeded as deployment `0Afjg00000055OrCAI`.
+- Cleanup readback preserved all ten confirmed attempt receipts, found zero pending SMS,
+  and matched both synthetic partner contact snapshots and all 28 schedule definitions to
+  preflight. Tech's temporary `VPCS_Intake_Policy_Operator` assignment was revoked and checked
+  absent. Ten exact Preview requests each recorded a captured Slack notification; the error
+  log scan found no errors during the test window.
+- Read-only replacement `dpl_AjFZsbx1Z3LbBZrLrxMircS5Cs8a` was built from the same workflow
+  source without the temporary test-window controls. Its immutable URL and restored
+  `test.veteranpcs.com` alias returned anonymous SSO redirects, authenticated GET 200 with
+  the exact build/key/CSP, and authenticated POST 403. The former write-enabled deployment
+  `dpl_C1t1KB9f7Ax52S53PnsYrLHuFaAP` was retired after its aliases moved.
+- The evidence-commit hook exposed a test race between the success render and React's focus
+  effect. Four asynchronous assertions now wait for the same exact focused element; no
+  runtime behavior changed. Focused tests passed 14/14 and the full suite passed 1,816 tests
+  with four skips before the mandatory commit hook rerun.
+
+Remaining gates are final immutable review and coordinated Production activation with a
+separately bounded canary. Release 2 excludes routing and working-hours changes.

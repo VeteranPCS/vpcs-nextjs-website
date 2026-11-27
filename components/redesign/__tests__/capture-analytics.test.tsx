@@ -58,7 +58,7 @@ describe('guide capture analytics', () => {
     if (!finish) throw new Error('Expected pending submission');
     finish({ success: true, outcome: 'accepted' });
     await screen.findByRole('status');
-    expect(document.activeElement).toBe(screen.getByRole('link', { name: colorado ? 'Find a Colorado Agent' : 'Download guide' }));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('link', { name: colorado ? 'Find a Colorado Agent' : 'Download guide' })));
     expect(downloadEvents().map(([event]) => event)).toEqual(['guide_download_requested', 'guide_download_started']);
     expect(mocks.gtm).toHaveBeenCalledExactlyOnceWith({ event: 'conversion_download', content: gaContent });
     expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(1);
@@ -168,7 +168,7 @@ describe('guide capture analytics', () => {
     expect(screen.getByRole('link', { name: 'Download again' }).classList.contains('steph-button')).toBe(false);
     const contact = screen.getByRole('link', { name: 'Contact Tyler' });
     expect(contact.classList.contains('steph-button')).toBe(true);
-    expect(document.activeElement).toBe(contact);
+    await waitFor(() => expect(document.activeElement).toBe(contact));
     expect(window.location.pathname).toBe('/colorado');
     expect(contact.getAttribute('href')).toBe('/contact-agent?form=agent&fn=Tyler&id=001Rg00000pmUUk&state=colorado');
     // Prevent jsdom navigation after exercising the link's normal click handler.
@@ -186,7 +186,7 @@ describe('guide capture analytics', () => {
     await screen.findByRole('status');
     const contact = screen.getByRole('link', { name: 'Find a Colorado Agent' });
     expect(contact.getAttribute('href')).toBe('/contact-agent?form=agent&state=colorado');
-    expect(document.activeElement).toBe(contact);
+    await waitFor(() => expect(document.activeElement).toBe(contact));
     expect(screen.queryByRole('link', { name: 'Contact Tyler' })).toBeNull();
   });
 
@@ -199,7 +199,7 @@ describe('guide capture analytics', () => {
     fireEvent.submit(form);
     const success = await screen.findByRole('status');
     expect(success.textContent).toContain('received');
-    expect(document.activeElement).toBe(within(success).getByRole('button', { name: 'Close' }));
+    await waitFor(() => expect(document.activeElement).toBe(within(success).getByRole('button', { name: 'Close' })));
     expect(downloadEvents()).toHaveLength(0);
     expect(mocks.gtm).not.toHaveBeenCalled();
     expect(HTMLAnchorElement.prototype.click).not.toHaveBeenCalled();
