@@ -3,7 +3,10 @@ import { salesForceIntakeAPI, type SalesforceIntakeOperation } from '@/services/
 
 type RequestBody = { emailHash?: string; attemptId?: string; payloadHash?: string; denyDispatch?: boolean };
 const INTAKE_CALL_MS = 5_000;
-const INTAKE_RECONCILE_MS = 8_000;
+const INTAKE_RECONCILE_MS = 15_000;
+// Web-to-Lead can acknowledge before the Lead becomes queryable. Keep the
+// initial fast checks and leave time for a late commit and a final RPC.
+const RECONCILE_READ_GAPS_MS = [0, 350, 1_000, 2_000, 4_000, 4_000];
 const INTAKE_NOTIFICATION_MS = 2_000;
 
 export class LeadAttemptConflictError extends Error {
@@ -76,7 +79,7 @@ export async function claimLeadAttempt(attemptId: string, payloadHash: string, e
 
 export async function reconcileLeadAttempt(attemptId: string, payloadHash: string, parent?: AbortSignal): Promise<boolean> {
     return withinDeadline(INTAKE_RECONCILE_MS, parent, async signal => {
-        for (const delay of [0, 350, 1_000, 2_000]) {
+        for (const delay of RECONCILE_READ_GAPS_MS) {
             if (delay) await waitForNextRead(delay, signal);
             const result = await callIntake('reconcile', { attemptId, payloadHash }, signal);
             if (typeof result.confirmed !== 'boolean') throw new Error('Invalid intake reconciliation response');
