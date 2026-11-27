@@ -32,6 +32,16 @@ Use `getSalesforceConfig()` and the selected org manifest for runtime record typ
 
 For real lead intake, bind the server-only `VPCS_SALESFORCE_INTAKE_CLIENT_ID`, `VPCS_SALESFORCE_INTAKE_CLIENT_SECRET`, and `VPCS_SALESFORCE_INTAKE_USER_ID` to the approved org and expected `005` run-as user. WebDev may explicitly reuse the restricted workflow app. Production requires a dedicated OAuth client and a separate nonadmin identity with `VPCS_Intake_API`. Missing or invalid intake settings fail closed with no directory fallback. The website uses the intake session only for the five admission operations. Directory REST keeps its existing authentication.
 
+The minimum API-only profile can authenticate while denying the Organization query. Do not remove
+that identity check or fall back to the directory session. Use the reviewed
+[intake org-access package](../../../salesforce/spam-intake/identity-access/README.md) and its
+WebDev diagnostic to establish the needed setup-read scope. `ViewSetup`/`ViewRoles` expose setup
+and role configuration; they are broader than reading two Organization fields. Obtain the scoped
+Production access approval when the existing authorization does not cover them, then verify the
+actual OAuth session and direct CRM/private-object denials. The permission-set license is an
+entitlement, not a substitute for explicit permissions. Keep the org-read set separate from the
+intake API grant and exclude the sandbox diagnostic sets/test from the Production package.
+
 Before real intake writes, verify that the actual intake token binds to the approved user, passes the exact Organization query and reaches the scoped Apex endpoint. In WebDev, verify denial for the blocklist and attempt objects and for the Lead honeypot and submission-hash fields. The workflow app retains limited Lead readback for the rehearsal harness. In Production, verify the dedicated identity is denied direct CRM and private-object access. Verify separately that the ordinary Preview principal is denied the Apex intake endpoint. Record the identity, scope and denial evidence without printing tokens or credentials. Follow the [lead admission runbook](../../../docs/spam-enforcement-release1.md#org-and-website-release-gates).
 
 ## Real sandbox and protected Preview tests
