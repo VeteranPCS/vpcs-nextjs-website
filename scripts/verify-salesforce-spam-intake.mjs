@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { projectRoot } from './lib/next-environment.mjs';
-import { connectSandbox, loadSandboxSettings } from './lib/salesforce-sandbox.mjs';
+import { connectSandboxIntake, loadSandboxSettings } from './lib/salesforce-sandbox.mjs';
 import { assertSameOrganization, createSalesforceCli, sameSalesforceId } from '../salesforce/routing-migration/salesforce-cli-adapter.mjs';
 
 const marker = '[VPCS WEBDEV TEST]';
@@ -39,12 +39,9 @@ async function expectSingleWinner(responses, operation) {
 }
 
 async function verifyPrivateFields(session) {
-    for (const [field, object] of [
-        ['Id', 'Vpcs_Blocked_Email__c'], ['Id', 'Vpcs_Intake_Attempt__c'],
-        ['Honeypot__c', 'Lead'], ['VPCS_Submission_Hash__c', 'Lead'],
-    ]) {
+    for (const probe of ['blocklist', 'attempts', 'honeypot', 'submissionHash']) {
         // Exercise object/field authorization without requesting a real customer's row.
-        const response = await session.request(`/query?q=${encodeURIComponent(`SELECT ${field} FROM ${object} WHERE Id = null LIMIT 1`)}`);
+        const response = await session.probeIntakeRead(probe);
         const errors = await response.json();
         check((response.status === 400 || response.status === 403 || response.status === 404) && Array.isArray(errors) &&
             errors.length > 0 && errors.every(error => deniedQueryCodes.has(error.errorCode)), 'Website OAuth principal retained an unexpected intake-object or field permission.');
@@ -75,7 +72,9 @@ async function main() {
     const settings = loadSandboxSettings();
     const { runId, verify } = verifyWindow(settings.config, settings.env);
     const operator = createSalesforceCli('vpcs-webdev');
-    const [first, second, org] = await Promise.all([connectSandbox(settings), connectSandbox(settings), operator.getOrganization()]);
+    const [first, second, org] = await Promise.all([
+        connectSandboxIntake(settings), connectSandboxIntake(settings), operator.getOrganization(),
+    ]);
     assertSameOrganization({ id: first.config.orgId, isSandbox: true }, org);
     check(first.fingerprint === second.fingerprint, 'Website OAuth sessions do not match the same WebDev profile.');
     const folder = join(projectRoot, 'artifacts', 'salesforce', 'webdev', first.fingerprint.slice(0, 12), 'spam-contract');

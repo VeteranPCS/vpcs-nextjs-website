@@ -5,7 +5,7 @@ import {
     invalidateSalesforceToken,
     type SalesforceTokenSnapshot,
 } from "@/services/salesForceTokenService";
-import { SalesforceConfigurationError } from "@/lib/salesforce/environment.mjs";
+import { SalesforceConfigurationError, resolveSalesforceIntakeAuth, validateSalesforceRequestUrl } from "@/lib/salesforce/environment.mjs";
 import { requestMockSalesforce } from "@/lib/salesforce/mock-transport";
 import { assertSalesforceRequestUrl, getSalesforceConfig } from "@/lib/salesforce/server-config";
 import { SalesforceTokenError } from "@/lib/salesforce/token-error";
@@ -116,18 +116,22 @@ export const api = async ({
 };
 // ***** end - Api function for calling any type of APIs *****
 
-function prepareSalesforceRequest(params: ApiParams) {
-    const config = getSalesforceConfig();
-    const url = assertSalesforceRequestUrl(params.endpoint, config);
+function prepareSalesforceRequest(params: ApiParams, purpose?: 'intake') {
+    const baseConfig = getSalesforceConfig();
+    const url = purpose === 'intake'
+        ? validateSalesforceRequestUrl(params.endpoint, baseConfig, purpose)
+        : assertSalesforceRequestUrl(params.endpoint, baseConfig);
     const isRead = params.type === RequestType.GET;
     const isMutation = params.type === RequestType.POST || params.type === RequestType.PUT
         || params.type === RequestType.PATCH || params.type === RequestType.DELETE;
     if (!isRead && !isMutation) {
         throw new SalesforceConfigurationError('Unsupported Salesforce REST request method.');
     }
-    if (isMutation && config.profile === 'webdev' && !config.allowSandboxWrites) {
+    if (isMutation && baseConfig.profile === 'webdev' && !baseConfig.allowSandboxWrites) {
         throw new SalesforceConfigurationError('Salesforce REST writes are disabled for this deployment.');
     }
+    const config = purpose === 'intake' && baseConfig.profile !== 'mock'
+        ? resolveSalesforceIntakeAuth(baseConfig).config : baseConfig;
     return { config, url };
 }
 
@@ -177,9 +181,10 @@ async function requestSalesforceAPI(
     }
 }
 
-function waitForSalesforceSession(signal?: AbortSignal, rejectedGeneration?: number): Promise<SalesforceTokenSnapshot> {
+function waitForSalesforceSession(signal?: AbortSignal, rejectedGeneration?: number, purpose?: 'intake'): Promise<SalesforceTokenSnapshot> {
     signal?.throwIfAborted();
-    const session = getSalesforceTokenSnapshot(rejectedGeneration === undefined ? undefined : { rejectedGeneration });
+    const options = rejectedGeneration === undefined ? undefined : { rejectedGeneration };
+    const session = getSalesforceTokenSnapshot(purpose ? { ...options, purpose } : options);
     if (!signal) return session;
 
     return new Promise((resolve, reject) => {
@@ -190,12 +195,13 @@ function waitForSalesforceSession(signal?: AbortSignal, rejectedGeneration?: num
     });
 }
 
-async function requestWithoutRetry(params: BoundedSalesforceRequest, image = false): Promise<AxiosResponse> {
-    const target = prepareSalesforceRequest(params);
+async function requestWithoutRetry(params: BoundedSalesforceRequest, image = false, purpose?: 'intake'): Promise<AxiosResponse> {
+    params.signal?.throwIfAborted();
+    const target = prepareSalesforceRequest(params, purpose);
     params.signal?.throwIfAborted();
     if (target.config.profile === 'mock') return requestMockSalesforce(target.url, params.type, image);
 
-    const session = await waitForSalesforceSession(params.signal);
+    const session = await waitForSalesforceSession(params.signal, undefined, purpose);
     params.signal?.throwIfAborted();
     const response = await requestSalesforceAPI(params, target, session, image);
     if (response.status === 401) invalidateSalesforceToken(session.generation);
@@ -203,6 +209,26 @@ async function requestWithoutRetry(params: BoundedSalesforceRequest, image = fal
 }
 
 export const salesForceAPI = (params: BoundedSalesforceRequest): Promise<AxiosResponse> => requestWithoutRetry(params);
+
+export type SalesforceIntakeOperation = 'policy' | 'inspect' | 'claim' | 'reconcile' | 'notification';
+
+export async function salesForceIntakeAPI(
+    operation: SalesforceIntakeOperation,
+    data: Record<string, unknown>,
+    signal?: AbortSignal,
+): Promise<AxiosResponse> {
+    // Check the operation before interpolation, including for untyped callers.
+    if (!['policy', 'inspect', 'claim', 'reconcile', 'notification'].includes(operation)) {
+        throw new SalesforceConfigurationError('Unsupported Salesforce intake operation.');
+    }
+    const { restOrigin } = getSalesforceConfig();
+    return requestWithoutRetry({
+        endpoint: `${restOrigin}/services/apexrest/vpcs/intake/v1/${operation}`,
+        type: RequestType.POST,
+        data,
+        signal,
+    }, false, 'intake');
+}
 
 export const salesForceImageAPI = (params: ApiParams): Promise<AxiosResponse> => requestWithoutRetry(params, true);
 

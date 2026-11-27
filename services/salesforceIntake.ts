@@ -1,8 +1,6 @@
 import 'server-only';
-import { RequestType, salesForceAPI } from '@/services/api';
-import { getSalesforceConfig } from '@/lib/salesforce/server-config';
+import { salesForceIntakeAPI, type SalesforceIntakeOperation } from '@/services/api';
 
-type Operation = 'policy' | 'inspect' | 'claim' | 'reconcile' | 'notification';
 type RequestBody = { emailHash?: string; attemptId?: string; payloadHash?: string; denyDispatch?: boolean };
 const INTAKE_CALL_MS = 5_000;
 const INTAKE_RECONCILE_MS = 8_000;
@@ -40,14 +38,9 @@ function waitForNextRead(milliseconds: number, signal: AbortSignal): Promise<voi
 }
 
 /** These POSTs never retry automatically; a lost claim response must stay uncertain. */
-async function callIntake(operation: Operation, body: RequestBody, parent?: AbortSignal): Promise<Record<string, unknown>> {
-    const config = getSalesforceConfig();
-    const response = await withinDeadline(operation === 'notification' ? INTAKE_NOTIFICATION_MS : INTAKE_CALL_MS, parent, signal => salesForceAPI({
-        endpoint: `${config.restOrigin}/services/apexrest/vpcs/intake/v1/${operation}`,
-        type: RequestType.POST,
-        data: body,
-        signal,
-    }));
+async function callIntake(operation: SalesforceIntakeOperation, body: RequestBody, parent?: AbortSignal): Promise<Record<string, unknown>> {
+    const response = await withinDeadline(operation === 'notification' ? INTAKE_NOTIFICATION_MS : INTAKE_CALL_MS,
+        parent, signal => salesForceIntakeAPI(operation, body, signal));
     if (operation !== 'policy' && response.status === 409 && response.data && typeof response.data === 'object' &&
         !Array.isArray(response.data) && response.data.code === 'attempt_conflict') {
         throw new LeadAttemptConflictError();

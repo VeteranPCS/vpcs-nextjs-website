@@ -9,7 +9,7 @@ import intakeMappings from '../config/salesforce/intake.json' with { type: 'json
 import { validateWebToLeadTarget } from '../lib/salesforce/environment.mjs';
 import { assertSameOrganization, createSalesforceCli, sameSalesforceId } from '../salesforce/routing-migration/salesforce-cli-adapter.mjs';
 import { projectRoot } from './lib/next-environment.mjs';
-import { connectSandbox, loadSandboxSettings } from './lib/salesforce-sandbox.mjs';
+import { connectSandboxIntake, loadSandboxSettings } from './lib/salesforce-sandbox.mjs';
 
 const targetOrg = 'vpcs-webdev';
 const webdevOrg = '00Djg000000EK8YEAW';
@@ -157,7 +157,7 @@ async function main() {
     const cutoff = new Date().toISOString();
     verifyWindow(settings, runId);
     const operator = createSalesforceCli(targetOrg);
-    const [session, organization] = await Promise.all([connectSandbox(settings), operator.getOrganization()]);
+    const [session, organization] = await Promise.all([connectSandboxIntake(settings), operator.getOrganization()]);
     assertSameOrganization({ id: webdevOrg, isSandbox: true }, organization);
     const fields = await resolveFields(config);
     const policy = (emailHash) => session.postIntake('policy', { emailHash });

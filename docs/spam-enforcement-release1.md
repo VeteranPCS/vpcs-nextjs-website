@@ -4,8 +4,9 @@ Status on November 26, 2026. The admission package and submission-ID uniqueness 
 Salesforce WebDev. The ten live form controls, 11-case routing rehearsal, native claim and
 notification arbitration, and 22 direct backstop cases reconciled. Both read-only Previews
 were checked. WebDev retired the legacy exact-match rule after blocklist reconciliation. The
-post-retirement set of 22 direct rejection controls also passed. Protected Preview writes and Production gates remain
-open. The [proposal](spam-enforcement-plan.md) covers the original
+post-retirement set of 22 direct rejection controls also passed. Protected Preview batch 02
+passed on `c01fde3` before the dedicated intake credential change. Hosted verification of the
+new credential path and Production gates remain open. The [proposal](spam-enforcement-plan.md) covers the original
 rationale and the separate Release 2 CAPTCHA work.
 
 ## What the release changes
@@ -49,7 +50,8 @@ countdowns, routing and reminder cadence outside this release.
 | WebDev lead rate limiter | The approved Vercel Preview connection uses the generated `VPCS_WEBDEV_LEAD_REDIS_KV_REST_API_URL` and `VPCS_WEBDEV_LEAD_REDIS_KV_REST_API_TOKEN` pair. The connection is Preview-only with the approved $20 cap. Manual or local WebDev configuration uses `VPCS_WEBDEV_LEAD_REDIS_URL` and `VPCS_WEBDEV_LEAD_REDIS_TOKEN`. Hosted WebDev uses a dedicated HTTPS Upstash endpoint. Local WebDev can use the isolated loopback wrapper below. Mixed, partial or conflicting write pairs fail closed. Generated Redis protocol URLs and read-only tokens are ignored. Keep the backend and credentials separate from Production and the WebDev notification budget. Ordinary Preview continues with writes off. |
 | `LEAD_SPAM_ENFORCED` | `0` holds new intake through a recoverable result. Unset or another value leaves admission enforced. Use the independent Vercel POST fence and producer coordination for cutover. |
 | `config/salesforce/intake.json` | Verify both org-specific wire IDs for the Lead honeypot and submission HMAC field in the intended org. WebDev entries are verified. The Production entry stays unverified until its metadata and field IDs are ready. |
-| `VPCS_Intake_API` | Assign only to the verified website intake runtime principal in that org. The permission set grants class and custom permission access. Verify it cannot query broad Lead, blocklist or attempt records. Verify ordinary Preview is denied the admission API. |
+| Dedicated intake OAuth | Set server-only `VPCS_SALESFORCE_INTAKE_CLIENT_ID`, `VPCS_SALESFORCE_INTAKE_CLIENT_SECRET` and `VPCS_SALESFORCE_INTAKE_USER_ID` (expected 15- or 18-character Salesforce `005` ID) for every environment that performs real intake. Production uses a different OAuth client from directory REST and a dedicated nonadmin run-as user. WebDev may reuse the restricted workflow app after explicitly setting all three variables. Client credentials are sent only to the selected org's My Domain. Verify the OAuth response's user and org and the exact Organization query. Missing or invalid settings fail closed with no directory fallback. Mock remains credential-free. |
+| `VPCS_Intake_API` | Assign only to the verified website intake runtime principal in that org. The permission set grants class and custom permission access for policy, inspection, claim, reconciliation and notification. In Production, verify the actual intake token is denied direct CRM and private-object REST access and unrelated Apex endpoints. In WebDev, the restricted workflow app retains limited Lead readback for rehearsals. Verify protection of the blocklist and attempt objects and the Lead honeypot and submission-hash fields. Verify ordinary Preview is denied the intake API. |
 
 Rate limiting permits five requests per ten minutes per applicable bucket. It uses the canonical
 email, or a normalized phone for phone-only intake, and includes IP only from the verified platform
@@ -105,8 +107,10 @@ opening the protected verification window or promoting Production.
 ## Org and website release gates
 
 1. **WebDev first.** Use the reviewed [Salesforce intake package](../salesforce/spam-intake/README.md).
-   Keep capture and ordinary website writes off. Assign the restricted website permission and verify
-   positive and denied API access separately. Audit active and soft-deleted Leads for nonblank IDs,
+   Keep capture and ordinary website writes off. Explicitly bind the restricted workflow app for
+   intake. Verify the actual token identity and permitted intake operations. Verify denial for the
+   blocklist and attempt objects, the Lead honeypot and submission-hash fields, and ordinary
+   Preview intake. Audit active and soft-deleted Leads for nonblank IDs,
    including case-folded equivalents. Use the separate field-only uniqueness package from a fresh org
    retrieval. Validate with existing affected tests, deploy the field alone under the producer hold,
    and wait for index finalization. Verify live uniqueness and run the unchanged index regression
@@ -132,7 +136,9 @@ opening the protected verification window or promoting Production.
    capture. Reconcile persistence and notifications. Restore capture, disable test writes, revoke
    temporary grants and replace or retire the write-enabled artifact after the run.
 5. **Production preparation.** Confirm the target org separately, refresh its private baseline,
-   verify required egress and least-privilege OAuth, and prepare scoped secrets. Validate the
+   verify required egress and configure a dedicated nonadmin intake OAuth identity. Confirm the token
+   belongs to that user, prove permitted operations and verify denial of direct CRM access.
+   Keep the existing directory REST credentials on their existing path. Validate the
    reviewed Salesforce admission, field uniqueness and rule-only packages with the required
    tests and coverage. Keep automatic Vercel Production domain assignment disabled. The immutable
    Production website candidate needs verified wire IDs from deployed fields. If the hash field
@@ -170,7 +176,7 @@ remove those safeguards to make an older artifact accept forms.
 
 | Gate | Result recorded November 26, 2026 |
 |---|---|
-| Local Vitest | The latest mandatory hooks passed 139 files and 1,660 tests; one isolated Redis file and four tests were skipped by default. Its four opt-in tests passed separately. |
+| Local Vitest | The latest local suite passed 1,681 tests and skipped four by default. The four isolated Redis opt-in tests passed separately. |
 | Isolated real Redis | Four opt-in tests passed. This confirms local Redis behavior. Hosted backend verification is separate. |
 | Mock build, startup and function budget | The standard credential-free Turbopack build passed after moving the cached artifact from the earlier port failure. The mock network block remained in effect. Six mock-start HTTP route checks returned 200. Local manifests showed a 60-second budget for 23 lead action hosts across 33 site pages and matched the baseline outside that scope. The exact protected hosted candidate `dpl_4k3wNGp73hyK7wSMEM9o5Dz39MpH` confirmed a 60-second function budget. |
 | Pull request checks | PR #244 CI passed for revision `4b910dff502be1dd302af066df86cc4968ecc675`, including Semgrep. |
@@ -179,13 +185,13 @@ remove those safeguards to make an older artifact accept forms.
 | WebDev admission package | Initial deployment `0Afjg0000004vNtCAI` passed eight Apex tests, with admission trigger and class coverage at 100% and intake API coverage at 92%. Atomic decline deployment `0Afjg0000004vXZCAY` passed nine of nine Apex tests. The revised intake API covered 114 of 124 lines. |
 | WebDev Lead uniqueness | Field-only deployment `0Afjg0000004vPVCAY` enabled case-insensitive submission-ID uniqueness. The separate index regression passed in `0Afjg0000004vR7CAI`. |
 | WebDev affected Apex | All 63 affected Apex tests passed in run `707jg000000aItT`. |
-| Live WebDev website | All ten real synthetic form controls passed in 22.48 seconds. Each matched a persisted Lead with its submission hash and capture evidence. All ten synthetic Leads were closed afterward. |
+| Live WebDev website | All ten real synthetic form controls passed in 22.48 seconds. Each matched a persisted Lead with its submission hash and capture evidence. All ten synthetic Leads were closed afterward. With dedicated OAuth, run `spam-r1-dedicated-forms-20261126-02` started at 00:12:49 UTC and passed all ten controls in 21.58 seconds. Each matched an exact persisted Lead and a Slack capture. Cleanup is pending the native welcome check. An earlier invocation stopped before OAuth or submission because local `LEAD_DRY_RUN` was set to `1`. The successful run used an explicit runtime value of `0` and a fresh run ID. |
 | WebDev blocklist and legacy rule retirement | All ten legacy entries and one synthetic control matched active blocklist rows. Rule-only validation `0Afjg0000004vanCAA` and deployment `0Afjg0000004uoQCAQ` each passed nine of nine Apex tests. Tooling readback confirmed `Block_Predatory_Email` inactive and the existing honeypot rule active. |
 | Direct WebDev backstop | Both sets of 22 cases, before and after legacy-rule retirement, completed. No matching Lead persisted and no native SMS or reminder-email capture appeared over either bounded observation window. With no matching Lead, absence of linked work is an inference. The backstop harness did not directly inspect queue records. Capture returned to its baseline label after the second run. |
-| Native claim and notification arbitration | The second WebDev concurrency run passed against the updated intake API. A separate native check confirmed the exact persisted Lead and one notification claim winner. In four additional native allow-versus-decline races, claim won three and decline won one. Each UUID had exactly one durable row and the race harness sent zero Web-to-Lead POSTs. |
+| Native claim and notification arbitration | The second WebDev concurrency run passed against the updated intake API. A separate native check confirmed the exact persisted Lead and one notification claim winner. In four additional native allow-versus-decline races, claim won three and decline won one. Each UUID had exactly one durable row and the race harness sent zero Web-to-Lead POSTs. Dedicated WebDev OAuth passed the native claim checks and four denial probes covering the blocklist object, attempt object, Lead honeypot field and Lead submission-hash field. |
 | Native routing and capture | The 11-case WebDev rehearsal passed with ten persisted controls and one honeypot rejection. Four SMS captures and six expected Tasks reconciled. Ten welcome email paths were scheduled for 22:27 UTC. The two older welcome entries were unchanged. This run verified scheduling and capture. Actual email delivery was not verified. |
 | Read-only Preview | Ordinary `dpl_Ddh6L7FqrwfcUtbp5y8eZtreUrFc` and workflow `dpl_6Z8v39af1U6hFrVdV8Z7giKe387c` at `0477329` each returned three anonymous Vercel SSO redirects and produced 22 authenticated render receipts across 360px and 1440px. Both rendered all ten form families and the alternate VA question form. Workflow used existing CLI automation access after Development OIDC received 403. The Contact form fit both viewports. The existing reviews carousel caused a separate intermittent document overflow. No Server Action was sent. |
-| Protected Preview writes | Pending. The approved dedicated Redis connection was provisioned for Preview only under the $20 cap. Its generated, prefixed REST write credentials are sensitive Preview variables. The exact write-enabled candidate still needs HMAC binding, Redis isolation, ordinary Preview application-level denial, and bounded protected submissions verified. The scoped firewall exception is awaiting authorization. |
+| Protected Preview writes | Batch 02 passed on `c01fde3` candidate `dpl_CRYcDrhmNQ48KzhbEstVHFKpkwxp`. The browser recorded two accepted controls, three rejections and one rate retry. This batch predates dedicated intake OAuth. Repeat the bounded hosted workflow and verify the new auth path, intake principal restrictions and ordinary Preview denial before closing the gate. The dedicated Redis connection remains scoped to Preview under the approved $20 cap. |
 | Production | Pending. No Production configuration, promotion, live form verification or policy activation is recorded for this release. |
 
 ### Follow-up verification
@@ -195,4 +201,4 @@ remove those safeguards to make an older artifact accept forms.
 - Combined index/test validation `0Afjf0000003mT7CAI` failed its unchanged `isUnique()` assertion, with zero metadata component errors. This is consistent with Salesforce's documented post-commit index creation. The release now follows the already-passed WebDev sequence: validate/deploy the field alone with adjacent regressions, wait for terminal success and verify the live index, then run the unchanged duplicate/blank-history regression while intake stays held. The failed validation applied no Production changes. [Salesforce deployment lifecycle](https://developer.salesforce.com/blogs/2025/09/take-a-deep-dive-into-metadata-api-deployments)
 - The separate field-only Production check-only validation `0Afjf0000003mUjCAI` passed all 57 tests across the 12 affected existing classes, with zero test or component errors. Live index finalization and the subsequent unchanged native uniqueness regression remain cutover gates.
 - Rule-only Production check-only validation `0Afjf0000003mZZCAY` also passed those 57 tests with zero component errors. It left the Production rule active. All ten Production blocklist entries must be seeded and reconciled before any actual retirement.
-- The first protected Preview browser control stopped on an unconfirmed UI result. The existing alternate-host firewall rule still denies all Preview POSTs. The exact candidate host recorded one firewall denial, no application POST log, and no matching Salesforce Lead or durable attempt. Preserve the original reference and do not resend it. A draft exception for only the immutable protected test host is awaiting authorization; it does not open Production or other Preview hosts. Hosted admission remains unverified until the bounded controls pass after that fence is resolved.
+- The first protected Preview browser control stopped on an unconfirmed UI result. The original alternate-host firewall rule denied the POST before it reached the application. There was no matching Salesforce Lead or durable attempt. Preserve that reference without resending. The later batch 02 controls used a fresh candidate. After batch 02, the firewall was restored, an inert POST returned 403, and six temporary branch variables were removed. The two accepted Leads were closed after their two native welcome actions, recorded in log `07Ljg0000005VCrEAM` at 00:06 UTC. The log establishes execution. Verify the firewall window and its removal separately for the dedicated-auth rehearsal.

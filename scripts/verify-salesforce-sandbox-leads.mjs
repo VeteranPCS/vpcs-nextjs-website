@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
+import { resolveSalesforceIntakeAuth } from '../lib/salesforce/environment.mjs';
 import { deliveryEmail } from './fixtures/salesforce-routing-delivery-readback.mjs';
 import { routingDeliveryCases, routingRehearsalCases } from './fixtures/salesforce-routing-rehearsal.mjs';
 import { projectRoot } from './lib/next-environment.mjs';
@@ -16,6 +17,7 @@ const rehearsalKeys = new Set([
     'VPCS_WEBDEV_ISOLATION_ATTESTED', 'VPCS_WEBDEV_TEST_RUN_ID', 'VPCS_WEBDEV_TEST_EXPIRES_AT',
     'VPCS_WEBDEV_TEST_EMAILS', 'VPCS_WEBDEV_TEST_PHONES', 'SALESFORCE_AUTH_GRANT', 'SALESFORCE_LOGIN_BASE_URL',
     'SALESFORCE_API_VERSION', 'SALESFORCE_CLIENT_ID', 'SALESFORCE_CLIENT_SECRET',
+    'VPCS_SALESFORCE_INTAKE_CLIENT_ID', 'VPCS_SALESFORCE_INTAKE_CLIENT_SECRET', 'VPCS_SALESFORCE_INTAKE_USER_ID',
     'VPCS_WEBDEV_LEAD_REDIS_URL', 'VPCS_WEBDEV_LEAD_REDIS_TOKEN', 'VPCS_LEAD_BINDING_KEY',
 ]);
 const usage = 'node scripts/with-isolated-lead-redis.mjs rehearsal [--routing | --routing-delivery] --execute --email <approved test sink> [--email <second approved test sink>] [--negative-email <routing honeypot sink>]';
@@ -83,6 +85,7 @@ async function main() {
     if (!/^[a-f0-9]{64}$/.test(env.VPCS_LEAD_BINDING_KEY ?? '')) {
         throw new Error('A valid WebDev lead binding key is required before starting the rehearsal.');
     }
+    resolveSalesforceIntakeAuth(config, env);
 
     const { fingerprint } = await connectSandbox(settings);
     const runDirectory = join(projectRoot, 'artifacts', 'salesforce', 'webdev', fingerprint.slice(0, 12), 'rehearsals');

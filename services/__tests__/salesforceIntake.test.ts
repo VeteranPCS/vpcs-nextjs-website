@@ -1,37 +1,33 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AxiosResponse } from 'axios';
-import { RequestType, salesForceAPI } from '@/services/api';
-import { stubProductionEnv } from '@/lib/salesforce/__tests__/configuration-fixtures';
+import { salesForceIntakeAPI } from '@/services/api';
 import {
   checkBlockedIdentity, claimLeadAttempt, claimWebsiteNotifications, inspectLeadAttempt, reconcileLeadAttempt, LeadAttemptConflictError,
 } from '@/services/salesforceIntake';
 
 vi.mock('server-only', () => ({}));
-vi.mock('@/services/api', () => ({ RequestType: { POST: 'post' }, salesForceAPI: vi.fn() }));
+vi.mock('@/services/api', () => ({ salesForceIntakeAPI: vi.fn() }));
 
-const transport = vi.mocked(salesForceAPI);
+const transport = vi.mocked(salesForceIntakeAPI);
 const attemptId = '01234567-0123-4321-abcd-0123456789ab';
 const payloadHash = 'a'.repeat(64);
 const emailHash = 'b'.repeat(64);
-const root = 'https://veteranpcs.my.salesforce.com/services/apexrest/vpcs/intake/v1/';
 const response = (status: number, data: unknown) => ({ status, data }) as AxiosResponse;
-const signalField = { signal: expect.any(AbortSignal) };
+const actionSignal = expect.any(AbortSignal);
 
 function untilCancelled(signal: AbortSignal | undefined): Promise<AxiosResponse> {
   if (!signal) throw new Error('Expected transport deadline');
   return new Promise((_, reject) => signal.addEventListener('abort', () => reject(signal.reason), { once: true }));
 }
 
-beforeEach(() => { stubProductionEnv(); transport.mockReset(); });
-afterEach(() => { vi.useRealTimers(); vi.unstubAllEnvs(); });
+beforeEach(() => { transport.mockReset(); });
+afterEach(() => { vi.useRealTimers(); });
 
 describe('Salesforce admission RPC', () => {
   it('sends only a bounded identity hash to the policy API and requires the current response version', async () => {
     transport.mockResolvedValueOnce(response(200, { blocked: true, policyVersion: 'r1' }));
     await expect(checkBlockedIdentity(emailHash)).resolves.toBe(true);
-    expect(transport).toHaveBeenCalledExactlyOnceWith({
-      endpoint: root + 'policy', type: RequestType.POST, data: { emailHash }, ...signalField,
-    });
+    expect(transport).toHaveBeenCalledExactlyOnceWith('policy', { emailHash }, actionSignal);
     transport.mockResolvedValueOnce(response(200, { blocked: false, policyVersion: 'stale' }));
     await expect(checkBlockedIdentity(emailHash)).rejects.toThrow();
   });
@@ -39,9 +35,7 @@ describe('Salesforce admission RPC', () => {
   it('inspects exact payload and attempt handles and rejects an authoritative conflict response', async () => {
     transport.mockResolvedValueOnce(response(200, { exists: true, confirmed: false, declined: false }));
     await expect(inspectLeadAttempt(attemptId, payloadHash)).resolves.toEqual({ exists: true, confirmed: false, declined: false });
-    expect(transport).toHaveBeenCalledExactlyOnceWith({
-      endpoint: root + 'inspect', type: RequestType.POST, data: { attemptId, payloadHash }, ...signalField,
-    });
+    expect(transport).toHaveBeenCalledExactlyOnceWith('inspect', { attemptId, payloadHash }, actionSignal);
     transport.mockResolvedValueOnce(response(409, { code: 'attempt_conflict' }));
     await expect(inspectLeadAttempt(attemptId, payloadHash)).rejects.toBeInstanceOf(LeadAttemptConflictError);
   });
@@ -57,9 +51,7 @@ describe('Salesforce admission RPC', () => {
   it('never retries a claim response lost to transport or token expiration', async () => {
     transport.mockRejectedValueOnce(new Error('synthetic unknown claim response'));
     await expect(claimLeadAttempt(attemptId, payloadHash, emailHash)).rejects.toThrow();
-    expect(transport).toHaveBeenCalledExactlyOnceWith({
-      endpoint: root + 'claim', type: RequestType.POST, data: { attemptId, payloadHash, emailHash }, ...signalField,
-    });
+    expect(transport).toHaveBeenCalledExactlyOnceWith('claim', { attemptId, payloadHash, emailHash }, actionSignal);
     transport.mockResolvedValueOnce(response(401, { errorCode: 'INVALID_SESSION_ID' }));
     await expect(claimLeadAttempt(attemptId, payloadHash, emailHash)).rejects.toThrow();
     expect(transport).toHaveBeenCalledTimes(2);
@@ -68,20 +60,18 @@ describe('Salesforce admission RPC', () => {
   it('sends an explicit terminal deny and never treats a dispatch grant as a deny result', async () => {
     transport.mockResolvedValueOnce(response(200, { claimed: false, blocked: true }));
     await expect(claimLeadAttempt(attemptId, payloadHash, emailHash, true)).resolves.toEqual({ claimed: false, blocked: true });
-    expect(transport).toHaveBeenCalledExactlyOnceWith({
-      endpoint: root + 'claim', type: RequestType.POST, data: { attemptId, payloadHash, emailHash, denyDispatch: true }, ...signalField,
-    });
+    expect(transport).toHaveBeenCalledExactlyOnceWith('claim', { attemptId, payloadHash, emailHash, denyDispatch: true }, actionSignal);
     transport.mockResolvedValueOnce(response(200, { claimed: true, blocked: false }));
     await expect(claimLeadAttempt(attemptId, payloadHash, emailHash, true)).rejects.toThrow('Invalid intake claim response');
   });
 
   it('aborts a waiting claim at five seconds and does not issue another request', async () => {
     vi.useFakeTimers();
-    transport.mockImplementation(({ signal }) => untilCancelled(signal));
+    transport.mockImplementation((_operation, _data, signal) => untilCancelled(signal));
     const request = claimLeadAttempt(attemptId, payloadHash, emailHash);
     const rejection = expect(request).rejects.toThrow('deadline exceeded');
     await vi.advanceTimersByTimeAsync(4_999);
-    expect(transport.mock.calls[0]?.[0].signal?.aborted).toBe(false);
+    expect(transport.mock.calls[0]?.[2]?.aborted).toBe(false);
     await vi.advanceTimersByTimeAsync(1);
     await rejection;
     expect(transport).toHaveBeenCalledTimes(1);
@@ -96,9 +86,7 @@ describe('Salesforce admission RPC', () => {
     await vi.runAllTimersAsync();
     await expect(confirmed).resolves.toBe(true);
     expect(transport).toHaveBeenCalledTimes(2);
-    expect(transport).toHaveBeenLastCalledWith({
-      endpoint: root + 'reconcile', type: RequestType.POST, data: { attemptId, payloadHash }, ...signalField,
-    });
+    expect(transport).toHaveBeenLastCalledWith('reconcile', { attemptId, payloadHash }, actionSignal);
     transport.mockClear().mockResolvedValue(response(200, { confirmed: false }));
     const missing = reconcileLeadAttempt(attemptId, payloadHash);
     await vi.runAllTimersAsync();
@@ -110,12 +98,12 @@ describe('Salesforce admission RPC', () => {
     vi.useFakeTimers();
     transport.mockImplementationOnce(() => new Promise(resolve => {
       setTimeout(() => resolve(response(200, { confirmed: false })), 4_900);
-    })).mockImplementation(({ signal }) => untilCancelled(signal));
+    })).mockImplementation((_operation, _data, signal) => untilCancelled(signal));
     const request = reconcileLeadAttempt(attemptId, payloadHash);
     const rejection = expect(request).rejects.toThrow('deadline exceeded');
     await vi.advanceTimersByTimeAsync(7_999);
     expect(transport).toHaveBeenCalledTimes(2);
-    expect(transport.mock.calls[1]?.[0].signal?.aborted).toBe(false);
+    expect(transport.mock.calls[1]?.[2]?.aborted).toBe(false);
     await vi.advanceTimersByTimeAsync(1);
     await rejection;
     expect(transport).toHaveBeenCalledTimes(2);
@@ -138,16 +126,14 @@ describe('Salesforce admission RPC', () => {
   it('requires the server notification claim before reporting it available', async () => {
     transport.mockResolvedValueOnce(response(200, { claimed: false }));
     await expect(claimWebsiteNotifications(attemptId, payloadHash)).resolves.toBe(false);
-    expect(transport).toHaveBeenCalledExactlyOnceWith({
-      endpoint: root + 'notification', type: RequestType.POST, data: { attemptId, payloadHash }, ...signalField,
-    });
+    expect(transport).toHaveBeenCalledExactlyOnceWith('notification', { attemptId, payloadHash }, actionSignal);
     transport.mockResolvedValueOnce(response(200, { claimed: 'true' }));
     await expect(claimWebsiteNotifications(attemptId, payloadHash)).rejects.toThrow();
   });
 
   it('caps the notification claim at two seconds without replay', async () => {
     vi.useFakeTimers();
-    transport.mockImplementation(({ signal }) => untilCancelled(signal));
+    transport.mockImplementation((_operation, _data, signal) => untilCancelled(signal));
     const request = claimWebsiteNotifications(attemptId, payloadHash);
     const rejection = expect(request).rejects.toThrow('deadline exceeded');
     await vi.advanceTimersByTimeAsync(2_000);
