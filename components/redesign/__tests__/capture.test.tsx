@@ -7,7 +7,7 @@ const mocks=vi.hoisted(()=>({submit:vi.fn()}));
 vi.mock('@/services/salesForcePostFormsService',()=>({KeepInTouchForm:mocks.submit,vaLoanGuideForm:mocks.submit,homebuyerGuideForm:mocks.submit,coloradoRelocationGuideForm:mocks.submit}));
 vi.mock('@/lib/analytics/client',()=>({captureAnalyticsEvent:vi.fn(),formTrackingPayload:()=>({}),trackFormStarted:vi.fn(),trackFormSubmitAttempted:vi.fn(),trackFormSubmissionFailed:vi.fn(),trackCtaClicked:vi.fn()}));
 import LeadCaptureDialog from '../LeadCaptureDialog';
-beforeEach(()=>{mocks.submit.mockReset();HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');};});
+beforeEach(()=>{mocks.submit.mockReset();});
 afterEach(cleanup);
 function fill(){fireEvent.change(screen.getByLabelText('First name'),{target:{value:'Test'}});fireEvent.change(screen.getByLabelText('Last name'),{target:{value:'Family'}});}
 describe('shared capture',()=>{

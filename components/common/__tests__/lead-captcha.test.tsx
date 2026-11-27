@@ -51,8 +51,9 @@ describe('shared CAPTCHA lifecycle', () => {
     expect(action).not.toHaveBeenCalled();
   });
 
-  it('requires a fresh challenge and keeps the same reference on a safe retry', async () => {
+  it('preserves the retry reference when server readback still needs a fresh challenge', async () => {
     action.mockResolvedValueOnce({ outcome: 'retry_later', success: false })
+      .mockResolvedValueOnce({ outcome: 'validation_error', success: false, fieldErrors: { captchaToken: 'Challenge required' } })
       .mockResolvedValueOnce({ outcome: 'accepted', success: true });
     render(<LeadCaptchaProvider config={required}><Fixture /></LeadCaptchaProvider>);
     await waitFor(() => expect(google.render).toHaveBeenCalledTimes(1));
@@ -67,12 +68,26 @@ describe('shared CAPTCHA lifecycle', () => {
     expect(sessionStorage.getItem('vpcs:lead-pending:v1:captcha-fixture')).toBe('retry:' + attempt);
     expect(action).toHaveBeenCalledWith({ email: 'fixture@example.invalid', submission_attempt_id: attempt, captchaToken: 'synthetic-token' });
     fireEvent.click(submit);
-    expect(action).toHaveBeenCalledTimes(1);
+    await screen.findByText('validation_error');
+    expect(action).toHaveBeenLastCalledWith({ email: 'fixture@example.invalid', submission_attempt_id: attempt });
+    expect(sessionStorage.getItem('vpcs:lead-pending:v1:captcha-fixture')).toBe('retry:' + attempt);
+    expect(google.reset).toHaveBeenCalledTimes(1);
     activate(0, 'fresh-token');
     fireEvent.click(submit);
     await waitFor(() => expect(sessionStorage.length).toBe(0));
     expect(action).toHaveBeenLastCalledWith(expect.objectContaining({ submission_attempt_id: attempt, captchaToken: 'fresh-token' }));
     expect(crypto.randomUUID).toHaveBeenCalledTimes(1);
+  });
+
+  it('recovers a saved reference without a widget when the server confirms the Lead', async () => {
+    sessionStorage.setItem('vpcs:lead-pending:v1:captcha-fixture', 'retry:' + attempt);
+    action.mockResolvedValueOnce({ outcome: 'accepted', success: true, submissionId: attempt });
+    render(<LeadCaptchaProvider config={{ mode: 'unavailable' }}><Fixture /></LeadCaptchaProvider>);
+    fireEvent.click(screen.getByText('Submit fixture'));
+    await waitFor(() => expect(sessionStorage.length).toBe(0));
+    expect(action).toHaveBeenCalledExactlyOnceWith({ email: 'fixture@example.invalid', submission_attempt_id: attempt });
+    expect(crypto.randomUUID).not.toHaveBeenCalled();
+    expect(google.reset).not.toHaveBeenCalled();
   });
 
   it('never unlocks uncertainty with a fresh widget callback or a remount', async () => {

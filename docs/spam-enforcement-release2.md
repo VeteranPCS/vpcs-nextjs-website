@@ -1,8 +1,9 @@
 # Release 2 native CAPTCHA restoration
 
 Status November 27, 2026: implementation and offline verification in progress. Release 1 is
-live; no CAPTCHA Production setting has changed. The sandbox key is prepared for approval,
-not created. Do not interpret these instructions or passing mocked tests as provider evidence.
+live; no CAPTCHA Production setting has changed. The separate Google sandbox checkbox key was
+created with approval; its native Salesforce registration and verification remain in progress.
+Do not interpret these instructions or passing mocked tests as provider evidence.
 
 ## Architecture and configuration
 
@@ -25,6 +26,9 @@ public variables, source, test traces or logs. No Google service account or cust
 API is required by this native integration.
 
 The shared service inspects/reconciles an existing attempt before requiring a fresh challenge.
+The browser permits only a saved safe-retry reference to request this tokenless readback during
+a CAPTCHA outage. An uncertain reference remains locked. A readback that still needs a challenge
+preserves the same reference and cannot bypass the server's fresh-dispatch gate.
 For new attempts, missing/malformed tokens cannot create a claim, enrich a partner or dispatch.
 Final serialization replaces client settings with the approved key name, current org ID,
 `fallback: "false"`, current millisecond timestamp and `g-recaptcha-response`. These fields stay
@@ -35,10 +39,17 @@ configuration becomes unavailable. A native POST without a matching persisted Le
 Google documents token lifetime and single use in its [verification guide](https://developers.google.com/recaptcha/docs/verify).
 Salesforce documents its [native Web-to-Lead setup](https://help.salesforce.com/s/articleView?id=sf.setting_up_web-to-lead.htm&language=en_US&type=5).
 
+The command-line ten-form rehearsal cannot produce genuine browser tokens. Use it for its
+nonmutating plan and historical Release 1 evidence, not as a live CAPTCHA success test. Likewise,
+the old native spam-backstop probes omit CAPTCHA; after the native requirement is enabled their
+rejection alone cannot prove honeypot or blocklist evaluation. Exercise those policies with the
+affected Apex tests and separate valid-token browser controls. Never disable mandatory CAPTCHA
+or inject a fake token to turn a rehearsal result green.
+
 ## Provisioning and release order
 
 1. Verify separate Google Web Checkbox keys. The existing Production key is the migrated
-   Salesforce Web-to-Lead key. The prepared WebDev key allows only `test.veteranpcs.com`,
+   Salesforce Web-to-Lead key. The WebDev key allows only `test.veteranpcs.com`,
    `localhost`, and `127.0.0.1`, with domain verification on. Any additional test hostname needs
    its exact reviewed entry, never a shared `vercel.app` parent. A parent domain covers subdomains.
 2. Register the sandbox key pair in WebDev, generate its native form and compare the exact
@@ -70,7 +81,12 @@ The Google project `salesforce-web-t-1731552477942` already has the billing acco
 `Google Reviews for Next.js Website` linked. This release has not added or changed billing.
 Its dashboard showed zero assessments over the preceding 30 days and no requests by the old
 key for six weeks. These project observations do not establish organization-wide free headroom.
-Verify the actual tier, shared usage and budget/alerts before provider tests and Production activation.
+The linked account's November 1–27 cost was $0.00 and its budget list was empty. These are delayed
+billing observations, not a cap. Billing-enabled projects automatically use Premium under the
+current [Google billing rules](https://docs.cloud.google.com/recaptcha/docs/billing-information):
+10,000 assessments per organization are free, then $8 through 100,000, then $1 per 1,000.
+No new billing account, paid subscription or alert was created. Verify shared usage and the
+appropriate usage/budget alert before Production activation.
 
 Google documents different over-quota behavior for legacy SiteVerify and CreateAssessment;
 SiteVerify can return success with an over-quota error. Salesforce's fallback setting documents
@@ -81,12 +97,25 @@ approval before adding billing or spend beyond existing authorization. [Google q
 ## Evidence ledger
 
 - Shared widget/hook tests, ten-action matrix and full Vitest pass with synthetic tokens and
-  mocked transports. Current exact counters belong in the final immutable review.
+  mocked transports. Checkpoint `055ceed7e15e519ec1a881f22b083fc293aeaf99` passed mandatory hooks:
+  1,812 tests (four skipped), type-check, lint (two existing homepage warnings), and the offline
+  1,070-route build. Follow-up browser fixes require their own exact-head checks and review.
 - Six loopback viewport checks used an intercepted provider, aborted every form POST, and a
   WebDev server with writes disabled. Narrow-mobile and desktop additionally proved uncertainty
   remains locked after another challenge, and no horizontal overflow.
 - Native Google/Salesforce verification, protected Preview, modal image challenge, quota controls,
   Production validation/cutover and controlled Production canary remain **pending**.
+
+Google key `6LcAeDUuAAAAAKk2NQG1JtCVXwp7aD8gvaOF9xke` is the public WebDev site key;
+it uses domain verification, a Balanced checkbox challenge, and no fixed-score test mode.
+The real classic `api.js` widget loaded on a write-disabled WebDev loopback server. Its secondary
+`api2/bframe` challenge frames are outside the native guide dialog. An isolated Chromium control
+proved that native modal top-layer inertness blocks such frames. The guide/newsletter now uses
+an overlay with explicit background inertness, leaving only the provider's challenge container
+interactive. Narrow-mobile and desktop tests cover simulated provider focus transfer, Tab wrapping,
+pending-action close prevention, Escape/backdrop restoration and accepted-state focus. Actual
+Google image challenge/focus verification remains pending. No challenge was solved and no Lead
+was submitted in the placement check.
 
 Do not commit raw provider tokens, secrets or personal fixture exports. Private R2 evidence is
 under `/private/tmp/vpcs-spam-ops/`; the independent R2 worktree is `/private/tmp/vpcs-spam-release2`.

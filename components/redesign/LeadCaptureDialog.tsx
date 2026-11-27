@@ -35,13 +35,21 @@ function trackSafely(track: () => void) {
   try { track(); } catch { /* Analytics can be blocked independently of the form. */ }
 }
 
+// Google renders the interactive challenge as a separate child of body.
+function isGoogleChallengeContainer(element: HTMLElement) {
+  if (element.tagName !== 'DIV') return false;
+  return Array.from(element.querySelectorAll<HTMLIFrameElement>(':scope > div > iframe[src]')).some(
+    frame => /^https:\/\/www\.google\.com\/recaptcha\/api2\/bframe(?:\?|$)/.test(frame.src),
+  );
+}
+
 export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabel, className = '', placement, allowAuthorContact = false }: { kind: Kind; initialEmail?: string; triggerLabel: string; className?: string; placement?: CapturePlacement; allowAuthorContact?: boolean }) {
-  const dialog = useRef<HTMLDialogElement>(null);
+  const overlay = useRef<HTMLDivElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const busy = useRef(false);
   const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
-  // Native dialogs enter the top layer but still inherit their DOM ancestors' CSS.
-  // Keep shared form styling independent of its card.
+  // Keep the capture form independent of its card and out of the native top layer.
   useEffect(() => { setPortalRoot(document.body); }, []);
   const id = useId();
   const [isOpen, setIsOpen] = useState(false);
@@ -53,12 +61,48 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
   const config = settings[kind];
   const submission = useLeadSubmission(config.formId);
   const pending = submission.submitting;
+  const captchaRequired = submission.captcha.config.mode === 'required';
   const isColorado = kind === COLORADO_RELOCATION_GUIDE.kind;
   useEffect(() => {
-    if (!isColorado || !success) return;
-    // The submitted form is gone; keep keyboard focus on the next intended action.
-    dialog.current?.querySelector<HTMLAnchorElement>('[data-guide-contact-card] a[href]')?.focus();
-  }, [isColorado, success]);
+    if (!success) return;
+    // The focused submit button is gone. Move focus to the actual next action.
+    const panel = dialog.current;
+    const next = panel?.querySelector<HTMLElement>('[data-guide-contact-card] a[href]')
+      ?? panel?.querySelector<HTMLElement>('[role="status"] a[download], [role="status"] button');
+    next?.focus();
+  }, [success]);
+  useEffect(() => {
+    const modalRoot = overlay.current;
+    if (!isOpen || !modalRoot) return;
+    const prior = new Map<HTMLElement, boolean>();
+    const previousOverflow = document.body.style.overflow;
+    function applyBackgroundInert() {
+      for (const element of document.body.children) {
+        if (!(element instanceof HTMLElement) || element === modalRoot) continue;
+        if (captchaRequired && isGoogleChallengeContainer(element)) {
+          if (prior.has(element)) {
+            element.inert = prior.get(element)!;
+            prior.delete(element);
+          }
+          continue;
+        }
+        if (!prior.has(element)) prior.set(element, element.inert);
+        element.inert = true;
+      }
+    }
+    const returnFocus = trigger.current;
+    applyBackgroundInert();
+    const observer = new MutationObserver(applyBackgroundInert);
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
+    document.body.style.overflow = 'hidden';
+    dialog.current?.querySelector<HTMLButtonElement>('.steph-capture-close')?.focus();
+    return () => {
+      observer.disconnect();
+      for (const [element, inert] of prior) element.inert = inert;
+      document.body.style.overflow = previousOverflow;
+      if (returnFocus?.isConnected) returnFocus.focus();
+    };
+  }, [isOpen, captchaRequired]);
   const downloadPath = config.file ? `/downloads/${config.file}` : undefined;
   const ctaProperties = buildCtaProperties({
     ctaId: `${config.formId}_capture`,
@@ -84,7 +128,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
   }
 
   function close() {
-    if (!busy.current) { dialog.current?.close(); setIsOpen(false); trigger.current?.focus(); }
+    if (!busy.current) setIsOpen(false);
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -143,18 +187,29 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
       submission.resetAccepted();
       setDownloadStarted(false);
       setAcceptedContactDetails(undefined);
-      dialog.current?.showModal();
       setIsOpen(true);
       trackSafely(() => trackCtaClicked(guideProperties));
       trackSafely(() => trackFormStarted(config.formId, guideProperties));
     }}>{triggerLabel}</button>
-    {portalRoot && createPortal(<dialog ref={dialog} className="steph-capture" aria-labelledby={`${id}-title`} onKeyDown={event => {
+    {portalRoot && createPortal(<div ref={overlay} className="steph-capture-overlay" hidden={!isOpen} onClick={event => {
+      if (event.target === event.currentTarget) close();
+    }}>
+    {/* Explicit background inert keeps the provider’s separate challenge available to assistive technology. */}
+    <div ref={dialog} className="steph-capture" role="dialog" aria-labelledby={`${id}-title`} onKeyDown={event => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        close();
+        return;
+      }
       if (event.key !== 'Tab') return;
-      const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]):not([aria-hidden]),select:not([disabled]),textarea:not([disabled])')).filter(element => element.getClientRects().length > 0);
+      const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(
+        'button:not([disabled]),a[href],input:not([disabled]):not([aria-hidden]),select:not([disabled]),textarea:not([disabled]),iframe:not([tabindex="-1"])',
+      )).filter(element => element.getClientRects().length > 0);
       const first = controls[0], last = controls[controls.length - 1];
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
-    }} onCancel={event => { if (busy.current) event.preventDefault(); }} onClose={() => { setIsOpen(false); trigger.current?.focus(); }} onClick={event => { if (event.target === event.currentTarget) close(); }}>
+    }}>
       <div className="steph-capture-inner">
         <button type="button" className="steph-capture-close" aria-label="Close" disabled={pending} onClick={close}>×</button>
         <h2 id={`${id}-title`}>{config.title}</h2>
@@ -185,6 +240,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
           <p className="steph-small">Your information is never sold. <Link href="/privacy-policy">Privacy policy</Link></p>
         </form>}
       </div>
-    </dialog>, portalRoot)}
+    </div>
+    </div>, portalRoot)}
   </>;
 }

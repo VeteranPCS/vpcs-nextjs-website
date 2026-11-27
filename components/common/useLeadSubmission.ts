@@ -55,25 +55,26 @@ export function useLeadSubmission(formId: string) {
     const marker = readAttempt(key);
     const retryId = marker?.startsWith(retryPrefix) ? marker.slice(retryPrefix.length) : undefined;
     if (accepted.current || activeAttempts.has(key) || (marker && !retryId)) return;
-    const captchaToken = captcha.config.mode === 'required' ? captcha.takeToken() : undefined;
-    if (captcha.config.mode !== 'off' && !captchaToken) {
-      captcha.requestChallenge();
-      return;
-    }
-    setSubmitting(true);
-    setFailure(undefined);
     let id: string;
+    let captchaToken: string | undefined;
     try {
       const comparable = JSON.stringify(comparablePayload);
+      captchaToken = captcha.config.mode === 'required' ? captcha.takeToken() : undefined;
+      // Only an existing retry reference can reach server readback without a challenge.
+      if (!retryId && captcha.config.mode !== 'off' && !captchaToken) {
+        captcha.requestChallenge();
+        return;
+      }
       id = retryId ?? (lastAttempt.current?.payload === comparable ? lastAttempt.current.id : crypto.randomUUID());
       lastAttempt.current = { payload: comparable, id };
     } catch {
-      bestEffort(captcha.resetAfterSubmit);
-      setSubmitting(false);
+      if (captchaToken) bestEffort(captcha.resetAfterSubmit);
       const result = { outcome: 'not_sent', success: false } as const;
       setFailure(result);
       return result;
     }
+    setSubmitting(true);
+    setFailure(undefined);
     writeAttempt(key, id, true);
     let result: LeadSubmitResult;
     try {
@@ -82,7 +83,7 @@ export function useLeadSubmission(formId: string) {
     } catch {
       result = { outcome: 'unconfirmed', success: false };
     }
-    bestEffort(captcha.resetAfterSubmit);
+    if (captchaToken) bestEffort(captcha.resetAfterSubmit);
     if (result.outcome === 'validation_error' && result.fieldErrors.captchaToken) captcha.requestChallenge();
     if (result.outcome === 'accepted') {
       lastAttempt.current = null;
