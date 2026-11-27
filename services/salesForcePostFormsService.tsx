@@ -1,11 +1,15 @@
 'use server'
 import sendToSlack from '@/actions/sendToSlack';
-import { LeadSubmissionError } from '@/lib/leads/submission-outcome';
+import type { LeadSubmitResult } from '@/lib/leads/submission-outcome';
+import { randomUUID } from 'node:crypto';
+import { canonicalEmail, emailIdentityHash, leadPayloadHash, normalizedPhone } from '@/lib/leads/identity';
+import { getIntakeFields } from '@/lib/salesforce/intake-fields';
+import { inspectLeadAttempt, claimLeadAttempt, reconcileLeadAttempt, claimWebsiteNotifications, LeadAttemptConflictError } from '@/services/salesforceIntake';
 import stateService from '@/services/stateService';
 import { logDebug, logError, logInfo } from './loggingService';
-import { FormSubmissionStatus, trackFormSubmission, updateSubmissionStatus } from './formTrackingService';
+import { FormSubmissionStatus, updateSubmissionStatus } from './formTrackingService';
 import { appendLeadSubmissionMarker } from '@/lib/leads/submission-marker';
-import { evaluateLeadSpam, tagSpamSuspected } from '@/lib/spam-protection';
+import { evaluateLeadSpam, evaluateLeadRateLimit } from '@/lib/spam-protection';
 import { isLeadDryRun } from '@/lib/lead-dry-run';
 import { HP_FIELD, TS_FIELD } from '@/lib/validation/spam-fields';
 import { formatStateLabel, normalizeStateCode, normalizeStateSlug } from '@/lib/states';
@@ -19,10 +23,11 @@ import { assertWebToLeadTarget, getSalesforceConfig } from '@/lib/salesforce/ser
 import { isProductionSalesforceRuntime, isProtectedSalesforceWebdevPreview } from '@/lib/salesforce/environment.mjs';
 import { getWebdevSiteOrigin, markWebdevSubmission, requireWebdevTestRun } from '@/lib/salesforce/webdev-intake';
 import { isWebdevPartnerFixture } from '@/lib/salesforce/webdev-fixtures';
-import { getVerifiedSalesforceSession } from '@/services/salesForceTokenService';
 import { COLORADO_RELOCATION_GUIDE } from '@/lib/guides/colorado-relocation';
 import {
     appendSalesforceAttributionParams,
+    VPCS_VISITOR_ID_W2L_FIELD_ID,
+    VPCS_SUBMISSION_ID_W2L_FIELD_ID,
     captureLeadConversionCreated,
     captureServerAnalyticsEvent,
 } from '@/lib/analytics/server';
@@ -38,191 +43,39 @@ import {
 } from '@/lib/validation/leadForms';
 import { type InternalCallOptions } from '@/lib/internal-call-token';
 
-interface SalesforceSubmissionResult {
-    success: boolean;
-    response?: Response;
-    responseText?: string;
-    redirectUrl?: string;
-    error?: Error;
-    /** Set only when LEAD_DRY_RUN short-circuited the POST; never set on a real submission. */
-    dryRun?: true;
-}
-
-/**
- * Submit once to Salesforce Web-to-Lead.
- *
- * Web-to-Lead is not idempotent: a 2xx response can create a Lead even when the
- * response body is missing, unexpected, or does not contain the normal redirect
- * script. Retrying after any response can create duplicate Leads, so this helper
- * intentionally performs exactly one POST.
- *
- * Dry-run choke point 1 of 2: this is the only place the app POSTs to Web-to-Lead, so
- * the guard here covers all ten forms.
- */
+/** Exactly one bounded POST. Only the separate exact-record readback proves acceptance. */
 async function submitToSalesforceWebToLead(
     url: string,
     formBody: string,
     submissionId: string,
     dryRun: boolean,
-    sandboxReturnUrl?: string,
-): Promise<SalesforceSubmissionResult> {
+): Promise<{ response?: Response }> {
     if (dryRun) {
         console.log('[LEAD_DRY_RUN] Skipping Salesforce Web-to-Lead POST', {
-            submissionId,
-            fieldCount: new URLSearchParams(formBody).size,
+            submissionId, fieldCount: new URLSearchParams(formBody).size,
         });
-
-        return { success: true, responseText: '', dryRun: true };
+        return {};
     }
-
-    const sandbox = Boolean(sandboxReturnUrl);
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
     try {
         const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: formBody,
-            signal: controller.signal,
-            ...(sandbox ? { redirect: 'error' } : {}),
+            signal: AbortSignal.timeout(8_000),
+            redirect: 'error',
         });
-
-        clearTimeout(timeoutId);
-
-        logInfo('Salesforce Web-to-Lead response received', {
-            submissionId,
-            status: response.status,
-            statusText: response.statusText,
-            ok: response.ok
+        logInfo('Salesforce Web-to-Lead HTTP response received; persistence unverified', {
+            submissionId, status: response.status,
         });
-
-        if (!response.ok) {
-            const error = new Error(`Salesforce HTTP error: ${response.status} ${response.statusText}`);
-            logError('Salesforce Web-to-Lead HTTP error', { submissionId, status: response.status }, error);
-            return { success: false, response, error };
-        }
-
-        let responseText = '';
-        try {
-            responseText = await response.text();
-            logDebug('Salesforce Web-to-Lead response text received', {
-                submissionId,
-                responseLength: responseText.length,
-                hasContent: responseText.length > 0
-            });
-        } catch (textError) {
-            logError(
-                'Failed to read Salesforce Web-to-Lead response text - treating accepted HTTP response as success',
-                { submissionId },
-                textError
-            );
-        }
-
-        const validation = validateSalesforceResponse(responseText, submissionId, !sandbox);
-
-        if (!validation.isValid) {
-            const error = new Error(`Salesforce validation failed: ${validation.reason}`);
-            logError('Salesforce Web-to-Lead response validation failed', {
-                submissionId,
-                reason: validation.reason,
-                ...(!sandbox ? { responsePreview: responseText.substring(0, 200) } : {}),
-            }, error);
-            return { success: false, response, responseText, error };
-        }
-
-        const candidate = extractSalesforceRedirectUrl(responseText);
-        const redirectUrl = !sandbox || candidate === sandboxReturnUrl || candidate === '/thank-you' ? candidate : undefined;
-
-        logInfo('Salesforce Web-to-Lead submission accepted', {
-            submissionId,
-            hasRedirectUrl: !!redirectUrl,
-            ...(!sandbox ? { redirectUrl } : {}),
-        });
-
-        return {
-            success: true,
-            response,
-            responseText,
-            redirectUrl
-        };
-    } catch (networkError) {
-        const error = networkError instanceof Error ? networkError : new Error('Unknown network error');
-
-        if (error.name === 'AbortError') {
-            logError('Salesforce Web-to-Lead request timeout', { submissionId }, error);
-        } else {
-            logError('Salesforce Web-to-Lead network error', { submissionId }, error);
-        }
-
-        return { success: false, error };
-    } finally {
-        clearTimeout(timeoutId);
+        // The body may echo contact data or a misleading success redirect. Do not read it.
+        void response.body?.cancel().catch(() => undefined);
+        return { response };
+    } catch {
+        // An abort or network error can happen after Salesforce creates the Lead.
+        // The durable claim remains consumed; callers reconcile and never repeat this POST.
+        logError('Salesforce Web-to-Lead transport uncertain', { submissionId });
+        return {};
     }
-}
-
-function extractSalesforceRedirectUrl(responseText: string): string | undefined {
-    const redirectUrlMatch = responseText.match(/window\.location(?:\.replace)?\(['"]([^'"]+)['"]\)/);
-    return redirectUrlMatch ? redirectUrlMatch[1] : undefined;
-}
-
-/**
- * Validates that a Salesforce response indicates successful form submission
- */
-function validateSalesforceResponse(responseText: string, submissionId: string, logPreview: boolean): { isValid: boolean; reason?: string } {
-    // 1. Positive signal FIRST. Salesforce emits a redirect script on acceptance
-    //    (window.location(...) / window.location.replace(...)). This is the
-    //    authoritative success signal. Checking it before any substring scan makes
-    //    the echoed retURL (which can contain words like "security") irrelevant.
-    if (responseText && /window\.location(?:\.replace)?\(['"]([^'"]+)['"]\)/.test(responseText)) {
-        logDebug('Found Salesforce success redirect in response', { submissionId });
-        return { isValid: true };
-    }
-
-    // 2. Empty/whitespace response → accepted. Salesforce can create the Lead and
-    //    still return no useful body; retrying here risks duplicate Leads.
-    if (!responseText || responseText.trim().length === 0) {
-        logDebug('Empty response from Salesforce - treating accepted HTTP response as success', {
-            submissionId,
-            responseLength: responseText ? responseText.length : 0
-        });
-        return { isValid: true };
-    }
-
-    // 3. Has content but no redirect → reject only explicit Salesforce error signals.
-    const errorIndicators = [
-        'error occurred',
-        'required field',
-        'required fields are missing',
-        'unable to create',
-        'failed to submit',
-        'system error',
-        'temporarily unavailable',
-        'invalid captcha',
-        'captcha verification failed'
-    ];
-
-    const lowerResponseText = responseText.toLowerCase();
-    for (const indicator of errorIndicators) {
-        if (lowerResponseText.includes(indicator)) {
-            logDebug('Found error indicator in response', {
-                submissionId,
-                indicator,
-                ...(logPreview ? { responsePreview: responseText.substring(0, 200) } : {}),
-            });
-            return { isValid: false, reason: `Error indicator found: ${indicator}` };
-        }
-    }
-
-    // 4. Has content, no redirect, no known error indicator → accepted. A 2xx
-    //    Web-to-Lead response is the strongest safe signal we have.
-    logDebug('Response has content but no Salesforce success redirect - treating accepted HTTP response as success', {
-        submissionId,
-        responseLength: responseText.length,
-        ...(logPreview ? { responsePreview: responseText.substring(0, 200) } : {}),
-    });
-    return { isValid: true };
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -592,10 +445,17 @@ async function dispatchSlackNotification(
 
 /** Optional post-acceptance work cannot change the outcome of a created lead. */
 async function afterAcceptance(submissionId: string, stage: string, work: () => Promise<unknown>): Promise<void> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
     try {
-        await work();
+        // Persistence is already confirmed. A stuck telemetry/provider flush must
+        // not turn acceptance into a browser timeout. Its claim is never replayed.
+        await Promise.race([work(), new Promise((_, reject) => {
+            timer = setTimeout(() => reject(new Error('Post-acceptance deadline')), 3_500);
+        })]);
     } catch {
-        logError('Post-acceptance work failed', { submissionId, stage });
+        logError('Post-acceptance work failed or exceeded its deadline', { submissionId, stage });
+    } finally {
+        if (timer) clearTimeout(timer);
     }
 }
 
@@ -607,221 +467,171 @@ async function submitWebToLead<TResult extends object>(
     config: WebToLeadConfig<TResult>,
     rawFormData: unknown,
     runtime?: { queryString?: string; options?: InternalCallOptions },
-): Promise<TResult> {
-    const production = isProductionSalesforceRuntime();
-    const options = runtime?.options;
+): Promise<LeadSubmitResult> {
     const queryString = runtime?.queryString ?? '';
-
-    const submissionId = await trackFormSubmission(
-        config.formType,
-        // Pre-validation, untrusted payload — logged only via truthiness checks.
-        rawFormData as Record<string, unknown>,
-        FormSubmissionStatus.PENDING,
-    );
-
-    logInfo(config.processingMessage, { submissionId });
-    let postInitiated = false;
-    let acceptedResult: TResult | undefined;
-
+    const raw = rawFormData && typeof rawFormData === 'object' && !Array.isArray(rawFormData)
+        ? rawFormData as Record<string, unknown> : {};
+    const providedId = raw.submission_attempt_id;
+    if (providedId !== undefined && (typeof providedId !== 'string' ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(providedId))) {
+        return { outcome: 'validation_error', success: false, fieldErrors: { submission_attempt_id: 'Invalid submission reference.' } };
+    }
+    const submissionId = typeof providedId === 'string' ? providedId : randomUUID();
+    let ambiguous = false;
+    let acceptedResult: LeadSubmitResult | undefined;
     try {
-        const deployedNonProduction = process.env.VERCEL_ENV === 'preview' || process.env.VERCEL_ENV === 'development';
-        if (deployedNonProduction && !isProtectedSalesforceWebdevPreview()) {
-            throw new Error('Lead submissions are disabled in non-production Vercel environments');
+        const hostedNonProduction = process.env.VERCEL_ENV === 'preview' || process.env.VERCEL_ENV === 'development';
+        if (hostedNonProduction && !isProtectedSalesforceWebdevPreview()) {
+            return { outcome: 'not_sent', success: false, submissionId };
         }
         const salesforce = getSalesforceConfig();
         const sandbox = salesforce.profile === 'webdev';
-        if (sandbox && process.env.VPCS_SANDBOX_LEAD_WRITES === '1' &&
-            !salesforce.allowSandboxWrites && !isLeadDryRun()) {
-            throw new Error('Salesforce WebDev writes are disabled for this environment');
-        }
-        const dryRun = salesforce.profile === 'mock' || (sandbox && !salesforce.allowSandboxWrites) ||
-            (!production && isLeadDryRun());
-
-        // Validate and normalize the payload before processing. Invalid data is a HARD
-        // reject here — never written to Salesforce.
+        const dryRun = salesforce.profile === 'mock' || (!isProductionSalesforceRuntime() && isLeadDryRun());
+        if (sandbox && !salesforce.allowSandboxWrites && !dryRun) return { outcome: 'not_sent', success: false, submissionId };
         const validation = parseLeadForm(config.schema, rawFormData);
-        if (!validation.ok) {
-            logError(`Invalid ${config.formType} submission`, { submissionId, errors: validation.errors });
-            throw new Error(`Invalid form data: ${validation.errors.join('; ')}`);
-        }
-        // Trust boundary: zod has validated and normalized the payload. The config's schema
-        // erases to `z.ZodTypeAny`, so `validation.data` is untyped here — assert the flat
-        // string-map view the downstream builders/sinks consume. Non-string passthrough values
-        // (analytics counters, an `otherStates` array) still flow through untouched.
-        const formData: Record<string, string | undefined> = validation.data as Record<string, string | undefined>;
-
-        // Family A: parse the query string and require a valid effective state.
-        let paramsObj: Record<string, string> = {};
-        let partnerId: string | undefined;
+        if (!validation.ok) return { outcome: 'validation_error', success: false, submissionId,
+            fieldErrors: { form: 'Please check the required fields and try again.' } };
+        const formData = validation.data as Record<string, string | undefined>;
+        const paramsObj: Record<string, string> = {};
         let effectiveState: EffectiveLeadState | null = null;
         if (config.location) {
-            new URLSearchParams(queryString).forEach((value, key) => {
-                paramsObj[key] = value;
-            });
-            partnerId = paramsObj.id;
-            if (sandbox && !dryRun && partnerId) {
-                const role = config.location.partner === 'agent' ? 'agents' : 'lenders';
-                if (!isWebdevPartnerFixture(salesforce, role, partnerId)) {
-                    throw new Error('Salesforce WebDev submission requires an approved partner Account fixture');
-                }
+            new URLSearchParams(queryString).forEach((value, key) => { paramsObj[key] = value; });
+            if (sandbox && !dryRun && paramsObj.id &&
+                !isWebdevPartnerFixture(salesforce, config.location.partner === 'agent' ? 'agents' : 'lenders', paramsObj.id)) {
+                return { outcome: 'not_sent', success: false, submissionId };
             }
-
             effectiveState = getEffectiveLeadState(formData.state, paramsObj.state);
-            if (!effectiveState) {
-                logError(`Invalid ${config.formType} state`, {
-                    submissionId,
-                    formState: formData.state,
-                    queryState: paramsObj.state,
-                });
-                throw new Error('Invalid form data: state is required.');
-            }
+            if (!effectiveState) return { outcome: 'validation_error', success: false, submissionId,
+                fieldErrors: { state: 'Choose a destination state.' } };
             formData.state = effectiveState.code;
         }
-
-        // Preserve suspected leads in Salesforce and tag them for downstream quarantine.
-        const spam = await evaluateLeadSpam({
-            email: formData.email,
-            ...(config.spamFreeTextField ? { freeText: formData[config.spamFreeTextField] } : {}),
-            honeypot: formData[HP_FIELD],
-            renderedAt: formData[TS_FIELD],
-            options,
-        });
-        if (spam.quarantine) {
-            logError('Spam-suspected submission', { submissionId, form: config.formType, reasons: spam.reasons });
-            if (config.spamFreeTextField) {
-                formData[config.spamFreeTextField] = tagSpamSuspected(formData[config.spamFreeTextField]);
-            }
-        }
-
         const sandboxSiteOrigin = sandbox && !dryRun ? getWebdevSiteOrigin() : undefined;
         const siteOrigin = sandboxSiteOrigin ?? BASE_URL;
-        let webFormUrl = '';
-        if (config.location) {
-            // Keep the sandbox URL limited to the approved partner selector and state.
-            const sandboxQuery = new URLSearchParams({ state: formData.state ?? '' });
-            if (paramsObj.id) sandboxQuery.set('id', paramsObj.id);
-            webFormUrl = appendLeadSubmissionMarker(
-                `${siteOrigin}/${config.location.path}${sandbox ? `?${sandboxQuery}` : queryString}`,
-                submissionId,
-            );
-        }
-
-        const ctx: WebToLeadContext = {
-            formData,
-            spam,
-            submissionId,
-            paramsObj,
-            webFormUrl,
-            siteOrigin,
-            sandboxSiteOrigin,
-            effectiveState,
-            agentInfo: null,
-        };
-
-        const legacyParams = config.buildParams(ctx);
+        const selector = new URLSearchParams({ state: formData.state ?? '' });
+        if (paramsObj.id) selector.set('id', paramsObj.id);
+        const webFormUrl = config.location ? appendLeadSubmissionMarker(
+            `${siteOrigin}/${config.location.path}${sandbox ? `?${selector}` : queryString}`, submissionId) : '';
+        const ctx: WebToLeadContext = { formData, spam: { decision: 'allow', quarantine: false, reasons: [] },
+            submissionId, paramsObj, webFormUrl, siteOrigin, sandboxSiteOrigin, effectiveState, agentInfo: null };
+        const legacyParams = appendSalesforceAttributionParams(config.buildParams(ctx), formData, submissionId);
+        // Only contacts actually serialized for Salesforce may determine admission or its rate bucket.
+        const email = legacyParams.get('email') || undefined;
+        const phone = legacyParams.get('mobile') || legacyParams.get('phone') || undefined;
+        const invalidContact = { outcome: 'validation_error', success: false, submissionId,
+            fieldErrors: { form: 'Enter a valid email address or phone number.' } } as const;
+        if (email ? !canonicalEmail(email) : !normalizedPhone(phone)) return invalidContact;
+        const emailHash = emailIdentityHash(email);
         if (sandbox && !dryRun) {
-            markWebdevSubmission(legacyParams, salesforce, submissionId);
+            requireWebdevTestRun(salesforce);
+            // Validate fixture identity/recipients before any OAuth-bound request; mark the actual body later.
+            markWebdevSubmission(new URLSearchParams(legacyParams), salesforce, submissionId);
         }
-        const params = serializeWebToLeadParams(legacyParams, salesforce);
-        const formBody = params.toString();
-        const url = dryRun ? salesforce.webToLeadUrl : assertWebToLeadTarget(params, salesforce);
-        // Web-to-Lead is unauthenticated. Verify sandbox identity without making production intake depend on OAuth.
-        if (sandbox && !dryRun) {
-            const session = await getVerifiedSalesforceSession();
-            if (session.cacheKey !== salesforce.cacheKey) throw new Error('Salesforce session did not match the Web-to-Lead profile');
-        }
-
-        // Salesforce must resolve an optional sandbox partner ID against the verified sandbox Account store.
-        if (partnerId && !dryRun) {
-            try {
-                ctx.agentInfo = await stateService.fetchAgentById(partnerId);
-                logDebug('Partner information fetched successfully', {
-                    partner_id: partnerId,
-                    submissionId,
-                });
-            } catch (error) {
-                if (sandbox) throw new Error('Salesforce WebDev partner Account could not be verified');
-                logError('Error fetching partner information', {
-                    partner_id: partnerId,
-                    submissionId,
-                }, error);
+        // The reference lives separately from the business fingerprint, including URL attribution.
+        const volatileKeys = new Set(['retURL', 'captcha_settings', 'g-recaptcha-response',
+            '00N4x00000QQ1LB', VPCS_VISITOR_ID_W2L_FIELD_ID, VPCS_SUBMISSION_ID_W2L_FIELD_ID]);
+        const bindingKey = process.env.VPCS_LEAD_BINDING_KEY;
+        if (!dryRun && !bindingKey) throw new Error('Lead binding key unavailable');
+        const payloadHash = leadPayloadHash(legacyParams, volatileKeys, dryRun ? undefined : bindingKey);
+        // Bound expensive Salesforce inspection/policy calls, including repeated reference checks.
+        const rate = await evaluateLeadRateLimit({ email, phone, dryRun });
+        if (rate.decision === 'reject') return invalidContact;
+        if (rate.decision !== 'allow') return { outcome: rate.decision,
+            success: false, submissionId, ...(rate.retryAt ? { retryAt: rate.retryAt } : {}) };
+        let confirmed = false;
+        if (!dryRun) {
+            // An existing attempt may already have native outreach. Never relabel it rejected.
+            const prior = await inspectLeadAttempt(submissionId, payloadHash);
+            if (prior.declined) return { outcome: 'rejected', success: false, submissionId };
+            if (prior.exists) {
+                ambiguous = true;
+                confirmed = await reconcileLeadAttempt(submissionId, payloadHash);
+                if (!confirmed) return { outcome: 'unconfirmed', success: false, submissionId };
             }
-            if (sandbox && !ctx.agentInfo) throw new Error('Salesforce WebDev partner Account could not be verified');
         }
-
-        logDebug('Sending form data to Salesforce Web-to-Lead', {
-            submissionId,
-            profile: salesforce.profile,
+        if (!confirmed) {
+            ctx.spam = await evaluateLeadSpam({ email, phone,
+                freeText: config.spamFreeTextField ? formData[config.spamFreeTextField] : undefined,
+                honeypot: formData[HP_FIELD], renderedAt: formData[TS_FIELD], options: runtime?.options, dryRun, rateChecked: true });
+            if (ctx.spam.decision === 'retry_later') {
+                return { outcome: 'retry_later',
+                    success: false, submissionId, ...(ctx.spam.retryAt ? { retryAt: ctx.spam.retryAt } : {}) };
+            }
+            if (ctx.spam.decision !== 'allow') {
+                const outcome = ctx.spam.decision === 'reject' ? 'rejected' : 'review_required';
+                if (dryRun) return { outcome, success: false, submissionId };
+                // Resolve the deny against the same durable slot as dispatch. A prior dispatch may already have persisted.
+                ambiguous = true;
+                const denial = await claimLeadAttempt(submissionId, payloadHash, emailHash, true);
+                if (denial.blocked) return { outcome, success: false, submissionId };
+                confirmed = await reconcileLeadAttempt(submissionId, payloadHash);
+                if (!confirmed) return { outcome: 'unconfirmed', success: false, submissionId };
+            }
+        }
+        // Enrichment occurs only after admission, and never controls native Salesforce ownership.
+        if (paramsObj.id && !dryRun) {
+            try { ctx.agentInfo = await stateService.fetchAgentById(paramsObj.id, AbortSignal.timeout(5_000)); }
+            catch { if (sandbox) throw new Error('Sandbox partner could not be verified'); }
+            if (sandbox && !ctx.agentInfo) throw new Error('Sandbox partner could not be verified');
+        }
+        let response: Response | undefined;
+        if (!confirmed) {
+            if (sandbox && !dryRun) {
+                requireWebdevTestRun(salesforce);
+                markWebdevSubmission(legacyParams, salesforce, submissionId);
+            }
+            const params = serializeWebToLeadParams(legacyParams, salesforce);
+            const fields = dryRun ? { honeypot: '00N000000000901', submissionHash: '00N000000000902' } : getIntakeFields(salesforce);
+            params.set(fields.honeypot, ''); // Only a validated, empty honeypot reaches serialization.
+            params.set(fields.submissionHash, payloadHash);
+            const url = dryRun ? salesforce.webToLeadUrl : assertWebToLeadTarget(params, {
+                ...salesforce,
+                // These two IDs have their own verified, org-bound manifest above.
+                fieldIds: { ...salesforce.fieldIds, [fields.honeypot]: fields.honeypot, [fields.submissionHash]: fields.submissionHash },
+            });
+            if (!dryRun) {
+                // The claim is durable before the POST; lost responses never authorize a resend.
+                ambiguous = true;
+                const claim = await claimLeadAttempt(submissionId, payloadHash, emailHash);
+                if (claim.blocked) return { outcome: 'rejected', success: false, submissionId };
+                if (!claim.claimed) {
+                    confirmed = await reconcileLeadAttempt(submissionId, payloadHash);
+                    if (!confirmed) return { outcome: 'unconfirmed', success: false, submissionId };
+                }
+            }
+            if (!confirmed) {
+                const transport = await submitToSalesforceWebToLead(url, params.toString(), submissionId, dryRun);
+                response = transport.response;
+                // HTTP/body/redirects cannot prove persistence or prove a rejection.
+                confirmed = dryRun || await reconcileLeadAttempt(submissionId, payloadHash);
+                if (!confirmed) return { outcome: 'unconfirmed', success: false, submissionId };
+            }
+        }
+        acceptedResult = { outcome: 'accepted', success: true, submissionId, redirectUrl: '/thank-you' };
+        await afterAcceptance(submissionId, 'status', () => updateSubmissionStatus(submissionId, FormSubmissionStatus.SUCCESS, response));
+        // Atomic notification claim prevents duplicate Slack/conversion effects after replayed reads.
+        let notify = dryRun;
+        if (!dryRun) await afterAcceptance(submissionId, 'notification_claim', async () => {
+            notify = await claimWebsiteNotifications(submissionId, payloadHash);
         });
-
-        if (sandbox && !dryRun) requireWebdevTestRun(salesforce);
-        postInitiated = !dryRun;
-        const submissionResult = await submitToSalesforceWebToLead(
-            url,
-            formBody,
-            submissionId,
-            dryRun,
-            sandboxSiteOrigin ? `${sandboxSiteOrigin}/thank-you` : undefined,
-        );
-
-        if (!submissionResult.success) {
-            logError('Salesforce Web-to-Lead submission failed', {
-                submissionId,
-                error: submissionResult.error?.message,
-            }, submissionResult.error);
-
-            throw submissionResult.error || new Error('Failed to submit form to Salesforce');
+        if (notify) {
+            if (config.capture) {
+                const capture = config.capture;
+                await afterAcceptance(submissionId, 'accepted_conversion', () => captureAcceptedCustomerLead({
+                    dryRun, spamQuarantined: false, formId: capture.formId, leadSource: capture.leadSource,
+                    submissionId, formData, sourcePagePath: capture.sourcePagePath,
+                    stateCode: effectiveState?.code ?? capture.stateCode,
+                    stateSlug: effectiveState?.slug ?? capture.stateSlug,
+                    partnerType: capture.partnerType, partnerSalesforceId: paramsObj.id || null, guideId: capture.guideId,
+                }));
+            }
+            await afterAcceptance(submissionId, 'notifications', () => dispatchSlackNotification(submissionId, dryRun, () => config.buildSlack(ctx)));
         }
-
-        const { response, redirectUrl } = submissionResult;
-        // Build the legacy success shape once. From here on, acceptance cannot be demoted.
-        const result = config.buildResult(redirectUrl, submissionId);
-        acceptedResult = dryRun ? { ...result, dryRun: true as const } : result;
-        await afterAcceptance(submissionId, 'status', () =>
-            updateSubmissionStatus(submissionId, FormSubmissionStatus.SUCCESS, response));
-        if (config.capture) {
-            const capture = config.capture;
-            await afterAcceptance(submissionId, 'accepted_conversion', () => captureAcceptedCustomerLead({
-                dryRun,
-                spamQuarantined: spam.quarantine,
-                formId: capture.formId,
-                leadSource: capture.leadSource,
-                submissionId,
-                formData,
-                ...(capture.sourcePagePath ? { sourcePagePath: capture.sourcePagePath } : {}),
-                ...(capture.stateCode ? { stateCode: capture.stateCode } : {}),
-                ...(capture.stateSlug ? { stateSlug: capture.stateSlug } : {}),
-                ...(config.location
-                    ? {
-                        stateCode: effectiveState?.code,
-                        stateSlug: effectiveState?.slug,
-                        partnerType: capture.partnerType,
-                        partnerSalesforceId: paramsObj.id || null,
-                    }
-                    : {}),
-                ...(capture.guideId ? { guideId: capture.guideId } : {}),
-            }));
-        }
-        await afterAcceptance(submissionId, 'notifications', () =>
-            dispatchSlackNotification(submissionId, dryRun, () => config.buildSlack(ctx)));
-
-        logInfo('Form submitted successfully', { submissionId, hasRedirectUrl: !!redirectUrl });
-
         return acceptedResult;
     } catch (error) {
-        if (acceptedResult) {
-            logError('Post-acceptance processing interrupted', { submissionId });
-            return acceptedResult;
-        }
-        await updateSubmissionStatus(
-            submissionId,
-            postInitiated ? FormSubmissionStatus.UNCONFIRMED : FormSubmissionStatus.FAILURE,
-            null,
-            error instanceof Error ? error : new Error('Unknown error'),
-        );
-
-        logError(`Error in ${config.formType} submission`, { submissionId }, error);
-        throw new LeadSubmissionError(postInitiated ? 'unconfirmed' : 'not_sent', submissionId);
+        if (acceptedResult) return acceptedResult;
+        const uncertain = ambiguous || error instanceof LeadAttemptConflictError;
+        logError('Lead admission or confirmation unavailable', { submissionId, uncertain });
+        return { outcome: uncertain ? 'unconfirmed' : 'retry_later', success: false, submissionId };
     }
 }
 

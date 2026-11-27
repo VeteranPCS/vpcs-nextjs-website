@@ -1,5 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
+import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
+import { useState } from "react";
 import GetListedAgents from "@/components/GetListedAgents/GetListedAgents";
 import CurrentLocation from "@/components/GetListedAgents/CurrentLocation";
 import AgentInfo from "@/components/GetListedAgents/AgentInfo";
@@ -15,14 +17,16 @@ export default function GetListedAgentsPage() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState({});
-  const [shouldSubmitForm, setShouldSubmitForm] = useState<boolean>(false);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const submission = useLeadSubmission('get_listed_agents');
   const { ref: honeypotRef, getSpamFields } = useHoneypot();
 
-  const shouldSubmit = () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    setShouldSubmitForm(true);
+  async function submitApplication(stepData: object) {
+    const payload = { ...formData, ...stepData };
+    const result = await submission.submit({ ...payload, ...getSpamFields() }, GetListedAgentsPostForm, payload);
+    if (result?.outcome === 'accepted') {
+      bestEffort(() => sendGTMEvent({ event: 'conversion_get_listed_agents' }));
+      router.push(result.redirectUrl || '/thank-you');
+    }
   }
 
   const handleNext = () => {
@@ -42,32 +46,6 @@ export default function GetListedAgentsPage() {
     return Promise.resolve({ success: true });
   };
 
-  useEffect(() => {
-    const handleFormSubmission = async () => {
-      try {
-        sendGTMEvent({
-          event: 'conversion_get_listed_agents',
-        });
-        const server_response = await GetListedAgentsPostForm({ ...formData, ...getSpamFields() });
-        // Only proceed to thank-you when Salesforce returned a redirect; otherwise treat as a failed submission.
-        if (server_response?.redirectUrl) {
-          router.push(server_response.redirectUrl);
-        } else {
-          console.error('No redirect URL found');
-          setIsSubmitting(false);
-          setShouldSubmitForm(false);
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        setIsSubmitting(false);
-        setShouldSubmitForm(false);
-      }
-    };
-
-    if (shouldSubmitForm) {
-      handleFormSubmission();
-    }
-  }, [formData, shouldSubmitForm, router, getSpamFields]);
 
   const renderProgressBar = () => {
     return (
@@ -145,8 +123,10 @@ export default function GetListedAgentsPage() {
         {currentStep === 4 && (
           <AgentInfo
             onBack={handleBack}
-            onSubmit={handleSubmit}
-            shouldSubmit={shouldSubmit}
+            onSubmit={submitApplication}
+            isSubmitting={submission.submitting}
+            blocked={submission.blocked}
+            feedback={<CustomerSubmissionFeedback failure={submission.failure} />}
           />
         )}
       </div>

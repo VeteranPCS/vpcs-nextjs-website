@@ -1,5 +1,6 @@
 import { expect, type Page, type Request } from '@playwright/test';
 import { gunzipSync } from 'node:zlib';
+import { MIN_SUBMIT_MS } from '../lib/validation/spam-fields';
 export async function assertNoOverflow(page:Page) {
   const widths=await page.evaluate(() => ({viewport:document.documentElement.clientWidth,content:document.documentElement.scrollWidth}));
   expect(widths.content).toBeLessThanOrEqual(widths.viewport+1);
@@ -7,6 +8,11 @@ export async function assertNoOverflow(page:Page) {
 export async function fixtureImpact(page:Page) {
   await page.route('**/api/v1/impact',route=>route.fulfill({json:{success:true,data:{available:true,cashBackAmount:'$676,500',charityAmount:'$66,270',totalVolumeSold:'$189 Million'}}}));
 }
+// Start once the form has hydrated so automated entry exercises the human-timing path.
+export function leadTimingReady() {
+  return new Promise<void>(resolve => setTimeout(resolve, MIN_SUBMIT_MS));
+}
+
 export type CapturedEvent = { event: string; properties: Record<string, unknown> };
 function decodeEvents(request: Request): CapturedEvent[] {
   const buffer = request.postDataBuffer();

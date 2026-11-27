@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { captureServerEvent } from '@/lib/posthog-server';
 import { logError } from '@/services/loggingService';
+import { PostHog } from 'posthog-node';
 
 const mocks = vi.hoisted(() => ({
   capture: vi.fn(),
@@ -42,6 +43,8 @@ describe('PostHog server delivery', () => {
   });
 
   it('logs capture failures without leaking event properties', async () => {
+    vi.stubEnv('NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN', 'test-project-token');
+    vi.stubEnv('NEXT_PUBLIC_POSTHOG_HOST', 'https://analytics.example.test');
     const error = new Error('network down');
     mocks.flush.mockRejectedValueOnce(error);
 
@@ -60,5 +63,10 @@ describe('PostHog server delivery', () => {
       error,
     );
     expect(mocks.logError.mock.calls[0]![1]).not.toHaveProperty('properties');
+    expect(PostHog).toHaveBeenCalledWith('test-project-token', expect.objectContaining({
+      host: 'https://analytics.example.test',
+      requestTimeout: 3_000,
+      fetchRetryCount: 0,
+    }));
   });
 });

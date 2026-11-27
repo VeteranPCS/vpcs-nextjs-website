@@ -1,4 +1,6 @@
 "use client"
+import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
+import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import Button from "@/components/common/Button";
 import classes from "./ContactForm.module.css";
 import Image from "next/image";
@@ -40,7 +42,8 @@ const contactFormSchema = yup.object().shape({
 });
 
 const ContactForm = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submission = useLeadSubmission('contact_form');
+  const isSubmitting = submission.submitting;
   const { open: openConcierge } = useConcierge();
 
   const handleConciergeCta = () => {
@@ -68,31 +71,17 @@ const ContactForm = () => {
   const { ref: honeypotRef, getSpamFields } = useHoneypot();
 
   async function onSubmit(data: ContactFormData) {
-    setIsSubmitting(true);
-    try {
-      sendGTMEvent({
-        event: 'contact_form_submission',
-      });
-
-      const server_response = await contactPostForm({
-        ...data,
-        ...getSpamFields(),
-        ...formTrackingPayload(),
-      });
-      if (server_response?.success || server_response?.message) {
-        reset();
-        navigateCustomerSuccess('/thank-you');
-        return;
-      } else {
-        trackFormSubmissionFailed('contact_form', 'server_submission', ['no_success_response']);
-        console.log("Form submission failed or no success indicator found");
-      }
-    } catch (error) {
-      trackFormSubmissionFailed('contact_form', 'server_submission', ['submission_exception']);
-      console.error('Error submitting form:', error);
-      // You might want to show an error message to the user here
-    } finally {
-      setIsSubmitting(false);
+    const result = await submission.submit({ ...data, ...getSpamFields() }, payload => {
+      let tracking = {};
+      bestEffort(() => { tracking = formTrackingPayload(); });
+      return contactPostForm({ ...payload, ...tracking });
+    }, data);
+    if (result?.outcome === 'accepted') {
+      bestEffort(() => sendGTMEvent({ event: 'contact_form_submission' }));
+      reset();
+      navigateCustomerSuccess('/thank-you');
+    } else if (result) {
+      bestEffort(() => trackFormSubmissionFailed('contact_form', 'server_submission', [result.outcome]));
     }
   }
   const [mediaAccount, SetMediaAccount] = useState<MediaAccountProps[]>([]);
@@ -327,10 +316,11 @@ const ContactForm = () => {
 
                 <HoneypotField ref={honeypotRef} />
                 <div className="flex flex-col items-end md:py-8 py-2 gap-3">
+                  <CustomerSubmissionFeedback failure={submission.failure} />
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className={`items-center ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#a91f23]'} w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px] px-[20px] xl:py-[15px] lg:py-[15px] sm:py-[14px] py-[14px] rounded-[16px] text-center tracking-[1px] hover:tracking-[5px] duration-500 transition-all`}
+                    disabled={isSubmitting || submission.blocked}
+                    className={`items-center ${isSubmitting || submission.blocked ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#a91f23]'} w-auto inline-flex xl:px-[30px] lg:px-[30px] sm:px-[20px] px-[20px] xl:py-[15px] lg:py-[15px] sm:py-[14px] py-[14px] rounded-[16px] text-center tracking-[1px] hover:tracking-[5px] duration-500 transition-all`}
                   >
                     <span
                       className="md:text-[18px] text-[14px] font-normal leading-6 bg-cover text-white text-nowrap"

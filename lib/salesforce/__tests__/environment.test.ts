@@ -2,9 +2,11 @@ import { describe, expect, it, vi } from 'vitest';
 
 import {
     authenticateSalesforce,
+    assertSalesforceIntakeIdentity,
     getSalesforceProfile,
     isProductionSalesforceRuntime,
     resolveSalesforceEnvironment,
+    resolveSalesforceIntakeAuth,
     validateSalesforceRequestUrl,
     validateWebToLeadTarget,
 } from '@/lib/salesforce/environment.mjs';
@@ -28,6 +30,58 @@ const protectedPreview = {
     VERCEL_GIT_COMMIT_REF: 'codex/salesforce-workflow-test',
     VPCS_SANDBOX_PREVIEW_PROTECTED: '1',
 };
+
+describe('dedicated Salesforce intake configuration', () => {
+    const userId = '005000000000123';
+    const dedicated = {
+        VPCS_SALESFORCE_INTAKE_CLIENT_ID: 'intake-app',
+        VPCS_SALESFORCE_INTAKE_CLIENT_SECRET: 'intake-secret',
+        VPCS_SALESFORCE_INTAKE_USER_ID: userId,
+    };
+    const env = { ...productionEnv, SALESFORCE_CLIENT_ID: 'directory-app', ...dedicated };
+    const config = resolveSalesforceEnvironment(env);
+
+    it('pins client credentials and an isolated cache key to the selected My Domain', () => {
+        const auth = resolveSalesforceIntakeAuth(config, env);
+        expect(auth.request.url).toBe(`${config.restOrigin}/services/oauth2/token`);
+        expect(Object.fromEntries(auth.request.body)).toEqual({
+            grant_type: 'client_credentials', client_id: 'intake-app', client_secret: 'intake-secret',
+        });
+        expect(auth.config.cacheKey).not.toBe(config.cacheKey);
+        expect(auth.config.cacheKey).not.toContain('intake-secret');
+    });
+
+    it.each([
+        { VPCS_SALESFORCE_INTAKE_CLIENT_ID: undefined },
+        { VPCS_SALESFORCE_INTAKE_CLIENT_SECRET: ' ' },
+        { VPCS_SALESFORCE_INTAKE_USER_ID: '00D000000000123' },
+        { VPCS_SALESFORCE_INTAKE_CLIENT_ID: 'directory-app' },
+    ])('rejects missing, invalid or shared Production credentials %#', overrides => {
+        expect(() => resolveSalesforceIntakeAuth(config, { ...env, ...overrides })).toThrow();
+    });
+
+    it('binds token identity to the exact configured org and principal without following its URL', () => {
+        const path = `/id/${config.orgId}/${userId}`;
+        expect(() => assertSalesforceIntakeIdentity(`https://login.salesforce.com${path}`, config, userId)).not.toThrow();
+        expect(() => assertSalesforceIntakeIdentity(`${config.restOrigin}${path}`, config, userId)).not.toThrow();
+        for (const id of [
+            `https://test.salesforce.com${path}`, `https://untrusted.invalid${path}`,
+            `https://login.salesforce.com${path}?`, `https://login.salesforce.com${path}/../${userId}`,
+            `https://login.salesforce.com/id/${WEBDEV_ORG}/${userId}`,
+            `https://login.salesforce.com/id/${config.orgId}/005000000000124`,
+        ]) {
+            expect(() => assertSalesforceIntakeIdentity(id, config, userId)).toThrow();
+        }
+    });
+
+    it('keeps directory and intake API routes disjoint', () => {
+        const intake = `${config.restOrigin}/services/apexrest/vpcs/intake/v1/inspect`;
+        const query = `${config.restOrigin}/services/data/${config.apiVersion}/query`;
+        expect(() => validateSalesforceRequestUrl(intake, config)).toThrow();
+        expect(validateSalesforceRequestUrl(intake, config, 'intake').toString()).toBe(intake);
+        expect(() => validateSalesforceRequestUrl(query, config, 'intake')).toThrow();
+    });
+});
 
 describe('Salesforce profiles', () => {
     it('keeps local Next production builds on webdev', () => {

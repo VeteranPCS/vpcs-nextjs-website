@@ -1,4 +1,6 @@
 "use client";
+import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
+import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from 'react-hook-form';
 import * as Yup from 'yup';
@@ -26,9 +28,7 @@ interface FormInputs {
 }
 
 const VaLoanGuideDownload = () => {
-    const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const { open: openConcierge } = useConcierge();
 
     const handleConciergeCta = () => {
@@ -55,57 +55,39 @@ const VaLoanGuideDownload = () => {
     const { ref: honeypotRef, getSpamFields } = useHoneypot();
 
     // On submit
+    const submission = useLeadSubmission('va_loan_guide');
+    const submitting = submission.submitting;
+
     const onSubmitHandler: SubmitHandler<FormInputs> = async (data) => {
-        setSubmitting(true);
-        setError(null);
-        captureAnalyticsEvent('guide_download_requested', {
+        const [firstName, ...lastNames] = data.name.trim().split(' ');
+        const payload = { firstName, lastName: lastNames.join(' '), email: data.email };
+        if (submission.blocked) return;
+        bestEffort(() => captureAnalyticsEvent('guide_download_requested', {
             guide_id: 'va_loan_guide',
             form_id: 'va_loan_guide',
             has_email: Boolean(data.email),
-        });
-        try {
-            sendGTMEvent({ event: "conversion_download", content: "VA Loan Guide" });
-            // Split name into first/last for Salesforce
-            const [firstName, ...lastArr] = data.name.trim().split(' ');
-            const lastName = lastArr.join(' ');
-            const payload = {
-                firstName,
-                lastName,
-                email: data.email,
-            };
-            const server_response = await vaLoanGuideForm({
-                ...payload,
-                ...getSpamFields(),
-                ...formTrackingPayload(),
-            });
-            if (server_response?.success) {
-                setSuccess(true);
-                reset();
-                captureAnalyticsEvent('guide_download_started', {
-                    guide_id: 'va_loan_guide',
-                    form_id: 'va_loan_guide',
-                });
-                // Download the PDF
-                const link = document.createElement('a');
-                link.href = '/downloads/VA-Loan-Guide.pdf';
-                link.download = 'VA-Loan-Guide.pdf';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } else {
-                trackFormSubmissionFailed('va_loan_guide', 'server_submission', ['no_success_response'], {
-                    guide_id: 'va_loan_guide',
-                });
-                setError("Submission failed. Please try again.");
-            }
-        } catch (err) {
-            trackFormSubmissionFailed('va_loan_guide', 'server_submission', ['submission_exception'], {
-                guide_id: 'va_loan_guide',
-            });
-            setError("Submission failed. Please try again.");
-        } finally {
-            setSubmitting(false);
+        }));
+        const result = await submission.submit({ ...payload, ...getSpamFields() }, attempt => {
+            let tracking = {};
+            bestEffort(() => { tracking = formTrackingPayload(); });
+            return vaLoanGuideForm({ ...attempt, ...tracking });
+        }, payload);
+        if (!result) return;
+        if (result.outcome !== 'accepted') {
+            bestEffort(() => trackFormSubmissionFailed('va_loan_guide', 'server_submission', [result.outcome], { guide_id: 'va_loan_guide' }));
+            return;
         }
+        setSuccess(true);
+        reset();
+        bestEffort(() => sendGTMEvent({ event: 'conversion_download', content: "VA Loan Guide" }));
+        bestEffort(() => captureAnalyticsEvent('guide_download_started', { guide_id: 'va_loan_guide', form_id: 'va_loan_guide' }));
+        bestEffort(() => {
+            const link = document.createElement('a');
+            link.href = '/downloads/VA-Loan-Guide.pdf';
+            link.download = 'VA-Loan-Guide.pdf';
+            document.body.appendChild(link);
+            try { link.click(); } finally { link.remove(); }
+        });
     };
 
     const handleInvalidSubmit = (formErrors: typeof errors) => {
@@ -163,7 +145,7 @@ const VaLoanGuideDownload = () => {
                         <button
                             className="md:w-auto px-6 bg-[#232857] text-white rounded py-3 text-base font-medium hover:bg-[#1a1e4a] disabled:bg-gray-400"
                             type="submit"
-                            disabled={submitting}
+                            disabled={submitting || submission.blocked || success}
                         >
                             {submitting ? 'Submitting...' : 'Download Now'}
                         </button>
@@ -172,7 +154,7 @@ const VaLoanGuideDownload = () => {
                     <div className="w-full flex flex-col items-center mb-2">
                         {errors.name && <span className="text-red-600 text-xs">{errors.name.message}</span>}
                         {errors.email && <span className="text-red-600 text-xs">{errors.email.message}</span>}
-                        {error && <span className="text-red-600 text-xs">{error}</span>}
+                        <CustomerSubmissionFeedback failure={submission.failure} />
                         {success && <span className="text-green-700 text-xs">Thank you! Your download will begin shortly.</span>}
                     </div>
 

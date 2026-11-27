@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomPermission xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Call the exact-key website intake service. Assign only to the verified intake runtime.</description>
+    <isLicensed>false</isLicensed>
+    <label>VPCS Intake API</label>
+</CustomPermission>

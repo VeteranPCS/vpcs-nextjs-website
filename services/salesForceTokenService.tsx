@@ -1,9 +1,11 @@
 import axios from 'axios';
 import {
     assertSalesforceInstanceUrl,
+    assertSalesforceIntakeIdentity,
     assertSalesforceOrganization,
     getSalesforceOAuthRequest,
     getSalesforceOrganizationQueryUrl,
+    resolveSalesforceIntakeAuth,
     type SalesforceEnvironment,
 } from '@/lib/salesforce/environment.mjs';
 import { getSalesforceConfig } from '@/lib/salesforce/server-config';
@@ -27,8 +29,11 @@ let generation = 0;
 const cached = new Map<string, CachedSalesforceToken>();
 const inflight = new Map<string, Promise<CachedSalesforceToken>>();
 
-async function requestSalesforceToken(config: SalesforceEnvironment): Promise<CachedSalesforceToken> {
-    const { url, body } = getSalesforceOAuthRequest(config);
+async function requestSalesforceToken(
+    config: SalesforceEnvironment,
+    intakeAuth?: ReturnType<typeof resolveSalesforceIntakeAuth>,
+): Promise<CachedSalesforceToken> {
+    const { url, body } = intakeAuth ? intakeAuth.request : getSalesforceOAuthRequest(config);
     const response = await axios({
         url,
         method: 'post',
@@ -41,6 +46,7 @@ async function requestSalesforceToken(config: SalesforceEnvironment): Promise<Ca
     if (response.status !== 200 || typeof token !== 'string' || !token) throw new SalesforceTokenError();
 
     const instanceUrl = assertSalesforceInstanceUrl(response.data?.instance_url, config);
+    if (intakeAuth) assertSalesforceIntakeIdentity(response.data?.id, config, intakeAuth.userId);
     const organization = await axios({
         url: getSalesforceOrganizationQueryUrl(config),
         method: 'get',
@@ -73,15 +79,18 @@ export function invalidateSalesforceToken(rejectedGeneration: number): void {
 export async function getSalesforceTokenSnapshot(options?: {
     forceRefresh?: boolean;
     rejectedGeneration?: number;
+    purpose?: 'intake';
 }): Promise<SalesforceTokenSnapshot> {
-    const config = getSalesforceConfig();
-    const { cacheKey } = config;
-    if (config.profile === 'mock') {
-        return { token: 'offline-mock-salesforce-token', generation: 0, instanceUrl: config.restOrigin, cacheKey };
+    const baseConfig = getSalesforceConfig();
+    if (baseConfig.profile === 'mock') {
+        return { token: 'offline-mock-salesforce-token', generation: 0, instanceUrl: baseConfig.restOrigin, cacheKey: baseConfig.cacheKey };
     }
+    const intakeAuth = options?.purpose === 'intake' ? resolveSalesforceIntakeAuth(baseConfig) : undefined;
+    const config = intakeAuth?.config ?? baseConfig;
+    const { cacheKey } = config;
 
     if (options?.rejectedGeneration !== undefined) {
-        invalidateSalesforceToken(options.rejectedGeneration);
+        if (cached.get(cacheKey)?.generation === options.rejectedGeneration) cached.delete(cacheKey);
     } else if (options?.forceRefresh) {
         cached.delete(cacheKey);
     }
@@ -92,7 +101,7 @@ export async function getSalesforceTokenSnapshot(options?: {
     const pending = inflight.get(cacheKey);
     if (pending) return pending;
 
-    const request = requestSalesforceToken(config)
+    const request = requestSalesforceToken(config, intakeAuth)
         .then((result) => {
             cached.set(cacheKey, result);
             return result;

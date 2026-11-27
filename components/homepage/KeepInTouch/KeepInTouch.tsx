@@ -1,4 +1,6 @@
 "use client";
+import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
+import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import React, { useState, useEffect, useCallback } from "react"; // No need for useState or useEffect
 import classes from "./KeepInTouch.module.css";
 import Image from "next/image";
@@ -37,7 +39,8 @@ const contactFormSchema = yup.object().shape({
 
 const KeepInTouch = () => {
   const pathname = usePathname()
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submission = useLeadSubmission('keep_in_touch');
+  const isSubmitting = submission.submitting;
 
   const {
     register,
@@ -59,30 +62,17 @@ const KeepInTouch = () => {
   const [mediaAccount, SetMediaAccount] = useState<MediaAccountProps[]>([]);
 
   const handleFormSubmission = async (data: ContactFormData) => {
-    setIsSubmitting(true);
-    try {
-      sendGTMEvent({
-        event: 'keep_in_touch_form_submission',
-        page: pathname,
-      });
-      const server_response = await KeepInTouchForm({
-        ...data,
-        ...getSpamFields(),
-        ...formTrackingPayload(),
-      });
-      if (server_response?.success) {
-        reset();
-        navigateCustomerSuccess('/thank-you');
-        return;
-      } else {
-        trackFormSubmissionFailed('keep_in_touch', 'server_submission', ['no_success_response']);
-        console.log("No redirect URL found");
-      }
-    } catch (error) {
-      trackFormSubmissionFailed('keep_in_touch', 'server_submission', ['submission_exception']);
-      console.error('Error submitting form:', error);
-    } finally {
-      setIsSubmitting(false);
+    const result = await submission.submit({ ...data, ...getSpamFields() }, payload => {
+      let tracking = {};
+      bestEffort(() => { tracking = formTrackingPayload(); });
+      return KeepInTouchForm({ ...payload, ...tracking });
+    }, data);
+    if (result?.outcome === 'accepted') {
+      bestEffort(() => sendGTMEvent({ event: 'keep_in_touch_form_submission', page: pathname }));
+      reset();
+      navigateCustomerSuccess('/thank-you');
+    } else if (result) {
+      bestEffort(() => trackFormSubmissionFailed('keep_in_touch', 'server_submission', [result.outcome]));
     }
   };
 
@@ -227,10 +217,11 @@ const KeepInTouch = () => {
                 <div className="flex items-center md:pl-0 pl-3 max-w-[390px] mx-auto sm:max-w-full">
                   <div className="w-[200px] flex md:flex-nowrap flex-wrap items-center gap-4">
                     <div className="md:py-8 py-2">
+                      <CustomerSubmissionFeedback failure={submission.failure} />
                       <button
                         type="submit"
-                        disabled={isSubmitting}
-	                        className={`inline-flex min-h-11 items-center rounded-2xl px-5 py-3.5 text-center transition-colors duration-200 sm:px-5 lg:px-[30px] lg:py-[15px] xl:px-[30px] xl:py-[15px] ${isSubmitting ? 'cursor-not-allowed bg-gray-400' : 'bg-accent-red hover:bg-accent-red-dark'}`}
+                        disabled={isSubmitting || submission.blocked}
+	                        className={`inline-flex min-h-11 items-center rounded-2xl px-5 py-3.5 text-center transition-colors duration-200 sm:px-5 lg:px-[30px] lg:py-[15px] xl:px-[30px] xl:py-[15px] ${isSubmitting || submission.blocked ? 'cursor-not-allowed bg-gray-400' : 'bg-accent-red hover:bg-accent-red-dark'}`}
                       >
                         <span
                           className="md:text-[18px] text-[14px] font-normal leading-6 bg-cover text-white text-nowrap"

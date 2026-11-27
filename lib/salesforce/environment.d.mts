@@ -32,7 +32,13 @@ export function getSalesforceProfile(env?: SalesforceEnv): SalesforceProfile;
 export function isProductionSalesforceRuntime(env?: SalesforceEnv): boolean;
 export function isProtectedSalesforceWebdevPreview(env?: SalesforceEnv): boolean;
 export function resolveSalesforceEnvironment(env?: SalesforceEnv, webdevManifest?: unknown): SalesforceEnvironment;
-export function validateSalesforceRequestUrl(value: string, config: SalesforceEnvironment): URL;
+export function validateSalesforceRequestUrl(value: string, config: SalesforceEnvironment, purpose?: 'directory' | 'intake'): URL;
+export function resolveSalesforceIntakeAuth(config: SalesforceEnvironment, env?: SalesforceEnv): {
+  config: SalesforceEnvironment;
+  request: { url: string; body: URLSearchParams };
+  userId: string;
+};
+export function assertSalesforceIntakeIdentity(value: unknown, config: SalesforceEnvironment, userId: string): void;
 export function validateWebToLeadTarget(params: URLSearchParams, config: SalesforceEnvironment): string;
 export function getSalesforceOAuthRequest(
   config: SalesforceEnvironment,

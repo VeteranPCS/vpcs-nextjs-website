@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fixtureImpact } from './helpers';
+import { fixtureImpact, leadTimingReady } from './helpers';
 
 // A visitor who picks an agent on a state page lands here with that agent in the query string.
 // Every "Find an Agent" link on this page points back at the page itself; none of them may
@@ -70,12 +70,14 @@ test('the selected agent reaches the lead submission after a header click', asyn
   const submissions: string[] = [];
   page.on('request', request => { if (request.method() === 'POST' && request.headers()['next-action']) submissions.push(request.postData() ?? ''); });
   await openSelectedAgent(page);
+  const timingReady = leadTimingReady();
   await clickHeaderFindAgent(page);
   await page.locator('#firstName').fill('RoutingFix');
   await page.locator('#lastName').fill('Verification');
   await page.locator('#email').fill('routing-fix-verification@example.com');
   await page.locator('#currentBase').fill('Fixture Base');
   await page.locator('#destinationBase').fill('Fixture Destination');
+  await timingReady;
   await page.getByRole('button', { name: 'Submit', exact: true }).click();
   await expect.poll(() => submissions.length).toBe(1);
   expect(submissions[0]).toContain(`id=${AGENT_ID}`);
@@ -93,6 +95,7 @@ test('choosing agent B while agent A is selected submits the lead to agent B', a
   const submissions: string[] = [];
   page.on('request', request => { if (request.method() === 'POST' && request.headers()['next-action']) submissions.push(request.postData() ?? ''); });
   await openSelectedAgent(page);
+  const timingReady = leadTimingReady();
   await page.evaluate(() => { (window as unknown as { __sameDocument: boolean }).__sameDocument = true; });
   await page.locator('#firstName').fill('RoutingFix');
   await page.locator('#email').fill('routing-fix-verification@example.com');
@@ -117,6 +120,7 @@ test('choosing agent B while agent A is selected submits the lead to agent B', a
   await page.locator('#lastName').fill('Verification');
   await page.locator('#currentBase').fill('Fixture Base');
   await page.locator('#destinationBase').fill('Fixture Destination');
+  await timingReady;
   await page.getByRole('button', { name: 'Submit', exact: true }).click();
   await expect.poll(() => submissions.length).toBe(1);
   expect(submissions[0]).toContain(`id=${AGENT_B}`);

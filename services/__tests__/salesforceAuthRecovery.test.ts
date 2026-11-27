@@ -52,6 +52,44 @@ beforeEach(() => {
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 describe('real token cache and API wrapper with mocked HTTP', () => {
+  it('can stop waiting for a refreshed token without issuing another GET', async () => {
+    const { axios, api } = await load();
+    const started = deferred<void>();
+    const refresh = deferred<ReturnType<typeof oauth>>();
+    axios.mockResolvedValueOnce(oauth('old')).mockResolvedValueOnce(unauthorized).mockImplementationOnce(() => {
+      started.resolve();
+      return refresh.promise;
+    });
+    const controller = new AbortController();
+    const request = api.salesForceAPIWithRefresh({
+      endpoint: WEBDEV_QUERY, type: api.RequestType.GET, signal: controller.signal,
+    });
+    const rejection = expect(request).rejects.toMatchObject({ name: 'AbortError' });
+    await started.promise;
+    controller.abort();
+    await rejection;
+    refresh.resolve(oauth('new'));
+    await vi.runAllTimersAsync();
+    expect(axios).toHaveBeenCalledTimes(3);
+  });
+
+  it('cancels a backoff timer for an aborted GET while retaining the wire signal', async () => {
+    const { axios, api } = await load();
+    const controller = new AbortController();
+    axios.mockResolvedValueOnce(oauth('old')).mockResolvedValueOnce({ status: 503, data: {} });
+    const request = api.salesForceAPIWithRefresh({
+      endpoint: WEBDEV_QUERY, type: api.RequestType.GET, signal: controller.signal,
+    });
+    const rejection = expect(request).rejects.toMatchObject({ name: 'AbortError' });
+    await vi.advanceTimersByTimeAsync(0);
+    expect(vi.getTimerCount()).toBe(1);
+    controller.abort();
+    await rejection;
+    expect(vi.getTimerCount()).toBe(0);
+    expect(axios).toHaveBeenCalledTimes(2);
+    expect(axios).toHaveBeenLastCalledWith(expect.objectContaining({ signal: controller.signal }));
+  });
+
   it.each(['simultaneous', 'late'])('coalesces %s old-generation 401s and uses the refreshed token', async (timing) => {
     const { axios, api } = await load();
     const first401 = deferred<typeof unauthorized>();

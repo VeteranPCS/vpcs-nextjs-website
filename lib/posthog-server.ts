@@ -10,6 +10,8 @@ function getPostHogClient(): PostHog {
       host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
       flushAt: 1,
       flushInterval: 0,
+      requestTimeout: 3_000,
+      fetchRetryCount: 0,
     });
   }
   return posthogClient;

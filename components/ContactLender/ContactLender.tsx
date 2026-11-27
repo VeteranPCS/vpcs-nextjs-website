@@ -18,7 +18,7 @@ import type { CustomerSubmitResponse } from '@/lib/leads/submission-outcome';
 
 // Props type for ContactForm component
 interface ContactFormProps {
-  onSubmit: (data: ContactLenderFormData) => Promise<CustomerSubmitResponse> | void;
+  onSubmit: (data: ContactLenderFormData & { submission_attempt_id: string }) => Promise<CustomerSubmitResponse> | void;
   derivedStateCode?: string | null;
 }
 
@@ -69,7 +69,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
     }
   }, [derivedStateCode, setValue]);
 
-  const { isSubmitting, focusRequest, onFormSubmit, setSubmitButton, submitLabel, ...feedback } = useCustomerSubmission({
+  const { isSubmitting, focusRequest, onFormSubmit, blocked, submitLabel, failure, showValidationFeedback } = useCustomerSubmission({
     formId: 'contact_lender',
     form: { handleSubmit, getValues, setError, reset },
     onSubmit,
@@ -270,13 +270,12 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
               </div>
             </div>
 
-            <CustomerSubmissionFeedback {...feedback} isSubmitting={isSubmitting} />
+            <CustomerSubmissionFeedback failure={failure} showValidation={showValidationFeedback} />
             <div className="flex md:justify-start justify-center flex-col md:items-start items-center gap-3">
               <button
                 type="submit"
-                ref={setSubmitButton}
-                disabled={isSubmitting}
-                className={`rounded-md border border-[#BBBFC1] ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
+                disabled={isSubmitting || blocked}
+                className={`rounded-md border border-[#BBBFC1] ${isSubmitting || blocked ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#292F6C]'} px-8 py-2 text-center text-white font-medium flex items-center gap-2 shadow-lg`}
               >
                 {submitLabel}
               </button>

@@ -29,6 +29,8 @@ describe('submitContactAgentLead', () => {
 
   it('preserves a Salesforce redirect URL', async () => {
     vi.mocked(contactAgentPostForm).mockResolvedValueOnce({
+      success: true,
+      outcome: 'accepted',
       redirectUrl: 'https://www.veteranpcs.com/thank-you',
       submissionId: 'submission-test-id',
     });
@@ -42,10 +44,11 @@ describe('submitContactAgentLead', () => {
     expect(contactAgentPostForm).toHaveBeenCalledWith(expect.objectContaining({ ...payload, state: 'CO' }), '?id=001&state=colorado');
   });
 
-  it('normalizes message-only success to the thank-you route', async () => {
+  it('normalizes accepted results without a redirect to the thank-you route', async () => {
     vi.mocked(contactAgentPostForm).mockResolvedValueOnce({
-      message: 'Form submitted successfully!',
-      submissionId: 'submission-test-id',
+      success: true,
+      outcome: 'accepted',
+        submissionId: 'submission-test-id',
     });
 
     await expect(submitContactAgentLead(payload, '?id=001&state=colorado')).resolves.toEqual({
@@ -58,6 +61,8 @@ describe('submitContactAgentLead', () => {
 
   it('does not emit legacy email-keyed analytics from the action layer', async () => {
     vi.mocked(contactAgentPostForm).mockResolvedValueOnce({
+      success: true,
+      outcome: 'accepted',
       redirectUrl: 'https://www.veteranpcs.com/thank-you',
       submissionId: 'submission-test-id',
     });

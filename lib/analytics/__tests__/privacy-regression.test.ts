@@ -1,6 +1,23 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { buildLeadTools } from '@/lib/ai/tools/lead-tools';
+import type { LeadSubmitResult } from '@/lib/leads/submission-outcome';
+
+const tools = vi.hoisted(() => ({
+  submit: vi.fn<() => Promise<LeadSubmitResult>>(),
+  capture: vi.fn(),
+}));
+
+vi.mock('server-only', () => ({}));
+vi.mock('@/services/salesForcePostFormsService', () => ({
+  contactAgentPostForm: tools.submit,
+  contactLenderPostForm: tools.submit,
+  contactPostForm: tools.submit,
+  vaLoanGuideForm: tools.submit,
+}));
+vi.mock('@/lib/analytics/server', () => ({ captureServerAnalyticsEvent: tools.capture }));
+vi.mock('@/services/loggingService', () => ({ logError: vi.fn(), logInfo: vi.fn() }));
 
 async function source(filePath: string): Promise<string> {
   return readFile(path.join(process.cwd(), filePath), 'utf8');
@@ -138,10 +155,53 @@ describe('analytics privacy regressions', () => {
     expect(clientAnalytics).not.toContain("| 'lead_conversion_created'");
   });
 
-  it('adds safe submission ids to concierge tool completion telemetry', async () => {
-    const leadTools = await source('lib/ai/tools/lead-tools.ts');
+  describe.each([
+    'submitAgentRequest', 'submitLenderRequest', 'submitGeneralInquiry', 'submitVALoanGuideRequest',
+  ] as const)('%s telemetry', (name) => {
+    const input = {
+      firstName: 'PrivateGiven', lastName: 'PrivateFamily', email: 'private@example.test',
+      phone: '2025550100', subject: 'Private subject', message: 'Private message', destinationState: 'CO',
+    };
+    const submissionId = '025284ba-b587-4777-b974-e5ebbf0ef6c7';
+    const visitorId = 'vpcs_test_visitor';
 
-    expect(leadTools).toContain('function submissionIdFromResponse');
-    expect(leadTools).toContain('submission_id: submissionIdFromResponse(serverResponse)');
+    async function execute() {
+      tools.capture.mockClear();
+      const tool = buildLeadTools({ vpcs_visitor_id: visitorId })[name];
+      if (!tool.execute) throw new Error('Missing lead tool executor');
+      expect(tool.needsApproval).toBe(true);
+      return tool.execute(input, { toolCallId: 'different-tool-call-id', messages: [] });
+    }
+
+    it('emits one completion with the exact server reference and no contact details', async () => {
+      tools.submit.mockResolvedValueOnce({ outcome: 'accepted', success: true, submissionId });
+      await expect(execute()).resolves.toMatchObject({ ok: true });
+      const events = tools.capture.mock.calls.map(([event]) => event);
+      expect(events).toHaveLength(2);
+      expect(events[1]).toMatchObject({
+        event: 'concierge_tool_completed', distinctId: visitorId,
+        properties: { tool_name: name, submission_id: submissionId },
+      });
+      const telemetry = JSON.stringify(events);
+      for (const { key, value } of [
+        { key: 'firstName', value: input.firstName }, { key: 'lastName', value: input.lastName },
+        { key: 'email', value: input.email }, { key: 'phone', value: input.phone },
+        { key: 'subject', value: input.subject }, { key: 'message', value: input.message },
+      ]) {
+        expect(telemetry).not.toContain(`"${key}"`);
+        expect(telemetry).not.toContain(value);
+      }
+    });
+
+    it.each(['rejected', 'unconfirmed'] as const)('emits failure without a completion for %s', async (outcome) => {
+      tools.submit.mockResolvedValueOnce({ outcome, success: false, submissionId });
+      await expect(execute()).resolves.toMatchObject({ ok: false });
+      const events = tools.capture.mock.calls.map(([event]) => event);
+      expect(events.map(event => event.event)).toEqual(['concierge_tool_submitted', 'concierge_tool_failed']);
+      expect(events[1]).toMatchObject({
+        distinctId: visitorId, properties: { tool_name: name, error_codes: [outcome] },
+      });
+      expect(JSON.stringify(events)).not.toContain(submissionId);
+    });
   });
 });

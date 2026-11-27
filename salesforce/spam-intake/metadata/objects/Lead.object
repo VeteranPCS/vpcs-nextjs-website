@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>VPCS_Submission_Hash__c</fullName>
+        <description>Server-bound intake payload digest for exact attempt reconciliation.</description>
+        <label>VPCS Submission Hash</label>
+        <length>64</length>
+        <required>false</required>
+        <type>Text</type>
+    </fields>
+</CustomObject>

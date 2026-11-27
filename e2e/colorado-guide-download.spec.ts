@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { test, expect, type Page } from '@playwright/test';
 import { COLORADO_RELOCATION_GUIDE as guide } from '../lib/guides/colorado-relocation';
 import { CONTACT_PREFILL_STORAGE_KEY } from '../lib/leads/contact-prefill';
-import { assertNoOverflow, interceptTelemetry } from './helpers';
+import { assertNoOverflow, interceptTelemetry, leadTimingReady } from './helpers';
 
 const PDF_SHA256 = 'b816103bade949338238a93ec77ad930f95a65a04128fbb04d95aa4bf95227e1';
 const privateValues = ['ColoradoTelemetryGiven', 'ColoradoTelemetryFamily', 'colorado-telemetry-private@example.com', 'private-colorado-query'];
@@ -41,8 +41,6 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
   await page.route('**/colorado**', async route => {
     if (route.request().method() === 'POST' && route.request().headers()['next-action']) {
       attempts += 1;
-      // First attempt never reaches the server; the retry uses its real dry-run action.
-      if (attempts === 1) { await route.abort('failed'); return; }
       if (attempts === 2) await acceptedRequestGate;
     }
     await route.continue();
@@ -94,6 +92,7 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
 
     await trigger.click();
     await expect(dialog).toBeVisible();
+    const timingReady = leadTimingReady();
     await assertNoOverflow(page);
     await page.screenshot({ path: testInfo.outputPath('colorado-guide-modal.png'), caret: 'initial' });
     const submit = dialog.getByRole('button', { name: 'Get my guide', exact: true });
@@ -114,9 +113,13 @@ test('Colorado guide captures a private-safe download after accepted dry-run sub
     expect(await googleDownloads(page)).toHaveLength(0);
 
     await email.fill('colorado-telemetry-private@example.com');
+    const honeypot = dialog.locator('input[name=company_website]');
+    await honeypot.evaluate((input: HTMLInputElement) => { input.value = 'synthetic-filled-honeypot'; });
     await submit.click();
-    await expect(dialog.getByRole('alert')).toContainText('Please try again');
+    await expect(dialog.getByRole('alert')).toContainText('couldn’t accept');
     expect(await googleDownloads(page)).toHaveLength(0);
+    await honeypot.evaluate((input: HTMLInputElement) => { input.value = ''; });
+    await timingReady;
 
     const automaticDownload = page.waitForEvent('download');
     await submit.click();

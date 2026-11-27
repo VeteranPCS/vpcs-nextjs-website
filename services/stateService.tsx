@@ -271,7 +271,7 @@ const stateService = {
     // to external consumers) by resolving the local path on the site origin.
     return absoluteUrl(image.path);
   },
-  fetchAgentById: async (agentId: string): Promise<Agent | null> => {
+  fetchAgentById: async (agentId: string, signal?: AbortSignal): Promise<Agent | null> => {
     try {
       // Escape the (user-derived) id before interpolating it into the SOQL
       // string literal. Valid Salesforce ids are alphanumeric, so this is a
@@ -288,6 +288,7 @@ const stateService = {
       const response = await salesForceAPIWithRefresh({
         endpoint: `${restOrigin}/services/data/${apiVersion}/query?q=${encodeURIComponent(query)}`,
         type: RequestType.GET,
+        ...(signal ? { signal } : {}),
       });
 
       if (response?.status === 200 && response.data.records.length > 0) {

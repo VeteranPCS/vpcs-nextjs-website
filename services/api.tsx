@@ -5,7 +5,7 @@ import {
     invalidateSalesforceToken,
     type SalesforceTokenSnapshot,
 } from "@/services/salesForceTokenService";
-import { SalesforceConfigurationError } from "@/lib/salesforce/environment.mjs";
+import { SalesforceConfigurationError, resolveSalesforceIntakeAuth, validateSalesforceRequestUrl } from "@/lib/salesforce/environment.mjs";
 import { requestMockSalesforce } from "@/lib/salesforce/mock-transport";
 import { assertSalesforceRequestUrl, getSalesforceConfig } from "@/lib/salesforce/server-config";
 import { SalesforceTokenError } from "@/lib/salesforce/token-error";
@@ -57,6 +57,8 @@ interface ApiParams {
     customHeader?: CustomHeaders;
 }
 
+type BoundedSalesforceRequest = ApiParams & { signal?: AbortSignal };
+
 // A Salesforce query endpoint carries its SOQL in the query string, which can include a
 // customer email in a WHERE clause. Because the URL is percent-encoded (`%40`), the log
 // sanitizer's email regex never matches it, so log only the path — enough to identify the
@@ -67,8 +69,17 @@ const logSafeEndpoint = (url: string | undefined): string | undefined => {
     return queryStart === -1 ? url : url.slice(0, queryStart);
 };
 
-const wait = (milliseconds: number): Promise<void> =>
-    new Promise((resolve) => setTimeout(resolve, milliseconds));
+function waitForSalesforceRetry(milliseconds: number, signal?: AbortSignal): Promise<void> {
+    signal?.throwIfAborted();
+    return new Promise((resolve, reject) => {
+        const abort = () => { clearTimeout(timer); reject(signal?.reason); };
+        const timer = setTimeout(() => {
+            signal?.removeEventListener('abort', abort);
+            resolve();
+        }, milliseconds);
+        signal?.addEventListener('abort', abort, { once: true });
+    });
+}
 
 // ***** start - Api function for calling any type of APIs *****
 export const api = async ({
@@ -105,25 +116,29 @@ export const api = async ({
 };
 // ***** end - Api function for calling any type of APIs *****
 
-function prepareSalesforceRequest(params: ApiParams) {
-    const config = getSalesforceConfig();
-    const url = assertSalesforceRequestUrl(params.endpoint, config);
+function prepareSalesforceRequest(params: ApiParams, purpose?: 'intake') {
+    const baseConfig = getSalesforceConfig();
+    const url = purpose === 'intake'
+        ? validateSalesforceRequestUrl(params.endpoint, baseConfig, purpose)
+        : assertSalesforceRequestUrl(params.endpoint, baseConfig);
     const isRead = params.type === RequestType.GET;
     const isMutation = params.type === RequestType.POST || params.type === RequestType.PUT
         || params.type === RequestType.PATCH || params.type === RequestType.DELETE;
     if (!isRead && !isMutation) {
         throw new SalesforceConfigurationError('Unsupported Salesforce REST request method.');
     }
-    if (isMutation && config.profile === 'webdev' && !config.allowSandboxWrites) {
+    if (isMutation && baseConfig.profile === 'webdev' && !baseConfig.allowSandboxWrites) {
         throw new SalesforceConfigurationError('Salesforce REST writes are disabled for this deployment.');
     }
+    const config = purpose === 'intake' && baseConfig.profile !== 'mock'
+        ? resolveSalesforceIntakeAuth(baseConfig).config : baseConfig;
     return { config, url };
 }
 
 const RESTRICTED_HEADERS = new Set(['authorization', 'proxy-authorization', 'cookie', 'host']);
 
 async function requestSalesforceAPI(
-    params: ApiParams,
+    params: BoundedSalesforceRequest,
     target: ReturnType<typeof prepareSalesforceRequest>,
     session: SalesforceTokenSnapshot,
     image = false,
@@ -143,6 +158,7 @@ async function requestSalesforceAPI(
             method: params.type,
             data: params.data,
             timeout: SALESFORCE_REQUEST_TIMEOUT_MS,
+            ...(params.signal ? { signal: params.signal } : {}),
             maxRedirects: 0,
             headers: {
                 ...customHeaders,
@@ -152,6 +168,7 @@ async function requestSalesforceAPI(
             responseType: image ? 'arraybuffer' : undefined,
         });
     } catch (error: any) {
+        params.signal?.throwIfAborted();
         if (error?.response) return error.response;
 
         // Raw Axios errors retain request headers and can include SOQL in the message.
@@ -164,24 +181,63 @@ async function requestSalesforceAPI(
     }
 }
 
-async function requestWithoutRetry(params: ApiParams, image = false): Promise<AxiosResponse> {
-    const target = prepareSalesforceRequest(params);
+function waitForSalesforceSession(signal?: AbortSignal, rejectedGeneration?: number, purpose?: 'intake'): Promise<SalesforceTokenSnapshot> {
+    signal?.throwIfAborted();
+    const options = rejectedGeneration === undefined ? undefined : { rejectedGeneration };
+    const session = getSalesforceTokenSnapshot(purpose ? { ...options, purpose } : options);
+    if (!signal) return session;
+
+    return new Promise((resolve, reject) => {
+        const abort = () => reject(signal.reason);
+        signal.addEventListener('abort', abort, { once: true });
+        // A request may stop waiting without cancelling authentication shared by other callers.
+        void session.then(resolve, reject).finally(() => signal.removeEventListener('abort', abort));
+    });
+}
+
+async function requestWithoutRetry(params: BoundedSalesforceRequest, image = false, purpose?: 'intake'): Promise<AxiosResponse> {
+    params.signal?.throwIfAborted();
+    const target = prepareSalesforceRequest(params, purpose);
+    params.signal?.throwIfAborted();
     if (target.config.profile === 'mock') return requestMockSalesforce(target.url, params.type, image);
 
-    const session = await getSalesforceTokenSnapshot();
+    const session = await waitForSalesforceSession(params.signal, undefined, purpose);
+    params.signal?.throwIfAborted();
     const response = await requestSalesforceAPI(params, target, session, image);
     if (response.status === 401) invalidateSalesforceToken(session.generation);
     return response;
 }
 
-export const salesForceAPI = (params: ApiParams): Promise<AxiosResponse> => requestWithoutRetry(params);
+export const salesForceAPI = (params: BoundedSalesforceRequest): Promise<AxiosResponse> => requestWithoutRetry(params);
+
+export type SalesforceIntakeOperation = 'policy' | 'inspect' | 'claim' | 'reconcile' | 'notification';
+
+export async function salesForceIntakeAPI(
+    operation: SalesforceIntakeOperation,
+    data: Record<string, unknown>,
+    signal?: AbortSignal,
+): Promise<AxiosResponse> {
+    // Check the operation before interpolation, including for untyped callers.
+    if (!['policy', 'inspect', 'claim', 'reconcile', 'notification'].includes(operation)) {
+        throw new SalesforceConfigurationError('Unsupported Salesforce intake operation.');
+    }
+    const { restOrigin } = getSalesforceConfig();
+    return requestWithoutRetry({
+        endpoint: `${restOrigin}/services/apexrest/vpcs/intake/v1/${operation}`,
+        type: RequestType.POST,
+        data,
+        signal,
+    }, false, 'intake');
+}
 
 export const salesForceImageAPI = (params: ApiParams): Promise<AxiosResponse> => requestWithoutRetry(params, true);
 
 // A safe GET can refresh a rejected token once and retry bounded transient failures.
 // Invalidate a rejected write token for future requests without replaying the mutation.
-export const salesForceAPIWithRefresh = async (params: ApiParams): Promise<AxiosResponse> => {
+export const salesForceAPIWithRefresh = async (params: BoundedSalesforceRequest): Promise<AxiosResponse> => {
     const target = prepareSalesforceRequest(params);
+    const { signal } = params;
+    signal?.throwIfAborted();
     if (target.config.profile === 'mock') return requestMockSalesforce(target.url, params.type, false);
 
     const isRetryableGet = params.type === RequestType.GET;
@@ -190,12 +246,14 @@ export const salesForceAPIWithRefresh = async (params: ApiParams): Promise<Axios
 
     for (let attempt = 1; attempt <= attempts; attempt += 1) {
         try {
-            let session = await getSalesforceTokenSnapshot();
+            let session = await waitForSalesforceSession(signal);
+            signal?.throwIfAborted();
             let response = await requestSalesforceAPI(params, target, session);
 
             if (response.status === 401 && isRetryableGet && !didRefreshAuth) {
                 didRefreshAuth = true;
-                session = await getSalesforceTokenSnapshot({ rejectedGeneration: session.generation });
+                session = await waitForSalesforceSession(signal, session.generation);
+                signal?.throwIfAborted();
                 response = await requestSalesforceAPI(params, target, session);
             }
 
@@ -213,6 +271,7 @@ export const salesForceAPIWithRefresh = async (params: ApiParams): Promise<Axios
                 maxAttempts: attempts,
             });
         } catch (error) {
+            signal?.throwIfAborted();
             if (error instanceof SalesforceTokenError || error instanceof SalesforceConfigurationError
                 || !isRetryableGet || attempt >= attempts) throw error;
 
@@ -224,7 +283,7 @@ export const salesForceAPIWithRefresh = async (params: ApiParams): Promise<Axios
         }
 
         const retryDelay = SALESFORCE_GET_RETRY_DELAYS_MS[attempt - 1];
-        if (retryDelay !== undefined) await wait(retryDelay);
+        if (retryDelay !== undefined) await waitForSalesforceRetry(retryDelay, signal);
     }
 
     throw new Error('Salesforce GET retry loop exhausted');

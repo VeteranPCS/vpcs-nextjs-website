@@ -5,6 +5,8 @@ import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { sendGTMEvent } from '@next/third-parties/google';
 import { KeepInTouchForm, vaLoanGuideForm, homebuyerGuideForm, coloradoRelocationGuideForm } from '@/services/salesForcePostFormsService';
+import { useLeadSubmission } from '@/components/common/useLeadSubmission';
+import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import { HoneypotField, useHoneypot } from '@/components/common/honeypot';
 import { captureAnalyticsEvent, formTrackingPayload, trackFormStarted, trackFormSubmitAttempted, trackFormSubmissionFailed, trackCtaClicked } from '@/lib/analytics/client';
 import { buildCtaProperties } from '@/lib/analytics/cta';
@@ -41,13 +43,14 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
   // Keep shared form styling independent of its card.
   useEffect(() => { setPortalRoot(document.body); }, []);
   const id = useId();
-  const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [downloadStarted, setDownloadStarted] = useState(false);
   const [acceptedContactDetails, setAcceptedContactDetails] = useState<ContactPrefillDetails>();
   const { ref: honeypotRef, getSpamFields } = useHoneypot();
   const config = settings[kind];
+  const submission = useLeadSubmission(config.formId);
+  const pending = submission.submitting;
   const isColorado = kind === COLORADO_RELOCATION_GUIDE.kind;
   useEffect(() => {
     if (!isColorado || !success) return;
@@ -84,7 +87,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (busy.current) return;
+    if (busy.current || submission.blocked) return;
     const form = new FormData(event.currentTarget);
     const firstName = String(form.get('firstName') ?? '').trim();
     const lastName = String(form.get('lastName') ?? '').trim();
@@ -97,29 +100,24 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
     }
 
     busy.current = true;
-    setPending(true);
     setError('');
     trackSafely(() => trackFormSubmitAttempted(config.formId, { ...guideProperties, has_email: true, has_phone: false }));
     if (config.file) trackDownload('guide_download_requested', 'form_submission');
 
-    try {
-      // Attribution is optional too: a storage/SDK error must not drop the request.
+    const details = { firstName, lastName, email };
+    const response = await submission.submit({ ...details, ...getSpamFields() }, payload => {
       let tracking = {};
-      try { tracking = formTrackingPayload(config.formId); } catch { /* Submit without optional attribution. */ }
-      const response = await config.action({ firstName, lastName, email, ...getSpamFields(), ...tracking });
-      if (!response?.success) throw new Error('Submission unsuccessful');
-    } catch {
-      setError('We could not send your request. Please try again.');
-      trackSafely(() => trackFormSubmissionFailed(config.formId, 'server_submission', ['submission_exception'], guideProperties));
-      busy.current = false;
-      setPending(false);
+      trackSafely(() => { tracking = formTrackingPayload(config.formId); });
+      return config.action({ ...payload, ...tracking });
+    }, details);
+    busy.current = false;
+    if (response?.outcome !== 'accepted') {
+      if (response) trackSafely(() => trackFormSubmissionFailed(config.formId, 'server_submission', [response.outcome], guideProperties));
       return;
     }
 
     if (isColorado && allowAuthorContact) setAcceptedContactDetails({ firstName, lastName, email });
     setSuccess(true);
-    busy.current = false;
-    setPending(false);
     if (config.file) {
       trackDownload('guide_download_started', 'form_submission');
       trackSafely(() => sendGTMEvent({ event: 'conversion_download', content: config.gaContent }));
@@ -140,6 +138,7 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
     <button ref={trigger} type="button" disabled={!portalRoot} className={className || 'steph-button'} onClick={() => {
       setError('');
       setSuccess(false);
+      submission.resetAccepted();
       setDownloadStarted(false);
       setAcceptedContactDetails(undefined);
       dialog.current?.showModal();
@@ -177,7 +176,8 @@ export default function LeadCaptureDialog({ kind, initialEmail = '', triggerLabe
           <label htmlFor={`${id}-last`}>Last name<input id={`${id}-last`} name="lastName" autoComplete="family-name" required maxLength={isColorado ? 80 : 120} /></label>
           <label htmlFor={`${id}-email`}>Email<input id={`${id}-email`} name="email" type="email" autoComplete="email" defaultValue={initialEmail} required maxLength={isColorado ? 80 : 200} /></label>
           {error && <p role="alert" className="steph-error">{error}</p>}
-          <button className="steph-button" type="submit" disabled={pending}>{pending ? 'Sending…' : config.file ? 'Get my guide' : 'Keep in touch'}</button>
+          <CustomerSubmissionFeedback failure={submission.failure} className="steph-error" />
+          <button className="steph-button" type="submit" disabled={pending || submission.blocked}>{pending ? 'Sending…' : config.file ? 'Get my guide' : 'Keep in touch'}</button>
           <p className="steph-small">Your information is never sold. <Link href="/privacy-policy">Privacy policy</Link></p>
         </form>}
       </div>

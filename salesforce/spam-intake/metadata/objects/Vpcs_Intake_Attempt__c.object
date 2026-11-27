@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Private durable dispatch and website notification claims keyed by an opaque intake attempt.</description>
+    <externalSharingModel>Private</externalSharingModel>
+    <fields>
+        <fullName>Attempt_Key__c</fullName>
+        <caseSensitive>true</caseSensitive>
+        <externalId>true</externalId>
+        <label>Attempt Key</label>
+        <length>36</length>
+        <required>true</required>
+        <type>Text</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Payload_Hash__c</fullName>
+        <label>Payload Hash</label>
+        <length>64</length>
+        <required>true</required>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Related_Lead__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <label>Related Lead</label>
+        <referenceTo>Lead</referenceTo>
+        <relationshipLabel>VPCS Intake Attempts</relationshipLabel>
+        <relationshipName>VPCS_Intake_Attempts</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>State__c</fullName>
+        <label>State</label>
+        <required>true</required>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Claimed</fullName>
+                    <default>true</default>
+                    <label>Claimed</label>
+                </value>
+                <value>
+                    <fullName>Confirmed</fullName>
+                    <default>false</default>
+                    <label>Confirmed</label>
+                </value>
+                <value>
+                    <fullName>Declined</fullName>
+                    <default>false</default>
+                    <label>Declined</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Website_Notification_Claimed__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Website Notification Claimed</label>
+        <type>Checkbox</type>
+    </fields>
+    <label>VPCS Intake Attempt</label>
+    <nameField>
+        <displayFormat>VIA-{000000}</displayFormat>
+        <label>VPCS Intake Attempt ID</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>VPCS Intake Attempts</pluralLabel>
+    <sharingModel>Private</sharingModel>
+</CustomObject>

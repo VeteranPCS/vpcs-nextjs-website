@@ -126,6 +126,27 @@ describe('api error handling: HTTP response vs network error', () => {
       expect.objectContaining({ timeout: 15_000, maxRedirects: 0 }),
     );
   });
+
+  it('does not dispatch a timed-out POST after shared authentication finishes', async () => {
+    let releaseSession!: (value: Awaited<ReturnType<typeof getSalesforceTokenSnapshot>>) => void;
+    vi.mocked(getSalesforceTokenSnapshot).mockReturnValueOnce(new Promise(resolve => { releaseSession = resolve; }));
+    const controller = new AbortController();
+    const rejected = captureRejection(salesForceAPI({ endpoint: leadEndpoint, type: RequestType.POST, signal: controller.signal }));
+    const deadline = new Error('synthetic intake deadline');
+    controller.abort(deadline);
+    expect(await rejected).toBe(deadline);
+    const config = getSalesforceConfig();
+    releaseSession({ token: 'test-token', generation: 1, cacheKey: config.cacheKey, instanceUrl: config.restOrigin });
+    await Promise.resolve();
+    expect(mockedAxios).not.toHaveBeenCalled();
+  });
+
+  it('forwards the caller deadline to the active Salesforce request', async () => {
+    const controller = new AbortController();
+    mockedAxios.mockResolvedValueOnce({ status: 200 } as never);
+    await salesForceAPI({ endpoint: leadEndpoint, type: RequestType.POST, signal: controller.signal });
+    expect(mockedAxios).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ signal: controller.signal }));
+  });
 });
 
 describe('salesForceAPIWithRefresh retry policy', () => {

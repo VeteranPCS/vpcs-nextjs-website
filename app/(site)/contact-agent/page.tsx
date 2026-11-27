@@ -37,28 +37,22 @@ export default function ContactAgentPage() {
   );
   const experiment = useDesktopContactAgentVariant();
 
-  const handleSubmit = async (formData: ContactAgentFormData): Promise<CustomerSubmitResult> => {
+  const handleSubmit = async (formData: ContactAgentFormData & { submission_attempt_id: string }): Promise<CustomerSubmitResult> => {
     const fullQueryString = window.location.search;
     const queryParams = new URLSearchParams(fullQueryString);
     const queryState = queryParams.get("state");
 
-    try {
-      // Comparator telemetry is optional and must never prevent lead delivery.
+    let tracking = {};
+    try { tracking = formTrackingPayload('contact_agent'); } catch { /* Optional attribution. */ }
+    const result = await submitContactAgentLead({ ...formData, ...tracking }, fullQueryString);
+    if (result.outcome === 'accepted') {
       try { sendGTMEvent({
         event: "conversion_contact_agent",
         agent_id: queryParams.get("id") || "",
         state: normalizeStateSlug(queryState) || "",
-      }); } catch { /* Keep existing GTM semantics, best effort. */ }
-
-      const result = await submitContactAgentLead(
-        { ...formData, ...formTrackingPayload('contact_agent') },
-        fullQueryString,
-      );
-      return result;
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      return { success: false, outcome: 'unconfirmed' };
+      }); } catch { /* Optional conversion telemetry. */ }
     }
+    return result;
   };
 
   // const renderProgressBar = () => {

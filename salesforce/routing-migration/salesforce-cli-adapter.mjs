@@ -64,8 +64,10 @@ export function createSalesforceCli(targetOrg, invoke = invokeSalesforce) {
     }
   }
 
-  async function query(soql, label) {
-    const result = await command(['data', 'query', '--query', soql], `Salesforce query failed: ${label}`);
+  async function query(soql, label, { tooling = false } = {}) {
+    const args = ['data', 'query', '--query', soql];
+    if (tooling) args.push('--use-tooling-api');
+    const result = await command(args, `Salesforce query failed: ${label}`);
     if (!Array.isArray(result.records) || result.done === false ||
       result.totalSize !== result.records.length) {
       throw new RoutingCliError(`Salesforce query did not return a complete result: ${label}`);

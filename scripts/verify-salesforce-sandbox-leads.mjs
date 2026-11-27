@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
+import { resolveSalesforceIntakeAuth } from '../lib/salesforce/environment.mjs';
 import { deliveryEmail } from './fixtures/salesforce-routing-delivery-readback.mjs';
 import { routingDeliveryCases, routingRehearsalCases } from './fixtures/salesforce-routing-rehearsal.mjs';
 import { projectRoot } from './lib/next-environment.mjs';
@@ -16,12 +17,15 @@ const rehearsalKeys = new Set([
     'VPCS_WEBDEV_ISOLATION_ATTESTED', 'VPCS_WEBDEV_TEST_RUN_ID', 'VPCS_WEBDEV_TEST_EXPIRES_AT',
     'VPCS_WEBDEV_TEST_EMAILS', 'VPCS_WEBDEV_TEST_PHONES', 'SALESFORCE_AUTH_GRANT', 'SALESFORCE_LOGIN_BASE_URL',
     'SALESFORCE_API_VERSION', 'SALESFORCE_CLIENT_ID', 'SALESFORCE_CLIENT_SECRET',
+    'VPCS_SALESFORCE_INTAKE_CLIENT_ID', 'VPCS_SALESFORCE_INTAKE_CLIENT_SECRET', 'VPCS_SALESFORCE_INTAKE_USER_ID',
+    'VPCS_WEBDEV_LEAD_REDIS_URL', 'VPCS_WEBDEV_LEAD_REDIS_TOKEN', 'VPCS_LEAD_BINDING_KEY',
 ]);
-const usage = 'npm run verify:salesforce-sandbox-leads -- [--routing | --routing-delivery] --execute --email <approved test sink>';
+const usage = 'node scripts/with-isolated-lead-redis.mjs rehearsal [--routing | --routing-delivery] --execute --email <approved test sink> [--email <second approved test sink>] [--negative-email <routing honeypot sink>]';
 
 async function main() {
     const { values } = parseArgs({ options: {
-        execute: { type: 'boolean' }, routing: { type: 'boolean' }, 'routing-delivery': { type: 'boolean' }, email: { type: 'string' },
+        execute: { type: 'boolean' }, routing: { type: 'boolean' }, 'routing-delivery': { type: 'boolean' },
+        email: { type: 'string', multiple: true }, 'negative-email': { type: 'string' },
     } });
     const delivery = values['routing-delivery'];
     if (delivery && values.routing) throw new Error(`Usage: ${usage}`);
@@ -36,14 +40,27 @@ async function main() {
         }
         console.log('Execution requires a verified sandbox, write and isolation flags, capture delivery, an expiring test run, and an approved email sink.');
         if (delivery) console.log('Queues exactly four selected cases with dispatch paused and Tech contact details; sends no SMS.');
+        if (values.routing) console.log('Use two approved healthy email sinks for five cases each, and reserve --negative-email for the honeypot rejection.');
         console.log(usage);
         return;
     }
-    const email = values.email?.trim().toLowerCase();
-    if (!email || !/^[a-z0-9.!#$%&*+/=?^_`{|}~-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email) || email.length > 80) {
+    const healthySinks = (values.email ?? []).map(email => email.trim().toLowerCase());
+    const negativeSink = values['negative-email']?.trim().toLowerCase();
+    if (values.routing && (healthySinks.length !== 2 || !negativeSink)) {
+        throw new Error('The routing rehearsal needs 3 distinct approved email identities: two --email values and one --negative-email reserved for the honeypot.');
+    }
+    if (!values.routing && negativeSink !== undefined) throw new Error('--negative-email applies only to the full routing rehearsal.');
+    const testSinks = negativeSink === undefined ? healthySinks : [...healthySinks, negativeSink];
+    if (testSinks.length === 0 || testSinks.some(email => !/^[a-z0-9.!#$%&*+/=?^_`{|}~-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email) || email.length > 80)) {
         throw new Error(`Usage: ${usage}`);
     }
-    if (delivery && email !== deliveryEmail) throw new Error('Delivery preparation requires the exact approved Tech email.');
+    if (delivery && (testSinks.length !== 1 || testSinks[0] !== deliveryEmail)) {
+        throw new Error('Delivery preparation requires the exact approved Tech email.');
+    }
+    const requiredSinks = values.routing ? 3 : 2;
+    if (!delivery && (testSinks.length !== requiredSinks || new Set(testSinks).size !== requiredSinks)) {
+        throw new Error(`This rehearsal requires ${requiredSinks} distinct approved email identities to stay within the five-per-identity rate limit.`);
+    }
     const settings = loadSandboxSettings();
     const { config, env } = settings;
     if (!config.allowSandboxWrites || config.deliveryMode !== 'capture' || env.VPCS_WEBDEV_ISOLATION_ATTESTED !== '1') {
@@ -61,7 +78,14 @@ async function main() {
             : 'Lead verification requires a unique test run ID and an authorized window of up to 24 hours.');
     }
     const emails = (env.VPCS_WEBDEV_TEST_EMAILS ?? '').split(',').map(value => value.trim().toLowerCase());
-    if (!emails.includes(email)) throw new Error('The rehearsal email is outside the approved test sink allowlist.');
+    if (testSinks.some(email => !emails.includes(email))) throw new Error('A rehearsal email is outside the approved test sink allowlist.');
+    if (!/^http:\/\/127\.0\.0\.1:[1-9]\d{0,4}$/.test(env.VPCS_WEBDEV_LEAD_REDIS_URL ?? '') || !env.VPCS_WEBDEV_LEAD_REDIS_TOKEN) {
+        throw new Error('Use the isolated local lead Redis wrapper for the WebDev rehearsal.');
+    }
+    if (!/^[a-f0-9]{64}$/.test(env.VPCS_LEAD_BINDING_KEY ?? '')) {
+        throw new Error('A valid WebDev lead binding key is required before starting the rehearsal.');
+    }
+    resolveSalesforceIntakeAuth(config, env);
 
     const { fingerprint } = await connectSandbox(settings);
     const runDirectory = join(projectRoot, 'artifacts', 'salesforce', 'webdev', fingerprint.slice(0, 12), 'rehearsals');
@@ -85,7 +109,7 @@ async function main() {
             ...rehearsalEnv,
             NODE_ENV: 'production',
             NEXT_PUBLIC_API_BASE_URL: 'http://127.0.0.1:3000',
-            VPCS_WEBDEV_REHEARSAL_EMAIL: email,
+            VPCS_WEBDEV_REHEARSAL_EMAILS: JSON.stringify(testSinks),
             VPCS_WEBDEV_REHEARSAL_SUITE: suite,
         },
     });

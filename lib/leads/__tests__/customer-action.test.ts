@@ -14,9 +14,9 @@ describe.each(['contact_agent', 'contact_lender'] as const)('%s action outcome b
     for (let i = 0; i < 2; i++) expect(await submitCustomerWebsiteLead(formId, payload, '', submit)).toMatchObject({ success: false, outcome: 'unconfirmed' });
   });
   it('preserves effective query-state precedence without relaxing direct-entry validation', async () => {
-    const submit = vi.fn().mockResolvedValue({ message: 'Accepted', submissionId: 'ref' });
-    await submitCustomerWebsiteLead(formId, { ...payload, state: 'TX' }, '?state=colorado', submit);
-    expect(submit).toHaveBeenCalledWith(expect.objectContaining({ state: 'CO' }), '?state=colorado');
+    const submit = vi.fn().mockResolvedValue({ success: true, outcome: 'accepted', submissionId: 'ref' });
+    await submitCustomerWebsiteLead(formId, { ...payload, submission_attempt_id: '025284ba-b587-4777-b974-e5ebbf0ef6c7', state: 'TX' }, '?state=colorado', submit);
+    expect(submit).toHaveBeenCalledWith(expect.objectContaining({ state: 'CO', submission_attempt_id: '025284ba-b587-4777-b974-e5ebbf0ef6c7' }), '?state=colorado');
     submit.mockClear();
     expect(await submitCustomerWebsiteLead(formId, { ...payload, state: '' }, '', submit)).toMatchObject({ outcome: 'validation_error', fieldErrors: { state: 'State is required' } });
     expect(submit).not.toHaveBeenCalled();
