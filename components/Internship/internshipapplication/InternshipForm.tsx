@@ -1,4 +1,5 @@
 "use client";
+import { LeadCaptcha } from '@/components/common/LeadCaptcha';
 import { useLeadSubmission } from '@/components/common/useLeadSubmission';
 import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -661,6 +662,7 @@ const WebToLeadForm = () => {
                         </div>
 
                         <HoneypotField ref={honeypotRef} />
+                        <LeadCaptcha control={submission.captcha} />
                         {/* Submit Button */}
                         <div className="flex md:justify-start justify-center">
                             <CustomerSubmissionFeedback failure={submission.failure} />

@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react';
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { renderWithCaptchaOff as render } from '@/components/common/__tests__/render-with-captcha-off';
+import { act, cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Page from '../page';
 import { submitContactAgentLead } from '../actions';

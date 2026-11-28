@@ -5,13 +5,14 @@ import type { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { trackFormSubmitAttempted, trackFormSubmissionFailed, trackFormValidationFailed } from '@/lib/analytics/client';
 import { CUSTOMER_FIELDS } from '@/lib/validation/contactForms';
 import { navigateCustomerSuccess } from '@/lib/leads/customer-navigation';
+import type { LeadSubmissionFields } from '@/lib/leads/captcha-types';
 import type { CustomerSubmitResponse } from '@/lib/leads/submission-outcome';
 import { bestEffort, useLeadSubmission } from './useLeadSubmission';
 
 export function useCustomerSubmission<T extends FieldValues>({ formId, form, onSubmit, getSpamFields }: {
   formId: 'contact_agent' | 'contact_lender';
   form: Pick<UseFormReturn<T>, 'handleSubmit' | 'getValues' | 'setError' | 'reset'>;
-  onSubmit: (data: T & { submission_attempt_id: string }) => Promise<CustomerSubmitResponse> | void;
+  onSubmit: (data: T & LeadSubmissionFields) => Promise<CustomerSubmitResponse> | void;
   getSpamFields: () => Record<string, unknown>;
 }) {
   const submission = useLeadSubmission(formId);
@@ -76,7 +77,7 @@ export function useCustomerSubmission<T extends FieldValues>({ formId, form, onS
   const showValidationFeedback = failure?.outcome === 'validation_error'
     && !Object.keys(failure.fieldErrors).some(field => CUSTOMER_FIELDS.includes(field));
   return {
-    isSubmitting, focusRequest, blocked: submission.blocked, failure, showValidationFeedback,
+    captcha: submission.captcha, isSubmitting, focusRequest, blocked: submission.blocked, failure, showValidationFeedback,
     submitLabel: isSubmitting ? 'Submitting...' : 'Submit',
     onFormSubmit: (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); void attempt(); },
   };

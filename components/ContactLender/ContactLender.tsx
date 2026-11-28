@@ -1,4 +1,6 @@
 "use client";
+import type { LeadSubmissionFields } from '@/lib/leads/captcha-types';
+import { LeadCaptcha } from '@/components/common/LeadCaptcha';
 import { useState, useEffect } from 'react';
 import { useForm, Resolver } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,7 +20,7 @@ import type { CustomerSubmitResponse } from '@/lib/leads/submission-outcome';
 
 // Props type for ContactForm component
 interface ContactFormProps {
-  onSubmit: (data: ContactLenderFormData & { submission_attempt_id: string }) => Promise<CustomerSubmitResponse> | void;
+  onSubmit: (data: ContactLenderFormData & LeadSubmissionFields) => Promise<CustomerSubmitResponse> | void;
   derivedStateCode?: string | null;
 }
 
@@ -69,7 +71,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
     }
   }, [derivedStateCode, setValue]);
 
-  const { isSubmitting, focusRequest, onFormSubmit, blocked, submitLabel, failure, showValidationFeedback } = useCustomerSubmission({
+  const { captcha, isSubmitting, focusRequest, onFormSubmit, blocked, submitLabel, failure, showValidationFeedback } = useCustomerSubmission({
     formId: 'contact_lender',
     form: { handleSubmit, getValues, setError, reset },
     onSubmit,
@@ -272,6 +274,7 @@ const ContactLenderForm: React.FC<ContactFormProps> = ({ onSubmit, derivedStateC
 
             <CustomerSubmissionFeedback failure={failure} showValidation={showValidationFeedback} />
             <div className="flex md:justify-start justify-center flex-col md:items-start items-center gap-3">
+              <LeadCaptcha control={captcha} />
               <button
                 type="submit"
                 disabled={isSubmitting || blocked}

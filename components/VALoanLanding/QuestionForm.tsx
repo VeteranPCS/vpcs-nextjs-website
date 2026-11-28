@@ -1,4 +1,5 @@
 'use client';
+import { LeadCaptcha } from '@/components/common/LeadCaptcha';
 import Link from 'next/link';
 import { useState, type FormEvent } from 'react';
 import { z } from 'zod';
@@ -56,6 +57,7 @@ export default function QuestionForm() {
     <HoneypotField ref={honeypotRef}/>
     <label htmlFor="va-question">What’s your question?<textarea id="va-question" name="additionalComments" required aria-label="What’s your question?" placeholder="Type your question here…" rows={3} maxLength={5000} aria-invalid={Boolean(errors.additionalComments)} aria-describedby={errors.additionalComments?'va-question-error':undefined}/>{errors.additionalComments&&<span id="va-question-error" className={styles.error}>{errors.additionalComments}</span>}</label>
     <div className={styles.fields}>{input('firstName','First name','text','given-name')}{input('lastName','Last name','text','family-name')}</div>
+    <LeadCaptcha control={submission.captcha} />
     <CustomerSubmissionFeedback failure={submission.failure} className={styles.error} />
     <div className={styles.submitRow}>{input('email','Email address','email','email')}<button type="submit" className="steph-button" disabled={pending || submission.blocked}>{pending?'Sending…':'Ask a VA Loan Expert'} <span aria-hidden="true">›</span></button></div>
     <p className={styles.privacy}>We respect your privacy. <Link href="/privacy-policy">Privacy policy</Link></p>

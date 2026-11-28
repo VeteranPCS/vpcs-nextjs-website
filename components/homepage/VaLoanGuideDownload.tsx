@@ -1,4 +1,5 @@
 "use client";
+import { LeadCaptcha } from '@/components/common/LeadCaptcha';
 import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
 import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import React, { useState } from "react";
@@ -127,6 +128,7 @@ const VaLoanGuideDownload = () => {
                     className="mb-6"
                 >
                     <HoneypotField ref={honeypotRef} />
+                    <LeadCaptcha control={submission.captcha} />
                     <div className="flex flex-col md:flex-row gap-4 mb-4">
                         <input
                             className="flex-1 px-4 py-3 rounded border border-gray-300 text-sm"

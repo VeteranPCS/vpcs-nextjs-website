@@ -1,3 +1,4 @@
+import { stubLeadCaptchaEnv, syntheticCaptchaToken } from './lead-captcha-fixtures';
 import { createHash, randomUUID } from 'node:crypto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import sendToSlack from '@/actions/sendToSlack';
@@ -61,7 +62,7 @@ const forms = [
 function payload(overrides: Record<string, unknown> = {}) {
   return {
     firstName: 'Synthetic', lastName: 'Intake Matrix', first_name: 'Synthetic', last_name: 'Intake Matrix',
-    email: 'qa@example.test', phone: '2025550100', mobile: '2025550100',
+    email: 'qa@example.test', captchaToken: syntheticCaptchaToken, phone: '2025550100', mobile: '2025550100',
     state: 'CO', primaryState: 'CO', vpcs_visitor_id: 'vpcs_admission_test_01',
     [HP_FIELD]: '', [TS_FIELD]: Date.now() - 5_000, submission_attempt_id: randomUUID(),
     ...overrides,
@@ -89,6 +90,7 @@ function assertRateStopsBeforeSalesforce() {
 beforeEach(() => {
   vi.clearAllMocks();
   stubProductionEnv();
+  stubLeadCaptchaEnv();
   vi.stubEnv('VPCS_LEAD_BINDING_KEY', 'a'.repeat(64));
   vi.stubEnv('LEAD_SPAM_ENFORCED', undefined);
   vi.stubGlobal('fetch', vi.fn(async () => new Response('', { status: 200 })));

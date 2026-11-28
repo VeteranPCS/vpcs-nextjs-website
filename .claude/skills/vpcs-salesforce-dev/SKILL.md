@@ -78,6 +78,10 @@ metadata. Keep the honeypot rule active and reconcile the private blocklist befo
 email rule. Verify the website's restricted API grant separately in WebDev and Production. For a
 rollback, retain compatible admission and readback and preserve uncertain attempts.
 
+Release 1 is active in Production. Its completion ledger includes the exact deployment, native tests, policy reconciliation, canary and cleanup. For policy maintenance, a separately authorized temporary `VPCS_Intake_Policy_Operator` assignment supplies the new-field access; broad administrative Apex access alone does not. Verify the complete expected policy set and revoke that temporary assignment after the operation. CAPTCHA is a separate release and must preserve the existing attempt/HMAC and no-replay contract.
+
+For CAPTCHA work, read the [Release 2 runbook](../../../docs/spam-enforcement-release2.md). Native Salesforce is the sole verifier of the single-use token. Confirm the sandbox-generated org/key/fallback settings, test an actual provider challenge and all ten form paths, and distinguish intercepted browser results from native persistence. Verify real image challenges in modal forms. Keep the legacy secret in Salesforce and preserve ambiguous attempts. Mandatory native enforcement and the compatible website must activate together under the intake hold, after scoped tests/review and stale-client containment. Never treat fallback-off as proof of undocumented over-quota behavior. Tech checks provider errors, assessment volume and billing daily during launch week. Hold intake on billing loss, provider quota errors or unexpected spend and keep Release 1 enforcement active.
+
 For an existing field's new unique index, validate the field-only package with existing affected
 tests, deploy under the producer hold, and wait for terminal success including finalization.
 Then verify the live index and run the unchanged uniqueness regression before reopening intake.

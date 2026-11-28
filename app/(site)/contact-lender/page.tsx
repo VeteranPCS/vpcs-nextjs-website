@@ -1,4 +1,5 @@
 "use client";
+import type { LeadSubmissionFields } from '@/lib/leads/captcha-types';
 import { useEffect, useState } from "react";
 import ContactLender from "@/components/ContactLender/ContactLender";
 import { submitContactLenderLead } from "./actions";
@@ -16,7 +17,7 @@ export default function ContactLenderPage() {
     setDerivedStateCode(normalizeStateCode(queryParams.get("state")));
   }, []);
 
-  const handleSubmit = async (formData: ContactLenderFormData & { submission_attempt_id: string }): Promise<CustomerSubmitResult> => {
+  const handleSubmit = async (formData: ContactLenderFormData & LeadSubmissionFields): Promise<CustomerSubmitResult> => {
     const fullQueryString = window.location.search;
     const queryParams = new URLSearchParams(fullQueryString);
 

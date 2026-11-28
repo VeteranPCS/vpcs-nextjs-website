@@ -1,4 +1,5 @@
 "use client";
+import { LeadCaptcha } from '@/components/common/LeadCaptcha';
 import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
 import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import React from "react";
@@ -155,6 +156,7 @@ const PcsResourcesVaLoanGuide = () => {
                 </div>
               </div>
               <div>
+                <LeadCaptcha control={submission.captcha} />
                 <CustomerSubmissionFeedback failure={submission.failure} className="text-white text-sm" />
                 <button type="submit" disabled={submitting || submission.blocked} className="border-2 border-white rounded-md text-center block w-full py-3 text-white roboto lg:text-[20px] md:text-[20px] sm:text-[14px] text-[14px] font-medium mt-8 mb-3">
                   Download For Free

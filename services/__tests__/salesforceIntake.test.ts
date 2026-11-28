@@ -78,35 +78,66 @@ describe('Salesforce admission RPC', () => {
     expect(vi.getTimerCount()).toBe(0);
   });
 
-  it('stops polling on exact confirmation and terminates at four negative reads', async () => {
+  it('stops polling on exact confirmation without waiting for the late-commit window', async () => {
     vi.useFakeTimers();
     transport.mockResolvedValueOnce(response(200, { confirmed: false }))
       .mockResolvedValueOnce(response(200, { confirmed: true }));
     const confirmed = reconcileLeadAttempt(attemptId, payloadHash);
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(1_000);
     await expect(confirmed).resolves.toBe(true);
     expect(transport).toHaveBeenCalledTimes(2);
     expect(transport).toHaveBeenLastCalledWith('reconcile', { attemptId, payloadHash }, actionSignal);
-    transport.mockClear().mockResolvedValue(response(200, { confirmed: false }));
-    const missing = reconcileLeadAttempt(attemptId, payloadHash);
-    await vi.runAllTimersAsync();
-    await expect(missing).resolves.toBe(false);
-    expect(transport).toHaveBeenCalledTimes(4);
+    expect(vi.getTimerCount()).toBe(0);
   });
 
-  it('uses one eight second reconciliation deadline across all reads and gaps', async () => {
+  it.each([7_280, 9_000])('confirms a Lead that first becomes visible at %ims', async (visibleAfterMs) => {
     vi.useFakeTimers();
-    transport.mockImplementationOnce(() => new Promise(resolve => {
-      setTimeout(() => resolve(response(200, { confirmed: false })), 4_900);
-    })).mockImplementation((_operation, _data, signal) => untilCancelled(signal));
+    const started = Date.now();
+    transport.mockImplementation(async () => response(200, { confirmed: Date.now() - started >= visibleAfterMs }));
+    let settled = false;
+    const confirmed = reconcileLeadAttempt(attemptId, payloadHash).then(result => {
+      settled = true;
+      return result;
+    });
+    await vi.advanceTimersByTimeAsync(visibleAfterMs - 1);
+    expect(settled).toBe(false);
+    await vi.advanceTimersByTimeAsync(4_000);
+    await expect(confirmed).resolves.toBe(true);
+    expect(transport.mock.calls.every(([operation, payload]) => operation === 'reconcile' &&
+      payload.attemptId === attemptId && payload.payloadHash === payloadHash)).toBe(true);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('bounds absent confirmation to at most six exact reads within fifteen seconds', async () => {
+    vi.useFakeTimers();
+    transport.mockResolvedValue(response(200, { confirmed: false }));
+    const missing = reconcileLeadAttempt(attemptId, payloadHash);
+    await vi.advanceTimersByTimeAsync(15_000);
+    await expect(missing).resolves.toBe(false);
+    const count = transport.mock.calls.length;
+    expect(count).toBeGreaterThan(4);
+    expect(count).toBeLessThanOrEqual(6);
+    await vi.runAllTimersAsync();
+    expect(transport).toHaveBeenCalledTimes(count);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('aborts the final in-flight read at the shared fifteen-second deadline', async () => {
+    vi.useFakeTimers();
+    for (let index = 0; index < 5; index++) {
+      transport.mockResolvedValueOnce(response(200, { confirmed: false }));
+    }
+    transport.mockImplementation((_operation, _data, signal) => untilCancelled(signal));
     const request = reconcileLeadAttempt(attemptId, payloadHash);
     const rejection = expect(request).rejects.toThrow('deadline exceeded');
-    await vi.advanceTimersByTimeAsync(7_999);
-    expect(transport).toHaveBeenCalledTimes(2);
-    expect(transport.mock.calls[1]?.[2]?.aborted).toBe(false);
+    await vi.advanceTimersByTimeAsync(14_999);
+    expect(transport).toHaveBeenCalledTimes(6);
+    const finalRead = transport.mock.calls.at(-1)?.[2];
+    expect(finalRead?.aborted).toBe(false);
     await vi.advanceTimersByTimeAsync(1);
     await rejection;
-    expect(transport).toHaveBeenCalledTimes(2);
+    expect(finalRead?.aborted).toBe(true);
+    expect(transport).toHaveBeenCalledTimes(6);
     expect(vi.getTimerCount()).toBe(0);
   });
 

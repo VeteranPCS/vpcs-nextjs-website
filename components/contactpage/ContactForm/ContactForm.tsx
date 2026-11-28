@@ -1,4 +1,5 @@
 "use client"
+import { LeadCaptcha } from '@/components/common/LeadCaptcha';
 import { bestEffort, useLeadSubmission } from '@/components/common/useLeadSubmission';
 import CustomerSubmissionFeedback from '@/components/common/CustomerSubmissionFeedback';
 import Button from "@/components/common/Button";
@@ -315,6 +316,7 @@ const ContactForm = () => {
                 </div>
 
                 <HoneypotField ref={honeypotRef} />
+                <LeadCaptcha control={submission.captcha} />
                 <div className="flex flex-col items-end md:py-8 py-2 gap-3">
                   <CustomerSubmissionFeedback failure={submission.failure} />
                   <button

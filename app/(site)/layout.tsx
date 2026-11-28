@@ -7,6 +7,8 @@ import Footer from "@/components/Footer/Footer"
 import { ConciergeProvider, ConciergeWidget } from "@/components/Concierge"
 import { featureFlags } from "@/lib/feature-flags";
 import { isProductionSalesforceRuntime } from "@/lib/salesforce/environment.mjs";
+import { LeadCaptchaProvider } from '@/components/common/LeadCaptcha';
+import { getLeadCaptchaPublicConfig } from '@/lib/leads/captcha-config';
 
 
 // Shared lead forms dispatch and confirm submissions from multiple site pages.
@@ -24,7 +26,7 @@ export default function RootLayout({
     && process.env.VERCEL !== '1';
   const conciergeEnabled = featureFlags.conciergeEnabled && (production || browserFixture);
   return (
-    <ConciergeProvider><ImpactProvider>
+    <LeadCaptchaProvider config={getLeadCaptchaPublicConfig()}><ConciergeProvider><ImpactProvider>
       {conciergeEnabled && production && (
         <BotIdClient
           protect={[
@@ -40,6 +42,6 @@ export default function RootLayout({
       <div className="site-header-addition">{children}</div>
       <Footer />
       {conciergeEnabled && <ConciergeWidget />}
-    </ImpactProvider></ConciergeProvider>
+    </ImpactProvider></ConciergeProvider></LeadCaptchaProvider>
   );
 }
