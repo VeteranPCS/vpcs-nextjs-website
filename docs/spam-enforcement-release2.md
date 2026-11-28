@@ -1,11 +1,11 @@
 # Release 2 native CAPTCHA restoration
 
-Status November 27, 2026. Release 1 remains live in Production. In WebDev, mandatory native
-verification, the direct token controls, the genuine mobile image challenge and all ten
-protected Preview forms passed. Test records were closed and capture was restored. The
-read-only replacement build, alias restoration, write-enabled deployment retirement and
-temporary grant revocation are verified. Final review, Production activation and its
-separately bounded canary are still pending.
+Status November 28, 2026. Release 2 is active in Production. The website and Salesforce's
+mandatory native reCAPTCHA were activated during the coordinated hold. Intake reopened after
+stale-client and firewall checks. The clean Colorado control persisted under Beth and reached
+the thank-you page. The direct no-token control produced zero matching Leads. Tech received
+both native emails, the matching Slack post was verified, and the synthetic Lead and Task
+were closed.
 
 ## Architecture and configuration
 
@@ -219,5 +219,20 @@ under `/private/tmp/vpcs-spam-ops/`; the independent R2 worktree is `/private/tm
   runtime behavior changed. Focused tests passed 14/14 and the full suite passed 1,816 tests
   with four skips before the mandatory commit hook rerun.
 
-Remaining gates are final immutable review and coordinated Production activation with a
-separately bounded canary. Release 2 excludes routing and working-hours changes.
+### Production cutover and canaries — November 28, 2026
+
+[PR #245](https://github.com/VeteranPCS/vpcs-nextjs-website/pull/245) merged reviewed source `5d56ec1a8afb6c949de696b6f861cf8f86bd0b94` as main `435e1626ed735193a41b8848ba1afab7feaa0bdb`. Source CI `46085314010`, Semgrep `279289833` and main CI `46162646707` passed. Final project readback confirmed live deployment `dpl_8L4b8VAM5eWU5BYTXrEJVap9SxzA`
+and automatic Production domain assignment off.
+
+| Gate | Observed result |
+|---|---|
+| Coordinated hold | Intake held at 16:19:38 UTC and reopened at 16:25:25 UTC. All 25 held and all 25 reopened POST probes passed. |
+| Native verification | Final native settings readback confirmed reCAPTCHA required, with the existing verified Google checkbox key and generated fallback-off settings. The linked Google project and active paid billing account were confirmed. |
+| Stale clients | All 16 stale and pinned-client checks passed. Skew Protection returned to 43,200 seconds with cutoff `1795881511390`. |
+| Clean website canary | One approved Colorado no-agent Tech submission persisted at 16:27:45 UTC under Beth and reached the thank-you page. Exactly one Lead `00Qjf000000htIz` and one Confirmed attempt were verified, with one Beth routing Task and zero SMS queue rows in the observation window. |
+| Direct no-token control | Native Web-to-Lead returned HTTP 200. Exact readback found zero matching Leads as of 16:37:55 UTC. |
+| Native email | The immediate email arrived in Tech’s inbox at 16:27:47 UTC. Headers matched `X-SFDC-EntityId: 00Qjf000000htIz` and org `00D4x000003yaV2`. Info and Admin appeared in the CC header. Their inboxes were not inspected. The welcome was due at 16:32:45 UTC. Salesforce stamped the message at 16:34:01 UTC, and it arrived in Tech’s inbox at 16:34:03 UTC, 6 minutes 18 seconds after Lead creation and 78 seconds after its due time. The welcome headers matched the same Lead and org. |
+| Website notification | The matching internal Slack message was verified at timestamp `1795883267.885189`. |
+| Production fixture cleanup | Guarded cleanup ran once. Final readback showed the exact synthetic Lead Closed: Duplicate and Task Completed. The Confirmed attempt and its hash were unchanged. No SMS queue rows were visible since 16:27:30 UTC. |
+
+Capture, provider acceptance and arrival are distinct evidence. This release excludes routing and working-hours changes. Tech manually checks provider errors, assessment volume and billing daily during launch week. Hold intake on billing loss, provider quota errors or unexpected spend and keep Release 1 enforcement active.
